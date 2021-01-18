@@ -24,12 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
 
-include("validation")
 
-dependencyResolutionManagement {
-    repositories {
-        jcenter()
-    }
+
+dependencies {
+    implementation("com.github.ajalt.clikt:clikt:3.1.0")
 }

@@ -34,9 +34,7 @@ group = "io.spine.protodata"
 version = "0.0.1"
 
 subprojects {
-    repositories {
-        mavenCentral()
-    }
+    apply(plugin = "kotlin")
 
     dependencies {
         testImplementation(kotlin("test-junit5"))
@@ -49,7 +47,7 @@ subprojects {
         useJUnitPlatform()
     }
 
-    tasks.withType<KotlinCompile>() {
+    tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
 }
