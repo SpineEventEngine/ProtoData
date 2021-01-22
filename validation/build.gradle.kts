@@ -24,9 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-
-
 dependencies {
-    implementation("com.github.ajalt.clikt:clikt:3.1.0")
+    implementation(project(":base"))
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
 }

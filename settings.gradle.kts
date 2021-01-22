@@ -26,7 +26,10 @@
 
 rootProject.name = "ProtoData"
 
+include("base")
+include("cli")
 include("validation")
+include("testlib")
 
 dependencyResolutionManagement {
     repositories {

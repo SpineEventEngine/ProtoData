@@ -24,10 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.21"
+    idea
 }
 
 group = "io.spine.protodata"
@@ -37,10 +41,14 @@ subprojects {
     apply(plugin = "kotlin")
 
     dependencies {
-        testImplementation(kotlin("test-junit5"))
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.23")
+        annotationProcessor("com.google.auto.service:auto-service:1.0-rc7")
+
+        implementation("com.google.flogger:flogger:0.5.1")
+        compileOnly("com.google.auto.service:auto-service-annotations:1.0-rc7")
+        runtimeOnly("com.google.flogger:flogger-system-backend:0.5.1")
+
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+        testRuntimeOnly("com.google.flogger:flogger-system-backend:0.5.1")
     }
 
     tasks.test {
@@ -49,5 +57,15 @@ subprojects {
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    tasks.withType<Test> {
+        testLogging {
+            showExceptions = true
+            showStackTraces = true
+            showCauses = true
+            exceptionFormat = FULL
+            events(FAILED, SKIPPED)
+        }
     }
 }
