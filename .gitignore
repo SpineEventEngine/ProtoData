@@ -32,7 +32,10 @@ hs_err_pid*
 # Cache of project
 .gradletasknamecache
 
+./idea/*.xml
 ./idea/**/*.xml
 !./idea/codeStyles
 !./idea/inspectionProfiles
 !./idea/copyright
+
+**/generated
