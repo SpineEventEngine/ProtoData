@@ -24,30 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.google.protobuf.gradle.*
 
 plugins {
-    kotlin("jvm") version "1.4.21"
+    id("com.google.protobuf")
+    java
 }
 
-group = "io.spine.protodata"
-version = "0.0.1"
-
-subprojects {
-    apply(plugin = "kotlin")
-
-    dependencies {
-        testImplementation(kotlin("test-junit5"))
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.23")
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.13.0"
     }
+}
 
-    tasks.test {
-        useJUnitPlatform()
+sourceSets {
+    main {
+        proto {
+            srcDirs("$projectDir/src/main/proto")
+        }
     }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+    test {
+        proto {
+            srcDirs("$projectDir/src/test/proto")
+        }
     }
 }
