@@ -24,25 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata
 
-package spine.protodata;
+import io.spine.server.projection.ProjectionRepository
+import io.spine.server.route.EventRoute.withId
+import io.spine.server.route.EventRouting
 
-import "spine/options.proto";
+class ProtobufSourceRepository
+    : ProjectionRepository<Path, ProtobufSourceProjection, ProtobufSource>() {
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata";
-option java_outer_classname = "ProtobufSourceProto";
-option java_multiple_files = true;
-
-import "spine/protodata/ast.proto";
-
-message ProtobufSource {
-    option (entity).kind = PROJECTION;
-
-    Path file_path = 1;
-
-    File file = 2;
-
-    map<string, MessageType> type = 3;
+    override fun setupEventRouting(routing: EventRouting<Path>) {
+        super.setupEventRouting(routing)
+        routing.route(FileDiscovered::class.java) { event, _ ->
+            withId(event.file.path)
+        }
+    }
 }

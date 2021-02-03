@@ -24,25 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata
 
-package spine.protodata;
+import io.spine.server.BoundedContext
 
-import "spine/options.proto";
+object ProtoDataContext {
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata";
-option java_outer_classname = "ProtobufSourceProto";
-option java_multiple_files = true;
-
-import "spine/protodata/ast.proto";
-
-message ProtobufSource {
-    option (entity).kind = PROJECTION;
-
-    Path file_path = 1;
-
-    File file = 2;
-
-    map<string, MessageType> type = 3;
+    fun build() : BoundedContext {
+        return BoundedContext
+            .singleTenant("ProtoData")
+            .add(ProtobufSourceRepository())
+            .build()
+    }
 }

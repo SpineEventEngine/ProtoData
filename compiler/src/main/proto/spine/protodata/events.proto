@@ -42,23 +42,55 @@ message FileDiscovered {
     File file = 1;
 }
 
+message FileOptionDiscovered {
+
+    Path file = 1;
+
+    Option option = 2;
+}
+
+message FileProcessingComplete {
+
+    Path file = 1;
+}
+
 message TypeDiscovered {
 
-    File declared_in = 1;
+    Path declared_in = 1;
 
     MessageType type = 2;
 }
 
-message TypeProcessed {
+message TypeProcessingComplete {
 
-    File declared_in = 1;
+    Path declared_in = 1;
 
     MessageType type = 2;
 }
 
 message FieldDiscovered {
 
-    File declared_in = 1;
+    Path declared_in = 1;
+
+    MessageType type = 2;
+
+    Field field = 3;
+}
+
+message FieldOptionDiscovered {
+
+    Path declared_in = 1;
+
+    MessageType type = 2;
+
+    Field field = 3;
+
+    Option option = 4;
+}
+
+message FieldProcessingComplete {
+
+    Path declared_in = 1;
 
     MessageType type = 2;
 

@@ -29,27 +29,46 @@ package io.spine.protodata
 import io.spine.core.Subscribe
 import io.spine.server.projection.Projection
 
-
-class ProtobufSourceProjection : Projection<File, ProtobufSource, ProtobufSource.Builder>() {
+class ProtobufSourceProjection : Projection<Path, ProtobufSource, ProtobufSource.Builder>() {
 
     @Subscribe
     fun on(e: FileDiscovered) {
         builder()
+            .setFilePath(e.file.path)
             .setFile(e.file)
     }
 
     @Subscribe
+    fun on(e: FileOptionDiscovered) {
+        builder()
+            .fileBuilder
+            .addOption(e.option)
+    }
+
+    @Subscribe
     fun on(e: TypeDiscovered) {
-        builder().putTypes(e.type.fqn(), e.type)
+        builder().putType(e.type.fqn(), e.type)
     }
 
     @Subscribe
     fun on(e: FieldDiscovered) {
         val typeName = e.type.fqn()
-        val type = builder().getTypesOrThrow(typeName)
+        val type = builder().getTypeOrThrow(typeName)
             .toBuilder()
             .addField(e.field)
             .build()
-        builder().putTypes(typeName, type)
+        builder().putType(typeName, type)
+    }
+
+    @Subscribe
+    fun on(e: FieldOptionDiscovered) {
+        val typeName = e.type.fqn()
+        val typeBuilder = builder().getTypeOrThrow(typeName)
+            .toBuilder()
+        val fieldBuilder = typeBuilder.fieldBuilderList.find { e.field.number == it.number }
+        fieldBuilder?.addOption(e.option) ?: throw IllegalStateException(
+            "Cannot find field `${e.field.name}` (#${e.field.number}) in type $typeName"
+        )
+        builder().putType(typeName, typeBuilder.build())
     }
 }
