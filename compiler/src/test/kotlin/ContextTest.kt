@@ -1,8 +1,3 @@
-import io.spine.protodata.ProtoDataContext
-import io.spine.protodata.ProtobufSourceProjection
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
-
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -28,6 +23,11 @@ import org.junit.jupiter.api.Test
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+import io.spine.protodata.ProtoDataContext
+import io.spine.protodata.ProtobufSourceProjection
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class `ProtoData context should` {
 
