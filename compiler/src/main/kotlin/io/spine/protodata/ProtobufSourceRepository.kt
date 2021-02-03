@@ -30,6 +30,9 @@ import io.spine.server.projection.ProjectionRepository
 import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
+/**
+ * The repository for the [ProtobufSourceProjection].
+ */
 public class ProtobufSourceRepository
     : ProjectionRepository<Path, ProtobufSourceProjection, ProtobufSource>() {
 

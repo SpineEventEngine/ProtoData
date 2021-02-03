@@ -28,8 +28,14 @@ package io.spine.protodata
 
 import io.spine.server.BoundedContext
 
+/**
+ * A factory for the `ProtoData` bounded context.
+ */
 public object ProtoDataContext {
 
+    /**
+     * Creates the instance of the bounded context.
+     */
     public fun build() : BoundedContext {
         return BoundedContext
             .singleTenant("ProtoData")

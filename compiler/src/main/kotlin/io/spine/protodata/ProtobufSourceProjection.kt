@@ -29,6 +29,9 @@ package io.spine.protodata
 import io.spine.core.Subscribe
 import io.spine.server.projection.Projection
 
+/**
+ * A projection which accumulates information about a Protobuf source file.
+ */
 public class ProtobufSourceProjection : Projection<Path, ProtobufSource, ProtobufSource.Builder>() {
 
     @Subscribe
