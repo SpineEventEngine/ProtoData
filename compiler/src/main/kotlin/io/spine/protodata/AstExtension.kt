@@ -26,4 +26,7 @@
 
 package io.spine.protodata
 
+/**
+ * Obtains the fully qualified name of the type.
+ */
 public fun MessageType.fqn(): String = name.value

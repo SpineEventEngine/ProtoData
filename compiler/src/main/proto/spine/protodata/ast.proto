@@ -37,21 +37,32 @@ option java_multiple_files = true;
 
 import "google/protobuf/any.proto";
 
+// A path in a file system.
+//
 message Path {
 
+    // The absolute path.
     string value = 1;
 }
 
+// A Protobuf source file.
+//
 message File {
 
+    // Path to the file in a file system.
     Path path = 1;
 
+    // Name of the Protobuf package to which the declarations of the file belong.
     string package_name = 2;
 
+    // The version of the Protobuf syntax.
     SyntaxVersion syntax = 3;
 
+    // File-level options.
     repeated Option option = 4;
 
+    // The version of the Protobuf syntax, as defined in a Protobuf source file.
+    //
     enum SyntaxVersion {
 
         LV_UNDEFINED = 0;
@@ -62,22 +73,39 @@ message File {
     }
 }
 
+// Name of a Protobuf type.
 message TypeName {
 
+    // The name, including the package.
     string value = 1;
 }
 
+// A Protobuf message type.
 message MessageType {
 
     TypeName name = 1;
 
+    // The prefix of the type's URL.
+    //
+    // A type URL has the following structure: "<type URL prefix>/<type FQN>". For more info, see
+    // the definition of `google.protobuf.Any.type_url`.
+    //
     string type_url_prefix = 2;
 
+    // The fields of this type.
+    //
+    // Does not include the fields belonging to a field group.
+    //
     repeated Field field = 3;
 
+    // The field groups defined in this type.
     repeated Group group = 4;
+
+    // Message-level options.
+    repeated Option option = 5;
 }
 
+// A primitive Protobuf type.
 enum PrimitiveType {
 
     PT_UNKNOWN = 0;
@@ -99,6 +127,7 @@ enum PrimitiveType {
     TYPE_SINT64 = 15;
 }
 
+// A Protobuf type.
 message Type {
 
     oneof kind {
@@ -109,36 +138,119 @@ message Type {
     }
 }
 
-message Field {
+// A name of a field in a message.
+message FieldName {
 
-    string name = 1;
-
-    Type type = 2;
-
-    uint32 number = 3;
-    uint32 order_of_declaration = 4;
-
-    bool is_list = 5;
-    bool is_map = 6;
-    PrimitiveType map_key_type = 7;
-
-    repeated Option option = 8;
+    // Short name of the field.
+    string value = 1;
 }
 
+// A Protobuf message field.
+message Field {
+
+    FieldName name = 1;
+
+    // The type of the field.
+    Type type = 2;
+
+    // The type in which the field is declared.
+    MessageType declaring_type = 3;
+
+    // The field number.
+    //
+    // Not to be confused with the field's order to declaration.
+    //
+    // For example, in a message:
+    // ```
+    // message Foo {
+    //     string bar = 2;
+    //     int32 baz = 1;
+    // }
+    // ```
+    // Field `bar` has the number 2 and the field `baz` has the number 1.
+    //
+    uint32 number = 4;
+
+    // The field's order to declaration.
+    //
+    // Not to be confused with the field number.
+    //
+    // For example, in a message:
+    // ```
+    // message Foo {
+    //     string bar = 2;
+    //     int32 baz = 1;
+    // }
+    // ```
+    // Field `bar` has the order 0 and the field `baz` has the order 1.
+    //
+    uint32 order_of_declaration =54;
+
+    // The flag telling if the field is a list.
+    //
+    // A list is any `repeated` field which is not a `map`.
+    //
+    bool is_list = 6;
+
+    // The flag telling if the field is a map.
+    bool is_map = 7;
+
+    // If the field is a map, this is the type of the key.
+    //
+    // Otherwise, must be empty.
+    //
+    PrimitiveType map_key_type = 8;
+
+    // If this field is declared in a field group, the name of the group.
+    //
+    // Otherwise, must be empty.
+    //
+    GroupName group = 9;
+
+    // Field-level options.
+    repeated Option option = 10;
+}
+
+// Name of a group of fields.
+message GroupName {
+
+    // Name of the `oneof` block.
+    string value = 1;
+}
+
+// Group is a set of fields declared within one `oneof` block.
 message Group {
 
-    string name = 1;
+    GroupName name = 1;
 
+    // Fields declared in this group.
     repeated Field field = 2;
 }
 
+// A Protobuf option.
+//
+// An option may be declared for a whole file, a type (message, enum, or service), for
+// a message field, a separate rpc, or an enum value.
+//
 message Option {
 
+    // Name of the option.
     string name = 1;
+
+    // The field number of the option.
+    //
+    // Custom options are defined as extensions to the standard option types and must have distinct
+    // field numbers.
+    //
     uint32 number = 2;
 
+    // The type of the option.
+    //
+    // An option can have a primitive or a message type, but cannot be repeated of a map.
+    //
     Type type = 3;
 
+    // The packed value of the option.
     google.protobuf.Any value = 4;
 }
 
