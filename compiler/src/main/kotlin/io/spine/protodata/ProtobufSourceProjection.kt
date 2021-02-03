@@ -51,24 +51,47 @@ public class ProtobufSourceProjection : Projection<Path, ProtobufSource, Protobu
     }
 
     @Subscribe
-    internal fun on(e: FieldDiscovered) {
-        val typeName = e.type.fqn()
+    internal fun on(e: TypeOptionDiscovered) {
+        val typeName = e.type.value
         val type = builder().getTypeOrThrow(typeName)
-            .toBuilder()
-            .addField(e.field)
-            .build()
+                            .toBuilder()
+                            .addOption(e.option)
+                            .build()
         builder().putType(typeName, type)
     }
 
     @Subscribe
+    internal fun on(e: FieldDiscovered) {
+        val typeName = e.type.value
+        val typeBuilder = builder().getTypeOrThrow(typeName)
+                                   .toBuilder()
+        if (e.field.hasGroup()) {
+            val groups = typeBuilder.groupBuilderList
+            var groupBuilder = groups.find { it.name == e.field.group }
+            if (groupBuilder == null) {
+                groupBuilder = Group.newBuilder()
+                                    .setName(e.field.group)
+                groups.add(groupBuilder)
+            }
+            groupBuilder!!.addField(e.field)
+        } else {
+            typeBuilder.addField(e.field)
+        }
+        builder().putType(typeName, typeBuilder.build())
+    }
+
+    @Subscribe
     internal fun on(e: FieldOptionDiscovered) {
-        val typeName = e.type.fqn()
+        val typeName = e.type.value
         val typeBuilder = builder().getTypeOrThrow(typeName)
             .toBuilder()
-        val fieldBuilder = typeBuilder.fieldBuilderList.find { e.field.number == it.number }
-        fieldBuilder?.addOption(e.option) ?: throw IllegalStateException(
-            "Cannot find field `${e.field.name}` (#${e.field.number}) in type $typeName"
-        )
+        var fieldBuilder = typeBuilder.fieldBuilderList.find { e.field.value == it.name.value }
+        if (fieldBuilder == null) {
+            fieldBuilder = typeBuilder.groupBuilderList
+                               .flatMap { group -> group.fieldBuilderList }
+                               .find { e.field.value == it.name.value }
+        }
+        fieldBuilder!!.addOption(e.option)
         builder().putType(typeName, typeBuilder.build())
     }
 }

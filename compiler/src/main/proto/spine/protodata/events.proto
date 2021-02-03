@@ -61,18 +61,27 @@ message TypeDiscovered {
     MessageType type = 2;
 }
 
+message TypeOptionDiscovered {
+
+    Path declared_in = 1;
+
+    TypeName type = 2;
+
+    Option option = 3;
+}
+
 message TypeProcessingComplete {
 
     Path declared_in = 1;
 
-    MessageType type = 2;
+    TypeName type = 2;
 }
 
 message FieldDiscovered {
 
     Path declared_in = 1;
 
-    MessageType type = 2;
+    TypeName type = 2;
 
     Field field = 3;
 }
@@ -81,9 +90,9 @@ message FieldOptionDiscovered {
 
     Path declared_in = 1;
 
-    MessageType type = 2;
+    TypeName type = 2;
 
-    Field field = 3;
+    FieldName field = 3;
 
     Option option = 4;
 }
@@ -92,7 +101,7 @@ message FieldProcessingComplete {
 
     Path declared_in = 1;
 
-    MessageType type = 2;
+    TypeName type = 2;
 
-    Field field = 3;
+    FieldName field = 3;
 }
