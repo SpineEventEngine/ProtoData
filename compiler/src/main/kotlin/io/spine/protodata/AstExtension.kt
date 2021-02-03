@@ -26,4 +26,4 @@
 
 package io.spine.protodata
 
-fun MessageType.fqn(): String = name.value
+public fun MessageType.fqn(): String = name.value

@@ -28,9 +28,9 @@ package io.spine.protodata
 
 import io.spine.server.BoundedContext
 
-object ProtoDataContext {
+public object ProtoDataContext {
 
-    fun build() : BoundedContext {
+    public fun build() : BoundedContext {
         return BoundedContext
             .singleTenant("ProtoData")
             .add(ProtobufSourceRepository())

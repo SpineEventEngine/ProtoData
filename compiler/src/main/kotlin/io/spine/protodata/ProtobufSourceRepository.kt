@@ -30,10 +30,10 @@ import io.spine.server.projection.ProjectionRepository
 import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
-class ProtobufSourceRepository
+public class ProtobufSourceRepository
     : ProjectionRepository<Path, ProtobufSourceProjection, ProtobufSource>() {
 
-    override fun setupEventRouting(routing: EventRouting<Path>) {
+    protected override fun setupEventRouting(routing: EventRouting<Path>) {
         super.setupEventRouting(routing)
         routing.route(FileDiscovered::class.java) { event, _ ->
             withId(event.file.path)

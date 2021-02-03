@@ -29,29 +29,29 @@ package io.spine.protodata
 import io.spine.core.Subscribe
 import io.spine.server.projection.Projection
 
-class ProtobufSourceProjection : Projection<Path, ProtobufSource, ProtobufSource.Builder>() {
+public class ProtobufSourceProjection : Projection<Path, ProtobufSource, ProtobufSource.Builder>() {
 
     @Subscribe
-    fun on(e: FileDiscovered) {
+    internal fun on(e: FileDiscovered) {
         builder()
             .setFilePath(e.file.path)
             .setFile(e.file)
     }
 
     @Subscribe
-    fun on(e: FileOptionDiscovered) {
+    internal fun on(e: FileOptionDiscovered) {
         builder()
             .fileBuilder
             .addOption(e.option)
     }
 
     @Subscribe
-    fun on(e: TypeDiscovered) {
+    internal fun on(e: TypeDiscovered) {
         builder().putType(e.type.fqn(), e.type)
     }
 
     @Subscribe
-    fun on(e: FieldDiscovered) {
+    internal fun on(e: FieldDiscovered) {
         val typeName = e.type.fqn()
         val type = builder().getTypeOrThrow(typeName)
             .toBuilder()
@@ -61,7 +61,7 @@ class ProtobufSourceProjection : Projection<Path, ProtobufSource, ProtobufSource
     }
 
     @Subscribe
-    fun on(e: FieldOptionDiscovered) {
+    internal fun on(e: FieldOptionDiscovered) {
         val typeName = e.type.fqn()
         val typeBuilder = builder().getTypeOrThrow(typeName)
             .toBuilder()
