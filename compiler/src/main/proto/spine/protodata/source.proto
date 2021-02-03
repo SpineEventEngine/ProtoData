@@ -37,6 +37,10 @@ option java_multiple_files = true;
 
 import "spine/protodata/ast.proto";
 
+// A projection of a complete source file.
+//
+// Includes all the message types declared in the file, along with their fields.
+//
 message ProtobufSource {
     option (entity).kind = PROJECTION;
 
