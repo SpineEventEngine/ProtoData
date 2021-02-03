@@ -25,7 +25,6 @@
  */
 
 plugins {
-    proto
     id("io.spine.tools.gradle.bootstrap").version("1.7.0")
 }
 

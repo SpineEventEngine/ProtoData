@@ -36,7 +36,3 @@ repositories {
     mavenLocal()
     jcenter()
 }
-
-dependencies {
-    implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.14")
-}
