@@ -37,11 +37,13 @@ option java_multiple_files = true;
 
 import "spine/protodata/ast.proto";
 
+// Emitted when processing of a file begins.
 message FileDiscovered {
 
     File file = 1;
 }
 
+// Emitted when a file-level option is found.
 message FileOptionDiscovered {
 
     Path file = 1;
@@ -49,46 +51,52 @@ message FileOptionDiscovered {
     Option option = 2;
 }
 
+// Emitted when processing of a file ends.
 message FileProcessingComplete {
 
     Path file = 1;
 }
 
+// Emitted when processing of a message type begins.
 message TypeDiscovered {
 
-    Path declared_in = 1;
+    Path file = 1;
 
     MessageType type = 2;
 }
 
+// Emitted when a message-level option is found.
 message TypeOptionDiscovered {
 
-    Path declared_in = 1;
+    Path file = 1;
 
     TypeName type = 2;
 
     Option option = 3;
 }
 
+// Emitted when processing of a message type ends.
 message TypeProcessingComplete {
 
-    Path declared_in = 1;
+    Path file = 1;
 
     TypeName type = 2;
 }
 
+// Emitted when processing of a field begins.
 message FieldDiscovered {
 
-    Path declared_in = 1;
+    Path file = 1;
 
     TypeName type = 2;
 
     Field field = 3;
 }
 
+// Emitted when a field-level option is found.
 message FieldOptionDiscovered {
 
-    Path declared_in = 1;
+    Path file = 1;
 
     TypeName type = 2;
 
@@ -97,9 +105,10 @@ message FieldOptionDiscovered {
     Option option = 4;
 }
 
+// Emitted when processing of a field ends.
 message FieldProcessingComplete {
 
-    Path declared_in = 1;
+    Path file = 1;
 
     TypeName type = 2;
 
