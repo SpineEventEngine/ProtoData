@@ -184,7 +184,7 @@ message Field {
     // ```
     // Field `bar` has the order 0 and the field `baz` has the order 1.
     //
-    uint32 order_of_declaration =54;
+    uint32 order_of_declaration = 5;
 
     // The flag telling if the field is a list.
     //
