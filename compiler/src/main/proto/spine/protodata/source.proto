@@ -41,7 +41,7 @@ import "spine/protodata/ast.proto";
 //
 // Includes all the message types declared in the file, along with their fields.
 //
-message ProtobufSource {
+message ProtobufSourceFile {
     option (entity).kind = PROJECTION;
 
     FilePath file_path = 1;

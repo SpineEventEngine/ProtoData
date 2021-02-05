@@ -39,7 +39,7 @@ public object ProtoDataContext {
     public fun build() : BoundedContext {
         return BoundedContext
             .singleTenant("ProtoData")
-            .add(ProtobufSourceRepository())
+            .add(ProtoSourceFileRepository())
             .build()
     }
 }

@@ -31,10 +31,10 @@ import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
 /**
- * The repository for the [ProtobufSourceProjection].
+ * The repository for the [ProtoSourceFileProjection].
  */
-public class ProtobufSourceRepository
-    : ProjectionRepository<FilePath, ProtobufSourceProjection, ProtobufSource>() {
+public class ProtoSourceFileRepository
+    : ProjectionRepository<FilePath, ProtoSourceFileProjection, ProtobufSourceFile>() {
 
     protected override fun setupEventRouting(routing: EventRouting<FilePath>) {
         super.setupEventRouting(routing)

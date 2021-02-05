@@ -32,7 +32,8 @@ import io.spine.server.projection.Projection
 /**
  * A projection which accumulates information about a Protobuf source file.
  */
-public class ProtobufSourceProjection : Projection<FilePath, ProtobufSource, ProtobufSource.Builder>() {
+public class ProtoSourceFileProjection
+    : Projection<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
     @Subscribe
     internal fun on(e: FileDiscovered) {
