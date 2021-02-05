@@ -44,7 +44,7 @@ import "spine/protodata/ast.proto";
 message ProtobufSource {
     option (entity).kind = PROJECTION;
 
-    Path file_path = 1;
+    FilePath file_path = 1;
 
     File file = 2;
 

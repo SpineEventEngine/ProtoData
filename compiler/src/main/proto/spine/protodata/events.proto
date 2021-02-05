@@ -46,7 +46,7 @@ message FileDiscovered {
 // Emitted when a file-level option is found.
 message FileOptionDiscovered {
 
-    Path file = 1;
+    FilePath file = 1;
 
     Option option = 2;
 }
@@ -54,13 +54,13 @@ message FileOptionDiscovered {
 // Emitted when processing of a file ends.
 message FileProcessingComplete {
 
-    Path file = 1;
+    FilePath file = 1;
 }
 
 // Emitted when processing of a message type begins.
 message TypeDiscovered {
 
-    Path file = 1;
+    FilePath file = 1;
 
     MessageType type = 2;
 }
@@ -68,7 +68,7 @@ message TypeDiscovered {
 // Emitted when a message-level option is found.
 message TypeOptionDiscovered {
 
-    Path file = 1;
+    FilePath file = 1;
 
     TypeName type = 2;
 
@@ -78,7 +78,7 @@ message TypeOptionDiscovered {
 // Emitted when processing of a message type ends.
 message TypeProcessingComplete {
 
-    Path file = 1;
+    FilePath file = 1;
 
     TypeName type = 2;
 }
@@ -86,7 +86,7 @@ message TypeProcessingComplete {
 // Emitted when processing of a field begins.
 message FieldDiscovered {
 
-    Path file = 1;
+    FilePath file = 1;
 
     TypeName type = 2;
 
@@ -96,7 +96,7 @@ message FieldDiscovered {
 // Emitted when a field-level option is found.
 message FieldOptionDiscovered {
 
-    Path file = 1;
+    FilePath file = 1;
 
     TypeName type = 2;
 
@@ -108,7 +108,7 @@ message FieldOptionDiscovered {
 // Emitted when processing of a field ends.
 message FieldProcessingComplete {
 
-    Path file = 1;
+    FilePath file = 1;
 
     TypeName type = 2;
 

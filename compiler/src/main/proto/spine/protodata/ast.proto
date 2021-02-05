@@ -40,7 +40,7 @@ import "google/protobuf/empty.proto";
 
 // A path in a file system.
 //
-message Path {
+message FilePath {
 
     // The absolute path.
     string value = 1;
@@ -51,7 +51,7 @@ message Path {
 message File {
 
     // Path to the file in a file system.
-    Path path = 1;
+    FilePath path = 1;
 
     // Name of the Protobuf package to which the declarations of the file belong.
     string package_name = 2;
