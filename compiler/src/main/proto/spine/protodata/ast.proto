@@ -36,6 +36,7 @@ option java_outer_classname = "AstProto";
 option java_multiple_files = true;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
 
 // A path in a file system.
 //
@@ -186,29 +187,47 @@ message Field {
     //
     uint32 order_of_declaration = 5;
 
-    // The flag telling if the field is a list.
-    //
-    // A list is any `repeated` field which is not a `map`.
-    //
-    bool is_list = 6;
+    oneof cardinality {
 
-    // The flag telling if the field is a map.
-    bool is_map = 7;
+        // The flag telling if the field holds just a single value.
+        //
+        // See also: `list`, `map`.
+        //
+        google.protobuf.Empty single = 6;
 
-    // If the field is a map, this is the type of the key.
-    //
-    // Otherwise, must be empty.
-    //
-    PrimitiveType map_key_type = 8;
+        // The flag telling if the field is a list.
+        //
+        // A list is any `repeated` field which is not a `map`.
+        //
+        google.protobuf.Empty list = 7;
 
-    // If this field is declared in a field group, the name of the group.
-    //
-    // Otherwise, must be empty.
-    //
-    OneofName oneof_name = 9;
+        // The details of this map field type.
+        //
+        // Only set if this field is a map.
+        //
+        MapField map = 8;
+
+        // If this field is declared in a field group, the name of the group.
+        //
+        // Otherwise, must be empty.
+        //
+        // `repeated` and `map` fields cannot be a part of a `oneof`.
+        //
+        OneofName oneof_name = 9;
+    }
 
     // Field-level options.
     repeated Option option = 10;
+
+    // Additional type details for map fields.
+    message MapField {
+
+        // The type of the key in the map.
+        //
+        // The type of the value is reflected in `Field.type`.
+        //
+        PrimitiveType key_type = 1;
+    }
 }
 
 // Name of a group of fields.

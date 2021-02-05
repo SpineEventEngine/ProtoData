@@ -30,3 +30,11 @@ package io.spine.protodata
  * Obtains the fully qualified name of the type.
  */
 public fun MessageType.fqn(): String = name.value
+
+public fun Field.isMap(): Boolean = hasMap()
+
+public fun Field.isList(): Boolean = hasList()
+
+public fun Field.isRepeated(): Boolean = isMap() || isList()
+
+public fun Field.isPartOfOneof(): Boolean = hasOneofName()
