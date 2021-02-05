@@ -50,12 +50,12 @@ public class ProtobufSourceProjection : Projection<Path, ProtobufSource, Protobu
 
     @Subscribe
     internal fun on(e: TypeDiscovered) {
-        builder().putType(e.type.fqn(), e.type)
+        builder().putType(e.type.typeUrl(), e.type)
     }
 
     @Subscribe
     internal fun on(e: TypeOptionDiscovered) {
-        val typeName = e.type.value
+        val typeName = e.type.typeUrl()
         val type = builder().getTypeOrThrow(typeName)
                             .toBuilder()
                             .addOption(e.option)
@@ -65,7 +65,7 @@ public class ProtobufSourceProjection : Projection<Path, ProtobufSource, Protobu
 
     @Subscribe
     internal fun on(e: FieldDiscovered) {
-        val typeName = e.type.value
+        val typeName = e.type.typeUrl()
         val typeBuilder = builder().getTypeOrThrow(typeName)
                                    .toBuilder()
         if (e.field.hasOneofName()) {
@@ -86,7 +86,7 @@ public class ProtobufSourceProjection : Projection<Path, ProtobufSource, Protobu
 
     @Subscribe
     internal fun on(e: FieldOptionDiscovered) {
-        val typeName = e.type.value
+        val typeName = e.type.typeUrl()
         val typeBuilder = builder().getTypeOrThrow(typeName)
             .toBuilder()
         var fieldBuilder = typeBuilder.fieldBuilderList.find { e.field.value == it.name.value }
