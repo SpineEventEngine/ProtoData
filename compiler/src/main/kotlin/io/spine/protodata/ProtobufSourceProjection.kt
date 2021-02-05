@@ -68,12 +68,13 @@ public class ProtobufSourceProjection : Projection<Path, ProtobufSource, Protobu
         val typeName = e.type.value
         val typeBuilder = builder().getTypeOrThrow(typeName)
                                    .toBuilder()
-        if (e.field.hasGroup()) {
-            val groups = typeBuilder.groupBuilderList
-            var groupBuilder = groups.find { it.name == e.field.group }
+        if (e.field.hasOneofName()) {
+            val groups = typeBuilder.oneofGroupBuilderList
+            var groupBuilder = groups.find { it.name == e.field.oneofName }
             if (groupBuilder == null) {
-                groupBuilder = Group.newBuilder()
-                                    .setName(e.field.group)
+                groupBuilder = OneofGroup
+                    .newBuilder()
+                    .setName(e.field.oneofName)
                 groups.add(groupBuilder)
             }
             groupBuilder!!.addField(e.field)
@@ -90,7 +91,7 @@ public class ProtobufSourceProjection : Projection<Path, ProtobufSource, Protobu
             .toBuilder()
         var fieldBuilder = typeBuilder.fieldBuilderList.find { e.field.value == it.name.value }
         if (fieldBuilder == null) {
-            fieldBuilder = typeBuilder.groupBuilderList
+            fieldBuilder = typeBuilder.oneofGroupBuilderList
                                .flatMap { group -> group.fieldBuilderList }
                                .find { e.field.value == it.name.value }
         }

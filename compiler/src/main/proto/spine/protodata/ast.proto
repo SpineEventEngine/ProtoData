@@ -65,7 +65,7 @@ message File {
     //
     enum SyntaxVersion {
 
-        LV_UNDEFINED = 0;
+        SV_UNDEFINED = 0;
 
         PROTO2 = 1;
 
@@ -99,7 +99,7 @@ message MessageType {
     repeated Field field = 3;
 
     // The field groups defined in this type.
-    repeated Group group = 4;
+    repeated OneofGroup oneof_group = 4;
 
     // Message-level options.
     repeated Option option = 5;
@@ -205,23 +205,23 @@ message Field {
     //
     // Otherwise, must be empty.
     //
-    GroupName group = 9;
+    OneofName oneof_name = 9;
 
     // Field-level options.
     repeated Option option = 10;
 }
 
 // Name of a group of fields.
-message GroupName {
+message OneofName {
 
     // Name of the `oneof` block.
     string value = 1;
 }
 
 // Group is a set of fields declared within one `oneof` block.
-message Group {
+message OneofGroup {
 
-    GroupName name = 1;
+    OneofName name = 1;
 
     // Fields declared in this group.
     repeated Field field = 2;
@@ -230,7 +230,7 @@ message Group {
 // A Protobuf option.
 //
 // An option may be declared for a whole file, a type (message, enum, or service), for
-// a message field, a separate rpc, or an enum value.
+// a message field, a separate `rpc`, or an enum value.
 //
 message Option {
 
