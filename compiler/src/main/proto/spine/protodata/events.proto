@@ -1,0 +1,148 @@
+/*
+ * Copyright 2021, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+syntax = "proto3";
+
+package spine.protodata;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata";
+option java_outer_classname = "EventsProto";
+option java_multiple_files = true;
+
+import "spine/protodata/ast.proto";
+
+// Emitted when processing of a file begins.
+message EnteredFile {
+
+    File file = 1;
+}
+
+// Emitted when a file-level option is found.
+message FileOptionDiscovered {
+
+    FilePath file = 1;
+
+    Option option = 2;
+}
+
+// Emitted when a file is completely discovered, including all the types, etc.
+message ExitedFile {
+
+    FilePath file = 1;
+}
+
+// Emitted when processing reaches a message type.
+message EnteredType {
+
+    FilePath file = 1;
+
+    MessageType type = 2;
+}
+
+// Emitted when a message-level option is found.
+message TypeOptionDiscovered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    Option option = 3;
+}
+
+// Emitted when a message type is completely discovered, including all the fields, etc.
+message ExitedType {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+}
+
+// Emitted when processing reaches a `oneof` group.
+message EnteredOneofGroup {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    OneofGroup group = 3;
+}
+
+// Emitted when a `oneof`-level option is found.
+message OneofOptionDiscovered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    OneofName group = 3;
+
+    Option option = 4;
+}
+
+// Emitted when a `oneof`-group is completely discovered, including all the options and fields.
+message ExitedOneofGroup {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    OneofName group = 3;
+}
+
+// Emitted when processing reaches a field.
+message EnteredField {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    Field field = 3;
+}
+
+// Emitted when a field-level option is found.
+message FieldOptionDiscovered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    FieldName field = 3;
+
+    Option option = 4;
+}
+
+// Emitted when a field is completely discovered including the options.
+message ExitedField {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    FieldName field = 3;
+}

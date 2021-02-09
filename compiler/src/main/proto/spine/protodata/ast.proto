@@ -1,0 +1,285 @@
+/*
+ * Copyright 2021, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+syntax = "proto3";
+
+package spine.protodata;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata";
+option java_outer_classname = "AstProto";
+option java_multiple_files = true;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+
+// A path in a file system.
+message FilePath {
+
+    // The absolute path.
+    //
+    // The value holds the file separator "as-is", i.e. file paths should not be shared across
+    // multiple computers.
+    //
+    string value = 1;
+}
+
+// A Protobuf source file.
+message File {
+
+    // Path to the file in a file system.
+    FilePath path = 1;
+
+    // Name of the Protobuf package to which the declarations of the file belong.
+    string package_name = 2;
+
+    // The version of the Protobuf syntax.
+    SyntaxVersion syntax = 3;
+
+    // File-level options.
+    repeated Option option = 4;
+
+    // The version of the Protobuf syntax, as defined in a Protobuf source file.
+    //
+    enum SyntaxVersion {
+
+        SV_UNDEFINED = 0;
+
+        PROTO2 = 1;
+
+        PROTO3 = 2;
+    }
+}
+
+// Name of a Protobuf type.
+message TypeName {
+
+    // The short name of the message type.
+    string simple_name = 1;
+
+    // The name of the package.
+    string package_name = 2;
+
+    // The prefix of the type's URL.
+    //
+    // A type URL has the following structure: "<type URL prefix>/<package>.<short name>". For more
+    // info, see the definition of `google.protobuf.Any.type_url`.
+    //
+    // Must not include a training slash ("/").
+    //
+    string type_url_prefix = 3;
+}
+
+// A Protobuf message type.
+message MessageType {
+
+    TypeName name = 1;
+
+    // The fields of this type.
+    //
+    // Does not include the fields belonging to a field group.
+    //
+    repeated Field field = 2;
+
+    // The field groups defined in this type.
+    repeated OneofGroup oneof_group = 3;
+
+    // Message-level options.
+    repeated Option option = 4;
+}
+
+// A primitive Protobuf type.
+enum PrimitiveType {
+
+    PT_UNKNOWN = 0;
+
+    TYPE_DOUBLE = 1;
+    TYPE_FLOAT = 2;
+    TYPE_INT64 = 3;
+    TYPE_UINT64 = 4;
+    TYPE_INT32 = 5;
+    TYPE_FIXED64 = 6;
+    TYPE_FIXED32 = 7;
+    TYPE_BOOL = 8;
+    TYPE_STRING = 9;
+    TYPE_BYTES = 10;
+    TYPE_UINT32 = 11;
+    TYPE_SFIXED32 = 12;
+    TYPE_SFIXED64 = 13;
+    TYPE_SINT32 = 14;
+    TYPE_SINT64 = 15;
+}
+
+// A Protobuf type.
+message Type {
+
+    oneof kind {
+
+        MessageType message = 1;
+
+        PrimitiveType primitive = 2;
+    }
+}
+
+// A name of a field in a message.
+message FieldName {
+
+    // Short name of the field.
+    string value = 1;
+}
+
+// A Protobuf message field.
+message Field {
+
+    FieldName name = 1;
+
+    // The type of the field.
+    Type type = 2;
+
+    // The type in which the field is declared.
+    MessageType declaring_type = 3;
+
+    // The field number.
+    //
+    // Not to be confused with the field's order to declaration.
+    //
+    // For example, in a message:
+    // ```
+    // message Foo {
+    //     string bar = 2;
+    //     int32 baz = 1;
+    // }
+    // ```
+    // Field `bar` has the number 2 and the field `baz` has the number 1.
+    //
+    uint32 number = 4;
+
+    // The field's order to declaration.
+    //
+    // Not to be confused with the field number.
+    //
+    // For example, in a message:
+    // ```
+    // message Foo {
+    //     string bar = 2;
+    //     int32 baz = 1;
+    // }
+    // ```
+    // Field `bar` has the order 0 and the field `baz` has the order 1.
+    //
+    uint32 order_of_declaration = 5;
+
+    oneof cardinality {
+
+        // The flag telling if the field holds just a single value.
+        //
+        // See also: `list`, `map`.
+        //
+        google.protobuf.Empty single = 6;
+
+        // The flag telling if the field is a list.
+        //
+        // A list is any `repeated` field which is not a `map`.
+        //
+        google.protobuf.Empty list = 7;
+
+        // The details of this map field type.
+        //
+        // Only set if this field is a map.
+        //
+        OfMap map = 8;
+
+        // If this field is declared in a field group, the name of the group.
+        //
+        // Otherwise, must be empty.
+        //
+        // `repeated` and `map` fields cannot be a part of a `oneof`.
+        //
+        OneofName oneof_name = 9;
+    }
+
+    // Field-level options.
+    repeated Option option = 10;
+
+    // Additional type details for map fields.
+    message OfMap {
+
+        // The type of the key in the map.
+        //
+        // The type of the value is reflected in `Field.type`.
+        //
+        PrimitiveType key_type = 1;
+    }
+}
+
+// Name of a group of fields.
+message OneofName {
+
+    // Name of the `oneof` block.
+    string value = 1;
+}
+
+// Group is a set of fields declared within one `oneof` block.
+message OneofGroup {
+
+    OneofName name = 1;
+
+    // Fields declared in this group.
+    repeated Field field = 2;
+
+    // Oneof-level options.
+    repeated Option option = 3;
+}
+
+// A Protobuf option.
+//
+// An option may be declared for a whole file, a type (message, enum, or service), for
+// a message field, a standalone `rpc`, or an enum value.
+//
+message Option {
+
+    // Name of the option.
+    string name = 1;
+
+    // The field number of the option.
+    //
+    // Custom options are defined as extensions to the standard option types and must have distinct
+    // field numbers.
+    //
+    uint32 number = 2;
+
+    // The type of the option.
+    //
+    // An option can have a primitive or a message type, but cannot be repeated of a map.
+    //
+    Type type = 3;
+
+    // The packed value of the option.
+    google.protobuf.Any value = 4;
+}
+

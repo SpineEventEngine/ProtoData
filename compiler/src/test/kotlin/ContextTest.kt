@@ -24,41 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import io.spine.protodata.ProtoDataContext
+import io.spine.protodata.ProtoSourceFileProjection
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-plugins {
-    kotlin("jvm") version "1.4.21"
-}
+class `'ProtoData' context should` {
 
-group = "io.spine.protodata"
-version = "0.0.1"
-
-subprojects {
-    apply(plugin = "kotlin")
-
-    dependencies {
-        testImplementation(kotlin("test-junit5"))
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.23")
-    }
-
-    tasks.test {
-        useJUnitPlatform()
-
-        testLogging {
-            events = setOf(PASSED, FAILED, SKIPPED)
-        }
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-
-    kotlin {
-        explicitApi()
+    @Test
+    fun `contain 'ProtobufSource' file projection`() {
+        val ctx = ProtoDataContext.build()
+        assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileProjection::class.java))
     }
 }

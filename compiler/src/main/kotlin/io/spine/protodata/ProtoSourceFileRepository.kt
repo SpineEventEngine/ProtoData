@@ -24,41 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package io.spine.protodata
 
-plugins {
-    kotlin("jvm") version "1.4.21"
-}
+import io.spine.server.projection.ProjectionRepository
+import io.spine.server.route.EventRoute.withId
+import io.spine.server.route.EventRouting
 
-group = "io.spine.protodata"
-version = "0.0.1"
+/**
+ * The repository for the [ProtoSourceFileProjection].
+ */
+public class ProtoSourceFileRepository
+    : ProjectionRepository<FilePath, ProtoSourceFileProjection, ProtobufSourceFile>() {
 
-subprojects {
-    apply(plugin = "kotlin")
-
-    dependencies {
-        testImplementation(kotlin("test-junit5"))
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.23")
-    }
-
-    tasks.test {
-        useJUnitPlatform()
-
-        testLogging {
-            events = setOf(PASSED, FAILED, SKIPPED)
+    protected override fun setupEventRouting(routing: EventRouting<FilePath>) {
+        super.setupEventRouting(routing)
+        routing.route(EnteredFile::class.java) { event, _ ->
+            withId(event.file.path)
         }
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-
-    kotlin {
-        explicitApi()
     }
 }
