@@ -108,6 +108,11 @@ public class ProtoSourceFileProjection
 private fun MessageType.Builder.findOneof(name: OneofName): OneofGroup.Builder =
     oneofGroupBuilderList.find { it.name == name }!!
 
+/**
+ * Looks up a field by its name in this message type.
+ *
+ * The field may be found either in the message directly or in one of the `oneof` groups.
+ */
 private fun MessageType.Builder.findField(name: FieldName): Field.Builder {
     var fieldBuilder = fieldBuilderList.find { it.name == name }
     if (fieldBuilder == null) {
