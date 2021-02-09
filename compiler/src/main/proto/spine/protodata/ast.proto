@@ -212,7 +212,7 @@ message Field {
         //
         // Only set if this field is a map.
         //
-        MapField map = 8;
+        OfMap map = 8;
 
         // If this field is declared in a field group, the name of the group.
         //
@@ -227,7 +227,7 @@ message Field {
     repeated Option option = 10;
 
     // Additional type details for map fields.
-    message MapField {
+    message OfMap {
 
         // The type of the key in the map.
         //
