@@ -43,6 +43,10 @@ import "google/protobuf/empty.proto";
 message FilePath {
 
     // The absolute path.
+    //
+    // The value holds the file separator "as-is", i.e. file paths should not be shared across
+    // multiple computers.
+    //
     string value = 1;
 }
 
