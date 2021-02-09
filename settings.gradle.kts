@@ -31,6 +31,6 @@ include("compiler")
 dependencyResolutionManagement {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
     }
 }

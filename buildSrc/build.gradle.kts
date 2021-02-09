@@ -34,5 +34,5 @@ kotlinDslPluginOptions {
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
