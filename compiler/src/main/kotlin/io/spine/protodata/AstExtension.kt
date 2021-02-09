@@ -27,20 +27,64 @@
 package io.spine.protodata
 
 /**
- * Obtains the fully qualified name of the type.
+ * Obtains the package and the name of the type.
  */
-public fun MessageType.fqn(): String = name.fqn()
+public fun MessageType.qualifiedName(): String = name.qualifiedName()
 
+/**
+ * Obtains the type URl of the type.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ *
+ * @see MessageType.qualifiedName
+ * @see TypeName.typeUrl
+ */
 public fun MessageType.typeUrl(): String = name.typeUrl()
 
-public fun TypeName.fqn(): String = "${packageName}.${simpleName}"
+/**
+ * Obtains the package and the name from this `TypeName`.
+ */
+public fun TypeName.qualifiedName(): String = "${packageName}.${simpleName}"
 
-public fun TypeName.typeUrl(): String = "${typeUrlPrefix}/${fqn()}"
+/**
+ * Obtains the type URl from this `TypeName`.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ *
+ * @see TypeName.qualifiedName
+ * @see MessageType.typeUrl
+ */
+public fun TypeName.typeUrl(): String = "${typeUrlPrefix}/${qualifiedName()}"
 
+/**
+ * Shows if this field is a `map`.
+ *
+ * If the field is a `map`, the `Field.type` contains the type of the value, and
+ * the `Field.map.key_type` contains the type the the map key.
+ */
 public fun Field.isMap(): Boolean = hasMap()
 
+/**
+ * Shows if this field is a list.
+ *
+ * In Protobuf `repeated` keyword denotes a sequence of values for a field. However, a map is also
+ * treated as a repeated field for serialization reasons. We use the term "list" for repeated fields
+ * which are not maps.
+ */
 public fun Field.isList(): Boolean = hasList()
 
+/**
+ * Shows if this field repeated.
+ *
+ * Can be declared in Protobuf either as a `map` or a `repeated` field.
+ */
 public fun Field.isRepeated(): Boolean = isMap() || isList()
 
+/**
+ * Shows if this field is a part of a `oneof` group.
+ *
+ * If the field is a part of a `oneof`, the `Field.oneof_name` contains the name of that `oneof`.
+ */
 public fun Field.isPartOfOneof(): Boolean = hasOneofName()
