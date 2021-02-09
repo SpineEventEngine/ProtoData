@@ -51,13 +51,13 @@ message FileOptionDiscovered {
     Option option = 2;
 }
 
-// Emitted when processing of a file ends.
+// Emitted when a file is completely discovered, including all the types, etc.
 message ExitedFile {
 
     FilePath file = 1;
 }
 
-// Emitted when processing of a message type begins.
+// Emitted when processing reaches a message type.
 message EnteredType {
 
     FilePath file = 1;
@@ -75,7 +75,7 @@ message TypeOptionDiscovered {
     Option option = 3;
 }
 
-// Emitted when processing of a message type ends.
+// Emitted when a message type is completely discovered, including all the fields, etc.
 message ExitedType {
 
     FilePath file = 1;
@@ -83,6 +83,7 @@ message ExitedType {
     TypeName type = 2;
 }
 
+// Emitted when processing reaches a `oneof` group.
 message EnteredOneofGroup {
 
     FilePath file = 1;
@@ -92,6 +93,7 @@ message EnteredOneofGroup {
     OneofGroup group = 3;
 }
 
+// Emitted when a `oneof`-level option is found.
 message OneofOptionDiscovered {
 
     FilePath file = 1;
@@ -103,6 +105,7 @@ message OneofOptionDiscovered {
     Option option = 4;
 }
 
+// Emitted when a `oneof`-group is completely discovered, including all the options and fields.
 message ExitedOneofGroup {
 
     FilePath file = 1;
@@ -112,7 +115,7 @@ message ExitedOneofGroup {
     OneofName group = 3;
 }
 
-// Emitted when processing of a field begins.
+// Emitted when processing reaches a field.
 message EnteredField {
 
     FilePath file = 1;
@@ -134,7 +137,7 @@ message FieldOptionDiscovered {
     Option option = 4;
 }
 
-// Emitted when processing of a field ends.
+// Emitted when a field is completely discovered including the options.
 message ExitedField {
 
     FilePath file = 1;
