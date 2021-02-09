@@ -35,7 +35,7 @@ public fun MessageType.typeUrl(): String = name.typeUrl()
 
 public fun TypeName.fqn(): String = "${packageName}.${simpleName}"
 
-public fun TypeName.typeUrl(): String = "${typeUrlPrefix}.${fqn()}"
+public fun TypeName.typeUrl(): String = "${typeUrlPrefix}/${fqn()}"
 
 public fun Field.isMap(): Boolean = hasMap()
 
