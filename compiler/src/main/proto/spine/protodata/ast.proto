@@ -39,7 +39,6 @@ import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 
 // A path in a file system.
-//
 message FilePath {
 
     // The absolute path.
@@ -51,7 +50,6 @@ message FilePath {
 }
 
 // A Protobuf source file.
-//
 message File {
 
     // Path to the file in a file system.
