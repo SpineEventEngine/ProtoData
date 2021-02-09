@@ -38,7 +38,7 @@ option java_multiple_files = true;
 import "spine/protodata/ast.proto";
 
 // Emitted when processing of a file begins.
-message FileDiscovered {
+message EnteredFile {
 
     File file = 1;
 }
@@ -52,13 +52,13 @@ message FileOptionDiscovered {
 }
 
 // Emitted when processing of a file ends.
-message FileProcessingComplete {
+message ExitedFile {
 
     FilePath file = 1;
 }
 
 // Emitted when processing of a message type begins.
-message TypeDiscovered {
+message EnteredType {
 
     FilePath file = 1;
 
@@ -76,15 +76,44 @@ message TypeOptionDiscovered {
 }
 
 // Emitted when processing of a message type ends.
-message TypeProcessingComplete {
+message ExitedType {
 
     FilePath file = 1;
 
     TypeName type = 2;
 }
 
+message EnteredOneofGroup {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    OneofGroup group = 3;
+}
+
+message OneofOptionDiscovered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    OneofName group = 3;
+
+    Option option = 4;
+}
+
+message ExitedOneofGroup {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    OneofName group = 3;
+}
+
 // Emitted when processing of a field begins.
-message FieldDiscovered {
+message EnteredField {
 
     FilePath file = 1;
 
@@ -106,7 +135,7 @@ message FieldOptionDiscovered {
 }
 
 // Emitted when processing of a field ends.
-message FieldProcessingComplete {
+message ExitedField {
 
     FilePath file = 1;
 

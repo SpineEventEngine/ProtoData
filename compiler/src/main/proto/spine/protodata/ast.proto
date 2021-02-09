@@ -249,6 +249,9 @@ message OneofGroup {
 
     // Fields declared in this group.
     repeated Field field = 2;
+
+    // Oneof-level options.
+    repeated Option option = 3;
 }
 
 // A Protobuf option.

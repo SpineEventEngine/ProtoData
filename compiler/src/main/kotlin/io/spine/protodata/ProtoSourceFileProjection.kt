@@ -36,7 +36,7 @@ public class ProtoSourceFileProjection
     : Projection<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
     @Subscribe
-    internal fun on(e: FileDiscovered) {
+    internal fun on(e: EnteredFile) {
         builder()
             .setFilePath(e.file.path)
             .setFile(e.file)
@@ -50,53 +50,70 @@ public class ProtoSourceFileProjection
     }
 
     @Subscribe
-    internal fun on(e: TypeDiscovered) {
+    internal fun on(e: EnteredType) {
         builder().putType(e.type.typeUrl(), e.type)
     }
 
     @Subscribe
     internal fun on(e: TypeOptionDiscovered) {
-        val typeName = e.type.typeUrl()
-        val type = builder().getTypeOrThrow(typeName)
-                            .toBuilder()
-                            .addOption(e.option)
-                            .build()
-        builder().putType(typeName, type)
+        modifyType(e.type) {
+            addOption(e.option)
+        }
     }
 
     @Subscribe
-    internal fun on(e: FieldDiscovered) {
-        val typeName = e.type.typeUrl()
-        val typeBuilder = builder().getTypeOrThrow(typeName)
-                                   .toBuilder()
-        if (e.field.hasOneofName()) {
-            val groups = typeBuilder.oneofGroupBuilderList
-            var groupBuilder = groups.find { it.name == e.field.oneofName }
-            if (groupBuilder == null) {
-                groupBuilder = OneofGroup
-                    .newBuilder()
-                    .setName(e.field.oneofName)
-                groups.add(groupBuilder)
-            }
-            groupBuilder!!.addField(e.field)
-        } else {
-            typeBuilder.addField(e.field)
+    internal fun on(e: EnteredOneofGroup) {
+        modifyType(e.type) {
+            addOneofGroup(e.group)
         }
-        builder().putType(typeName, typeBuilder.build())
+    }
+
+    @Subscribe
+    internal fun on(e: OneofOptionDiscovered) {
+        modifyType(e.type) {
+            val oneof = findOneof(e.group)
+            oneof.addOption(e.option)
+        }
+    }
+
+    @Subscribe
+    internal fun on(e: EnteredField) {
+        modifyType(e.type) {
+            if (e.field.hasOneofName()) {
+                val oneof = findOneof(e.field.oneofName)
+                oneof.addField(e.field)
+            } else {
+                addField(e.field)
+            }
+        }
     }
 
     @Subscribe
     internal fun on(e: FieldOptionDiscovered) {
-        val typeName = e.type.typeUrl()
-        val typeBuilder = builder().getTypeOrThrow(typeName)
-            .toBuilder()
-        var fieldBuilder = typeBuilder.fieldBuilderList.find { e.field.value == it.name.value }
-        if (fieldBuilder == null) {
-            fieldBuilder = typeBuilder.oneofGroupBuilderList
-                               .flatMap { group -> group.fieldBuilderList }
-                               .find { e.field.value == it.name.value }
+        modifyType(e.type) {
+            val field = findField(e.field)
+            field.addOption(e.option)
         }
-        fieldBuilder!!.addOption(e.option)
-        builder().putType(typeName, typeBuilder.build())
     }
+
+    private fun modifyType(name: TypeName, changes: MessageType.Builder.() -> Unit) {
+        val typeUrl = name.typeUrl()
+        val typeBuilder = builder().getTypeOrThrow(typeUrl)
+            .toBuilder()
+        changes(typeBuilder)
+        builder().putType(typeUrl, typeBuilder.build())
+    }
+}
+
+private fun MessageType.Builder.findOneof(name: OneofName): OneofGroup.Builder =
+    oneofGroupBuilderList.find { it.name == name }!!
+
+private fun MessageType.Builder.findField(name: FieldName): Field.Builder {
+    var fieldBuilder = fieldBuilderList.find { it.name == name }
+    if (fieldBuilder == null) {
+        fieldBuilder = oneofGroupBuilderList
+            .flatMap { group -> group.fieldBuilderList }
+            .find { it.name == name }
+    }
+    return fieldBuilder!!
 }
