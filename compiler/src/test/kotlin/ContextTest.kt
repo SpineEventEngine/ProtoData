@@ -29,10 +29,10 @@ import io.spine.protodata.ProtoSourceFileProjection
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class `ProtoData context should` {
+class `'ProtoData' context should` {
 
     @Test
-    fun `contain ProtobufSource file projection`() {
+    fun `contain 'ProtobufSource' file projection`() {
         val ctx = ProtoDataContext.build()
         assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileProjection::class.java))
     }
