@@ -26,9 +26,11 @@
 
 package io.spine.protodata
 
+import com.google.protobuf.DescriptorProtos.FileDescriptorSet
 import io.spine.base.EventMessage
 import io.spine.core.UserId
 import io.spine.server.BoundedContext
+import io.spine.server.BoundedContextBuilder
 import io.spine.server.integration.ThirdPartyContext
 
 /**
@@ -40,10 +42,13 @@ public object ProtoDataContext {
      * Creates the instance of the bounded context.
      */
     public fun build() : BoundedContext {
+        return builder().build()
+    }
+
+    internal fun builder(): BoundedContextBuilder {
         return BoundedContext
             .singleTenant("ProtoData")
             .add(ProtoSourceFileRepository())
-            .build()
     }
 }
 
@@ -56,6 +61,11 @@ public object CompilerEvents {
         .newBuilder()
         .setValue(NAME)
         .build()
+
+    public fun fromDescriptor(desc: FileDescriptorSet) {
+        val events = Parser.parse(desc)
+        events.forEach(::emit)
+    }
 
     public fun emit(event: EventMessage) {
         context.emittedEvent(event, actor)

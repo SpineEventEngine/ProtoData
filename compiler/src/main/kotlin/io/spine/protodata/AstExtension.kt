@@ -101,3 +101,9 @@ internal fun FieldDescriptor.name(): FieldName =
     FieldName.newBuilder()
         .setValue(name)
         .build()
+
+internal fun PrimitiveType.asType() : Type {
+    return Type.newBuilder()
+        .setPrimitive(this)
+        .build()
+}

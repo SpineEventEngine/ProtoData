@@ -79,7 +79,7 @@ public class ProtoSourceFileProjection
     @Subscribe(external = true)
     internal fun on(e: EnteredField) {
         modifyType(e.type) {
-            if (e.field.hasOneofName()) {
+            if (e.field.isPartOfOneof()) {
                 val oneof = findOneof(e.field.oneofName)
                 oneof.addField(e.field)
             } else {
@@ -98,7 +98,8 @@ public class ProtoSourceFileProjection
 
     private fun modifyType(name: TypeName, changes: MessageType.Builder.() -> Unit) {
         val typeUrl = name.typeUrl()
-        val typeBuilder = builder().getTypeOrThrow(typeUrl)
+        val typeBuilder = builder()
+            .getTypeOrThrow(typeUrl)
             .toBuilder()
         changes(typeBuilder)
         builder().putType(typeUrl, typeBuilder.build())

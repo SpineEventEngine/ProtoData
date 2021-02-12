@@ -96,6 +96,7 @@ private suspend fun SequenceScope<EventMessage>.produceFileEvents(descriptor: De
         .setPackageName(descriptor.`package`)
         .setSyntax(descriptor.syntax.toSyntaxVersion())
         .build()
+
     yield(EnteredFile
         .newBuilder()
         .setFile(file)
@@ -117,17 +118,17 @@ private suspend fun SequenceScope<EventMessage>.produceMessageEvents(file: File,
         .setPackageName(file.packageName)
         .setSimpleName(descriptor.name)
         .build()
+    val path = file.path
     val type = MessageType
         .newBuilder()
         .setName(typeName)
+        .setDeclaredIn(path)
         .build()
-    val path = file.path
     yield(EnteredType
         .newBuilder()
         .setFile(path)
         .setType(type)
         .build())
-
     produceOptionEvents(descriptor.options) {
         TypeOptionDiscovered
             .newBuilder()
@@ -139,7 +140,9 @@ private suspend fun SequenceScope<EventMessage>.produceMessageEvents(file: File,
 
     descriptor.realOneofs.forEach { produceOneofEvents(type, it) }
 
-    descriptor.fields.forEach { produceFieldEvents(type, it) }
+    descriptor.fields
+        .filter { it.realContainingOneof == null }
+        .forEach { produceFieldEvents(type, it) }
 
     yield(ExitedType
         .newBuilder()
@@ -257,12 +260,6 @@ private fun FieldDescriptor.primitiveType(): PrimitiveType =
         UINT64 -> TYPE_UINT64
         else -> throw IllegalArgumentException("`$type` is not a primitive type.")
     }
-
-private fun PrimitiveType.asType() : Type {
-    return Type.newBuilder()
-               .setPrimitive(this)
-               .build()
-}
 
 private fun enum(field: FieldDescriptor) : Type {
     val enumType = field.enumType
