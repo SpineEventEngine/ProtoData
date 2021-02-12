@@ -24,10 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.truth.Truth.assertThat
+import com.google.protobuf.BoolValue
+import com.google.protobuf.DescriptorProtos.FileDescriptorSet
+import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
+import io.spine.protobuf.AnyPacker
+import io.spine.protodata.CompilerEvents
+import io.spine.protodata.FilePath
+import io.spine.protodata.Option
+import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ProtoDataContext
 import io.spine.protodata.ProtoSourceFileProjection
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.asType
+import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.typeUrl
+import io.spine.testing.server.blackbox.BlackBoxContext
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import com.google.common.truth.extensions.proto.ProtoTruth.assertThat as assertMessage
 
 class `'ProtoData' context should` {
 
@@ -35,5 +50,48 @@ class `'ProtoData' context should` {
     fun `contain 'ProtobufSource' file projection`() {
         val ctx = ProtoDataContext.build()
         assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileProjection::class.java))
+    }
+
+    @Test
+    fun `construct 'ProtobufSource' based on a descriptor set`() {
+        val ctx = BlackBoxContext.from(ProtoDataContext.builder())
+        val protoDescriptor = DoctorProto.getDescriptor().toProto()
+        val set = FileDescriptorSet
+            .newBuilder()
+            .addFile(protoDescriptor)
+            .build()
+        CompilerEvents.fromDescriptor(set)
+        val path = FilePath
+            .newBuilder()
+            .setValue("spine/protodata/test/doctor.proto")
+            .build()
+        val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileProjection::class.java)
+        assertSourceFile
+            .exists()
+        val actual = assertSourceFile.actual()!!.state() as ProtobufSourceFile
+
+        val types = actual.typeMap
+        val typeName = "type.spine.io/spine.protodata.test.Journey"
+        assertThat(types)
+            .containsKey(typeName)
+        val journeyType = types[typeName]!!
+        assertThat(journeyType.name.typeUrl())
+            .isEqualTo(typeName)
+        assertMessage(journeyType.optionList)
+            .containsExactly(
+                Option
+                    .newBuilder()
+                    .setName("beta_type")
+                    .setNumber(BETA_TYPE_FIELD_NUMBER)
+                    .setType(TYPE_BOOL.asType())
+                    .setValue(AnyPacker.pack(BoolValue.of(true)))
+                    .build()
+            )
+        assertThat(journeyType.fieldList)
+            .hasSize(3)
+        assertThat(journeyType.oneofGroupList)
+            .hasSize(1)
+        assertThat(journeyType.oneofGroupList[0].fieldList)
+            .hasSize(2)
     }
 }

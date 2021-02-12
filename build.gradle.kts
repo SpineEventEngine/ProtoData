@@ -51,6 +51,9 @@ subprojects {
 
         testLogging {
             events = setOf(PASSED, FAILED, SKIPPED)
+            showExceptions = true
+            showCauses = true
+            showStackTraces = true
         }
     }
 
