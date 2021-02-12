@@ -35,40 +35,40 @@ import io.spine.server.projection.Projection
 public class ProtoSourceFileProjection
     : Projection<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: EnteredFile) {
         builder()
             .setFilePath(e.file.path)
             .setFile(e.file)
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: FileOptionDiscovered) {
         builder()
             .fileBuilder
             .addOption(e.option)
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: EnteredType) {
         builder().putType(e.type.typeUrl(), e.type)
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: TypeOptionDiscovered) {
         modifyType(e.type) {
             addOption(e.option)
         }
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: EnteredOneofGroup) {
         modifyType(e.type) {
             addOneofGroup(e.group)
         }
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: OneofOptionDiscovered) {
         modifyType(e.type) {
             val oneof = findOneof(e.group)
@@ -76,7 +76,7 @@ public class ProtoSourceFileProjection
         }
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: EnteredField) {
         modifyType(e.type) {
             if (e.field.hasOneofName()) {
@@ -88,7 +88,7 @@ public class ProtoSourceFileProjection
         }
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: FieldOptionDiscovered) {
         modifyType(e.type) {
             val field = findField(e.field)
