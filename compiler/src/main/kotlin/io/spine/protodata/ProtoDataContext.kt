@@ -26,7 +26,10 @@
 
 package io.spine.protodata
 
+import io.spine.base.EventMessage
+import io.spine.core.UserId
 import io.spine.server.BoundedContext
+import io.spine.server.integration.ThirdPartyContext
 
 /**
  * A factory for the `ProtoData` bounded context.
@@ -41,5 +44,20 @@ public object ProtoDataContext {
             .singleTenant("ProtoData")
             .add(ProtoSourceFileRepository())
             .build()
+    }
+}
+
+public object CompilerEvents {
+
+    private const val NAME = "Protobuf Compiler"
+
+    private val context = ThirdPartyContext.singleTenant(NAME)
+    private val actor = UserId
+        .newBuilder()
+        .setValue(NAME)
+        .build()
+
+    public fun emit(event: EventMessage) {
+        context.emittedEvent(event, actor)
     }
 }
