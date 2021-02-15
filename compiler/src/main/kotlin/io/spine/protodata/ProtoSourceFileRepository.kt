@@ -40,7 +40,7 @@ public class ProtoSourceFileRepository
     protected override fun setupEventRouting(routing: EventRouting<FilePath>) {
         super.setupEventRouting(routing)
         routing.replaceDefault(byFirstMessageField(FilePath::class.java))
-        routing.route(EnteredFile::class.java) { event, _ ->
+        routing.route(FileEntered::class.java) { event, _ ->
             withId(event.file.path)
         }
     }

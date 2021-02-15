@@ -109,7 +109,7 @@ internal object CompilerEvents {
             .build()
 
         yield(
-            EnteredFile
+            FileEntered
                 .newBuilder()
                 .setFile(file)
                 .build()
@@ -118,7 +118,7 @@ internal object CompilerEvents {
         descriptor.messageTypes.forEach { produceMessageEvents(file, it) }
 
         yield(
-            ExitedFile
+            FileExited
                 .newBuilder()
                 .setFile(path)
                 .build()
@@ -149,7 +149,7 @@ internal object CompilerEvents {
             .setDeclaredIn(path)
             .build()
         yield(
-            EnteredType
+            TypeEntered
                 .newBuilder()
                 .setFile(path)
                 .setType(type)
@@ -171,7 +171,7 @@ internal object CompilerEvents {
             .forEach { produceFieldEvents(type, it) }
 
         yield(
-            ExitedType
+            TypeExited
                 .newBuilder()
                 .setFile(path)
                 .setType(typeName)
@@ -195,7 +195,7 @@ internal object CompilerEvents {
             .setName(oneofName)
             .build()
         yield(
-            EnteredOneofGroup
+            OneofGroupEntered
                 .newBuilder()
                 .setFile(type.declaredIn)
                 .setType(type.name)
@@ -213,7 +213,7 @@ internal object CompilerEvents {
         }
         descriptor.fields.forEach { produceFieldEvents(type, it) }
         yield(
-            ExitedOneofGroup
+            OneofGroupExited
                 .newBuilder()
                 .setFile(type.declaredIn)
                 .setType(type.name)
@@ -226,7 +226,7 @@ internal object CompilerEvents {
      * Yields compiler events for the given field.
      *
      * Opens with an [EnteredField] event. Then go the events regarding the field options. At last,
-     * closes with an [ExitedField] event.
+     * closes with an [FieldExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
         type: MessageType,
@@ -242,7 +242,7 @@ internal object CompilerEvents {
             .assignTypeAndCardinality(descriptor)
             .build()
         yield(
-            EnteredField
+            FieldEntered
                 .newBuilder()
                 .setFile(type.declaredIn)
                 .setType(type.name)
@@ -261,7 +261,7 @@ internal object CompilerEvents {
         }
 
         yield(
-            ExitedField
+            FieldExited
                 .newBuilder()
                 .setFile(type.declaredIn)
                 .setType(type.name)

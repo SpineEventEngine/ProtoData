@@ -36,7 +36,7 @@ public class ProtoSourceFileProjection
     : Projection<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
     @Subscribe(external = true)
-    internal fun on(e: EnteredFile) {
+    internal fun on(e: FileEntered) {
         builder()
             .setFilePath(e.file.path)
             .setFile(e.file)
@@ -50,7 +50,7 @@ public class ProtoSourceFileProjection
     }
 
     @Subscribe(external = true)
-    internal fun on(e: EnteredType) {
+    internal fun on(e: TypeEntered) {
         builder().putType(e.type.typeUrl(), e.type)
     }
 
@@ -62,7 +62,7 @@ public class ProtoSourceFileProjection
     }
 
     @Subscribe(external = true)
-    internal fun on(e: EnteredOneofGroup) {
+    internal fun on(e: OneofGroupEntered) {
         modifyType(e.type) {
             addOneofGroup(e.group)
         }
@@ -77,7 +77,7 @@ public class ProtoSourceFileProjection
     }
 
     @Subscribe(external = true)
-    internal fun on(e: EnteredField) {
+    internal fun on(e: FieldEntered) {
         modifyType(e.type) {
             if (e.field.isPartOfOneof()) {
                 val oneof = findOneof(e.field.oneofName)
