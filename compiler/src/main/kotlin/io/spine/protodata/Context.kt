@@ -27,7 +27,6 @@
 package io.spine.protodata
 
 import com.google.protobuf.DescriptorProtos.FileDescriptorSet
-import io.spine.base.EventMessage
 import io.spine.core.UserId
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
@@ -52,6 +51,9 @@ public object ProtoDataContext {
     }
 }
 
+/**
+ * The `Protobuf Compiler` third-party bounded context.
+ */
 public object CompilerEventsContext {
 
     private const val NAME = "Protobuf Compiler"
@@ -62,12 +64,11 @@ public object CompilerEventsContext {
         .setValue(NAME)
         .build()
 
-    public fun fromDescriptor(desc: FileDescriptorSet) {
+    /**
+     * Produces and emits compiler events describing the given file descriptor set.
+     */
+    public fun emittedEventsFor(desc: FileDescriptorSet) {
         val events = CompilerEvents.parse(desc)
-        events.forEach(::emit)
-    }
-
-    public fun emit(event: EventMessage) {
-        context.emittedEvent(event, actor)
+        events.forEach { context.emittedEvent(it, actor) }
     }
 }

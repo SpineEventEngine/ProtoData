@@ -60,7 +60,7 @@ class `'ProtoData' context should` {
             .newBuilder()
             .addFile(protoDescriptor)
             .build()
-        CompilerEventsContext.fromDescriptor(set)
+        CompilerEventsContext.emittedEventsFor(set)
 
         val path = DoctorProto.getDescriptor().path()
         val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileProjection::class.java)

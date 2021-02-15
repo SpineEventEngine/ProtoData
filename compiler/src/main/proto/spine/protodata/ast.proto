@@ -41,10 +41,10 @@ import "google/protobuf/empty.proto";
 // A path in a file system.
 message FilePath {
 
-    // The absolute path.
+    // The relative path from the Protobuf source directory to a file.
     //
-    // The value holds the file separator "as-is", i.e. file paths should not be shared across
-    // multiple computers.
+    // The Protobuf compiler only works with the Unix-style file separators (`/`), regardless of
+    // the operating system. This value holds this exact format of the path.
     //
     string value = 1;
 }

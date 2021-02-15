@@ -109,6 +109,9 @@ internal fun FieldDescriptor.name(): FieldName =
              .setValue(name)
              .build()
 
+/**
+ * Obtains the relative path to this file as a [FilePath].
+ */
 internal fun Descriptors.FileDescriptor.path(): FilePath =
     FilePath.newBuilder()
             .setValue(name)
