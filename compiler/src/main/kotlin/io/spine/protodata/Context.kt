@@ -56,7 +56,7 @@ public object ProtoDataContext {
 /**
  * The `Protobuf Compiler` third-party bounded context.
  */
-public object CompilerEventsContext {
+public object ProtobufCompilerContext {
 
     private const val NAME = "Protobuf Compiler"
 

@@ -29,11 +29,11 @@ import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos.FileDescriptorSet
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
-import io.spine.protodata.CompilerEventsContext
 import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ProtoDataContext
 import io.spine.protodata.ProtoSourceFileProjection
+import io.spine.protodata.ProtobufCompilerContext
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
 import io.spine.protodata.path
@@ -60,7 +60,7 @@ class `'ProtoData' context should` {
             .newBuilder()
             .addFile(protoDescriptor)
             .build()
-        CompilerEventsContext.emittedEventsFor(set)
+        ProtobufCompilerContext.emittedEventsFor(set)
 
         val path = DoctorProto.getDescriptor().path()
         val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileProjection::class.java)
