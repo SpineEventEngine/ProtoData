@@ -26,6 +26,7 @@
 
 package io.spine.protodata
 
+import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.DescriptorProtos.FileDescriptorSet
 import io.spine.core.UserId
 import io.spine.server.BoundedContext
@@ -44,6 +45,7 @@ public object ProtoDataContext {
         return builder().build()
     }
 
+    @VisibleForTesting
     internal fun builder(): BoundedContextBuilder {
         return BoundedContext
             .singleTenant("ProtoData")
