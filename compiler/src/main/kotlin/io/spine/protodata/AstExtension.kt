@@ -26,6 +26,7 @@
 
 package io.spine.protodata
 
+import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 
@@ -107,6 +108,11 @@ internal fun FieldDescriptor.name(): FieldName =
     FieldName.newBuilder()
              .setValue(name)
              .build()
+
+internal fun Descriptors.FileDescriptor.path(): FilePath =
+    FilePath.newBuilder()
+            .setValue(name)
+            .build()
 
 /**
  * Obtains a [Type] wrapping this `PrimitiveType`.

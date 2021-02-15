@@ -29,7 +29,7 @@ import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos.FileDescriptorSet
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
-import io.spine.protodata.CompilerEvents
+import io.spine.protodata.CompilerEventsContext
 import io.spine.protodata.FilePath
 import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
@@ -60,7 +60,7 @@ class `'ProtoData' context should` {
             .newBuilder()
             .addFile(protoDescriptor)
             .build()
-        CompilerEvents.fromDescriptor(set)
+        CompilerEventsContext.fromDescriptor(set)
         val path = FilePath
             .newBuilder()
             .setValue("spine/protodata/test/doctor.proto")

@@ -73,23 +73,34 @@ import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.PrimitiveType.TYPE_UINT32
 import io.spine.protodata.PrimitiveType.TYPE_UINT64
 
-internal object Parser {
+/**
+ * A factory for Protobuf compiler events.
+ */
+internal object CompilerEvents {
 
-    fun parse(desc: FileDescriptorSet): Sequence<EventMessage> = produceEvents(desc)
-
-
-    private fun produceEvents(desc: FileDescriptorSet): Sequence<EventMessage> {
+    /**
+     * Produces a sequence of events based on the given descriptor set.
+     *
+     * The sequence is produced lazily. An element is produced only when polled.
+     *
+     * The resulting sequence is always finite, it's limited by the type set.
+     */
+    fun parse(desc: FileDescriptorSet): Sequence<EventMessage> {
         val files = FileSet.of(desc.fileList)
         return sequence {
             files.files().forEach { produceFileEvents(it) }
         }
     }
 
-    private suspend fun SequenceScope<EventMessage>.produceFileEvents(descriptor: Descriptors.FileDescriptor) {
-        val path = FilePath
-            .newBuilder()
-            .setValue(descriptor.name)
-            .build()
+    /**
+     * Yields compiler events for the given file.
+     *
+     * Opens with an [EnteredFile] event. Then go the events regarding the file metadata. Then go
+     * the events regarding the file contents. At last, closes with an [ExitedFile] event.
+     */
+    private suspend fun
+            SequenceScope<EventMessage>.produceFileEvents(descriptor: Descriptors.FileDescriptor) {
+        val path = descriptor.path()
         val file = File
             .newBuilder()
             .setPath(path)
@@ -114,6 +125,12 @@ internal object Parser {
         )
     }
 
+    /**
+     * Yields compiler events for the given message type.
+     *
+     * Opens with an [EnteredType] event. Then go the events regarding the type metadata. Then go
+     * the events regarding the fields. At last, closes with an [ExitedType] event.
+     */
     private suspend fun SequenceScope<EventMessage>.produceMessageEvents(
         file: File,
         descriptor: Descriptor
@@ -162,6 +179,12 @@ internal object Parser {
         )
     }
 
+    /**
+     * Yields compiler events for the given `oneof` group.
+     *
+     * Opens with an [EnteredOneofGroup] event. Then go the events regarding the group metadata.
+     * Then go the events regarding the fields. At last, closes with an [ExitedOneofGroup] event.
+     */
     private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
         type: MessageType,
         descriptor: OneofDescriptor
@@ -199,6 +222,12 @@ internal object Parser {
         )
     }
 
+    /**
+     * Yields compiler events for the given field.
+     *
+     * Opens with an [EnteredField] event. Then go the events regarding the field options. At last,
+     * closes with an [ExitedField] event.
+     */
     private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
         type: MessageType,
         descriptor: FieldDescriptor
@@ -241,6 +270,14 @@ internal object Parser {
         )
     }
 
+    /**
+     * Yields events regarding a set of options.
+     *
+     * @param options
+     *     the set of options, such as `FileOptions`, `FieldOptions`, etc.
+     * @param ctor
+     *     a function which given an option, constructs a fitting event
+     */
     private suspend fun
             SequenceScope<EventMessage>.produceOptionEvents(
         options: ExtendableMessage<*>,
@@ -258,6 +295,9 @@ internal object Parser {
         }
     }
 
+    /**
+     * Constructs a [Type] of the receiver field.
+     */
     private fun FieldDescriptor.type(): Type {
         return when (type) {
             ENUM -> enum(this)
@@ -330,6 +370,12 @@ internal object Parser {
             Syntax.UNKNOWN -> SyntaxVersion.UNRECOGNIZED
         }
 
+    /**
+     * Assigns the field type and cardinality (`map`/`list`/`oneof_name`/`single`) to the receiver
+     * builder.
+     *
+     * @return the receiver for method chaining
+     */
     private fun Field.Builder.assignTypeAndCardinality(desc: FieldDescriptor): Field.Builder {
         if (desc.isMapField) {
             val (keyField, valueField) = desc.messageType.fields

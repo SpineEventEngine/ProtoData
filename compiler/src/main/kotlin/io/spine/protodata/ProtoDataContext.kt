@@ -52,7 +52,7 @@ public object ProtoDataContext {
     }
 }
 
-public object CompilerEvents {
+public object CompilerEventsContext {
 
     private const val NAME = "Protobuf Compiler"
 
@@ -63,7 +63,7 @@ public object CompilerEvents {
         .build()
 
     public fun fromDescriptor(desc: FileDescriptorSet) {
-        val events = Parser.parse(desc)
+        val events = CompilerEvents.parse(desc)
         events.forEach(::emit)
     }
 
