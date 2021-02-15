@@ -73,250 +73,279 @@ import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.PrimitiveType.TYPE_UINT32
 import io.spine.protodata.PrimitiveType.TYPE_UINT64
 
-public object Parser {
+internal object Parser {
 
-    public fun parse(desc: FileDescriptorSet) : Sequence<EventMessage> = produceEvents(desc)
-}
+    fun parse(desc: FileDescriptorSet): Sequence<EventMessage> = produceEvents(desc)
 
-private fun produceEvents(desc: FileDescriptorSet): Sequence<EventMessage> {
-    val files = FileSet.of(desc.fileList)
-    return sequence {
-        files.files().forEach { produceFileEvents(it) }
-    }
-}
 
-private suspend fun SequenceScope<EventMessage>.produceFileEvents(descriptor: Descriptors.FileDescriptor) {
-    val path = FilePath
-        .newBuilder()
-        .setValue(descriptor.name)
-        .build()
-    val file = File
-        .newBuilder()
-        .setPath(path)
-        .setPackageName(descriptor.`package`)
-        .setSyntax(descriptor.syntax.toSyntaxVersion())
-        .build()
-
-    yield(EnteredFile
-        .newBuilder()
-        .setFile(file)
-        .build())
-
-    descriptor.messageTypes.forEach { produceMessageEvents(file, it) }
-
-    yield(ExitedFile
-        .newBuilder()
-        .setFile(path)
-        .build())
-}
-
-private suspend fun SequenceScope<EventMessage>.produceMessageEvents(file: File, descriptor: Descriptor) {
-    val typeUrl = descriptor.file.options.getExtension(OptionsProto.typeUrlPrefix)
-    val typeName = TypeName
-        .newBuilder()
-        .setTypeUrlPrefix(typeUrl)
-        .setPackageName(file.packageName)
-        .setSimpleName(descriptor.name)
-        .build()
-    val path = file.path
-    val type = MessageType
-        .newBuilder()
-        .setName(typeName)
-        .setDeclaredIn(path)
-        .build()
-    yield(EnteredType
-        .newBuilder()
-        .setFile(path)
-        .setType(type)
-        .build())
-    produceOptionEvents(descriptor.options) {
-        TypeOptionDiscovered
-            .newBuilder()
-            .setFile(path)
-            .setType(typeName)
-            .setOption(it)
-            .build()
-    }
-
-    descriptor.realOneofs.forEach { produceOneofEvents(type, it) }
-
-    descriptor.fields
-        .filter { it.realContainingOneof == null }
-        .forEach { produceFieldEvents(type, it) }
-
-    yield(ExitedType
-        .newBuilder()
-        .setFile(path)
-        .setType(typeName)
-        .build())
-}
-
-private suspend fun SequenceScope<EventMessage>.produceOneofEvents(type: MessageType, descriptor: OneofDescriptor) {
-    val oneofName = descriptor.name()
-    val oneofGroup = OneofGroup
-        .newBuilder()
-        .setName(oneofName)
-        .build()
-    yield(EnteredOneofGroup
-            .newBuilder()
-            .setFile(type.declaredIn)
-            .setType(type.name)
-            .setGroup(oneofGroup)
-            .build())
-    produceOptionEvents(descriptor.options) {
-        OneofOptionDiscovered
-            .newBuilder()
-            .setFile(type.declaredIn)
-            .setType(type.name)
-            .setGroup(oneofName)
-            .setOption(it)
-            .build()
-    }
-    descriptor.fields.forEach { produceFieldEvents(type, it) }
-    yield(ExitedOneofGroup
-            .newBuilder()
-            .setFile(type.declaredIn)
-            .setType(type.name)
-            .setGroup(oneofName)
-            .build())
-}
-
-private suspend fun SequenceScope<EventMessage>.produceFieldEvents(type: MessageType, descriptor: FieldDescriptor) {
-    val fieldName = descriptor.name()
-    val field = Field
-        .newBuilder()
-        .setName(fieldName)
-        .setDeclaringType(type)
-        .setNumber(descriptor.number)
-        .setOrderOfDeclaration(descriptor.index)
-        .assignTypeAndCardinality(descriptor)
-        .build()
-    yield(EnteredField
-        .newBuilder()
-        .setFile(type.declaredIn)
-        .setType(type.name)
-        .setField(field)
-        .build())
-
-    produceOptionEvents(descriptor.options) {
-        FieldOptionDiscovered
-            .newBuilder()
-            .setFile(type.declaredIn)
-            .setType(type.name)
-            .setField(fieldName)
-            .setOption(it)
-            .build()
-    }
-
-    yield(ExitedField
-        .newBuilder()
-        .setFile(type.declaredIn)
-        .setType(type.name)
-        .setField(fieldName)
-        .build())
-}
-
-private suspend fun
-SequenceScope<EventMessage>.produceOptionEvents(options: ExtendableMessage<*>, ctor: (Option) -> EventMessage) {
-    options.allFields.forEach { (optionDescriptor, value) ->
-        val option = Option
-            .newBuilder()
-            .setName(optionDescriptor.name)
-            .setNumber(optionDescriptor.number)
-            .setType(optionDescriptor.type())
-            .setValue(TypeConverter.toAny(value))
-            .build()
-        yield(ctor(option))
-    }
-}
-
-private fun FieldDescriptor.type(): Type {
-    return when (type) {
-        ENUM -> enum(this)
-        MESSAGE -> message(this)
-        GROUP -> throw IllegalStateException(
-            "Cannot process field $fullName of type $type."
-        )
-        else -> primitiveType().asType()
-    }
-}
-
-private fun FieldDescriptor.primitiveType(): PrimitiveType =
-    when (type) {
-        BOOL -> TYPE_BOOL
-        BYTES -> TYPE_BYTES
-        DOUBLE -> TYPE_DOUBLE
-        FIXED32 -> TYPE_FIXED32
-        FIXED64 -> TYPE_FIXED64
-        FLOAT -> TYPE_FLOAT
-        INT32 -> TYPE_INT32
-        INT64 -> TYPE_INT64
-        SFIXED32 -> TYPE_SFIXED32
-        SFIXED64 -> TYPE_SFIXED64
-        SINT32 -> TYPE_SINT32
-        SINT64 -> TYPE_SINT64
-        STRING -> TYPE_STRING
-        UINT32 -> TYPE_UINT32
-        UINT64 -> TYPE_UINT64
-        else -> throw IllegalArgumentException("`$type` is not a primitive type.")
-    }
-
-private fun enum(field: FieldDescriptor) : Type {
-    val enumType = field.enumType
-    val typeName = TypeName
-        .newBuilder()
-        .setSimpleName(enumType.name)
-        .setPackageName(enumType.file.`package`)
-        .setTypeUrlPrefix(enumType.file.options.getExtension(OptionsProto.typeUrlPrefix))
-        .build()
-    val enum = EnumType
-        .newBuilder()
-        .setName(typeName)
-        .build()
-    return Type.newBuilder()
-               .setEnumeration(enum)
-               .build()
-}
-
-private fun message(field: FieldDescriptor) : Type {
-    val messageType = field.messageType
-    val typeName = TypeName
-        .newBuilder()
-        .setSimpleName(messageType.name)
-        .setPackageName(messageType.file.`package`)
-        .setTypeUrlPrefix(messageType.file.options.getExtension(OptionsProto.typeUrlPrefix))
-        .build()
-    val message = MessageType
-        .newBuilder()
-        .setName(typeName)
-        .build()
-    return Type.newBuilder()
-               .setMessage(message)
-               .build()
-}
-
-private fun Syntax.toSyntaxVersion() : SyntaxVersion =
-    when(this) {
-        Syntax.PROTO2 -> SyntaxVersion.PROTO2
-        Syntax.PROTO3 -> SyntaxVersion.PROTO3
-        Syntax.UNKNOWN -> SyntaxVersion.UNRECOGNIZED
-    }
-
-private fun Field.Builder.assignTypeAndCardinality(desc: FieldDescriptor): Field.Builder {
-    if (desc.isMapField) {
-        val (keyField, valueField) = desc.messageType.fields
-        map = Field.OfMap
-            .newBuilder()
-            .setKeyType(keyField.primitiveType())
-            .build()
-        type = valueField.type()
-    } else {
-        type = desc.type()
-        when {
-            desc.isRepeated -> list = Empty.getDefaultInstance()
-            desc.realContainingOneof != null -> oneofName = desc.realContainingOneof.name()
-            else -> single = Empty.getDefaultInstance()
+    private fun produceEvents(desc: FileDescriptorSet): Sequence<EventMessage> {
+        val files = FileSet.of(desc.fileList)
+        return sequence {
+            files.files().forEach { produceFileEvents(it) }
         }
     }
-    return this
+
+    private suspend fun SequenceScope<EventMessage>.produceFileEvents(descriptor: Descriptors.FileDescriptor) {
+        val path = FilePath
+            .newBuilder()
+            .setValue(descriptor.name)
+            .build()
+        val file = File
+            .newBuilder()
+            .setPath(path)
+            .setPackageName(descriptor.`package`)
+            .setSyntax(descriptor.syntax.toSyntaxVersion())
+            .build()
+
+        yield(
+            EnteredFile
+                .newBuilder()
+                .setFile(file)
+                .build()
+        )
+
+        descriptor.messageTypes.forEach { produceMessageEvents(file, it) }
+
+        yield(
+            ExitedFile
+                .newBuilder()
+                .setFile(path)
+                .build()
+        )
+    }
+
+    private suspend fun SequenceScope<EventMessage>.produceMessageEvents(
+        file: File,
+        descriptor: Descriptor
+    ) {
+        val typeUrl = descriptor.file.options.getExtension(OptionsProto.typeUrlPrefix)
+        val typeName = TypeName
+            .newBuilder()
+            .setTypeUrlPrefix(typeUrl)
+            .setPackageName(file.packageName)
+            .setSimpleName(descriptor.name)
+            .build()
+        val path = file.path
+        val type = MessageType
+            .newBuilder()
+            .setName(typeName)
+            .setDeclaredIn(path)
+            .build()
+        yield(
+            EnteredType
+                .newBuilder()
+                .setFile(path)
+                .setType(type)
+                .build()
+        )
+        produceOptionEvents(descriptor.options) {
+            TypeOptionDiscovered
+                .newBuilder()
+                .setFile(path)
+                .setType(typeName)
+                .setOption(it)
+                .build()
+        }
+
+        descriptor.realOneofs.forEach { produceOneofEvents(type, it) }
+
+        descriptor.fields
+            .filter { it.realContainingOneof == null }
+            .forEach { produceFieldEvents(type, it) }
+
+        yield(
+            ExitedType
+                .newBuilder()
+                .setFile(path)
+                .setType(typeName)
+                .build()
+        )
+    }
+
+    private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
+        type: MessageType,
+        descriptor: OneofDescriptor
+    ) {
+        val oneofName = descriptor.name()
+        val oneofGroup = OneofGroup
+            .newBuilder()
+            .setName(oneofName)
+            .build()
+        yield(
+            EnteredOneofGroup
+                .newBuilder()
+                .setFile(type.declaredIn)
+                .setType(type.name)
+                .setGroup(oneofGroup)
+                .build()
+        )
+        produceOptionEvents(descriptor.options) {
+            OneofOptionDiscovered
+                .newBuilder()
+                .setFile(type.declaredIn)
+                .setType(type.name)
+                .setGroup(oneofName)
+                .setOption(it)
+                .build()
+        }
+        descriptor.fields.forEach { produceFieldEvents(type, it) }
+        yield(
+            ExitedOneofGroup
+                .newBuilder()
+                .setFile(type.declaredIn)
+                .setType(type.name)
+                .setGroup(oneofName)
+                .build()
+        )
+    }
+
+    private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
+        type: MessageType,
+        descriptor: FieldDescriptor
+    ) {
+        val fieldName = descriptor.name()
+        val field = Field
+            .newBuilder()
+            .setName(fieldName)
+            .setDeclaringType(type)
+            .setNumber(descriptor.number)
+            .setOrderOfDeclaration(descriptor.index)
+            .assignTypeAndCardinality(descriptor)
+            .build()
+        yield(
+            EnteredField
+                .newBuilder()
+                .setFile(type.declaredIn)
+                .setType(type.name)
+                .setField(field)
+                .build()
+        )
+
+        produceOptionEvents(descriptor.options) {
+            FieldOptionDiscovered
+                .newBuilder()
+                .setFile(type.declaredIn)
+                .setType(type.name)
+                .setField(fieldName)
+                .setOption(it)
+                .build()
+        }
+
+        yield(
+            ExitedField
+                .newBuilder()
+                .setFile(type.declaredIn)
+                .setType(type.name)
+                .setField(fieldName)
+                .build()
+        )
+    }
+
+    private suspend fun
+            SequenceScope<EventMessage>.produceOptionEvents(
+        options: ExtendableMessage<*>,
+        ctor: (Option) -> EventMessage
+    ) {
+        options.allFields.forEach { (optionDescriptor, value) ->
+            val option = Option
+                .newBuilder()
+                .setName(optionDescriptor.name)
+                .setNumber(optionDescriptor.number)
+                .setType(optionDescriptor.type())
+                .setValue(TypeConverter.toAny(value))
+                .build()
+            yield(ctor(option))
+        }
+    }
+
+    private fun FieldDescriptor.type(): Type {
+        return when (type) {
+            ENUM -> enum(this)
+            MESSAGE -> message(this)
+            GROUP -> throw IllegalStateException(
+                "Cannot process field $fullName of type $type."
+            )
+            else -> primitiveType().asType()
+        }
+    }
+
+    private fun FieldDescriptor.primitiveType(): PrimitiveType =
+        when (type) {
+            BOOL -> TYPE_BOOL
+            BYTES -> TYPE_BYTES
+            DOUBLE -> TYPE_DOUBLE
+            FIXED32 -> TYPE_FIXED32
+            FIXED64 -> TYPE_FIXED64
+            FLOAT -> TYPE_FLOAT
+            INT32 -> TYPE_INT32
+            INT64 -> TYPE_INT64
+            SFIXED32 -> TYPE_SFIXED32
+            SFIXED64 -> TYPE_SFIXED64
+            SINT32 -> TYPE_SINT32
+            SINT64 -> TYPE_SINT64
+            STRING -> TYPE_STRING
+            UINT32 -> TYPE_UINT32
+            UINT64 -> TYPE_UINT64
+            else -> throw IllegalArgumentException("`$type` is not a primitive type.")
+        }
+
+    private fun enum(field: FieldDescriptor): Type {
+        val enumType = field.enumType
+        val typeName = TypeName
+            .newBuilder()
+            .setSimpleName(enumType.name)
+            .setPackageName(enumType.file.`package`)
+            .setTypeUrlPrefix(enumType.file.options.getExtension(OptionsProto.typeUrlPrefix))
+            .build()
+        val enum = EnumType
+            .newBuilder()
+            .setName(typeName)
+            .build()
+        return Type.newBuilder()
+            .setEnumeration(enum)
+            .build()
+    }
+
+    private fun message(field: FieldDescriptor): Type {
+        val messageType = field.messageType
+        val typeName = TypeName
+            .newBuilder()
+            .setSimpleName(messageType.name)
+            .setPackageName(messageType.file.`package`)
+            .setTypeUrlPrefix(messageType.file.options.getExtension(OptionsProto.typeUrlPrefix))
+            .build()
+        val message = MessageType
+            .newBuilder()
+            .setName(typeName)
+            .build()
+        return Type.newBuilder()
+            .setMessage(message)
+            .build()
+    }
+
+    private fun Syntax.toSyntaxVersion(): SyntaxVersion =
+        when (this) {
+            Syntax.PROTO2 -> SyntaxVersion.PROTO2
+            Syntax.PROTO3 -> SyntaxVersion.PROTO3
+            Syntax.UNKNOWN -> SyntaxVersion.UNRECOGNIZED
+        }
+
+    private fun Field.Builder.assignTypeAndCardinality(desc: FieldDescriptor): Field.Builder {
+        if (desc.isMapField) {
+            val (keyField, valueField) = desc.messageType.fields
+            map = Field.OfMap
+                .newBuilder()
+                .setKeyType(keyField.primitiveType())
+                .build()
+            type = valueField.type()
+        } else {
+            type = desc.type()
+            when {
+                desc.isRepeated -> list = Empty.getDefaultInstance()
+                desc.realContainingOneof != null -> oneofName = desc.realContainingOneof.name()
+                else -> single = Empty.getDefaultInstance()
+            }
+        }
+        return this
+    }
 }
