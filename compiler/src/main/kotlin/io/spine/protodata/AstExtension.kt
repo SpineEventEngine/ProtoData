@@ -92,18 +92,26 @@ public fun Field.isRepeated(): Boolean = isMap() || isList()
  */
 public fun Field.isPartOfOneof(): Boolean = hasOneofName()
 
+/**
+ * Obtains the name of this `oneof` as a [OneofName].
+ */
 internal fun OneofDescriptor.name(): OneofName =
     OneofName.newBuilder()
-        .setValue(name)
-        .build()
+             .setValue(name)
+             .build()
 
+/**
+ * Obtains the name of this field as a [FieldName].
+ */
 internal fun FieldDescriptor.name(): FieldName =
     FieldName.newBuilder()
-        .setValue(name)
-        .build()
+             .setValue(name)
+             .build()
 
-internal fun PrimitiveType.asType() : Type {
-    return Type.newBuilder()
+/**
+ * Obtains a [Type] wrapping this `PrimitiveType`.
+ */
+internal fun PrimitiveType.asType(): Type =
+    Type.newBuilder()
         .setPrimitive(this)
         .build()
-}
