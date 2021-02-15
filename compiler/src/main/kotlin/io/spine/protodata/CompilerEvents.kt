@@ -95,8 +95,8 @@ internal object CompilerEvents {
     /**
      * Yields compiler events for the given file.
      *
-     * Opens with an [EnteredFile] event. Then go the events regarding the file metadata. Then go
-     * the events regarding the file contents. At last, closes with an [ExitedFile] event.
+     * Opens with an [FileEntered] event. Then go the events regarding the file metadata. Then go
+     * the events regarding the file contents. At last, closes with an [FileExited] event.
      */
     private suspend fun
             SequenceScope<EventMessage>.produceFileEvents(descriptor: Descriptors.FileDescriptor) {
@@ -128,8 +128,8 @@ internal object CompilerEvents {
     /**
      * Yields compiler events for the given message type.
      *
-     * Opens with an [EnteredType] event. Then go the events regarding the type metadata. Then go
-     * the events regarding the fields. At last, closes with an [ExitedType] event.
+     * Opens with an [TypeEntered] event. Then go the events regarding the type metadata. Then go
+     * the events regarding the fields. At last, closes with an [TypeExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceMessageEvents(
         file: File,
@@ -182,8 +182,8 @@ internal object CompilerEvents {
     /**
      * Yields compiler events for the given `oneof` group.
      *
-     * Opens with an [EnteredOneofGroup] event. Then go the events regarding the group metadata.
-     * Then go the events regarding the fields. At last, closes with an [ExitedOneofGroup] event.
+     * Opens with an [OneofGroupEntered] event. Then go the events regarding the group metadata.
+     * Then go the events regarding the fields. At last, closes with an [OneofGroupExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
         type: MessageType,
@@ -225,7 +225,7 @@ internal object CompilerEvents {
     /**
      * Yields compiler events for the given field.
      *
-     * Opens with an [EnteredField] event. Then go the events regarding the field options. At last,
+     * Opens with an [FieldEntered] event. Then go the events regarding the field options. At last,
      * closes with an [FieldExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
