@@ -30,13 +30,13 @@ import com.google.protobuf.DescriptorProtos.FileDescriptorSet
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.CompilerEventsContext
-import io.spine.protodata.FilePath
 import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ProtoDataContext
 import io.spine.protodata.ProtoSourceFileProjection
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
+import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.typeUrl
 import io.spine.testing.server.blackbox.BlackBoxContext
@@ -61,10 +61,8 @@ class `'ProtoData' context should` {
             .addFile(protoDescriptor)
             .build()
         CompilerEventsContext.fromDescriptor(set)
-        val path = FilePath
-            .newBuilder()
-            .setValue("spine/protodata/test/doctor.proto")
-            .build()
+
+        val path = DoctorProto.getDescriptor().path()
         val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileProjection::class.java)
         assertSourceFile
             .exists()
