@@ -26,6 +26,10 @@
 
 package io.spine.protodata
 
+import com.google.protobuf.Descriptors
+import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.OneofDescriptor
+
 /**
  * Obtains the package and the name of the type.
  */
@@ -88,3 +92,35 @@ public fun Field.isRepeated(): Boolean = isMap() || isList()
  * If the field is a part of a `oneof`, the `Field.oneof_name` contains the name of that `oneof`.
  */
 public fun Field.isPartOfOneof(): Boolean = hasOneofName()
+
+/**
+ * Obtains the name of this `oneof` as a [OneofName].
+ */
+internal fun OneofDescriptor.name(): OneofName =
+    OneofName.newBuilder()
+             .setValue(name)
+             .build()
+
+/**
+ * Obtains the name of this field as a [FieldName].
+ */
+internal fun FieldDescriptor.name(): FieldName =
+    FieldName.newBuilder()
+             .setValue(name)
+             .build()
+
+/**
+ * Obtains the relative path to this file as a [FilePath].
+ */
+internal fun Descriptors.FileDescriptor.path(): FilePath =
+    FilePath.newBuilder()
+            .setValue(name)
+            .build()
+
+/**
+ * Obtains a [Type] wrapping this `PrimitiveType`.
+ */
+internal fun PrimitiveType.asType(): Type =
+    Type.newBuilder()
+        .setPrimitive(this)
+        .build()

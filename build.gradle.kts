@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.21"
+    idea
 }
 
 group = "io.spine.protodata"
@@ -51,6 +52,9 @@ subprojects {
 
         testLogging {
             events = setOf(PASSED, FAILED, SKIPPED)
+            showExceptions = true
+            showCauses = true
+            showStackTraces = true
         }
     }
 

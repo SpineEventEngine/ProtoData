@@ -35,40 +35,40 @@ import io.spine.server.projection.Projection
 public class ProtoSourceFileProjection
     : Projection<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
-    @Subscribe
-    internal fun on(e: EnteredFile) {
+    @Subscribe(external = true)
+    internal fun on(e: FileEntered) {
         builder()
             .setFilePath(e.file.path)
             .setFile(e.file)
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: FileOptionDiscovered) {
         builder()
             .fileBuilder
             .addOption(e.option)
     }
 
-    @Subscribe
-    internal fun on(e: EnteredType) {
+    @Subscribe(external = true)
+    internal fun on(e: TypeEntered) {
         builder().putType(e.type.typeUrl(), e.type)
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: TypeOptionDiscovered) {
         modifyType(e.type) {
             addOption(e.option)
         }
     }
 
-    @Subscribe
-    internal fun on(e: EnteredOneofGroup) {
+    @Subscribe(external = true)
+    internal fun on(e: OneofGroupEntered) {
         modifyType(e.type) {
             addOneofGroup(e.group)
         }
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: OneofOptionDiscovered) {
         modifyType(e.type) {
             val oneof = findOneof(e.group)
@@ -76,10 +76,10 @@ public class ProtoSourceFileProjection
         }
     }
 
-    @Subscribe
-    internal fun on(e: EnteredField) {
+    @Subscribe(external = true)
+    internal fun on(e: FieldEntered) {
         modifyType(e.type) {
-            if (e.field.hasOneofName()) {
+            if (e.field.isPartOfOneof()) {
                 val oneof = findOneof(e.field.oneofName)
                 oneof.addField(e.field)
             } else {
@@ -88,7 +88,7 @@ public class ProtoSourceFileProjection
         }
     }
 
-    @Subscribe
+    @Subscribe(external = true)
     internal fun on(e: FieldOptionDiscovered) {
         modifyType(e.type) {
             val field = findField(e.field)
@@ -98,7 +98,8 @@ public class ProtoSourceFileProjection
 
     private fun modifyType(name: TypeName, changes: MessageType.Builder.() -> Unit) {
         val typeUrl = name.typeUrl()
-        val typeBuilder = builder().getTypeOrThrow(typeUrl)
+        val typeBuilder = builder()
+            .getTypeOrThrow(typeUrl)
             .toBuilder()
         changes(typeBuilder)
         builder().putType(typeUrl, typeBuilder.build())

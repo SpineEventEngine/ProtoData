@@ -41,10 +41,10 @@ import "google/protobuf/empty.proto";
 // A path in a file system.
 message FilePath {
 
-    // The absolute path.
+    // The relative path from the Protobuf source directory to a file.
     //
-    // The value holds the file separator "as-is", i.e. file paths should not be shared across
-    // multiple computers.
+    // The Protobuf compiler only works with the Unix-style file separators (`/`), regardless of
+    // the operating system. This value holds this exact format of the path.
     //
     string value = 1;
 }
@@ -77,9 +77,12 @@ message File {
 }
 
 // Name of a Protobuf type.
+//
+// Applicable to message and enum types.
+//
 message TypeName {
 
-    // The short name of the message type.
+    // The short name of the type.
     string simple_name = 1;
 
     // The name of the package.
@@ -111,6 +114,15 @@ message MessageType {
 
     // Message-level options.
     repeated Option option = 4;
+
+    // Path to the file which declares this type.
+    FilePath declared_in = 5;
+}
+
+// A Protobuf enum type.
+message EnumType {
+
+    TypeName name = 1;
 }
 
 // A primitive Protobuf type.
@@ -142,7 +154,9 @@ message Type {
 
         MessageType message = 1;
 
-        PrimitiveType primitive = 2;
+        EnumType enumeration = 2;
+
+        PrimitiveType primitive = 3;
     }
 }
 

@@ -27,6 +27,7 @@
 package io.spine.protodata
 
 import io.spine.server.projection.ProjectionRepository
+import io.spine.server.route.EventRoute.byFirstMessageField
 import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
@@ -38,7 +39,8 @@ public class ProtoSourceFileRepository
 
     protected override fun setupEventRouting(routing: EventRouting<FilePath>) {
         super.setupEventRouting(routing)
-        routing.route(EnteredFile::class.java) { event, _ ->
+        routing.replaceDefault(byFirstMessageField(FilePath::class.java))
+        routing.route(FileEntered::class.java) { event, _ ->
             withId(event.file.path)
         }
     }

@@ -26,7 +26,12 @@
 
 package io.spine.protodata
 
+import com.google.common.annotations.VisibleForTesting
+import com.google.protobuf.DescriptorProtos.FileDescriptorSet
+import io.spine.core.UserId
 import io.spine.server.BoundedContext
+import io.spine.server.BoundedContextBuilder
+import io.spine.server.integration.ThirdPartyContext
 
 /**
  * A factory for the `ProtoData` bounded context.
@@ -37,9 +42,35 @@ public object ProtoDataContext {
      * Creates the instance of the bounded context.
      */
     public fun build() : BoundedContext {
+        return builder().build()
+    }
+
+    @VisibleForTesting
+    internal fun builder(): BoundedContextBuilder {
         return BoundedContext
             .singleTenant("ProtoData")
             .add(ProtoSourceFileRepository())
-            .build()
+    }
+}
+
+/**
+ * The `Protobuf Compiler` third-party bounded context.
+ */
+public object ProtobufCompilerContext {
+
+    private const val NAME = "Protobuf Compiler"
+
+    private val context = ThirdPartyContext.singleTenant(NAME)
+    private val actor = UserId
+        .newBuilder()
+        .setValue(NAME)
+        .build()
+
+    /**
+     * Produces and emits compiler events describing the given file descriptor set.
+     */
+    public fun emittedEventsFor(desc: FileDescriptorSet) {
+        val events = CompilerEvents.parse(desc)
+        events.forEach { context.emittedEvent(it, actor) }
     }
 }
