@@ -29,6 +29,7 @@ package io.spine.protodata
 import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.DescriptorProtos.FileDescriptorSet
 import io.spine.core.UserId
+import io.spine.protodata.subscriber.Subscriber
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.integration.ThirdPartyContext
@@ -41,15 +42,17 @@ public object ProtoDataContext {
     /**
      * Creates the instance of the bounded context.
      */
-    public fun build() : BoundedContext {
-        return builder().build()
+    public fun build(vararg withSubscribers: Subscriber<*>) : BoundedContext {
+        return builder(*withSubscribers).build()
     }
 
     @VisibleForTesting
-    internal fun builder(): BoundedContextBuilder {
-        return BoundedContext
+    internal fun builder(vararg withSubscribers: Subscriber<*>): BoundedContextBuilder {
+        val builder = BoundedContext
             .singleTenant("ProtoData")
             .add(ProtoSourceFileRepository())
+        withSubscribers.forEach { builder.addEventDispatcher(it) }
+        return builder
     }
 }
 
