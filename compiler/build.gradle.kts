@@ -29,3 +29,7 @@ plugins {
 }
 
 spine.enableJava().server()
+
+dependencies {
+    api(kotlin("reflect"))
+}

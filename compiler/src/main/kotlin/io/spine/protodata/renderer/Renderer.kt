@@ -24,48 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package io.spine.protodata.renderer
 
-plugins {
-    kotlin("jvm") version "1.4.21"
-    idea
+import io.spine.protodata.subscriber.CodeEnhancement
+import kotlin.reflect.KClass
+import kotlin.reflect.KVisibility
+
+public interface Renderer {
+
+    public var enhancements: List<CodeEnhancement>
+
+    public fun render(sources: SourceSet): SourceSet
 }
 
-group = "io.spine.protodata"
-version = "0.0.1"
+public class RendererBuilder
+private constructor() {
 
-subprojects {
-    apply(plugin = "kotlin")
+    private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
 
-    dependencies {
-        testImplementation(kotlin("test-junit5"))
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.23")
+    public infix fun and(enhancement: CodeEnhancement) : RendererBuilder {
+        enhancements.add(enhancement)
+        return this
     }
 
-    tasks.test {
-        useJUnitPlatform()
-
-        testLogging {
-            events = setOf(PASSED, FAILED, SKIPPED)
-            showExceptions = true
-            showCauses = true
-            showStackTraces = true
-        }
+    public infix fun and(newEnhancements: Iterable<CodeEnhancement>) : RendererBuilder {
+        enhancements.addAll(newEnhancements)
+        return this
     }
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
-        }
-    }
-
-    kotlin {
-        explicitApi()
+    public fun <R: Renderer> create(cls: KClass<R>): R {
+        val ctor = cls.constructors.find {
+            it.visibility == KVisibility.PUBLIC && it.parameters.isEmpty()
+        } ?: throw IllegalStateException(
+            "Renderer `${cls.qualifiedName} should have a public zero-parameter constructor.`"
+        )
+        val renderer = ctor.call()
+        renderer.enhancements = enhancements.toList()
+        return renderer
     }
 }

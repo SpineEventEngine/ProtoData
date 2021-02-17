@@ -39,7 +39,7 @@ public abstract class Subscriber<E : EventMessage>(
     private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
 
     internal val producedEnhancements: List<CodeEnhancement>
-    get() = enhancements.toList()
+        get() = enhancements.toList()
 
     public abstract fun process(event: E): Iterable<CodeEnhancement>
 

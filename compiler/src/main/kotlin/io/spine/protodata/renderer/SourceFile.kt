@@ -24,48 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package io.spine.protodata.renderer
 
-plugins {
-    kotlin("jvm") version "1.4.21"
-    idea
-}
+import java.nio.charset.Charset
+import java.nio.file.Path
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
-group = "io.spine.protodata"
-version = "0.0.1"
+@OptIn(ExperimentalPathApi::class)
+public class SourceFile
+private constructor(
+    public val code: String,
+    private val path: Path
+) {
 
-subprojects {
-    apply(plugin = "kotlin")
+    public companion object {
 
-    dependencies {
-        testImplementation(kotlin("test-junit5"))
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.23")
+        public fun read(path: Path, charset: Charset = Charsets.UTF_8): SourceFile =
+            SourceFile(path.readText(charset), path)
+
+        public fun fromCode(path: Path, code: String): SourceFile = SourceFile(code, path)
     }
 
-    tasks.test {
-        useJUnitPlatform()
-
-        testLogging {
-            events = setOf(PASSED, FAILED, SKIPPED)
-            showExceptions = true
-            showCauses = true
-            showStackTraces = true
-        }
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
-        }
-    }
-
-    kotlin {
-        explicitApi()
+    public fun write(charset: Charset = Charsets.UTF_8) {
+        path.writeText(code, charset)
     }
 }
