@@ -37,8 +37,7 @@ public interface Renderer {
     public fun render(sources: SourceSet): SourceSet
 }
 
-public class RendererBuilder
-private constructor() {
+public class RendererBuilder {
 
     private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
 

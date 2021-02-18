@@ -28,6 +28,8 @@ package io.spine.protodata.renderer
 
 import java.nio.charset.Charset
 import java.nio.file.Path
+import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+import java.nio.file.StandardOpenOption.WRITE
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -36,7 +38,7 @@ import kotlin.io.path.writeText
 public class SourceFile
 private constructor(
     public val code: String,
-    private val path: Path
+    public val path: Path
 ) {
 
     public companion object {
@@ -48,6 +50,6 @@ private constructor(
     }
 
     public fun write(charset: Charset = Charsets.UTF_8) {
-        path.writeText(code, charset)
+        path.writeText(code, charset, WRITE, TRUNCATE_EXISTING)
     }
 }

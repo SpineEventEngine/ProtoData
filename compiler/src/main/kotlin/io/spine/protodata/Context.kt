@@ -27,12 +27,16 @@
 package io.spine.protodata
 
 import com.google.common.annotations.VisibleForTesting
-import com.google.protobuf.DescriptorProtos.FileDescriptorSet
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.base.Production
 import io.spine.core.UserId
 import io.spine.protodata.subscriber.Subscriber
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
+import io.spine.server.ServerEnvironment
 import io.spine.server.integration.ThirdPartyContext
+import io.spine.server.storage.memory.InMemoryStorageFactory
+import io.spine.server.transport.memory.InMemoryTransportFactory
 
 /**
  * A factory for the `ProtoData` bounded context.
@@ -48,6 +52,10 @@ public object ProtoDataContext {
 
     @VisibleForTesting
     internal fun builder(vararg withSubscribers: Subscriber<*>): BoundedContextBuilder {
+        val config = ServerEnvironment.`when`(Production::class.java)
+        config.use(InMemoryTransportFactory.newInstance())
+        config.use(InMemoryStorageFactory.newInstance())
+
         val builder = BoundedContext
             .singleTenant("ProtoData")
             .add(ProtoSourceFileRepository())
@@ -70,10 +78,14 @@ public object ProtobufCompilerContext {
         .build()
 
     /**
-     * Produces and emits compiler events describing the given file descriptor set.
+     * Produces and emits compiler events describing the types listed in
+     * the [CodeGeneratorRequest.getFileToGenerateList].
+     *
+     * The request must contain descriptors for the files to generate, as well as for their
+     * dependencies.
      */
-    public fun emittedEventsFor(desc: FileDescriptorSet) {
-        val events = CompilerEvents.parse(desc)
+    public fun emittedEventsFor(request: CodeGeneratorRequest) {
+        val events = CompilerEvents.parse(request)
         events.forEach { context.emittedEvent(it, actor) }
     }
 }
