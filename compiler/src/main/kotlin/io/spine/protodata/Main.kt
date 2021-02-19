@@ -43,7 +43,6 @@ import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Path
 
-
 public fun main(args: Array<String>): Unit = Run().main(args)
 
 private class Run : CliktCommand() {
