@@ -32,7 +32,7 @@ import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.isRegularFile
 
-public data class SourceSet(val files: Set<SourceFile>, val root: Path) {
+public data class SourceSet(val files: Set<SourceFile>) {
 
     public companion object {
 
@@ -43,7 +43,7 @@ public data class SourceSet(val files: Set<SourceFile>, val root: Path) {
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read(it) }
                 .collect(toImmutableSet())
-            return SourceSet(files, directory)
+            return SourceSet(files)
         }
     }
 }
