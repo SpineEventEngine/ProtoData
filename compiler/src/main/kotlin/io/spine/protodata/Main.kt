@@ -112,7 +112,7 @@ private class Run : CliktCommand() {
 
     private fun loadRenderer(subscribers: List<Subscriber<*>>, classLoader: ClassLoader): Renderer {
         val rendererBuilder = RendererBuilder()
-        subscribers.forEach { rendererBuilder.and(it.producedEnhancements) }
+        subscribers.forEach { rendererBuilder.add(it.producedEnhancements) }
         return rendererBuilder.createFromName(renderer, classLoader)
     }
 }

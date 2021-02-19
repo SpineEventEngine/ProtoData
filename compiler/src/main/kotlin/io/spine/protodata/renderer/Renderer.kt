@@ -29,13 +29,33 @@ package io.spine.protodata.renderer
 import io.spine.protodata.ReflectiveBuilder
 import io.spine.protodata.subscriber.CodeEnhancement
 
-public interface Renderer {
+/**
+ * A `Renderer` takes existing source code, modifies it with a number of
+ * [enhancements][CodeEnhancement], and renders the resulting code into source files.
+ *
+ * Instances of `Renderer`s are creates via reflection. It is required that the concrete classes
+ * have a `public` no-argument constructor.
+ */
+public abstract class Renderer {
 
-    public var enhancements: List<CodeEnhancement>
+    /**
+     * The code enhancements to apply to the source files.
+     */
+    public lateinit var enhancements: List<CodeEnhancement>
 
-    public fun render(sources: SourceSet): SourceSet
+    /**
+     * Processes the given `sources` in accordance with the [enhancements].
+     *
+     * If a file is present in the input source set but not the output, the file is left untouched.
+     * If a file is present in the output source set but not the input, the file created.
+     * If a file is present is both the input and the output source sets, the file is overridden.
+     */
+    public abstract fun render(sources: SourceSet): SourceSet
 }
 
+/**
+ * A reflective builder for renderers.
+ */
 internal class RendererBuilder : ReflectiveBuilder<Renderer>() {
 
     private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
