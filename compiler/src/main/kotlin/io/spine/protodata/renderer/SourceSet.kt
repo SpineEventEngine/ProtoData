@@ -31,10 +31,16 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.isRegularFile
 
+/**
+ * A set of source files.
+ */
 public data class SourceSet(val files: Set<SourceFile>) {
 
     public companion object {
 
+        /**
+         * Collects a source set from a given root directory.
+         */
         public fun fromContentsOf(directory: Path): SourceSet {
             val files = Files
                 .walk(directory)

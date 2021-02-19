@@ -33,15 +33,37 @@ import io.spine.server.event.EventDispatcher
 import io.spine.server.type.EventClass
 import io.spine.server.type.EventEnvelope
 
+/**
+ * A subscriber to a compiler event.
+ *
+ * Instances of `Subscriber`s are created via reflection. It is required that the concrete classes
+ * have a `public` no-argument constructor.
+ */
 public abstract class Subscriber<E : EventMessage>(
+
+    /**
+     * The class of the event to which to subscribe.
+     */
     private val eventClass: Class<E>
 ) : EventDispatcher {
 
     private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
 
+    /**
+     * Obtains the [CodeEnhancement]s produced by this subscriber so far.
+     */
     internal val producedEnhancements: List<CodeEnhancement>
         get() = enhancements.toList()
 
+    /**
+     * Receives the event and produces a number of [CodeEnhancement]s based on the the event.
+     *
+     * May produce no enhancements, one, or many enhancements on a single event.
+     *
+     * The ordering of the resulting enhancements may not be preserved. Likewise, no deduplication
+     * will be performed on the enhancements, regardless if they come from one or different
+     * `Subscriber`s
+     */
     public abstract fun process(event: E): Iterable<CodeEnhancement>
 
     final override fun dispatch(envelope: EventEnvelope) {
@@ -70,4 +92,7 @@ public abstract class Subscriber<E : EventMessage>(
         ImmutableSet.of()
 }
 
+/**
+ * A reflective builder for [Subscriber]s.
+ */
 internal class SubscriberBuilder: ReflectiveBuilder<Subscriber<*>>()

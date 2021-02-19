@@ -33,7 +33,7 @@ import io.spine.protodata.subscriber.CodeEnhancement
  * A `Renderer` takes existing source code, modifies it with a number of
  * [enhancements][CodeEnhancement], and renders the resulting code into source files.
  *
- * Instances of `Renderer`s are creates via reflection. It is required that the concrete classes
+ * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
  * have a `public` no-argument constructor.
  */
 public abstract class Renderer {

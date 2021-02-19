@@ -33,20 +33,43 @@ import java.nio.file.StandardOpenOption.WRITE
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
+/**
+ * A file with source code.
+ */
 public class SourceFile
 private constructor(
+
+    /**
+     * The source code.
+     */
     public val code: String,
+
+    /**
+     * The FS path to the file.
+     */
     public val path: Path
 ) {
 
     public companion object {
 
+        /**
+         * Reads the file from the given FS location.
+         */
         public fun read(path: Path, charset: Charset = Charsets.UTF_8): SourceFile =
             SourceFile(path.readText(charset), path)
 
+        /**
+         * Constructs a file from source code.
+         *
+         * @param path the FS path for the file; the file might not exist on the file system
+         * @param code the source code
+         */
         public fun fromCode(path: Path, code: String): SourceFile = SourceFile(code, path)
     }
 
+    /**
+     * Writes the source code into the file on the file system.
+     */
     public fun write(charset: Charset = Charsets.UTF_8) {
         path.writeText(code, charset, WRITE, TRUNCATE_EXISTING)
     }

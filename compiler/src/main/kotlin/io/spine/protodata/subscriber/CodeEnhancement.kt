@@ -26,4 +26,13 @@
 
 package io.spine.protodata.subscriber
 
+/**
+ * A description of a certain change to source code.
+ *
+ * [Subscriber]s produce `CodeEnhancement`s and [Renderer][io.spine.protodata.renderer.Renderer]s
+ * consume them.
+ *
+ * This is a marker interface. Concrete implementations must include all the info needed by
+ * the renderers to apply the enhancement to source code.
+ */
 public interface CodeEnhancement

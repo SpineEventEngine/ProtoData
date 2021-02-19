@@ -44,13 +44,24 @@ import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Path
 
+/**
+ * Launches the CLI application.
+ *
+ * When the application is done or an unhandled error occurs, exists the process.
+ */
 public fun main(args: Array<String>): Unit = Run().main(args)
 
+/**
+ * Launches the CLI application without finishing the process after execution.
+ */
 @VisibleForTesting
 internal fun launchApp(vararg argv: String) {
     Run().parse(argv.toList())
 }
 
+/**
+ * The main CLI command which performs the ProtoData code generation tasks.
+ */
 private class Run : CliktCommand() {
 
     val subscribers: List<String> by option("--subscriber", "-s").multiple(required = true)
@@ -106,13 +117,13 @@ private class Run : CliktCommand() {
     private fun loadSubscribers(classLoader: ClassLoader): List<Subscriber<*>> {
         val subscriberBuilder = SubscriberBuilder()
         return subscribers.map {
-            subscriberBuilder.createFromName(it, classLoader)
+            subscriberBuilder.createByName(it, classLoader)
         }
     }
 
     private fun loadRenderer(subscribers: List<Subscriber<*>>, classLoader: ClassLoader): Renderer {
         val rendererBuilder = RendererBuilder()
         subscribers.forEach { rendererBuilder.add(it.producedEnhancements) }
-        return rendererBuilder.createFromName(renderer, classLoader)
+        return rendererBuilder.createByName(renderer, classLoader)
     }
 }
