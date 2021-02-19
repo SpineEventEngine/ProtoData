@@ -30,11 +30,9 @@ import java.nio.charset.Charset
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.nio.file.StandardOpenOption.WRITE
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
-@OptIn(ExperimentalPathApi::class)
 public class SourceFile
 private constructor(
     public val code: String,

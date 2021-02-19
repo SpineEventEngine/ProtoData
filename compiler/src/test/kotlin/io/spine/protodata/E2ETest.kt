@@ -34,7 +34,6 @@ import io.spine.protodata.given.TestSubscriber
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.Journey
 import java.nio.file.Path
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
@@ -45,7 +44,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-@OptIn(ExperimentalPathApi::class)
 class `Commad-line app should` {
 
     private lateinit var srcRoot : Path

@@ -29,14 +29,12 @@ package io.spine.protodata.renderer
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.isRegularFile
 
 public data class SourceSet(val files: Set<SourceFile>) {
 
     public companion object {
 
-        @OptIn(ExperimentalPathApi::class)
         public fun fromContentsOf(directory: Path): SourceSet {
             val files = Files
                 .walk(directory)

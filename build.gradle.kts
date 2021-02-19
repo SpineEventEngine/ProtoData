@@ -59,7 +59,7 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
         }
     }
 

@@ -29,11 +29,8 @@ package io.spine.protodata.given
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceSet
-import io.spine.protodata.subscriber.CodeEnhancement
 
-class TestRenderer : Renderer {
-
-    override lateinit var enhancements: List<CodeEnhancement>
+class TestRenderer : Renderer() {
 
     override fun render(sources: SourceSet): SourceSet {
         val files = mutableListOf<SourceFile>()

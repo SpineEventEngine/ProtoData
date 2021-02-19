@@ -40,12 +40,10 @@ internal class RendererBuilder : ReflectiveBuilder<Renderer>() {
 
     private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
 
-    fun and(enhancement: CodeEnhancement) : RendererBuilder {
-        enhancements.add(enhancement)
-        return this
-    }
-
-    fun and(newEnhancements: Iterable<CodeEnhancement>) : RendererBuilder {
+    /**
+     * Adds given [CodeEnhancement]s to the built renderer.
+     */
+    fun add(newEnhancements: Iterable<CodeEnhancement>) : RendererBuilder {
         enhancements.addAll(newEnhancements)
         return this
     }
