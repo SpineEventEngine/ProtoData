@@ -24,33 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata
 
-import io.spine.protodata.ReflectiveBuilder
-import io.spine.protodata.subscriber.CodeEnhancement
+import kotlin.reflect.KClass
+import kotlin.reflect.KVisibility
 
-public interface Renderer {
+internal open class ReflectiveBuilder<T: Any> {
 
-    public var enhancements: List<CodeEnhancement>
-
-    public fun render(sources: SourceSet): SourceSet
-}
-
-internal class RendererBuilder : ReflectiveBuilder<Renderer>() {
-
-    private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
-
-    fun and(enhancement: CodeEnhancement) : RendererBuilder {
-        enhancements.add(enhancement)
-        return this
+    fun createFromName(className: String, classLoader: ClassLoader): T {
+        val cls = classLoader.loadClass(className).kotlin
+        @Suppress("UNCHECKED_CAST")
+        val tClass = cls as KClass<T>
+        return create(tClass)
     }
 
-    fun and(newEnhancements: Iterable<CodeEnhancement>) : RendererBuilder {
-        enhancements.addAll(newEnhancements)
-        return this
+    fun create(cls: KClass<T>) : T {
+        val ctor = cls.constructors.find {
+            it.visibility == KVisibility.PUBLIC && it.parameters.isEmpty()
+        } ?: throw IllegalStateException(
+            "Class `${cls.qualifiedName} should have a public zero-parameter constructor.`"
+        )
+        val instance = ctor.call()
+        prepareInstance(instance)
+        return instance
     }
 
-    override fun prepareInstance(instance: Renderer) {
-        instance.enhancements = enhancements.toList()
+    protected open fun prepareInstance(instance: T) {
     }
 }

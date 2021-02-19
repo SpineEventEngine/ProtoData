@@ -26,7 +26,7 @@
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.BoolValue
-import com.google.protobuf.DescriptorProtos.FileDescriptorSet
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.Option
@@ -56,9 +56,10 @@ class `'ProtoData' context should` {
     fun `construct 'ProtobufSource' based on a descriptor set`() {
         val ctx = BlackBoxContext.from(ProtoDataContext.builder())
         val protoDescriptor = DoctorProto.getDescriptor().toProto()
-        val set = FileDescriptorSet
+        val set = CodeGeneratorRequest
             .newBuilder()
-            .addFile(protoDescriptor)
+            .addProtoFile(protoDescriptor)
+            .addFileToGenerate(protoDescriptor.name)
             .build()
         ProtobufCompilerContext.emittedEventsFor(set)
 

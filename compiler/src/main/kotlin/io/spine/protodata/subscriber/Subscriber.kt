@@ -28,6 +28,7 @@ package io.spine.protodata.subscriber
 
 import com.google.common.collect.ImmutableSet
 import io.spine.base.EventMessage
+import io.spine.protodata.ReflectiveBuilder
 import io.spine.server.event.EventDispatcher
 import io.spine.server.type.EventClass
 import io.spine.server.type.EventEnvelope
@@ -68,3 +69,5 @@ public abstract class Subscriber<E : EventMessage>(
     final override fun domesticEventClasses(): ImmutableSet<EventClass> =
         ImmutableSet.of()
 }
+
+internal class SubscriberBuilder: ReflectiveBuilder<Subscriber<*>>()
