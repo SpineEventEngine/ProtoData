@@ -33,6 +33,7 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
+import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.RendererBuilder
@@ -44,6 +45,11 @@ import java.net.URLClassLoader
 import java.nio.file.Path
 
 public fun main(args: Array<String>): Unit = Run().main(args)
+
+@VisibleForTesting
+internal fun launchApp(vararg argv: String) {
+    Run().parse(argv.toList())
+}
 
 private class Run : CliktCommand() {
 
