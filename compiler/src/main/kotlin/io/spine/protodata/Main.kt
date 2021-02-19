@@ -48,7 +48,7 @@ public fun main(args: Array<String>): Unit = Run().main(args)
 
 private class Run : CliktCommand() {
 
-    val subscribers: List<String> by option("--subscriber", "-s").multiple()
+    val subscribers: List<String> by option("--subscriber", "-s").multiple(required = true)
     val renderer: String by option("--renderer", "-r").required()
     val codegenRequestFile: File by option("--request", "-t").file(
         mustExist = true,

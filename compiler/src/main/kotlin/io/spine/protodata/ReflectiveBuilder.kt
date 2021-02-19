@@ -38,7 +38,7 @@ internal open class ReflectiveBuilder<T: Any> {
         return create(tClass)
     }
 
-    fun create(cls: KClass<T>) : T {
+    private fun create(cls: KClass<T>) : T {
         val ctor = cls.constructors.find {
             it.visibility == KVisibility.PUBLIC && it.parameters.isEmpty()
         } ?: throw IllegalStateException(
