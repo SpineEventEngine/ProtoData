@@ -29,4 +29,7 @@ package io.spine.protodata.given
 import io.spine.protodata.TypeName
 import io.spine.protodata.subscriber.CodeEnhancement
 
+/**
+ * A test enhancement which suggests adding the dollar sign to the name of a type.
+ */
 data class AddDollar(val targetName: TypeName) : CodeEnhancement

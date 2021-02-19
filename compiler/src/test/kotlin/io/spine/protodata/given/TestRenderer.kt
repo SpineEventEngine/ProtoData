@@ -30,6 +30,11 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceSet
 
+/**
+ * A [Renderer] for test purposes.
+ *
+ * Supports the [AddDollar] enhancement.
+ */
 class TestRenderer : Renderer() {
 
     override fun render(sources: SourceSet): SourceSet {

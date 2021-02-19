@@ -30,7 +30,11 @@ import io.spine.protodata.TypeEntered
 import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.protodata.subscriber.Subscriber
 
-
+/**
+ * A [Subscriber] to the `TypeEntered` events.
+ *
+ * Produces [AddDollar] enhancements.
+ */
 class TestSubscriber : Subscriber<TypeEntered>(TypeEntered::class.java) {
 
     override fun process(event: TypeEntered): Iterable<CodeEnhancement> {
