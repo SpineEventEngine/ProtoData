@@ -42,15 +42,15 @@ class TestRenderer : Renderer() {
         return SourceSet(files.toSet())
     }
 
-    private fun enhance(enhancement: AddDollar, files: Iterable<SourceFile>) : Sequence<SourceFile>
-    = sequence {
-        val name = enhancement.targetName.simpleName
-        files.forEach {
-            if (it.code.contains(name)) {
-                val enhancedCode = it.code.replace(name, "$$name$")
-                val newFile = SourceFile.fromCode(it.path, enhancedCode)
-                yield(newFile)
+    private fun enhance(enhancement: AddDollar, files: Iterable<SourceFile>): Sequence<SourceFile> =
+        sequence {
+            val name = enhancement.targetName.simpleName
+            files.forEach {
+                if (it.code.contains(name)) {
+                    val enhancedCode = it.code.replace(name, "$$name$")
+                    val newFile = SourceFile.fromCode(it.path, enhancedCode)
+                    yield(newFile)
+                }
             }
         }
-    }
 }
