@@ -24,21 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata
+
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
-import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
-import io.spine.protodata.ProtoDataContext
-import io.spine.protodata.ProtoSourceFileProjection
-import io.spine.protodata.ProtobufCompilerContext
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.asType
-import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
-import io.spine.protodata.typeUrl
 import io.spine.testing.server.blackbox.BlackBoxContext
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
