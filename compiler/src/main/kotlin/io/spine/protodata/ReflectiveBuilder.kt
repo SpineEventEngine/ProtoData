@@ -30,12 +30,18 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 
 /**
- * A builder for creating instances of classes defined by a downstream.
+ * A builder for creating instances of classes defined by the users of this library.
+ *
+ * The class is loaded via a `ClassLoader` and an instance is created. It is expected that
+ * the class has a `public` constructor with no parameters.
  */
 internal open class ReflectiveBuilder<T: Any> {
 
     /**
      * Creates an instance of `T`.
+     *
+     * It is necessary that the class defined by the [className] parameter is a subtype of `T`.
+     * Otherwise, a casting error occurs.
      *
      * @param className name of the concrete class to instantiate
      * @param classLoader the [ClassLoader] to load the class by its name

@@ -30,8 +30,9 @@ import io.spine.protodata.ReflectiveBuilder
 import io.spine.protodata.subscriber.CodeEnhancement
 
 /**
- * A `Renderer` takes existing source code, modifies it with a number of
- * [enhancements][CodeEnhancement], and renders the resulting code into source files.
+ * A `Renderer` takes existing source set, modifies it with a number of
+ * [enhancements][CodeEnhancement], including changing the contents of existing source files or
+ * creating new ones, and renders the resulting code into a [SourceSet].
  *
  * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
  * have a `public` no-argument constructor.
