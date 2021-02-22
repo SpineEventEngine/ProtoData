@@ -36,3 +36,14 @@ package io.spine.protodata.subscriber
  * the renderers to apply the enhancement to source code.
  */
 public interface CodeEnhancement
+
+/**
+ * A code enhancement which overrides all the other enhancements and disallows launching
+ * the renderer.
+ *
+ * If [Subscriber]s produce no enhancements, the renderer is launched anyway, as it may have some
+ * kind of unconditional logic. To prevent launching the renderer (and also, possibly, speed up
+ * a processing which is not going to produce any changes anyway), a subscriber should produce
+ * the `SkipEverything` enhancement.
+ */
+public object SkipEverything: CodeEnhancement

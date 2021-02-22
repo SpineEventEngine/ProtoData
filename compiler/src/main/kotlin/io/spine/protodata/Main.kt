@@ -35,9 +35,12 @@ import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
 import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.logging.Logging
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.RendererBuilder
 import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.subscriber.CodeEnhancement
+import io.spine.protodata.subscriber.SkipEverything
 import io.spine.protodata.subscriber.Subscriber
 import io.spine.protodata.subscriber.SubscriberBuilder
 import java.io.File
@@ -69,8 +72,13 @@ internal fun launchApp(vararg argv: String) {
  * the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter. Finally,
  * the code enhancements produced by the subscribers are supplied to the renderer, which applies
  * them to the source set with the root path, supplied in the `--source-root` parameter.
+ *
+ * Note that the [Renderer] is launched even if no enhancements are produced. In order to skip
+ * the rendering step altogether (making the whole CLI invocation no-op), a subscriber should
+ * produce the [SkipEverything] enhancement. This is a signal for the app to stop the processing and
+ * quit.
  */
-private class Run : CliktCommand() {
+private class Run : CliktCommand(), Logging {
 
     val subscribers: List<String> by option("--subscriber", "-s", help = """
         The name of a Java class, a subtype of `${Subscriber::class.qualifiedName}`.
@@ -115,12 +123,17 @@ private class Run : CliktCommand() {
     override fun run() {
         val classLoader = loadExtraClasspath()
         val subscribers = loadSubscribers(classLoader)
-        processProtobuf(subscribers)
-        val renderer = loadRenderer(subscribers, classLoader)
-        val sourceSet = SourceSet.fromContentsOf(sourceRoot)
-        val enhanced = renderer.render(sourceSet)
-        enhanced.files.forEach {
-            it.write()
+        val enhancements = processProtobuf(subscribers)
+        if (SkipEverything !in enhancements) {
+            _info().log("Applying ${enhancements.size} code enhancements.")
+            val renderer = loadRenderer(enhancements, classLoader)
+            val sourceSet = SourceSet.fromContentsOf(sourceRoot)
+            val enhanced = renderer.render(sourceSet)
+            enhanced.files.forEach {
+                it.write()
+            }
+        } else {
+            _info().log("Skipping everything. ${enhancements.size - 1} code enhancements ignored.")
         }
     }
 
@@ -136,12 +149,13 @@ private class Run : CliktCommand() {
         }
     }
 
-    private fun processProtobuf(subscribers: List<Subscriber<*>>) {
+    private fun processProtobuf(subscribers: List<Subscriber<*>>): List<CodeEnhancement> {
         ProtoDataContext.build(*subscribers.toTypedArray())
         val codegenRequest = codegenRequestFile.inputStream().use {
             CodeGeneratorRequest.parseFrom(it)
         }
         ProtobufCompilerContext.emittedEventsFor(codegenRequest)
+        return subscribers.flatMap { it.producedEnhancements }
     }
 
     private fun loadSubscribers(classLoader: ClassLoader): List<Subscriber<*>> {
@@ -151,9 +165,10 @@ private class Run : CliktCommand() {
         }
     }
 
-    private fun loadRenderer(subscribers: List<Subscriber<*>>, classLoader: ClassLoader): Renderer {
+    private fun
+    loadRenderer(enhancements: List<CodeEnhancement>, classLoader: ClassLoader): Renderer {
         val rendererBuilder = RendererBuilder()
-        subscribers.forEach { rendererBuilder.add(it.producedEnhancements) }
+        rendererBuilder.add(enhancements)
         return rendererBuilder.createByName(renderer, classLoader)
     }
 }
