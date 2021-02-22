@@ -61,23 +61,53 @@ internal fun launchApp(vararg argv: String) {
 
 /**
  * The main CLI command which performs the ProtoData code generation tasks.
+ *
+ * The command accepts class names for [Subscriber]s and a [Renderer] via the `--subscriber` and
+ * `--renderer` parameters. Then, using the classpath of the app and the extra classpath supplied
+ * via the `--extra-classpath` parameter, loads those classes. Subscribers listen to the Protobuf
+ * compiler events, regarding the Protobuf types, listed in
+ * the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter. Finally,
+ * the code enhancements produced by the subscribers are supplied to the renderer, which applies
+ * them to the source set with the root path, supplied in the `--source-root` parameter.
  */
 private class Run : CliktCommand() {
 
-    val subscribers: List<String> by option("--subscriber", "-s").multiple(required = true)
-    val renderer: String by option("--renderer", "-r").required()
-    val codegenRequestFile: File by option("--request", "-t").file(
+    val subscribers: List<String> by option("--subscriber", "-s", help = """
+        The name of a Java class, a subtype of `${Subscriber::class.qualifiedName}`.
+        There can be multiple subscribers. To pass more then one value, type:
+        
+             <...> -s com.foo.Bar -s com.foo.Baz
+        
+    """.trimIndent()).multiple(required = true)
+    val renderer: String by option("--renderer", "-r", help = """
+        The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
+        There can only be one renderer command line per call.
+    """.trimIndent()).required()
+    val codegenRequestFile: File by option("--request", "-t", help =
+    "The path to the binary file containing a serialized instance of " +
+            "`${CodeGeneratorRequest.getDescriptor().name}`."
+    ).file(
         mustExist = true,
         canBeDir = false,
         canBeSymlink = false,
         mustBeReadable = true
     ).required()
-    val sourceRoot: Path by option("--source-root", "--src").path(
+    val sourceRoot: Path by option("--source-root", "--src", help = """
+        The path to a directory which contains the source files to be processed.
+    """.trimIndent()
+    ).path(
         mustExist = true,
         canBeFile = false,
         canBeSymlink = false
     ).required()
-    val classPath: List<Path>? by option("--extra-classpath", "--xcp").path(
+    val classPath: List<Path>? by option("--extra-classpath", "--xcp", help = """
+        The extra classpath which contains all the `--subscriber` and `--renderer` classes, as well
+        as all their dependencies, which are not included as a part of the ProtoData library.
+        This may be omitted if the classes are already present in the application's classpath.
+        May be one path to a JAR, a ZIP, or a directory. Or may be many paths separated by
+        the `${File.pathSeparator}` separator char.
+    """.trimIndent()
+    ).path(
         mustExist = true,
         mustBeReadable = true
     ).split(File.pathSeparator)
