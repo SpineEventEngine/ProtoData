@@ -30,7 +30,7 @@ import io.spine.protodata.ReflectiveBuilder
 import io.spine.protodata.subscriber.CodeEnhancement
 
 /**
- * A `Renderer` takes existing source set, modifies it with a number of
+ * A `Renderer` takes an existing source set, modifies it with a number of
  * [enhancements][CodeEnhancement], including changing the contents of existing source files or
  * creating new ones, and renders the resulting code into a [SourceSet].
  *
