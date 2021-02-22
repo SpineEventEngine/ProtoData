@@ -47,7 +47,7 @@ import java.nio.file.Path
 /**
  * Launches the CLI application.
  *
- * When the application is done or an unhandled error occurs, exists the process.
+ * When the application is done or an unhandled error occurs, exits the process.
  */
 public fun main(args: Array<String>): Unit = Run().main(args)
 

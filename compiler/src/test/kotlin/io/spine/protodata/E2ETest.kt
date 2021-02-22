@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class `Commad-line app should` {
+class `Command-line app should` {
 
     private lateinit var srcRoot : Path
     private lateinit var codegenRequestFile: Path
