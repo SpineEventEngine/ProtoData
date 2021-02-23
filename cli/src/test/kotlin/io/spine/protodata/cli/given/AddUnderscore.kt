@@ -29,5 +29,4 @@ package io.spine.protodata.cli.given
 import io.spine.protodata.TypeName
 import io.spine.protodata.subscriber.CodeEnhancement
 
-
 class AddUnderscore(val type: TypeName) : CodeEnhancement
