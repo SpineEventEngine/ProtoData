@@ -26,21 +26,21 @@
 
 package io.spine.protodata
 
-import com.github.ajalt.clikt.core.MissingOption
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.given.TestRenderer
+import io.spine.protodata.given.TestSkippingSubscriber
 import io.spine.protodata.given.TestSubscriber
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.Journey
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
-import kotlin.reflect.jvm.jvmName
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -49,6 +49,8 @@ class `Command-line app should` {
     private lateinit var srcRoot : Path
     private lateinit var codegenRequestFile: Path
     private lateinit var sourceFile: Path
+    private lateinit var request: CodeGeneratorRequest
+    private lateinit var renderer: TestRenderer
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
@@ -62,75 +64,48 @@ class `Command-line app should` {
         """.trimIndent())
 
         val protoFile = DoctorProto.getDescriptor()
-        val request = CodeGeneratorRequest
+        request = CodeGeneratorRequest
             .newBuilder()
             .addProtoFile(protoFile.toProto())
             .addFileToGenerate(protoFile.name)
             .build()
         codegenRequestFile.writeBytes(request.toByteArray())
+        renderer = TestRenderer()
     }
 
     @Test
     fun `render enhanced code`() {
-        launchApp(
-            "-s", TestSubscriber::class.jvmName,
-            "-r", TestRenderer::class.jvmName,
-            "--src", srcRoot.toString(),
-            "-t", codegenRequestFile.toString()
-        )
+        Pipeline(
+            listOf(TestSubscriber()),
+            rendererFactory(),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        ).run()
         assertThat(sourceFile.readText())
             .isEqualTo("\$Journey$ worth taking")
+        assertThat(renderer.called)
+            .isTrue()
     }
 
-    @Nested
-    inner class `Fail if` {
+    @Test
+    fun `skip all code generation on 'SkipEverything'`() {
+        val initialContents = sourceFile.readText()
+        Pipeline(
+            listOf(TestSkippingSubscriber()),
+            rendererFactory(),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        ).run()
+        assertThat(sourceFile.readText())
+            .isEqualTo(initialContents)
+        assertThat(renderer.called)
+            .isFalse()
+    }
 
-        @Test
-        fun `subscriber is missing`() {
-            assertMissingOption {
-                launchApp(
-                    "-r", TestRenderer::class.jvmName,
-                    "--src", srcRoot.toString(),
-                    "-t", codegenRequestFile.toString()
-                )
-            }
-        }
-
-        @Test
-        fun `renderer is missing`() {
-            assertMissingOption {
-                launchApp(
-                    "-s", TestSubscriber::class.jvmName,
-                    "--src", srcRoot.toString(),
-                    "-t", codegenRequestFile.toString()
-                )
-            }
-        }
-
-        @Test
-        fun `source root is missing`() {
-            assertMissingOption {
-                launchApp(
-                    "-s", TestSubscriber::class.jvmName,
-                    "-r", TestRenderer::class.jvmName,
-                    "-t", codegenRequestFile.toString()
-                )
-            }
-        }
-
-        @Test
-        fun `code generator request file is missing`() {
-            assertMissingOption {
-                launchApp(
-                    "-s", TestSubscriber::class.jvmName,
-                    "-r", TestRenderer::class.jvmName,
-                    "--src", srcRoot.toString()
-                )
-            }
-        }
-
-        private fun assertMissingOption(block: () -> Unit) {
-            Assertions.assertThrows(MissingOption::class.java, block)
+    private fun rendererFactory(): (List<CodeEnhancement>) -> Renderer {
+        return { enhancements ->
+            renderer.enhancements = enhancements
+            renderer
         }
     }
 }

@@ -24,8 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    id("io.spine.tools.gradle.bootstrap").version("1.7.0")
-}
+package io.spine.protodata.cli
 
-spine.enableJava().server()
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.subscriber.CodeEnhancement
+
+/**
+ * A reflective builder for renderers.
+ */
+internal class RendererBuilder : ReflectiveBuilder<Renderer>() {
+
+    private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
+
+    /**
+     * Adds given [CodeEnhancement]s to the built renderer.
+     */
+    fun add(newEnhancements: Iterable<CodeEnhancement>) : RendererBuilder {
+        enhancements.addAll(newEnhancements)
+        return this
+    }
+
+    override fun prepareInstance(instance: Renderer) {
+        instance.enhancements = enhancements.toList()
+    }
+}

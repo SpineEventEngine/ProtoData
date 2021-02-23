@@ -24,8 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    id("io.spine.tools.gradle.bootstrap").version("1.7.0")
-}
+package io.spine.protodata.cli
 
-spine.enableJava().server()
+import io.spine.protodata.subscriber.Subscriber
+
+/**
+ * A reflective builder for [Subscriber]s.
+ */
+internal class SubscriberBuilder: ReflectiveBuilder<Subscriber<*>>()

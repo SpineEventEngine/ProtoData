@@ -24,42 +24,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.given
+package io.spine.protodata
 
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.logging.Logging
 import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.subscriber.CodeEnhancement
+import io.spine.protodata.subscriber.SkipEverything
+import io.spine.protodata.subscriber.Subscriber
 
-/**
- * A [Renderer] for test purposes.
- *
- * Supports the [AddDollar] enhancement.
- */
-class TestRenderer : Renderer() {
 
-    var called = false
-        private set
+public class Pipeline(
+    private val subscribers: List<Subscriber<*>>,
+    private val renderer: (List<CodeEnhancement>) -> Renderer,
+    private val sourceSet: SourceSet,
+    private val request: CodeGeneratorRequest
+) : Logging {
 
-    override fun render(sources: SourceSet): SourceSet {
-        called = true
-        val files = mutableListOf<SourceFile>()
-        enhancements.forEach {
-            when (it) {
-                is AddDollar -> files.addAll(enhance(it, sources.files))
+    public fun run() {
+        val enhancements = processProtobuf(subscribers)
+        if (SkipEverything !in enhancements) {
+            val enhanced = renderer(enhancements).render(sourceSet)
+            enhanced.files.forEach {
+                it.write()
             }
+        } else {
+            _info().log("Skipping everything. ${enhancements.size - 1} code enhancements ignored.")
         }
-        return SourceSet(files.toSet())
     }
 
-    private fun enhance(enhancement: AddDollar, files: Iterable<SourceFile>): Sequence<SourceFile> =
-        sequence {
-            val name = enhancement.targetName.simpleName
-            files.forEach {
-                if (it.code.contains(name)) {
-                    val enhancedCode = it.code.replace(name, "$$name$")
-                    val newFile = SourceFile.fromCode(it.path, enhancedCode)
-                    yield(newFile)
-                }
-            }
-        }
+    private fun processProtobuf(subscribers: List<Subscriber<*>>): List<CodeEnhancement> {
+        ProtoDataContext.build(*subscribers.toTypedArray())
+        ProtobufCompilerContext.emittedEventsFor(request)
+        return subscribers.flatMap { it.producedEnhancements }
+    }
 }

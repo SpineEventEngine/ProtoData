@@ -26,6 +26,17 @@
 
 plugins {
     id("io.spine.tools.gradle.bootstrap").version("1.7.0")
+    application
 }
 
 spine.enableJava().server()
+
+dependencies {
+    implementation(project(":compiler"))
+    implementation(kotlin("reflect"))
+    implementation("com.github.ajalt.clikt:clikt:3.1.0")
+}
+
+application {
+    mainClass.set("io.spine.protodata.MainKt")
+}

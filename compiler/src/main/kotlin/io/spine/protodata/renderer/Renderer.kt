@@ -26,7 +26,6 @@
 
 package io.spine.protodata.renderer
 
-import io.spine.protodata.ReflectiveBuilder
 import io.spine.protodata.subscriber.CodeEnhancement
 
 /**
@@ -54,22 +53,3 @@ public abstract class Renderer {
     public abstract fun render(sources: SourceSet): SourceSet
 }
 
-/**
- * A reflective builder for renderers.
- */
-internal class RendererBuilder : ReflectiveBuilder<Renderer>() {
-
-    private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
-
-    /**
-     * Adds given [CodeEnhancement]s to the built renderer.
-     */
-    fun add(newEnhancements: Iterable<CodeEnhancement>) : RendererBuilder {
-        enhancements.addAll(newEnhancements)
-        return this
-    }
-
-    override fun prepareInstance(instance: Renderer) {
-        instance.enhancements = enhancements.toList()
-    }
-}

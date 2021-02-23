@@ -24,8 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    id("io.spine.tools.gradle.bootstrap").version("1.7.0")
-}
+package io.spine.protodata.given
 
-spine.enableJava().server()
+import io.spine.protodata.FileExited
+import io.spine.protodata.subscriber.CodeEnhancement
+import io.spine.protodata.subscriber.SkipEverything
+import io.spine.protodata.subscriber.Subscriber
+
+class TestSkippingSubscriber: Subscriber<FileExited>(FileExited::class.java) {
+
+    override fun process(event: FileExited): Iterable<CodeEnhancement> =
+        listOf(SkipEverything)
+}
