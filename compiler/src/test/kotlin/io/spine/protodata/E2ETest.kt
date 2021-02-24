@@ -80,7 +80,7 @@ class `Command-line app should` {
             rendererFactory(),
             SourceSet.fromContentsOf(srcRoot),
             request
-        ).run()
+        )()
         assertThat(sourceFile.readText())
             .isEqualTo("\$Journey$ worth taking")
         assertThat(renderer.called)
@@ -95,7 +95,7 @@ class `Command-line app should` {
             rendererFactory(),
             SourceSet.fromContentsOf(srcRoot),
             request
-        ).run()
+        )()
         assertThat(sourceFile.readText())
             .isEqualTo(initialContents)
         assertThat(renderer.called)

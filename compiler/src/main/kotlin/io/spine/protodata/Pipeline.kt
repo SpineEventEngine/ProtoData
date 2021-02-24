@@ -34,7 +34,19 @@ import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.protodata.subscriber.SkipEverything
 import io.spine.protodata.subscriber.Subscriber
 
-
+/**
+ * A pipeline which processes the Protobuf files.
+ *
+ * A pipeline consists of several [Subscriber]s and a single [Renderer] and runs on a single
+ * source set.
+ *
+ * The pipeline starts by building a Bounded Context with the supplied subscribers.
+ * Then, the Protobuf compiler events are emitted for the subscribers to listen. Subscribers produce
+ * [CodeEnhancement]s in response to the events.
+ * Then, the [Renderer], based on the generated enhancements, alters the source set. This may
+ * include creating new files and/or modifying existing ones.
+ * Lastly, the source set is stored onto the file system.
+ */
 public class Pipeline(
     private val subscribers: List<Subscriber<*>>,
     private val renderer: (List<CodeEnhancement>) -> Renderer,
@@ -42,7 +54,10 @@ public class Pipeline(
     private val request: CodeGeneratorRequest
 ) : Logging {
 
-    public fun run() {
+    /**
+     * Executes the processing pipeline.
+     */
+    public operator fun invoke() {
         val enhancements = processProtobuf(subscribers)
         if (SkipEverything !in enhancements) {
             val enhanced = renderer(enhancements).render(sourceSet)

@@ -127,7 +127,7 @@ private class Run : CliktCommand() {
             CodeGeneratorRequest.parseFrom(it)
         }
         val pipeline = Pipeline(subscribers, renderer, sourceSet, codegenRequest)
-        pipeline.run()
+        pipeline()
     }
 
     private fun loadExtraClasspath(): ClassLoader {
