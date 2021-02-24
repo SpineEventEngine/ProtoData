@@ -34,6 +34,12 @@ package io.spine.protodata.subscriber
  *
  * This is a marker interface. Concrete implementations must include all the info needed by
  * the renderers to apply the enhancement to source code.
+ *
+ * An enhancement should be self sufficient. This means not relying on other enhancements.
+ * The processing mechanism for an enhancement should not assume that another enhancement was
+ * processed beforehand. For example, in case if a language element, such as a class, a method,
+ * or a field, which is being modified is missing, the enhancement should specify whether or not
+ * it is OK to create it.
  */
 public interface CodeEnhancement
 
