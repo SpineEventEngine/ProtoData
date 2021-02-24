@@ -49,5 +49,4 @@ class TestRenderer : Renderer() {
         }
         return SourceSet(files)
     }
-
 }
