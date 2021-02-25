@@ -28,4 +28,7 @@ package io.spine.protodata.cli
 
 import io.spine.server.projection.ProjectionRepository
 
+/**
+ * A reflective builder for projection repositories.
+ */
 internal class ProjectionRepositoryBuilder: ReflectiveBuilder<ProjectionRepository<*, *, *>>()
