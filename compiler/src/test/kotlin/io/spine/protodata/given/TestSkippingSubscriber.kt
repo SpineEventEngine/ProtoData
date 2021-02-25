@@ -31,6 +31,9 @@ import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.protodata.subscriber.SkipEverything
 import io.spine.protodata.subscriber.Subscriber
 
+/**
+ * A subscriber which always produces the [SkipEverything] enhancement.
+ */
 class TestSkippingSubscriber: Subscriber<FileExited>(FileExited::class.java) {
 
     override fun process(event: FileExited): Iterable<CodeEnhancement> =

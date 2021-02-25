@@ -31,9 +31,18 @@ import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.protodata.subscriber.Subscriber
 
-
+/**
+ * A [Subscriber] which accumulates all the info about files upon first discovery.
+ */
 class TestQueryingSubscriber : Subscriber<FileEntered>(FileEntered::class.java) {
 
+    /**
+     * The files processed by this subscriber.
+     *
+     * Despite the fact that the subscriber processes with the [FileEntered] event, which does not
+     * have all the data about a file, these files are the complete models of the actual Protobuf
+     * source files, thanks to the querying capabilities of the subscriber.
+     */
     val files = mutableListOf<ProtobufSourceFile>()
 
     override fun process(event: FileEntered): Iterable<CodeEnhancement> {
