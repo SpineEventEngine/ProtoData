@@ -26,9 +26,6 @@
 
 package io.spine.protodata.cli
 
-import io.spine.protodata.subscriber.Subscriber
+import io.spine.server.projection.ProjectionRepository
 
-/**
- * A reflective builder for [Subscriber]s.
- */
-public class SubscriberBuilder: ReflectiveBuilder<Subscriber<*>>()
+internal class ProjectionRepositoryBuilder: ReflectiveBuilder<ProjectionRepository<*, *, *>>()

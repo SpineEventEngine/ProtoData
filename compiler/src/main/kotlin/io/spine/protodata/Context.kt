@@ -26,48 +26,60 @@
 
 package io.spine.protodata
 
-import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.base.Production
+import io.spine.base.EventMessage
 import io.spine.core.UserId
 import io.spine.protodata.subscriber.Subscriber
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
-import io.spine.server.ServerEnvironment
 import io.spine.server.integration.ThirdPartyContext
-import io.spine.server.storage.memory.InMemoryStorageFactory
-import io.spine.server.transport.memory.InMemoryTransportFactory
+import io.spine.server.projection.ProjectionRepository
 
 /**
  * A factory for the `ProtoData` bounded context.
  */
-public object ProtoDataContext {
+internal object ProtoDataContext {
+
+    fun build(projections: List<ProjectionRepository<*, *, *>>): BoundedContext =
+        builder(projections).build()
 
     /**
-     * Creates the instance of the bounded context.
+     * Creates a builder of the bounded context.
      */
-    public fun build(vararg withSubscribers: Subscriber<*>) : BoundedContext {
-        return builder(*withSubscribers).build()
-    }
-
-    @VisibleForTesting
-    internal fun builder(vararg withSubscribers: Subscriber<*>): BoundedContextBuilder {
-        val config = ServerEnvironment.`when`(Production::class.java)
-        config.use(InMemoryTransportFactory.newInstance())
-        config.use(InMemoryStorageFactory.newInstance())
-
+    fun builder(
+        projections: Iterable<ProjectionRepository<*, *, *>> = listOf()
+    ): BoundedContextBuilder {
         val builder = BoundedContext
             .singleTenant("ProtoData")
-            .add(ProtoSourceFileRepository())
-        withSubscribers.forEach { builder.addEventDispatcher(it) }
+        preparedProjections().forEach { builder.add(it) }
+        projections.forEach { builder.add(it) }
         return builder
+    }
+
+    private fun preparedProjections() = listOf<ProjectionRepository<*, *, *>>(
+        ProtoSourceFileRepository()
+    )
+}
+
+internal object ProtoDataGeneratorContext {
+
+    fun build(withSubscribers: Iterable<Subscriber<*>>,
+              protoDataContext: BoundedContext): BoundedContext {
+        val builder = BoundedContext
+            .singleTenant("ProtoDataGenerator")
+
+        withSubscribers.forEach {
+            it.protoDataContext = protoDataContext
+            builder.addEventDispatcher(it)
+        }
+        return builder.build()
     }
 }
 
 /**
  * The `Protobuf Compiler` third-party bounded context.
  */
-public object ProtobufCompilerContext {
+internal object ProtobufCompilerContext {
 
     private const val NAME = "Protobuf Compiler"
 
@@ -84,8 +96,7 @@ public object ProtobufCompilerContext {
      * The request must contain descriptors for the files to generate, as well as for their
      * dependencies.
      */
-    public fun emittedEventsFor(request: CodeGeneratorRequest) {
-        val events = CompilerEvents.parse(request)
+    fun emitted(events: Sequence<EventMessage>) {
         events.forEach { context.emittedEvent(it, actor) }
     }
 }

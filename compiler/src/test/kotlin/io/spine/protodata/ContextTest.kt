@@ -42,7 +42,7 @@ class `'ProtoData' context should` {
 
     @Test
     fun `contain 'ProtobufSource' file projection`() {
-        val ctx = ProtoDataContext.build()
+        val ctx = ProtoDataContext.builder().build()
         assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileProjection::class.java))
     }
 
@@ -55,7 +55,7 @@ class `'ProtoData' context should` {
             .addProtoFile(protoDescriptor)
             .addFileToGenerate(protoDescriptor.name)
             .build()
-        ProtobufCompilerContext.emittedEventsFor(set)
+        ProtobufCompilerContext.emitted(CompilerEvents.parse(set))
 
         val path = DoctorProto.getDescriptor().path()
         val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileProjection::class.java)

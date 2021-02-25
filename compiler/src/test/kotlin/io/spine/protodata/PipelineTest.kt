@@ -28,6 +28,7 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.protodata.given.TestQueryingSubscriber
 import io.spine.protodata.given.TestRenderer
 import io.spine.protodata.given.TestSkippingSubscriber
 import io.spine.protodata.given.TestSubscriber
@@ -44,7 +45,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class `Command-line app should` {
+private const val JOURNEY_TYPE = "type.spine.io/spine.protodata.test.Journey"
+
+class `'Pipeline' should` {
 
     private lateinit var srcRoot : Path
     private lateinit var codegenRequestFile: Path
@@ -77,6 +80,7 @@ class `Command-line app should` {
     fun `render enhanced code`() {
         Pipeline(
             listOf(TestSubscriber()),
+            listOf(),
             rendererFactory(),
             SourceSet.fromContentsOf(srcRoot),
             request
@@ -92,6 +96,7 @@ class `Command-line app should` {
         val initialContents = sourceFile.readText()
         Pipeline(
             listOf(TestSkippingSubscriber()),
+            listOf(),
             rendererFactory(),
             SourceSet.fromContentsOf(srcRoot),
             request
@@ -100,6 +105,27 @@ class `Command-line app should` {
             .isEqualTo(initialContents)
         assertThat(renderer.called)
             .isFalse()
+    }
+
+    @Test
+    fun `deliver all events to projections before notifying 'Subscribers'`() {
+        val subscriber = TestQueryingSubscriber()
+        Pipeline(
+            listOf(subscriber),
+            listOf(),
+            rendererFactory(),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        assertThat(subscriber.files)
+            .hasSize(1)
+        val file = subscriber.files.first()
+        assertThat(file.typeMap)
+            .hasSize(2)
+        assertThat(file.typeMap)
+            .containsKey(JOURNEY_TYPE)
+        assertThat(file.typeMap[JOURNEY_TYPE]!!.fieldList)
+            .hasSize(3)
     }
 
     private fun rendererFactory(): (List<CodeEnhancement>) -> Renderer {

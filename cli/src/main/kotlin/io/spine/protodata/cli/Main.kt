@@ -41,6 +41,7 @@ import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.protodata.subscriber.SkipEverything
 import io.spine.protodata.subscriber.Subscriber
+import io.spine.server.projection.ProjectionRepository
 import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Path
@@ -85,6 +86,13 @@ private class Run : CliktCommand() {
              <...> -s com.foo.Bar -s com.foo.Baz
         
     """.trimIndent()).multiple(required = true)
+    val projections: List<String> by option("--projection", "-p", help = """
+        The name of a Java class, a subtype of `${ProjectionRepository::class.qualifiedName}`.
+        There can be multiple projections. To pass more then one value, type:
+        
+             <...> -p com.foo.BarRepository -p com.foo.BazRepository
+        
+    """.trimIndent()).multiple()
     val renderer: String by option("--renderer", "-r", help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
         There can only be one renderer command line per call.
@@ -121,13 +129,15 @@ private class Run : CliktCommand() {
     override fun run() {
         val classLoader = loadExtraClasspath()
         val subscribers = loadSubscribers(classLoader)
+        val projections = loadProjections(classLoader)
         val renderer = { enhancements: List<CodeEnhancement> -> loadRenderer(enhancements, classLoader) }
         val sourceSet = SourceSet.fromContentsOf(sourceRoot)
         val codegenRequest = codegenRequestFile.inputStream().use {
             CodeGeneratorRequest.parseFrom(it)
         }
-        val pipeline = Pipeline(subscribers, renderer, sourceSet, codegenRequest)
-        pipeline()
+        Pipeline(subscribers, projections, renderer, sourceSet, codegenRequest).use {
+            it()
+        }
     }
 
     private fun loadExtraClasspath(): ClassLoader {
@@ -145,6 +155,13 @@ private class Run : CliktCommand() {
     private fun loadSubscribers(classLoader: ClassLoader): List<Subscriber<*>> {
         val subscriberBuilder = SubscriberBuilder()
         return subscribers.map {
+            subscriberBuilder.createByName(it, classLoader)
+        }
+    }
+
+    private fun loadProjections(classLoader: ClassLoader): List<ProjectionRepository<*, *, *>> {
+        val subscriberBuilder = ProjectionRepositoryBuilder()
+        return projections.map {
             subscriberBuilder.createByName(it, classLoader)
         }
     }

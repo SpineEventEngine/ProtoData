@@ -24,11 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata.given
 
+import io.spine.protodata.FileEntered
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.protodata.subscriber.Subscriber
 
-/**
- * A reflective builder for [Subscriber]s.
- */
-public class SubscriberBuilder: ReflectiveBuilder<Subscriber<*>>()
+
+class TestQueryingSubscriber : Subscriber<FileEntered>(FileEntered::class.java) {
+
+    val files = mutableListOf<ProtobufSourceFile>()
+
+    override fun process(event: FileEntered): Iterable<CodeEnhancement> {
+        val file = select(ProtobufSourceFile::class.java)
+            .withId(event.file.path)
+            .execute()
+            .first()
+        files.add(file)
+        return emptyList()
+    }
+}

@@ -27,7 +27,15 @@
 package io.spine.protodata.subscriber
 
 import com.google.common.collect.ImmutableSet
+import io.grpc.stub.StreamObserver
+import io.spine.base.EntityState
 import io.spine.base.EventMessage
+import io.spine.base.Identifier
+import io.spine.client.ActorRequestFactory
+import io.spine.client.QueryResponse
+import io.spine.core.UserId
+import io.spine.protobuf.AnyPacker
+import io.spine.server.BoundedContext
 import io.spine.server.event.EventDispatcher
 import io.spine.server.type.EventClass
 import io.spine.server.type.EventEnvelope
@@ -46,6 +54,11 @@ public abstract class Subscriber<E : EventMessage>(
     private val eventClass: Class<E>
 ) : EventDispatcher {
 
+    private val actor = UserId
+        .newBuilder()
+        .setValue(this.javaClass.name)
+        .build()
+
     private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
 
     /**
@@ -53,6 +66,8 @@ public abstract class Subscriber<E : EventMessage>(
      */
     internal val producedEnhancements: List<CodeEnhancement>
         get() = enhancements.toList()
+
+    internal lateinit var protoDataContext: BoundedContext
 
     /**
      * Receives the event and produces a number of [CodeEnhancement]s based on the the event.
@@ -64,6 +79,10 @@ public abstract class Subscriber<E : EventMessage>(
      * `Subscriber`s
      */
     public abstract fun process(event: E): Iterable<CodeEnhancement>
+
+    protected fun <P : EntityState> select(type: Class<P>): QueryBuilder<P> {
+        return QueryBuilder(protoDataContext, type, javaClass.name)
+    }
 
     final override fun dispatch(envelope: EventEnvelope) {
         checkClass(envelope.messageClass())
@@ -89,5 +108,64 @@ public abstract class Subscriber<E : EventMessage>(
 
     final override fun domesticEventClasses(): ImmutableSet<EventClass> =
         ImmutableSet.of()
+}
+
+public class QueryBuilder<T : EntityState>(
+    private val context: BoundedContext,
+    private val type: Class<T>,
+    subscriberName: String
+) {
+
+    private val actor = UserId
+        .newBuilder()
+        .setValue(subscriberName)
+        .build()
+    private val factory = ActorRequestFactory
+        .newBuilder()
+        .setActor(actor)
+        .build()
+
+    private var id: Any? = null
+
+    public fun withId(id: Any): QueryBuilder<T> {
+        this.id = Identifier.checkSupported(id.javaClass)
+        return this
+    }
+
+    public fun execute(): Set<T> {
+        val queries = factory.query()
+        val query = if (id == null) {
+            queries.byIds(type, setOf(id))
+        } else {
+            queries.all(type)
+        }
+        val observer = Observer(type)
+        context.stand().execute(query, observer)
+        return observer.foundResult().toSet()
+    }
+
+    private class Observer<T : EntityState>(
+        private val type: Class<T>
+    ) : StreamObserver<QueryResponse> {
+
+        private var result: List<T>? = null
+
+        override fun onNext(response: QueryResponse?) {
+            response!!
+            result = response.messageList.map {
+                AnyPacker.unpack(it.state, type)
+            }
+        }
+
+        override fun onError(e: Throwable?) {
+            throw e!!
+        }
+
+        override fun onCompleted() {}
+
+        fun foundResult(): List<T> {
+            return result ?: throw IllegalStateException("Query has not yielded any result yet.")
+        }
+    }
 }
 

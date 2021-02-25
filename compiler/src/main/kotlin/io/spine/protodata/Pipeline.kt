@@ -27,12 +27,18 @@
 package io.spine.protodata
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.base.Production
 import io.spine.logging.Logging
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.protodata.subscriber.SkipEverything
 import io.spine.protodata.subscriber.Subscriber
+import io.spine.protodata.transport.PrunableTransport
+import io.spine.server.BoundedContext
+import io.spine.server.ServerEnvironment
+import io.spine.server.projection.ProjectionRepository
+import io.spine.server.storage.memory.InMemoryStorageFactory
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -49,16 +55,25 @@ import io.spine.protodata.subscriber.Subscriber
  */
 public class Pipeline(
     private val subscribers: List<Subscriber<*>>,
+    private val projections: List<ProjectionRepository<*, *, *>>,
     private val renderer: (List<CodeEnhancement>) -> Renderer,
     private val sourceSet: SourceSet,
     private val request: CodeGeneratorRequest
-) : Logging {
+) : Logging, AutoCloseable {
+
+    private var generatorContext: BoundedContext? = null
+
+    init {
+        val config = ServerEnvironment.`when`(Production::class.java)
+        config.use(PrunableTransport)
+        config.use(InMemoryStorageFactory.newInstance())
+    }
 
     /**
      * Executes the processing pipeline.
      */
     public operator fun invoke() {
-        val enhancements = processProtobuf(subscribers)
+        val enhancements = processProtobuf()
         if (SkipEverything !in enhancements) {
             val enhanced = renderer(enhancements).render(sourceSet)
             enhanced.files.forEach {
@@ -69,9 +84,17 @@ public class Pipeline(
         }
     }
 
-    private fun processProtobuf(subscribers: List<Subscriber<*>>): List<CodeEnhancement> {
-        ProtoDataContext.build(*subscribers.toTypedArray())
-        ProtobufCompilerContext.emittedEventsFor(request)
+    private fun processProtobuf(): List<CodeEnhancement> {
+        val protoDataContext = ProtoDataContext.build(projections)
+        val events = CompilerEvents.parse(request)
+        ProtobufCompilerContext.emitted(events)
+        PrunableTransport.prune()
+        generatorContext = ProtoDataGeneratorContext.build(subscribers, protoDataContext)
+        ProtobufCompilerContext.emitted(events)
         return subscribers.flatMap { it.producedEnhancements }
+    }
+
+    override fun close() {
+        generatorContext?.close()
     }
 }

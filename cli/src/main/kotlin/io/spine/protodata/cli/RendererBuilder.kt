@@ -32,14 +32,14 @@ import io.spine.protodata.subscriber.CodeEnhancement
 /**
  * A reflective builder for renderers.
  */
-internal class RendererBuilder : ReflectiveBuilder<Renderer>() {
+public class RendererBuilder : ReflectiveBuilder<Renderer>() {
 
     private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
 
     /**
      * Adds given [CodeEnhancement]s to the built renderer.
      */
-    fun add(newEnhancements: Iterable<CodeEnhancement>) : RendererBuilder {
+    public fun add(newEnhancements: Iterable<CodeEnhancement>) : RendererBuilder {
         enhancements.addAll(newEnhancements)
         return this
     }
