@@ -39,6 +39,7 @@ version = "0.0.1"
 
 subprojects {
     apply(plugin = "kotlin")
+    apply(plugin = "idea")
 
     dependencies {
         testImplementation(kotlin("test-junit5"))
