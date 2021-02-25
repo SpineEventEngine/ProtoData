@@ -110,7 +110,11 @@ public abstract class Subscriber<E : EventMessage>(
         ImmutableSet.of()
 }
 
-public class QueryBuilder<T : EntityState>(
+/**
+ * A builder for queries to the projections defined on top of the Protobuf compiler events.
+ */
+public class QueryBuilder<T : EntityState>
+internal constructor(
     private val context: BoundedContext,
     private val type: Class<T>,
     subscriberName: String
@@ -127,11 +131,17 @@ public class QueryBuilder<T : EntityState>(
 
     private var id: Any? = null
 
+    /**
+     * Selects a projection by its ID.
+     */
     public fun withId(id: Any): QueryBuilder<T> {
         this.id = Identifier.checkSupported(id.javaClass)
         return this
     }
 
+    /**
+     * Runs the query and obtains the results.
+     */
     public fun execute(): Set<T> {
         val queries = factory.query()
         val query = if (id == null) {
@@ -144,6 +154,11 @@ public class QueryBuilder<T : EntityState>(
         return observer.foundResult().toSet()
     }
 
+    /**
+     * A [StreamObserver] which listens to a single [QueryResponse].
+     *
+     * The observer persists the [found result][foundResult] as a list of messages.
+     */
     private class Observer<T : EntityState>(
         private val type: Class<T>
     ) : StreamObserver<QueryResponse> {
@@ -163,9 +178,12 @@ public class QueryBuilder<T : EntityState>(
 
         override fun onCompleted() {}
 
+        /**
+         * Obtains the found result or throws an `IllegalStateException` if the result has not been
+         * received.
+         */
         fun foundResult(): List<T> {
             return result ?: throw IllegalStateException("Query has not yielded any result yet.")
         }
     }
 }
-
