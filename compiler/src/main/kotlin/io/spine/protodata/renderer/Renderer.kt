@@ -41,7 +41,13 @@ public abstract class Renderer {
     /**
      * The code enhancements to apply to the source files.
      */
-    public lateinit var enhancements: List<CodeEnhancement>
+    public var enhancements: List<CodeEnhancement> = listOf()
+        set(value) {
+            if (field.isNotEmpty()) {
+                throw IllegalStateException("Cannot reassign `enhancements`.")
+            }
+            field = value
+        }
 
     /**
      * Processes the given `sources` in accordance with the [enhancements].
@@ -52,4 +58,3 @@ public abstract class Renderer {
      */
     public abstract fun render(sources: SourceSet): SourceSet
 }
-
