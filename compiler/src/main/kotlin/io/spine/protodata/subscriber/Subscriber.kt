@@ -80,6 +80,20 @@ public abstract class Subscriber<E : EventMessage>(
      */
     public abstract fun process(event: E): Iterable<CodeEnhancement>
 
+    /**
+     * Creates a [QueryBuilder] to find projections.
+     *
+     * If any extra context is needed, additionally to the data provided in the event, projections
+     * are the way to assemble such context.
+     *
+     * Projections are built on top of the same events that are given for processing to
+     * the subscribers. However, guaranteed to be built completely, i.e. receive all the events,
+     * before the subscribers start receiving the events. This means that the subscribers can see
+     * the "full picture" via projections.
+     *
+     * Users may create their own projections and register them in
+     * the [Pipeline][io.spine.protodata.Pipeline] via their repositories.
+     */
     protected fun <P : EntityState> select(type: Class<P>): QueryBuilder<P> {
         return QueryBuilder(protoDataContext, type, javaClass.name)
     }
