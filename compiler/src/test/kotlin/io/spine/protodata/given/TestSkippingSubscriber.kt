@@ -24,14 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.given
 
-include("compiler")
-include("cli")
+import io.spine.protodata.FileExited
+import io.spine.protodata.subscriber.CodeEnhancement
+import io.spine.protodata.subscriber.SkipEverything
+import io.spine.protodata.subscriber.Subscriber
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
+/**
+ * A subscriber which always produces the [SkipEverything] enhancement.
+ */
+class TestSkippingSubscriber: Subscriber<FileExited>(FileExited::class.java) {
+
+    override fun process(event: FileExited): Iterable<CodeEnhancement> =
+        listOf(SkipEverything)
 }

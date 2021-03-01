@@ -24,21 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata
+
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.BoolValue
-import com.google.protobuf.DescriptorProtos.FileDescriptorSet
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
-import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
-import io.spine.protodata.ProtoDataContext
-import io.spine.protodata.ProtoSourceFileProjection
-import io.spine.protodata.ProtobufCompilerContext
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.asType
-import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
-import io.spine.protodata.typeUrl
 import io.spine.testing.server.blackbox.BlackBoxContext
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -48,7 +42,7 @@ class `'ProtoData' context should` {
 
     @Test
     fun `contain 'ProtobufSource' file projection`() {
-        val ctx = ProtoDataContext.build()
+        val ctx = ProtoDataContext.builder().build()
         assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileProjection::class.java))
     }
 
@@ -56,11 +50,12 @@ class `'ProtoData' context should` {
     fun `construct 'ProtobufSource' based on a descriptor set`() {
         val ctx = BlackBoxContext.from(ProtoDataContext.builder())
         val protoDescriptor = DoctorProto.getDescriptor().toProto()
-        val set = FileDescriptorSet
+        val set = CodeGeneratorRequest
             .newBuilder()
-            .addFile(protoDescriptor)
+            .addProtoFile(protoDescriptor)
+            .addFileToGenerate(protoDescriptor.name)
             .build()
-        ProtobufCompilerContext.emittedEventsFor(set)
+        ProtobufCompilerContext.emitted(CompilerEvents.parse(set))
 
         val path = DoctorProto.getDescriptor().path()
         val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileProjection::class.java)

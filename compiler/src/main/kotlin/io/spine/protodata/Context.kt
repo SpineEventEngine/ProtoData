@@ -26,37 +26,60 @@
 
 package io.spine.protodata
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.protobuf.DescriptorProtos.FileDescriptorSet
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.base.EventMessage
 import io.spine.core.UserId
+import io.spine.protodata.subscriber.Subscriber
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.integration.ThirdPartyContext
+import io.spine.server.projection.ProjectionRepository
 
 /**
  * A factory for the `ProtoData` bounded context.
  */
-public object ProtoDataContext {
+internal object ProtoDataContext {
+
+    fun build(projections: List<ProjectionRepository<*, *, *>>): BoundedContext =
+        builder(projections).build()
 
     /**
-     * Creates the instance of the bounded context.
+     * Creates a builder of the bounded context.
      */
-    public fun build() : BoundedContext {
-        return builder().build()
+    fun builder(
+        projections: Iterable<ProjectionRepository<*, *, *>> = listOf()
+    ): BoundedContextBuilder {
+        val builder = BoundedContext
+            .singleTenant("ProtoData")
+        preparedProjections().forEach { builder.add(it) }
+        projections.forEach { builder.add(it) }
+        return builder
     }
 
-    @VisibleForTesting
-    internal fun builder(): BoundedContextBuilder {
-        return BoundedContext
-            .singleTenant("ProtoData")
-            .add(ProtoSourceFileRepository())
+    private fun preparedProjections() = listOf<ProjectionRepository<*, *, *>>(
+        ProtoSourceFileRepository()
+    )
+}
+
+internal object ProtoDataGeneratorContext {
+
+    fun build(withSubscribers: Iterable<Subscriber<*>>,
+              protoDataContext: BoundedContext): BoundedContext {
+        val builder = BoundedContext
+            .singleTenant("ProtoDataGenerator")
+
+        withSubscribers.forEach {
+            it.protoDataContext = protoDataContext
+            builder.addEventDispatcher(it)
+        }
+        return builder.build()
     }
 }
 
 /**
  * The `Protobuf Compiler` third-party bounded context.
  */
-public object ProtobufCompilerContext {
+internal object ProtobufCompilerContext {
 
     private const val NAME = "Protobuf Compiler"
 
@@ -67,10 +90,13 @@ public object ProtobufCompilerContext {
         .build()
 
     /**
-     * Produces and emits compiler events describing the given file descriptor set.
+     * Produces and emits compiler events describing the types listed in
+     * the [CodeGeneratorRequest.getFileToGenerateList].
+     *
+     * The request must contain descriptors for the files to generate, as well as for their
+     * dependencies.
      */
-    public fun emittedEventsFor(desc: FileDescriptorSet) {
-        val events = CompilerEvents.parse(desc)
+    fun emitted(events: Sequence<EventMessage>) {
         events.forEach { context.emittedEvent(it, actor) }
     }
 }

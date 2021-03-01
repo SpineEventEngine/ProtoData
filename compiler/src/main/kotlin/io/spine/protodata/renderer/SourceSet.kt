@@ -24,14 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.renderer
 
-include("compiler")
-include("cli")
+import com.google.common.collect.ImmutableSet.toImmutableSet
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.isRegularFile
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
+/**
+ * A set of source files.
+ */
+public data class SourceSet(val files: Set<SourceFile>) {
+
+    public companion object {
+
+        /**
+         * Collects a source set from a given root directory.
+         */
+        public fun fromContentsOf(directory: Path): SourceSet {
+            val files = Files
+                .walk(directory)
+                .filter { it.isRegularFile() }
+                .map { SourceFile.read(it) }
+                .collect(toImmutableSet())
+            return SourceSet(files)
+        }
     }
 }

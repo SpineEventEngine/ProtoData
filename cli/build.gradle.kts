@@ -24,14 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+plugins {
+    id("io.spine.tools.gradle.bootstrap").version("1.7.0")
+    application
+}
 
-include("compiler")
-include("cli")
+spine.enableJava().server()
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
+dependencies {
+    implementation(project(":compiler"))
+    implementation(kotlin("reflect"))
+    implementation("com.github.ajalt.clikt:clikt:3.1.0")
+}
+
+application {
+    mainClass.set("io.spine.protodata.MainKt")
 }

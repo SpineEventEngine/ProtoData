@@ -24,14 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.given
 
-include("compiler")
-include("cli")
+import io.spine.protodata.TypeEntered
+import io.spine.protodata.subscriber.CodeEnhancement
+import io.spine.protodata.subscriber.Subscriber
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
+/**
+ * A [Subscriber] to the `TypeEntered` events.
+ *
+ * Produces [AddDollar] enhancements.
+ */
+class TestSubscriber : Subscriber<TypeEntered>(TypeEntered::class.java) {
+
+    override fun process(event: TypeEntered): Iterable<CodeEnhancement> {
+        return listOf(AddDollar(event.type.name))
     }
 }

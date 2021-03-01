@@ -24,14 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.cli.given
 
-include("compiler")
-include("cli")
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.renderer.SourceSet
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
+class TestRenderer : Renderer() {
+
+    override fun render(sources: SourceSet): SourceSet {
+        var files = sources.files
+        enhancements.forEach {
+            if (it is AddUnderscore) {
+                val name = it.type.simpleName
+                files = files
+                    .map { file ->
+                        SourceFile.fromCode(
+                            file.path,
+                            file.code.replace(name, "_${name}_")
+                        )
+                    }
+                    .toSet()
+            }
+        }
+        return SourceSet(files)
     }
 }

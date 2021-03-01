@@ -24,14 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.cli
 
-include("compiler")
-include("cli")
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.subscriber.CodeEnhancement
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
+/**
+ * A reflective builder for renderers.
+ */
+public class RendererBuilder : ReflectiveBuilder<Renderer>() {
+
+    private val enhancements: MutableList<CodeEnhancement> = mutableListOf()
+
+    /**
+     * Adds given [CodeEnhancement]s to the built renderer.
+     */
+    public fun add(newEnhancements: Iterable<CodeEnhancement>) : RendererBuilder {
+        enhancements.addAll(newEnhancements)
+        return this
+    }
+
+    override fun prepareInstance(instance: Renderer) {
+        instance.enhancements = enhancements.toList()
     }
 }

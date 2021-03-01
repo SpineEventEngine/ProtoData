@@ -24,14 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.given
 
-include("compiler")
-include("cli")
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.renderer.SourceSet
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
+/**
+ * A [Renderer] for test purposes.
+ *
+ * Supports the [AddDollar] enhancement.
+ */
+class TestRenderer : Renderer() {
+
+    var called = false
+        private set
+
+    override fun render(sources: SourceSet): SourceSet {
+        called = true
+        val files = mutableListOf<SourceFile>()
+        enhancements.forEach {
+            when (it) {
+                is AddDollar -> files.addAll(enhance(it, sources.files))
+            }
+        }
+        return SourceSet(files.toSet())
     }
+
+    private fun enhance(enhancement: AddDollar, files: Iterable<SourceFile>): Sequence<SourceFile> =
+        sequence {
+            val name = enhancement.targetName.simpleName
+            files.forEach {
+                if (it.code.contains(name)) {
+                    val enhancedCode = it.code.replace(name, "$$name$")
+                    val newFile = SourceFile.fromCode(it.path, enhancedCode)
+                    yield(newFile)
+                }
+            }
+        }
 }

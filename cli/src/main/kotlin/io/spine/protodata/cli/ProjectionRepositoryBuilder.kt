@@ -24,14 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.cli
 
-include("compiler")
-include("cli")
+import io.spine.server.projection.ProjectionRepository
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
+/**
+ * A reflective builder for projection repositories.
+ */
+internal class ProjectionRepositoryBuilder: ReflectiveBuilder<ProjectionRepository<*, *, *>>()

@@ -24,47 +24,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package io.spine.protodata.renderer
 
-plugins {
-    kotlin("jvm") version "1.4.30"
-    idea
-}
+import java.nio.charset.Charset
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+import java.nio.file.StandardOpenOption.WRITE
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
-group = "io.spine.protodata"
-version = "0.0.1"
+/**
+ * A file with source code.
+ */
+public class SourceFile
+private constructor(
 
-subprojects {
-    apply(plugin = "kotlin")
-    apply(plugin = "idea")
+    /**
+     * The source code.
+     */
+    public val code: String,
 
-    dependencies {
-        testImplementation(kotlin("test-junit5"))
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
+    /**
+     * The FS path to the file.
+     */
+    public val path: Path
+) {
+
+    public companion object {
+
+        /**
+         * Reads the file from the given FS location.
+         */
+        public fun read(path: Path, charset: Charset = Charsets.UTF_8): SourceFile =
+            SourceFile(path.readText(charset), path)
+
+        /**
+         * Constructs a file from source code.
+         *
+         * @param path the FS path for the file; the file might not exist on the file system
+         * @param code the source code
+         */
+        public fun fromCode(path: Path, code: String): SourceFile = SourceFile(code, path)
     }
 
-    tasks.test {
-        useJUnitPlatform()
-
-        testLogging {
-            events = setOf(PASSED, FAILED, SKIPPED)
-            showExceptions = true
-            showCauses = true
-            showStackTraces = true
-        }
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
-        }
-    }
-
-    kotlin {
-        explicitApi()
+    /**
+     * Writes the source code into the file on the file system.
+     */
+    public fun write(charset: Charset = Charsets.UTF_8) {
+        path.writeText(code, charset, WRITE, TRUNCATE_EXISTING)
     }
 }

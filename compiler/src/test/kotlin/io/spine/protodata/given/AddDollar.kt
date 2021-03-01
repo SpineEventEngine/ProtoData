@@ -24,14 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.given
 
-include("compiler")
-include("cli")
+import io.spine.protodata.TypeName
+import io.spine.protodata.subscriber.CodeEnhancement
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
+/**
+ * A test enhancement which suggests adding the dollar sign to the name of a type.
+ */
+data class AddDollar(val targetName: TypeName) : CodeEnhancement

@@ -24,14 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.cli.given
 
-include("compiler")
-include("cli")
+import io.spine.protodata.TypeName
+import io.spine.protodata.subscriber.CodeEnhancement
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
+class AddUnderscore(val type: TypeName) : CodeEnhancement

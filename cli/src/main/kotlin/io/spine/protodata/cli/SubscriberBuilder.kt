@@ -24,14 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.cli
 
-include("compiler")
-include("cli")
+import io.spine.protodata.subscriber.Subscriber
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
+/**
+ * A reflective builder for [Subscriber]s.
+ */
+public class SubscriberBuilder: ReflectiveBuilder<Subscriber<*>>()
