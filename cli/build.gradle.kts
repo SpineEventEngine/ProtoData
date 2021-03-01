@@ -38,5 +38,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("io.spine.protodata.MainKt")
+    mainClass.set("io.spine.protodata.cli.MainKt")
 }
