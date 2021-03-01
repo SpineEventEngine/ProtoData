@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.gradle.internal.Deps
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.30"
+    id("io.spine.tools.gradle.bootstrap").version("1.7.0")
     idea
 }
 
@@ -40,10 +42,13 @@ version = "0.0.1"
 subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "idea")
+    apply(plugin = "io.spine.tools.gradle.bootstrap")
+
+    spine.enableJava().server()
 
     dependencies {
         testImplementation(kotlin("test-junit5"))
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
+        testRuntimeOnly(Deps.test.junit.runner)
     }
 
     tasks.test {

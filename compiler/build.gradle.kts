@@ -23,9 +23,3 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-plugins {
-    id("io.spine.tools.gradle.bootstrap").version("1.7.0")
-}
-
-spine.enableJava().server()
