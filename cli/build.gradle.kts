@@ -39,4 +39,5 @@ dependencies {
 
 application {
     mainClass.set("io.spine.protodata.cli.MainKt")
+    applicationName = "protodata"
 }
