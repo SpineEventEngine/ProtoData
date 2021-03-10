@@ -50,4 +50,8 @@ public data class SourceSet(val files: Set<SourceFile>) {
             return SourceSet(files)
         }
     }
+
+    public fun file(path: Path): SourceFile =
+        files.find { it.path.endsWith(path) }
+            ?: throw IllegalArgumentException("File not found: `$path`.")
 }

@@ -27,14 +27,10 @@
 package io.spine.protodata.subscriber
 
 import com.google.common.collect.ImmutableSet
-import io.grpc.stub.StreamObserver
 import io.spine.base.EntityState
 import io.spine.base.EventMessage
-import io.spine.base.Identifier
-import io.spine.client.ActorRequestFactory
-import io.spine.client.QueryResponse
 import io.spine.core.UserId
-import io.spine.protobuf.AnyPacker
+import io.spine.protodata.QueryBuilder
 import io.spine.server.BoundedContext
 import io.spine.server.event.EventDispatcher
 import io.spine.server.type.EventClass
@@ -122,82 +118,4 @@ public abstract class Subscriber<E : EventMessage>(
 
     final override fun domesticEventClasses(): ImmutableSet<EventClass> =
         ImmutableSet.of()
-}
-
-/**
- * A builder for queries to the projections defined on top of the Protobuf compiler events.
- */
-public class QueryBuilder<T : EntityState>
-internal constructor(
-    private val context: BoundedContext,
-    private val type: Class<T>,
-    subscriberName: String
-) {
-
-    private val actor = UserId
-        .newBuilder()
-        .setValue(subscriberName)
-        .build()
-    private val factory = ActorRequestFactory
-        .newBuilder()
-        .setActor(actor)
-        .build()
-
-    private var id: Any? = null
-
-    /**
-     * Selects a projection by its ID.
-     */
-    public fun withId(id: Any): QueryBuilder<T> {
-        this.id = Identifier.checkSupported(id.javaClass)
-        return this
-    }
-
-    /**
-     * Runs the query and obtains the results.
-     */
-    public fun execute(): Set<T> {
-        val queries = factory.query()
-        val query = if (id == null) {
-            queries.byIds(type, setOf(id))
-        } else {
-            queries.all(type)
-        }
-        val observer = Observer(type)
-        context.stand().execute(query, observer)
-        return observer.foundResult().toSet()
-    }
-
-    /**
-     * A [StreamObserver] which listens to a single [QueryResponse].
-     *
-     * The observer persists the [found result][foundResult] as a list of messages.
-     */
-    private class Observer<T : EntityState>(
-        private val type: Class<T>
-    ) : StreamObserver<QueryResponse> {
-
-        private var result: List<T>? = null
-
-        override fun onNext(response: QueryResponse?) {
-            response!!
-            result = response.messageList.map {
-                AnyPacker.unpack(it.state, type)
-            }
-        }
-
-        override fun onError(e: Throwable?) {
-            throw e!!
-        }
-
-        override fun onCompleted() {}
-
-        /**
-         * Obtains the found result or throws an `IllegalStateException` if the result has not been
-         * received.
-         */
-        fun foundResult(): List<T> {
-            return result ?: throw IllegalStateException("Query has not yielded any result yet.")
-        }
-    }
 }

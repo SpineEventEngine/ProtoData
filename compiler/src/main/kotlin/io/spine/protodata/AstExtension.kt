@@ -24,11 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:JvmName("Ast")
+
 package io.spine.protodata
 
+import com.google.protobuf.BoolValue
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
+import com.google.protobuf.Message
+import com.google.protobuf.StringValue
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Obtains the package and the name of the type.
@@ -92,6 +99,63 @@ public fun Field.isRepeated(): Boolean = isMap() || isList()
  * If the field is a part of a `oneof`, the `Field.oneof_name` contains the name of that `oneof`.
  */
 public fun Field.isPartOfOneof(): Boolean = hasOneofName()
+
+public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>): T? {
+    val value = firstOrNull { it.name == optionName }?.value
+    return value?.unpack(cls)
+}
+
+public fun MessageType.javaFile(declaredIn: File): Path {
+    val packageName = declaredIn.optionList.find("java_package", StringValue::class.java)
+        ?.value
+        ?: declaredIn.packageName
+    val javaMultipleFiles = declaredIn.optionList.find("java_multiple_files", BoolValue::class.java)
+        ?.value
+        ?: false
+    val topLevelClassName = if (javaMultipleFiles) {
+        name.simpleName
+    } else {
+        val outerClass =  declaredIn.optionList.find("java_outer_classname", StringValue::class.java)
+            ?.value
+            ?: "${declaredIn.nameWithoutExtension().CamelCase()}OuterClass"
+        outerClass
+    }
+    return Paths.get(packageName.replace('.', '/'), "$topLevelClassName.java")
+}
+
+public fun MessageType.javaClassName(declaredIn: File): String {
+    val packageName = declaredIn.optionList.find("java_package", StringValue::class.java)
+        ?.value
+        ?: declaredIn.packageName
+    val javaMultipleFiles = declaredIn.optionList.find("java_multiple_files", BoolValue::class.java)
+        ?.value
+        ?: false
+    val className = if (javaMultipleFiles) {
+        name.simpleName
+    } else {
+        val outerClass =  declaredIn.optionList.find("java_outer_classname", StringValue::class.java)
+            ?.value
+            ?: "${declaredIn.nameWithoutExtension().CamelCase()}OuterClass"
+        "${outerClass}.${name.simpleName}"
+    }
+    return "${packageName}.${className}"
+}
+
+private fun String.CamelCase(): String =
+    split("_")
+        .filter { it.isNotBlank() }
+        .joinToString { it.capitalize() }
+
+
+private fun File.nameWithoutExtension(): String {
+    val name = path.value.split("/").last()
+    val index = name.indexOf(".")
+    return if (index > 0) {
+        name.substring(0, index)
+    } else {
+        name
+    }
+}
 
 /**
  * Obtains the name of this `oneof` as a [OneofName].
