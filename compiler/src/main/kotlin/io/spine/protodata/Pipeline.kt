@@ -76,17 +76,21 @@ public class Pipeline(
     public operator fun invoke() {
         protoDataContext = ProtoDataContext.build(projections)
         val enhancements = processProtobuf(protoDataContext)
-        if (enhancements.isEmpty()) {
-            _info().log("No code enhancements produced.")
-        } else if (SkipEverything !in enhancements) {
-            val renderer = renderer(enhancements)
-            renderer.protoDataContext = protoDataContext
-            val enhanced = renderer.render(sourceSet)
-            enhanced.files.forEach {
-                it.write()
+        when {
+            enhancements.isEmpty() -> _info().log(
+                "No code enhancements produced."
+            )
+            SkipEverything in enhancements -> _info().log(
+                "Skipping everything. ${enhancements.size - 1} code enhancements ignored."
+            )
+            else -> {
+                val renderer = renderer(enhancements)
+                renderer.protoDataContext = protoDataContext
+                val enhanced = renderer.render(sourceSet)
+                enhanced.files.forEach {
+                    it.write()
+                }
             }
-        } else {
-            _info().log("Skipping everything. ${enhancements.size - 1} code enhancements ignored.")
         }
     }
 
