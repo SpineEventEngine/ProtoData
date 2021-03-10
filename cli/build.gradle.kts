@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.gradle.internal.Deps
+
 plugins {
     application
 }
@@ -32,6 +34,8 @@ dependencies {
     implementation(project(":compiler"))
     implementation(kotlin("reflect"))
     implementation("com.github.ajalt.clikt:clikt:3.1.0")
+
+    implementation(Deps.build.flogger.lib)
 }
 
 application {

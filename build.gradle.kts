@@ -34,15 +34,14 @@ plugins {
     kotlin("jvm") version "1.4.30"
     id("io.spine.tools.gradle.bootstrap").version("1.7.0")
     idea
+    `maven-publish`
 }
-
-group = "io.spine.protodata"
-version = "0.0.1"
 
 subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "idea")
     apply(plugin = "io.spine.tools.gradle.bootstrap")
+    apply(plugin = "maven-publish")
 
     spine.enableJava().server()
 
@@ -71,5 +70,17 @@ subprojects {
 
     kotlin {
         explicitApi()
+    }
+
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                groupId = "io.spine.protodata"
+                artifactId = project.name
+                version = "0.0.1"
+
+                from(components["java"])
+            }
+        }
     }
 }

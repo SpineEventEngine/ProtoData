@@ -24,6 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.gradle.internal.IncrementGuard
+plugins {
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+}
 
-apply<IncrementGuard>()
+tasks.jar {
+
+    manifest {
+        attributes(mapOf("Main-Class" to "io.spine.protodata.protoc.Plugin"))
+    }
+    // Assemble "Fat-JAR" artifact containing all the dependencies.
+    from(configurations.runtimeClasspath.get().map {
+        when {
+            it.isDirectory -> it
+            else -> zipTree(it)
+        }
+    })
+
+    archiveBaseName.set("protodatac")
+    // We should provide a classifier or else Protobuf Gradle plugin will substitute it with
+    // an OS-specific one.
+    archiveClassifier.set("exe")
+}
