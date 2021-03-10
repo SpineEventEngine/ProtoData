@@ -141,6 +141,7 @@ public fun MessageType.javaClassName(declaredIn: File): String {
     return "${packageName}.${className}"
 }
 
+@Suppress("FunctionName") // Demonstrates the CamelCase example.
 private fun String.CamelCase(): String =
     split("_")
         .filter { it.isNotBlank() }
