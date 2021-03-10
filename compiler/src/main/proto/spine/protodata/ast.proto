@@ -116,7 +116,16 @@ message MessageType {
     repeated Option option = 4;
 
     // Path to the file which declares this type.
-    FilePath declared_in = 5;
+    FilePath file = 5;
+
+    // Name of the message type which hosts the declaration of this type.
+    TypeName declared_in = 6;
+
+    // Message type declarations nested inside this type.
+    repeated MessageType nested_messages = 7;
+
+    // Enum type declarations nested inside this type.
+    repeated EnumType nested_enums = 8;
 }
 
 // A Protobuf enum type.

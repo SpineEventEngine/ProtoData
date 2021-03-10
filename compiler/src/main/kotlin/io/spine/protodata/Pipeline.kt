@@ -61,7 +61,8 @@ public class Pipeline(
     private val request: CodeGeneratorRequest
 ) : Logging, AutoCloseable {
 
-    private var generatorContext: BoundedContext? = null
+    private lateinit var generatorContext: BoundedContext
+    private lateinit var protoDataContext: BoundedContext
 
     init {
         val config = ServerEnvironment.`when`(Production::class.java)
@@ -73,9 +74,14 @@ public class Pipeline(
      * Executes the processing pipeline.
      */
     public operator fun invoke() {
-        val enhancements = processProtobuf()
-        if (SkipEverything !in enhancements) {
-            val enhanced = renderer(enhancements).render(sourceSet)
+        protoDataContext = ProtoDataContext.build(projections)
+        val enhancements = processProtobuf(protoDataContext)
+        if (enhancements.isEmpty()) {
+            _info().log("No code enhancements produced.")
+        } else if (SkipEverything !in enhancements) {
+            val renderer = renderer(enhancements)
+            renderer.protoDataContext = protoDataContext
+            val enhanced = renderer.render(sourceSet)
             enhanced.files.forEach {
                 it.write()
             }
@@ -84,8 +90,7 @@ public class Pipeline(
         }
     }
 
-    private fun processProtobuf(): List<CodeEnhancement> {
-        val protoDataContext = ProtoDataContext.build(projections)
+    private fun processProtobuf(protoDataContext: BoundedContext): List<CodeEnhancement> {
         val events = CompilerEvents.parse(request)
         ProtobufCompilerContext.emitted(events)
         PrunableTransport.prune()
@@ -95,6 +100,7 @@ public class Pipeline(
     }
 
     override fun close() {
-        generatorContext?.close()
+        generatorContext.close()
+        protoDataContext.close()
     }
 }

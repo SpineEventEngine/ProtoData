@@ -110,16 +110,20 @@ internal object CompilerEvents {
             .setPackageName(descriptor.`package`)
             .setSyntax(descriptor.syntax.toSyntaxVersion())
             .build()
-
         yield(
             FileEntered
                 .newBuilder()
                 .setFile(file)
                 .build()
         )
-
+        produceOptionEvents(descriptor.options) {
+            FileOptionDiscovered
+                .newBuilder()
+                .setFile(path)
+                .setOption(it)
+                .build()
+        }
         descriptor.messageTypes.forEach { produceMessageEvents(file, it) }
-
         yield(
             FileExited
                 .newBuilder()
@@ -149,7 +153,7 @@ internal object CompilerEvents {
         val type = MessageType
             .newBuilder()
             .setName(typeName)
-            .setDeclaredIn(path)
+            .setFile(path)
             .build()
         yield(
             TypeEntered
@@ -200,7 +204,7 @@ internal object CompilerEvents {
         yield(
             OneofGroupEntered
                 .newBuilder()
-                .setFile(type.declaredIn)
+                .setFile(type.file)
                 .setType(type.name)
                 .setGroup(oneofGroup)
                 .build()
@@ -208,7 +212,7 @@ internal object CompilerEvents {
         produceOptionEvents(descriptor.options) {
             OneofOptionDiscovered
                 .newBuilder()
-                .setFile(type.declaredIn)
+                .setFile(type.file)
                 .setType(type.name)
                 .setGroup(oneofName)
                 .setOption(it)
@@ -218,7 +222,7 @@ internal object CompilerEvents {
         yield(
             OneofGroupExited
                 .newBuilder()
-                .setFile(type.declaredIn)
+                .setFile(type.file)
                 .setType(type.name)
                 .setGroup(oneofName)
                 .build()
@@ -247,7 +251,7 @@ internal object CompilerEvents {
         yield(
             FieldEntered
                 .newBuilder()
-                .setFile(type.declaredIn)
+                .setFile(type.file)
                 .setType(type.name)
                 .setField(field)
                 .build()
@@ -256,7 +260,7 @@ internal object CompilerEvents {
         produceOptionEvents(descriptor.options) {
             FieldOptionDiscovered
                 .newBuilder()
-                .setFile(type.declaredIn)
+                .setFile(type.file)
                 .setType(type.name)
                 .setField(fieldName)
                 .setOption(it)
@@ -266,7 +270,7 @@ internal object CompilerEvents {
         yield(
             FieldExited
                 .newBuilder()
-                .setFile(type.declaredIn)
+                .setFile(type.file)
                 .setType(type.name)
                 .setField(fieldName)
                 .build()

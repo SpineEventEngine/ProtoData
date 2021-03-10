@@ -21,7 +21,7 @@ message Journey {
 
     oneof crew {
         google.protobuf.Empty alone = 3;
-        Sidekick sidekick = 4;
+        Sidekick sidekick = 4 [(validate) = true];
     }
 
     Incarnation incarnation = 5;
