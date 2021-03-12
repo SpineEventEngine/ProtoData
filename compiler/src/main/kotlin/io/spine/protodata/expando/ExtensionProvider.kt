@@ -24,11 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata.expando
 
-import io.spine.protodata.subscriber.Subscriber
+import com.google.protobuf.ExtensionRegistry
 
-/**
- * A reflective builder for [Subscriber]s.
- */
-internal class SubscriberBuilder: ReflectiveBuilder<Subscriber<*>>()
+public interface ExtensionProvider {
+
+    public fun dumpTo(registry: ExtensionRegistry)
+}

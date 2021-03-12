@@ -97,6 +97,8 @@ internal object ProtobufCompilerContext {
      * dependencies.
      */
     fun emitted(events: Sequence<EventMessage>) {
-        events.forEach { context.emittedEvent(it, actor) }
+        events.forEach {
+            context.emittedEvent(it, actor)
+        }
     }
 }

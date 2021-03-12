@@ -26,6 +26,7 @@
 
 package io.spine.protodata
 
+import com.google.common.flogger.LazyArgs.lazy
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.Production
 import io.spine.logging.Logging
@@ -76,22 +77,27 @@ public class Pipeline(
     public operator fun invoke() {
         protoDataContext = ProtoDataContext.build(projections)
         val enhancements = processProtobuf(protoDataContext)
-        when {
-            enhancements.isEmpty() -> _info().log(
-                "No code enhancements produced."
-            )
-            SkipEverything in enhancements -> _info().log(
-                "Skipping everything. ${enhancements.size - 1} code enhancements ignored."
-            )
-            else -> {
-                val renderer = renderer(enhancements)
-                renderer.protoDataContext = protoDataContext
-                val enhanced = renderer.render(sourceSet)
-                enhanced.files.forEach {
-                    it.write()
-                }
+        if (SkipEverything in enhancements) {
+            _info().log("Skipping everything. ${enhancements.size - 1} code enhancements ignored.")
+        } else {
+            logEnhancements(enhancements)
+            val renderer = renderer(enhancements)
+            renderer.protoDataContext = protoDataContext
+            val enhanced = renderer.render(sourceSet)
+            enhanced.files.forEach {
+                it.write()
             }
         }
+    }
+
+    private fun logEnhancements(enhancements: List<CodeEnhancement>) {
+        _info().log("%s code enhancements produced.", lazy {
+            if (enhancements.isNotEmpty()) {
+                "${enhancements.size}"
+            } else {
+                "No"
+            }
+        })
     }
 
     private fun processProtobuf(protoDataContext: BoundedContext): List<CodeEnhancement> {

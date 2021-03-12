@@ -26,14 +26,17 @@
 
 package io.spine.protodata
 
+import com.google.common.collect.Iterables.getOnlyElement
 import io.grpc.stub.StreamObserver
 import io.spine.base.EntityState
-import io.spine.base.Identifier
+import io.spine.base.Identifier.checkSupported
 import io.spine.client.ActorRequestFactory
+import io.spine.client.Query
 import io.spine.client.QueryResponse
 import io.spine.core.UserId
 import io.spine.protobuf.AnyPacker
 import io.spine.server.BoundedContext
+import java.util.*
 
 /**
  * A builder for queries to the projections defined on top of the Protobuf compiler events.
@@ -52,61 +55,91 @@ internal constructor(
         .setActor(actor)
         .build()
 
-    private var id: Any? = null
-
     /**
      * Selects a projection by its ID.
      */
-    public fun withId(id: Any): QueryBuilder<T> {
-        this.id = Identifier.checkSupported(id.javaClass)
-        return this
+    public fun withId(id: Any): SingleCastQuery<T> {
+        checkSupported(id.javaClass)
+        return SingleCastQuery(context, buildQuery(id), type)
     }
 
-    /**
-     * Runs the query and obtains the results.
-     */
-    public fun execute(): Set<T> {
+    public fun all(): MulticastQuery<T> {
+        return MulticastQuery(context, buildQuery(), type)
+    }
+
+    private fun buildQuery(id: Any? = null): Query {
         val queries = factory.query()
-        val query = if (id == null) {
-            queries.byIds(type, setOf(id))
-        } else {
+        return if (id == null) {
             queries.all(type)
+        } else {
+            queries.byIds(type, setOf(id))
         }
-        val observer = Observer(type)
-        context.stand().execute(query, observer)
-        return observer.foundResult().toSet()
+    }
+}
+
+public class MulticastQuery<T : EntityState>(
+    private val context: BoundedContext,
+    private val query: Query,
+    private val type: Class<T>
+) {
+
+    public fun execute(): Set<T> = executeQuery(context, query, type)
+}
+
+public class SingleCastQuery<T: EntityState>(
+    private val context: BoundedContext,
+    private val query: Query,
+    private val type: Class<T>
+) {
+
+    public fun execute(): Optional<T> {
+        val result = executeQuery(context, query, type)
+        return if (result.isEmpty()) {
+            Optional.empty()
+        } else {
+            val value = getOnlyElement(result)
+            Optional.of(value)
+        }
+    }
+}
+
+private fun <T: EntityState>
+        executeQuery(context: BoundedContext, query: Query, type: Class<T>): Set<T> {
+    val observer = Observer(type)
+    context.stand().execute(query, observer)
+    return observer.foundResult().toSet()
+}
+
+
+/**
+ * A [StreamObserver] which listens to a single [QueryResponse].
+ *
+ * The observer persists the [found result][foundResult] as a list of messages.
+ */
+private class Observer<T : EntityState>(
+    private val type: Class<T>
+) : StreamObserver<QueryResponse> {
+
+    private var result: List<T>? = null
+
+    override fun onNext(response: QueryResponse?) {
+        response!!
+        result = response.messageList.map {
+            AnyPacker.unpack(it.state, type)
+        }
     }
 
+    override fun onError(e: Throwable?) {
+        throw e!!
+    }
+
+    override fun onCompleted() {}
+
     /**
-     * A [StreamObserver] which listens to a single [QueryResponse].
-     *
-     * The observer persists the [found result][foundResult] as a list of messages.
+     * Obtains the found result or throws an `IllegalStateException` if the result has not been
+     * received.
      */
-    private class Observer<T : EntityState>(
-        private val type: Class<T>
-    ) : StreamObserver<QueryResponse> {
-
-        private var result: List<T>? = null
-
-        override fun onNext(response: QueryResponse?) {
-            response!!
-            result = response.messageList.map {
-                AnyPacker.unpack(it.state, type)
-            }
-        }
-
-        override fun onError(e: Throwable?) {
-            throw e!!
-        }
-
-        override fun onCompleted() {}
-
-        /**
-         * Obtains the found result or throws an `IllegalStateException` if the result has not been
-         * received.
-         */
-        fun foundResult(): List<T> {
-            return result ?: throw IllegalStateException("Query has not yielded any result yet.")
-        }
+    fun foundResult(): List<T> {
+        return result ?: throw IllegalStateException("Query has not yielded any result yet.")
     }
 }

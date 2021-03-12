@@ -35,7 +35,7 @@ import kotlin.reflect.KVisibility
  * The class is loaded via a `ClassLoader` and an instance is created. It is expected that
  * the class has a `public` constructor with no parameters.
  */
-public open class ReflectiveBuilder<T: Any> {
+internal open class ReflectiveBuilder<T: Any> {
 
     /**
      * Creates an instance of `T`.
@@ -46,7 +46,7 @@ public open class ReflectiveBuilder<T: Any> {
      * @param className name of the concrete class to instantiate
      * @param classLoader the [ClassLoader] to load the class by its name
      */
-    public fun createByName(className: String, classLoader: ClassLoader): T {
+    fun createByName(className: String, classLoader: ClassLoader): T {
         val cls = classLoader.loadClass(className).kotlin
         @Suppress("UNCHECKED_CAST")
         val tClass = cls as KClass<T>

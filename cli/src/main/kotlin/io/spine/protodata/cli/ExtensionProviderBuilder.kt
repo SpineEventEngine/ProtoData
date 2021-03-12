@@ -26,9 +26,9 @@
 
 package io.spine.protodata.cli
 
-import io.spine.protodata.subscriber.Subscriber
+import io.spine.protodata.expando.ExtensionProvider
 
 /**
- * A reflective builder for [Subscriber]s.
+ * A reflective builder for [ExtensionProvider]s.
  */
-internal class SubscriberBuilder: ReflectiveBuilder<Subscriber<*>>()
+internal class ExtensionProviderBuilder: ReflectiveBuilder<ExtensionProvider>()

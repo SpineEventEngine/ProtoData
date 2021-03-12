@@ -46,10 +46,13 @@ class TestQueryingSubscriber : Subscriber<FileEntered>(FileEntered::class.java) 
     val files = mutableListOf<ProtobufSourceFile>()
 
     override fun process(event: FileEntered): Iterable<CodeEnhancement> {
+        val path = event.file.path
         val file = select(ProtobufSourceFile::class.java)
-            .withId(event.file.path)
+            .withId(path)
             .execute()
-            .first()
+            .orElseThrow {
+                IllegalStateException("`ProtobufSourceFile` with path `$path` not found.")
+            }
         files.add(file)
         return emptyList()
     }

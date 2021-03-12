@@ -34,8 +34,10 @@ import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
 import com.google.common.annotations.VisibleForTesting
+import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.Pipeline
+import io.spine.protodata.expando.ExtensionProvider
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.subscriber.CodeEnhancement
@@ -83,20 +85,27 @@ private class Run : CliktCommand() {
         The name of a Java class, a subtype of `${Subscriber::class.qualifiedName}`.
         There can be multiple subscribers. To pass more then one value, type:
         
-             <...> -s com.foo.Bar -s com.foo.Baz
+           <...> -s com.foo.Bar -s com.foo.Baz
         
     """.trimIndent()).multiple(required = true)
     val projections: List<String> by option("--projection", "-p", help = """
         The name of a Java class, a subtype of `${ProjectionRepository::class.qualifiedName}`.
         There can be multiple projections. To pass more then one value, type:
         
-             <...> -p com.foo.BarRepository -p com.foo.BazRepository
+           <...> -p com.foo.BarRepository -p com.foo.BazRepository
         
     """.trimIndent()).multiple()
     val renderer: String by option("--renderer", "-r", help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
         There can only be one renderer command line per call.
     """.trimIndent()).required()
+    val extensionProviders: List<String> by option("--extension", "-x", help = """
+        The name of a Java class, a subtype of `${ExtensionProvider::class.qualifiedName}`.
+        There can be multiple providers. To pass more then one value, type:
+        
+           <...> -x com.foo.TypeOptionsProvider -p com.foo.FieldOptionsProvider
+        
+    """.trimIndent()).multiple()
     val codegenRequestFile: File by option("--request", "-t", help =
     "The path to the binary file containing a serialized instance of " +
             "`${CodeGeneratorRequest.getDescriptor().name}`."
@@ -130,10 +139,14 @@ private class Run : CliktCommand() {
         val classLoader = loadExtraClasspath()
         val subscribers = loadSubscribers(classLoader)
         val projections = loadProjections(classLoader)
+        val extensions = loadExtensions(classLoader)
         val renderer = { enhancements: List<CodeEnhancement> -> loadRenderer(enhancements, classLoader) }
         val sourceSet = SourceSet.fromContentsOf(sourceRoot)
+
+        val registry = ExtensionRegistry.newInstance()
+        extensions.forEach { it.dumpTo(registry) }
         val codegenRequest = codegenRequestFile.inputStream().use {
-            CodeGeneratorRequest.parseFrom(it)
+            CodeGeneratorRequest.parseFrom(it, registry)
         }
         Pipeline(subscribers, projections, renderer, sourceSet, codegenRequest).use {
             it()
@@ -163,6 +176,13 @@ private class Run : CliktCommand() {
         val subscriberBuilder = ProjectionRepositoryBuilder()
         return projections.map {
             subscriberBuilder.createByName(it, classLoader)
+        }
+    }
+
+    private fun loadExtensions(classLoader: ClassLoader): List<ExtensionProvider> {
+        val extensionBuilder = ExtensionProviderBuilder()
+        return extensionProviders.map {
+            extensionBuilder.createByName(it, classLoader)
         }
     }
 
