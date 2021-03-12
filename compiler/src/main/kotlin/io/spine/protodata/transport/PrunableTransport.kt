@@ -38,18 +38,25 @@ import io.spine.server.transport.Subscriber
 import io.spine.server.transport.TransportFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 
+private val transportDelegate = InMemoryTransportFactory.newInstance()
+
 /**
  * A [TransportFactory] which can clear all its channels.
  *
  * Delivery always happens in memory in the calling thread (synchronously).
  */
-internal object PrunableTransport
-    : TransportFactory by InMemoryTransportFactory.newInstance() {
+internal object PrunableTransport : TransportFactory by transportDelegate {
 
     private val subscribers: Multimap<ChannelId, Subscriber> = HashMultimap.create()
 
     override fun createPublisher(id: ChannelId): Publisher {
         return LocalPublisher(id, subscribers)
+    }
+
+    override fun createSubscriber(id: ChannelId): Subscriber {
+        val subscriber = transportDelegate.createSubscriber(id)
+        subscribers.put(id, subscriber)
+        return subscriber
     }
 
     /**
@@ -59,6 +66,11 @@ internal object PrunableTransport
      */
     fun prune() {
         subscribers.clear()
+    }
+
+    override fun close() {
+        transportDelegate.close()
+        prune()
     }
 }
 
@@ -71,7 +83,8 @@ private class LocalPublisher(
 ) : Publisher {
 
     override fun publish(messageId: Any, message: ExternalMessage): Ack {
-        subscribers[id].forEach {
+        val subscribers = subscribers[id]
+        subscribers.forEach {
             it.onMessage(message)
         }
         return acknowledge(messageId)
