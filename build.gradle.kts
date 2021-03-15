@@ -77,10 +77,13 @@ subprojects {
             maven {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/SpineEventEngine/ProtoData")
-                authentication {
-                    create<HttpHeaderAuthentication>(
-                        "authorization: Bearer ${System.getenv("GITHUB_TOKEN")}"
-                    )
+
+                credentials {
+                    // This is a trick. Gradle only supports password or AWS credentials. Thus,
+                    // we pass the GitHub token as a "password".
+                    // https://docs.github.com/en/actions/guides/publishing-java-packages-with-gradle#publishing-packages-to-github-packages
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
                 }
             }
         }
