@@ -45,6 +45,11 @@ subprojects {
 
     spine.enableJava().server()
 
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
     dependencies {
         testImplementation(kotlin("test-junit5"))
         testRuntimeOnly(Deps.test.junit.runner)
