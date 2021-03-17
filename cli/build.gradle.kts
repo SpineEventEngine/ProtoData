@@ -42,3 +42,11 @@ application {
     mainClass.set("io.spine.protodata.cli.MainKt")
     applicationName = "protodata"
 }
+
+val distZip: Zip by tasks.getting(Zip::class) {
+    archiveClassifier.set("exe")
+}
+
+artifacts {
+    archives(distZip)
+}
