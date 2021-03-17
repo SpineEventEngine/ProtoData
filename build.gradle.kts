@@ -25,16 +25,28 @@
  */
 
 import io.spine.gradle.internal.Deps
+import io.spine.gradle.internal.PublishingRepos
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.30"
+    id("org.jetbrains.dokka") version "1.4.30"
     id("io.spine.tools.gradle.bootstrap").version("1.7.0")
     idea
-    `maven-publish`
+}
+
+extra.apply {
+    this["groupId"] = "io.spine.protodata"
+    this["publishToRepository"] = PublishingRepos.cloudRepo
+    this["projectsToPublish"] = listOf(
+        "cli",
+        "compiler",
+        "protoc"
+    )
 }
 
 subprojects {
@@ -42,6 +54,7 @@ subprojects {
     apply(plugin = "idea")
     apply(plugin = "io.spine.tools.gradle.bootstrap")
     apply(plugin = "maven-publish")
+    apply(plugin = "org.jetbrains.dokka")
 
     spine.enableJava().server()
 
@@ -66,6 +79,10 @@ subprojects {
         }
     }
 
+    kotlin {
+        explicitApi()
+    }
+
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
@@ -73,19 +90,21 @@ subprojects {
         }
     }
 
-    kotlin {
-        explicitApi()
+    tasks.create("sourceJar", Jar::class) {
+        from(sourceSets["main"].allSource)
+        archiveClassifier.set("sources")
     }
 
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                groupId = "io.spine.protodata"
-                artifactId = project.name
-                version = "0.0.1"
+    tasks.create("testOutputJar", Jar::class) {
+        from(sourceSets["test"].output)
+        archiveClassifier.set("test")
+    }
 
-                from(components["java"])
-            }
-        }
+    val dokkaJavadoc by tasks.getting(DokkaTask::class)
+
+    tasks.register("javadocJar", Jar::class) {
+        from(dokkaJavadoc.outputDirectory)
+        archiveClassifier.set("javadoc")
+        dependsOn(dokkaJavadoc)
     }
 }
