@@ -24,10 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    id("com.github.johnrengelman.shadow") version "6.1.0"
-}
-
 tasks.jar {
 
     manifest {

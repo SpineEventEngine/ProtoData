@@ -40,20 +40,24 @@ plugins {
 }
 
 extra.apply {
-    this["groupId"] = "io.spine.protodata"
-    this["publishToRepository"] = PublishingRepos.cloudRepo
+    this["publishToRepository"] = PublishingRepos.gitHub("ProtoData")
     this["projectsToPublish"] = listOf(
         "cli",
         "compiler",
         "protoc"
     )
+    this["spinePrefix"] = false
+}
+
+allprojects {
+    group = "io.spine.protodata"
+    version = "0.0.1"
 }
 
 subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "idea")
     apply(plugin = "io.spine.tools.gradle.bootstrap")
-    apply(plugin = "maven-publish")
     apply(plugin = "org.jetbrains.dokka")
 
     spine.enableJava().server()
@@ -108,3 +112,5 @@ subprojects {
         dependsOn(dokkaJavadoc)
     }
 }
+
+apply(Deps.scripts.publish(project))
