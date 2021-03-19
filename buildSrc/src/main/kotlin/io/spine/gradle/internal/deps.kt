@@ -87,8 +87,8 @@ data class Repository(
  * Password credentials for a Maven repository.
  */
 data class Credentials(
-    val username: String,
-    val password: String
+    val username: String?,
+    val password: String?
 )
 
 /**
@@ -109,7 +109,7 @@ object PublishingRepos {
         credentialsFile = "cloudrepo.properties"
     )
 
-    fun gitHub(repoName: String) {
+    fun gitHub(repoName: String): Repository {
         return Repository(
             releases = "https://maven.pkg.github.com/SpineEventEngine/$repoName",
             snapshots = "https://maven.pkg.github.com/SpineEventEngine/$repoName",
