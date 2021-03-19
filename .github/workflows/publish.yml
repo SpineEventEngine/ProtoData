@@ -1,7 +1,6 @@
-name: Build
+name: Publish
 
 on: push
-#    branches: [master]
 
 jobs:
   publish:
