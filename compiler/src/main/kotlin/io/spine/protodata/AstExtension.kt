@@ -100,46 +100,61 @@ public fun Field.isRepeated(): Boolean = isMap() || isList()
  */
 public fun Field.isPartOfOneof(): Boolean = hasOneofName()
 
+/**
+ * Looks up an option value by the [optionName].
+ *
+ * @return the value of the option or a `null` if the option is not found
+ */
 public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>): T? {
     val value = firstOrNull { it.name == optionName }?.value
     return value?.unpack(cls)
 }
 
+/**
+ * Obtains the path to the `.java` file, generated from this message.
+ *
+ * The class which represents this message might not be the top level class of the Java file.
+ */
 public fun MessageType.javaFile(declaredIn: File): Path {
-    val packageName = declaredIn.optionList.find("java_package", StringValue::class.java)
-        ?.value
-        ?: declaredIn.packageName
-    val javaMultipleFiles = declaredIn.optionList.find("java_multiple_files", BoolValue::class.java)
-        ?.value
-        ?: false
+    val packageName = declaredIn.javaPackage()
+    val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val topLevelClassName = if (javaMultipleFiles) {
         name.simpleName
     } else {
-        val outerClass =  declaredIn.optionList.find("java_outer_classname", StringValue::class.java)
-            ?.value
-            ?: "${declaredIn.nameWithoutExtension().CamelCase()}OuterClass"
-        outerClass
+        declaredIn.javaOuterClassName()
     }
     return Paths.get(packageName.replace('.', '/'), "$topLevelClassName.java")
 }
 
+/**
+ * Obtains the full name of the Java class, generated from this message.
+ */
 public fun MessageType.javaClassName(declaredIn: File): String {
-    val packageName = declaredIn.optionList.find("java_package", StringValue::class.java)
-        ?.value
-        ?: declaredIn.packageName
-    val javaMultipleFiles = declaredIn.optionList.find("java_multiple_files", BoolValue::class.java)
-        ?.value
-        ?: false
+    val packageName = declaredIn.javaPackage()
+    val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val className = if (javaMultipleFiles) {
         name.simpleName
     } else {
-        val outerClass =  declaredIn.optionList.find("java_outer_classname", StringValue::class.java)
-            ?.value
-            ?: "${declaredIn.nameWithoutExtension().CamelCase()}OuterClass"
+        val outerClass =  declaredIn.javaOuterClassName()
         "${outerClass}.${name.simpleName}"
     }
     return "${packageName}.${className}"
 }
+
+private fun File.javaPackage() =
+    optionList.find("java_package", StringValue::class.java)
+        ?.value
+        ?: packageName
+
+private fun File.javaMultipleFiles() =
+    optionList.find("java_multiple_files", BoolValue::class.java)
+        ?.value
+        ?: false
+
+private fun File.javaOuterClassName() =
+    optionList.find("java_outer_classname", StringValue::class.java)
+        ?.value
+        ?: "${nameWithoutExtension().CamelCase()}OuterClass"
 
 @Suppress("FunctionName") // Demonstrates the CamelCase example.
 private fun String.CamelCase(): String =
