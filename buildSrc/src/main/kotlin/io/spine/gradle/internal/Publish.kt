@@ -56,12 +56,10 @@ import org.gradle.kotlin.dsl.setProperty
  * Apply this plugin to the root project. Specify the projects which produce publishable artifacts
  * and the target Maven repositories via the `publishing` DSL:
  * ```
- * import io.spine.gradle.internal.Publish
  * import io.spine.gradle.internal.PublishingRepos
+ * import io.spine.gradle.internal.spinePublishing
  *
- * apply<Publish>()
- *
- * publishing {
+ * spinePublishing {
  *     projectsToPublish.addAll(
  *         "submodule1",
  *         "submodule2",
@@ -93,14 +91,16 @@ class Publish : Plugin<Project> {
     companion object {
 
         const val taskName = "publish"
+        const val extensionName = "spinePublishing"
 
         private const val ARCHIVES = "archives"
     }
 
     override fun apply(project: Project) {
         val extension = PublishExtension.create(project)
-        project.extensions.add(PublishExtension::class.java, "publishing", extension)
+        project.extensions.add(PublishExtension::class.java, extensionName, extension)
 
+        val publish = project.createPublishTask()
         val checkCredentials = project.createCheckTask(extension)
 
         project.afterEvaluate {
@@ -108,27 +108,29 @@ class Publish : Plugin<Project> {
                 .get()
                 .map { project.project(it) }
                 .forEach { p ->
-                    apply(plugin = "maven-publish")
+                    p.logger.debug("Applying `maven-publish` plugin to ${name}.")
 
-                    logger.debug("Applying `maven-publish` plugin to ${name}.")
+                    p.apply(plugin = "maven-publish")
 
                     p.setUpDefaultArtifacts()
 
-                    val publishingExtension = extensions.getByType(PublishingExtension::class)
                     val action = {
+                        val publishingExtension = p.extensions.getByType(PublishingExtension::class)
                         publishingExtension.createMavenPublication(p, extension)
+                        publishingExtension.setUpRepositories(p, extension)
+                        p.prepareTasks(publish, checkCredentials)
                     }
                     if (state.executed) {
                         action()
                     } else {
                         afterEvaluate { action() }
                     }
-
-                    publishingExtension.setUpRepositories(p, extension)
-                    p.prepareTasks(checkCredentials)
                 }
         }
     }
+
+    private fun Project.createPublishTask(): Task =
+        rootProject.tasks.create(taskName)
 
     private fun Project.createCheckTask(extension: PublishExtension): Task {
         val checkCredentials = tasks.create("checkCredentials")
@@ -146,8 +148,7 @@ class Publish : Plugin<Project> {
         return checkCredentials
     }
 
-    private fun Project.prepareTasks(checkCredentials: Task) {
-        val publish = rootProject.tasks.create(taskName)
+    private fun Project.prepareTasks(publish: Task, checkCredentials: Task) {
         val publishTasks = getTasksByName(taskName, false)
         publish.dependsOn(publishTasks)
         publishTasks.forEach { it.dependsOn(checkCredentials) }
@@ -159,7 +160,7 @@ class Publish : Plugin<Project> {
 
         val sourceJar = tasks.createIfAbsent(
             artifactTask = sourceJar,
-            from = sourceSets["main"].allJava,
+            from = sourceSets["main"].allSource,
             classifier = "sources"
         )
         val testOutputJar = tasks.createIfAbsent(
@@ -276,6 +277,20 @@ private constructor(
     init {
         spinePrefix.convention(true)
     }
+}
+
+/**
+ * Configures the `spinePublishing` extension.
+ *
+ * As `Publish` is a class-plugin in `buildSrc`, we don't get strongly typed generated helper
+ * methods for the `spinePublishing` configuration. Thus, we proviude this helper function for use
+ * in Kotlin build scripts.
+ */
+fun Project.spinePublishing(action: PublishExtension.() -> Unit) {
+    apply<Publish>()
+
+    val extension = extensions.getByType(PublishExtension::class)
+    extension.action()
 }
 
 /**

@@ -26,6 +26,7 @@
 
 import io.spine.gradle.internal.Deps
 import io.spine.gradle.internal.PublishingRepos
+import io.spine.gradle.internal.spinePublishing
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
@@ -39,14 +40,14 @@ plugins {
     idea
 }
 
-extra.apply {
-    this["publishToRepository"] = PublishingRepos.gitHub("ProtoData")
-    this["projectsToPublish"] = listOf(
+spinePublishing {
+    targetRepositories.add(PublishingRepos.gitHub("ProtoData"))
+    projectsToPublish.addAll(setOf(
         "cli",
         "compiler",
         "protoc"
-    )
-    this["spinePrefix"] = false
+    ))
+    spinePrefix.set(false)
 }
 
 allprojects {
@@ -94,16 +95,6 @@ subprojects {
         }
     }
 
-    tasks.create("sourceJar", Jar::class) {
-        from(sourceSets["main"].allSource)
-        archiveClassifier.set("sources")
-    }
-
-    tasks.create("testOutputJar", Jar::class) {
-        from(sourceSets["test"].output)
-        archiveClassifier.set("test")
-    }
-
     val dokkaJavadoc by tasks.getting(DokkaTask::class)
 
     tasks.register("javadocJar", Jar::class) {
@@ -112,5 +103,3 @@ subprojects {
         dependsOn(dokkaJavadoc)
     }
 }
-
-apply(Deps.scripts.publish(project))
