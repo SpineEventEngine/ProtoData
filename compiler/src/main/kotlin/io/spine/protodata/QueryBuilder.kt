@@ -77,21 +77,35 @@ internal constructor(
     }
 }
 
+/**
+ * A query which may yield many entities.
+ */
 public class MulticastQuery<T : EntityState>(
     private val context: BoundedContext,
     private val query: Query,
     private val type: Class<T>
 ) {
 
+    /**
+     * Runs this query and obtains the entities.
+     */
     public fun execute(): Set<T> = executeQuery(context, query, type)
 }
 
+/**
+ * A query which may only yield one entity.
+ */
 public class SingleCastQuery<T: EntityState>(
     private val context: BoundedContext,
     private val query: Query,
     private val type: Class<T>
 ) {
 
+    /**
+     * Runs this query and obtains the single entity.
+     *
+     * @return the looked up entity or `Optional.empty()` if the entity does not exist.
+     */
     public fun execute(): Optional<T> {
         val result = executeQuery(context, query, type)
         return if (result.isEmpty()) {
