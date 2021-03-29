@@ -29,10 +29,10 @@ package io.spine.protodata.cli
 import com.github.ajalt.clikt.core.MissingOption
 import com.google.common.truth.Truth
 import com.google.protobuf.compiler.PluginProtos
-import io.spine.protodata.cli.given.TestRenderer
-import io.spine.protodata.cli.given.TestSubscriber
-import io.spine.protodata.cli.test.Project
-import io.spine.protodata.cli.test.ProjectProto
+import io.spine.protodata.test.Project
+import io.spine.protodata.test.ProjectProto
+import io.spine.protodata.test.TestContextExtension
+import io.spine.protodata.test.TestRenderer
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
@@ -73,34 +73,23 @@ class `Command line application should` {
     @Test
     fun `render enhanced code`() {
         launchApp(
-            "-s", TestSubscriber::class.jvmName,
+            "-x", TestContextExtension::class.jvmName,
             "-r", TestRenderer::class.jvmName,
             "--src", srcRoot.toString(),
             "-t", codegenRequestFile.toString()
         )
         Truth.assertThat(sourceFile.readText())
-            .isEqualTo("_${Project::class.simpleName}_.getUuid() ")
+            .isEqualTo("_${Project::class.simpleName}.getUuid() ")
     }
 
     @Nested
     inner class `Fail if` {
 
         @Test
-        fun `subscriber is missing`() {
-            assertMissingOption {
-                launchApp(
-                    "-r", TestRenderer::class.jvmName,
-                    "--src", srcRoot.toString(),
-                    "-t", codegenRequestFile.toString()
-                )
-            }
-        }
-
-        @Test
         fun `renderer is missing`() {
             assertMissingOption {
                 launchApp(
-                    "-s", TestSubscriber::class.jvmName,
+                    "-x", TestContextExtension::class.jvmName,
                     "--src", srcRoot.toString(),
                     "-t", codegenRequestFile.toString()
                 )
@@ -111,7 +100,7 @@ class `Command line application should` {
         fun `source root is missing`() {
             assertMissingOption {
                 launchApp(
-                    "-s", TestSubscriber::class.jvmName,
+                    "-x", TestContextExtension::class.jvmName,
                     "-r", TestRenderer::class.jvmName,
                     "-t", codegenRequestFile.toString()
                 )
@@ -122,7 +111,7 @@ class `Command line application should` {
         fun `code generator request file is missing`() {
             assertMissingOption {
                 launchApp(
-                    "-s", TestSubscriber::class.jvmName,
+                    "-x", TestContextExtension::class.jvmName,
                     "-r", TestRenderer::class.jvmName,
                     "--src", srcRoot.toString()
                 )

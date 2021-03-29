@@ -67,6 +67,8 @@ private constructor(
         public fun fromCode(path: Path, code: String): SourceFile = SourceFile(code, path)
     }
 
+    public fun overwrite(newCode: String): SourceFile = SourceFile(newCode, path)
+
     /**
      * Writes the source code into the file on the file system.
      */

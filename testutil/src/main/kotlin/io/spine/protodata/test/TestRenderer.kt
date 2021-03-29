@@ -24,18 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.given
+package io.spine.protodata.test
 
-import io.spine.protodata.FileExited
-import io.spine.protodata.subscriber.CodeEnhancement
-import io.spine.protodata.subscriber.SkipEverything
-import io.spine.protodata.subscriber.Subscriber
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceSet
 
-/**
- * A subscriber which always produces the [SkipEverything] enhancement.
- */
-class TestSkippingSubscriber: Subscriber<FileExited>(FileExited::class.java) {
+public class TestRenderer : Renderer() {
 
-    override fun process(event: FileExited): Iterable<CodeEnhancement> =
-        listOf(SkipEverything)
+    public override fun render(sources: SourceSet): SourceSet {
+        var files = sources.files
+        val internalTypes = select<InternalType>().all().execute()
+        internalTypes.forEach { internalType ->
+            val oldName = internalType.name.simpleName
+            val newName = "_$oldName"
+            files = files.map {
+                it.overwrite(it.code.replace(oldName, newName))
+            }.toSet()
+        }
+        return SourceSet(files)
+    }
 }

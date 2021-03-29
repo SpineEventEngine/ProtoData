@@ -28,7 +28,6 @@ package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
 import io.spine.protodata.QueryBuilder
-import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.server.BoundedContext
 
 /**
@@ -40,17 +39,6 @@ import io.spine.server.BoundedContext
  * have a `public` no-argument constructor.
  */
 public abstract class Renderer {
-
-    /**
-     * The code enhancements to apply to the source files.
-     */
-    public var enhancements: List<CodeEnhancement> = listOf()
-        set(value) {
-            if (field.isNotEmpty()) {
-                throw IllegalStateException("Cannot reassign `enhancements`.")
-            }
-            field = value
-        }
 
     internal lateinit var protoDataContext: BoundedContext
 
@@ -80,5 +68,10 @@ public abstract class Renderer {
      */
     protected fun <P : EntityState> select(type: Class<P>): QueryBuilder<P> {
         return QueryBuilder(protoDataContext, type, javaClass.name)
+    }
+
+    protected inline fun <reified P : EntityState> select(): QueryBuilder<P>  {
+        val cls = P::class.java
+        return select(cls)
     }
 }

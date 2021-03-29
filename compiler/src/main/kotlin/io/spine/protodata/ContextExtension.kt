@@ -24,12 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.given
+package io.spine.protodata
 
-import io.spine.protodata.TypeName
-import io.spine.protodata.subscriber.CodeEnhancement
+import io.spine.server.BoundedContextBuilder
 
 /**
- * A test enhancement which suggests adding the dollar sign to the name of a type.
+ * An extension above the `ProtoData` bounded context.
  */
-data class AddDollar(val targetName: TypeName) : CodeEnhancement
+public interface ContextExtension {
+
+    /**
+     * Registers the extension entities in the bounded context.
+     */
+    public fun fillIn(context: BoundedContextBuilder)
+}

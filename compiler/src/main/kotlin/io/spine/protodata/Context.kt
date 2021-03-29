@@ -29,50 +29,26 @@ package io.spine.protodata
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.core.UserId
-import io.spine.protodata.subscriber.Subscriber
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.integration.ThirdPartyContext
-import io.spine.server.projection.ProjectionRepository
 
 /**
  * A factory for the `ProtoData` bounded context.
  */
 internal object ProtoDataContext {
 
-    fun build(projections: List<ProjectionRepository<*, *, *>>): BoundedContext =
-        builder(projections).build()
+    fun build(): BoundedContext =
+        builder().build()
 
     /**
      * Creates a builder of the bounded context.
      */
-    fun builder(
-        projections: Iterable<ProjectionRepository<*, *, *>> = listOf()
-    ): BoundedContextBuilder {
+    fun builder(): BoundedContextBuilder {
         val builder = BoundedContext
             .singleTenant("ProtoData")
-        preparedProjections().forEach { builder.add(it) }
-        projections.forEach { builder.add(it) }
+        builder.add(ProtoSourceFileRepository())
         return builder
-    }
-
-    private fun preparedProjections() = listOf<ProjectionRepository<*, *, *>>(
-        ProtoSourceFileRepository()
-    )
-}
-
-internal object ProtoDataGeneratorContext {
-
-    fun build(withSubscribers: Iterable<Subscriber<*>>,
-              protoDataContext: BoundedContext): BoundedContext {
-        val builder = BoundedContext
-            .singleTenant("ProtoDataGenerator")
-
-        withSubscribers.forEach {
-            it.protoDataContext = protoDataContext
-            builder.addEventDispatcher(it)
-        }
-        return builder.build()
     }
 }
 

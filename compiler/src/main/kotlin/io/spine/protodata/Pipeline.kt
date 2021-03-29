@@ -26,19 +26,12 @@
 
 package io.spine.protodata
 
-import com.google.common.flogger.LazyArgs.lazy
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.Production
 import io.spine.logging.Logging
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
-import io.spine.protodata.subscriber.CodeEnhancement
-import io.spine.protodata.subscriber.SkipEverything
-import io.spine.protodata.subscriber.Subscriber
-import io.spine.protodata.transport.PrunableTransport
-import io.spine.server.BoundedContext
 import io.spine.server.ServerEnvironment
-import io.spine.server.projection.ProjectionRepository
 import io.spine.server.storage.memory.InMemoryStorageFactory
 
 /**
@@ -55,19 +48,14 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
  * Lastly, the source set is stored onto the file system.
  */
 public class Pipeline(
-    private val subscribers: List<Subscriber<*>>,
-    private val projections: List<ProjectionRepository<*, *, *>>,
-    private val renderer: (List<CodeEnhancement>) -> Renderer,
+    private val extensions: List<ContextExtension>,
+    private val renderer:  Renderer,
     private val sourceSet: SourceSet,
     private val request: CodeGeneratorRequest
-) : Logging, AutoCloseable {
-
-    private lateinit var generatorContext: BoundedContext
-    private lateinit var protoDataContext: BoundedContext
+) : Logging {
 
     init {
         val config = ServerEnvironment.`when`(Production::class.java)
-        config.use(PrunableTransport)
         config.use(InMemoryStorageFactory.newInstance())
     }
 
@@ -75,42 +63,18 @@ public class Pipeline(
      * Executes the processing pipeline.
      */
     public operator fun invoke() {
-        protoDataContext = ProtoDataContext.build(projections)
-        val enhancements = processProtobuf(protoDataContext)
-        if (SkipEverything in enhancements) {
-            _info().log("Skipping everything. ${enhancements.size - 1} code enhancements ignored.")
-        } else {
-            logEnhancements(enhancements)
-            val renderer = renderer(enhancements)
-            renderer.protoDataContext = protoDataContext
-            val enhanced = renderer.render(sourceSet)
-            enhanced.files.forEach {
-                it.write()
-            }
-        }
-    }
+        val contextBuilder = ProtoDataContext.builder()
+        extensions.forEach { it.fillIn(contextBuilder) }
+        val context = contextBuilder.build()
 
-    private fun logEnhancements(enhancements: List<CodeEnhancement>) {
-        _info().log("%s code enhancements produced.", lazy {
-            if (enhancements.isNotEmpty()) {
-                "${enhancements.size}"
-            } else {
-                "No"
-            }
-        })
-    }
-
-    private fun processProtobuf(protoDataContext: BoundedContext): List<CodeEnhancement> {
         val events = CompilerEvents.parse(request)
         ProtobufCompilerContext.emitted(events)
-        PrunableTransport.prune()
-        generatorContext = ProtoDataGeneratorContext.build(subscribers, protoDataContext)
-        ProtobufCompilerContext.emitted(events)
-        return subscribers.flatMap { it.producedEnhancements }
-    }
 
-    override fun close() {
-        generatorContext.close()
-        protoDataContext.close()
+        renderer.protoDataContext = context
+        val enhanced = renderer.render(sourceSet)
+        enhanced.files.forEach {
+            it.write()
+        }
+        context.close()
     }
 }

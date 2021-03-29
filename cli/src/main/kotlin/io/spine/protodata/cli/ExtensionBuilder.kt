@@ -26,9 +26,9 @@
 
 package io.spine.protodata.cli
 
-import io.spine.protodata.expando.ExtensionProvider
+import io.spine.protodata.ContextExtension
 
 /**
- * A reflective builder for [ExtensionProvider]s.
+ * A reflective builder for [ContextExtension]s.
  */
-internal class ExtensionProviderBuilder: ReflectiveBuilder<ExtensionProvider>()
+internal class ExtensionBuilder: ReflectiveBuilder<ContextExtension>()

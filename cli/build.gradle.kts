@@ -36,6 +36,8 @@ dependencies {
     implementation("com.github.ajalt.clikt:clikt:3.1.0")
 
     implementation(Deps.build.flogger.lib)
+
+    testImplementation(project(":testutil"))
 }
 
 application {

@@ -24,42 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.given
+package io.spine.protodata.test
 
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.ContextExtension
+import io.spine.server.BoundedContextBuilder
 
-/**
- * A [Renderer] for test purposes.
- *
- * Supports the [AddDollar] enhancement.
- */
-class TestRenderer : Renderer() {
+public class TestContextExtension: ContextExtension {
 
-    var called = false
-        private set
-
-    override fun render(sources: SourceSet): SourceSet {
-        called = true
-        val files = mutableListOf<SourceFile>()
-        enhancements.forEach {
-            when (it) {
-                is AddDollar -> files.addAll(enhance(it, sources.files))
-            }
-        }
-        return SourceSet(files.toSet())
+    public override fun fillIn(context: BoundedContextBuilder) {
+        context.add(InternalMessageRepository())
     }
-
-    private fun enhance(enhancement: AddDollar, files: Iterable<SourceFile>): Sequence<SourceFile> =
-        sequence {
-            val name = enhancement.targetName.simpleName
-            files.forEach {
-                if (it.code.contains(name)) {
-                    val enhancedCode = it.code.replace(name, "$$name$")
-                    val newFile = SourceFile.fromCode(it.path, enhancedCode)
-                    yield(newFile)
-                }
-            }
-        }
 }

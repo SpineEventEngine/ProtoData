@@ -24,11 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
-
-import io.spine.protodata.subscriber.Subscriber
-
-/**
- * A reflective builder for [Subscriber]s.
- */
-internal class SubscriberBuilder: ReflectiveBuilder<Subscriber<*>>()
+dependencies {
+    implementation(project(":compiler"))
+}

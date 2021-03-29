@@ -29,6 +29,7 @@ rootProject.name = "ProtoData"
 include("compiler")
 include("cli")
 include("protoc")
+include("testutil")
 
 dependencyResolutionManagement {
     repositories {

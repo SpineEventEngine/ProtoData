@@ -24,4 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// No extra config required.
+dependencies {
+    testImplementation(project(":testutil"))
+}

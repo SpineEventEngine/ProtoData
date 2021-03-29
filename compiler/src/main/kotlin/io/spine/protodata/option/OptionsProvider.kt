@@ -24,9 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.given
+package io.spine.protodata.option
 
-import io.spine.protodata.TypeName
-import io.spine.protodata.subscriber.CodeEnhancement
+import com.google.protobuf.ExtensionRegistry
 
-class AddUnderscore(val type: TypeName) : CodeEnhancement
+public interface OptionsProvider {
+
+    public fun dumpTo(registry: ExtensionRegistry)
+}

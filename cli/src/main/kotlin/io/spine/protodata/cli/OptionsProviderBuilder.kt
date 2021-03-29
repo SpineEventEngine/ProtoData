@@ -24,20 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.given
+package io.spine.protodata.cli
 
-import io.spine.protodata.TypeEntered
-import io.spine.protodata.subscriber.CodeEnhancement
-import io.spine.protodata.subscriber.Subscriber
+import io.spine.protodata.option.OptionsProvider
 
 /**
- * A [Subscriber] to the `TypeEntered` events.
- *
- * Produces [AddDollar] enhancements.
+ * A reflective builder for [OptionsProvider]s.
  */
-class TestSubscriber : Subscriber<TypeEntered>(TypeEntered::class.java) {
-
-    override fun process(event: TypeEntered): Iterable<CodeEnhancement> {
-        return listOf(AddDollar(event.type.name))
-    }
-}
+internal class OptionsProviderBuilder: ReflectiveBuilder<OptionsProvider>()

@@ -26,6 +26,7 @@
 
 package io.spine.protodata
 
+import io.spine.core.External
 import io.spine.core.Subscribe
 import io.spine.server.projection.Projection
 
@@ -35,49 +36,49 @@ import io.spine.server.projection.Projection
 public class ProtoSourceFileProjection
     : Projection<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
-    @Subscribe(external = true)
-    internal fun on(e: FileEntered) {
+    @Subscribe
+    internal fun on(@External e: FileEntered) {
         builder()
             .setFilePath(e.file.path)
             .setFile(e.file)
     }
 
-    @Subscribe(external = true)
-    internal fun on(e: FileOptionDiscovered) {
+    @Subscribe
+    internal fun on(@External e: FileOptionDiscovered) {
         builder()
             .fileBuilder
             .addOption(e.option)
     }
 
-    @Subscribe(external = true)
-    internal fun on(e: TypeEntered) {
+    @Subscribe
+    internal fun on(@External e: TypeEntered) {
         builder().putType(e.type.typeUrl(), e.type)
     }
 
-    @Subscribe(external = true)
-    internal fun on(e: TypeOptionDiscovered) {
+    @Subscribe
+    internal fun on(@External e: TypeOptionDiscovered) {
         modifyType(e.type) {
             addOption(e.option)
         }
     }
 
-    @Subscribe(external = true)
-    internal fun on(e: OneofGroupEntered) {
+    @Subscribe
+    internal fun on(@External e: OneofGroupEntered) {
         modifyType(e.type) {
             addOneofGroup(e.group)
         }
     }
 
-    @Subscribe(external = true)
-    internal fun on(e: OneofOptionDiscovered) {
+    @Subscribe
+    internal fun on(@External e: OneofOptionDiscovered) {
         modifyType(e.type) {
             val oneof = findOneof(e.group)
             oneof.addOption(e.option)
         }
     }
 
-    @Subscribe(external = true)
-    internal fun on(e: FieldEntered) {
+    @Subscribe
+    internal fun on(@External e: FieldEntered) {
         modifyType(e.type) {
             if (e.field.isPartOfOneof()) {
                 val oneof = findOneof(e.field.oneofName)
@@ -88,8 +89,8 @@ public class ProtoSourceFileProjection
         }
     }
 
-    @Subscribe(external = true)
-    internal fun on(e: FieldOptionDiscovered) {
+    @Subscribe
+    internal fun on(@External e: FieldOptionDiscovered) {
         modifyType(e.type) {
             val field = findField(e.field)
             field.addOption(e.option)

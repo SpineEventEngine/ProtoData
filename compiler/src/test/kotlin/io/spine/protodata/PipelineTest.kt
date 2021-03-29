@@ -28,15 +28,11 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.protodata.given.TestQueryingSubscriber
-import io.spine.protodata.given.TestRenderer
-import io.spine.protodata.given.TestSkippingSubscriber
-import io.spine.protodata.given.TestSubscriber
-import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
-import io.spine.protodata.subscriber.CodeEnhancement
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.Journey
+import io.spine.protodata.test.TestContextExtension
+import io.spine.protodata.test.TestRenderer
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
@@ -44,8 +40,6 @@ import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-
-private const val JOURNEY_TYPE = "type.spine.io/spine.protodata.test.Journey"
 
 class `'Pipeline' should` {
 
@@ -79,59 +73,12 @@ class `'Pipeline' should` {
     @Test
     fun `render enhanced code`() {
         Pipeline(
-            listOf(TestSubscriber()),
-            listOf(),
-            rendererFactory(),
+            listOf(TestContextExtension()),
+            renderer,
             SourceSet.fromContentsOf(srcRoot),
             request
         )()
         assertThat(sourceFile.readText())
-            .isEqualTo("\$Journey$ worth taking")
-        assertThat(renderer.called)
-            .isTrue()
-    }
-
-    @Test
-    fun `skip all code generation on 'SkipEverything'`() {
-        val initialContents = sourceFile.readText()
-        Pipeline(
-            listOf(TestSkippingSubscriber()),
-            listOf(),
-            rendererFactory(),
-            SourceSet.fromContentsOf(srcRoot),
-            request
-        )()
-        assertThat(sourceFile.readText())
-            .isEqualTo(initialContents)
-        assertThat(renderer.called)
-            .isFalse()
-    }
-
-    @Test
-    fun `deliver all events to projections before notifying 'Subscribers'`() {
-        val subscriber = TestQueryingSubscriber()
-        Pipeline(
-            listOf(subscriber),
-            listOf(),
-            rendererFactory(),
-            SourceSet.fromContentsOf(srcRoot),
-            request
-        )()
-        assertThat(subscriber.files)
-            .hasSize(1)
-        val file = subscriber.files.first()
-        assertThat(file.typeMap)
-            .hasSize(2)
-        assertThat(file.typeMap)
-            .containsKey(JOURNEY_TYPE)
-        assertThat(file.typeMap[JOURNEY_TYPE]!!.fieldList)
-            .hasSize(3)
-    }
-
-    private fun rendererFactory(): (List<CodeEnhancement>) -> Renderer {
-        return { enhancements ->
-            renderer.enhancements = enhancements
-            renderer
-        }
+            .isEqualTo("_Journey worth taking")
     }
 }

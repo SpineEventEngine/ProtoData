@@ -24,14 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.given
+package io.spine.protodata.test
 
+import io.spine.core.External
+import io.spine.core.Subscribe
 import io.spine.protodata.TypeEntered
-import io.spine.protodata.subscriber.CodeEnhancement
-import io.spine.protodata.subscriber.Subscriber
+import io.spine.protodata.TypeName
+import io.spine.server.projection.Projection
+import io.spine.server.projection.ProjectionRepository
+import io.spine.server.route.EventRoute.withId
+import io.spine.server.route.EventRouting
 
-class TestSubscriber : Subscriber<TypeEntered>(TypeEntered::class.java) {
+public class InternalMessageProjection : Projection<TypeName, InternalType, InternalType.Builder>() {
 
-    override fun process(event: TypeEntered): Iterable<CodeEnhancement> =
-        listOf(AddUnderscore(event.type.name))
+    @Subscribe
+    internal fun on(@External e: TypeEntered) {
+        builder().name = e.type.name
+    }
+}
+
+public class InternalMessageRepository :
+    ProjectionRepository<TypeName, InternalMessageProjection, InternalType>() {
+
+    protected override fun setupEventRouting(routing: EventRouting<TypeName>) {
+        super.setupEventRouting(routing)
+        routing.route(TypeEntered::class.java) { event, _ ->
+            withId(event.type.name)
+        }
+    }
 }
