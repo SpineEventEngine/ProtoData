@@ -16,4 +16,3 @@ message InternalType {
 
     TypeName name = 1;
 }
-

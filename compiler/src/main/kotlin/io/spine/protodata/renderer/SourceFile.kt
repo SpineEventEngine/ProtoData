@@ -67,6 +67,9 @@ private constructor(
         public fun fromCode(path: Path, code: String): SourceFile = SourceFile(code, path)
     }
 
+    /**
+     * Creates a new `SourceFile` with the same path as this one but with different content.
+     */
     public fun overwrite(newCode: String): SourceFile = SourceFile(newCode, path)
 
     /**

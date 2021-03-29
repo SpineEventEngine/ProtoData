@@ -51,6 +51,11 @@ public data class SourceSet(val files: Set<SourceFile>) {
         }
     }
 
+    /**
+     * Looks up a file by its path.
+     *
+     * The [path] may be a relative or an absolute path the file.
+     */
     public fun file(path: Path): SourceFile =
         files.find { it.path.endsWith(path) }
             ?: throw IllegalArgumentException("File not found: `$path`.")

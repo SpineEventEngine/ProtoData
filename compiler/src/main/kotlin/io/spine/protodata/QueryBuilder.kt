@@ -63,6 +63,9 @@ internal constructor(
         return SingleCastQuery(context, buildQuery(id), type)
     }
 
+    /**
+     * Selects all projections of the given type.
+     */
     public fun all(): MulticastQuery<T> {
         return MulticastQuery(context, buildQuery(), type)
     }
@@ -117,8 +120,12 @@ public class SingleCastQuery<T: EntityState>(
     }
 }
 
-private fun <T: EntityState>
-        executeQuery(context: BoundedContext, query: Query, type: Class<T>): Set<T> {
+/**
+ * Executes the given [query] upon the given [context].
+ */
+private fun <T: EntityState> executeQuery(context: BoundedContext,
+                                          query: Query,
+                                          type: Class<T>): Set<T> {
     val observer = Observer(type)
     context.stand().execute(query, observer)
     return observer.foundResult().toSet()

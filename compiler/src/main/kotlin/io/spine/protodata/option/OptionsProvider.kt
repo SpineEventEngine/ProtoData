@@ -28,7 +28,13 @@ package io.spine.protodata.option
 
 import com.google.protobuf.ExtensionRegistry
 
+/**
+ * A service provider interface for custom Protobuf options.
+ */
 public interface OptionsProvider {
 
+    /**
+     * Registers some the custom options in the given [registry].
+     */
     public fun dumpTo(registry: ExtensionRegistry)
 }
