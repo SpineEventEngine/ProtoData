@@ -52,7 +52,7 @@ spinePublishing {
 
 allprojects {
     group = "io.spine.protodata"
-    version = "0.0.3"
+    version = "0.0.4"
 }
 
 subprojects {
