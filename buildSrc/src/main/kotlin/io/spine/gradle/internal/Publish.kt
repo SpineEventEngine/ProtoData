@@ -120,10 +120,10 @@ class Publish : Plugin<Project> {
                         publishingExtension.setUpRepositories(p, extension)
                         p.prepareTasks(publish, checkCredentials)
                     }
-                    if (state.executed) {
+                    if (p.state.executed) {
                         action()
                     } else {
-                        afterEvaluate { action() }
+                        p.afterEvaluate { action() }
                     }
                 }
         }
