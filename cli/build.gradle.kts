@@ -44,3 +44,21 @@ application {
     mainClass.set("io.spine.protodata.cli.MainKt")
     applicationName = "protodata"
 }
+
+/**
+ * A task re-packing the distribution ZIP archive into a JAR.
+ *
+ * Some Maven repositories, particularly GitHub Packages, do not support publishing arbitrary files.
+ * This way, we trick it to accept this file (as a JAR).
+ */
+val executableAsJar by tasks.registering(Jar::class) {
+    from(zipTree(tasks.distZip.get().archiveFile))
+
+    archiveClassifier.set("exe")
+
+    dependsOn(tasks.distZip)
+}
+
+artifacts {
+    archives(executableAsJar)
+}
