@@ -42,11 +42,11 @@ plugins {
 
 spinePublishing {
     targetRepositories.add(PublishingRepos.gitHub("ProtoData"))
-    projectsToPublish.addAll(setOf(
+    projectsToPublish.addAll(
         "cli",
         "compiler",
         "protoc"
-    ))
+    )
     spinePrefix.set(false)
 }
 
