@@ -27,4 +27,4 @@ jobs:
       - name: Publish artifacts to Maven
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew assemble publish --stacktrace
+        run: ./gradlew build publish --stacktrace -x test
