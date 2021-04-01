@@ -29,7 +29,7 @@ jobs:
       - run: unzip -d ./unzipped ./cli/build/libs/protodata.jar
       - run: ./unzipped/install.sh
       - name: Launch ProtoData
-        run: source $HOME/.bash_profile && protdata -h
+        run: source $HOME/.bash_profile && protodata -h
 
   publish:
     runs-on: ubuntu-latest
