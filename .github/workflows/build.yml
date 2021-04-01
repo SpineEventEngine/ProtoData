@@ -28,9 +28,8 @@ jobs:
       - run: ./gradlew assemble executableAsJar --stacktrace
       - run: unzip -d ./unzipped ./cli/build/libs/protodata.jar
       - run: ./unzipped/install.sh
-      - run: cat $HOME/.bash_profile
-      - run: source $HOME/.bash_profile
-      - run: protdata -h
+      - name: Launch ProtoData
+        run: source $HOME/.bash_profile && protdata -h
 
   publish:
     runs-on: ubuntu-latest
