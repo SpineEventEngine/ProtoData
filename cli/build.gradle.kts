@@ -65,11 +65,27 @@ val executableAsJar by tasks.registering(Jar::class) {
     from(zipTree(tasks.distZip.get().archiveFile))
     from("$projectDir/install.sh")
 
-    archiveClassifier.set("exe")
+    archiveFileName.set("${appName}.jar")
 
     dependsOn(tasks.distZip)
 }
 
+val executableArchivesConfig = "executableArchives"
+
+configurations.create(executableArchivesConfig)
+
 artifacts {
-    archives(executableAsJar)
+    add(executableArchivesConfig, executableAsJar)
+}
+
+publishing {
+    publications {
+        create("exec", MavenPublication::class) {
+            groupId = project.group.toString()
+            artifactId = "executable"
+            version = project.version.toString()
+
+            setArtifacts(project.configurations.getAt(executableArchivesConfig).allArtifacts)
+        }
+    }
 }
