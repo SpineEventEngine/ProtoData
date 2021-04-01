@@ -40,9 +40,19 @@ dependencies {
     testImplementation(project(":testutil"))
 }
 
+val appName = "protodata"
+
+tasks.distZip {
+    archiveFileName.set("${appName}.zip")
+}
+
+tasks.distTar {
+    archiveFileName.set("${appName}.tar")
+}
+
 application {
     mainClass.set("io.spine.protodata.cli.MainKt")
-    applicationName = "protodata"
+    applicationName = appName
 }
 
 /**
@@ -53,6 +63,7 @@ application {
  */
 val executableAsJar by tasks.registering(Jar::class) {
     from(zipTree(tasks.distZip.get().archiveFile))
+    from("$projectDir/install.sh")
 
     archiveClassifier.set("exe")
 
