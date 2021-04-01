@@ -27,7 +27,7 @@ jobs:
       - run: git submodule update --init --recursive
       - run: ./gradlew assemble executableAsJar --stacktrace
       - run: unzip -d ./unzipped ./cli/build/libs/protodata.jar
-      - run: ./unzipped/protodata/install.sh
+      - run: ./unzipped/install.sh
       - run: source ~/.bash_profile
       - run: protdata -h
 
