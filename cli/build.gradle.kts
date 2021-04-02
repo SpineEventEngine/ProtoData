@@ -89,3 +89,19 @@ publishing {
         }
     }
 }
+
+val versionFile = "$buildDir/version/version.txt"
+
+val createVersionFile by tasks.registering {
+
+    inputs.property("version", project.version)
+    outputs.file(versionFile)
+
+    doLast {
+        file(versionFile).writeText(project.version.toString())
+    }
+}
+
+tasks.processResources {
+    dependsOn(createVersionFile)
+}

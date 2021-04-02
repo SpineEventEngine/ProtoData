@@ -71,7 +71,12 @@ private fun readVersion(): String {
  * parameter. Finally, the renderer applies required changes to the source set with the root path,
  * supplied in the `--source-root` parameter.
  */
-private class Run : CliktCommand() {
+internal class Run(version: String) : CliktCommand(
+    name = "protodata",
+    help = "ProtoData tool helps build better multi-platform code generation. Version ${version}.",
+    epilog = "https://github.com/SpineEventEngine/ProtoData/",
+    printHelpOnEmptyArgs = true
+) {
 
     private val extensionProviders: List<String> by option("--extension", "-x", help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
