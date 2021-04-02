@@ -122,4 +122,6 @@ class `Command line application should` {
             Assertions.assertThrows(MissingOption::class.java, block)
         }
     }
+
+    private fun launchApp(vararg argv: String) = Run("42.0.0").parse(argv.toList())
 }

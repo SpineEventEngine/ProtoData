@@ -33,9 +33,9 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
-import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.io.Resource
 import io.spine.protodata.ContextExtension
 import io.spine.protodata.Pipeline
 import io.spine.protodata.option.OptionsProvider
@@ -45,53 +45,53 @@ import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Path
 
+private const val VERSION_FILE_NAME = "version.txt"
+
 /**
  * Launches the CLI application.
  *
  * When the application is done or an unhandled error occurs, exits the process.
  */
-public fun main(args: Array<String>): Unit = Run().main(args)
+public fun main(args: Array<String>): Unit =
+    Run(readVersion()).main(args)
 
-/**
- * Launches the CLI application without finishing the process after execution.
- */
-@VisibleForTesting
-internal fun launchApp(vararg argv: String) {
-    Run().parse(argv.toList())
+private fun readVersion(): String {
+    val versionFile = Resource.file(VERSION_FILE_NAME, Run::class.java.classLoader)
+    return versionFile.read()
 }
 
 /**
  * The main CLI command which performs the ProtoData code generation tasks.
  *
- * The command accepts class names for a [Renderer] via the `--renderer` parameter. Then, using
+ * The command accepts class names for the service provider interface implementations via the CLI
+ * parameters, such as `--extension`, `--renderer`, and `--options`. Then, using
  * the classpath of the app and the extra classpath supplied via the `--extra-classpath` parameter,
- * loads those classes. Subscribers listen to the Protobuf compiler events, regarding the Protobuf
+ * loads those classes. `ProtoData` context accept Protobuf compiler events, regarding the Protobuf
  * types, listed in the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request`
- * parameter. Finally, the code enhancements produced by the subscribers are supplied to
- * the renderer, which applies them to the source set with the root path, supplied in
- * the `--source-root` parameter.
+ * parameter. Finally, the renderer applies required changes to the source set with the root path,
+ * supplied in the `--source-root` parameter.
  */
 private class Run : CliktCommand() {
 
-    val extensionProviders: List<String> by option("--extension", "-x", help = """
+    private val extensionProviders: List<String> by option("--extension", "-x", help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
         
            <...> -x com.foo.TypeOptionsProvider -p com.foo.FieldOptionsProvider
         
     """.trimIndent()).multiple()
-    val renderer: String by option("--renderer", "-r", help = """
+    private  val renderer: String by option("--renderer", "-r", help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
         There can only be one renderer command line per call.
     """.trimIndent()).required()
-    val optionProviders: List<String> by option("--options", "-o", help = """
+    private val optionProviders: List<String> by option("--options", "-o", help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
         
            <...> -x com.foo.TypeOptionsProvider -p com.foo.FieldOptionsProvider
         
     """.trimIndent()).multiple()
-    val codegenRequestFile: File by option("--request", "-t", help =
+    private val codegenRequestFile: File by option("--request", "-t", help =
     "The path to the binary file containing a serialized instance of " +
             "`${CodeGeneratorRequest.getDescriptor().name}`."
     ).file(
@@ -100,7 +100,7 @@ private class Run : CliktCommand() {
         canBeSymlink = false,
         mustBeReadable = true
     ).required()
-    val sourceRoot: Path by option("--source-root", "--src", help = """
+    private val sourceRoot: Path by option("--source-root", "--src", help = """
         The path to a directory which contains the source files to be processed.
     """.trimIndent()
     ).path(
@@ -108,7 +108,7 @@ private class Run : CliktCommand() {
         canBeFile = false,
         canBeSymlink = false
     ).required()
-    val classPath: List<Path>? by option("--extra-classpath", "--xcp", help = """
+    private val classPath: List<Path>? by option("--extra-classpath", "--xcp", help = """
         The extra classpath which contains all the `--subscriber` and `--renderer` classes, as well
         as all their dependencies, which are not included as a part of the ProtoData library.
         This may be omitted if the classes are already present in the application's classpath.
