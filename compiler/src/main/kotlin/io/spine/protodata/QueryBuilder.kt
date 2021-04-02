@@ -45,11 +45,11 @@ public class QueryBuilder<T : EntityState>
 internal constructor(
     private val context: BoundedContext,
     private val type: Class<T>,
-    subscriberName: String
+    actorName: String
 ) {
 
     private val actor = UserId.newBuilder()
-        .setValue(subscriberName)
+        .setValue(actorName)
         .build()
     private val factory = ActorRequestFactory.newBuilder()
         .setActor(actor)
