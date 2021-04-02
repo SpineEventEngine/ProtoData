@@ -90,7 +90,14 @@ publishing {
     }
 }
 
-val versionFile = "$buildDir/version/version.txt"
+val versionDir = "$buildDir/version"
+val versionFile = "$versionDir/version.txt"
+
+sourceSets {
+    main {
+        resources.srcDir(versionDir)
+    }
+}
 
 val createVersionFile by tasks.registering {
 
