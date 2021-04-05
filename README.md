@@ -9,7 +9,8 @@ The project is under development right now. Proceed with caution.
 
 To install ProtoData on a *nix system:
 
- 1. [Download](tbd) the `protodata.jar` archive.
+ 1. [Download](https://github.com/SpineEventEngine/ProtoData/packages/710696) 
+    the `executable-<version>.jar` archive.
 
  2. Unzip the archive:
  ```
@@ -41,7 +42,10 @@ protodata -h
 There is currently no installation script for Windows.
 
 Start using the app:
- 1. [download](tbd) and extract the JAR archive.
+
+ 1. [download](https://github.com/SpineEventEngine/ProtoData/packages/710696) and extract 
+    the `executable-<version>.jar` archive.
+
  2. To launch the app, launch the `bin/protodata.bat` script.
 
 Note that it is necessary to keep the structure of the archive intact: the scripts in `bin` rely
