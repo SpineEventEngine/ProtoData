@@ -28,6 +28,8 @@ package io.spine.protodata
 
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Descriptors.EnumDescriptor
+import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.BOOL
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.BYTES
@@ -123,7 +125,8 @@ internal object CompilerEvents {
                 .setOption(it)
                 .build()
         }
-        descriptor.messageTypes.forEach { produceMessageEvents(file, it) }
+        descriptor.messageTypes.forEach { produceMessageEvents(declaringFile = file, descriptor = it) }
+        descriptor.enumTypes.forEach { produceEnumEvents(declaringFile = file, descriptor = it) }
         yield(
             FileExited
                 .newBuilder()
@@ -139,22 +142,26 @@ internal object CompilerEvents {
      * the events regarding the fields. At last, closes with an [TypeExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceMessageEvents(
-        file: File,
+        declaringFile: File,
+        nestedIn: TypeName? = null,
         descriptor: Descriptor
     ) {
         val typeUrl = descriptor.file.options.getExtension(OptionsProto.typeUrlPrefix)
         val typeName = TypeName
             .newBuilder()
             .setTypeUrlPrefix(typeUrl)
-            .setPackageName(file.packageName)
+            .setPackageName(declaringFile.packageName)
             .setSimpleName(descriptor.name)
             .build()
-        val path = file.path
+        val path = declaringFile.path
         val type = MessageType
-            .newBuilder()
-            .setName(typeName)
-            .setFile(path)
-            .build()
+            .newBuilder().apply {
+                name = typeName
+                file = path
+                if (nestedIn != null) {
+                    declaredIn = nestedIn
+                }
+            }.build()
         yield(
             TypeEntered
                 .newBuilder()
@@ -177,11 +184,120 @@ internal object CompilerEvents {
             .filter { it.realContainingOneof == null }
             .forEach { produceFieldEvents(type, it) }
 
+        descriptor.nestedTypes.forEach {
+            produceMessageEvents(declaringFile = declaringFile, nestedIn = typeName, descriptor = it)
+        }
+
+        descriptor.enumTypes.forEach {
+            produceEnumEvents(declaringFile = declaringFile, nestedIn = typeName, descriptor = it)
+        }
+
         yield(
             TypeExited
                 .newBuilder()
                 .setFile(path)
                 .setType(typeName)
+                .build()
+        )
+    }
+
+    /**
+     * Yields compiler events for the given enum type.
+     *
+     * Opens with an [EnumEntered] event. Then go the events regarding the type metadata. Then go
+     * the events regarding the enum constants. At last, closes with an [EnumExited] event.
+     */
+    private suspend fun SequenceScope<EventMessage>.produceEnumEvents(
+        declaringFile: File,
+        nestedIn: TypeName? = null,
+        descriptor: EnumDescriptor
+    ) {
+        val typeUrl = descriptor.file.options.getExtension(OptionsProto.typeUrlPrefix)
+        val typeName = TypeName
+            .newBuilder()
+            .setTypeUrlPrefix(typeUrl)
+            .setPackageName(declaringFile.packageName)
+            .setSimpleName(descriptor.name)
+            .build()
+        val path = declaringFile.path
+        val type = EnumType
+            .newBuilder().apply {
+                name = typeName
+                file = path
+                if (nestedIn != null) {
+                    declaredIn = nestedIn
+                }
+            }.build()
+        yield(
+            EnumEntered
+                .newBuilder()
+                .setFile(path)
+                .setType(type)
+                .build()
+        )
+        produceOptionEvents(descriptor.options) {
+            EnumOptionDiscovered
+                .newBuilder()
+                .setFile(path)
+                .setType(typeName)
+                .setOption(it)
+                .build()
+        }
+        descriptor.values.forEach {
+            produceConstantEvents(type, it)
+        }
+        yield(
+            EnumExited
+                .newBuilder()
+                .setFile(path)
+                .setType(typeName)
+                .build()
+        )
+    }
+
+    /**
+     * Yields compiler events for the given enum constant.
+     *
+     * Opens with an [EnumConstantEntered] event. Then go the events regarding the constant options.
+     * At last, closes with an [EnumConstantExited] event.
+     */
+    private suspend fun SequenceScope<EventMessage>.produceConstantEvents(
+        type: EnumType,
+        descriptor: EnumValueDescriptor
+    ) {
+        val name = ConstantName
+            .newBuilder()
+            .setValue(descriptor.name)
+            .build()
+        val constant = EnumConstant
+            .newBuilder()
+            .setName(name)
+            .setDeclaredIn(type)
+            .setNumber(descriptor.number)
+            .setOrderOfDeclaration(descriptor.index)
+            .build()
+        yield(
+            EnumConstantEntered
+                .newBuilder()
+                .setFile(type.file)
+                .setType(type.name)
+                .setConstant(constant)
+                .build()
+        )
+        produceOptionEvents(descriptor.options) {
+            EnumConstantOptionDiscovered
+                .newBuilder()
+                .setFile(type.file)
+                .setType(type.name)
+                .setConstant(name)
+                .build()
+        }
+        yield(
+            EnumConstantExited
+                .newBuilder()
+                .setFile(type.file)
+                .setType(type.name)
+                .setConstant(name)
                 .build()
         )
     }

@@ -132,6 +132,35 @@ message MessageType {
 message EnumType {
 
     TypeName name = 1;
+
+    // Message-level options.
+    repeated Option option = 2;
+
+    // Path to the file which declares this type.
+    FilePath file = 3;
+
+    repeated EnumConstant constant = 4;
+
+    // Name of the message type which hosts the declaration of this type.
+    TypeName declared_in = 5;
+}
+
+message ConstantName {
+
+    string value = 1;
+}
+
+message EnumConstant {
+
+    ConstantName name = 1;
+
+    uint32 number = 2;
+
+    EnumType declared_in = 3;
+
+    uint32 order_of_declaration = 5;
+
+    repeated Option option = 6;
 }
 
 // A primitive Protobuf type.

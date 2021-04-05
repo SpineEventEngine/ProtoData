@@ -146,3 +146,53 @@ message FieldExited {
 
     FieldName field = 3;
 }
+
+message EnumEntered {
+
+    FilePath file = 1;
+
+    EnumType type = 2;
+}
+
+message EnumOptionDiscovered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    Option option = 3;
+}
+
+message EnumConstantEntered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    EnumConstant constant = 3;
+}
+
+message EnumConstantOptionDiscovered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    ConstantName constant = 3;
+}
+
+message EnumConstantExited {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    ConstantName constant = 3;
+}
+
+message EnumExited {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+}
