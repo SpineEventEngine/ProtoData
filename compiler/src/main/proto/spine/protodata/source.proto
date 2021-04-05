@@ -49,4 +49,6 @@ message ProtobufSourceFile {
     File file = 2;
 
     map<string, MessageType> type = 3;
+
+    map<string, EnumType> enum_type = 4;
 }

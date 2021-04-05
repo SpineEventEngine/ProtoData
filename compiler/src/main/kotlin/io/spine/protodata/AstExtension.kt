@@ -54,6 +54,17 @@ public fun MessageType.qualifiedName(): String = name.qualifiedName()
 public fun MessageType.typeUrl(): String = name.typeUrl()
 
 /**
+ * Obtains the type URl of the type.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ *
+ * @see MessageType.qualifiedName
+ * @see TypeName.typeUrl
+ */
+public fun EnumType.typeUrl(): String = name.typeUrl()
+
+/**
  * Obtains the package and the name from this `TypeName`.
  */
 public fun TypeName.qualifiedName(): String = "${packageName}.${simpleName}"

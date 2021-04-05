@@ -97,6 +97,33 @@ public class ProtoSourceFileProjection
         }
     }
 
+    @Subscribe
+    internal fun on(@External e: EnumEntered) {
+        builder().putEnumType(e.type.typeUrl(), e.type)
+    }
+
+    @Subscribe
+    internal fun on(@External e: EnumOptionDiscovered) {
+        modifyEnum(e.type) {
+            addOption(e.option)
+        }
+    }
+
+    @Subscribe
+    internal fun on(@External e: EnumConstantEntered) {
+        modifyEnum(e.type) {
+            addConstant(e.constant)
+        }
+    }
+
+    @Subscribe
+    internal fun on(@External e: EnumConstantOptionDiscovered) {
+        modifyEnum(e.type) {
+            val const = constantBuilderList.find { it.name == e.constant }!!
+            const.addOption(e.option)
+        }
+    }
+
     private fun modifyType(name: TypeName, changes: MessageType.Builder.() -> Unit) {
         val typeUrl = name.typeUrl()
         val typeBuilder = builder()
@@ -104,6 +131,15 @@ public class ProtoSourceFileProjection
             .toBuilder()
         changes(typeBuilder)
         builder().putType(typeUrl, typeBuilder.build())
+    }
+
+    private fun modifyEnum(name: TypeName, changes: EnumType.Builder.() -> Unit) {
+        val typeUrl = name.typeUrl()
+        val typeBuilder = builder()
+            .getEnumTypeOrThrow(typeUrl)
+            .toBuilder()
+        changes(typeBuilder)
+        builder().putEnumType(typeUrl, typeBuilder.build())
     }
 }
 

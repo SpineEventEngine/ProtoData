@@ -179,6 +179,8 @@ message EnumConstantOptionDiscovered {
     TypeName type = 2;
 
     ConstantName constant = 3;
+
+    Option option = 4;
 }
 
 message EnumConstantExited {
