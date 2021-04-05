@@ -178,11 +178,11 @@ internal object CompilerEvents {
                 .build()
         }
 
-        descriptor.realOneofs.forEach { produceOneofEvents(type, it) }
+        descriptor.realOneofs.forEach { produceOneofEvents(typeName, path, it) }
 
         descriptor.fields
             .filter { it.realContainingOneof == null }
-            .forEach { produceFieldEvents(type, it) }
+            .forEach { produceFieldEvents(typeName, path, it) }
 
         descriptor.nestedTypes.forEach {
             produceMessageEvents(declaringFile = declaringFile, nestedIn = typeName, descriptor = it)
@@ -244,7 +244,7 @@ internal object CompilerEvents {
                 .build()
         }
         descriptor.values.forEach {
-            produceConstantEvents(type, it)
+            produceConstantEvents(typeName, path, it)
         }
         yield(
             EnumExited
@@ -262,7 +262,8 @@ internal object CompilerEvents {
      * At last, closes with an [EnumConstantExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceConstantEvents(
-        type: EnumType,
+        type: TypeName,
+        file: FilePath,
         descriptor: EnumValueDescriptor
     ) {
         val name = ConstantName
@@ -279,24 +280,24 @@ internal object CompilerEvents {
         yield(
             EnumConstantEntered
                 .newBuilder()
-                .setFile(type.file)
-                .setType(type.name)
+                .setFile(file)
+                .setType(type)
                 .setConstant(constant)
                 .build()
         )
         produceOptionEvents(descriptor.options) {
             EnumConstantOptionDiscovered
                 .newBuilder()
-                .setFile(type.file)
-                .setType(type.name)
+                .setFile(file)
+                .setType(type)
                 .setConstant(name)
                 .build()
         }
         yield(
             EnumConstantExited
                 .newBuilder()
-                .setFile(type.file)
-                .setType(type.name)
+                .setFile(file)
+                .setType(type)
                 .setConstant(name)
                 .build()
         )
@@ -309,7 +310,8 @@ internal object CompilerEvents {
      * Then go the events regarding the fields. At last, closes with an [OneofGroupExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
-        type: MessageType,
+        type: TypeName,
+        file: FilePath,
         descriptor: OneofDescriptor
     ) {
         val oneofName = descriptor.name()
@@ -320,26 +322,26 @@ internal object CompilerEvents {
         yield(
             OneofGroupEntered
                 .newBuilder()
-                .setFile(type.file)
-                .setType(type.name)
+                .setFile(file)
+                .setType(type)
                 .setGroup(oneofGroup)
                 .build()
         )
         produceOptionEvents(descriptor.options) {
             OneofOptionDiscovered
                 .newBuilder()
-                .setFile(type.file)
-                .setType(type.name)
+                .setFile(file)
+                .setType(type)
                 .setGroup(oneofName)
                 .setOption(it)
                 .build()
         }
-        descriptor.fields.forEach { produceFieldEvents(type, it) }
+        descriptor.fields.forEach { produceFieldEvents(type, file, it) }
         yield(
             OneofGroupExited
                 .newBuilder()
-                .setFile(type.file)
-                .setType(type.name)
+                .setFile(file)
+                .setType(type)
                 .setGroup(oneofName)
                 .build()
         )
@@ -352,7 +354,8 @@ internal object CompilerEvents {
      * closes with an [FieldExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
-        type: MessageType,
+        type: TypeName,
+        file: FilePath,
         descriptor: FieldDescriptor
     ) {
         val fieldName = descriptor.name()
@@ -367,27 +370,25 @@ internal object CompilerEvents {
         yield(
             FieldEntered
                 .newBuilder()
-                .setFile(type.file)
-                .setType(type.name)
+                .setFile(file)
+                .setType(type)
                 .setField(field)
                 .build()
         )
-
         produceOptionEvents(descriptor.options) {
             FieldOptionDiscovered
                 .newBuilder()
-                .setFile(type.file)
-                .setType(type.name)
+                .setFile(file)
+                .setType(type)
                 .setField(fieldName)
                 .setOption(it)
                 .build()
         }
-
         yield(
             FieldExited
                 .newBuilder()
-                .setFile(type.file)
-                .setType(type.name)
+                .setFile(file)
+                .setType(type)
                 .setField(fieldName)
                 .build()
         )

@@ -122,10 +122,10 @@ message MessageType {
     TypeName declared_in = 6;
 
     // Message type declarations nested inside this type.
-    repeated MessageType nested_messages = 7;
+    repeated TypeName nested_messages = 7;
 
     // Enum type declarations nested inside this type.
-    repeated EnumType nested_enums = 8;
+    repeated TypeName nested_enums = 8;
 }
 
 // A Protobuf enum type.
@@ -156,7 +156,7 @@ message EnumConstant {
 
     uint32 number = 2;
 
-    EnumType declared_in = 3;
+    TypeName declared_in = 3;
 
     uint32 order_of_declaration = 5;
 
@@ -214,7 +214,7 @@ message Field {
     Type type = 2;
 
     // The type in which the field is declared.
-    MessageType declaring_type = 3;
+    TypeName declaring_type = 3;
 
     // The field number.
     //
