@@ -36,6 +36,7 @@ import io.spine.option.OptionsProto.REQUIRED_FIELD_NUMBER
 import io.spine.option.OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.Correspondences.type
+import kotlin.reflect.KClass
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -56,10 +57,10 @@ class `'CompilerEvents' should` {
     @Test
     fun `produce file events`() {
         assertEmits(
-            FileEntered::class.java,
-            FileOptionDiscovered::class.java,
-            FileOptionDiscovered::class.java,
-            FileExited::class.java
+            FileEntered::class,
+            FileOptionDiscovered::class,
+            FileOptionDiscovered::class,
+            FileExited::class
         )
     }
 
@@ -90,27 +91,27 @@ class `'CompilerEvents' should` {
     @Test
     fun `produce type events`() {
         assertEmits(
-            FileEntered::class.java,
+            FileEntered::class,
 
-            TypeEntered::class.java,
-            TypeExited::class.java,
+            TypeEntered::class,
+            TypeExited::class,
 
-            FileExited::class.java
+            FileExited::class
         )
     }
 
     @Test
     fun `produce field events`() {
         assertEmits(
-            FileEntered::class.java,
-            TypeEntered::class.java,
+            FileEntered::class,
+            TypeEntered::class,
 
-            FieldEntered::class.java,
-            FieldOptionDiscovered::class.java,
-            FieldExited::class.java,
+            FieldEntered::class,
+            FieldOptionDiscovered::class,
+            FieldExited::class,
 
-            TypeExited::class.java,
-            FileExited::class.java
+            TypeExited::class,
+            FileExited::class
         )
     }
 
@@ -128,24 +129,50 @@ class `'CompilerEvents' should` {
     @Test
     fun `produce 'oneof' events`() {
         assertEmits(
-            FileEntered::class.java,
-            TypeEntered::class.java,
+            FileEntered::class,
+            TypeEntered::class,
 
-            OneofGroupEntered::class.java,
-            FieldEntered::class.java,
-            FieldOptionDiscovered::class.java,
-            FieldExited::class.java,
-            OneofGroupExited::class.java,
+            OneofGroupEntered::class,
+            FieldEntered::class,
+            FieldOptionDiscovered::class,
+            FieldExited::class,
+            OneofGroupExited::class,
 
-            TypeExited::class.java,
-            FileExited::class.java
+            TypeExited::class,
+            FileExited::class
+        )
+    }
+    
+    @Test
+    fun `produce enum events`() {
+        assertEmits(
+            FileEntered::class,
+            EnumEntered::class,
+            EnumConstantEntered::class,
+            EnumConstantExited::class,
+            EnumConstantEntered::class,
+            EnumConstantExited::class,
+            EnumConstantEntered::class,
+            EnumConstantExited::class,
+            EnumExited::class
         )
     }
 
-    private fun assertEmits(vararg types: Class<out EventMessage>) {
+    @Test
+    fun `produce nested type events`() {
+        assertEmits(
+            TypeEntered::class,
+            TypeEntered::class,
+            TypeExited::class,
+            TypeExited::class
+        )
+    }
+
+    private fun assertEmits(vararg types: KClass<out EventMessage>) {
+        val javaClasses = types.map { it.java }
         assertThat(events)
             .comparingElementsUsing(type<EventMessage>())
-            .containsAtLeastElementsIn(types)
+            .containsAtLeastElementsIn(javaClasses)
             .inOrder()
     }
 }

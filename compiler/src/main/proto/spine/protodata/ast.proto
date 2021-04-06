@@ -334,4 +334,3 @@ message Option {
     // The packed value of the option.
     google.protobuf.Any value = 4;
 }
-

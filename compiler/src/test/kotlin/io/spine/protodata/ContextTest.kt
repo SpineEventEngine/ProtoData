@@ -81,7 +81,7 @@ class `'ProtoData' context should` {
                     .build()
             )
         assertThat(journeyType.fieldList)
-            .hasSize(3)
+            .hasSize(4)
         assertThat(journeyType.oneofGroupList)
             .hasSize(1)
         assertThat(journeyType.oneofGroupList[0].fieldList)

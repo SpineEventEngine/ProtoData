@@ -25,6 +25,15 @@ message Journey {
     }
 
     Incarnation incarnation = 5;
+
+    message Destination {
+
+        string where = 1;
+
+        time.LocalDate when = 2;
+    }
+
+    repeated Destination route = 6;
 }
 
 message Sidekick {
