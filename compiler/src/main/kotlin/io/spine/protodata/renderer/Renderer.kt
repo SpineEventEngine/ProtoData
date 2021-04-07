@@ -31,9 +31,8 @@ import io.spine.protodata.QueryingClient
 import io.spine.server.BoundedContext
 
 /**
- * A `Renderer` takes an existing source set, modifies it with a number of
- * [enhancements][CodeEnhancement], including changing the contents of existing source files or
- * creating new ones, and renders the resulting code into a [SourceSet].
+ * A `Renderer` takes an existing source set, modifies it, including changing the contents of
+ * existing source files or creating new ones, and renders the resulting code into a [SourceSet].
  *
  * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
  * have a `public` no-argument constructor.
@@ -43,7 +42,7 @@ public abstract class Renderer {
     internal lateinit var protoDataContext: BoundedContext
 
     /**
-     * Processes the given `sources` in accordance with the [enhancements].
+     * Processes the given `sources` and produces the updated [SourceSet].
      *
      * If a file is present in the input source set but not the output, the file is left untouched.
      * If a file is present in the output source set but not the input, the file created.
