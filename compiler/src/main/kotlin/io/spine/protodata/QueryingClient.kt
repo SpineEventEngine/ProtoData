@@ -39,9 +39,9 @@ import io.spine.server.BoundedContext
 import java.util.*
 
 /**
- * A builder for queries to the projections defined on top of the Protobuf compiler events.
+ * A builder for queries to the entities defined on top of the Protobuf compiler events.
  */
-public class QueryBuilder<T : EntityState>
+public class QueryingClient<T : EntityState>
 internal constructor(
     private val context: BoundedContext,
     private val type: Class<T>,
@@ -56,18 +56,26 @@ internal constructor(
         .build()
 
     /**
-     * Selects a projection by its ID.
+     * Selects an entity by its ID.
      */
-    public fun withId(id: Any): SingleCastQuery<T> {
+    public fun withId(id: Any): Optional<T> {
         checkSupported(id.javaClass)
-        return SingleCastQuery(context, buildQuery(id), type)
+        val query = buildQuery(id)
+        val results = execute(query)
+        return if (results.isEmpty()) {
+            Optional.empty()
+        } else {
+            val value = getOnlyElement(results)
+            Optional.of(value)
+        }
     }
 
     /**
-     * Selects all projections of the given type.
+     * Selects all entities of the given type.
      */
-    public fun all(): MulticastQuery<T> {
-        return MulticastQuery(context, buildQuery(), type)
+    public fun all(): Set<T> {
+        val query = buildQuery()
+        return execute(query)
     }
 
     private fun buildQuery(id: Any? = null): Query {
@@ -78,59 +86,16 @@ internal constructor(
             queries.byIds(type, setOf(id))
         }
     }
-}
-
-/**
- * A query which may yield many entities.
- */
-public class MulticastQuery<T : EntityState>(
-    private val context: BoundedContext,
-    private val query: Query,
-    private val type: Class<T>
-) {
 
     /**
-     * Runs this query and obtains the entities.
+     * Executes the given [query] upon the given [context].
      */
-    public fun execute(): Set<T> = executeQuery(context, query, type)
-}
-
-/**
- * A query which may only yield one entity.
- */
-public class SingleCastQuery<T: EntityState>(
-    private val context: BoundedContext,
-    private val query: Query,
-    private val type: Class<T>
-) {
-
-    /**
-     * Runs this query and obtains the single entity.
-     *
-     * @return the looked up entity or `Optional.empty()` if the entity does not exist.
-     */
-    public fun execute(): Optional<T> {
-        val result = executeQuery(context, query, type)
-        return if (result.isEmpty()) {
-            Optional.empty()
-        } else {
-            val value = getOnlyElement(result)
-            Optional.of(value)
-        }
+    private fun execute(query: Query): Set<T> {
+        val observer = Observer(type)
+        context.stand().execute(query, observer)
+        return observer.foundResult().toSet()
     }
 }
-
-/**
- * Executes the given [query] upon the given [context].
- */
-private fun <T: EntityState> executeQuery(context: BoundedContext,
-                                          query: Query,
-                                          type: Class<T>): Set<T> {
-    val observer = Observer(type)
-    context.stand().execute(query, observer)
-    return observer.foundResult().toSet()
-}
-
 
 /**
  * A [StreamObserver] which listens to a single [QueryResponse].

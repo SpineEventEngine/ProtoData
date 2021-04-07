@@ -27,7 +27,7 @@
 package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
-import io.spine.protodata.QueryBuilder
+import io.spine.protodata.QueryingClient
 import io.spine.server.BoundedContext
 
 /**
@@ -52,22 +52,22 @@ public abstract class Renderer {
     public abstract fun render(sources: SourceSet): SourceSet
 
     /**
-     * Creates a [QueryBuilder] to find projections of the given class.
+     * Creates a [QueryingClient] to find projections of the given class.
      *
      * Users may create their own projections and register them in the `ProtoData` context via
      * a [ContextExtension][io.spine.protodata.ContextExtension].
      */
-    protected fun <P : EntityState> select(type: Class<P>): QueryBuilder<P> {
-        return QueryBuilder(protoDataContext, type, javaClass.name)
+    protected fun <P : EntityState> select(type: Class<P>): QueryingClient<P> {
+        return QueryingClient(protoDataContext, type, javaClass.name)
     }
 
     /**
-     * Creates a [QueryBuilder] to find projections of the given type.
+     * Creates a [QueryingClient] to find projections of the given type.
      *
      * Users may create their own projections and register them in the `ProtoData` context via
      * a [ContextExtension][io.spine.protodata.ContextExtension].
      */
-    protected inline fun <reified P : EntityState> select(): QueryBuilder<P>  {
+    protected inline fun <reified P : EntityState> select(): QueryingClient<P>  {
         val cls = P::class.java
         return select(cls)
     }
