@@ -126,6 +126,8 @@ message MessageType {
 
     // Enum type declarations nested inside this type.
     repeated TypeName nested_enums = 8;
+
+    Doc doc = 9;
 }
 
 // A Protobuf enum type.
@@ -143,6 +145,8 @@ message EnumType {
 
     // Name of the message type which hosts the declaration of this type.
     TypeName declared_in = 5;
+
+    Doc doc = 6;
 }
 
 message ConstantName {
@@ -161,6 +165,8 @@ message EnumConstant {
     uint32 order_of_declaration = 5;
 
     repeated Option option = 6;
+
+    Doc doc = 7;
 }
 
 // A primitive Protobuf type.
@@ -278,6 +284,8 @@ message Field {
     // Field-level options.
     repeated Option option = 10;
 
+    Doc doc = 11;
+
     // Additional type details for map fields.
     message OfMap {
 
@@ -306,6 +314,8 @@ message OneofGroup {
 
     // Oneof-level options.
     repeated Option option = 3;
+
+    Doc doc = 4;
 }
 
 // A Protobuf option.
@@ -333,4 +343,13 @@ message Option {
 
     // The packed value of the option.
     google.protobuf.Any value = 4;
+}
+
+message Doc {
+
+    string leading_comment = 1;
+
+    string trailing_comment = 2;
+
+    repeated string detached_comment = 3;
 }
