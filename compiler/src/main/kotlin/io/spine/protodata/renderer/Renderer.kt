@@ -55,6 +55,9 @@ public abstract class Renderer {
      *
      * Users may create their own projections and register them in the `ProtoData` context via
      * a [Plugin][io.spine.protodata.Plugin].
+     *
+     * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
+     * prettier code.
      */
     protected fun <P : EntityState> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)
