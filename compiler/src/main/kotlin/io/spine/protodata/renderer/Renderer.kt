@@ -53,7 +53,7 @@ public abstract class Renderer {
     /**
      * Creates a [QueryingClient] to find projections of the given class.
      *
-     * Users may create their own projections and register them in the `ProtoData` context via
+     * Users may create their own projections and register them in the `Code Generation` context via
      * a [Plugin][io.spine.protodata.Plugin].
      *
      * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
@@ -66,7 +66,7 @@ public abstract class Renderer {
     /**
      * Creates a [QueryingClient] to find projections of the given type.
      *
-     * Users may create their own projections and register them in the `ProtoData` context via
+     * Users may create their own projections and register them in the `Code Generation` context via
      * a [Plugin][io.spine.protodata.Plugin].
      */
     protected inline fun <reified P : EntityState> select(): QueryingClient<P>  {

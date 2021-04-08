@@ -29,7 +29,7 @@ package io.spine.protodata
 import io.spine.server.BoundedContextBuilder
 
 /**
- * An plugin into the `ProtoData` bounded context.
+ * An plugin into the `Code Generation` bounded context.
  *
  * Users may want to define bespoke projections and processes based on the Protobuf compiler events.
  * To do so, define your entities, commands, and events, and register the entities in the bounded

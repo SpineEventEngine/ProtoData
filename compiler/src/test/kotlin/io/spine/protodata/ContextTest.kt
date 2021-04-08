@@ -38,17 +38,17 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat as assertMessage
 
-class `'ProtoData' context should` {
+class `'Code Generation' context should` {
 
     @Test
     fun `contain 'ProtobufSource' file projection`() {
-        val ctx = ProtoDataContext.builder().build()
+        val ctx = CodeGenerationContext.builder().build()
         assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileProjection::class.java))
     }
 
     @Test
     fun `construct 'ProtobufSource' based on a descriptor set`() {
-        val ctx = BlackBoxContext.from(ProtoDataContext.builder())
+        val ctx = BlackBoxContext.from(CodeGenerationContext.builder())
         val protoDescriptor = DoctorProto.getDescriptor().toProto()
         val set = CodeGeneratorRequest
             .newBuilder()

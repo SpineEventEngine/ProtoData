@@ -66,10 +66,10 @@ private fun readVersion(): String {
  * The command accepts class names for the service provider interface implementations via the CLI
  * parameters, such as `--extension`, `--renderer`, and `--options`. Then, using
  * the classpath of the app and the extra classpath supplied via the `--extra-classpath` parameter,
- * loads those classes. `ProtoData` context accept Protobuf compiler events, regarding the Protobuf
- * types, listed in the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request`
- * parameter. Finally, the renderer applies required changes to the source set with the root path,
- * supplied in the `--source-root` parameter.
+ * loads those classes. `Code Generation` context accept Protobuf compiler events, regarding
+ * the Protobuf types, listed in the `CodeGeneratorRequest.file_to_generate` as loaded from
+ * the `--request` parameter. Finally, the renderer applies required changes to the source set
+ * with the root path, supplied in the `--source-root` parameter.
  */
 internal class Run(version: String) : CliktCommand(
     name = "protodata",
