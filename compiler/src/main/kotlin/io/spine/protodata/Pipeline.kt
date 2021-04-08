@@ -72,7 +72,7 @@ public class Pipeline(
         renderer.protoDataContext = context
         val enhanced = renderer.render(sourceSet)
         enhanced.files.forEach {
-            it.write()
+            it.write(rootDir = sourceSet.rootDir)
         }
         context.close()
     }

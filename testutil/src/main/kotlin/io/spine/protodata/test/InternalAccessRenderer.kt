@@ -26,21 +26,28 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceSet
+import java.io.File
+import java.nio.file.Paths
 
-public class TestRenderer : Renderer() {
+/**
+ * Creates a new package-private class for each [InternalType].
+ */
+public class InternalAccessRenderer : Renderer() {
 
-    public override fun render(sources: SourceSet): SourceSet {
-        var files = sources.files
+    override fun render(sources: SourceSet): SourceSet {
         val internalTypes = select<InternalType>().all()
-        internalTypes.forEach { internalType ->
-            val oldName = internalType.name.simpleName
-            val newName = "_$oldName"
-            files = files.map {
-                it.overwrite(it.code.replace(oldName, newName))
-            }.toSet()
+        val newFiles = internalTypes.map { internalType ->
+            val path = internalType.name.qualifiedName().replace('.', File.separatorChar)
+            SourceFile.fromCode(Paths.get("${path}Internal.java"), """
+                class ${internalType.name.simpleName}Internal {
+                    // Here goes case specific code.
+                }
+            """.trimIndent())
         }
-        return sources.withFiles(files)
+        return sources.withFiles(newFiles.toSet())
     }
 }

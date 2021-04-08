@@ -38,9 +38,6 @@ import io.spine.server.integration.ThirdPartyContext
  */
 internal object CodeGenerationContext {
 
-    fun build(): BoundedContext =
-        builder().build()
-
     /**
      * Creates a builder of the bounded context.
      */

@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import java.nio.charset.Charset
 import java.nio.file.Path
+import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.nio.file.StandardOpenOption.WRITE
 import kotlin.io.path.readText
@@ -75,7 +76,19 @@ private constructor(
     /**
      * Writes the source code into the file on the file system.
      */
-    public fun write(charset: Charset = Charsets.UTF_8) {
-        path.writeText(code, charset, WRITE, TRUNCATE_EXISTING)
+    internal fun write(charset: Charset = Charsets.UTF_8, rootDir: Path? = null) {
+        val targetPath = if (rootDir != null) {
+            if (path.startsWith(rootDir)) {
+                path
+            } else {
+                rootDir.resolve(path)
+            }
+        } else {
+            path
+        }
+        targetPath.toFile()
+                  .parentFile
+                  .mkdirs()
+        targetPath.writeText(code, charset, WRITE, TRUNCATE_EXISTING, CREATE)
     }
 }

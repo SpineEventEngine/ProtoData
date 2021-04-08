@@ -35,7 +35,8 @@ import io.spine.server.projection.ProjectionRepository
 import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
-public class InternalMessageProjection : Projection<TypeName, InternalType, InternalType.Builder>() {
+public class InternalMessageProjection
+    : Projection<TypeName, InternalType, InternalType.Builder>() {
 
     @Subscribe
     internal fun on(@External e: TypeEntered) {
