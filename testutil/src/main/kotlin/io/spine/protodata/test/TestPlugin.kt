@@ -24,17 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.test
 
+import io.spine.protodata.Plugin
 import io.spine.server.BoundedContextBuilder
 
-/**
- * An extension above the `ProtoData` bounded context.
- */
-public interface ContextExtension {
+public class TestPlugin: Plugin {
 
-    /**
-     * Registers the extension entities in the bounded context.
-     */
-    public fun fillIn(context: BoundedContextBuilder)
+    public override fun fillIn(context: BoundedContextBuilder) {
+        context.add(InternalMessageRepository())
+    }
 }

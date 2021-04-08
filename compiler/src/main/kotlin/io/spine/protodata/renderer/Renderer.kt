@@ -54,7 +54,7 @@ public abstract class Renderer {
      * Creates a [QueryingClient] to find projections of the given class.
      *
      * Users may create their own projections and register them in the `ProtoData` context via
-     * a [ContextExtension][io.spine.protodata.ContextExtension].
+     * a [ContextExtension][io.spine.protodata.Plugin].
      */
     protected fun <P : EntityState> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)
@@ -64,7 +64,7 @@ public abstract class Renderer {
      * Creates a [QueryingClient] to find projections of the given type.
      *
      * Users may create their own projections and register them in the `ProtoData` context via
-     * a [ContextExtension][io.spine.protodata.ContextExtension].
+     * a [ContextExtension][io.spine.protodata.Plugin].
      */
     protected inline fun <reified P : EntityState> select(): QueryingClient<P>  {
         val cls = P::class.java

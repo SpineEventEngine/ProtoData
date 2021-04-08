@@ -31,7 +31,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.Journey
-import io.spine.protodata.test.TestContextExtension
+import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
 import java.nio.file.Path
 import kotlin.io.path.readText
@@ -73,7 +73,7 @@ class `'Pipeline' should` {
     @Test
     fun `render enhanced code`() {
         Pipeline(
-            listOf(TestContextExtension()),
+            listOf(TestPlugin()),
             renderer,
             SourceSet.fromContentsOf(srcRoot),
             request

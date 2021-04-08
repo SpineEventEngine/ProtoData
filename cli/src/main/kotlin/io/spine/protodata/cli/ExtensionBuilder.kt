@@ -26,9 +26,9 @@
 
 package io.spine.protodata.cli
 
-import io.spine.protodata.ContextExtension
+import io.spine.protodata.Plugin
 
 /**
- * A reflective builder for [ContextExtension]s.
+ * A reflective builder for [Plugin]s.
  */
-internal class ExtensionBuilder: ReflectiveBuilder<ContextExtension>()
+internal class ExtensionBuilder: ReflectiveBuilder<Plugin>()

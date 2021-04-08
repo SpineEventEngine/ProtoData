@@ -36,8 +36,8 @@ import com.github.ajalt.clikt.parameters.types.path
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.io.Resource
-import io.spine.protodata.ContextExtension
 import io.spine.protodata.Pipeline
+import io.spine.protodata.Plugin
 import io.spine.protodata.option.OptionsProvider
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
@@ -152,7 +152,7 @@ internal class Run(version: String) : CliktCommand(
         }
     }
 
-    private fun loadExtensions(classLoader: ClassLoader): List<ContextExtension> {
+    private fun loadExtensions(classLoader: ClassLoader): List<Plugin> {
         val extensionBuilder = ExtensionBuilder()
         return extensionProviders.map {
             extensionBuilder.createByName(it, classLoader)

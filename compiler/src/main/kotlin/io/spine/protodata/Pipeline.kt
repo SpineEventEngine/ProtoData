@@ -41,13 +41,13 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
  * a single [Renderer]. A pipeline runs on a single source set.
  *
  * The pipeline starts by building the `ProtoData` bounded context with the supplied
- * [ContextExtension]s. Then, the Protobuf compiler events are emitted and the subscribers in
+ * [Plugin]s. Then, the Protobuf compiler events are emitted and the subscribers in
  * the context receive them. Then, the [Renderer], which is able to query the states of entities in
  * the `ProtoData` context, alters the source set. This may include creating new files and/or
  * modifying existing ones. Lastly, the source set is stored onto the file system.
  */
 public class Pipeline(
-    private val extensions: List<ContextExtension>,
+    private val extensions: List<Plugin>,
     private val renderer:  Renderer,
     private val sourceSet: SourceSet,
     private val request: CodeGeneratorRequest

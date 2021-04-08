@@ -24,14 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata
 
-import io.spine.protodata.ContextExtension
 import io.spine.server.BoundedContextBuilder
 
-public class TestContextExtension: ContextExtension {
+/**
+ * An plugin into the `ProtoData` bounded context.
+ *
+ * Users may want to define bespoke projections and processes based on the Protobuf compiler events.
+ * To do so, define your entities, commands, and events, and register the entities in the bounded
+ * context via [fillIn].
+ *
+ * ProtoData uses the Spine Event Engine framework. If you are new to the tool, see
+ * the [getting started guide](https://spine.io/docs/quick-start/).
+ */
+public interface Plugin {
 
-    public override fun fillIn(context: BoundedContextBuilder) {
-        context.add(InternalMessageRepository())
-    }
+    /**
+     * Registers the extra entities in the bounded context.
+     *
+     * Implementations may register entities add Bus filters and listeners, etc. It is not
+     * recommended to remove entities from the context, as the ProtoData library may rely on
+     * presence of some of them.
+     */
+    public fun fillIn(context: BoundedContextBuilder)
 }

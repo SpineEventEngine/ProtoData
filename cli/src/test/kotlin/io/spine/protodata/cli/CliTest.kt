@@ -31,7 +31,7 @@ import com.google.common.truth.Truth
 import com.google.protobuf.compiler.PluginProtos
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
-import io.spine.protodata.test.TestContextExtension
+import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
 import java.nio.file.Path
 import kotlin.io.path.readText
@@ -73,7 +73,7 @@ class `Command line application should` {
     @Test
     fun `render enhanced code`() {
         launchApp(
-            "-x", TestContextExtension::class.jvmName,
+            "-x", TestPlugin::class.jvmName,
             "-r", TestRenderer::class.jvmName,
             "--src", srcRoot.toString(),
             "-t", codegenRequestFile.toString()
@@ -89,7 +89,7 @@ class `Command line application should` {
         fun `renderer is missing`() {
             assertMissingOption {
                 launchApp(
-                    "-x", TestContextExtension::class.jvmName,
+                    "-x", TestPlugin::class.jvmName,
                     "--src", srcRoot.toString(),
                     "-t", codegenRequestFile.toString()
                 )
@@ -100,7 +100,7 @@ class `Command line application should` {
         fun `source root is missing`() {
             assertMissingOption {
                 launchApp(
-                    "-x", TestContextExtension::class.jvmName,
+                    "-x", TestPlugin::class.jvmName,
                     "-r", TestRenderer::class.jvmName,
                     "-t", codegenRequestFile.toString()
                 )
@@ -111,7 +111,7 @@ class `Command line application should` {
         fun `code generator request file is missing`() {
             assertMissingOption {
                 launchApp(
-                    "-x", TestContextExtension::class.jvmName,
+                    "-x", TestPlugin::class.jvmName,
                     "-r", TestRenderer::class.jvmName,
                     "--src", srcRoot.toString()
                 )
