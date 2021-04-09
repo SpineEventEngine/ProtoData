@@ -34,6 +34,7 @@ import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
+import java.io.File.separatorChar
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -118,26 +119,29 @@ public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>
 public fun MessageType.javaFile(declaredIn: File): Path {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
-    val topLevelClassName = if (javaMultipleFiles) {
-        name.simpleName
-    } else {
-        declaredIn.javaOuterClassName()
+    val topLevelClassName = when {
+        !javaMultipleFiles -> declaredIn.javaOuterClassName()
+        name.nestingTypeNameList.isNotEmpty() -> name.nestingTypeNameList.first()
+        else -> name.simpleName
     }
-    return Paths.get(packageName.replace('.', '/'), "$topLevelClassName.java")
+    return Paths.get(packageName.replace('.', separatorChar), "$topLevelClassName.java")
 }
 
 /**
  * Obtains the full name of the Java class, generated from this message.
+ *
+ * @return binary name of the class generated from this message
  */
 public fun MessageType.javaClassName(declaredIn: File): String {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
-    val className = if (javaMultipleFiles) {
-        name.simpleName
-    } else {
-        val outerClass =  declaredIn.javaOuterClassName()
-        "${outerClass}.${name.simpleName}"
+    val nameElements = mutableListOf<String>()
+    if (!javaMultipleFiles) {
+        nameElements.add(declaredIn.javaOuterClassName())
     }
+    nameElements.addAll(name.nestingTypeNameList)
+    nameElements.add(name.simpleName)
+    val className = nameElements.joinToString(separator = "$")
     return "${packageName}.${className}"
 }
 
