@@ -26,12 +26,28 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.ContextExtension
-import io.spine.server.BoundedContextBuilder
+import io.spine.protodata.qualifiedName
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.renderer.SourceSet
+import java.io.File
+import java.nio.file.Paths
 
-public class TestContextExtension: ContextExtension {
+/**
+ * Creates a new package-private class for each [InternalType].
+ */
+public class InternalAccessRenderer : Renderer() {
 
-    public override fun fillIn(context: BoundedContextBuilder) {
-        context.add(InternalMessageRepository())
+    override fun render(sources: SourceSet): SourceSet {
+        val internalTypes = select<InternalType>().all()
+        val newFiles = internalTypes.map { internalType ->
+            val path = internalType.name.qualifiedName().replace('.', File.separatorChar)
+            SourceFile.fromCode(Paths.get("${path}Internal.java"), """
+                class ${internalType.name.simpleName}Internal {
+                    // Here goes case specific code.
+                }
+            """.trimIndent())
+        }
+        return sources.withFiles(newFiles.toSet())
     }
 }

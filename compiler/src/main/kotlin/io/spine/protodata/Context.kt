@@ -34,19 +34,16 @@ import io.spine.server.BoundedContextBuilder
 import io.spine.server.integration.ThirdPartyContext
 
 /**
- * A factory for the `ProtoData` bounded context.
+ * A factory for the `Code Generation` bounded context.
  */
-internal object ProtoDataContext {
-
-    fun build(): BoundedContext =
-        builder().build()
+internal object CodeGenerationContext {
 
     /**
      * Creates a builder of the bounded context.
      */
     fun builder(): BoundedContextBuilder {
         val builder = BoundedContext
-            .singleTenant("ProtoData")
+            .singleTenant("Code Generation")
         builder.add(ProtoSourceFileRepository())
         return builder
     }

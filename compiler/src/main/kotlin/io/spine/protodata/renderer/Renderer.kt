@@ -27,13 +27,12 @@
 package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
-import io.spine.protodata.QueryBuilder
+import io.spine.protodata.QueryingClient
 import io.spine.server.BoundedContext
 
 /**
- * A `Renderer` takes an existing source set, modifies it with a number of
- * [enhancements][CodeEnhancement], including changing the contents of existing source files or
- * creating new ones, and renders the resulting code into a [SourceSet].
+ * A `Renderer` takes an existing source set, modifies it, including changing the contents of
+ * existing source files or creating new ones, and renders the resulting code into a [SourceSet].
  *
  * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
  * have a `public` no-argument constructor.
@@ -43,7 +42,7 @@ public abstract class Renderer {
     internal lateinit var protoDataContext: BoundedContext
 
     /**
-     * Processes the given `sources` in accordance with the [enhancements].
+     * Processes the given `sources` and produces the updated [SourceSet].
      *
      * If a file is present in the input source set but not the output, the file is left untouched.
      * If a file is present in the output source set but not the input, the file created.
@@ -52,22 +51,25 @@ public abstract class Renderer {
     public abstract fun render(sources: SourceSet): SourceSet
 
     /**
-     * Creates a [QueryBuilder] to find projections of the given class.
+     * Creates a [QueryingClient] to find projections of the given class.
      *
-     * Users may create their own projections and register them in the `ProtoData` context via
-     * a [ContextExtension][io.spine.protodata.ContextExtension].
+     * Users may create their own projections and register them in the `Code Generation` context via
+     * a [Plugin][io.spine.protodata.Plugin].
+     *
+     * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
+     * prettier code.
      */
-    protected fun <P : EntityState> select(type: Class<P>): QueryBuilder<P> {
-        return QueryBuilder(protoDataContext, type, javaClass.name)
+    protected fun <P : EntityState> select(type: Class<P>): QueryingClient<P> {
+        return QueryingClient(protoDataContext, type, javaClass.name)
     }
 
     /**
-     * Creates a [QueryBuilder] to find projections of the given type.
+     * Creates a [QueryingClient] to find projections of the given type.
      *
-     * Users may create their own projections and register them in the `ProtoData` context via
-     * a [ContextExtension][io.spine.protodata.ContextExtension].
+     * Users may create their own projections and register them in the `Code Generation` context via
+     * a [Plugin][io.spine.protodata.Plugin].
      */
-    protected inline fun <reified P : EntityState> select(): QueryBuilder<P>  {
+    protected inline fun <reified P : EntityState> select(): QueryingClient<P>  {
         val cls = P::class.java
         return select(cls)
     }

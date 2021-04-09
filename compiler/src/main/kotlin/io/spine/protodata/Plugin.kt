@@ -24,11 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata
 
-import io.spine.server.projection.ProjectionRepository
+import io.spine.server.BoundedContextBuilder
 
 /**
- * A reflective builder for projection repositories.
+ * An plugin into the `Code Generation` bounded context.
+ *
+ * Users may want to define bespoke projections and processes based on the Protobuf compiler events.
+ * To do so, define your entities, commands, and events, and register the entities in the bounded
+ * context via [fillIn].
+ *
+ * ProtoData uses the Spine Event Engine framework. If you are new to the tool, see
+ * the [getting started guide](https://spine.io/docs/quick-start/).
  */
-internal class ProjectionRepositoryBuilder: ReflectiveBuilder<ProjectionRepository<*, *, *>>()
+public interface Plugin {
+
+    /**
+     * Registers the extra entities in the bounded context.
+     *
+     * Implementations may register entities add Bus filters and listeners, etc. It is not
+     * recommended to remove entities from the context, as the ProtoData library may rely on
+     * presence of some of them.
+     */
+    public fun fillIn(context: BoundedContextBuilder)
+}

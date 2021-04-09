@@ -33,7 +33,7 @@ public class TestRenderer : Renderer() {
 
     public override fun render(sources: SourceSet): SourceSet {
         var files = sources.files
-        val internalTypes = select<InternalType>().all().execute()
+        val internalTypes = select<InternalType>().all()
         internalTypes.forEach { internalType ->
             val oldName = internalType.name.simpleName
             val newName = "_$oldName"
@@ -41,6 +41,6 @@ public class TestRenderer : Renderer() {
                 it.overwrite(it.code.replace(oldName, newName))
             }.toSet()
         }
-        return SourceSet(files)
+        return sources.withFiles(files)
     }
 }

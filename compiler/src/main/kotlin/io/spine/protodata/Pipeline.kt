@@ -37,17 +37,17 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
 /**
  * A pipeline which processes the Protobuf files.
  *
- * A pipeline consists of the `ProtoData` context, which receives Protobuf compiler events, and
- * a single [Renderer]. A pipeline runs on a single source set.
+ * A pipeline consists of the `Code Generation` context, which receives Protobuf compiler events,
+ * and a single [Renderer]. A pipeline runs on a single source set.
  *
- * The pipeline starts by building the `ProtoData` bounded context with the supplied
- * [ContextExtension]s. Then, the Protobuf compiler events are emitted and the subscribers in
+ * The pipeline starts by building the `Code Generation` bounded context with the supplied
+ * [Plugin]s. Then, the Protobuf compiler events are emitted and the subscribers in
  * the context receive them. Then, the [Renderer], which is able to query the states of entities in
- * the `ProtoData` context, alters the source set. This may include creating new files and/or
+ * the `Code Generation` context, alters the source set. This may include creating new files and/or
  * modifying existing ones. Lastly, the source set is stored onto the file system.
  */
 public class Pipeline(
-    private val extensions: List<ContextExtension>,
+    private val extensions: List<Plugin>,
     private val renderer:  Renderer,
     private val sourceSet: SourceSet,
     private val request: CodeGeneratorRequest
@@ -62,7 +62,7 @@ public class Pipeline(
      * Executes the processing pipeline.
      */
     public operator fun invoke() {
-        val contextBuilder = ProtoDataContext.builder()
+        val contextBuilder = CodeGenerationContext.builder()
         extensions.forEach { it.fillIn(contextBuilder) }
         val context = contextBuilder.build()
 
@@ -72,7 +72,7 @@ public class Pipeline(
         renderer.protoDataContext = context
         val enhanced = renderer.render(sourceSet)
         enhanced.files.forEach {
-            it.write()
+            it.write(rootDir = sourceSet.rootDir)
         }
         context.close()
     }

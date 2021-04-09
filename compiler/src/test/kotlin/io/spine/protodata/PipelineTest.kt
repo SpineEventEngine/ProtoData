@@ -30,10 +30,13 @@ import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.test.InternalAccessRenderer
 import io.spine.protodata.test.Journey
-import io.spine.protodata.test.TestContextExtension
+import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
 import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
@@ -73,12 +76,28 @@ class `'Pipeline' should` {
     @Test
     fun `render enhanced code`() {
         Pipeline(
-            listOf(TestContextExtension()),
+            listOf(TestPlugin()),
             renderer,
             SourceSet.fromContentsOf(srcRoot),
             request
         )()
         assertThat(sourceFile.readText())
             .isEqualTo("_Journey worth taking")
+    }
+
+    @Test
+    fun `generate new files`() {
+        Pipeline(
+            listOf(TestPlugin()),
+            InternalAccessRenderer(),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        val newClass = srcRoot.resolve("spine/protodata/test/JourneyInternal.java")
+        println(srcRoot.listDirectoryEntries())
+        assertThat(newClass.exists())
+            .isTrue()
+        assertThat(newClass.readText())
+            .contains("class JourneyInternal")
     }
 }

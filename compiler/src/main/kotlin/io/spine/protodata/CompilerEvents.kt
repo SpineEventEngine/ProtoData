@@ -414,8 +414,7 @@ private class ProtoFileEvents(
      * @param ctor
      *     a function which given an option, constructs a fitting event
      */
-    private suspend fun
-            SequenceScope<EventMessage>.produceOptionEvents(
+    private suspend fun SequenceScope<EventMessage>.produceOptionEvents(
         options: ExtendableMessage<*>,
         ctor: (Option) -> EventMessage
     ) {

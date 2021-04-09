@@ -34,7 +34,12 @@ import kotlin.io.path.isRegularFile
 /**
  * A set of source files.
  */
-public data class SourceSet(val files: Set<SourceFile>) {
+@Suppress("DataClassPrivateConstructor")
+    // It's OK once we have and instance to change it. Making constructor `private` here so that
+    // users do not attempt re-building an object from scratch and use `fromContentsOf` or
+    // `withFiles` instead.
+public data class SourceSet
+private constructor(val files: Set<SourceFile>, internal val rootDir: Path) {
 
     public companion object {
 
@@ -47,7 +52,7 @@ public data class SourceSet(val files: Set<SourceFile>) {
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read(it) }
                 .collect(toImmutableSet())
-            return SourceSet(files)
+            return SourceSet(files, directory)
         }
     }
 
@@ -59,4 +64,10 @@ public data class SourceSet(val files: Set<SourceFile>) {
     public fun file(path: Path): SourceFile =
         files.find { it.path.endsWith(path) }
             ?: throw IllegalArgumentException("File not found: `$path`.")
+
+    /**
+     * Constructs a `SourceSet` in the same root directory out of the given source files.
+     */
+    public fun withFiles(files: Set<SourceFile>): SourceSet =
+        SourceSet(files, rootDir)
 }
