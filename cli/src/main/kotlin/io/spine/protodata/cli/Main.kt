@@ -64,7 +64,7 @@ private fun readVersion(): String {
  * The main CLI command which performs the ProtoData code generation tasks.
  *
  * The command accepts class names for the service provider interface implementations via the CLI
- * parameters, such as `--extension`, `--renderer`, and `--options`. Then, using
+ * parameters, such as `--plugin`, `--renderer`, and `--options`. Then, using
  * the classpath of the app and the extra classpath supplied via the `--extra-classpath` parameter,
  * loads those classes. `Code Generation` context accept Protobuf compiler events, regarding
  * the Protobuf types, listed in the `CodeGeneratorRequest.file_to_generate` as loaded from
@@ -78,11 +78,11 @@ internal class Run(version: String) : CliktCommand(
     printHelpOnEmptyArgs = true
 ) {
 
-    private val extensionProviders: List<String> by option("--extension", "-x", help = """
-        The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
+    private val extensionProviders: List<String> by option("--plugin", "-p", help = """
+        The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
         
-           <...> -x com.foo.TypeOptionsProvider -p com.foo.FieldOptionsProvider
+           <...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin
         
     """.trimIndent()).multiple()
     private  val renderer: String by option("--renderer", "-r", help = """
@@ -93,7 +93,7 @@ internal class Run(version: String) : CliktCommand(
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
         
-           <...> -x com.foo.TypeOptionsProvider -p com.foo.FieldOptionsProvider
+           <...> -o com.foo.TypeOptionsProvider -o com.foo.FieldOptionsProvider
         
     """.trimIndent()).multiple()
     private val codegenRequestFile: File by option("--request", "-t", help =

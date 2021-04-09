@@ -73,7 +73,7 @@ class `Command line application should` {
     @Test
     fun `render enhanced code`() {
         launchApp(
-            "-x", TestPlugin::class.jvmName,
+            "-p", TestPlugin::class.jvmName,
             "-r", TestRenderer::class.jvmName,
             "--src", srcRoot.toString(),
             "-t", codegenRequestFile.toString()
@@ -89,7 +89,7 @@ class `Command line application should` {
         fun `renderer is missing`() {
             assertMissingOption {
                 launchApp(
-                    "-x", TestPlugin::class.jvmName,
+                    "-p", TestPlugin::class.jvmName,
                     "--src", srcRoot.toString(),
                     "-t", codegenRequestFile.toString()
                 )
@@ -100,7 +100,7 @@ class `Command line application should` {
         fun `source root is missing`() {
             assertMissingOption {
                 launchApp(
-                    "-x", TestPlugin::class.jvmName,
+                    "-p", TestPlugin::class.jvmName,
                     "-r", TestRenderer::class.jvmName,
                     "-t", codegenRequestFile.toString()
                 )
@@ -111,7 +111,7 @@ class `Command line application should` {
         fun `code generator request file is missing`() {
             assertMissingOption {
                 launchApp(
-                    "-x", TestPlugin::class.jvmName,
+                    "-p", TestPlugin::class.jvmName,
                     "-r", TestRenderer::class.jvmName,
                     "--src", srcRoot.toString()
                 )

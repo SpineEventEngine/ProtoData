@@ -50,4 +50,3 @@ Start using the app:
 
 Note that it is necessary to keep the structure of the archive intact: the scripts in `bin` rely
 on the relative path to other files in the archive.
-
