@@ -29,11 +29,14 @@
 package io.spine.protodata
 
 import com.google.protobuf.BoolValue
-import com.google.protobuf.Descriptors
+import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
+import io.spine.option.OptionsProto
 import java.io.File.separatorChar
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -189,6 +192,36 @@ private fun File.nameWithoutExtension(): String {
 }
 
 /**
+ * Obtains the name of this message type as a [TypeName].
+ */
+internal fun Descriptor.name(): TypeName = buildTypeName(name, file, containingType)
+
+/**
+ * Obtains the name of this enum type as a [TypeName].
+ */
+internal fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containingType)
+
+private fun buildTypeName(simpleName: String,
+                          file: FileDescriptor,
+                          containingDeclaration: Descriptor?): TypeName {
+    val nestingNames = mutableListOf<String>()
+    var parent = containingDeclaration
+    while (parent != null) {
+        nestingNames.add(0, parent.name)
+        parent = parent.containingType
+    }
+    val typeName = TypeName
+        .newBuilder()
+        .setSimpleName(simpleName)
+        .setPackageName(file.`package`)
+        .setTypeUrlPrefix(file.options.getExtension(OptionsProto.typeUrlPrefix))
+    if (nestingNames.isNotEmpty()) {
+        typeName.addAllNestingTypeName(nestingNames)
+    }
+    return typeName.build()
+}
+
+/**
  * Obtains the name of this `oneof` as a [OneofName].
  */
 internal fun OneofDescriptor.name(): OneofName =
@@ -207,7 +240,7 @@ internal fun FieldDescriptor.name(): FieldName =
 /**
  * Obtains the relative path to this file as a [FilePath].
  */
-internal fun Descriptors.FileDescriptor.path(): FilePath =
+internal fun FileDescriptor.path(): FilePath =
     FilePath.newBuilder()
             .setValue(name)
             .build()

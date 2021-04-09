@@ -155,12 +155,7 @@ private class ProtoFileEvents(
         nestedIn: TypeName? = null
     ) {
         val typeUrl = descriptor.file.options.getExtension(OptionsProto.typeUrlPrefix)
-        val typeName = TypeName
-            .newBuilder()
-            .setTypeUrlPrefix(typeUrl)
-            .setPackageName(file.packageName)
-            .setSimpleName(descriptor.name)
-            .build()
+        val typeName = descriptor.name()
         val path = file.path
         val type = MessageType
             .newBuilder().apply {
@@ -220,13 +215,7 @@ private class ProtoFileEvents(
         descriptor: EnumDescriptor,
         nestedIn: TypeName? = null
     ) {
-        val typeUrl = fileDescriptor.options.getExtension(OptionsProto.typeUrlPrefix)
-        val typeName = TypeName
-            .newBuilder()
-            .setTypeUrlPrefix(typeUrl)
-            .setPackageName(file.packageName)
-            .setSimpleName(descriptor.name)
-            .build()
+        val typeName = descriptor.name()
         val path = file.path
         val type = EnumType
             .newBuilder().apply {
@@ -466,12 +455,7 @@ private class ProtoFileEvents(
 
     private fun enum(field: FieldDescriptor): Type {
         val enumType = field.enumType
-        val typeName = TypeName
-            .newBuilder()
-            .setSimpleName(enumType.name)
-            .setPackageName(enumType.file.`package`)
-            .setTypeUrlPrefix(enumType.file.options.getExtension(OptionsProto.typeUrlPrefix))
-            .build()
+        val typeName = enumType.name()
         val enum = EnumType
             .newBuilder()
             .setName(typeName)
@@ -483,12 +467,7 @@ private class ProtoFileEvents(
 
     private fun message(field: FieldDescriptor): Type {
         val messageType = field.messageType
-        val typeName = TypeName
-            .newBuilder()
-            .setSimpleName(messageType.name)
-            .setPackageName(messageType.file.`package`)
-            .setTypeUrlPrefix(messageType.file.options.getExtension(OptionsProto.typeUrlPrefix))
-            .build()
+        val typeName = messageType.name()
         val message = MessageType
             .newBuilder()
             .setName(typeName)
