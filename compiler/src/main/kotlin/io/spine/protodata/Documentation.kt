@@ -35,7 +35,7 @@ internal class Documentation(
 ) {
 
     private val docs: Map<LocationPath, Location> = locations.associateBy(
-        LocationPath.Companion::from
+        LocationPath::from
     )
 
     fun forMessage(descriptor: Descriptors.Descriptor): Doc {
@@ -69,13 +69,23 @@ internal class Documentation(
     private fun commentsAt(path: LocationPath): Doc {
         val location = docs[path] ?: Location.getDefaultInstance()
         return Doc.newBuilder()
-                  .setLeadingComment(location.leadingComments)
-                  .setTrailingComment(location.trailingComments)
-                  .addAllDetachedComment(location.leadingDetachedCommentsList)
+                  .setLeadingComment(location.leadingComments.trimIndent())
+                  .setTrailingComment(location.trailingComments.trimIndent())
+                  .addAllDetachedComment(location.leadingDetachedCommentsList.trimIndents())
                   .build()
     }
 }
 
+private fun Iterable<String>.trimIndents(): List<String> =
+    map { it.trimIndent() }
+
+/**
+ * A numerical path to a location is source code.
+ *
+ * Used by the Protobuf compiler as a coordinate system for arbitrary Protobuf declarations.
+ *
+ * See `google.protobuf.SourceCodeInfo.Location.path` for the explanation of the protocol.
+ */
 private inline class LocationPath
 private constructor(private val value: List<Int>) {
 
@@ -140,6 +150,10 @@ private constructor(private val value: List<Int>) {
 
     fun rpc(rpc: Descriptors.MethodDescriptor): LocationPath =
         subDeclaration(DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER, rpc.index)
+
+    override fun toString(): String {
+        return "LocationPath(${value.joinToString()})"
+    }
 
     private fun subDeclaration(descriptorFieldNumber: Int, index: Int): LocationPath =
         LocationPath(value + arrayOf(descriptorFieldNumber, index))

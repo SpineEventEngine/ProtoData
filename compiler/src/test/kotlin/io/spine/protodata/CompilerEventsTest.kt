@@ -26,6 +26,7 @@
 
 package io.spine.protodata
 
+import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
@@ -36,6 +37,7 @@ import io.spine.option.OptionsProto.REQUIRED_FIELD_NUMBER
 import io.spine.option.OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.Correspondences.type
+import io.spine.type.KnownTypes
 import kotlin.reflect.KClass
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -46,10 +48,14 @@ class `'CompilerEvents' should` {
 
     @BeforeEach
     fun parseEvents() {
+        val allTheTypes = KnownTypes.instance()
+                                    .asTypeSet()
+                                    .messageTypes()
+                                    .map { it.descriptor().file.toProto() }
         val request = CodeGeneratorRequest
             .newBuilder()
             .addFileToGenerate(DoctorProto.getDescriptor().fullName)
-            .addProtoFile(DoctorProto.getDescriptor().toProto())
+            .addAllProtoFile(allTheTypes)
             .build()
         events = CompilerEvents.parse(request).toList()
     }
@@ -168,11 +174,38 @@ class `'CompilerEvents' should` {
         )
     }
 
+    @Test
+    fun `include message doc info`() {
+        val typeEntered = emitted<TypeEntered>()
+        assertThat(typeEntered.type)
+            .comparingExpectedFieldsOnly()
+            .isEqualTo(MessageType
+                .newBuilder()
+                .setName(TypeName.newBuilder().setSimpleName("Journey"))
+                .build())
+        assertThat(typeEntered.type.doc.leadingComment)
+            .isEqualTo("""
+                A Doctor's journey.
+
+                A test type
+
+            """.trimIndent());
+        assertThat(typeEntered.type.doc.trailingComment)
+            .isEqualTo("Impl note: test type.");
+        assertThat(typeEntered.type.doc.detachedCommentList)
+            .containsExactly("Detached 1.", "Detached 2.");
+    }
+
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
         assertThat(events)
             .comparingElementsUsing(type<EventMessage>())
             .containsAtLeastElementsIn(javaClasses)
             .inOrder()
+    }
+
+    private inline fun <reified E : EventMessage> emitted(): E {
+        val javaClass = E::class.java
+        return events.find { it.javaClass == javaClass }!! as E
     }
 }

@@ -56,7 +56,6 @@ import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
-import io.spine.option.OptionsProto
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.File.SyntaxVersion
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
@@ -154,7 +153,6 @@ private class ProtoFileEvents(
         descriptor: Descriptor,
         nestedIn: TypeName? = null
     ) {
-        val typeUrl = descriptor.file.options.getExtension(OptionsProto.typeUrlPrefix)
         val typeName = descriptor.name()
         val path = file.path
         val type = MessageType
