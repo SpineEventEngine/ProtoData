@@ -31,6 +31,7 @@ import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.nio.file.StandardOpenOption.WRITE
+import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
@@ -76,16 +77,8 @@ private constructor(
     /**
      * Writes the source code into the file on the file system.
      */
-    internal fun write(charset: Charset = Charsets.UTF_8, rootDir: Path? = null) {
-        val targetPath = if (rootDir != null) {
-            if (path.startsWith(rootDir)) {
-                path
-            } else {
-                rootDir.resolve(path)
-            }
-        } else {
-            path
-        }
+    internal fun write(charset: Charset = Charsets.UTF_8, rootDir: Path) {
+        val targetPath = rootDir / path
         targetPath.toFile()
                   .parentFile
                   .mkdirs()

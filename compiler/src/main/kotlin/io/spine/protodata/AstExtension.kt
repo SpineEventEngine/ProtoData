@@ -36,8 +36,7 @@ import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import java.io.File.separatorChar
 import java.nio.file.Path
-import java.nio.file.Paths
-
+import kotlin.io.path.Path
 /**
  * Obtains the package and the name of the type.
  */
@@ -124,7 +123,8 @@ public fun MessageType.javaFile(declaredIn: File): Path {
         name.nestingTypeNameList.isNotEmpty() -> name.nestingTypeNameList.first()
         else -> name.simpleName
     }
-    return Paths.get(packageName.replace('.', separatorChar), "$topLevelClassName.java")
+    val packageAsPath = packageName.replace('.', separatorChar)
+    return Path(packageAsPath, "$topLevelClassName.java")
 }
 
 /**

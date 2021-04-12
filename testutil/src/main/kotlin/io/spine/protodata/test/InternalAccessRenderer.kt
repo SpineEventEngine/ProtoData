@@ -31,7 +31,7 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceSet
 import java.io.File
-import java.nio.file.Paths
+import kotlin.io.path.Path
 
 /**
  * Creates a new package-private class for each [InternalType].
@@ -42,7 +42,7 @@ public class InternalAccessRenderer : Renderer() {
         val internalTypes = select<InternalType>().all()
         val newFiles = internalTypes.map { internalType ->
             val path = internalType.name.qualifiedName().replace('.', File.separatorChar)
-            SourceFile.fromCode(Paths.get("${path}Internal.java"), """
+            SourceFile.fromCode(Path("${path}Internal.java"), """
                 class ${internalType.name.simpleName}Internal {
                     // Here goes case specific code.
                 }

@@ -30,7 +30,7 @@ package io.spine.protodata.protoc
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse
-import java.nio.file.Paths
+import kotlin.io.path.Path
 import kotlin.io.path.writeBytes
 
 /**
@@ -40,7 +40,7 @@ public fun main() {
     val request = CodeGeneratorRequest.parseFrom(System.`in`)
     val path = request.parameter
 
-    val requestFile = Paths.get(path)
+    val requestFile = Path(path)
     requestFile.writeBytes(request.toByteArray())
 
     val emptyResponce = CodeGeneratorResponse.newBuilder().build()
