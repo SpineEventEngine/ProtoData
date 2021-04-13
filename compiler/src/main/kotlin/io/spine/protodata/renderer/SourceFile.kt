@@ -44,7 +44,7 @@ private constructor(
     /**
      * The source code.
      */
-    public val code: String,
+    code: String,
 
     /**
      * The FS path to the file.
@@ -52,12 +52,17 @@ private constructor(
     public val path: Path
 ) {
 
-    public companion object {
+    private lateinit var sourceSet: SourceSet
+
+    public var code: String = code
+        internal set
+
+    internal companion object {
 
         /**
          * Reads the file from the given FS location.
          */
-        public fun read(path: Path, charset: Charset = Charsets.UTF_8): SourceFile =
+        fun read(path: Path, charset: Charset = Charsets.UTF_8): SourceFile =
             SourceFile(path.readText(charset), path)
 
         /**
@@ -66,13 +71,30 @@ private constructor(
          * @param path the FS path for the file; the file might not exist on the file system
          * @param code the source code
          */
-        public fun fromCode(path: Path, code: String): SourceFile = SourceFile(code, path)
+        fun fromCode(path: Path, code: String): SourceFile =
+            SourceFile(code, path)
+    }
+
+    internal fun attachTo(sourceSet: SourceSet) {
+        this.sourceSet = sourceSet
     }
 
     /**
      * Creates a new `SourceFile` with the same path as this one but with different content.
+     *
+     * **Note.** This method may overwrite the work of other [Renderer]s, as well as remove
+     * the insertion points from the file. Use with caution.
      */
-    public fun overwrite(newCode: String): SourceFile = SourceFile(newCode, path)
+    public fun overwrite(newCode: String) {
+        this.code = newCode
+    }
+
+    public fun at(insertionsPoint: InsertionPoint): SourceAtPoint =
+        SourceAtPoint(this, insertionsPoint)
+
+    public fun delete() {
+        sourceSet.delete(path)
+    }
 
     /**
      * Writes the source code into the file on the file system.
@@ -84,4 +106,44 @@ private constructor(
                   .mkdirs()
         targetPath.writeText(code, charset, WRITE, TRUNCATE_EXISTING, CREATE)
     }
+
+    override fun toString(): String = path.toString()
 }
+
+public class SourceAtPoint
+internal constructor(
+    private val file: SourceFile,
+    private val point: InsertionPoint
+) {
+
+    public fun add(vararg lines: String, extraIndentLevel: Int = 0) {
+        add(lines.toList(), extraIndentLevel)
+    }
+
+    public fun add(lines: Iterable<String>, extraIndentLevel: Int = 0) {
+        val sourceLines = file.code.split(System.lineSeparator())
+        val updatedLines = ArrayList(sourceLines)
+        val pointMarker = point.codeLine
+        val newCode = lines.linesToCode(extraIndentLevel)
+        sourceLines.mapIndexed { index, line -> index to line }
+                   .filter { (_, line) -> line.contains(pointMarker) }
+                   .map { it.first + 1 }
+                   .forEach { index -> updatedLines.add(index, newCode) }
+        file.code = updatedLines.joinToString(System.lineSeparator())
+    }
+}
+
+private fun Iterable<String>.linesToCode(indentLevel: Int): String =
+    joinToString(System.lineSeparator()) {
+        (INDENT * indentLevel) + it
+    }
+
+
+private operator fun String.times(count: Int): String =
+    buildString(capacity = length * count) {
+        for (i in 0..count) {
+            append(this)
+        }
+    }
+
+private const val INDENT: String = "    "

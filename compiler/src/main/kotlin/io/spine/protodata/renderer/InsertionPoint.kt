@@ -24,15 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.renderer
 
-import io.spine.protodata.Plugin
-import io.spine.server.BoundedContextBuilder
+public interface InsertionPoint {
 
-public class TestPlugin: Plugin {
+    public val label: String
 
-    public override fun fillIn(context: BoundedContextBuilder) {
-        context.add(InternalMessageRepository())
-        context.add(DeletedTypeRepository())
-    }
+    public val codeLine: String
+        get() = "INSERT:'${label}'"
 }

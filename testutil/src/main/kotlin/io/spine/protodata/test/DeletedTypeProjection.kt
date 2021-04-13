@@ -26,13 +26,36 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.Plugin
-import io.spine.server.BoundedContextBuilder
+import io.spine.core.External
+import io.spine.core.Subscribe
+import io.spine.protodata.TypeEntered
+import io.spine.protodata.TypeName
+import io.spine.server.projection.Projection
+import io.spine.server.projection.ProjectionRepository
+import io.spine.server.route.EventRouting
 
-public class TestPlugin: Plugin {
+public class DeletedTypeProjection : Projection<TypeName, DeletedType, DeletedType.Builder>() {
 
-    public override fun fillIn(context: BoundedContextBuilder) {
-        context.add(InternalMessageRepository())
-        context.add(DeletedTypeRepository())
+    @Subscribe
+    internal fun to(@External event: TypeEntered) {
+        builder()
+            .setName(event.type.name)
+            .setType(event.type)
+    }
+}
+
+public class DeletedTypeRepository
+    : ProjectionRepository<TypeName, DeletedTypeProjection, DeletedType>() {
+
+    override fun setupEventRouting(routing: EventRouting<TypeName>) {
+        super.setupEventRouting(routing)
+        routing.route(TypeEntered::class.java) { e, _ ->
+            val name = e.type.name
+            return@route if (name.simpleName.startsWith("_")) {
+                setOf(name)
+            } else {
+                setOf()
+            }
+        }
     }
 }

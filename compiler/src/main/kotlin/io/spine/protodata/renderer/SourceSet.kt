@@ -27,26 +27,34 @@
 package io.spine.protodata.renderer
 
 import com.google.common.collect.ImmutableSet.toImmutableSet
+import io.spine.protodata.theOnly
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.isRegularFile
+import kotlin.text.Charsets.UTF_8
 
 /**
  * A set of source files.
  */
-@Suppress("DataClassPrivateConstructor")
-    // It's OK once we have and instance to change it. Making constructor `private` here so that
-    // users do not attempt re-building an object from scratch and use `fromContentsOf` or
-    // `withFiles` instead.
-public data class SourceSet
-private constructor(val files: Set<SourceFile>, internal val rootDir: Path) {
+public class SourceSet
+private constructor(files: Set<SourceFile>, internal val rootDir: Path)
+    : Iterable<SourceFile> by files {
+
+    private val files: MutableMap<Path, SourceFile>
+
+    init {
+        val map = HashMap<Path, SourceFile>(files.size)
+        this.files = files.associateByTo(map) { it.path }
+        this.files.values.forEach { it.attachTo(this) }
+    }
 
     public companion object {
 
         /**
          * Collects a source set from a given root directory.
          */
-        public fun fromContentsOf(directory: Path): SourceSet {
+        @JvmStatic public fun fromContentsOf(directory: Path): SourceSet {
             val files = Files
                 .walk(directory)
                 .filter { it.isRegularFile() }
@@ -61,13 +69,55 @@ private constructor(val files: Set<SourceFile>, internal val rootDir: Path) {
      *
      * The [path] may be a relative or an absolute path the file.
      */
-    public fun file(path: Path): SourceFile =
-        files.find { it.path.endsWith(path) }
-            ?: throw IllegalArgumentException("File not found: `$path`.")
+    public fun file(path: Path): SourceFile {
+        val file = files[path]
+        if (file != null) {
+            return file
+        }
+        val filtered = files.filterKeys { it.endsWith(path) }
+        if (filtered.isEmpty()) {
+            throw IllegalArgumentException("File not found: `$path`.")
+        }
+        return filtered.values.theOnly()
+    }
 
     /**
-     * Constructs a `SourceSet` in the same root directory out of the given source files.
+     * Creates a new source file at the given [path] and contains the given [code].
      */
-    public fun withFiles(files: Set<SourceFile>): SourceSet =
-        SourceSet(files, rootDir)
+    public fun createFile(path: Path, code: String): SourceFile {
+        val file = SourceFile.fromCode(path, code)
+        files[file.path] = file
+        file.attachTo(this)
+        return file
+    }
+
+    /**
+     * Delete the given [file] from the source set.
+     *
+     * Does not delete the file from the file system. All the FS operations are performed in
+     * the [write] method.
+     */
+    internal fun delete(file: Path) {
+        val value = files.remove(file)
+        if (value == null) {
+            throw IllegalStateException("File `$value` not found.")
+        }
+    }
+
+    /**
+     * Writes this source set to the file system.
+     *
+     * The sources existing on the file system at the moment are deleted, along with the whole
+     * directory structure and the new files are written.
+     */
+    internal fun write(charset: Charset = UTF_8) {
+        val rootDirFile = rootDir.toFile()
+        if (!rootDirFile.deleteRecursively()) {
+            throw IllegalStateException("Unable to delete `$rootDirFile`.")
+        }
+        rootDirFile.mkdirs()
+        files.values.forEach {
+            it.write(charset, rootDir)
+        }
+    }
 }

@@ -48,7 +48,7 @@ public abstract class Renderer {
      * If a file is present in the output source set but not the input, the file created.
      * If a file is present is both the input and the output source sets, the file is overridden.
      */
-    public abstract fun render(sources: SourceSet): SourceSet
+    public abstract fun render(sources: SourceSet)
 
     /**
      * Creates a [QueryingClient] to find projections of the given class.

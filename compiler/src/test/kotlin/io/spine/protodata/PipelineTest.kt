@@ -29,6 +29,7 @@ package io.spine.protodata
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.test.DeletingRenderer
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.InternalAccessRenderer
 import io.spine.protodata.test.Journey
@@ -36,7 +37,6 @@ import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
 import java.nio.file.Path
 import kotlin.io.path.exists
-import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
@@ -58,8 +58,7 @@ class `'Pipeline' should` {
         srcRoot.toFile().mkdirs()
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
-        sourceFile = srcRoot.resolve("SourceCode.java")
-        sourceFile.writeText("""
+        sourceFile = write("SourceCode.java", """
             ${Journey::class.simpleName} worth taking
         """.trimIndent())
 
@@ -71,6 +70,13 @@ class `'Pipeline' should` {
             .build()
         codegenRequestFile.writeBytes(request.toByteArray())
         renderer = TestRenderer()
+    }
+
+    private fun write(path: String, code: String): Path {
+        val file = srcRoot.resolve(path)
+        file.parent.toFile().mkdirs()
+        file.writeText(code)
+        return file
     }
 
     @Test
@@ -94,10 +100,22 @@ class `'Pipeline' should` {
             request
         )()
         val newClass = srcRoot.resolve("spine/protodata/test/JourneyInternal.java")
-        println(srcRoot.listDirectoryEntries())
         assertThat(newClass.exists())
             .isTrue()
         assertThat(newClass.readText())
             .contains("class JourneyInternal")
+    }
+
+    @Test
+    fun `delete files`() {
+        val sourceFile = write("io/spine/protodata/test/_DeleteMe.java", "foo bar")
+        Pipeline(
+            listOf(TestPlugin()),
+            DeletingRenderer(),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        assertThat(sourceFile.exists())
+            .isFalse()
     }
 }

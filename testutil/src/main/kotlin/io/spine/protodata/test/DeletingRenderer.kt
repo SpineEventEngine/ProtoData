@@ -26,13 +26,22 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.Plugin
-import io.spine.server.BoundedContextBuilder
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.javaFile
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceSet
 
-public class TestPlugin: Plugin {
+public class DeletingRenderer : Renderer() {
 
-    public override fun fillIn(context: BoundedContextBuilder) {
-        context.add(InternalMessageRepository())
-        context.add(DeletedTypeRepository())
+    override fun render(sources: SourceSet) {
+        val types = select<DeletedType>().all()
+        types.forEach {
+            val source = select<ProtobufSourceFile>()
+                .withId(it.type.file)
+                .orElseThrow(::IllegalStateException)
+            val javaClassFile = it.type.javaFile(source.file)
+            sources.file(javaClassFile)
+                   .delete()
+        }
     }
 }

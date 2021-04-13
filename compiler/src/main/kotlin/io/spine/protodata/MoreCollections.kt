@@ -24,15 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata
 
-import io.spine.protodata.Plugin
-import io.spine.server.BoundedContextBuilder
-
-public class TestPlugin: Plugin {
-
-    public override fun fillIn(context: BoundedContextBuilder) {
-        context.add(InternalMessageRepository())
-        context.add(DeletedTypeRepository())
+/**
+ * Obtains the only element in the receiver `Iterable`.
+ *
+ * @throws NoSuchElementException if there are no elements
+ * @throws IndexOutOfBoundsException if there are more than one elements
+ */
+public fun <E> Iterable<E>.theOnly(): E {
+    val iterator = iterator()
+    if (!iterator.hasNext()) {
+        throw NoSuchElementException("The iterable is empty.")
     }
+    val element = iterator.next()
+    if (iterator.hasNext()) {
+        throw IndexOutOfBoundsException("The iterable has more than one element.")
+    }
+    return element
 }

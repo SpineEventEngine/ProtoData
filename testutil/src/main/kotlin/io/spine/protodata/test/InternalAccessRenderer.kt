@@ -28,7 +28,6 @@ package io.spine.protodata.test
 
 import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceSet
 import java.io.File
 import kotlin.io.path.Path
@@ -38,16 +37,17 @@ import kotlin.io.path.Path
  */
 public class InternalAccessRenderer : Renderer() {
 
-    override fun render(sources: SourceSet): SourceSet {
+    override fun render(sources: SourceSet) {
         val internalTypes = select<InternalType>().all()
-        val newFiles = internalTypes.map { internalType ->
+        internalTypes.forEach { internalType ->
             val path = internalType.name.qualifiedName().replace('.', File.separatorChar)
-            SourceFile.fromCode(Path("${path}Internal.java"), """
+            sources.createFile(Path("${path}Internal.java"),
+                """
                 class ${internalType.name.simpleName}Internal {
                     // Here goes case specific code.
                 }
-            """.trimIndent())
+                """.trimIndent()
+            )
         }
-        return sources.withFiles(newFiles.toSet())
     }
 }

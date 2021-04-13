@@ -70,10 +70,8 @@ public class Pipeline(
         ProtobufCompilerContext.emitted(events)
 
         renderer.protoDataContext = context
-        val enhanced = renderer.render(sourceSet)
-        enhanced.files.forEach {
-            it.write(rootDir = sourceSet.rootDir)
-        }
+        renderer.render(sourceSet)
+        sourceSet.write()
         context.close()
     }
 }

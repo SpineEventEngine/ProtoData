@@ -37,3 +37,6 @@ enum Incarnation {
     CLASSIC = 1;
     CURRENT = 2;
 }
+
+message _DeleteMe {
+}
