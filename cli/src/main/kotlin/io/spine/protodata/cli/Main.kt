@@ -85,10 +85,13 @@ internal class Run(version: String) : CliktCommand(
            <...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin
         
     """.trimIndent()).multiple()
-    private  val renderer: String by option("--renderer", "-r", help = """
+    private  val renderers: List<String> by option("--renderer", "-r", help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
-        There can only be one renderer command line per call.
-    """.trimIndent()).required()
+        There can only be multiple renderers. To pass more then one value, type:
+        
+           <...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer
+        
+    """.trimIndent()).multiple(required = true)
     private val optionProviders: List<String> by option("--options", "-o", help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
@@ -129,7 +132,7 @@ internal class Run(version: String) : CliktCommand(
         val classLoader = loadExtraClasspath()
         val extensions = loadExtensions(classLoader)
         val optionsProviders = loadOptions(classLoader)
-        val renderer = loadRenderer(classLoader)
+        val renderer = loadRenderers(classLoader)
         val sourceSet = SourceSet.fromContentsOf(sourceRoot)
 
         val registry = ExtensionRegistry.newInstance()
@@ -159,9 +162,11 @@ internal class Run(version: String) : CliktCommand(
         }
     }
 
-    private fun loadRenderer(classLoader: ClassLoader): Renderer {
+    private fun loadRenderers(classLoader: ClassLoader): List<Renderer> {
         val rendererBuilder = RendererBuilder()
-        return rendererBuilder.createByName(renderer, classLoader)
+        return renderers.map {
+            rendererBuilder.createByName(it, classLoader)
+        }
     }
 
     private fun loadOptions(classLoader: ClassLoader): List<OptionsProvider> {

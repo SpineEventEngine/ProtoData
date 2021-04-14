@@ -32,4 +32,29 @@ public interface InsertionPoint {
 
     public val codeLine: String
         get() = "INSERT:'${label}'"
+
+    public fun plug(code: String): String
+}
+
+public enum class GenericInsertionPoint : InsertionPoint {
+
+    FILE_START {
+        override fun plug(code: String): String {
+            return """
+                $codeLine
+                $code
+            """.trimIndent()
+        }
+    },
+    FILE_END {
+        override fun plug(code: String): String {
+            return """
+                $code
+                $codeLine
+            """.trimIndent()
+        }
+    };
+
+    override val label: String
+        get() = name.toLowerCase()
 }

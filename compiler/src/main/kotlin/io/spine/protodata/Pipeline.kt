@@ -48,7 +48,7 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
  */
 public class Pipeline(
     private val extensions: List<Plugin>,
-    private val renderer:  Renderer,
+    private val renderers:  List<Renderer>,
     private val sourceSet: SourceSet,
     private val request: CodeGeneratorRequest
 ) : Logging {
@@ -62,6 +62,10 @@ public class Pipeline(
      * Executes the processing pipeline.
      */
     public operator fun invoke() {
+        val insertionPoints = renderers.flatMap { it.supportedInsertionPoints }.toSet()
+        sourceSet.forEach { file ->
+            file.plugInsertionPoints(insertionPoints)
+        }
         val contextBuilder = CodeGenerationContext.builder()
         extensions.forEach { it.fillIn(contextBuilder) }
         val context = contextBuilder.build()
@@ -69,8 +73,10 @@ public class Pipeline(
         val events = CompilerEvents.parse(request)
         ProtobufCompilerContext.emitted(events)
 
-        renderer.protoDataContext = context
-        renderer.render(sourceSet)
+        renderers.forEach {
+            it.protoDataContext = context
+            it.render(sourceSet)
+        }
         sourceSet.write()
         context.close()
     }

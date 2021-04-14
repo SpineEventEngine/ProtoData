@@ -83,7 +83,7 @@ class `'Pipeline' should` {
     fun `render enhanced code`() {
         Pipeline(
             listOf(TestPlugin()),
-            renderer,
+            listOf(renderer),
             SourceSet.fromContentsOf(srcRoot),
             request
         )()
@@ -95,7 +95,7 @@ class `'Pipeline' should` {
     fun `generate new files`() {
         Pipeline(
             listOf(TestPlugin()),
-            InternalAccessRenderer(),
+            listOf(InternalAccessRenderer()),
             SourceSet.fromContentsOf(srcRoot),
             request
         )()
@@ -111,7 +111,7 @@ class `'Pipeline' should` {
         val sourceFile = write("io/spine/protodata/test/_DeleteMe.java", "foo bar")
         Pipeline(
             listOf(TestPlugin()),
-            DeletingRenderer(),
+            listOf(DeletingRenderer()),
             SourceSet.fromContentsOf(srcRoot),
             request
         )()

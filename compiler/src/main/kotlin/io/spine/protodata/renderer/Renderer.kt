@@ -37,7 +37,8 @@ import io.spine.server.BoundedContext
  * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
  * have a `public` no-argument constructor.
  */
-public abstract class Renderer {
+public abstract class Renderer
+protected constructor(internal val supportedInsertionPoints: Set<InsertionPoint> = setOf()) {
 
     internal lateinit var protoDataContext: BoundedContext
 
@@ -69,7 +70,7 @@ public abstract class Renderer {
      * Users may create their own projections and register them in the `Code Generation` context via
      * a [Plugin][io.spine.protodata.Plugin].
      */
-    protected inline fun <reified P : EntityState> select(): QueryingClient<P>  {
+    protected inline fun <reified P : EntityState> select(): QueryingClient<P> {
         val cls = P::class.java
         return select(cls)
     }
