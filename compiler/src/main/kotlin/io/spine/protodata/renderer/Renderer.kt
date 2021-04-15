@@ -32,8 +32,8 @@ import io.spine.protodata.language.Language
 import io.spine.server.BoundedContext
 
 /**
- * A `Renderer` takes an existing source set, modifies it, including changing the contents of
- * existing source files or creating new ones, and renders the resulting code into a [SourceSet].
+ * A `Renderer` takes an existing [SourceSet] and modifies it, changing the contents of existing
+ * source files, creating new ones, or deleting unwanted files.
  *
  * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
  * have a `public` no-argument constructor.
@@ -45,8 +45,10 @@ protected constructor(
 
     internal lateinit var protoDataContext: BoundedContext
 
-    // TODO:2021-04-14:dmytro.dashenkov: Document.
-    public fun render(sources: SourceSet) {
+    /**
+     * Performs required changes to the given source set.
+     */
+    internal fun render(sources: SourceSet) {
         val relevantFiles = supportedLanguages
             .map { it.filter(sources) }
             .reduce { left, right -> left.intersection(right) }
@@ -54,6 +56,12 @@ protected constructor(
         sources.mergeBack(relevantFiles)
     }
 
+    /**
+     * Makes changes to the given source set.
+     *
+     * The source set is guaranteed to consist only of the files, containing the code in
+     * the [supportedLanguages].
+     */
     protected abstract fun doRender(sources: SourceSet)
 
     /**

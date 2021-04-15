@@ -78,28 +78,56 @@ private constructor(
             SourceFile(code, path, changed = true)
     }
 
-    public fun at(insertionsPoint: InsertionPoint): SourceAtPoint =
-        SourceAtPoint(this, insertionsPoint)
+    /**
+     * Creates a new fluent builder for adding code at the given [insertionPoint].
+     *
+     * If the [insertionPoint] is not found in the code, no action will be performed as the result.
+     * If there are more than one instances of the same insertion point, the code will be added to
+     * all of them.
+     *
+     * Insertion points should be marked with comments of special format. The added code is always
+     * inserted after the line with the comment, and the line with the comment is preserved.
+     */
+    public fun at(insertionPoint: InsertionPoint): SourceAtPoint =
+        SourceAtPoint(this, insertionPoint)
 
+    /**
+     * Deletes this file from the source set.
+     *
+     * As the result of this method, the associated source file will be eventually removed from
+     * the file system.
+     *
+     * If the file was created earlier (by the same or a different [Renderer]), the file will not
+     * be written to the file system.
+     *
+     * After this method, the file will no longer be accessible via associated the `SourceSet`.
+     */
     public fun delete() {
         sourceSet.delete(path)
     }
 
     /**
-     * Creates a new `SourceFile` with the same path as this one but with different content.
+     * Changes the contents of this file to the provided [newCode].
      *
      * **Note.** This method may overwrite the work of other [Renderer]s, as well as remove
-     * the insertion points from the file. Use with caution.
+     * the insertion points from the file. Use with caution. Prefer using [at(InsertionPoint)][at]
+     * when possible.
      */
     public fun overwrite(newCode: String) {
         this.code = newCode
         this.changed = true
     }
 
+    /**
+     * Overwrites the code in this file line by line.
+     */
     internal fun updateLines(newCode: List<String>) {
         overwrite(newCode.joinToString(lineSeparator()))
     }
 
+    /**
+     * Injects the given [sourceSet].
+     */
     internal fun attachTo(sourceSet: SourceSet) {
         this.sourceSet = sourceSet
     }
@@ -117,13 +145,17 @@ private constructor(
         }
     }
 
-    override fun toString(): String = path.toString()
-
+    /**
+     * Obtains the entire content of this file.
+     */
     public fun code(): String {
         initializeCode()
         return code
     }
 
+    /**
+     * Obtains the entire content of this file as a list of lines.
+     */
     public fun lines(): List<String> {
         return code().split(lineSeparator())
     }
@@ -141,18 +173,41 @@ private constructor(
             preReadActions.forEach { it(this) }
         }
     }
+
+    override fun toString(): String = path.toString()
 }
 
+/**
+ * A fluent builder for inserting code into pre-prepared insertion points.
+ *
+ * @see SourceFile.at for the start of the fluent API and the detailed description of its behaviour.
+ */
 public class SourceAtPoint
 internal constructor(
     private val file: SourceFile,
     private val point: InsertionPoint
 ) {
 
+    /**
+     * Adds the given code lines at the associated insertion point.
+     *
+     * @param lines
+     *      code lines
+     * @param extraIndentLevel
+     *      extra indentation to be added to the lines; each unit adds four spaces
+     */
     public fun add(vararg lines: String, extraIndentLevel: Int = 0) {
         add(lines.toList(), extraIndentLevel)
     }
 
+    /**
+     * Adds the given code lines at the associated insertion point.
+     *
+     * @param lines
+     *      code lines
+     * @param extraIndentLevel
+     *      extra indentation to be added to the lines; each unit adds four spaces
+     */
     public fun add(lines: Iterable<String>, extraIndentLevel: Int = 0) {
         val sourceLines = file.lines()
         val updatedLines = ArrayList(sourceLines)
@@ -162,7 +217,7 @@ internal constructor(
                    .filter { (_, line) -> line.contains(pointMarker) }
                    .map { it.first + 1 }
                    .forEach { index -> updatedLines.add(index, newCode) }
-        file.overwrite(updatedLines.joinToString(lineSeparator()))
+        file.updateLines(updatedLines)
     }
 }
 

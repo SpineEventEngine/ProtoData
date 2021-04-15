@@ -38,8 +38,16 @@ import kotlin.text.Charsets.UTF_8
  * A set of source files.
  */
 public class SourceSet
-internal constructor(files: Set<SourceFile>, internal val rootDir: Path)
-    : Iterable<SourceFile> by files {
+internal constructor(
+    files: Set<SourceFile>,
+
+    /**
+     * A common root directory for all the files in this source set.
+     *
+     * Paths of the files must be either absolute or relative to this directory.
+     */
+    internal val rootDir: Path
+) : Iterable<SourceFile> by files {
 
     private val files: MutableMap<Path, SourceFile>
     private val deletedFiles = mutableSetOf<Path>()
@@ -110,14 +118,6 @@ internal constructor(files: Set<SourceFile>, internal val rootDir: Path)
         deletedFiles.add(file)
     }
 
-    internal fun mergeBack(other: SourceSet) {
-        files.putAll(other.files)
-        deletedFiles.addAll(other.deletedFiles)
-        other.deletedFiles.forEach {
-            files.remove(it)
-        }
-    }
-
     /**
      * Writes this source set to the file system.
      *
@@ -135,12 +135,22 @@ internal constructor(files: Set<SourceFile>, internal val rootDir: Path)
         }
     }
 
+    /**
+     * Applies the given [action] to all the code files which are accessed by a [Renderer].
+     *
+     * When a file's code is first accessed, runs the given action. The action may change the code
+     * if necessary, for example, by adding insertion points.
+     */
     internal fun prepareCode(action: (SourceFile) -> Unit) {
         files.values.forEach {
             it.whenRead(action)
         }
+        preReadActions.add(action)
     }
 
+    /**
+     * Produces an intersection of this source set and the [other] source set.
+     */
     internal fun intersection(other: SourceSet): SourceSet {
         if (rootDir != other.rootDir) {
             throw IllegalArgumentException("""
@@ -154,6 +164,17 @@ internal constructor(files: Set<SourceFile>, internal val rootDir: Path)
         result.files.putAll(files)
         result.files.putAll(other.files)
         return result
+    }
+
+    /**
+     * Merges the other source set into this one.
+     */
+    internal fun mergeBack(other: SourceSet) {
+        files.putAll(other.files)
+        deletedFiles.addAll(other.deletedFiles)
+        other.deletedFiles.forEach {
+            files.remove(it)
+        }
     }
 
     override fun toString(): String = toList().joinToString()
