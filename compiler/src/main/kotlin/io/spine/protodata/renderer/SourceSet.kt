@@ -112,6 +112,7 @@ internal constructor(files: Set<SourceFile>, internal val rootDir: Path)
 
     internal fun mergeBack(other: SourceSet) {
         files.putAll(other.files)
+        deletedFiles.addAll(other.deletedFiles)
         other.deletedFiles.forEach {
             files.remove(it)
         }
@@ -125,8 +126,8 @@ internal constructor(files: Set<SourceFile>, internal val rootDir: Path)
      */
     internal fun write(charset: Charset = UTF_8) {
         val rootDirFile = rootDir.toFile()
-        if (!rootDirFile.deleteRecursively()) {
-            throw IllegalStateException("Unable to delete `$rootDirFile`.")
+        deletedFiles.forEach {
+            it.toFile().deleteRecursively()
         }
         rootDirFile.mkdirs()
         files.values.forEach {

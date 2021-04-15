@@ -50,12 +50,15 @@ private constructor(
     /**
      * The FS path to the file.
      */
-    public val path: Path
+    public val path: Path,
+
+    private var changed: Boolean = false
 ) {
 
     private lateinit var sourceSet: SourceSet
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
     private var alreadyRead = false
+
 
     internal companion object {
 
@@ -72,7 +75,7 @@ private constructor(
          * @param code the source code
          */
         fun fromCode(path: Path, code: String): SourceFile =
-            SourceFile(code, path)
+            SourceFile(code, path, changed = true)
     }
 
     public fun at(insertionsPoint: InsertionPoint): SourceAtPoint =
@@ -89,15 +92,12 @@ private constructor(
      * the insertion points from the file. Use with caution.
      */
     public fun overwrite(newCode: String) {
-        updateCode(newCode)
-    }
-
-    internal fun updateCode(newCode: String) {
         this.code = newCode
+        this.changed = true
     }
 
     internal fun updateLines(newCode: List<String>) {
-        updateCode(newCode.joinToString(lineSeparator()))
+        overwrite(newCode.joinToString(lineSeparator()))
     }
 
     internal fun attachTo(sourceSet: SourceSet) {
@@ -108,11 +108,13 @@ private constructor(
      * Writes the source code into the file on the file system.
      */
     internal fun write(charset: Charset = Charsets.UTF_8, rootDir: Path) {
-        val targetPath = rootDir / path
-        targetPath.toFile()
-                  .parentFile
-                  .mkdirs()
-        targetPath.writeText(code, charset, WRITE, TRUNCATE_EXISTING, CREATE)
+        if (changed) {
+            val targetPath = rootDir / path
+            targetPath.toFile()
+                .parentFile
+                .mkdirs()
+            targetPath.writeText(code, charset, WRITE, TRUNCATE_EXISTING, CREATE)
+        }
     }
 
     override fun toString(): String = path.toString()
@@ -160,7 +162,7 @@ internal constructor(
                    .filter { (_, line) -> line.contains(pointMarker) }
                    .map { it.first + 1 }
                    .forEach { index -> updatedLines.add(index, newCode) }
-        file.updateCode(updatedLines.joinToString(lineSeparator()))
+        file.overwrite(updatedLines.joinToString(lineSeparator()))
     }
 }
 
