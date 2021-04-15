@@ -32,7 +32,9 @@ import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.test.DeletingRenderer
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.InternalAccessRenderer
+import io.spine.protodata.test.JavaGenericInsertionPointPrinter
 import io.spine.protodata.test.Journey
+import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
 import java.nio.file.Path
@@ -117,5 +119,30 @@ class `'Pipeline' should` {
         )()
         assertThat(sourceFile.exists())
             .isFalse()
+    }
+
+    @Test
+    fun `write into insertion points`() {
+        val initialContent = "foo bar"
+        val sourceFile = write("io/spine/protodata/test/_DeleteMe.java", initialContent)
+        val renderer = PrependingRenderer()
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(JavaGenericInsertionPointPrinter(), renderer),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        assertThat(sourceFile.readText())
+            .isEqualTo("""
+                // INSERT:'file_start'
+                Hello from ${renderer.javaClass.name}
+                $initialContent
+                // INSERT:'file_end'
+            """.trimIndent())
+    }
+
+    @Test
+    fun `use different renderers for different files`() {
+
     }
 }

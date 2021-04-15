@@ -26,7 +26,7 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.base.Strings.repeat
+import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE
@@ -35,8 +35,6 @@ import java.nio.file.StandardOpenOption.WRITE
 import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 /**
  * A file with source code.
@@ -47,7 +45,7 @@ private constructor(
     /**
      * The source code.
      */
-    code: String,
+    private var code: String,
 
     /**
      * The FS path to the file.
@@ -56,20 +54,8 @@ private constructor(
 ) {
 
     private lateinit var sourceSet: SourceSet
-
-    private var insertionPoints: Set<InsertionPoint> = setOf()
-
-    private var rawCode: String = code
-
-    private val codeProperty = ResetableLazy {
-        var pluggedCode = rawCode
-        insertionPoints.forEach {
-            pluggedCode = it.plug(pluggedCode)
-        }
-        pluggedCode
-    }
-
-    public val code: String by codeProperty
+    private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
+    private var alreadyRead = false
 
     internal companion object {
 
@@ -89,8 +75,11 @@ private constructor(
             SourceFile(code, path)
     }
 
-    internal fun attachTo(sourceSet: SourceSet) {
-        this.sourceSet = sourceSet
+    public fun at(insertionsPoint: InsertionPoint): SourceAtPoint =
+        SourceAtPoint(this, insertionsPoint)
+
+    public fun delete() {
+        sourceSet.delete(path)
     }
 
     /**
@@ -100,19 +89,19 @@ private constructor(
      * the insertion points from the file. Use with caution.
      */
     public fun overwrite(newCode: String) {
-        codeProperty.reset()
         updateCode(newCode)
     }
 
     internal fun updateCode(newCode: String) {
-        this.rawCode = newCode
+        this.code = newCode
     }
 
-    public fun at(insertionsPoint: InsertionPoint): SourceAtPoint =
-        SourceAtPoint(this, insertionsPoint)
+    internal fun updateLines(newCode: List<String>) {
+        updateCode(newCode.joinToString(lineSeparator()))
+    }
 
-    public fun delete() {
-        sourceSet.delete(path)
+    internal fun attachTo(sourceSet: SourceSet) {
+        this.sourceSet = sourceSet
     }
 
     /**
@@ -128,8 +117,27 @@ private constructor(
 
     override fun toString(): String = path.toString()
 
-    internal fun plugInsertionPoints(insertionPoints: Set<InsertionPoint>) {
-        this.insertionPoints = insertionPoints
+    public fun code(): String {
+        initializeCode()
+        return code
+    }
+
+    public fun lines(): List<String> {
+        return code().split(lineSeparator())
+    }
+
+    internal fun whenRead(action: (SourceFile) -> Unit) {
+        preReadActions.add(action)
+        if (alreadyRead) {
+            action(this)
+        }
+    }
+
+    private fun initializeCode() {
+        if (!alreadyRead) {
+            alreadyRead = true
+            preReadActions.forEach { it(this) }
+        }
     }
 }
 
@@ -144,7 +152,7 @@ internal constructor(
     }
 
     public fun add(lines: Iterable<String>, extraIndentLevel: Int = 0) {
-        val sourceLines = file.code.split(System.lineSeparator())
+        val sourceLines = file.lines()
         val updatedLines = ArrayList(sourceLines)
         val pointMarker = point.codeLine
         val newCode = lines.linesToCode(extraIndentLevel)
@@ -152,31 +160,13 @@ internal constructor(
                    .filter { (_, line) -> line.contains(pointMarker) }
                    .map { it.first + 1 }
                    .forEach { index -> updatedLines.add(index, newCode) }
-        file.updateCode(updatedLines.joinToString(System.lineSeparator()))
+        file.updateCode(updatedLines.joinToString(lineSeparator()))
     }
 }
 
 private fun Iterable<String>.linesToCode(indentLevel: Int): String =
-    joinToString(System.lineSeparator()) {
-        (INDENT * indentLevel) + it
+    joinToString(lineSeparator()) {
+        INDENT.repeat(indentLevel) + it
     }
-
-private operator fun String.times(count: Int): String = repeat(this, count)
 
 private const val INDENT: String = "    "
-
-private class ResetableLazy<T>(private val constructor: () -> T) : ReadOnlyProperty<Any, T> {
-
-    private var value: T? = null
-
-    override fun getValue(thisRef: Any, property: KProperty<*>): T {
-        if (value == null) {
-            value = constructor()
-        }
-        return value!!
-    }
-
-    fun reset() {
-        value = null
-    }
-}

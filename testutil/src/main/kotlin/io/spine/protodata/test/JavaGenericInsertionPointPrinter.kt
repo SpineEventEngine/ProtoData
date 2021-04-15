@@ -27,28 +27,24 @@
 package io.spine.protodata.test
 
 import io.spine.protodata.language.CommonLanguages
-import io.spine.protodata.qualifiedName
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
-import java.io.File
-import kotlin.io.path.Path
+import io.spine.protodata.renderer.InsertionPoint
+import io.spine.protodata.renderer.InsertionPointPrinter
 
-/**
- * Creates a new package-private class for each [InternalType].
- */
-public class InternalAccessRenderer : Renderer(supportedLanguages = setOf(CommonLanguages.Java)) {
+public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
+    target = CommonLanguages.Java,
+    supportedInsertionPoints = GenericInsertionPoint.values().toSet()
+)
 
-    override fun doRender(sources: SourceSet) {
-        val internalTypes = select<InternalType>().all()
-        internalTypes.forEach { internalType ->
-            val path = internalType.name.qualifiedName().replace('.', File.separatorChar)
-            sources.createFile(Path("${path}Internal.java"),
-                """
-                class ${internalType.name.simpleName}Internal {
-                    // Here goes case specific code.
-                }
-                """.trimIndent()
-            )
-        }
-    }
+public enum class GenericInsertionPoint : InsertionPoint {
+
+    FILE_START {
+        override fun locate(lines: List<String>): Int = 0
+
+    },
+    FILE_END {
+        override fun locate(lines: List<String>): Int = lines.size
+    };
+
+    override val label: String
+        get() = name.toLowerCase()
 }

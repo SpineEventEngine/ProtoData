@@ -24,31 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.renderer
 
-import io.spine.protodata.language.CommonLanguages
-import io.spine.protodata.qualifiedName
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
-import java.io.File
-import kotlin.io.path.Path
+import io.spine.protodata.language.Language
 
-/**
- * Creates a new package-private class for each [InternalType].
- */
-public class InternalAccessRenderer : Renderer(supportedLanguages = setOf(CommonLanguages.Java)) {
+public abstract class InsertionPointPrinter(private val target: Language,
+                                            private val supportedInsertionPoints: Set<InsertionPoint>)
+    : Renderer(setOf(target)) {
 
     override fun doRender(sources: SourceSet) {
-        val internalTypes = select<InternalType>().all()
-        internalTypes.forEach { internalType ->
-            val path = internalType.name.qualifiedName().replace('.', File.separatorChar)
-            sources.createFile(Path("${path}Internal.java"),
-                """
-                class ${internalType.name.simpleName}Internal {
-                    // Here goes case specific code.
+        sources.prepareCode { file ->
+            val lines = file.lines().toMutableList()
+            supportedInsertionPoints.forEach { point ->
+                val index = point.locate(lines)
+                if (index >= 0) {
+                    val comment = target.comment(point.codeLine)
+                    if (index >= lines.size) {
+                        lines.add(comment)
+                    } else {
+                        lines.add(index, comment)
+                    }
                 }
-                """.trimIndent()
-            )
+            }
+            file.updateLines(lines)
         }
     }
 }
+

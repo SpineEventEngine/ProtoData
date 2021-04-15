@@ -62,10 +62,6 @@ public class Pipeline(
      * Executes the processing pipeline.
      */
     public operator fun invoke() {
-        val insertionPoints = renderers.flatMap { it.supportedInsertionPoints }.toSet()
-        sourceSet.forEach { file ->
-            file.plugInsertionPoints(insertionPoints)
-        }
         val contextBuilder = CodeGenerationContext.builder()
         extensions.forEach { it.fillIn(contextBuilder) }
         val context = contextBuilder.build()

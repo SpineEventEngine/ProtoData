@@ -28,12 +28,13 @@ package io.spine.protodata.test
 
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.javaFile
+import io.spine.protodata.language.CommonLanguages
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 
-public class DeletingRenderer : Renderer() {
+public class DeletingRenderer : Renderer(supportedLanguages = setOf(CommonLanguages.Java)) {
 
-    override fun render(sources: SourceSet) {
+    override fun doRender(sources: SourceSet) {
         val types = select<DeletedType>().all()
         types.forEach {
             val source = select<ProtobufSourceFile>()

@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
 import io.spine.protodata.QueryingClient
+import io.spine.protodata.language.Language
 import io.spine.server.BoundedContext
 
 /**
@@ -38,18 +39,22 @@ import io.spine.server.BoundedContext
  * have a `public` no-argument constructor.
  */
 public abstract class Renderer
-protected constructor(internal val supportedInsertionPoints: Set<InsertionPoint> = setOf()) {
+protected constructor(
+    private val supportedLanguages: Set<Language>
+) {
 
     internal lateinit var protoDataContext: BoundedContext
 
-    /**
-     * Processes the given `sources` and produces the updated [SourceSet].
-     *
-     * If a file is present in the input source set but not the output, the file is left untouched.
-     * If a file is present in the output source set but not the input, the file created.
-     * If a file is present is both the input and the output source sets, the file is overridden.
-     */
-    public abstract fun render(sources: SourceSet)
+    // TODO:2021-04-14:dmytro.dashenkov: Document.
+    public fun render(sources: SourceSet) {
+        val relevantFiles = supportedLanguages
+            .map { it.filter(sources) }
+            .reduce { left, right -> left.intersection(right) }
+        doRender(relevantFiles)
+        sources.mergeBack(relevantFiles)
+    }
+
+    protected abstract fun doRender(sources: SourceSet)
 
     /**
      * Creates a [QueryingClient] to find projections of the given class.

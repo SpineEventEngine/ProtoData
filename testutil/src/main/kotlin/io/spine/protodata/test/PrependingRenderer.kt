@@ -27,28 +27,18 @@
 package io.spine.protodata.test
 
 import io.spine.protodata.language.CommonLanguages
-import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
-import java.io.File
-import kotlin.io.path.Path
+import io.spine.protodata.theOnly
+import kotlin.io.path.name
 
-/**
- * Creates a new package-private class for each [InternalType].
- */
-public class InternalAccessRenderer : Renderer(supportedLanguages = setOf(CommonLanguages.Java)) {
+public class PrependingRenderer : Renderer(supportedLanguages = setOf(CommonLanguages.Java)) {
 
     override fun doRender(sources: SourceSet) {
-        val internalTypes = select<InternalType>().all()
-        internalTypes.forEach { internalType ->
-            val path = internalType.name.qualifiedName().replace('.', File.separatorChar)
-            sources.createFile(Path("${path}Internal.java"),
-                """
-                class ${internalType.name.simpleName}Internal {
-                    // Here goes case specific code.
-                }
-                """.trimIndent()
-            )
-        }
+        val file = sources
+            .filter { it.path.name.startsWith("_") }
+            .theOnly()
+        file.at(GenericInsertionPoint.FILE_START)
+            .add("Hello from ${this.javaClass.name}")
     }
 }

@@ -38,10 +38,12 @@ import kotlin.text.Charsets.UTF_8
  * A set of source files.
  */
 public class SourceSet
-private constructor(files: Set<SourceFile>, internal val rootDir: Path)
+internal constructor(files: Set<SourceFile>, internal val rootDir: Path)
     : Iterable<SourceFile> by files {
 
     private val files: MutableMap<Path, SourceFile>
+    private val deletedFiles = mutableSetOf<Path>()
+    private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
 
     init {
         val map = HashMap<Path, SourceFile>(files.size)
@@ -88,6 +90,9 @@ private constructor(files: Set<SourceFile>, internal val rootDir: Path)
         val file = SourceFile.fromCode(path, code)
         files[file.path] = file
         file.attachTo(this)
+        preReadActions.forEach {
+            file.whenRead(it)
+        }
         return file
     }
 
@@ -101,6 +106,14 @@ private constructor(files: Set<SourceFile>, internal val rootDir: Path)
         val value = files.remove(file)
         if (value == null) {
             throw IllegalStateException("File `$value` not found.")
+        }
+        deletedFiles.add(file)
+    }
+
+    internal fun mergeBack(other: SourceSet) {
+        files.putAll(other.files)
+        other.deletedFiles.forEach {
+            files.remove(it)
         }
     }
 
@@ -120,4 +133,27 @@ private constructor(files: Set<SourceFile>, internal val rootDir: Path)
             it.write(charset, rootDir)
         }
     }
+
+    internal fun prepareCode(action: (SourceFile) -> Unit) {
+        files.values.forEach {
+            it.whenRead(action)
+        }
+    }
+
+    internal fun intersection(other: SourceSet): SourceSet {
+        if (rootDir != other.rootDir) {
+            throw IllegalArgumentException("""
+                Cannot intersect source sets with different root directories: 
+                    $rootDir
+                    AND
+                    ${other.rootDir}
+            """.trimIndent())
+        }
+        val result = SourceSet(setOf(), rootDir)
+        result.files.putAll(files)
+        result.files.putAll(other.files)
+        return result
+    }
+
+    override fun toString(): String = toList().joinToString()
 }
