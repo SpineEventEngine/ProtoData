@@ -54,14 +54,14 @@ public abstract class Language(
      *
      * @param line
      *     the contents of the comment
-     * @return a line which can be safely inserted into a code file
+     * @return a line which can be safely inserted into a code file.
      */
     public abstract fun comment(line: String): String
 
     /**
      * Filters a given source set retaining only the files in this language.
      *
-     * @return a new source set with all the files from the given [sourceSet] which match
+     * @return a new source set with all the files from the given [sourceSet] which match.
      *     the [filePattern] of this language
      */
     internal fun filter(sourceSet: SourceSet): SourceSet {

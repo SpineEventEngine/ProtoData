@@ -43,7 +43,7 @@ public interface InsertionPoint {
      *
      * @param
      *     lines a list of code lines in a source file
-     * @return the line number at which the insertion point should be added
+     * @return the line number at which the insertion point should be added.
      * @see LineNumber
      */
     public fun locate(lines: List<String>): LineNumber

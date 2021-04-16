@@ -103,7 +103,7 @@ public fun Field.isPartOfOneof(): Boolean = hasOneofName()
 /**
  * Looks up an option value by the [optionName].
  *
- * @return the value of the option or a `null` if the option is not found
+ * @return the value of the option or a `null` if the option is not found.
  */
 public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>): T? {
     val value = firstOrNull { it.name == optionName }?.value
@@ -130,7 +130,7 @@ public fun MessageType.javaFile(declaredIn: File): Path {
 /**
  * Obtains the full name of the Java class, generated from this message.
  *
- * @return binary name of the class generated from this message
+ * @return binary name of the class generated from this message.
  */
 public fun MessageType.javaClassName(declaredIn: File): String {
     val packageName = declaredIn.javaPackage()

@@ -380,7 +380,7 @@ internal object CompilerEvents {
      * Assigns the field type and cardinality (`map`/`list`/`oneof_name`/`single`) to the receiver
      * builder.
      *
-     * @return the receiver for method chaining
+     * @return the receiver for method chaining.
      */
     private fun Field.Builder.assignTypeAndCardinality(desc: FieldDescriptor): Field.Builder {
         if (desc.isMapField) {

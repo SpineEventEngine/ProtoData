@@ -31,7 +31,7 @@ import com.google.common.collect.Iterables
 /**
  * Obtains the only element in the receiver `Iterable`.
  *
- * @throws NoSuchElementException if the iterable is empty
- * @throws IllegalArgumentException if the iterable contains multiple elements
+ * @throws NoSuchElementException if the iterable is empty.
+ * @throws IllegalArgumentException if the iterable contains multiple elements.
  */
 public fun <E> Iterable<E>.theOnly(): E = Iterables.getOnlyElement(this)
