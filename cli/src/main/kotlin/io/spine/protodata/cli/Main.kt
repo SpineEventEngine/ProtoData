@@ -155,24 +155,20 @@ internal class Run(version: String) : CliktCommand(
         }
     }
 
-    private fun loadExtensions(classLoader: ClassLoader): List<Plugin> {
-        val extensionBuilder = ExtensionBuilder()
-        return extensionProviders.map {
-            extensionBuilder.createByName(it, classLoader)
-        }
-    }
+    private fun loadExtensions(classLoader: ClassLoader) =
+        load(extensionProviders, classLoader, ExtensionBuilder())
 
-    private fun loadRenderers(classLoader: ClassLoader): List<Renderer> {
-        val rendererBuilder = RendererBuilder()
-        return renderers.map {
-            rendererBuilder.createByName(it, classLoader)
-        }
-    }
+    private fun loadRenderers(classLoader: ClassLoader) =
+        load(renderers, classLoader, RendererBuilder())
 
-    private fun loadOptions(classLoader: ClassLoader): List<OptionsProvider> {
-        val extensionBuilder = OptionsProviderBuilder()
-        return optionProviders.map {
-            extensionBuilder.createByName(it, classLoader)
+    private fun loadOptions(classLoader: ClassLoader) =
+        load(optionProviders, classLoader, OptionsProviderBuilder())
+
+    private fun <T: Any> load(classNames: List<String>,
+                              classLoader: ClassLoader,
+                              builder: ReflectiveBuilder<T>) : List<T> {
+        return classNames.map {
+            builder.createByName(it, classLoader)
         }
     }
 }
