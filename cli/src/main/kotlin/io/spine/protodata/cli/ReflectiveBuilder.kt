@@ -63,7 +63,7 @@ internal open class ReflectiveBuilder<T: Any> {
      * @param className name of the concrete class to instantiate
      * @param classLoader the [ClassLoader] to load the class by its name
      */
-    fun createByName(className: String, classLoader: ClassLoader): T {
+    private fun createByName(className: String, classLoader: ClassLoader): T {
         val cls = classLoader.loadClass(className).kotlin
         @Suppress("UNCHECKED_CAST")
         val tClass = cls as KClass<T>
