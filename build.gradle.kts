@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.gradle.internal.Deps
 import io.spine.gradle.internal.PublishingRepos
 import io.spine.gradle.internal.spinePublishing
+import io.spine.internal.dependency.JUnit
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
@@ -70,7 +70,7 @@ subprojects {
 
     dependencies {
         testImplementation(kotlin("test-junit5"))
-        testRuntimeOnly(Deps.test.junit.runner)
+        testRuntimeOnly(JUnit.runner)
     }
 
     tasks.test {
@@ -92,7 +92,7 @@ subprojects {
         kotlinOptions {
             jvmTarget = "1.8"
             freeCompilerArgs = freeCompilerArgs +
-                    "-Xopt-in=kotlin.io.path.ExperimentalPathApi" +
+                    "-Xopt-in=kotlin.io.path.ExperimentalPathApi,kotlin.ExperimentalUnsignedTypes" +
                     "-Xinline-classes"
         }
     }

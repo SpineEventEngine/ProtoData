@@ -33,5 +33,6 @@ public class TestPlugin: Plugin {
 
     public override fun fillIn(context: BoundedContextBuilder) {
         context.add(InternalMessageRepository())
+        context.add(DeletedTypeRepository())
     }
 }

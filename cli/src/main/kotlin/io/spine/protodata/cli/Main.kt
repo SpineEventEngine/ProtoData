@@ -64,12 +64,13 @@ private fun readVersion(): String {
  * The main CLI command which performs the ProtoData code generation tasks.
  *
  * The command accepts class names for the service provider interface implementations via the CLI
- * parameters, such as `--plugin`, `--renderer`, and `--options`. Then, using
- * the classpath of the app and the extra classpath supplied via the `--extra-classpath` parameter,
- * loads those classes. `Code Generation` context accept Protobuf compiler events, regarding
- * the Protobuf types, listed in the `CodeGeneratorRequest.file_to_generate` as loaded from
- * the `--request` parameter. Finally, the renderer applies required changes to the source set
- * with the root path, supplied in the `--source-root` parameter.
+ * parameters, such as `--plugin`, `--renderer`, and `--options`, all of which can be repeated
+ * parameters, if required. Then, using the classpath of the app and the extra classpath supplied
+ * via the `--extra-classpath` parameter, loads those classes. `Code Generation` context accept
+ * Protobuf compiler events, regarding the Protobuf types, listed in
+ * the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter. Finally,
+ * the renderers apply required changes to the source set with the root path, supplied in
+ * the `--source-root` parameter.
  */
 internal class Run(version: String) : CliktCommand(
     name = "protodata",
@@ -85,10 +86,13 @@ internal class Run(version: String) : CliktCommand(
            <...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin
         
     """.trimIndent()).multiple()
-    private  val renderer: String by option("--renderer", "-r", help = """
+    private  val renderers: List<String> by option("--renderer", "-r", help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
-        There can only be one renderer command line per call.
-    """.trimIndent()).required()
+        There can only be multiple renderers. To pass more then one value, type:
+        
+           <...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer
+        
+    """.trimIndent()).multiple(required = true)
     private val optionProviders: List<String> by option("--options", "-o", help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
@@ -129,7 +133,7 @@ internal class Run(version: String) : CliktCommand(
         val classLoader = loadExtraClasspath()
         val extensions = loadExtensions(classLoader)
         val optionsProviders = loadOptions(classLoader)
-        val renderer = loadRenderer(classLoader)
+        val renderer = loadRenderers(classLoader)
         val sourceSet = SourceSet.fromContentsOf(sourceRoot)
 
         val registry = ExtensionRegistry.newInstance()
@@ -152,22 +156,12 @@ internal class Run(version: String) : CliktCommand(
         }
     }
 
-    private fun loadExtensions(classLoader: ClassLoader): List<Plugin> {
-        val extensionBuilder = ExtensionBuilder()
-        return extensionProviders.map {
-            extensionBuilder.createByName(it, classLoader)
-        }
-    }
+    private fun loadExtensions(classLoader: ClassLoader) =
+        ExtensionBuilder().createAll(extensionProviders, classLoader)
 
-    private fun loadRenderer(classLoader: ClassLoader): Renderer {
-        val rendererBuilder = RendererBuilder()
-        return rendererBuilder.createByName(renderer, classLoader)
-    }
+    private fun loadRenderers(classLoader: ClassLoader) =
+        RendererBuilder().createAll(renderers, classLoader)
 
-    private fun loadOptions(classLoader: ClassLoader): List<OptionsProvider> {
-        val extensionBuilder = OptionsProviderBuilder()
-        return optionProviders.map {
-            extensionBuilder.createByName(it, classLoader)
-        }
-    }
+    private fun loadOptions(classLoader: ClassLoader) =
+        OptionsProviderBuilder().createAll(optionProviders, classLoader)
 }

@@ -26,6 +26,16 @@
 
 package io.spine.protodata
 
+import com.google.common.collect.Iterables
+
+/**
+ * Obtains the only element in the receiver `Iterable`.
+ *
+ * @throws NoSuchElementException if the iterable is empty.
+ * @throws IllegalArgumentException if the iterable contains multiple elements.
+ */
+public fun <E> Iterable<E>.theOnly(): E = Iterables.getOnlyElement(this)
+
 internal fun <T> Iterable<T>.interlaced(infix: T): Sequence<T> = sequence {
     forEachIndexed { index, element ->
         if (index != 0) {

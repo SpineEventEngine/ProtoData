@@ -39,8 +39,7 @@ import com.google.protobuf.StringValue
 import io.spine.option.OptionsProto
 import java.io.File.separatorChar
 import java.nio.file.Path
-import java.nio.file.Paths
-
+import kotlin.io.path.Path
 /**
  * Obtains the package and the name of the type.
  */
@@ -118,7 +117,7 @@ public fun Field.isPartOfOneof(): Boolean = hasOneofName()
 /**
  * Looks up an option value by the [optionName].
  *
- * @return the value of the option or a `null` if the option is not found
+ * @return the value of the option or a `null` if the option is not found.
  */
 public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>): T? {
     val value = firstOrNull { it.name == optionName }?.value
@@ -138,13 +137,14 @@ public fun MessageType.javaFile(declaredIn: File): Path {
         name.nestingTypeNameList.isNotEmpty() -> name.nestingTypeNameList.first()
         else -> name.simpleName
     }
-    return Paths.get(packageName.replace('.', separatorChar), "$topLevelClassName.java")
+    val packageAsPath = packageName.replace('.', separatorChar)
+    return Path(packageAsPath, "$topLevelClassName.java")
 }
 
 /**
  * Obtains the full name of the Java class, generated from this message.
  *
- * @return binary name of the class generated from this message
+ * @return binary name of the class generated from this message.
  */
 public fun MessageType.javaClassName(declaredIn: File): String {
     val packageName = declaredIn.javaPackage()

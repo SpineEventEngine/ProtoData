@@ -26,7 +26,6 @@
 
 package io.spine.protodata
 
-import com.google.common.collect.Iterables.getOnlyElement
 import io.grpc.stub.StreamObserver
 import io.spine.base.EntityState
 import io.spine.base.Identifier.checkSupported
@@ -65,7 +64,7 @@ internal constructor(
         return if (results.isEmpty()) {
             Optional.empty()
         } else {
-            val value = getOnlyElement(results)
+            val value = results.theOnly()
             Optional.of(value)
         }
     }

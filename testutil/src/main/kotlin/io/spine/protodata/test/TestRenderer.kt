@@ -26,21 +26,20 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.language.CommonLanguages
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 
-public class TestRenderer : Renderer() {
+public class TestRenderer : Renderer(supportedLanguages = setOf(CommonLanguages.Java)) {
 
-    public override fun render(sources: SourceSet): SourceSet {
-        var files = sources.files
+    override fun doRender(sources: SourceSet) {
         val internalTypes = select<InternalType>().all()
         internalTypes.forEach { internalType ->
             val oldName = internalType.name.simpleName
             val newName = "_$oldName"
-            files = files.map {
-                it.overwrite(it.code.replace(oldName, newName))
-            }.toSet()
+            sources.forEach {
+                it.overwrite(it.code().replace(oldName, newName))
+            }
         }
-        return sources.withFiles(files)
     }
 }
