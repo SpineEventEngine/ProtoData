@@ -26,42 +26,55 @@
 
 package io.spine.protodata.language
 
+import io.spine.protodata.file.Glob
 import io.spine.protodata.renderer.SourceSet
-import java.nio.file.FileSystems
-import java.nio.file.Path
-import java.nio.file.PathMatcher
 
+/**
+ * A programming language or a specific syntax.
+ *
+ * For example, Java, Python 3.x, etc.
+ */
 public abstract class Language(
+
+    /**
+     * Label to distinguish the language.
+     */
     public val name: String,
+
+    /**
+     * Pattern which all the language sources must match.
+     *
+     * For example, all Java source files must have `.java` extension.
+     */
     private val filePattern: Glob
 ) {
 
+    /**
+     * Creates a syntactically valid comment in this language.
+     *
+     * @param line
+     *     the contents of the comment
+     * @return a line which can be safely inserted into a code file
+     */
     public abstract fun comment(line: String): String
 
+    /**
+     * Filters a given source set retaining only the files in this language.
+     *
+     * @return a new source set with all the files from the given [sourceSet] which match
+     *     the [filePattern] of this language
+     */
     internal fun filter(sourceSet: SourceSet): SourceSet {
         val files = sourceSet.filter { filePattern.matches(it.path) }.toSet()
         return SourceSet(files, sourceSet.rootDir)
     }
 }
 
-public class Glob(pattern: String) {
-
-    private val matcher: PathMatcher = FileSystems.getDefault()
-                                                  .getPathMatcher("glob:$pattern")
-
-    public companion object {
-
-        public val any: Glob = Glob("**/*")
-
-        @JvmStatic
-        public fun extension(extension: String): Glob {
-            return Glob("**/*.$extension")
-        }
-    }
-
-    public fun matches(path: Path): Boolean = matcher.matches(path)
-}
-
+/**
+ * A C-like language.
+ *
+ * Supports double-slash comments (`// <comment body>`).
+ */
 public class CLike(
     name: String,
     filePattern: Glob
@@ -70,6 +83,9 @@ public class CLike(
     override fun comment(line: String): String = "// $line"
 }
 
+/**
+ * A collection of commonly used [Language]s.
+ */
 public object CommonLanguages {
 
     public val any: Language = object : Language("any language", Glob.any) {
