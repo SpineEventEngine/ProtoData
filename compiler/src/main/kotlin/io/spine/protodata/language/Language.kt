@@ -77,6 +77,8 @@ public abstract class Language(
  *
  * Supports double-slash comments (`// <comment body>`).
  */
+// TODO:2021-04-16:dmytro.dashenkov: Revisit naming.
+//  https://github.com/SpineEventEngine/ProtoData/issues/8
 public class CLike(
     name: String,
     filePattern: Glob
