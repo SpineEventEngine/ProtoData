@@ -29,8 +29,11 @@ package io.spine.protodata
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.codeLine
+import io.spine.protodata.test.CatOutOfTheBoxReleaser
 import io.spine.protodata.test.DeletingRenderer
 import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.test.GenericInsertionPoint
 import io.spine.protodata.test.InternalAccessRenderer
 import io.spine.protodata.test.JavaGenericInsertionPointPrinter
 import io.spine.protodata.test.Journey
@@ -157,6 +160,39 @@ class `'Pipeline' should` {
             .contains("Hello JavaScript")
         assertThat(ktSource.readText())
             .contains("Hello Kotlin")
+    }
 
+    @Test
+    fun `add insertion points`() {
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxReleaser()),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        val assertCode = assertThat(sourceFile.readText())
+        assertCode
+            .startsWith("// ${GenericInsertionPoint.FILE_START.codeLine}")
+        assertCode
+            .endsWith("// ${GenericInsertionPoint.FILE_END.codeLine}")
+        assertCode
+            .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
+    }
+
+    @Test
+    fun `not add insertion points if nobody touches the file contents`() {
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(JavaGenericInsertionPointPrinter(), JsRenderer()),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        val assertCode = assertThat(sourceFile.readText())
+        assertCode
+            .doesNotContain(GenericInsertionPoint.FILE_START.codeLine)
+        assertCode
+            .doesNotContain(GenericInsertionPoint.FILE_END.codeLine)
+        assertCode
+            .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
     }
 }

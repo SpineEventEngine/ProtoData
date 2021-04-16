@@ -27,29 +27,20 @@
 package io.spine.protodata.test
 
 import io.spine.protodata.language.CommonLanguages
-import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.renderer.LineNumber
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceSet
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
-    target = CommonLanguages.Java
-) {
-    override val supportedInsertionPoints: Set<InsertionPoint>
-        get() = GenericInsertionPoint.values().toSet()
-}
+/**
+ * Reads every file in the source set and obtains its code, invoking the insertion point rendering,
+ * which is a lazy process and would not happen unless someone is requesting the source code.
+ *
+ * Releases the proverbial Schrödinger's cat (insertion points) out of the box by observing it.
+ */
+public class CatOutOfTheBoxReleaser : Renderer(supportedLanguages = setOf(CommonLanguages.any)) {
 
-public enum class GenericInsertionPoint : InsertionPoint {
-
-    FILE_START {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.at(0U)
-    },
-    FILE_END {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.endOfFile()
-    },
-    OUTSIDE_FILE {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.notInFile()
-    };
-
-    override val label: String
-        get() = name.toLowerCase()
+    override fun doRender(sources: SourceSet) {
+        sources.forEach {
+            it.code()
+        }
+    }
 }
