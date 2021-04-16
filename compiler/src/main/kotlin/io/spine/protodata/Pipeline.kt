@@ -38,13 +38,13 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
  * A pipeline which processes the Protobuf files.
  *
  * A pipeline consists of the `Code Generation` context, which receives Protobuf compiler events,
- * and a single [Renderer]. A pipeline runs on a single source set.
+ * and one ofr more [Renderer]s. A pipeline runs on a single source set.
  *
  * The pipeline starts by building the `Code Generation` bounded context with the supplied
  * [Plugin]s. Then, the Protobuf compiler events are emitted and the subscribers in
- * the context receive them. Then, the [Renderer], which is able to query the states of entities in
- * the `Code Generation` context, alters the source set. This may include creating new files and/or
- * modifying existing ones. Lastly, the source set is stored onto the file system.
+ * the context receive them. Then, the [Renderer]s, which are able to query the states of entities
+ * in the `Code Generation` context, alters the source set. This may include creating new files,
+ * modifying, or deleting existing ones. Lastly, the source set is stored back onto the file system.
  */
 public class Pipeline(
     private val extensions: List<Plugin>,
