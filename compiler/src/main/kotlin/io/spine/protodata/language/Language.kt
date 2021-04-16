@@ -32,7 +32,7 @@ import io.spine.protodata.renderer.SourceSet
 /**
  * A programming language or a specific syntax.
  *
- * For example, Java, Python 3.x, etc.
+ * For example, `"Java"`, `"Python 3.x"`, etc.
  */
 public abstract class Language(
 
@@ -87,6 +87,10 @@ public class CLike(
 
 /**
  * A collection of commonly used [Language]s.
+ *
+ * If this prepared set is not enough, users are encouraged to create their own instances of
+ * [Language] by either extending the class directly or using one of its existing subtypes, such as
+ * [CLike].
  */
 public object CommonLanguages {
 
