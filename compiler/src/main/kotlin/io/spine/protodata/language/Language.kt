@@ -68,6 +68,8 @@ public abstract class Language(
         val files = sourceSet.filter { filePattern.matches(it.path) }.toSet()
         return SourceSet(files, sourceSet.rootDir)
     }
+
+    override fun toString(): String = name
 }
 
 /**
