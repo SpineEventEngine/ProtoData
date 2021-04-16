@@ -33,71 +33,74 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
-import com.google.common.annotations.VisibleForTesting
+import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.io.Resource
 import io.spine.protodata.Pipeline
+import io.spine.protodata.Plugin
+import io.spine.protodata.option.OptionsProvider
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
-import io.spine.protodata.subscriber.CodeEnhancement
-import io.spine.protodata.subscriber.SkipEverything
-import io.spine.protodata.subscriber.Subscriber
-import io.spine.server.projection.ProjectionRepository
 import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Path
+
+private const val VERSION_FILE_NAME = "version.txt"
 
 /**
  * Launches the CLI application.
  *
  * When the application is done or an unhandled error occurs, exits the process.
  */
-public fun main(args: Array<String>): Unit = Run().main(args)
+public fun main(args: Array<String>): Unit =
+    Run(readVersion()).main(args)
 
-/**
- * Launches the CLI application without finishing the process after execution.
- */
-@VisibleForTesting
-internal fun launchApp(vararg argv: String) {
-    Run().parse(argv.toList())
+private fun readVersion(): String {
+    val versionFile = Resource.file(VERSION_FILE_NAME, Run::class.java.classLoader)
+    return versionFile.read()
 }
 
 /**
  * The main CLI command which performs the ProtoData code generation tasks.
  *
- * The command accepts class names for [Subscriber]s and a [Renderer] via the `--subscriber` and
- * `--renderer` parameters. Then, using the classpath of the app and the extra classpath supplied
- * via the `--extra-classpath` parameter, loads those classes. Subscribers listen to the Protobuf
- * compiler events, regarding the Protobuf types, listed in
+ * The command accepts class names for the service provider interface implementations via the CLI
+ * parameters, such as `--plugin`, `--renderer`, and `--options`, all of which can be repeated
+ * parameters, if required. Then, using the classpath of the app and the extra classpath supplied
+ * via the `--extra-classpath` parameter, loads those classes. `Code Generation` context accept
+ * Protobuf compiler events, regarding the Protobuf types, listed in
  * the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter. Finally,
- * the code enhancements produced by the subscribers are supplied to the renderer, which applies
- * them to the source set with the root path, supplied in the `--source-root` parameter.
- *
- * Note that the [Renderer] is launched even if no enhancements are produced. In order to skip
- * the rendering step altogether (making the whole CLI invocation no-op), a subscriber should
- * produce the [SkipEverything] enhancement. This is a signal for the app to stop the processing and
- * quit.
+ * the renderers apply required changes to the source set with the root path, supplied in
+ * the `--source-root` parameter.
  */
-private class Run : CliktCommand() {
+internal class Run(version: String) : CliktCommand(
+    name = "protodata",
+    help = "ProtoData tool helps build better multi-platform code generation. Version ${version}.",
+    epilog = "https://github.com/SpineEventEngine/ProtoData/",
+    printHelpOnEmptyArgs = true
+) {
 
-    val subscribers: List<String> by option("--subscriber", "-s", help = """
-        The name of a Java class, a subtype of `${Subscriber::class.qualifiedName}`.
-        There can be multiple subscribers. To pass more then one value, type:
+    private val extensionProviders: List<String> by option("--plugin", "-p", help = """
+        The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
+        There can be multiple providers. To pass more then one value, type:
         
-             <...> -s com.foo.Bar -s com.foo.Baz
-        
-    """.trimIndent()).multiple(required = true)
-    val projections: List<String> by option("--projection", "-p", help = """
-        The name of a Java class, a subtype of `${ProjectionRepository::class.qualifiedName}`.
-        There can be multiple projections. To pass more then one value, type:
-        
-             <...> -p com.foo.BarRepository -p com.foo.BazRepository
+           <...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin
         
     """.trimIndent()).multiple()
-    val renderer: String by option("--renderer", "-r", help = """
+    private  val renderers: List<String> by option("--renderer", "-r", help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
-        There can only be one renderer command line per call.
-    """.trimIndent()).required()
-    val codegenRequestFile: File by option("--request", "-t", help =
+        There can only be multiple renderers. To pass more then one value, type:
+        
+           <...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer
+        
+    """.trimIndent()).multiple(required = true)
+    private val optionProviders: List<String> by option("--options", "-o", help = """
+        The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
+        There can be multiple providers. To pass more then one value, type:
+        
+           <...> -o com.foo.TypeOptionsProvider -o com.foo.FieldOptionsProvider
+        
+    """.trimIndent()).multiple()
+    private val codegenRequestFile: File by option("--request", "-t", help =
     "The path to the binary file containing a serialized instance of " +
             "`${CodeGeneratorRequest.getDescriptor().name}`."
     ).file(
@@ -106,7 +109,7 @@ private class Run : CliktCommand() {
         canBeSymlink = false,
         mustBeReadable = true
     ).required()
-    val sourceRoot: Path by option("--source-root", "--src", help = """
+    private val sourceRoot: Path by option("--source-root", "--src", help = """
         The path to a directory which contains the source files to be processed.
     """.trimIndent()
     ).path(
@@ -114,7 +117,7 @@ private class Run : CliktCommand() {
         canBeFile = false,
         canBeSymlink = false
     ).required()
-    val classPath: List<Path>? by option("--extra-classpath", "--xcp", help = """
+    private val classPath: List<Path>? by option("--extra-classpath", "--xcp", help = """
         The extra classpath which contains all the `--subscriber` and `--renderer` classes, as well
         as all their dependencies, which are not included as a part of the ProtoData library.
         This may be omitted if the classes are already present in the application's classpath.
@@ -128,16 +131,17 @@ private class Run : CliktCommand() {
 
     override fun run() {
         val classLoader = loadExtraClasspath()
-        val subscribers = loadSubscribers(classLoader)
-        val projections = loadProjections(classLoader)
-        val renderer = { enhancements: List<CodeEnhancement> -> loadRenderer(enhancements, classLoader) }
+        val extensions = loadExtensions(classLoader)
+        val optionsProviders = loadOptions(classLoader)
+        val renderer = loadRenderers(classLoader)
         val sourceSet = SourceSet.fromContentsOf(sourceRoot)
+
+        val registry = ExtensionRegistry.newInstance()
+        optionsProviders.forEach { it.dumpTo(registry) }
         val codegenRequest = codegenRequestFile.inputStream().use {
-            CodeGeneratorRequest.parseFrom(it)
+            CodeGeneratorRequest.parseFrom(it, registry)
         }
-        Pipeline(subscribers, projections, renderer, sourceSet, codegenRequest).use {
-            it()
-        }
+        Pipeline(extensions, renderer, sourceSet, codegenRequest)()
     }
 
     private fun loadExtraClasspath(): ClassLoader {
@@ -152,24 +156,12 @@ private class Run : CliktCommand() {
         }
     }
 
-    private fun loadSubscribers(classLoader: ClassLoader): List<Subscriber<*>> {
-        val subscriberBuilder = SubscriberBuilder()
-        return subscribers.map {
-            subscriberBuilder.createByName(it, classLoader)
-        }
-    }
+    private fun loadExtensions(classLoader: ClassLoader) =
+        ExtensionBuilder().createAll(extensionProviders, classLoader)
 
-    private fun loadProjections(classLoader: ClassLoader): List<ProjectionRepository<*, *, *>> {
-        val subscriberBuilder = ProjectionRepositoryBuilder()
-        return projections.map {
-            subscriberBuilder.createByName(it, classLoader)
-        }
-    }
+    private fun loadRenderers(classLoader: ClassLoader) =
+        RendererBuilder().createAll(renderers, classLoader)
 
-    private fun
-    loadRenderer(enhancements: List<CodeEnhancement>, classLoader: ClassLoader): Renderer {
-        val rendererBuilder = RendererBuilder()
-        rendererBuilder.add(enhancements)
-        return rendererBuilder.createByName(renderer, classLoader)
-    }
+    private fun loadOptions(classLoader: ClassLoader) =
+        OptionsProviderBuilder().createAll(optionProviders, classLoader)
 }

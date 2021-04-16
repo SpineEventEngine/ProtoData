@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package spine.protodata.test;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.test";
+option java_outer_classname = "DoctorProto";
+option java_multiple_files = true;
+
+import "spine/time/time.proto";
+import "google/protobuf/empty.proto";
+
+message Journey {
+    option (beta_type) = true;
+
+    time.LocalDate from = 1 [(required) = true];
+
+    time.LocalDate to = 2 [(required) = true];
+
+    oneof crew {
+        google.protobuf.Empty alone = 3;
+        Sidekick sidekick = 4 [(validate) = true];
+    }
+
+    Incarnation incarnation = 5;
+}
+
+message Sidekick {
+    string name = 1;
+}
+
+enum Incarnation {
+
+    UNKNOWN = 0;
+    CLASSIC = 1;
+    CURRENT = 2;
+}
+
+message _DeleteMe {
+}

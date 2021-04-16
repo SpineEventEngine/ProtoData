@@ -1,0 +1,33 @@
+name: Installation
+
+on: push
+
+jobs:
+  test:
+    defaults:
+      run:
+        shell: bash
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - run: git submodule update --init --recursive
+
+      - name: Build artifacts
+        run: ./gradlew assemble executableAsJar --stacktrace
+
+      - name: Extract installation materials from an archive
+        run: unzip -d ./unzipped ./cli/build/libs/protodata.jar
+
+      - name: Prepare installation dir
+        run: mkdir $HOME/application
+
+      - name: Install ProtoData
+        run: ./unzipped/install.sh $HOME/application
+
+      - name: Launch ProtoData
+        run: source $HOME/.bash_profile && protodata -h

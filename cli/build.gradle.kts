@@ -24,19 +24,90 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.internal.dependency.Flogger
+
 plugins {
-    id("io.spine.tools.gradle.bootstrap").version("1.7.0")
     application
 }
-
-spine.enableJava().server()
 
 dependencies {
     implementation(project(":compiler"))
     implementation(kotlin("reflect"))
     implementation("com.github.ajalt.clikt:clikt:3.1.0")
+    implementation(Flogger.lib)
+
+    testImplementation(project(":testutil"))
+}
+
+val appName = "protodata"
+
+tasks.distZip {
+    archiveFileName.set("${appName}.zip")
+}
+
+tasks.distTar {
+    archiveFileName.set("${appName}.tar")
 }
 
 application {
-    mainClass.set("io.spine.protodata.MainKt")
+    mainClass.set("io.spine.protodata.cli.MainKt")
+    applicationName = appName
+}
+
+/**
+ * A task re-packing the distribution ZIP archive into a JAR.
+ *
+ * Some Maven repositories, particularly GitHub Packages, do not support publishing arbitrary files.
+ * This way, we trick it to accept this file (as a JAR).
+ */
+val executableAsJar by tasks.registering(Jar::class) {
+    from(zipTree(tasks.distZip.get().archiveFile))
+    from("$projectDir/install.sh")
+
+    archiveFileName.set("${appName}.jar")
+
+    dependsOn(tasks.distZip)
+}
+
+val executableArchivesConfig = "executableArchives"
+
+configurations.create(executableArchivesConfig)
+
+artifacts {
+    add(executableArchivesConfig, executableAsJar)
+}
+
+publishing {
+    publications {
+        create("exec", MavenPublication::class) {
+            groupId = project.group.toString()
+            artifactId = "executable"
+            version = project.version.toString()
+
+            setArtifacts(project.configurations.getAt(executableArchivesConfig).allArtifacts)
+        }
+    }
+}
+
+val versionDir = "$buildDir/version"
+val versionFile = "$versionDir/version.txt"
+
+sourceSets {
+    main {
+        resources.srcDir(versionDir)
+    }
+}
+
+val createVersionFile by tasks.registering {
+
+    inputs.property("version", project.version)
+    outputs.file(versionFile)
+
+    doLast {
+        file(versionFile).writeText(project.version.toString())
+    }
+}
+
+tasks.processResources {
+    dependsOn(createVersionFile)
 }

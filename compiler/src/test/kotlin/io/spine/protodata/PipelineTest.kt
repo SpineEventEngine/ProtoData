@@ -28,24 +28,28 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.protodata.given.TestQueryingSubscriber
-import io.spine.protodata.given.TestRenderer
-import io.spine.protodata.given.TestSkippingSubscriber
-import io.spine.protodata.given.TestSubscriber
-import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
-import io.spine.protodata.subscriber.CodeEnhancement
+import io.spine.protodata.renderer.codeLine
+import io.spine.protodata.test.CatOutOfTheBoxEmancipator
+import io.spine.protodata.test.DeletingRenderer
 import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.test.GenericInsertionPoint
+import io.spine.protodata.test.InternalAccessRenderer
+import io.spine.protodata.test.JavaGenericInsertionPointPrinter
 import io.spine.protodata.test.Journey
+import io.spine.protodata.test.JsRenderer
+import io.spine.protodata.test.KtRenderer
+import io.spine.protodata.test.PrependingRenderer
+import io.spine.protodata.test.TestPlugin
+import io.spine.protodata.test.TestRenderer
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-
-private const val JOURNEY_TYPE = "type.spine.io/spine.protodata.test.Journey"
 
 class `'Pipeline' should` {
 
@@ -61,8 +65,7 @@ class `'Pipeline' should` {
         srcRoot.toFile().mkdirs()
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
-        sourceFile = srcRoot.resolve("SourceCode.java")
-        sourceFile.writeText("""
+        sourceFile = write("SourceCode.java", """
             ${Journey::class.simpleName} worth taking
         """.trimIndent())
 
@@ -76,62 +79,120 @@ class `'Pipeline' should` {
         renderer = TestRenderer()
     }
 
-    @Test
-    fun `render enhanced code`() {
-        Pipeline(
-            listOf(TestSubscriber()),
-            listOf(),
-            rendererFactory(),
-            SourceSet.fromContentsOf(srcRoot),
-            request
-        )()
-        assertThat(sourceFile.readText())
-            .isEqualTo("\$Journey$ worth taking")
-        assertThat(renderer.called)
-            .isTrue()
+    private fun write(path: String, code: String): Path {
+        val file = srcRoot.resolve(path)
+        file.parent.toFile().mkdirs()
+        file.writeText(code)
+        return file
     }
 
     @Test
-    fun `skip all code generation on 'SkipEverything'`() {
-        val initialContents = sourceFile.readText()
+    fun `render enhanced code`() {
         Pipeline(
-            listOf(TestSkippingSubscriber()),
-            listOf(),
-            rendererFactory(),
+            listOf(TestPlugin()),
+            listOf(renderer),
             SourceSet.fromContentsOf(srcRoot),
             request
         )()
         assertThat(sourceFile.readText())
-            .isEqualTo(initialContents)
-        assertThat(renderer.called)
+            .isEqualTo("_Journey worth taking")
+    }
+
+    @Test
+    fun `generate new files`() {
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(InternalAccessRenderer()),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        val newClass = srcRoot.resolve("spine/protodata/test/JourneyInternal.java")
+        assertThat(newClass.exists())
+            .isTrue()
+        assertThat(newClass.readText())
+            .contains("class JourneyInternal")
+    }
+
+    @Test
+    fun `delete files`() {
+        val sourceFile = write("io/spine/protodata/test/_DeleteMe.java", "foo bar")
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(DeletingRenderer()),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        assertThat(sourceFile.exists())
             .isFalse()
     }
 
     @Test
-    fun `deliver all events to projections before notifying 'Subscribers'`() {
-        val subscriber = TestQueryingSubscriber()
+    fun `write into insertion points`() {
+        val initialContent = "foo bar"
+        val sourceFile = write("io/spine/protodata/test/_DeleteMe.java", initialContent)
+        val renderer = PrependingRenderer()
         Pipeline(
-            listOf(subscriber),
-            listOf(),
-            rendererFactory(),
+            listOf(TestPlugin()),
+            listOf(JavaGenericInsertionPointPrinter(), renderer),
             SourceSet.fromContentsOf(srcRoot),
             request
         )()
-        assertThat(subscriber.files)
-            .hasSize(1)
-        val file = subscriber.files.first()
-        assertThat(file.typeMap)
-            .hasSize(2)
-        assertThat(file.typeMap)
-            .containsKey(JOURNEY_TYPE)
-        assertThat(file.typeMap[JOURNEY_TYPE]!!.fieldList)
-            .hasSize(3)
+        assertThat(sourceFile.readText())
+            .isEqualTo("""
+                // INSERT:'file_start'
+                Hello from ${renderer.javaClass.name}
+                $initialContent
+                // INSERT:'file_end'
+            """.trimIndent())
     }
 
-    private fun rendererFactory(): (List<CodeEnhancement>) -> Renderer {
-        return { enhancements ->
-            renderer.enhancements = enhancements
-            renderer
-        }
+    @Test
+    fun `use different renderers for different files`() {
+        val jsSource = write("test/source.js", "alert('Hello')")
+        val ktSource = write("corp/acme/test/Source.kt", "println(\"Hello\")")
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(JsRenderer(), KtRenderer()),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        assertThat(jsSource.readText())
+            .contains("Hello JavaScript")
+        assertThat(ktSource.readText())
+            .contains("Hello Kotlin")
+    }
+
+    @Test
+    fun `add insertion points`() {
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxEmancipator()),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        val assertCode = assertThat(sourceFile.readText())
+        assertCode
+            .startsWith("// ${GenericInsertionPoint.FILE_START.codeLine}")
+        assertCode
+            .endsWith("// ${GenericInsertionPoint.FILE_END.codeLine}")
+        assertCode
+            .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
+    }
+
+    @Test
+    fun `not add insertion points if nobody touches the file contents`() {
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(JavaGenericInsertionPointPrinter(), JsRenderer()),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        val assertCode = assertThat(sourceFile.readText())
+        assertCode
+            .doesNotContain(GenericInsertionPoint.FILE_START.codeLine)
+        assertCode
+            .doesNotContain(GenericInsertionPoint.FILE_END.codeLine)
+        assertCode
+            .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
     }
 }

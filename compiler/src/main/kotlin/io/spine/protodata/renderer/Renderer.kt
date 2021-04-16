@@ -26,35 +26,65 @@
 
 package io.spine.protodata.renderer
 
-import io.spine.protodata.subscriber.CodeEnhancement
+import io.spine.base.EntityState
+import io.spine.protodata.QueryingClient
+import io.spine.protodata.language.Language
+import io.spine.server.BoundedContext
 
 /**
- * A `Renderer` takes an existing source set, modifies it with a number of
- * [enhancements][CodeEnhancement], including changing the contents of existing source files or
- * creating new ones, and renders the resulting code into a [SourceSet].
+ * A `Renderer` takes an existing [SourceSet] and modifies it, changing the contents of existing
+ * source files, creating new ones, or deleting unwanted files.
  *
  * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
  * have a `public` no-argument constructor.
  */
-public abstract class Renderer {
+public abstract class Renderer
+protected constructor(
+    private val supportedLanguages: Set<Language>
+) {
+
+    internal lateinit var protoDataContext: BoundedContext
 
     /**
-     * The code enhancements to apply to the source files.
+     * Performs required changes to the given source set.
      */
-    public var enhancements: List<CodeEnhancement> = listOf()
-        set(value) {
-            if (field.isNotEmpty()) {
-                throw IllegalStateException("Cannot reassign `enhancements`.")
-            }
-            field = value
-        }
+    internal fun render(sources: SourceSet) {
+        val relevantFiles = supportedLanguages
+            .map { it.filter(sources) }
+            .reduce { left, right -> left.intersection(right) }
+        doRender(relevantFiles)
+        sources.mergeBack(relevantFiles)
+    }
 
     /**
-     * Processes the given `sources` in accordance with the [enhancements].
+     * Makes changes to the given source set.
      *
-     * If a file is present in the input source set but not the output, the file is left untouched.
-     * If a file is present in the output source set but not the input, the file created.
-     * If a file is present is both the input and the output source sets, the file is overridden.
+     * The source set is guaranteed to consist only of the files, containing the code in
+     * the [supportedLanguages].
      */
-    public abstract fun render(sources: SourceSet): SourceSet
+    protected abstract fun doRender(sources: SourceSet)
+
+    /**
+     * Creates a [QueryingClient] to find projections of the given class.
+     *
+     * Users may create their own projections and register them in the `Code Generation` context via
+     * a [Plugin][io.spine.protodata.Plugin].
+     *
+     * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
+     * prettier code.
+     */
+    protected fun <P : EntityState> select(type: Class<P>): QueryingClient<P> {
+        return QueryingClient(protoDataContext, type, javaClass.name)
+    }
+
+    /**
+     * Creates a [QueryingClient] to find projections of the given type.
+     *
+     * Users may create their own projections and register them in the `Code Generation` context via
+     * a [Plugin][io.spine.protodata.Plugin].
+     */
+    protected inline fun <reified P : EntityState> select(): QueryingClient<P> {
+        val cls = P::class.java
+        return select(cls)
+    }
 }

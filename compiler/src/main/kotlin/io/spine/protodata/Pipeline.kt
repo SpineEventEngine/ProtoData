@@ -31,41 +31,30 @@ import io.spine.base.Production
 import io.spine.logging.Logging
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
-import io.spine.protodata.subscriber.CodeEnhancement
-import io.spine.protodata.subscriber.SkipEverything
-import io.spine.protodata.subscriber.Subscriber
-import io.spine.protodata.transport.PrunableTransport
-import io.spine.server.BoundedContext
 import io.spine.server.ServerEnvironment
-import io.spine.server.projection.ProjectionRepository
 import io.spine.server.storage.memory.InMemoryStorageFactory
 
 /**
  * A pipeline which processes the Protobuf files.
  *
- * A pipeline consists of several [Subscriber]s and a single [Renderer] and runs on a single
- * source set.
+ * A pipeline consists of the `Code Generation` context, which receives Protobuf compiler events,
+ * and one ofr more [Renderer]s. A pipeline runs on a single source set.
  *
- * The pipeline starts by building a Bounded Context with the supplied subscribers.
- * Then, the Protobuf compiler events are emitted for the subscribers to listen. Subscribers produce
- * [CodeEnhancement]s in response to the events.
- * Then, the [Renderer], based on the generated enhancements, alters the source set. This may
- * include creating new files and/or modifying existing ones.
- * Lastly, the source set is stored onto the file system.
+ * The pipeline starts by building the `Code Generation` bounded context with the supplied
+ * [Plugin]s. Then, the Protobuf compiler events are emitted and the subscribers in
+ * the context receive them. Then, the [Renderer]s, which are able to query the states of entities
+ * in the `Code Generation` context, alters the source set. This may include creating new files,
+ * modifying, or deleting existing ones. Lastly, the source set is stored back onto the file system.
  */
 public class Pipeline(
-    private val subscribers: List<Subscriber<*>>,
-    private val projections: List<ProjectionRepository<*, *, *>>,
-    private val renderer: (List<CodeEnhancement>) -> Renderer,
+    private val extensions: List<Plugin>,
+    private val renderers:  List<Renderer>,
     private val sourceSet: SourceSet,
     private val request: CodeGeneratorRequest
-) : Logging, AutoCloseable {
-
-    private var generatorContext: BoundedContext? = null
+) : Logging {
 
     init {
         val config = ServerEnvironment.`when`(Production::class.java)
-        config.use(PrunableTransport)
         config.use(InMemoryStorageFactory.newInstance())
     }
 
@@ -73,28 +62,18 @@ public class Pipeline(
      * Executes the processing pipeline.
      */
     public operator fun invoke() {
-        val enhancements = processProtobuf()
-        if (SkipEverything !in enhancements) {
-            val enhanced = renderer(enhancements).render(sourceSet)
-            enhanced.files.forEach {
-                it.write()
-            }
-        } else {
-            _info().log("Skipping everything. ${enhancements.size - 1} code enhancements ignored.")
-        }
-    }
+        val contextBuilder = CodeGenerationContext.builder()
+        extensions.forEach { it.fillIn(contextBuilder) }
+        val context = contextBuilder.build()
 
-    private fun processProtobuf(): List<CodeEnhancement> {
-        val protoDataContext = ProtoDataContext.build(projections)
         val events = CompilerEvents.parse(request)
         ProtobufCompilerContext.emitted(events)
-        PrunableTransport.prune()
-        generatorContext = ProtoDataGeneratorContext.build(subscribers, protoDataContext)
-        ProtobufCompilerContext.emitted(events)
-        return subscribers.flatMap { it.producedEnhancements }
-    }
 
-    override fun close() {
-        generatorContext?.close()
+        renderers.forEach {
+            it.protoDataContext = context
+            it.render(sourceSet)
+        }
+        sourceSet.write()
+        context.close()
     }
 }
