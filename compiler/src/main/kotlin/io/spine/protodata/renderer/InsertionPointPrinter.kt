@@ -28,11 +28,30 @@ package io.spine.protodata.renderer
 
 import io.spine.protodata.language.Language
 
-public abstract class InsertionPointPrinter(private val target: Language,
-                                            private val supportedInsertionPoints: Set<InsertionPoint>)
-    : Renderer(setOf(target)) {
+/**
+ * A [Renderer] which adds [InsertionPoint]s to the code.
+ *
+ * Insertion points help the developers of other `Renderer`s by marking up source files for easier
+ * code insertion. This way, it's only required to parse the file's contents once — in
+ * an `InsertionPointPrinter`. The job of other `Renderer`s would be to insert their code into
+ * pre-prepared insertion points.
+ *
+ * By default, there are no insertion points in the code files. To add some, create a subtype
+ * of `InsertionPointPrinter` and add it to your processing as a first `Renderer`. Note that
+ * the `InsertionPointPrinter`s need to be invoked before the other `Renderers`.
+ */
+public abstract class InsertionPointPrinter(
+    private val target: Language
+) : Renderer(setOf(target)) {
 
-    override fun doRender(sources: SourceSet) {
+    /**
+     * [InsertionPoint]s which could be added to source code by this `InsertionPointPrinter`.
+     *
+     * The property getter may use [Renderer.select] to find out more info about the message types.
+     */
+    protected abstract val supportedInsertionPoints: Set<InsertionPoint>
+
+    final override fun doRender(sources: SourceSet) {
         sources.prepareCode { file ->
             val lines = file.lines().toMutableList()
             supportedInsertionPoints.forEach { point ->

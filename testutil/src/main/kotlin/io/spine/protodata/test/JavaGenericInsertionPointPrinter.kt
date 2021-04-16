@@ -31,9 +31,11 @@ import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 
 public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
-    target = CommonLanguages.Java,
-    supportedInsertionPoints = GenericInsertionPoint.values().toSet()
-)
+    target = CommonLanguages.Java
+) {
+    override val supportedInsertionPoints: Set<InsertionPoint>
+        get() = GenericInsertionPoint.values().toSet()
+}
 
 public enum class GenericInsertionPoint : InsertionPoint {
 
