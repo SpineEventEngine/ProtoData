@@ -142,6 +142,7 @@ message MessageType {
     // Enum type declarations nested inside this type.
     repeated TypeName nested_enums = 8;
 
+    // Documentation of this type.
     Doc doc = 9;
 }
 
@@ -161,26 +162,42 @@ message EnumType {
     // Name of the message type which hosts the declaration of this type.
     TypeName declared_in = 5;
 
+    // Documentation of this type.
     Doc doc = 6;
 }
 
+// A name of an enum constant.
 message ConstantName {
 
     string value = 1;
 }
 
+// An enum constant, a.k.a. an enum value.
 message EnumConstant {
 
     ConstantName name = 1;
 
+    // The number associated with the constant.
+    //
+    // The numbers always start with a zero.
+    //
+    // If the enum permits aliases, there can be multiple constants with the same number.
+    //
     uint32 number = 2;
 
+    // The name of the enum type which declares this constant.
     TypeName declared_in = 3;
 
+    // The index of the constant within the enum.
+    //
+    // Not to be confused with the enum constant `number`.
+    //
     uint32 order_of_declaration = 5;
 
+    // Options associated with this constant.
     repeated Option option = 6;
 
+    // Documentation of this constant.
     Doc doc = 7;
 }
 
@@ -252,7 +269,7 @@ message Field {
     //
     uint32 number = 4;
 
-    // The field's order to declaration.
+    // The index of the field within the message.
     //
     // Not to be confused with the field number.
     //
@@ -299,6 +316,7 @@ message Field {
     // Field-level options.
     repeated Option option = 10;
 
+    // Documentation of this field.
     Doc doc = 11;
 
     // Additional type details for map fields.
@@ -330,6 +348,7 @@ message OneofGroup {
     // Oneof-level options.
     repeated Option option = 3;
 
+    // Documentation of this group.
     Doc doc = 4;
 }
 
@@ -360,11 +379,24 @@ message Option {
     google.protobuf.Any value = 4;
 }
 
+// Documentation associated with a certain Protobuf declaration.
+//
 message Doc {
 
+    // The comment placed directly above the declaration without any empty lines.
+    //
+    // For example, this very doc is the leading comment of the `leading_comment` field.
+    //
     string leading_comment = 1;
 
+    // The comment placed beneath above the declaration without any empty lines.
     string trailing_comment = 2;
 
+    // Comments placed above the declaration separated by at least one empty line from
+    // the declaration.
+    //
+    // This can often be a general comment, related not to the declaration itself, but rather to
+    // its context.
+    //
     repeated string detached_comment = 3;
 }

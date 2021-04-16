@@ -147,6 +147,7 @@ message FieldExited {
     FieldName field = 3;
 }
 
+// Emitted when processing reaches an enum type.
 message EnumEntered {
 
     FilePath file = 1;
@@ -154,6 +155,7 @@ message EnumEntered {
     EnumType type = 2;
 }
 
+// Emitted when an enum-level option is found.
 message EnumOptionDiscovered {
 
     FilePath file = 1;
@@ -163,6 +165,7 @@ message EnumOptionDiscovered {
     Option option = 3;
 }
 
+// Emitted when processing reaches an enum constant a.k.a. enum value.
 message EnumConstantEntered {
 
     FilePath file = 1;
@@ -172,6 +175,7 @@ message EnumConstantEntered {
     EnumConstant constant = 3;
 }
 
+// Emitted when an enum constant-level option is found.
 message EnumConstantOptionDiscovered {
 
     FilePath file = 1;
@@ -183,6 +187,7 @@ message EnumConstantOptionDiscovered {
     Option option = 4;
 }
 
+// Emitted when an enum constant is completely discovered.
 message EnumConstantExited {
 
     FilePath file = 1;
@@ -192,6 +197,7 @@ message EnumConstantExited {
     ConstantName constant = 3;
 }
 
+// Emitted when an enum type is completely discovered, including all the constants, etc.
 message EnumExited {
 
     FilePath file = 1;
