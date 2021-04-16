@@ -97,4 +97,3 @@ internal object EndOfFile : LineNumber()
  * A [LineNumber] representing that the looked up line is nowhere to be found in the file.
  */
 internal object Nowhere : LineNumber()
-
