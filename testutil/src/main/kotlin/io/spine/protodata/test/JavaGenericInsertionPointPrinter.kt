@@ -41,7 +41,7 @@ public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
 public enum class GenericInsertionPoint : InsertionPoint {
 
     FILE_START {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.at(0.toUInt())
+        override fun locate(lines: List<String>): LineNumber = LineNumber.at(0U)
     },
     FILE_END {
         override fun locate(lines: List<String>): LineNumber = LineNumber.endOfFile()
