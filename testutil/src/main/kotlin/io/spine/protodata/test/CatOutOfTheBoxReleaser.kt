@@ -32,7 +32,7 @@ import io.spine.protodata.renderer.SourceSet
 
 /**
  * Reads every file in the source set and obtains its code, invoking the insertion point rendering,
- * which is a lazy process and would not happen unless someone is requesting the source code.
+ * which is a lazy process and would not happen unless someone requested the source code.
  *
  * Releases the proverbial Schrödinger's cat (insertion points) out of the box by observing it.
  */
