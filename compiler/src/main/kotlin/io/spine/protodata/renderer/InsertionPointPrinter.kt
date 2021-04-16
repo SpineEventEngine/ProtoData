@@ -60,7 +60,7 @@ public abstract class InsertionPointPrinter(
                 val comment = target.comment(point.codeLine)
                 when(lineNumber) {
                     is LineIndex -> {
-                        val index = lineNumber.value
+                        val index = lineNumber.value.toInt()
                         checkPositionIndex(index, lines.size, "Line number")
                         lines.add(index, comment)
                     }

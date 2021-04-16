@@ -68,14 +68,7 @@ public sealed class LineNumber {
         /**
          * Creates a `LineNumber` pointing at a given line.
          */
-        public fun at(number: Int): LineNumber {
-            if (number < 0) {
-                throw IndexOutOfBoundsException(
-                    "Line number should be non-negative. Got `${number}`."
-                )
-            }
-            return LineIndex(number)
-        }
+        public fun at(number: UInt): LineNumber = LineIndex(number)
 
         /**
          * Creates a `LineNumber` pointing at the end of the file, no matter the index of the actual
@@ -93,7 +86,7 @@ public sealed class LineNumber {
 /**
  * A [LineNumber] pointing at a particular line.
  */
-internal data class LineIndex(val value: Int) : LineNumber()
+internal data class LineIndex constructor(val value: UInt) : LineNumber()
 
 /**
  * A [LineNumber] which always lies at the end of the file.
