@@ -29,6 +29,7 @@ package io.spine.protodata.test
 import io.spine.protodata.language.CommonLanguages
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
+import io.spine.protodata.renderer.LineNumber
 
 public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
     target = CommonLanguages.Java
@@ -40,11 +41,11 @@ public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
 public enum class GenericInsertionPoint : InsertionPoint {
 
     FILE_START {
-        override fun locate(lines: List<String>): Int = 0
+        override fun locate(lines: List<String>): LineNumber = LineNumber.at(0)
 
     },
     FILE_END {
-        override fun locate(lines: List<String>): Int = lines.size
+        override fun locate(lines: List<String>): LineNumber = LineNumber.endOfFile()
     };
 
     override val label: String

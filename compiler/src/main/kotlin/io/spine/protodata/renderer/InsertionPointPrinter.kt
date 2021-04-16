@@ -26,6 +26,7 @@
 
 package io.spine.protodata.renderer
 
+import com.google.common.base.Preconditions.checkPositionIndex
 import io.spine.protodata.language.Language
 
 /**
@@ -55,14 +56,17 @@ public abstract class InsertionPointPrinter(
         sources.prepareCode { file ->
             val lines = file.lines().toMutableList()
             supportedInsertionPoints.forEach { point ->
-                val index = point.locate(lines)
-                if (index >= 0) {
-                    val comment = target.comment(point.codeLine)
-                    if (index >= lines.size) {
-                        lines.add(comment)
-                    } else {
+                val lineNumber = point.locate(lines)
+                val comment = target.comment(point.codeLine)
+                when(lineNumber) {
+                    is LineIndex -> {
+                        val index = lineNumber.value
+                        checkPositionIndex(index, lines.size, "Line number")
                         lines.add(index, comment)
                     }
+                    is EndOfFile -> lines.add(comment)
+                    is Nowhere -> {} // No need to add anything.
+                                     // Insertion point should not appear in the file.
                 }
             }
             file.updateLines(lines)

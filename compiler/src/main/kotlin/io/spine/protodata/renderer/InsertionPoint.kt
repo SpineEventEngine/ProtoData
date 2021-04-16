@@ -26,12 +26,82 @@
 
 package io.spine.protodata.renderer
 
+/**
+ * A point is a source file, where more code may be inserted.
+ */
 public interface InsertionPoint {
 
+    /**
+     * The name of this insertion point.
+     */
     public val label: String
 
-    public val codeLine: String
-        get() = "INSERT:'${label}'"
-
-    public fun locate(lines: List<String>): Int
+    /**
+     * Locates the line number where the insertion point should be added.
+     *
+     * An insertion point should only appear once in a file.
+     *
+     * @param
+     *     lines a list of code lines in a source file
+     * @return the line number at which the insertion point should be added
+     * @see LineNumber
+     */
+    public fun locate(lines: List<String>): LineNumber
 }
+
+/**
+ * The marker representing this [InsertionPoint] in the code.
+ *
+ * This property is an extension rather than a normal property because we don't want users
+ * to override it.
+ */
+public val InsertionPoint.codeLine: String
+    get() = "INSERT:'${label}'"
+
+/**
+ * A pointer to a line in a source file.
+ */
+public sealed class LineNumber {
+
+    public companion object {
+
+        /**
+         * Creates a `LineNumber` pointing at a given line.
+         */
+        public fun at(number: Int): LineNumber {
+            if (number < 0) {
+                throw IndexOutOfBoundsException(
+                    "Line number should be non-negative. Got `${number}`."
+                )
+            }
+            return LineIndex(number)
+        }
+
+        /**
+         * Creates a `LineNumber` pointing at the end of the file, no matter the index of the actual
+         * line.
+         */
+        public fun endOfFile(): LineNumber = EndOfFile
+
+        /**
+         * Creates a `LineNumber` not pointing at any line.
+         */
+        public fun notInFile(): LineNumber = Nowhere
+    }
+}
+
+/**
+ * A [LineNumber] pointing at a particular line.
+ */
+internal data class LineIndex(val value: Int) : LineNumber()
+
+/**
+ * A [LineNumber] which always lies at the end of the file.
+ */
+internal object EndOfFile : LineNumber()
+
+/**
+ * A [LineNumber] representing that the looked up line is nowhere to be found in the file.
+ */
+internal object Nowhere : LineNumber()
+
