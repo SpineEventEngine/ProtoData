@@ -98,6 +98,9 @@ internal object CompilerEvents {
     }
 }
 
+/**
+ * Produces events from the associated file.
+ */
 private class ProtoFileEvents(
     private val fileDescriptor: FileDescriptor
 ) {
