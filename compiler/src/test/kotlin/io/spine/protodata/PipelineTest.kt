@@ -30,7 +30,7 @@ import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.renderer.codeLine
-import io.spine.protodata.test.CatOutOfTheBoxReleaser
+import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.DeletingRenderer
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.GenericInsertionPoint
@@ -166,7 +166,7 @@ class `'Pipeline' should` {
     fun `add insertion points`() {
         Pipeline(
             listOf(TestPlugin()),
-            listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxReleaser()),
+            listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxEmancipator()),
             SourceSet.fromContentsOf(srcRoot),
             request
         )()
