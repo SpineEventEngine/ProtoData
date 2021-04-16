@@ -26,20 +26,12 @@
 
 package io.spine.protodata
 
+import com.google.common.collect.Iterables
+
 /**
  * Obtains the only element in the receiver `Iterable`.
  *
- * @throws NoSuchElementException if there are no elements
- * @throws IndexOutOfBoundsException if there are more than one elements
+ * @throws NoSuchElementException if the iterable is empty
+ * @throws IllegalArgumentException if the iterable contains multiple elements
  */
-public fun <E> Iterable<E>.theOnly(): E {
-    val iterator = iterator()
-    if (!iterator.hasNext()) {
-        throw NoSuchElementException("The iterable is empty.")
-    }
-    val element = iterator.next()
-    if (iterator.hasNext()) {
-        throw IndexOutOfBoundsException("The iterable has more than one element.")
-    }
-    return element
-}
+public fun <E> Iterable<E>.theOnly(): E = Iterables.getOnlyElement(this)
