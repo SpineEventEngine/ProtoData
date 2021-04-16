@@ -64,7 +64,8 @@ internal constructor(
         /**
          * Collects a source set from a given root directory.
          */
-        @JvmStatic public fun fromContentsOf(directory: Path): SourceSet {
+        @JvmStatic
+        public fun fromContentsOf(directory: Path): SourceSet {
             val files = Files
                 .walk(directory)
                 .filter { it.isRegularFile() }
