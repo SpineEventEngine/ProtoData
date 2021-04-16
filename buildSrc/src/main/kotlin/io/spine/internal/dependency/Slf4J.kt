@@ -24,46 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.internal.dependency
+
 /**
- * This script uses three declarations of the constant [licenseReportVersion] because
- * currently there is no way to define a constant _before_ a build script of `buildSrc`.
- * We cannot use imports or do something else before the `buildscript` or `plugin` clauses.
+ * Spine used to log with SLF4J. Now we use Flogger. Whenever a choice comes up, we recommend to
+ * use the latter.
  *
- * Therefore, when a version of [io.spine.internal.dependency.LicenseReport] changes, it should be
- * changed in the Kotlin object _and_ in this file below thrice. 
+ * Some third-party libraries may clash with different versions of the library. Thus, we specify
+ * this version and force it via [forceConfiguration(..)][DependencyResolution.forceConfiguration].
  */
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    val licenseReportVersion = "1.16"
-    dependencies {
-        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
-    }
-}
-
-plugins {
-    java
-    groovy
-    `kotlin-dsl`
-    val licenseReportVersion = "1.16"
-    id("com.github.jk1.dependency-license-report").version(licenseReportVersion)
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
-}
-
-repositories {
-    mavenLocal()
-    gradlePluginPortal()
-    mavenCentral()
-}
-
-val jacksonVersion = "2.11.0"
-val licenseReportVersion = "1.16"
-
-dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
-    api("com.github.jk1:gradle-license-report:${licenseReportVersion}")
+@Deprecated("Use Flogger over SLF4J.", replaceWith = ReplaceWith("flogger"))
+object Slf4J {
+    private const val version = "1.7.30"
+    const val lib = "org.slf4j:slf4j-api:${version}"
+    const val jdk14 = "org.slf4j:slf4j-jdk14:${version}"
 }

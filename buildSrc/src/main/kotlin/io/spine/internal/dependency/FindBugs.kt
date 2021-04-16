@@ -24,46 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.internal.dependency
+
 /**
- * This script uses three declarations of the constant [licenseReportVersion] because
- * currently there is no way to define a constant _before_ a build script of `buildSrc`.
- * We cannot use imports or do something else before the `buildscript` or `plugin` clauses.
- *
- * Therefore, when a version of [io.spine.internal.dependency.LicenseReport] changes, it should be
- * changed in the Kotlin object _and_ in this file below thrice. 
+ * The FindBugs project is dead since 2017. It has a successor called SpotBugs, but we don't use it.
+ * We use ErrorProne for static analysis instead. The only reason for having this dependency is
+ * the annotations for null-checking introduced by JSR-305. These annotations are troublesome,
+ * but no alternatives are known for some of them so far.  Please see
+ * [this issue](https://github.com/SpineEventEngine/base/issues/108) for more details.
  */
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    val licenseReportVersion = "1.16"
-    dependencies {
-        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
-    }
-}
-
-plugins {
-    java
-    groovy
-    `kotlin-dsl`
-    val licenseReportVersion = "1.16"
-    id("com.github.jk1.dependency-license-report").version(licenseReportVersion)
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
-}
-
-repositories {
-    mavenLocal()
-    gradlePluginPortal()
-    mavenCentral()
-}
-
-val jacksonVersion = "2.11.0"
-val licenseReportVersion = "1.16"
-
-dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
-    api("com.github.jk1:gradle-license-report:${licenseReportVersion}")
+object FindBugs {
+    private const val version = "3.0.2"
+    const val annotations = "com.google.code.findbugs:jsr305:${version}"
 }

@@ -24,46 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This script uses three declarations of the constant [licenseReportVersion] because
- * currently there is no way to define a constant _before_ a build script of `buildSrc`.
- * We cannot use imports or do something else before the `buildscript` or `plugin` clauses.
- *
- * Therefore, when a version of [io.spine.internal.dependency.LicenseReport] changes, it should be
- * changed in the Kotlin object _and_ in this file below thrice. 
- */
-buildscript {
-    repositories {
-        gradlePluginPortal()
+package io.spine.internal.dependency
+
+// https://errorprone.info/
+@Suppress("unused")
+object ErrorProne {
+    private const val version = "2.6.0"
+    // https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
+    private const val javacPluginVersion = "9+181-r4173-1"
+
+    val annotations = listOf(
+        "com.google.errorprone:error_prone_annotations:${version}",
+        "com.google.errorprone:error_prone_type_annotations:${version}"
+    )
+    const val core = "com.google.errorprone:error_prone_core:${version}"
+    const val checkApi = "com.google.errorprone:error_prone_check_api:${version}"
+    const val testHelpers = "com.google.errorprone:error_prone_test_helpers:${version}"
+    const val javacPlugin  = "com.google.errorprone:javac:${javacPluginVersion}"
+
+    object GradlePlugin {
+        const val id = "net.ltgt.errorprone"
+        const val version = "1.3.0"
+        const val lib = "net.ltgt.gradle:gradle-errorprone-plugin:${version}"
     }
-    val licenseReportVersion = "1.16"
-    dependencies {
-        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
-    }
-}
-
-plugins {
-    java
-    groovy
-    `kotlin-dsl`
-    val licenseReportVersion = "1.16"
-    id("com.github.jk1.dependency-license-report").version(licenseReportVersion)
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
-}
-
-repositories {
-    mavenLocal()
-    gradlePluginPortal()
-    mavenCentral()
-}
-
-val jacksonVersion = "2.11.0"
-val licenseReportVersion = "1.16"
-
-dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
-    api("com.github.jk1:gradle-license-report:${licenseReportVersion}")
 }

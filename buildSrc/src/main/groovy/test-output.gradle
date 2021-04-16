@@ -24,46 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This script uses three declarations of the constant [licenseReportVersion] because
- * currently there is no way to define a constant _before_ a build script of `buildSrc`.
- * We cannot use imports or do something else before the `buildscript` or `plugin` clauses.
+/*
+ * This plugin configured the test output as follows:
  *
- * Therefore, when a version of [io.spine.internal.dependency.LicenseReport] changes, it should be
- * changed in the Kotlin object _and_ in this file below thrice. 
+ *  - the standard streams of the tests execution are logged;
+ *  - exceptions thrown in tests are logged;
+ *  - after all the tests are executed, a short test summary is logged; the summary shown the number
+ *    of tests and their results.
  */
-buildscript {
-    repositories {
-        gradlePluginPortal()
+
+tasks.withType(Test).each {
+    it.testLogging {
+        showStandardStreams = true
+        showExceptions = true
+        showStackTraces = true
+        showCauses = true
+        exceptionFormat = 'full'
     }
-    val licenseReportVersion = "1.16"
-    dependencies {
-        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
+
+    it.afterSuite { final testDescriptor, final result ->
+        // If the descriptor has no parent, then it is the root test suite, i.e. it includes the
+        // info about all the run tests.
+        if (!testDescriptor.parent) {
+            logger.lifecycle(
+                    """
+                    Test summary:
+                    >> ${result.testCount} tests
+                    >> ${result.successfulTestCount} succeeded
+                    >> ${result.failedTestCount} failed
+                    >> ${result.skippedTestCount} skipped
+                    """
+            )
+        }
     }
-}
-
-plugins {
-    java
-    groovy
-    `kotlin-dsl`
-    val licenseReportVersion = "1.16"
-    id("com.github.jk1.dependency-license-report").version(licenseReportVersion)
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
-}
-
-repositories {
-    mavenLocal()
-    gradlePluginPortal()
-    mavenCentral()
-}
-
-val jacksonVersion = "2.11.0"
-val licenseReportVersion = "1.16"
-
-dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
-    api("com.github.jk1:gradle-license-report:${licenseReportVersion}")
 }

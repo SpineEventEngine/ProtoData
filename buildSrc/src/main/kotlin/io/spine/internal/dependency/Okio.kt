@@ -24,46 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.internal.dependency
+
 /**
- * This script uses three declarations of the constant [licenseReportVersion] because
- * currently there is no way to define a constant _before_ a build script of `buildSrc`.
- * We cannot use imports or do something else before the `buildscript` or `plugin` clauses.
- *
- * Therefore, when a version of [io.spine.internal.dependency.LicenseReport] changes, it should be
- * changed in the Kotlin object _and_ in this file below thrice. 
+ * Okio is a transitive dependency which we don't use directly.
+ * We `force` it in [DependencyResolution.forceConfiguration].
  */
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    val licenseReportVersion = "1.16"
-    dependencies {
-        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
-    }
-}
-
-plugins {
-    java
-    groovy
-    `kotlin-dsl`
-    val licenseReportVersion = "1.16"
-    id("com.github.jk1.dependency-license-report").version(licenseReportVersion)
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
-}
-
-repositories {
-    mavenLocal()
-    gradlePluginPortal()
-    mavenCentral()
-}
-
-val jacksonVersion = "2.11.0"
-val licenseReportVersion = "1.16"
-
-dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
-    api("com.github.jk1:gradle-license-report:${licenseReportVersion}")
+object Okio {
+    // This is the last version before next major.
+    private const val version = "1.17.5"
+    const val lib = "com.squareup.okio:okio:${version}"
 }

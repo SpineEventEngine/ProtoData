@@ -24,46 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This script uses three declarations of the constant [licenseReportVersion] because
- * currently there is no way to define a constant _before_ a build script of `buildSrc`.
- * We cannot use imports or do something else before the `buildscript` or `plugin` clauses.
- *
- * Therefore, when a version of [io.spine.internal.dependency.LicenseReport] changes, it should be
- * changed in the Kotlin object _and_ in this file below thrice. 
+
+/*
+ * This script configures Gradle PMD plugin.
  */
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    val licenseReportVersion = "1.16"
-    dependencies {
-        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
-    }
+pmd {
+    toolVersion = "${io.spine.internal.dependency.Pmd.version}"
+    consoleOutput = true
+    incrementalAnalysis = true
+
+    // The build is going to fail in case of violations.
+    ignoreFailures = false
+
+    // Disable the default rule set to use the custom rules (see below).
+    ruleSets = []
+
+    // A set of custom rules.
+    ruleSetFiles = files("$rootDir/config/quality/pmd.xml")
+
+    reportsDir = file("build/reports/pmd")
+
+    // Just analyze the main sources; do not analyze tests.
+    sourceSets = [sourceSets.main]
 }
 
-plugins {
-    java
-    groovy
-    `kotlin-dsl`
-    val licenseReportVersion = "1.16"
-    id("com.github.jk1.dependency-license-report").version(licenseReportVersion)
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
-}
-
-repositories {
-    mavenLocal()
-    gradlePluginPortal()
-    mavenCentral()
-}
-
-val jacksonVersion = "2.11.0"
-val licenseReportVersion = "1.16"
-
-dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
-    api("com.github.jk1:gradle-license-report:${licenseReportVersion}")
-}
+// Workaround for https://github.com/pmd/pmd/issues/1705.
+pmdMain.classpath += sourceSets.main.runtimeClasspath

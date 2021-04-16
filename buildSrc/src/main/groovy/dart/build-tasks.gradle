@@ -23,47 +23,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package dart
 
-/**
- * This script uses three declarations of the constant [licenseReportVersion] because
- * currently there is no way to define a constant _before_ a build script of `buildSrc`.
- * We cannot use imports or do something else before the `buildscript` or `plugin` clauses.
- *
- * Therefore, when a version of [io.spine.internal.dependency.LicenseReport] changes, it should be
- * changed in the Kotlin object _and_ in this file below thrice. 
- */
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    val licenseReportVersion = "1.16"
-    dependencies {
-        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
-    }
+import org.apache.tools.ant.taskdefs.condition.Os
+
+final def GROUP = 'Dart'
+final def packageIndex = "$projectDir/.packages" as File
+final def extension = Os.isFamily(Os.FAMILY_WINDOWS) ? '.bat' : ''
+final def PUB_EXECUTABLE = 'pub' + extension
+
+task resolveDependencies(type: Exec) {
+    group = GROUP
+    description = 'Fetches the dependencies declared via `pubspec.yaml`.'
+
+    inputs.file "$projectDir/pubspec.yaml"
+    outputs.file packageIndex
+
+    commandLine PUB_EXECUTABLE, 'get'
+
+    mustRunAfter 'cleanPackageIndex'
 }
 
-plugins {
-    java
-    groovy
-    `kotlin-dsl`
-    val licenseReportVersion = "1.16"
-    id("com.github.jk1.dependency-license-report").version(licenseReportVersion)
+tasks['assemble'].dependsOn 'resolveDependencies'
+
+task cleanPackageIndex(type: Delete) {
+    group = GROUP
+    description = 'Deletes the `.packages` file on this Dart module.'
+    delete = [packageIndex]
 }
 
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
+tasks['clean'].dependsOn 'cleanPackageIndex'
+
+task testDart(type: Exec) {
+    group = GROUP
+    description = 'Runs Dart tests declared in the `./test` directory. See `https://pub.dev/packages/test#running-tests`.'
+
+    commandLine PUB_EXECUTABLE, 'run', 'test'
+
+    dependsOn 'resolveDependencies'
 }
 
-repositories {
-    mavenLocal()
-    gradlePluginPortal()
-    mavenCentral()
-}
-
-val jacksonVersion = "2.11.0"
-val licenseReportVersion = "1.16"
-
-dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
-    api("com.github.jk1:gradle-license-report:${licenseReportVersion}")
-}
+tasks['check'].dependsOn 'testDart'
