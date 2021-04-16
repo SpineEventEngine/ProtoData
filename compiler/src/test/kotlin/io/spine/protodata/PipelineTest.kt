@@ -34,6 +34,8 @@ import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.InternalAccessRenderer
 import io.spine.protodata.test.JavaGenericInsertionPointPrinter
 import io.spine.protodata.test.Journey
+import io.spine.protodata.test.JsRenderer
+import io.spine.protodata.test.KtRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
@@ -143,6 +145,18 @@ class `'Pipeline' should` {
 
     @Test
     fun `use different renderers for different files`() {
+        val jsSource = write("test/source.js", "alert('Hello')")
+        val ktSource = write("corp/acme/test/Source.kt", "println(\"Hello\")")
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(JsRenderer(), KtRenderer()),
+            SourceSet.fromContentsOf(srcRoot),
+            request
+        )()
+        assertThat(jsSource.readText())
+            .contains("Hello JavaScript")
+        assertThat(ktSource.readText())
+            .contains("Hello Kotlin")
 
     }
 }
