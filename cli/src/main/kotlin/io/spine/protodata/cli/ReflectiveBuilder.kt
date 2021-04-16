@@ -38,6 +38,23 @@ import kotlin.reflect.KVisibility
 internal open class ReflectiveBuilder<T: Any> {
 
     /**
+     * Creates instances of `T` from the givne class names.
+     *
+     * It is necessary that the classes defined by the [classNames] parameter are subtypes of `T`.
+     * Otherwise, a casting error occurs.
+     *
+     * @param classNames
+     *     names of concrete classes to instantiate
+     * @param classLoader
+     *     the [ClassLoader] to load the class by its name
+     * @see createByName
+     */
+    fun createAll(classNames: List<String>, classLoader: ClassLoader) =
+        classNames.map {
+            createByName(it, classLoader)
+        }
+
+    /**
      * Creates an instance of `T`.
      *
      * It is necessary that the class defined by the [className] parameter is a subtype of `T`.

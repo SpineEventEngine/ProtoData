@@ -156,19 +156,11 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun loadExtensions(classLoader: ClassLoader) =
-        load(extensionProviders, classLoader, ExtensionBuilder())
+        ExtensionBuilder().createAll(extensionProviders, classLoader)
 
     private fun loadRenderers(classLoader: ClassLoader) =
-        load(renderers, classLoader, RendererBuilder())
+        RendererBuilder().createAll(renderers, classLoader)
 
     private fun loadOptions(classLoader: ClassLoader) =
-        load(optionProviders, classLoader, OptionsProviderBuilder())
-
-    private fun <T: Any> load(classNames: List<String>,
-                              classLoader: ClassLoader,
-                              builder: ReflectiveBuilder<T>) : List<T> {
-        return classNames.map {
-            builder.createByName(it, classLoader)
-        }
-    }
+        OptionsProviderBuilder().createAll(optionProviders, classLoader)
 }
