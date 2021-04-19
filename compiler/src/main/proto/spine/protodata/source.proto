@@ -51,4 +51,6 @@ message ProtobufSourceFile {
     map<string, MessageType> type = 3;
 
     map<string, EnumType> enum_type = 4;
+
+    map<string, Service> service = 5;
 }

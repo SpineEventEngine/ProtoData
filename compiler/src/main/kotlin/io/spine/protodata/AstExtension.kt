@@ -29,11 +29,13 @@
 package io.spine.protodata
 
 import com.google.protobuf.BoolValue
+import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import io.spine.option.OptionsProto
@@ -82,6 +84,21 @@ public fun TypeName.qualifiedName(): String = "${packageName}.${simpleName}"
  * @see MessageType.typeUrl
  */
 public fun TypeName.typeUrl(): String = "${typeUrlPrefix}/${qualifiedName()}"
+
+/**
+ * Obtains the type URl from this `ServiceName`.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ */
+public fun ServiceName.typeUrl(): String = "$typeUrlPrefix/$packageName.$simpleName"
+
+/**
+ * Obtains the type URl of this service.
+ *
+ * @see ServiceName.typeUrl
+ */
+public fun Service.typeUrl(): String = name.typeUrl()
 
 /**
  * Shows if this field is a `map`.
@@ -214,12 +231,22 @@ private fun buildTypeName(simpleName: String,
         .newBuilder()
         .setSimpleName(simpleName)
         .setPackageName(file.`package`)
-        .setTypeUrlPrefix(file.options.getExtension(OptionsProto.typeUrlPrefix))
+        .setTypeUrlPrefix(file.typeUrlPrefix)
     if (nestingNames.isNotEmpty()) {
         typeName.addAllNestingTypeName(nestingNames)
     }
     return typeName.build()
 }
+
+private val FileDescriptor.typeUrlPrefix: String
+    get() {
+        val customTypeUrl = options.getExtension(OptionsProto.typeUrlPrefix)
+        return if (customTypeUrl.isNullOrBlank()) {
+            "type.googleapis.com"
+        } else {
+            customTypeUrl
+        }
+    }
 
 /**
  * Obtains the name of this `oneof` as a [OneofName].
@@ -244,6 +271,24 @@ internal fun FileDescriptor.path(): FilePath =
     FilePath.newBuilder()
             .setValue(name)
             .build()
+
+/**
+ * Obtains the name of this service as a [ServiceName].
+ */
+internal fun ServiceDescriptor.name(): ServiceName =
+    ServiceName.newBuilder()
+               .setTypeUrlPrefix(file.typeUrlPrefix)
+               .setPackageName(file.`package`)
+               .setSimpleName(name)
+               .build()
+
+/**
+ * Obtains the name of this RPC method as an [RpcName].
+ */
+internal fun Descriptors.MethodDescriptor.name(): RpcName =
+    RpcName.newBuilder()
+           .setValue(name)
+           .build()
 
 /**
  * Obtains a [Type] wrapping this `PrimitiveType`.

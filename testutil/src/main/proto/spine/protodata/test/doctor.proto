@@ -10,7 +10,9 @@ option java_outer_classname = "DoctorProto";
 option java_multiple_files = true;
 
 import "spine/time/time.proto";
+import "spine/people/person_name.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 // Detached 1.
 
@@ -55,6 +57,29 @@ enum Incarnation {
     UNKNOWN = 0;
     CLASSIC = 1;
     CURRENT = 2;
+}
+
+message Yes {
+}
+
+message Episode {
+
+    uint32 series = 1;
+
+    uint32 episode = 2;
+}
+
+service DoctorsPhone {
+
+    rpc who(google.protobuf.Empty) returns (google.protobuf.Empty) {
+        option idempotency_level = NO_SIDE_EFFECTS;
+    };
+
+    rpc rescue_call(stream spine.people.PersonName) returns (Yes);
+
+    rpc where_are_you(google.protobuf.Empty) returns (stream google.protobuf.StringValue);
+
+    rpc which_actor(stream Episode) returns (stream spine.people.PersonName);
 }
 
 message _DeleteMe {

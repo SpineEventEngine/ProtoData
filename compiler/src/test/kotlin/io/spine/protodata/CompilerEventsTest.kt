@@ -30,11 +30,15 @@ import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
+import com.google.protobuf.EnumValue
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto.REQUIRED_FIELD_NUMBER
 import io.spine.option.OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
+import io.spine.protobuf.AnyPacker.unpack
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.Correspondences.type
 import io.spine.type.KnownTypes
@@ -73,8 +77,7 @@ class `'CompilerEvents' should` {
     @Test
     fun `produce standard file option events`() {
         val event = events.find {
-            it is FileOptionDiscovered
-                    && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
+            it is FileOptionDiscovered && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
         } as FileOptionDiscovered?
         assertThat(event)
             .isNotNull()
@@ -85,8 +88,7 @@ class `'CompilerEvents' should` {
     @Test
     fun `produce custom file option events`() {
         val event = events.find {
-            it is FileOptionDiscovered
-                    && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
+            it is FileOptionDiscovered && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
         } as FileOptionDiscovered?
         assertThat(event)
             .isNotNull()
@@ -175,6 +177,30 @@ class `'CompilerEvents' should` {
     }
 
     @Test
+    fun `produce service events`() {
+        assertEmits(
+            ServiceEntered::class,
+            RpcEntered::class,
+            RpcOptionDiscovered::class,
+            RpcExited::class,
+            ServiceExited::class
+        )
+    }
+
+    @Test
+    fun `include 'rpc' options`() {
+        val event = emitted<RpcOptionDiscovered>()
+        assertThat(event.option.name)
+            .isEqualTo("idempotency_level")
+        assertThat(unpack(event.option.value))
+            .isEqualTo(EnumValue
+                .newBuilder()
+                .setName(NO_SIDE_EFFECTS.name)
+                .setNumber(NO_SIDE_EFFECTS_VALUE)
+                .build())
+    }
+
+    @Test
     fun `include message doc info`() {
         val typeEntered = emitted<TypeEntered>()
         assertThat(typeEntered.type)
@@ -189,11 +215,11 @@ class `'CompilerEvents' should` {
 
                 A test type
 
-            """.trimIndent());
+            """.trimIndent())
         assertThat(typeEntered.type.doc.trailingComment)
-            .isEqualTo("Impl note: test type.");
+            .isEqualTo("Impl note: test type.")
         assertThat(typeEntered.type.doc.detachedCommentList)
-            .containsExactly("Detached 1.", "Detached 2.");
+            .containsExactly("Detached 1.", "Detached 2.")
     }
 
     private fun assertEmits(vararg types: KClass<out EventMessage>) {

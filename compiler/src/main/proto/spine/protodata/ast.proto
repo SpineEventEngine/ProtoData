@@ -228,9 +228,9 @@ message Type {
 
     oneof kind {
 
-        MessageType message = 1;
+        TypeName message = 1;
 
-        EnumType enumeration = 2;
+        TypeName enumeration = 2;
 
         PrimitiveType primitive = 3;
     }
@@ -352,6 +352,90 @@ message OneofGroup {
     Doc doc = 4;
 }
 
+// A name of a Protobuf service type.
+message ServiceName {
+
+    // The short name of the service type.
+    string simple_name = 1;
+
+    // The name of the package.
+    string package_name = 2;
+
+    // The prefix of the type's URL.
+    //
+    // A type URL has the following structure: "<type URL prefix>/<package>.<short name>". For more
+    // info, see the definition of `google.protobuf.Any.type_url`.
+    //
+    // Must not include a training slash ("/").
+    //
+    string type_url_prefix = 4;
+}
+
+// A Protobuf service type.
+message Service {
+
+    ServiceName name = 1;
+
+    // The remote procedure call methods exposed by this service.
+    repeated Rpc rpc = 2;
+
+    // Service-level options.
+    repeated Option option = 3;
+
+    // Documentation of this service.
+    Doc doc = 4;
+}
+
+// A name of an RPC method.
+message RpcName {
+
+    string value = 1;
+}
+
+// A remote procedure call method defined in a Protobuf service.
+message Rpc {
+
+    RpcName name = 1;
+
+    // The kind of call.
+    //
+    // A call may accept one request or a stream of requests and produce one response or a stream of
+    // responses.
+    //
+    CallCardinality cardinality = 2;
+
+    // The type of the request messages.
+    TypeName request_type = 3;
+
+    // The type of the response messages.
+    TypeName response_type = 4;
+
+    // `rpc`-level options.
+    repeated Option option = 5;
+
+    // Documentation of this `rpc`.
+    Doc doc = 6;
+
+    // The service declaring this method.
+    ServiceName service = 7;
+}
+
+// The kind of exchange between a client and a server in a single `rpc` call.
+enum CallCardinality {
+
+    // The client sends a single request to the server and gets a single response back.
+    UNARY = 0;
+
+    // The client sends a single request to the server and receives a stream of responses.
+    SERVER_STREAMING = 1;
+
+    // The client sends a stream of requests to the server and receives a single response.
+    CLIENT_STREAMING = 2;
+
+    // The client sends a stream of requests to the server and receives a stream of responses.
+    BIDIRECTIONAL_STREAMING = 3;
+}
+
 // A Protobuf option.
 //
 // An option may be declared for a whole file, a type (message, enum, or service), for
@@ -380,7 +464,6 @@ message Option {
 }
 
 // Documentation associated with a certain Protobuf declaration.
-//
 message Doc {
 
     // The comment placed directly above the declaration without any empty lines.

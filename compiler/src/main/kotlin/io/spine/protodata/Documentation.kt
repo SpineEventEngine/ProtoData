@@ -54,7 +54,7 @@ internal class Documentation(
      */
     fun forField(descriptor: Descriptors.FieldDescriptor): Doc {
         val path = LocationPath.fromMessage(descriptor.containingType)
-            .field(descriptor)
+                               .field(descriptor)
         return commentsAt(path)
     }
 
@@ -63,7 +63,7 @@ internal class Documentation(
      */
     fun forOneof(descriptor: Descriptors.OneofDescriptor): Doc {
         val path = LocationPath.fromMessage(descriptor.containingType)
-            .oneof(descriptor)
+                               .oneof(descriptor)
         return commentsAt(path)
     }
 
@@ -80,7 +80,24 @@ internal class Documentation(
      */
     fun forEnumConstant(descriptor: Descriptors.EnumValueDescriptor): Doc {
         val path = LocationPath.fromEnum(descriptor.type)
-            .constant(descriptor)
+                               .constant(descriptor)
+        return commentsAt(path)
+    }
+
+    /**
+     * Obtains documentation for the given service.
+     */
+    fun forService(descriptor: Descriptors.ServiceDescriptor): Doc {
+        val path = LocationPath.fromService(descriptor)
+        return commentsAt(path)
+    }
+
+    /**
+     * Obtains documentation for the given RPC method.
+     */
+    fun forRpc(descriptor: Descriptors.MethodDescriptor): Doc {
+        val path = LocationPath.fromService(descriptor.service)
+                               .rpc(descriptor)
         return commentsAt(path)
     }
 

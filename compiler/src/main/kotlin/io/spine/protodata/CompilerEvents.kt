@@ -50,13 +50,21 @@ import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT32
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT64
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.FileDescriptor.Syntax
+import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
 import com.google.protobuf.Empty
+import com.google.protobuf.EnumValue
 import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
+import io.spine.protobuf.AnyPacker.pack
 import io.spine.protobuf.TypeConverter
+import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
+import io.spine.protodata.CallCardinality.CLIENT_STREAMING
+import io.spine.protodata.CallCardinality.SERVER_STREAMING
+import io.spine.protodata.CallCardinality.UNARY
 import io.spine.protodata.File.SyntaxVersion
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_BYTES
@@ -138,6 +146,7 @@ private class ProtoFileEvents(
         }
         fileDescriptor.messageTypes.forEach { produceMessageEvents(it) }
         fileDescriptor.enumTypes.forEach { produceEnumEvents(it) }
+        fileDescriptor.services.forEach { produceServiceEvents(it) }
         yield(
             FileExited
                 .newBuilder()
@@ -303,6 +312,92 @@ private class ProtoFileEvents(
         )
     }
 
+    private suspend fun SequenceScope<EventMessage>.produceServiceEvents(
+        descriptor: ServiceDescriptor
+    ) {
+        val serviceName = descriptor.name()
+        val service = Service
+            .newBuilder()
+            .setName(serviceName)
+            .setDoc(documentation.forService(descriptor))
+            .build()
+        val path = file.path
+        yield(
+            ServiceEntered
+                .newBuilder()
+                .setFile(path)
+                .setService(service)
+                .build()
+        )
+        produceOptionEvents(descriptor.options) {
+            ServiceOptionDiscovered
+                .newBuilder()
+                .setFile(path)
+                .setService(serviceName)
+                .setOption(it)
+                .build()
+        }
+        descriptor.methods.forEach { produceRpcEvents(serviceName, it) }
+        yield(
+            ServiceExited
+                .newBuilder()
+                .setFile(path)
+                .setService(serviceName)
+                .build()
+        )
+    }
+
+    private suspend fun SequenceScope<EventMessage>.produceRpcEvents(
+        service: ServiceName,
+        descriptor: MethodDescriptor
+    ) {
+        val path = file.path
+        val name = descriptor.name()
+        val cardinality = when {
+            !descriptor.isClientStreaming && !descriptor.isServerStreaming -> UNARY
+            !descriptor.isClientStreaming && descriptor.isServerStreaming -> SERVER_STREAMING
+            descriptor.isClientStreaming && !descriptor.isServerStreaming -> CLIENT_STREAMING
+            descriptor.isClientStreaming && descriptor.isServerStreaming -> BIDIRECTIONAL_STREAMING
+            else -> throw IllegalStateException(
+                "Unable to determine cardinality of method: ${service.typeUrl()}.${name.value}"
+            )
+        }
+        val rpc = Rpc
+            .newBuilder()
+            .setName(name)
+            .setCardinality(cardinality)
+            .setRequestType(descriptor.inputType.name())
+            .setResponseType(descriptor.outputType.name())
+            .setDoc(documentation.forRpc(descriptor))
+            .setService(service)
+            .build()
+        yield(
+            RpcEntered
+                .newBuilder()
+                .setFile(path)
+                .setService(service)
+                .setRpc(rpc)
+                .build()
+        )
+        produceOptionEvents(descriptor.options) {
+            RpcOptionDiscovered
+                .newBuilder()
+                .setFile(path)
+                .setService(service)
+                .setRpc(name)
+                .setOption(it)
+                .build()
+        }
+        yield(
+            RpcExited
+                .newBuilder()
+                .setFile(path)
+                .setService(service)
+                .setRpc(name)
+                .build()
+        )
+    }
+
     /**
      * Yields compiler events for the given `oneof` group.
      *
@@ -409,12 +504,21 @@ private class ProtoFileEvents(
         ctor: (Option) -> EventMessage
     ) {
         options.allFields.forEach { (optionDescriptor, value) ->
+            val optionValue = if (optionDescriptor.type == ENUM) {
+                val enumValue = value as EnumValueDescriptor
+                pack(EnumValue.newBuilder()
+                              .setName(enumValue.name)
+                              .setNumber(enumValue.number)
+                              .build())
+            } else {
+                TypeConverter.toAny(value)
+            }
             val option = Option
                 .newBuilder()
                 .setName(optionDescriptor.name)
                 .setNumber(optionDescriptor.number)
                 .setType(optionDescriptor.type())
-                .setValue(TypeConverter.toAny(value))
+                .setValue(optionValue)
                 .build()
             yield(ctor(option))
         }
@@ -455,26 +559,14 @@ private class ProtoFileEvents(
         }
 
     private fun enum(field: FieldDescriptor): Type {
-        val enumType = field.enumType
-        val typeName = enumType.name()
-        val enum = EnumType
-            .newBuilder()
-            .setName(typeName)
-            .build()
         return Type.newBuilder()
-            .setEnumeration(enum)
+            .setEnumeration(field.enumType.name())
             .build()
     }
 
     private fun message(field: FieldDescriptor): Type {
-        val messageType = field.messageType
-        val typeName = messageType.name()
-        val message = MessageType
-            .newBuilder()
-            .setName(typeName)
-            .build()
         return Type.newBuilder()
-            .setMessage(message)
+            .setMessage(field.messageType.name())
             .build()
     }
 
