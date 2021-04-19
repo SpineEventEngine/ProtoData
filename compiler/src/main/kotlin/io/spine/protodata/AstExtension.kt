@@ -39,6 +39,10 @@ import com.google.protobuf.Descriptors.ServiceDescriptor
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import io.spine.option.OptionsProto
+import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
+import io.spine.protodata.CallCardinality.CLIENT_STREAMING
+import io.spine.protodata.CallCardinality.SERVER_STREAMING
+import io.spine.protodata.CallCardinality.UNARY
 import java.io.File.separatorChar
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -297,3 +301,19 @@ internal fun PrimitiveType.asType(): Type =
     Type.newBuilder()
         .setPrimitive(this)
         .build()
+
+/**
+ * Obtains the [CallCardinality] of this RPC method.
+ *
+ * The cardinality determines how many messages may flow from the client to the server and back.
+ */
+internal fun Descriptors.MethodDescriptor.cardinality(): CallCardinality =
+    when {
+        !isClientStreaming && !isServerStreaming -> UNARY
+        !isClientStreaming && isServerStreaming -> SERVER_STREAMING
+        isClientStreaming && !isServerStreaming -> CLIENT_STREAMING
+        isClientStreaming && isServerStreaming -> BIDIRECTIONAL_STREAMING
+        else -> throw IllegalStateException(
+            "Unable to determine cardinality of method: `$fullName`."
+        )
+    }

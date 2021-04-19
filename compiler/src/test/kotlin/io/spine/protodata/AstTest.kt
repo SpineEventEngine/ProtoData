@@ -28,10 +28,16 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.BoolValue
+import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Empty
 import com.google.protobuf.StringValue
 import io.spine.protobuf.AnyPacker.pack
+import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
+import io.spine.protodata.CallCardinality.CLIENT_STREAMING
+import io.spine.protodata.CallCardinality.SERVER_STREAMING
+import io.spine.protodata.CallCardinality.UNARY
 import io.spine.protodata.PrimitiveType.TYPE_STRING
+import io.spine.protodata.test.DoctorProto
 import java.io.File.separatorChar
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -198,6 +204,43 @@ class `AST extensions should` {
                 .buildPartial()
             assertThat(field.isRepeated())
                 .isFalse()
+        }
+    }
+
+    @Nested
+    inner class `Recognize RPC cardinality` {
+
+        @Test
+        fun unary() {
+            val method = method("who")
+            assertThat(method.cardinality())
+                .isEqualTo(UNARY)
+        }
+
+        @Test
+        fun `server streaming`() {
+            val method = method("where_are_you")
+            assertThat(method.cardinality())
+                .isEqualTo(SERVER_STREAMING)
+        }
+
+        @Test
+        fun `client streaming`() {
+            val method = method("rescue_call")
+            assertThat(method.cardinality())
+                .isEqualTo(CLIENT_STREAMING)
+        }
+
+        @Test
+        fun `bidirectional streaming`() {
+            val method = method("which_actor")
+            assertThat(method.cardinality())
+                .isEqualTo(BIDIRECTIONAL_STREAMING)
+        }
+
+        private fun method(name: String): MethodDescriptor {
+            val service = DoctorProto.getDescriptor().services[0]
+            return service.methods.find { it.name == name }!!
         }
     }
 }

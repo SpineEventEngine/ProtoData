@@ -28,10 +28,6 @@ package io.spine.protodata.events
 
 import com.google.protobuf.Descriptors
 import io.spine.base.EventMessage
-import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
-import io.spine.protodata.CallCardinality.CLIENT_STREAMING
-import io.spine.protodata.CallCardinality.SERVER_STREAMING
-import io.spine.protodata.CallCardinality.UNARY
 import io.spine.protodata.Documentation
 import io.spine.protodata.File
 import io.spine.protodata.Rpc
@@ -43,8 +39,8 @@ import io.spine.protodata.ServiceEntered
 import io.spine.protodata.ServiceExited
 import io.spine.protodata.ServiceName
 import io.spine.protodata.ServiceOptionDiscovered
+import io.spine.protodata.cardinality
 import io.spine.protodata.name
-import io.spine.protodata.typeUrl
 
 /**
  * Produces events for a service.
@@ -97,15 +93,7 @@ internal class ServiceCompilerEvents(
     ) {
         val path = file.path
         val name = descriptor.name()
-        val cardinality = when {
-            !descriptor.isClientStreaming && !descriptor.isServerStreaming -> UNARY
-            !descriptor.isClientStreaming && descriptor.isServerStreaming -> SERVER_STREAMING
-            descriptor.isClientStreaming && !descriptor.isServerStreaming -> CLIENT_STREAMING
-            descriptor.isClientStreaming && descriptor.isServerStreaming -> BIDIRECTIONAL_STREAMING
-            else -> throw IllegalStateException(
-                "Unable to determine cardinality of method: ${service.typeUrl()}.${name.value}"
-            )
-        }
+        val cardinality = descriptor.cardinality()
         val rpc = Rpc.newBuilder()
             .setName(name)
             .setCardinality(cardinality)
