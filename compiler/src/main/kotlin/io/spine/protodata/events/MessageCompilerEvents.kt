@@ -54,7 +54,6 @@ internal class MessageCompilerEvents(
     private val documentation: Documentation
 ) {
 
-
     /**
      * Yields compiler events for the given message type.
      *
@@ -114,7 +113,6 @@ internal class MessageCompilerEvents(
         )
     }
 
-
     /**
      * Yields compiler events for the given `oneof` group.
      *
@@ -155,7 +153,6 @@ internal class MessageCompilerEvents(
                 .build()
         )
     }
-
 
     /**
      * Yields compiler events for the given field.
@@ -200,7 +197,6 @@ internal class MessageCompilerEvents(
                 .build()
         )
     }
-
 
     /**
      * Assigns the field type and cardinality (`map`/`list`/`oneof_name`/`single`) to the receiver
