@@ -39,6 +39,7 @@ import io.spine.base.EventMessage
 import io.spine.option.OptionsProto.REQUIRED_FIELD_NUMBER
 import io.spine.option.OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker.unpack
+import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.Correspondences.type
 import io.spine.type.KnownTypes

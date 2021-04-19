@@ -30,6 +30,7 @@ import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth8.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.ProjectProto
 import io.spine.server.BoundedContext

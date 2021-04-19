@@ -29,6 +29,7 @@ package io.spine.protodata
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.Production
 import io.spine.logging.Logging
+import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import io.spine.server.ServerEnvironment
