@@ -96,13 +96,17 @@ public class CLike(
  */
 public object CommonLanguages {
 
+    @JvmStatic
     public val any: Language = object : Language("any language", Glob.any) {
         override fun comment(line: String): String {
             throw UnsupportedOperationException("`$name` does not support comments.")
         }
     }
 
+    @JvmStatic
     public val Kotlin: Language = CLike("Kotlin", Glob.extension("kt"))
+    @JvmStatic
     public val Java: Language = CLike("Java", Glob.extension("java"))
+    @JvmStatic
     public val JavaScript: Language = CLike("JavaScript", Glob.extension("js"))
 }
