@@ -68,17 +68,20 @@ public sealed class LineNumber {
         /**
          * Creates a `LineNumber` pointing at a given line.
          */
-        public fun at(number: UInt): LineNumber = LineIndex(number)
+        @JvmStatic
+        public fun at(number: Int): LineNumber = LineIndex(number)
 
         /**
          * Creates a `LineNumber` pointing at the end of the file, no matter the index of the actual
          * line.
          */
+        @JvmStatic
         public fun endOfFile(): LineNumber = EndOfFile
 
         /**
          * Creates a `LineNumber` not pointing at any line.
          */
+        @JvmStatic
         public fun notInFile(): LineNumber = Nowhere
     }
 }
@@ -86,7 +89,14 @@ public sealed class LineNumber {
 /**
  * A [LineNumber] pointing at a particular line.
  */
-internal data class LineIndex constructor(val value: UInt) : LineNumber()
+internal data class LineIndex constructor(val value: Int) : LineNumber() {
+
+    init {
+        if (value < 0) {
+            throw IndexOutOfBoundsException("Invalid line number: `$value`.")
+        }
+    }
+}
 
 /**
  * A [LineNumber] which always lies at the end of the file.
