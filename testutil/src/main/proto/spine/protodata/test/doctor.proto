@@ -82,5 +82,11 @@ service DoctorsPhone {
     rpc which_actor(stream Episode) returns (stream spine.people.PersonName);
 }
 
+// A test type starting with an underscore.
+//
+// In tests, the files generated from this type are deleted from the source set.
+//
+// Please, DO NOT delete this type.
+//
 message _DeleteMe {
 }
