@@ -368,7 +368,7 @@ message ServiceName {
     //
     // Must not include a training slash ("/").
     //
-    string type_url_prefix = 4;
+    string type_url_prefix = 3;
 }
 
 // A Protobuf service type.
