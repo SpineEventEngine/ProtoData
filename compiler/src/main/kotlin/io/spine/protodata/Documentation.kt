@@ -29,6 +29,7 @@ package io.spine.protodata
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
 import com.google.protobuf.Descriptors
+import java.lang.System.lineSeparator
 
 /**
  * Documentation contained in a Protobuf file.
@@ -104,15 +105,24 @@ internal class Documentation(
     private fun commentsAt(path: LocationPath): Doc {
         val location = docs[path] ?: Location.getDefaultInstance()
         return Doc.newBuilder()
-                  .setLeadingComment(location.leadingComments.trimIndent())
-                  .setTrailingComment(location.trailingComments.trimIndent())
-                  .addAllDetachedComment(location.leadingDetachedCommentsList.trimIndents())
+                  .setLeadingComment(location.leadingComments.trimWhitespace())
+                  .setTrailingComment(location.trailingComments.trimWhitespace())
+                  .addAllDetachedComment(location.leadingDetachedCommentsList.trimWhitespace())
                   .build()
     }
 }
 
-private fun Iterable<String>.trimIndents(): List<String> =
-    map { it.trimIndent() }
+private fun Iterable<String>.trimWhitespace(): List<String> =
+    map { it.trimWhitespace() }
+
+private fun String.trimWhitespace(): String {
+    val noIndent = trimIndent()
+    val lines = noIndent.lines()
+    val trimmedLines = lines.map {
+        it.trimEnd()
+    }
+    return trimmedLines.joinToString(lineSeparator())
+}
 
 /**
  * A numerical path to a location is source code.

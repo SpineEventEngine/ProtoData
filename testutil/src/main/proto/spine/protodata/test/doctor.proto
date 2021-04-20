@@ -16,14 +16,19 @@ import "google/protobuf/wrappers.proto";
 
 // Detached 1.
 
-// Detached 2.
+/*
+   Detached 2.
+  Indentation is not preserved in Protobuf.
+
+  Bla bla!
+ */
 
 // A Doctor's journey.
 //
 // A test type
 //
 message Journey {
-    // Impl note: test type.
+    /* Impl note: test type. */
 
     option (beta_type) = true;
 
