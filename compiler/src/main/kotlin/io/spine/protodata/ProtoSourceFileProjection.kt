@@ -97,6 +97,61 @@ public class ProtoSourceFileProjection
         }
     }
 
+    @Subscribe
+    internal fun on(@External e: EnumEntered) {
+        builder().putEnumType(e.type.typeUrl(), e.type)
+    }
+
+    @Subscribe
+    internal fun on(@External e: EnumOptionDiscovered) {
+        modifyEnum(e.type) {
+            addOption(e.option)
+        }
+    }
+
+    @Subscribe
+    internal fun on(@External e: EnumConstantEntered) {
+        modifyEnum(e.type) {
+            addConstant(e.constant)
+        }
+    }
+
+    @Subscribe
+    internal fun on(@External e: EnumConstantOptionDiscovered) {
+        modifyEnum(e.type) {
+            val const = constantBuilderList.find { it.name == e.constant }!!
+            const.addOption(e.option)
+        }
+    }
+
+    @Subscribe
+    internal fun on(@External e: ServiceEntered) {
+        builder().putService(e.service.typeUrl(), e.service)
+    }
+
+    @Subscribe
+    internal fun on(@External e: ServiceOptionDiscovered) {
+        modifyService(e.service) {
+            addOption(e.option)
+        }
+    }
+
+    @Subscribe
+    internal fun on(@External e: RpcEntered) {
+        modifyService(e.service) {
+            addRpc(e.rpc)
+        }
+    }
+
+    @Subscribe
+    internal fun on(@External e: RpcOptionDiscovered) {
+        modifyService(e.service) {
+            rpcBuilderList
+                .find { it.name == e.rpc }!!
+                .addOption(e.option)
+        }
+    }
+
     private fun modifyType(name: TypeName, changes: MessageType.Builder.() -> Unit) {
         val typeUrl = name.typeUrl()
         val typeBuilder = builder()
@@ -104,6 +159,24 @@ public class ProtoSourceFileProjection
             .toBuilder()
         changes(typeBuilder)
         builder().putType(typeUrl, typeBuilder.build())
+    }
+
+    private fun modifyEnum(name: TypeName, changes: EnumType.Builder.() -> Unit) {
+        val typeUrl = name.typeUrl()
+        val typeBuilder = builder()
+            .getEnumTypeOrThrow(typeUrl)
+            .toBuilder()
+        changes(typeBuilder)
+        builder().putEnumType(typeUrl, typeBuilder.build())
+    }
+
+    private fun modifyService(name: ServiceName, changes: Service.Builder.() -> Unit) {
+        val typeUrl = name.typeUrl()
+        val builder = builder()
+            .getServiceOrThrow(typeUrl)
+            .toBuilder()
+        changes(builder)
+        builder().putService(typeUrl, builder.build())
     }
 }
 

@@ -92,7 +92,8 @@ subprojects {
         kotlinOptions {
             jvmTarget = "1.8"
             freeCompilerArgs = freeCompilerArgs +
-                    "-Xopt-in=kotlin.io.path.ExperimentalPathApi,kotlin.ExperimentalUnsignedTypes"
+                    "-Xopt-in=kotlin.io.path.ExperimentalPathApi,kotlin.ExperimentalUnsignedTypes" +
+                    "-Xinline-classes"
         }
     }
 

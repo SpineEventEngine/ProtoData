@@ -32,6 +32,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
+import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.server.blackbox.BlackBoxContext
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -81,7 +82,7 @@ class `'Code Generation' context should` {
                     .build()
             )
         assertThat(journeyType.fieldList)
-            .hasSize(3)
+            .hasSize(4)
         assertThat(journeyType.oneofGroupList)
             .hasSize(1)
         assertThat(journeyType.oneofGroupList[0].fieldList)

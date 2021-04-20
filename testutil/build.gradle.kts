@@ -27,3 +27,9 @@
 dependencies {
     implementation(project(":compiler"))
 }
+
+spine.enableJava {
+    codegen {
+        grpc = true
+    }
+}

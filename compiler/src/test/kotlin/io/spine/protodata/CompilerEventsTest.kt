@@ -26,16 +26,24 @@
 
 package io.spine.protodata
 
+import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
+import com.google.protobuf.EnumValue
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto.REQUIRED_FIELD_NUMBER
 import io.spine.option.OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
+import io.spine.protobuf.AnyPacker.unpack
+import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.Correspondences.type
+import io.spine.type.KnownTypes
+import kotlin.reflect.KClass
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -45,10 +53,14 @@ class `'CompilerEvents' should` {
 
     @BeforeEach
     fun parseEvents() {
+        val allTheTypes = KnownTypes.instance()
+                                    .asTypeSet()
+                                    .messageTypes()
+                                    .map { it.descriptor().file.toProto() }
         val request = CodeGeneratorRequest
             .newBuilder()
             .addFileToGenerate(DoctorProto.getDescriptor().fullName)
-            .addProtoFile(DoctorProto.getDescriptor().toProto())
+            .addAllProtoFile(allTheTypes)
             .build()
         events = CompilerEvents.parse(request).toList()
     }
@@ -56,18 +68,17 @@ class `'CompilerEvents' should` {
     @Test
     fun `produce file events`() {
         assertEmits(
-            FileEntered::class.java,
-            FileOptionDiscovered::class.java,
-            FileOptionDiscovered::class.java,
-            FileExited::class.java
+            FileEntered::class,
+            FileOptionDiscovered::class,
+            FileOptionDiscovered::class,
+            FileExited::class
         )
     }
 
     @Test
     fun `produce standard file option events`() {
         val event = events.find {
-            it is FileOptionDiscovered
-                    && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
+            it is FileOptionDiscovered && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
         } as FileOptionDiscovered?
         assertThat(event)
             .isNotNull()
@@ -78,8 +89,7 @@ class `'CompilerEvents' should` {
     @Test
     fun `produce custom file option events`() {
         val event = events.find {
-            it is FileOptionDiscovered
-                    && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
+            it is FileOptionDiscovered && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
         } as FileOptionDiscovered?
         assertThat(event)
             .isNotNull()
@@ -90,27 +100,27 @@ class `'CompilerEvents' should` {
     @Test
     fun `produce type events`() {
         assertEmits(
-            FileEntered::class.java,
+            FileEntered::class,
 
-            TypeEntered::class.java,
-            TypeExited::class.java,
+            TypeEntered::class,
+            TypeExited::class,
 
-            FileExited::class.java
+            FileExited::class
         )
     }
 
     @Test
     fun `produce field events`() {
         assertEmits(
-            FileEntered::class.java,
-            TypeEntered::class.java,
+            FileEntered::class,
+            TypeEntered::class,
 
-            FieldEntered::class.java,
-            FieldOptionDiscovered::class.java,
-            FieldExited::class.java,
+            FieldEntered::class,
+            FieldOptionDiscovered::class,
+            FieldExited::class,
 
-            TypeExited::class.java,
-            FileExited::class.java
+            TypeExited::class,
+            FileExited::class
         )
     }
 
@@ -128,24 +138,106 @@ class `'CompilerEvents' should` {
     @Test
     fun `produce 'oneof' events`() {
         assertEmits(
-            FileEntered::class.java,
-            TypeEntered::class.java,
+            FileEntered::class,
+            TypeEntered::class,
 
-            OneofGroupEntered::class.java,
-            FieldEntered::class.java,
-            FieldOptionDiscovered::class.java,
-            FieldExited::class.java,
-            OneofGroupExited::class.java,
+            OneofGroupEntered::class,
+            FieldEntered::class,
+            FieldOptionDiscovered::class,
+            FieldExited::class,
+            OneofGroupExited::class,
 
-            TypeExited::class.java,
-            FileExited::class.java
+            TypeExited::class,
+            FileExited::class
+        )
+    }
+    
+    @Test
+    fun `produce enum events`() {
+        assertEmits(
+            FileEntered::class,
+            EnumEntered::class,
+            EnumConstantEntered::class,
+            EnumConstantExited::class,
+            EnumConstantEntered::class,
+            EnumConstantExited::class,
+            EnumConstantEntered::class,
+            EnumConstantExited::class,
+            EnumExited::class
         )
     }
 
-    private fun assertEmits(vararg types: Class<out EventMessage>) {
+    @Test
+    fun `produce nested type events`() {
+        assertEmits(
+            TypeEntered::class,
+            TypeEntered::class,
+            TypeExited::class,
+            TypeExited::class
+        )
+    }
+
+    @Test
+    fun `produce service events`() {
+        assertEmits(
+            ServiceEntered::class,
+            RpcEntered::class,
+            RpcOptionDiscovered::class,
+            RpcExited::class,
+            ServiceExited::class
+        )
+    }
+
+    @Test
+    fun `include 'rpc' options`() {
+        val event = emitted<RpcOptionDiscovered>()
+        assertThat(event.option.name)
+            .isEqualTo("idempotency_level")
+        assertThat(unpack(event.option.value))
+            .isEqualTo(EnumValue
+                .newBuilder()
+                .setName(NO_SIDE_EFFECTS.name)
+                .setNumber(NO_SIDE_EFFECTS_VALUE)
+                .build())
+    }
+
+    @Test
+    fun `include message doc info`() {
+        val typeEntered = emitted<TypeEntered>()
+        assertThat(typeEntered.type)
+            .comparingExpectedFieldsOnly()
+            .isEqualTo(MessageType
+                .newBuilder()
+                .setName(TypeName.newBuilder().setSimpleName("Journey"))
+                .build())
+        assertThat(typeEntered.type.doc.leadingComment)
+            .isEqualTo("""
+                A Doctor's journey.
+
+                A test type
+
+            """.trimIndent())
+        assertThat(typeEntered.type.doc.trailingComment)
+            .isEqualTo("Impl note: test type.")
+        assertThat(typeEntered.type.doc.detachedCommentList)
+            .containsExactly("Detached 1.", """
+               |Detached 2.
+               |Indentation is not preserved in Protobuf.
+               |
+               |Bla bla!
+               """.trimMargin())
+    }
+
+    private fun assertEmits(vararg types: KClass<out EventMessage>) {
+        val javaClasses = types.map { it.java }
         assertThat(events)
             .comparingElementsUsing(type<EventMessage>())
-            .containsAtLeastElementsIn(types)
+            .containsAtLeastElementsIn(javaClasses)
             .inOrder()
+    }
+
+    private inline fun <reified E : EventMessage> emitted(): E {
+        val javaClass = E::class.java
+        return events.find { it.javaClass == javaClass }!! as E
     }
 }

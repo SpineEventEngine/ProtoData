@@ -146,3 +146,119 @@ message FieldExited {
 
     FieldName field = 3;
 }
+
+// Emitted when processing reaches an enum type.
+message EnumEntered {
+
+    FilePath file = 1;
+
+    EnumType type = 2;
+}
+
+// Emitted when an enum-level option is found.
+message EnumOptionDiscovered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    Option option = 3;
+}
+
+// Emitted when processing reaches an enum constant a.k.a. enum value.
+message EnumConstantEntered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    EnumConstant constant = 3;
+}
+
+// Emitted when an enum constant-level option is found.
+message EnumConstantOptionDiscovered {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    ConstantName constant = 3;
+
+    Option option = 4;
+}
+
+// Emitted when an enum constant is completely discovered.
+message EnumConstantExited {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+
+    ConstantName constant = 3;
+}
+
+// Emitted when an enum type is completely discovered, including all the constants, etc.
+message EnumExited {
+
+    FilePath file = 1;
+
+    TypeName type = 2;
+}
+
+// Emitted when the processing reaches a service.
+message ServiceEntered {
+
+    FilePath file = 1;
+
+    Service service = 2;
+}
+
+// Emitted when an service-level option is found.
+message ServiceOptionDiscovered {
+
+    FilePath file = 1;
+
+    ServiceName service = 2;
+
+    Option option = 3;
+}
+
+// Emitted when a service is completely discovered, including all the option and RPCs.
+message ServiceExited {
+
+    FilePath file = 1;
+
+    ServiceName service = 2;
+}
+
+// Emitted when the processing reaches a remote procedure call.
+message RpcEntered {
+
+    FilePath file = 1;
+
+    ServiceName service = 2;
+
+    Rpc rpc = 3;
+}
+
+// Emitted when an RPC-level option is found.
+message RpcOptionDiscovered {
+
+    FilePath file = 1;
+
+    ServiceName service = 2;
+
+    RpcName rpc = 3;
+
+    Option option = 4;
+}
+
+// Emitted when an RPC is completely discovered.
+message RpcExited {
+
+    FilePath file = 1;
+
+    ServiceName service = 2;
+
+    RpcName rpc = 3;
+}

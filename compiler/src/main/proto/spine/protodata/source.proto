@@ -48,5 +48,25 @@ message ProtobufSourceFile {
 
     File file = 2;
 
+    // All the message types in this source files.
+    //
+    // The keys are the type URLs of the message types.
+    //
+    // This map includes both top-level and nested definitions.
+    //
     map<string, MessageType> type = 3;
+
+    // All the enum types in this source files.
+    //
+    // The keys are the type URLs of the enum types.
+    //
+    // This map includes both top-level and nested definitions.
+    //
+    map<string, EnumType> enum_type = 4;
+
+    // All the services declared in this source files.
+    //
+    // The keys are the type URLs of the services.
+    //
+    map<string, Service> service = 5;
 }

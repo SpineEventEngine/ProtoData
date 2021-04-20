@@ -137,16 +137,68 @@ message MessageType {
     TypeName declared_in = 6;
 
     // Message type declarations nested inside this type.
-    repeated MessageType nested_messages = 7;
+    repeated TypeName nested_messages = 7;
 
     // Enum type declarations nested inside this type.
-    repeated EnumType nested_enums = 8;
+    repeated TypeName nested_enums = 8;
+
+    // Documentation of this type.
+    Doc doc = 9;
 }
 
 // A Protobuf enum type.
 message EnumType {
 
     TypeName name = 1;
+
+    // Message-level options.
+    repeated Option option = 2;
+
+    // Path to the file which declares this type.
+    FilePath file = 3;
+
+    repeated EnumConstant constant = 4;
+
+    // Name of the message type which hosts the declaration of this type.
+    TypeName declared_in = 5;
+
+    // Documentation of this type.
+    Doc doc = 6;
+}
+
+// A name of an enum constant.
+message ConstantName {
+
+    string value = 1;
+}
+
+// An enum constant, a.k.a. an enum value.
+message EnumConstant {
+
+    ConstantName name = 1;
+
+    // The number associated with the constant.
+    //
+    // The numbers always start with a zero.
+    //
+    // If the enum permits aliases, there can be multiple constants with the same number.
+    //
+    uint32 number = 2;
+
+    // The name of the enum type which declares this constant.
+    TypeName declared_in = 3;
+
+    // The index of the constant within the enum.
+    //
+    // Not to be confused with the enum constant `number`.
+    //
+    uint32 order_of_declaration = 5;
+
+    // Options associated with this constant.
+    repeated Option option = 6;
+
+    // Documentation of this constant.
+    Doc doc = 7;
 }
 
 // A primitive Protobuf type.
@@ -176,9 +228,9 @@ message Type {
 
     oneof kind {
 
-        MessageType message = 1;
+        TypeName message = 1;
 
-        EnumType enumeration = 2;
+        TypeName enumeration = 2;
 
         PrimitiveType primitive = 3;
     }
@@ -200,7 +252,7 @@ message Field {
     Type type = 2;
 
     // The type in which the field is declared.
-    MessageType declaring_type = 3;
+    TypeName declaring_type = 3;
 
     // The field number.
     //
@@ -217,7 +269,7 @@ message Field {
     //
     uint32 number = 4;
 
-    // The field's order to declaration.
+    // The index of the field within the message.
     //
     // Not to be confused with the field number.
     //
@@ -264,6 +316,9 @@ message Field {
     // Field-level options.
     repeated Option option = 10;
 
+    // Documentation of this field.
+    Doc doc = 11;
+
     // Additional type details for map fields.
     message OfMap {
 
@@ -292,6 +347,93 @@ message OneofGroup {
 
     // Oneof-level options.
     repeated Option option = 3;
+
+    // Documentation of this group.
+    Doc doc = 4;
+}
+
+// A name of a Protobuf service type.
+message ServiceName {
+
+    // The short name of the service type.
+    string simple_name = 1;
+
+    // The name of the package.
+    string package_name = 2;
+
+    // The prefix of the type's URL.
+    //
+    // A type URL has the following structure: "<type URL prefix>/<package>.<short name>". For more
+    // info, see the definition of `google.protobuf.Any.type_url`.
+    //
+    // Must not include a training slash ("/").
+    //
+    string type_url_prefix = 3;
+}
+
+// A Protobuf service type.
+message Service {
+
+    ServiceName name = 1;
+
+    // The remote procedure call methods exposed by this service.
+    repeated Rpc rpc = 2;
+
+    // Service-level options.
+    repeated Option option = 3;
+
+    // Documentation of this service.
+    Doc doc = 4;
+}
+
+// A name of an RPC method.
+message RpcName {
+
+    string value = 1;
+}
+
+// A remote procedure call method defined in a Protobuf service.
+message Rpc {
+
+    RpcName name = 1;
+
+    // The kind of call.
+    //
+    // A call may accept one request or a stream of requests and produce one response or a stream of
+    // responses.
+    //
+    CallCardinality cardinality = 2;
+
+    // The type of the request messages.
+    TypeName request_type = 3;
+
+    // The type of the response messages.
+    TypeName response_type = 4;
+
+    // `rpc`-level options.
+    repeated Option option = 5;
+
+    // Documentation of this `rpc`.
+    Doc doc = 6;
+
+    // The service declaring this method.
+    ServiceName service = 7;
+}
+
+// The kind of exchange between a client and a server in a single `rpc` call.
+enum CallCardinality {
+
+    // The client sends a single request to the server and gets a single response back.
+    UNARY = 0;
+
+    // The client sends a single request to the server and receives a stream of responses.
+    SERVER_STREAMING = 1;
+
+    // The client sends a stream of requests to the server and receives a single response.
+    CLIENT_STREAMING = 2;
+
+    // The client sends a stream of requests to the server and receives a stream of responses.
+    BIDIRECTIONAL_STREAMING = 3;
 }
 
 // A Protobuf option.
@@ -321,3 +463,23 @@ message Option {
     google.protobuf.Any value = 4;
 }
 
+// Documentation associated with a certain Protobuf declaration.
+message Doc {
+
+    // The comment placed directly above the declaration without any empty lines.
+    //
+    // For example, this very doc is the leading comment of the `leading_comment` field.
+    //
+    string leading_comment = 1;
+
+    // The comment placed beneath above the declaration without any empty lines.
+    string trailing_comment = 2;
+
+    // Comments placed above the declaration separated by at least one empty line from
+    // the declaration.
+    //
+    // This can often be a general comment, related not to the declaration itself, but rather to
+    // its context.
+    //
+    repeated string detached_comment = 3;
+}
