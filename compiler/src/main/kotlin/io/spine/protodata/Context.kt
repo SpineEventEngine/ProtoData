@@ -29,6 +29,7 @@ package io.spine.protodata
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.core.UserId
+import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.integration.ThirdPartyContext
@@ -44,7 +45,7 @@ internal object CodeGenerationContext {
     fun builder(): BoundedContextBuilder {
         val builder = BoundedContext
             .singleTenant("Code Generation")
-        builder.add(ProtoSourceFileRepository())
+        builder.add(ViewRepository.default(ProtoSourceFileView::class))
         return builder
     }
 }

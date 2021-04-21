@@ -26,13 +26,11 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.Plugin
-import io.spine.server.BoundedContextBuilder
+import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.plugin.ViewRepository
 
 public class TestPlugin: Plugin {
 
-    public override fun fillIn(context: BoundedContextBuilder) {
-        context.add(InternalMessageRepository())
-        context.add(DeletedTypeRepository())
-    }
+    override val views: Set<ViewRepository<*, *, *>>
+        get() = setOf(InternalMessageRepository(), DeletedTypeRepository())
 }

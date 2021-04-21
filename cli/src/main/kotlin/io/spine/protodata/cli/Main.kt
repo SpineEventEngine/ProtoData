@@ -37,8 +37,8 @@ import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.io.Resource
 import io.spine.protodata.Pipeline
-import io.spine.protodata.Plugin
 import io.spine.protodata.option.OptionsProvider
+import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import java.io.File

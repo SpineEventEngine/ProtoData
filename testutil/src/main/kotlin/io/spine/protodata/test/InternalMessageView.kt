@@ -30,13 +30,13 @@ import io.spine.core.External
 import io.spine.core.Subscribe
 import io.spine.protodata.TypeEntered
 import io.spine.protodata.TypeName
-import io.spine.server.projection.Projection
-import io.spine.server.projection.ProjectionRepository
+import io.spine.protodata.plugin.View
+import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
-public class InternalMessageProjection
-    : Projection<TypeName, InternalType, InternalType.Builder>() {
+public class InternalMessageView
+    : View<TypeName, InternalType, InternalType.Builder>() {
 
     @Subscribe
     internal fun on(@External e: TypeEntered) {
@@ -45,7 +45,7 @@ public class InternalMessageProjection
 }
 
 public class InternalMessageRepository :
-    ProjectionRepository<TypeName, InternalMessageProjection, InternalType>() {
+    ViewRepository<TypeName, InternalMessageView, InternalType>() {
 
     protected override fun setupEventRouting(routing: EventRouting<TypeName>) {
         super.setupEventRouting(routing)

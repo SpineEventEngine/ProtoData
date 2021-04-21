@@ -26,7 +26,7 @@
 
 package io.spine.protodata.cli
 
-import io.spine.protodata.Plugin
+import io.spine.protodata.plugin.Plugin
 
 /**
  * A reflective builder for [Plugin]s.

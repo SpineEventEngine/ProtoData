@@ -24,28 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.test
 
-import io.spine.server.BoundedContextBuilder
+import io.spine.core.External
+import io.spine.core.Subscribe
+import io.spine.protodata.TypeEntered
+import io.spine.protodata.TypeName
+import io.spine.protodata.plugin.View
+import io.spine.protodata.plugin.ViewRepository
+import io.spine.server.route.EventRouting
 
-/**
- * An plugin into the `Code Generation` bounded context.
- *
- * Users may want to define bespoke projections and processes based on the Protobuf compiler events.
- * To do so, define your entities, commands, and events, and register the entities in the bounded
- * context via [fillIn].
- *
- * ProtoData uses the Spine Event Engine framework. If you are new to the tool, see
- * the [getting started guide](https://spine.io/docs/quick-start/).
- */
-public interface Plugin {
+public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>() {
 
-    /**
-     * Registers the extra entities in the bounded context.
-     *
-     * Implementations may register entities add Bus filters and listeners, etc. It is not
-     * recommended to remove entities from the context, as the ProtoData library may rely on
-     * presence of some of them.
-     */
-    public fun fillIn(context: BoundedContextBuilder)
+    @Subscribe
+    internal fun to(@External event: TypeEntered) {
+        builder()
+            .setName(event.type.name)
+            .setType(event.type)
+    }
+}
+
+public class DeletedTypeRepository
+    : ViewRepository<TypeName, DeletedTypeView, DeletedType>() {
+
+    override fun setupEventRouting(routing: EventRouting<TypeName>) {
+        super.setupEventRouting(routing)
+        routing.route(TypeEntered::class.java) { e, _ ->
+            val name = e.type.name
+            return@route if (name.simpleName.startsWith("_")) {
+                setOf(name)
+            } else {
+                setOf()
+            }
+        }
+    }
 }

@@ -24,38 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.plugin
 
-import io.spine.core.External
-import io.spine.core.Subscribe
-import io.spine.protodata.TypeEntered
-import io.spine.protodata.TypeName
-import io.spine.server.projection.Projection
-import io.spine.server.projection.ProjectionRepository
-import io.spine.server.route.EventRouting
+import io.spine.server.BoundedContextBuilder
 
-public class DeletedTypeProjection : Projection<TypeName, DeletedType, DeletedType.Builder>() {
+/**
+ * An plugin into the code generation process.
+ *
+ * Users may want to define bespoke [views][View] and [policies][Policy] based on the Protobuf
+ * compiler events. To do so, define your entities and events, and expose the event handling
+ * components via `views` and `policies` properties.
+ *
+ * ProtoData uses the Spine Event Engine framework. If you are new to the tool, see
+ * the [getting started guide](https://spine.io/docs/quick-start/).
+ */
+public interface Plugin {
 
-    @Subscribe
-    internal fun to(@External event: TypeEntered) {
-        builder()
-            .setName(event.type.name)
-            .setType(event.type)
-    }
+    public val views: Set<ViewRepository<*, *, *>>
+        get() = setOf()
+
+    public val policies: Set<Policy>
+        get() = setOf()
 }
 
-public class DeletedTypeRepository
-    : ProjectionRepository<TypeName, DeletedTypeProjection, DeletedType>() {
-
-    override fun setupEventRouting(routing: EventRouting<TypeName>) {
-        super.setupEventRouting(routing)
-        routing.route(TypeEntered::class.java) { e, _ ->
-            val name = e.type.name
-            return@route if (name.simpleName.startsWith("_")) {
-                setOf(name)
-            } else {
-                setOf()
-            }
-        }
+internal fun BoundedContextBuilder.apply(plugin: Plugin) {
+    plugin.views.forEach {
+        add(it)
+    }
+    plugin.policies.forEach {
+        addEventDispatcher(it)
     }
 }

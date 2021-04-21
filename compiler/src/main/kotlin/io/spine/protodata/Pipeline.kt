@@ -30,6 +30,8 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.Production
 import io.spine.logging.Logging
 import io.spine.protodata.events.CompilerEvents
+import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import io.spine.server.ServerEnvironment
@@ -48,7 +50,7 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
  * modifying, or deleting existing ones. Lastly, the source set is stored back onto the file system.
  */
 public class Pipeline(
-    private val extensions: List<Plugin>,
+    private val plugins: List<Plugin>,
     private val renderers:  List<Renderer>,
     private val sourceSet: SourceSet,
     private val request: CodeGeneratorRequest
@@ -64,7 +66,7 @@ public class Pipeline(
      */
     public operator fun invoke() {
         val contextBuilder = CodeGenerationContext.builder()
-        extensions.forEach { it.fillIn(contextBuilder) }
+        plugins.forEach { contextBuilder.apply(it) }
         val context = contextBuilder.build()
 
         val events = CompilerEvents.parse(request)

@@ -87,6 +87,7 @@ private class ProtoFileEvents(
     suspend fun SequenceScope<EventMessage>.produceFileEvents() {
         yield(
             FileEntered.newBuilder()
+                .setPath(file.path)
                 .setFile(file)
                 .build()
         )
