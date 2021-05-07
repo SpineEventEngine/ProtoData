@@ -31,6 +31,33 @@ import io.spine.protodata.QueryingClient
 import io.spine.server.BoundedContext
 import io.spine.server.event.AbstractEventReactor
 
+/**
+ * A policy converts one event into zero to many other events.
+ *
+ * As a rule of thumb, a policy should read:
+ * Whenever <something happens>, then <something else must happen>.
+ *
+ * For example:
+ * Whenever a `Field Option` is `Discovered`, a `Validation Rule` must be `Added`.
+ *
+ * To convert an event into another event, declare a method, which reacts with an event to an event:
+ * ```kotlin
+ * class MyPolicy {
+ *
+ *     @React
+ *     internal on(@External event: FieldOptionDiscovered): ValidationRuleAdded {
+ *         // Produce the event.
+ *     }
+ * }
+ * ```
+ *
+ * Please note that when reacting on Protobuf Compiler events, one should mark them as
+ * [@External][io.spine.core.External].
+ *
+ * *Note.* Often when talking about policies, people imply converting an event into a command, not
+ * an event. This approach seems too complicated to us at this stage, as not many commands will do
+ * anything but produce events with the same information, thus we directly convert between events.
+ */
 public open class Policy : AbstractEventReactor() {
 
     private lateinit var context: BoundedContext
