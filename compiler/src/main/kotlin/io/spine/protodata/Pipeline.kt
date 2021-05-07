@@ -36,6 +36,7 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import io.spine.server.ServerEnvironment
 import io.spine.server.storage.memory.InMemoryStorageFactory
+import io.spine.server.transport.memory.InMemoryTransportFactory
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -57,8 +58,9 @@ public class Pipeline(
 ) : Logging {
 
     init {
-        val config = ServerEnvironment.`when`(Production::class.java)
-        config.use(InMemoryStorageFactory.newInstance())
+        ServerEnvironment.`when`(Production::class.java)
+                         .use(InMemoryStorageFactory.newInstance())
+                         .use(InMemoryTransportFactory.newInstance())
     }
 
     /**
