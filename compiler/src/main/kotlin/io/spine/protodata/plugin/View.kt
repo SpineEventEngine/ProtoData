@@ -52,7 +52,8 @@ import kotlin.reflect.KClass
  * as they must not be called directly.
  *
  * Events from the Protobuf compiler should be marked as [@External][io.spine.core.External], while
- * events from policies should not.
+ * events from policies should not.  See the whole list of Protobuf compiler events
+ * in `spine/protodata/events.proto`.
  *
  * Example:
  * ```

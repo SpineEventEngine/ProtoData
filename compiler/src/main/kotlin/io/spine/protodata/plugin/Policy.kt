@@ -52,7 +52,8 @@ import io.spine.server.event.AbstractEventReactor
  * ```
  *
  * Please note that when reacting on Protobuf Compiler events, one should mark them as
- * [@External][io.spine.core.External].
+ * [@External][io.spine.core.External]. See the whole list of Protobuf compiler events
+ * in `spine/protodata/events.proto`.
  *
  * *Note.* Often when talking about policies, people imply converting an event into a command, not
  * an event. This approach seems too complicated to us at this stage, as not many commands will do
