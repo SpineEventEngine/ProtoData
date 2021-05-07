@@ -42,8 +42,9 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import java.io.File
-import java.net.URLClassLoader
+import java.io.File.pathSeparator
 import java.nio.file.Path
+import kotlin.system.exitProcess
 
 private const val VERSION_FILE_NAME = "version.txt"
 
@@ -65,7 +66,7 @@ private fun readVersion(): String {
  *
  * The command accepts class names for the service provider interface implementations via the CLI
  * parameters, such as `--plugin`, `--renderer`, and `--options`, all of which can be repeated
- * parameters, if required. Then, using the classpath of the app and the extra classpath supplied
+ * parameters, if required. Then, using the classpath of the app and the user classpath supplied
  * via the `--extra-classpath` parameter, loads those classes. `Code Generation` context accept
  * Protobuf compiler events, regarding the Protobuf types, listed in
  * the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter. Finally,
@@ -79,26 +80,20 @@ internal class Run(version: String) : CliktCommand(
     printHelpOnEmptyArgs = true
 ) {
 
-    private val extensionProviders: List<String> by option("--plugin", "-p", help = """
+    private val plugins: List<String> by option("--plugin", "-p", help = """
         The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
-        
-           <...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin
-        
+           `<...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin`
     """.trimIndent()).multiple()
     private  val renderers: List<String> by option("--renderer", "-r", help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
         There can only be multiple renderers. To pass more then one value, type:
-        
-           <...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer
-        
+           `<...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer`
     """.trimIndent()).multiple(required = true)
     private val optionProviders: List<String> by option("--options", "-o", help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
-        
-           <...> -o com.foo.TypeOptionsProvider -o com.foo.FieldOptionsProvider
-        
+           `<...> -o com.foo.TypeOptionsProvider -o com.foo.FieldOptionsProvider`
     """.trimIndent()).multiple()
     private val codegenRequestFile: File by option("--request", "-t", help =
     "The path to the binary file containing a serialized instance of " +
@@ -117,23 +112,22 @@ internal class Run(version: String) : CliktCommand(
         canBeFile = false,
         canBeSymlink = false
     ).required()
-    private val classPath: List<Path>? by option("--extra-classpath", "--xcp", help = """
-        The extra classpath which contains all the `--subscriber` and `--renderer` classes, as well
-        as all their dependencies, which are not included as a part of the ProtoData library.
-        This may be omitted if the classes are already present in the application's classpath.
-        May be one path to a JAR, a ZIP, or a directory. Or may be many paths separated by
-        the `${File.pathSeparator}` separator char.
+    private val classPath: List<Path>? by option("--user-classpath" ,"--ucp", help = """
+        The user classpath which contains all `--renderer` classes, user-defined policies, views,
+        events, etc., as well as all their dependencies, which are not included as a part of
+        the ProtoData library. This may be omitted if the classes are already present in
+        the ProtoData classpath. May be one path to a JAR, a ZIP, or a directory. Or may be many
+        paths separated by the `$pathSeparator` separator char (system-dependent).
     """.trimIndent()
     ).path(
         mustExist = true,
         mustBeReadable = true
-    ).split(File.pathSeparator)
+    ).split(pathSeparator)
 
     override fun run() {
-        val classLoader = loadExtraClasspath()
-        val extensions = loadExtensions(classLoader)
-        val optionsProviders = loadOptions(classLoader)
-        val renderer = loadRenderers(classLoader)
+        val plugins = loadPlugins()
+        val optionsProviders = loadOptions()
+        val renderer = loadRenderers()
         val sourceSet = SourceSet.fromContentsOf(sourceRoot)
 
         val registry = ExtensionRegistry.newInstance()
@@ -141,27 +135,33 @@ internal class Run(version: String) : CliktCommand(
         val codegenRequest = codegenRequestFile.inputStream().use {
             CodeGeneratorRequest.parseFrom(it, registry)
         }
-        Pipeline(extensions, renderer, sourceSet, codegenRequest)()
+        Pipeline(plugins, renderer, sourceSet, codegenRequest)()
     }
 
-    private fun loadExtraClasspath(): ClassLoader {
-        val contextClassLoader = Thread.currentThread().contextClassLoader!!
-        return if (classPath != null) {
-            val urls = classPath!!
-                .map { it.toUri().toURL() }
-                .toTypedArray()
-            URLClassLoader(urls, contextClassLoader)
-        } else {
-            contextClassLoader
+    private fun loadPlugins() =
+        load(PluginBuilder(), plugins)
+
+    private fun loadRenderers() =
+        load(RendererBuilder(), renderers)
+
+    private fun loadOptions() =
+        load(OptionsProviderBuilder(), optionProviders)
+
+    private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {
+        val classLoader = Thread.currentThread().contextClassLoader
+        try {
+            return builder.createAll(classNames, classLoader)
+        } catch (e: ClassNotFoundException) {
+            error(e.message)
+            error("Don't forget to add required classes to the user classpath.")
+            if (classPath != null) {
+                error("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
+            }
+            exitProcess(1)
         }
     }
 
-    private fun loadExtensions(classLoader: ClassLoader) =
-        ExtensionBuilder().createAll(extensionProviders, classLoader)
-
-    private fun loadRenderers(classLoader: ClassLoader) =
-        RendererBuilder().createAll(renderers, classLoader)
-
-    private fun loadOptions(classLoader: ClassLoader) =
-        OptionsProviderBuilder().createAll(optionProviders, classLoader)
+    private fun error(msg: String?) {
+        echo(msg, err = true)
+    }
 }

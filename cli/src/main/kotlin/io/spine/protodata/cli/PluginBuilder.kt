@@ -31,4 +31,4 @@ import io.spine.protodata.plugin.Plugin
 /**
  * A reflective builder for [Plugin]s.
  */
-internal class ExtensionBuilder: ReflectiveBuilder<Plugin>()
+internal class PluginBuilder: ReflectiveBuilder<Plugin>()
