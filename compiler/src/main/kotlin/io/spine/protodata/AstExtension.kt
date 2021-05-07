@@ -204,7 +204,7 @@ private fun File.javaMultipleFiles() =
 private fun File.javaOuterClassName() =
     optionList.find("java_outer_classname", StringValue::class.java)
         ?.value
-        ?: "${nameWithoutExtension().CamelCase()}OuterClass"
+        ?: nameWithoutExtension().CamelCase()
 
 @Suppress("FunctionName") // Demonstrates the CamelCase example.
 private fun String.CamelCase(): String =
