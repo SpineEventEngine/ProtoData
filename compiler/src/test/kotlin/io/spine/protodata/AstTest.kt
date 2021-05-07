@@ -105,10 +105,29 @@ class `AST extensions should` {
             assertThat(className)
                 .isEqualTo("${TestEnv.packageName}.${TestEnv.outerClassName}$${simpleName}")
         }
+
+        @Test
+        fun enum() {
+            val simpleName = "ExplosiveType"
+            val type = EnumType
+                .newBuilder()
+                .setName(TypeName.newBuilder()
+                    .setPackageName("ecme.example")
+                    .setSimpleName(simpleName))
+                .build()
+            val file = File
+                .newBuilder()
+                .addOption(TestEnv.javaPackage)
+                .addOption(TestEnv.javaMultipleFiles)
+                .build()
+            val className = type.javaClassName(declaredIn = file)
+            assertThat(className)
+                .isEqualTo("${TestEnv.packageName}.${simpleName}")
+        }
     }
 
     @Nested
-    inner class `Obtain Java file declaring generated class from`() {
+    inner class `Obtain Java file declaring generated class from` {
 
         @Test
         fun `top-level message`() {
