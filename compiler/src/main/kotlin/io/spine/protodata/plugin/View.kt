@@ -48,7 +48,7 @@ import kotlin.reflect.KClass
  * the `builder()` method.
  *
  * We recommend to use `internal` access for the subscriber methods in Kotlin and package-private —
- * in Java. The methods are not `private`, as they are invoked by the framework, and no `public`,
+ * in Java. The methods are not `private`, as they are invoked by the framework, and not `public`,
  * as they must not be called directly.
  *
  * Events from the Protobuf compiler should be marked as [@External][io.spine.core.External], while
