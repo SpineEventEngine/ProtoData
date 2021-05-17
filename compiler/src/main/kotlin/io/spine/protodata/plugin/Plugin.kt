@@ -41,7 +41,7 @@ import io.spine.server.BoundedContextBuilder
 public interface Plugin {
 
     /**
-     * The [View]s added by this plugin.
+     * The [views][View] added by this plugin.
      *
      * A [View] always has a repository. If there is no need to create a custom one,
      * use [ViewRepository.default].
@@ -50,7 +50,7 @@ public interface Plugin {
         get() = setOf()
 
     /**
-     * The [Policies][Policy] added by this plugin.
+     * The [policies][Policy] added by this plugin.
      */
     public val policies: Set<Policy>
         get() = setOf()
