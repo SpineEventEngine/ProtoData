@@ -69,6 +69,8 @@ public sealed class LineNumber {
          * Creates a `LineNumber` pointing at a given line.
          */
         @JvmStatic
+        // TODO:2021-05-17:dmytro.dashenkov: Should be a UInt. Migrate to unsigned when issue
+        //  resolved: https://youtrack.jetbrains.com/issue/KT-46725
         public fun at(number: Int): LineNumber = LineIndex(number)
 
         /**
