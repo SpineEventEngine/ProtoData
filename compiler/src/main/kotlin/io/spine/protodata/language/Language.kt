@@ -94,6 +94,16 @@ public class LanguageWithSlashComments(
  */
 public object CommonLanguages {
 
+    /**
+     * Any language will do.
+     *
+     * This instance indicates that any programming language can be accepted.
+     *
+     * Intended to be used for filtering source files by language via file name conventions. If no
+     * filtering required, but a [Language] is needed, use `CommonLanguages.any`.
+     *
+     * Does not support [comments][Language.comment].
+     */
     @JvmStatic
     public val any: Language = object : Language("any language", Glob.any) {
         override fun comment(line: String): String {
