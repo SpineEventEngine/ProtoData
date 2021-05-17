@@ -149,11 +149,16 @@ internal class Run(version: String) : CliktCommand(
 
     private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {
         val classLoader = Thread.currentThread().contextClassLoader
+        return classNames.map { builder.tryCreate(it, classLoader) }
+    }
+
+    private fun <T: Any> ReflectiveBuilder<T>.tryCreate(className: String,
+                                                        classLoader: ClassLoader): T {
         try {
-            return builder.createAll(classNames, classLoader)
+            return createByName(className, classLoader)
         } catch (e: ClassNotFoundException) {
             error(e.message)
-            error("Don't forget to add required classes to the user classpath.")
+            error("Please add the required class `$className` to the user classpath.")
             if (classPath != null) {
                 error("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
             }
