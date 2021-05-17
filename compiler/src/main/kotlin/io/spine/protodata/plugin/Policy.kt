@@ -38,9 +38,9 @@ import io.spine.server.event.AbstractEventReactor
  * Whenever <something happens>, then <something else must happen>.
  *
  * For example:
- * Whenever a `Field Option` is `Discovered`, a `Validation Rule` must be `Added`.
+ * Whenever a field option is discovered, a validation rule must be added.
  *
- * To convert an event into another event, declare a method, which reacts with an event to an event:
+ * To implement the policy, declare a method which reacts to an event with an event:
  * ```kotlin
  * class MyPolicy {
  *

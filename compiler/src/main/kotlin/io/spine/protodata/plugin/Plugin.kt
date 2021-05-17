@@ -31,12 +31,12 @@ import io.spine.server.BoundedContextBuilder
 /**
  * An plugin into the code generation process.
  *
- * Users may want to define bespoke [views][View] and [policies][Policy] based on the Protobuf
- * compiler events. To do so, define your entities and events, and expose the event handling
- * components via `views` and `policies` properties.
+ * ProtoData uses the reactive approach to handling Protobuf source info. We handle events which
+ * describe a Protobuf source set via a set of [views][View] and [policies][Policy].
  *
- * ProtoData uses the Spine Event Engine framework. If you are new to the tool, see
- * the [getting started guide](https://spine.io/docs/quick-start/).
+ * Users may want to define bespoke [views][View] and [policies][Policy] based on the Protobuf
+ * compiler events. To do so, define your handlers and events and expose the components via
+ * [Plugin.views] and [Plugin.policies] properties.
  */
 public interface Plugin {
 
