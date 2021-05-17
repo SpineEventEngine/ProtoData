@@ -77,9 +77,7 @@ public abstract class Language(
  *
  * Supports double-slash comments (`// <comment body>`).
  */
-// TODO:2021-04-16:dmytro.dashenkov: Revisit naming.
-//  https://github.com/SpineEventEngine/ProtoData/issues/8
-public class CLike(
+public class LanguageWithSlashComments(
     name: String,
     filePattern: Glob
 ) : Language(name, filePattern) {
@@ -90,9 +88,9 @@ public class CLike(
 /**
  * A collection of commonly used [Language]s.
  *
- * If this prepared set is not enough, users are encouraged to create their own instances of
- * [Language] by either extending the class directly or using one of its existing subtypes, such as
- * [CLike].
+ * If this prepared set is not enough, users are encouraged to create custom [Language] types
+ * by either extending the class directly, or using one of its existing subtypes, such as
+ * [LanguageWithSlashComments].
  */
 public object CommonLanguages {
 
@@ -104,9 +102,9 @@ public object CommonLanguages {
     }
 
     @JvmStatic
-    public val Kotlin: Language = CLike("Kotlin", Glob.extension("kt"))
+    public val Kotlin: Language = LanguageWithSlashComments("Kotlin", Glob.extension("kt"))
     @JvmStatic
-    public val Java: Language = CLike("Java", Glob.extension("java"))
+    public val Java: Language = LanguageWithSlashComments("Java", Glob.extension("java"))
     @JvmStatic
-    public val JavaScript: Language = CLike("JavaScript", Glob.extension("js"))
+    public val JavaScript: Language = LanguageWithSlashComments("JavaScript", Glob.extension("js"))
 }
