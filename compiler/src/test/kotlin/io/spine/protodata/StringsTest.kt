@@ -24,32 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata
 
-import io.spine.protodata.language.CommonLanguages
-import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.renderer.LineNumber
+import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
-    target = CommonLanguages.Java
-) {
-    override val supportedInsertionPoints: Set<InsertionPoint>
-        get() = GenericInsertionPoint.values().toSet()
-}
+class `Strings should` {
 
-public enum class GenericInsertionPoint : InsertionPoint {
+    @ParameterizedTest
+    @CsvSource("aaa,Aaa", "field_name,Field_name", "TypeName,TypeName", "_uri,_uri")
+    fun `produce a title case string`(initial: String, expected: String) {
+        assertThat(initial.titleCase())
+            .isEqualTo(expected)
+    }
 
-    FILE_START {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.at(0)
-    },
-    FILE_END {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.endOfFile()
-    },
-    OUTSIDE_FILE {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.notInFile()
-    };
+    @ParameterizedTest
+    @CsvSource("aaa,Aaa", "field_name,FieldName", "TypeName,TypeName", "___u_ri____,URi")
+    fun `produce a camel case string`(initial: String, expected: String) {
+        assertThat(initial.CamelCase())
+            .isEqualTo(expected)
+    }
 
-    override val label: String
-        get() = name.lowercase()
+    @Test
+    fun `trim whitespace`() {
+        val value = """
+            line one   
+             line two 
+        """
+        assertThat(value.trimIndent().lines()[0].last())
+            .isEqualTo(' ');
+        val trimmed = value.trimWhitespace()
+        assertThat(trimmed.lines()[0].last())
+            .isEqualTo('e');
+        assertThat(trimmed).isEqualTo(
+            "line one" + System.lineSeparator() + " line two"
+        )
+    }
 }

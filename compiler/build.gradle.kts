@@ -26,4 +26,5 @@
 
 dependencies {
     testImplementation(project(":testutil"))
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
 }

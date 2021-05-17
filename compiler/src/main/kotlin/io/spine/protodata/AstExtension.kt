@@ -206,13 +206,6 @@ private fun File.javaOuterClassName() =
         ?.value
         ?: nameWithoutExtension().CamelCase()
 
-@Suppress("FunctionName") // Demonstrates the CamelCase example.
-private fun String.CamelCase(): String =
-    split("_")
-        .filter { it.isNotBlank() }
-        .joinToString { it.capitalize() }
-
-
 private fun File.nameWithoutExtension(): String {
     val name = path.value.split("/").last()
     val index = name.indexOf(".")
