@@ -27,10 +27,11 @@
 package io.spine.protodata.plugin
 
 import com.google.common.collect.ImmutableSet
-import com.google.common.flogger.LazyArgs.lazy
+import com.google.protobuf.Message
 import io.spine.base.EntityState
 import io.spine.base.EventMessage
 import io.spine.logging.Logging
+import io.spine.protodata.ConfigurationError
 import io.spine.protodata.QueryingClient
 import io.spine.server.BoundedContext
 import io.spine.server.event.AbstractEventReactor
@@ -78,16 +79,14 @@ import io.spine.server.type.EventClass
  *
  * @param E the type of the event handled by this policy
  */
-public abstract class Policy<E : EventMessage>(
-    internal val external: Boolean = false
-) : AbstractEventReactor(), Logging {
+public abstract class Policy<E : EventMessage> : AbstractEventReactor(), Logging {
 
     private var context: BoundedContext? = null
 
     /**
      * Handles an event and produces some number of events in responce.
      */
-    public abstract fun whenever(event: E): Iterable<EventMessage>
+    public abstract fun whenever(event: E): Iterable<Message>
 
     final override fun registerWith(context: BoundedContext) {
         super.registerWith(context)
@@ -125,9 +124,9 @@ public abstract class Policy<E : EventMessage>(
     private fun checkHandlers(events: Iterable<EventClass>) {
         val classes = events.toList()
         if (classes.size > 1) {
-            _error().log("Policy `%s` handles too many events: [%s].",
-                         lazy { javaClass.name },
-                         lazy { classes.joinToString() })
+            throw ConfigurationError(
+                "Policy `${javaClass.name}` handles too many events: [${classes.joinToString()}]."
+            )
         }
     }
 }

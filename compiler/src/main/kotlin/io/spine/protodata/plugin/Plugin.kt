@@ -54,7 +54,7 @@ public interface Plugin {
      * A [View] may require a repository to route events. In such case, use
      * [Plugin.viewRepositories] instead.
      */
-    public val views: Set<Class<View<*, *, *>>>
+    public val views: Set<Class<out View<*, *, *>>>
         get() = setOf()
 
     /**

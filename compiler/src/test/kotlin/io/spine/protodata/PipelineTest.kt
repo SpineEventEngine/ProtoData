@@ -31,9 +31,13 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
+import io.spine.protodata.test.DeletedTypeRepository
+import io.spine.protodata.test.DeletedTypeView
 import io.spine.protodata.test.DeletingRenderer
+import io.spine.protodata.test.DocilePlugin
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.GenericInsertionPoint
+import io.spine.protodata.test.GreedyPolicy
 import io.spine.protodata.test.InternalAccessRenderer
 import io.spine.protodata.test.JavaGenericInsertionPointPrinter
 import io.spine.protodata.test.Journey
@@ -48,7 +52,9 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
 class `'Pipeline' should` {
@@ -194,5 +200,42 @@ class `'Pipeline' should` {
             .doesNotContain(GenericInsertionPoint.FILE_END.codeLine)
         assertCode
             .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
+    }
+
+    @Nested
+    inner class `Fail to construct if` {
+
+        @Test
+        fun `a policy handles too many events at once`() {
+            val policy = GreedyPolicy()
+            val pipeline = Pipeline(
+                listOf(DocilePlugin(policies = setOf(policy))),
+                listOf(renderer),
+                SourceSet.fromContentsOf(srcRoot),
+                request
+            )
+            val error = assertThrows<ConfigurationError> { pipeline() }
+            assertThat(error)
+                .hasMessageThat()
+                .contains(policy.javaClass.name)
+        }
+
+        @Test
+        fun `view is already registered`() {
+            val viewClass = DeletedTypeView::class.java
+            val pipeline = Pipeline(
+                listOf(DocilePlugin(
+                    views = setOf(viewClass),
+                    viewRepositories = setOf(DeletedTypeRepository())
+                )),
+                listOf(renderer),
+                SourceSet.fromContentsOf(srcRoot),
+                request
+            )
+            val error = assertThrows<ConfigurationError> { pipeline() }
+            assertThat(error)
+                .hasMessageThat()
+                .contains(viewClass.name)
+        }
     }
 }

@@ -96,7 +96,7 @@ public open class ViewRepository<I, V : View<I, S, *>, S : EntityState>
     internal companion object {
 
         @Suppress("UNCHECKED_CAST")
-        fun default(cls: Class<View<*, *, *>>): ViewRepository<*, *, *> {
+        fun default(cls: Class<out View<*, *, *>>): ViewRepository<*, *, *> {
             val cast = cls as Class<View<Any, EntityState, *>>
             return DefaultViewRepository(cast)
         }
