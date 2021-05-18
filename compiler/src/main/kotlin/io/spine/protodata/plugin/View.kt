@@ -93,20 +93,12 @@ public open class View<I, M : EntityState, B : ValidatingBuilder<M>> : Projectio
 public open class ViewRepository<I, V : View<I, S, *>, S : EntityState>
     : ProjectionRepository<I, V, S>() {
 
-
-    public companion object {
+    internal companion object {
 
         @Suppress("UNCHECKED_CAST")
-        @JvmStatic
-        public fun default(cls: Class<View<*, *, *>>): ViewRepository<*, *, *> {
+        fun default(cls: Class<View<*, *, *>>): ViewRepository<*, *, *> {
             val cast = cls as Class<View<Any, EntityState, *>>
             return DefaultViewRepository(cast)
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        public inline fun <reified V : View<*, *, *>> default(): ViewRepository<*, *, *> {
-            val cast = V::class.java as Class<View<*, *, *>>
-            return default(cast)
         }
     }
 
