@@ -99,8 +99,8 @@ public object CommonLanguages {
      *
      * This instance indicates that any programming language can be accepted.
      *
-     * Intended to be used for filtering source files by language via file name conventions. If no
-     * filtering required, but a [Language] is needed, use `CommonLanguages.any`.
+     * Intended to be used for filtering source files by language via file name conventions.
+     * If no filtering required, but a [Language] is needed, use `CommonLanguages.any`.
      *
      * Does not support [comments][Language.comment].
      */
