@@ -26,6 +26,7 @@
 
 package io.spine.protodata.plugin
 
+import io.spine.protodata.ConfigurationError
 import io.spine.server.BoundedContextBuilder
 
 /**
@@ -68,12 +69,22 @@ public interface Plugin {
  * Applies the given plugin to the receiver bounded context.
  */
 internal fun BoundedContextBuilder.apply(plugin: Plugin) {
-    plugin.views.forEach {
-        add(ViewRepository.default(it))
+    val repos = plugin.viewRepositories.toMutableList()
+    val defaultRepos = plugin.views.map { ViewRepository.default(it) }
+    repos.addAll(defaultRepos)
+    val repeatedView = repos.map { it.entityClass() }
+                            .groupingBy { it }
+                            .eachCount()
+                            .filter { it.value > 1 }
+                            .keys
+                            .firstOrNull()
+    if (repeatedView != null) {
+        throw ConfigurationError(
+            "View `${repeatedView}` is repeated. " +
+                    "Please only submit one repository OR the class for the view."
+        )
     }
-    plugin.viewRepositories.forEach {
-        add(it)
-    }
+    repos.forEach(this::add)
     plugin.policies.forEach {
         addEventDispatcher(it)
     }
