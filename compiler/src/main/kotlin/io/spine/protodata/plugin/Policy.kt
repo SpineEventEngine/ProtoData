@@ -42,7 +42,7 @@ import io.spine.server.event.AbstractEventReactor
  *
  * To implement the policy, declare a method which reacts to an event with an event:
  * ```kotlin
- * class MyPolicy {
+ * class MyPolicy : Policy() {
  *
  *     @React
  *     internal on(@External event: FieldOptionDiscovered): ValidationRuleAdded {
@@ -59,7 +59,7 @@ import io.spine.server.event.AbstractEventReactor
  * an event. This approach seems too complicated to us at this stage, as not many commands will do
  * anything but produce events with the same information, thus we directly convert between events.
  */
-public open class Policy : AbstractEventReactor() {
+public abstract class Policy : AbstractEventReactor() {
 
     private lateinit var context: BoundedContext
 
