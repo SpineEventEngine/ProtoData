@@ -42,7 +42,7 @@ import com.google.common.truth.extensions.proto.ProtoTruth.assertThat as assertM
 class `'Code Generation' context should` {
 
     @Test
-    fun `contain 'ProtobufSource' file projection`() {
+    fun `contain 'ProtobufSource' file view`() {
         val ctx = CodeGenerationContext.builder().build()
         assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileView::class.java))
     }

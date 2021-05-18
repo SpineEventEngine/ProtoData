@@ -65,10 +65,9 @@ protected constructor(
     protected abstract fun doRender(sources: SourceSet)
 
     /**
-     * Creates a [QueryingClient] to find projections of the given class.
+     * Creates a [QueryingClient] to find views of the given class.
      *
-     * Users may create their own projections and register them in the `Code Generation` context via
-     * a [Plugin][io.spine.protodata.Plugin].
+     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
      *
      * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
      * prettier code.
@@ -78,10 +77,9 @@ protected constructor(
     }
 
     /**
-     * Creates a [QueryingClient] to find projections of the given type.
+     * Creates a [QueryingClient] to find views of the given type.
      *
-     * Users may create their own projections and register them in the `Code Generation` context via
-     * a [Plugin][io.spine.protodata.Plugin].
+     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
      */
     protected inline fun <reified P : EntityState> select(): QueryingClient<P> {
         val cls = P::class.java
