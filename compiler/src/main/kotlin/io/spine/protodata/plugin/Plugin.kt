@@ -36,7 +36,7 @@ import io.spine.server.BoundedContextBuilder
  *
  * Users may want to define bespoke [views][View] and [policies][Policy] based on the Protobuf
  * compiler events. To do so, define your handlers and events and expose the components via
- * [Plugin.viewRepositories] and [Plugin.policies] properties.
+ * [Plugin.viewRepositories], [Plugin.views], and [Plugin.policies] properties.
  */
 public interface Plugin {
 
