@@ -60,7 +60,7 @@ public interface Plugin {
     /**
      * The [policies][Policy] added by this plugin.
      */
-    public val policies: Set<Policy>
+    public val policies: Set<Policy<*>>
         get() = setOf()
 }
 
