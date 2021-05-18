@@ -91,9 +91,11 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = freeCompilerArgs +
-                    "-Xopt-in=kotlin.io.path.ExperimentalPathApi,kotlin.ExperimentalUnsignedTypes" +
-                    "-Xinline-classes"
+            freeCompilerArgs = freeCompilerArgs + listOf(
+                "-Xopt-in=kotlin.io.path.ExperimentalPathApi,kotlin.ExperimentalUnsignedTypes",
+                "-Xinline-classes",
+                "-Xjvm-default=all"
+            )
         }
     }
 
