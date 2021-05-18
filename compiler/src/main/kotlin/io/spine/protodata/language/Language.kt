@@ -77,7 +77,7 @@ public abstract class Language(
  *
  * Supports double-slash comments (`// <comment body>`).
  */
-public class LanguageWithSlashComments(
+public class SlashCommentLanguage(
     name: String,
     filePattern: Glob
 ) : Language(name, filePattern) {
@@ -90,7 +90,7 @@ public class LanguageWithSlashComments(
  *
  * If this prepared set is not enough, users are encouraged to create custom [Language] types
  * by either extending the class directly, or using one of its existing subtypes, such as
- * [LanguageWithSlashComments].
+ * [SlashCommentLanguage].
  */
 public object CommonLanguages {
 
@@ -112,9 +112,9 @@ public object CommonLanguages {
     }
 
     @JvmStatic
-    public val Kotlin: Language = LanguageWithSlashComments("Kotlin", Glob.extension("kt"))
+    public val Kotlin: Language = SlashCommentLanguage("Kotlin", Glob.extension("kt"))
     @JvmStatic
-    public val Java: Language = LanguageWithSlashComments("Java", Glob.extension("java"))
+    public val Java: Language = SlashCommentLanguage("Java", Glob.extension("java"))
     @JvmStatic
-    public val JavaScript: Language = LanguageWithSlashComments("JavaScript", Glob.extension("js"))
+    public val JavaScript: Language = SlashCommentLanguage("JavaScript", Glob.extension("js"))
 }
