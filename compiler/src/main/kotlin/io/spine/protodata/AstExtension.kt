@@ -204,7 +204,7 @@ private fun File.javaMultipleFiles() =
 private fun File.javaOuterClassName() =
     optionList.find("java_outer_classname", StringValue::class.java)
         ?.value
-        ?: nameWithoutExtension().CamelCase()
+        ?: nameWithoutExtension().camelCase()
 
 private fun File.nameWithoutExtension(): String {
     val name = path.value.split("/").last()

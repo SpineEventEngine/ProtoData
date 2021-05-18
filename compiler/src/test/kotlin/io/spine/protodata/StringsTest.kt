@@ -43,7 +43,7 @@ class `Strings should` {
     @ParameterizedTest
     @CsvSource("aaa,Aaa", "field_name,FieldName", "TypeName,TypeName", "___u_ri____,URi")
     fun `produce a camel case string`(initial: String, expected: String) {
-        assertThat(initial.CamelCase())
+        assertThat(initial.camelCase())
             .isEqualTo(expected)
     }
 

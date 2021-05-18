@@ -40,24 +40,26 @@ public fun String.titleCase(): String =
 /**
  * Obtains the same string but in camel case instead of snake case.
  *
+ * The string will start with the first capital letter if possible.
+ *
  * Examples:
  *  - `"aaa"` becomes `"Aaa"`;
  *  - `"field_name"` becomes `"FieldName"`;
  *  - `"TypeName"` stays `"TypeName"`;
  *  - `"___u_ri____"` becomes `"URi"`.
  */
-@Suppress("FunctionName") // Demonstrates the CamelCase example.
-public fun String.CamelCase(): String =
-    split("_").CamelCase()
+public fun String.camelCase(): String =
+    split("_").camelCase()
 
 /**
  * Joins these strings into a camel case string.
  *
+ * The string will start with the first capital letter if possible.
+ *
  * Each element is capitalized and joined in the order of appearance in this `Iterable`.
  * The elements are never changed except for the first char.
  */
-@Suppress("FunctionName") // Demonstrates the CamelCase example.
-public fun Iterable<String>.CamelCase(): String =
+public fun Iterable<String>.camelCase(): String =
     filter { it.isNotBlank() }.joinToString(separator = "") { it.titleCase() }
 
 /**
