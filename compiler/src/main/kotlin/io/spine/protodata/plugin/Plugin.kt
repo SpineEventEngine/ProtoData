@@ -36,17 +36,25 @@ import io.spine.server.BoundedContextBuilder
  *
  * Users may want to define bespoke [views][View] and [policies][Policy] based on the Protobuf
  * compiler events. To do so, define your handlers and events and expose the components via
- * [Plugin.views] and [Plugin.policies] properties.
+ * [Plugin.viewRepositories] and [Plugin.policies] properties.
  */
 public interface Plugin {
 
     /**
-     * The [views][View] added by this plugin.
+     * The [views][View] added by this plugin represented via their [repositories][ViewRepository].
      *
-     * A [View] always has a repository. If there is no need to create a custom one,
-     * use [ViewRepository.default].
+     * A [View] may not have a need for repository. In such case, use [Plugin.views] instead.
      */
-    public val views: Set<ViewRepository<*, *, *>>
+    public val viewRepositories: Set<ViewRepository<*, *, *>>
+        get() = setOf()
+
+    /**
+     * The [views][View] added by this plugin represented via their classes.
+     *
+     * A [View] may require a repository to route events. In such case, use
+     * [Plugin.viewRepositories] instead.
+     */
+    public val views: Set<Class<View<*, *, *>>>
         get() = setOf()
 
     /**
@@ -61,6 +69,9 @@ public interface Plugin {
  */
 internal fun BoundedContextBuilder.apply(plugin: Plugin) {
     plugin.views.forEach {
+        add(ViewRepository.default(it))
+    }
+    plugin.viewRepositories.forEach {
         add(it)
     }
     plugin.policies.forEach {

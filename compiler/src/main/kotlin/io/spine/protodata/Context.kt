@@ -45,7 +45,7 @@ internal object CodeGenerationContext {
     fun builder(): BoundedContextBuilder {
         val builder = BoundedContext
             .singleTenant("Code Generation")
-        builder.add(ViewRepository.default(ProtoSourceFileView::class))
+        builder.add(ViewRepository.default<ProtoSourceFileView>())
         return builder
     }
 }

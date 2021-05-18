@@ -29,13 +29,11 @@ package io.spine.protodata.plugin
 import io.spine.base.EntityState
 import io.spine.protobuf.ValidatingBuilder
 import io.spine.server.DefaultRepository
-import io.spine.server.entity.model.EntityClass
 import io.spine.server.projection.Projection
 import io.spine.server.projection.ProjectionRepository
 import io.spine.server.projection.model.ProjectionClass
 import io.spine.server.route.EventRoute
 import io.spine.server.route.EventRouting
-import kotlin.reflect.KClass
 
 /**
  * A view on the Protobuf sources.
@@ -95,17 +93,21 @@ public open class View<I, M : EntityState, B : ValidatingBuilder<M>> : Projectio
 public open class ViewRepository<I, V : View<I, S, *>, S : EntityState>
     : ProjectionRepository<I, V, S>() {
 
+
     public companion object {
 
+        @Suppress("UNCHECKED_CAST")
         @JvmStatic
-        public fun <I, V : View<I, S, *>, S : EntityState> default(cls: Class<V>)
-                : ViewRepository<I, V, S> =
-            DefaultViewRepository(cls)
+        public fun default(cls: Class<View<*, *, *>>): ViewRepository<*, *, *> {
+            val cast = cls as Class<View<Any, EntityState, *>>
+            return DefaultViewRepository(cast)
+        }
 
-
-        public fun <I, V : View<I, S, *>, S : EntityState> default(cls: KClass<V>)
-                : ViewRepository<I, V, S> =
-            default(cls.java)
+        @Suppress("UNCHECKED_CAST")
+        public inline fun <reified V : View<*, *, *>> default(): ViewRepository<*, *, *> {
+            val cast = V::class.java as Class<View<*, *, *>>
+            return default(cast)
+        }
     }
 
     override fun setupEventRouting(routing: EventRouting<I>) {
@@ -120,15 +122,13 @@ public open class ViewRepository<I, V : View<I, S, *>, S : EntityState>
  * A [ViewRepository] can be customized in case event routing must be adjusted. Otherwise, users
  * should use `DefaultViewRepository` by calling [ViewRepository.default].
  */
-internal class DefaultViewRepository<I, V : View<I, S, *>, S : EntityState>(
-    private val cls: Class<V>
-) : ViewRepository<I, V, S>(), DefaultRepository {
+internal class DefaultViewRepository(
+    private val cls: Class<View<Any, EntityState, *>>
+) : ViewRepository<Any, View<Any, EntityState, *>, EntityState>(), DefaultRepository {
 
-    override fun entityModelClass(): EntityClass<V> {
-        return ProjectionClass.asProjectionClass(cls)
-    }
+    override fun entityModelClass(): ProjectionClass<View<Any, EntityState, *>> =
+        ProjectionClass.asProjectionClass(cls)
 
-    override fun logName(): String {
-        return "${ViewRepository::class.simpleName}.default()"
-    }
+    override fun logName(): String =
+        "${ViewRepository::class.simpleName}.default()"
 }

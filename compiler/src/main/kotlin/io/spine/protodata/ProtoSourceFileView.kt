@@ -31,7 +31,7 @@ import io.spine.core.Subscribe
 import io.spine.protodata.plugin.View
 
 /**
- * A projection which accumulates information about a Protobuf source file.
+ * A view which collects information about a Protobuf source file.
  */
 internal class ProtoSourceFileView
     : View<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
