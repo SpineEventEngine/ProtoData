@@ -24,33 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata
 
-import io.spine.core.External
-import io.spine.core.Subscribe
-import io.spine.protodata.TypeEntered
-import io.spine.protodata.TypeName
-import io.spine.server.projection.Projection
-import io.spine.server.projection.ProjectionRepository
-import io.spine.server.route.EventRoute.withId
-import io.spine.server.route.EventRouting
+import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
-public class InternalMessageProjection
-    : Projection<TypeName, InternalType, InternalType.Builder>() {
+class `Strings should` {
 
-    @Subscribe
-    internal fun on(@External e: TypeEntered) {
-        builder().name = e.type.name
+    @ParameterizedTest
+    @CsvSource("aaa,Aaa", "field_name,Field_name", "TypeName,TypeName", "_uri,_uri")
+    fun `produce a title case string`(initial: String, expected: String) {
+        assertThat(initial.titleCase())
+            .isEqualTo(expected)
     }
-}
 
-public class InternalMessageRepository :
-    ProjectionRepository<TypeName, InternalMessageProjection, InternalType>() {
+    @ParameterizedTest
+    @CsvSource("aaa,Aaa", "field_name,FieldName", "TypeName,TypeName", "___u_ri____,URi")
+    fun `produce a camel case string`(initial: String, expected: String) {
+        assertThat(initial.camelCase())
+            .isEqualTo(expected)
+    }
 
-    protected override fun setupEventRouting(routing: EventRouting<TypeName>) {
-        super.setupEventRouting(routing)
-        routing.route(TypeEntered::class.java) { event, _ ->
-            withId(event.type.name)
-        }
+    @Test
+    fun `trim whitespace`() {
+        val value = """
+            line one   
+             line two 
+        """
+        assertThat(value.trimIndent().lines()[0].last())
+            .isEqualTo(' ');
+        val trimmed = value.trimWhitespace()
+        assertThat(trimmed.lines()[0].last())
+            .isEqualTo('e');
+        assertThat(trimmed).isEqualTo(
+            "line one" + System.lineSeparator() + " line two"
+        )
     }
 }

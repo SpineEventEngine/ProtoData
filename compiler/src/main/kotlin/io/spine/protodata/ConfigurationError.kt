@@ -24,38 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata
 
-import io.spine.core.External
-import io.spine.core.Subscribe
-import io.spine.protodata.TypeEntered
-import io.spine.protodata.TypeName
-import io.spine.server.projection.Projection
-import io.spine.server.projection.ProjectionRepository
-import io.spine.server.route.EventRouting
-
-public class DeletedTypeProjection : Projection<TypeName, DeletedType, DeletedType.Builder>() {
-
-    @Subscribe
-    internal fun to(@External event: TypeEntered) {
-        builder()
-            .setName(event.type.name)
-            .setType(event.type)
-    }
-}
-
-public class DeletedTypeRepository
-    : ProjectionRepository<TypeName, DeletedTypeProjection, DeletedType>() {
-
-    override fun setupEventRouting(routing: EventRouting<TypeName>) {
-        super.setupEventRouting(routing)
-        routing.route(TypeEntered::class.java) { e, _ ->
-            val name = e.type.name
-            return@route if (name.simpleName.startsWith("_")) {
-                setOf(name)
-            } else {
-                setOf()
-            }
-        }
-    }
-}
+/**
+ * An error in configuring ProtoData.
+ */
+public class ConfigurationError(msg: String) : Error(msg)

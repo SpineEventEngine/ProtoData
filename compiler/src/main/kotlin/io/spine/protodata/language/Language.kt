@@ -77,9 +77,7 @@ public abstract class Language(
  *
  * Supports double-slash comments (`// <comment body>`).
  */
-// TODO:2021-04-16:dmytro.dashenkov: Revisit naming.
-//  https://github.com/SpineEventEngine/ProtoData/issues/8
-public class CLike(
+public class SlashCommentLanguage(
     name: String,
     filePattern: Glob
 ) : Language(name, filePattern) {
@@ -90,19 +88,33 @@ public class CLike(
 /**
  * A collection of commonly used [Language]s.
  *
- * If this prepared set is not enough, users are encouraged to create their own instances of
- * [Language] by either extending the class directly or using one of its existing subtypes, such as
- * [CLike].
+ * If this prepared set is not enough, users are encouraged to create custom [Language] types
+ * by either extending the class directly, or using one of its existing subtypes, such as
+ * [SlashCommentLanguage].
  */
 public object CommonLanguages {
 
+    /**
+     * Any language will do.
+     *
+     * This instance indicates that any programming language can be accepted.
+     *
+     * Intended to be used for filtering source files by language via file name conventions.
+     * If no filtering required, but a [Language] is needed, use `CommonLanguages.any`.
+     *
+     * Does not support [comments][Language.comment].
+     */
+    @JvmStatic
     public val any: Language = object : Language("any language", Glob.any) {
         override fun comment(line: String): String {
             throw UnsupportedOperationException("`$name` does not support comments.")
         }
     }
 
-    public val Kotlin: Language = CLike("Kotlin", Glob.extension("kt"))
-    public val Java: Language = CLike("Java", Glob.extension("java"))
-    public val JavaScript: Language = CLike("JavaScript", Glob.extension("js"))
+    @JvmStatic
+    public val Kotlin: Language = SlashCommentLanguage("Kotlin", Glob.extension("kt"))
+    @JvmStatic
+    public val Java: Language = SlashCommentLanguage("Java", Glob.extension("java"))
+    @JvmStatic
+    public val JavaScript: Language = SlashCommentLanguage("JavaScript", Glob.extension("js"))
 }

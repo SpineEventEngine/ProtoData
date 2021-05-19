@@ -40,7 +40,9 @@ import "spine/protodata/ast.proto";
 // Emitted when processing of a file begins.
 message FileEntered {
 
-    File file = 1;
+    FilePath path = 1;
+
+    File file = 2;
 }
 
 // Emitted when a file-level option is found.

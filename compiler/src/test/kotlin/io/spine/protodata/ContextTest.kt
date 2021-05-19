@@ -42,9 +42,9 @@ import com.google.common.truth.extensions.proto.ProtoTruth.assertThat as assertM
 class `'Code Generation' context should` {
 
     @Test
-    fun `contain 'ProtobufSource' file projection`() {
+    fun `contain 'ProtobufSource' file view`() {
         val ctx = CodeGenerationContext.builder().build()
-        assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileProjection::class.java))
+        assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileView::class.java))
     }
 
     @Test
@@ -59,7 +59,7 @@ class `'Code Generation' context should` {
         ProtobufCompilerContext.emitted(CompilerEvents.parse(set))
 
         val path = DoctorProto.getDescriptor().path()
-        val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileProjection::class.java)
+        val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileView::class.java)
         assertSourceFile
             .exists()
         val actual = assertSourceFile.actual()!!.state() as ProtobufSourceFile

@@ -167,15 +167,26 @@ public fun MessageType.javaFile(declaredIn: File): Path {
  *
  * @return binary name of the class generated from this message.
  */
-public fun MessageType.javaClassName(declaredIn: File): String {
+public fun MessageType.javaClassName(declaredIn: File): String =
+    name.javaClassName(declaredIn)
+
+/**
+ * Obtains the full name of the Java enum, generated from this Protobuf enum.
+ *
+ * @return binary name of the enum class generated from this enum.
+ */
+public fun EnumType.javaClassName(declaredIn: File): String =
+    name.javaClassName(declaredIn)
+
+private fun TypeName.javaClassName(declaredIn: File): String {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val nameElements = mutableListOf<String>()
     if (!javaMultipleFiles) {
         nameElements.add(declaredIn.javaOuterClassName())
     }
-    nameElements.addAll(name.nestingTypeNameList)
-    nameElements.add(name.simpleName)
+    nameElements.addAll(nestingTypeNameList)
+    nameElements.add(simpleName)
     val className = nameElements.joinToString(separator = "$")
     return "${packageName}.${className}"
 }
@@ -193,14 +204,7 @@ private fun File.javaMultipleFiles() =
 private fun File.javaOuterClassName() =
     optionList.find("java_outer_classname", StringValue::class.java)
         ?.value
-        ?: "${nameWithoutExtension().CamelCase()}OuterClass"
-
-@Suppress("FunctionName") // Demonstrates the CamelCase example.
-private fun String.CamelCase(): String =
-    split("_")
-        .filter { it.isNotBlank() }
-        .joinToString { it.capitalize() }
-
+        ?: nameWithoutExtension().camelCase()
 
 private fun File.nameWithoutExtension(): String {
     val name = path.value.split("/").last()

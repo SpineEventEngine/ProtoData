@@ -24,30 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.protodata.test
 
-// https://junit.org/junit5/
-object JUnit {
-    private const val version            = "5.7.1"
-    private const val platformVersion    = "1.7.1"
-    private const val legacyVersion      = "4.13.1"
+import io.spine.core.External
+import io.spine.core.Subscribe
+import io.spine.protodata.TypeEntered
+import io.spine.protodata.TypeName
+import io.spine.protodata.plugin.View
+import io.spine.protodata.plugin.ViewRepository
+import io.spine.server.route.EventRouting
 
-    // https://github.com/apiguardian-team/apiguardian
-    private const val apiGuardianVersion = "1.1.1"
-    // https://github.com/junit-pioneer/junit-pioneer
-    private const val pioneerVersion     = "1.3.8"
+public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>() {
 
-    const val legacy = "junit:junit:${legacyVersion}"
-    val api = listOf(
-        "org.apiguardian:apiguardian-api:${apiGuardianVersion}",
-        "org.junit.jupiter:junit-jupiter-api:${version}",
-        "org.junit.jupiter:junit-jupiter-params:${version}"
-    )
-    const val runner  = "org.junit.jupiter:junit-jupiter-engine:${version}"
-    @Suppress("unused")
-    const val pioneer = "org.junit-pioneer:junit-pioneer:${pioneerVersion}"
-    const val platformCommons = "org.junit.platform:junit-platform-commons:${platformVersion}"
-    const val platformLauncher = "org.junit.platform:junit-platform-launcher:${platformVersion}"
-    @Suppress("unused")
-    const val params = "org.junit.jupiter:junit-jupiter-params:${version}"
+    @Subscribe
+    internal fun to(@External event: TypeEntered) {
+        builder()
+            .setName(event.type.name)
+            .setType(event.type)
+    }
+}
+
+public class DeletedTypeRepository
+    : ViewRepository<TypeName, DeletedTypeView, DeletedType>() {
+
+    override fun setupEventRouting(routing: EventRouting<TypeName>) {
+        super.setupEventRouting(routing)
+        routing.route(TypeEntered::class.java) { e, _ ->
+            val name = e.type.name
+            return@route if (name.simpleName.startsWith("_")) {
+                setOf(name)
+            } else {
+                setOf()
+            }
+        }
+    }
 }

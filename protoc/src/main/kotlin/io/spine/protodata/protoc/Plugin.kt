@@ -41,6 +41,9 @@ public fun main() {
     val path = request.parameter
 
     val requestFile = Path(path)
+    requestFile.toFile()
+               .parentFile
+               .mkdirs()
     requestFile.writeBytes(request.toByteArray())
 
     val emptyResponce = CodeGeneratorResponse.newBuilder().build()

@@ -1,3 +1,5 @@
+import io.spine.internal.dependency.JUnit
+
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -26,4 +28,5 @@
 
 dependencies {
     testImplementation(project(":testutil"))
+    testImplementation(JUnit.params)
 }

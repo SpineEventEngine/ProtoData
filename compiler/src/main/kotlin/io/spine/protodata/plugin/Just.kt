@@ -24,28 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.plugin
 
-import io.spine.server.BoundedContextBuilder
+import io.spine.base.EventMessage
+import io.spine.server.tuple.Tuple
 
 /**
- * An plugin into the `Code Generation` bounded context.
+ * A tuple of one event.
  *
- * Users may want to define bespoke projections and processes based on the Protobuf compiler events.
- * To do so, define your entities, commands, and events, and register the entities in the bounded
- * context via [fillIn].
- *
- * ProtoData uses the Spine Event Engine framework. If you are new to the tool, see
- * the [getting started guide](https://spine.io/docs/quick-start/).
+ * Used when returning an iterable from a handler method for better readability over `List<E>`.
  */
-public interface Plugin {
-
-    /**
-     * Registers the extra entities in the bounded context.
-     *
-     * Implementations may register entities add Bus filters and listeners, etc. It is not
-     * recommended to remove entities from the context, as the ProtoData library may rely on
-     * presence of some of them.
-     */
-    public fun fillIn(context: BoundedContextBuilder)
-}
+public class Just<E : EventMessage>(event: E) : Tuple(event)

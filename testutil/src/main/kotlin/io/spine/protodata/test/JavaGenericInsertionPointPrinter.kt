@@ -41,7 +41,7 @@ public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
 public enum class GenericInsertionPoint : InsertionPoint {
 
     FILE_START {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.at(0U)
+        override fun locate(lines: List<String>): LineNumber = LineNumber.at(0)
     },
     FILE_END {
         override fun locate(lines: List<String>): LineNumber = LineNumber.endOfFile()
@@ -51,5 +51,5 @@ public enum class GenericInsertionPoint : InsertionPoint {
     };
 
     override val label: String
-        get() = name.toLowerCase()
+        get() = name.lowercase()
 }

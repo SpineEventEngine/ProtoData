@@ -32,7 +32,7 @@ To install ProtoData on a *nix system:
  the `PATH` environmental variable. If you use another shell, you will have to update the `PATH`
  variable manually.
 
-Now ProtoData CLI should be accessible. To check the correctness of th installation, run:
+Now ProtoData CLI should be accessible. To check the correctness of the installation, run:
 ```
 protodata -h
 ```

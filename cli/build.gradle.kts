@@ -54,6 +54,12 @@ application {
     applicationName = appName
 }
 
+tasks.getByName<CreateStartScripts>("startScripts") {
+    windowsStartScriptGenerator = ScriptGenerator { _, _ -> /* Do nothing. */ }
+    val template = resources.text.fromFile("$projectDir/launch.template.py")
+    (unixStartScriptGenerator as TemplateBasedScriptGenerator).template = template
+}
+
 /**
  * A task re-packing the distribution ZIP archive into a JAR.
  *

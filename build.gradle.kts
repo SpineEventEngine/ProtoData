@@ -34,8 +34,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.30"
-    id("org.jetbrains.dokka") version "1.4.30"
+    kotlin("jvm") version "1.5.0"
+    id("org.jetbrains.dokka") version "1.4.32"
     id("io.spine.tools.gradle.bootstrap").version("1.7.0")
     idea
 }
@@ -52,7 +52,7 @@ spinePublishing {
 
 allprojects {
     group = "io.spine.protodata"
-    version = "0.0.7"
+    version = "0.0.8"
 }
 
 subprojects {
@@ -91,9 +91,11 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = freeCompilerArgs +
-                    "-Xopt-in=kotlin.io.path.ExperimentalPathApi,kotlin.ExperimentalUnsignedTypes" +
-                    "-Xinline-classes"
+            freeCompilerArgs = freeCompilerArgs + listOf(
+                "-Xopt-in=kotlin.io.path.ExperimentalPathApi,kotlin.ExperimentalUnsignedTypes",
+                "-Xinline-classes",
+                "-Xjvm-default=all"
+            )
         }
     }
 

@@ -24,24 +24,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.test
 
-import io.spine.server.projection.ProjectionRepository
-import io.spine.server.route.EventRoute.byFirstMessageField
+import io.spine.core.External
+import io.spine.core.Subscribe
+import io.spine.protodata.TypeEntered
+import io.spine.protodata.TypeName
+import io.spine.protodata.plugin.View
+import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
-/**
- * The repository for the [ProtoSourceFileProjection].
- */
-public class ProtoSourceFileRepository
-    : ProjectionRepository<FilePath, ProtoSourceFileProjection, ProtobufSourceFile>() {
+public class InternalMessageView
+    : View<TypeName, InternalType, InternalType.Builder>() {
 
-    protected override fun setupEventRouting(routing: EventRouting<FilePath>) {
+    @Subscribe
+    internal fun on(@External e: TypeEntered) {
+        builder().name = e.type.name
+    }
+}
+
+public class InternalMessageRepository :
+    ViewRepository<TypeName, InternalMessageView, InternalType>() {
+
+    protected override fun setupEventRouting(routing: EventRouting<TypeName>) {
         super.setupEventRouting(routing)
-        routing.replaceDefault(byFirstMessageField(FilePath::class.java))
-        routing.route(FileEntered::class.java) { event, _ ->
-            withId(event.file.path)
+        routing.route(TypeEntered::class.java) { event, _ ->
+            withId(event.type.name)
         }
     }
 }

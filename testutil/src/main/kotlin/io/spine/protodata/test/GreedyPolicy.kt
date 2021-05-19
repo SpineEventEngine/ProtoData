@@ -24,11 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata.test
 
-import io.spine.protodata.Plugin
+import io.spine.core.External
+import io.spine.protodata.TypeEntered
+import io.spine.protodata.plugin.Just
+import io.spine.protodata.plugin.Policy
+import io.spine.server.event.React
+import io.spine.server.model.Nothing
 
-/**
- * A reflective builder for [Plugin]s.
- */
-internal class ExtensionBuilder: ReflectiveBuilder<Plugin>()
+public class GreedyPolicy : Policy<TypeEntered>() {
+
+    @React
+    override fun whenever(@External event: TypeEntered): Just<Nothing> {
+        return Just(nothing())
+    }
+
+    @React
+    internal fun on(@Suppress("UNUSED_PARAMETER") e: ProjectCreated): Just<Nothing> {
+        return Just(nothing())
+    }
+}

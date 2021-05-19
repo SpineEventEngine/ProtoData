@@ -196,6 +196,7 @@ internal constructor(
      * @param extraIndentLevel
      *      extra indentation to be added to the lines; each unit adds four spaces
      */
+    @JvmOverloads
     public fun add(vararg lines: String, extraIndentLevel: Int = 0) {
         add(lines.toList(), extraIndentLevel)
     }
@@ -208,6 +209,7 @@ internal constructor(
      * @param extraIndentLevel
      *      extra indentation to be added to the lines; each unit adds four spaces
      */
+    @JvmOverloads
     public fun add(lines: Iterable<String>, extraIndentLevel: Int = 0) {
         val sourceLines = file.lines()
         val updatedLines = ArrayList(sourceLines)
