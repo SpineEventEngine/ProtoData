@@ -40,8 +40,10 @@ public class InternalMessageView
     : View<TypeName, InternalType, InternalType.Builder>() {
 
     @Subscribe
-    internal fun on(@External e: TypeEntered) = update {
-        name = e.type.name
+    internal fun on(@External e: TypeEntered) {
+        update {
+            name = e.type.name
+        }
     }
 }
 

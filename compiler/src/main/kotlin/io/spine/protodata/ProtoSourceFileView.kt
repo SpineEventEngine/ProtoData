@@ -38,19 +38,25 @@ internal class ProtoSourceFileView
     : View<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
     @Subscribe
-    internal fun on(@External e: FileEntered) = update {
-        filePath = e.file.path
-        file = e.file
+    internal fun on(@External e: FileEntered) {
+        update {
+            filePath = e.file.path
+            file = e.file
+        }
     }
 
     @Subscribe
-    internal fun on(@External e: FileOptionDiscovered) = update {
-        fileBuilder.addOption(e.option)
+    internal fun on(@External e: FileOptionDiscovered) {
+        update {
+            fileBuilder.addOption(e.option)
+        }
     }
 
     @Subscribe
-    internal fun on(@External e: TypeEntered) = update {
-        putType(e.type.typeUrl(), e.type)
+    internal fun on(@External e: TypeEntered) {
+        update {
+            putType(e.type.typeUrl(), e.type)
+        }
     }
 
     @Subscribe
@@ -86,8 +92,10 @@ internal class ProtoSourceFileView
     }
 
     @Subscribe
-    internal fun on(@External e: EnumEntered) = update {
-        putEnumType(e.type.typeUrl(), e.type)
+    internal fun on(@External e: EnumEntered) {
+        update {
+            putEnumType(e.type.typeUrl(), e.type)
+        }
     }
 
     @Subscribe
@@ -107,8 +115,10 @@ internal class ProtoSourceFileView
     }
 
     @Subscribe
-    internal fun on(@External e: ServiceEntered) = update {
-        putService(e.service.typeUrl(), e.service)
+    internal fun on(@External e: ServiceEntered) {
+        update {
+            putService(e.service.typeUrl(), e.service)
+        }
     }
 
     @Subscribe

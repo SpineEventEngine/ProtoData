@@ -38,9 +38,11 @@ import io.spine.server.route.EventRouting
 public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>() {
 
     @Subscribe
-    internal fun to(@External event: TypeEntered) = update {
-        name = event.type.name
-        type = event.type
+    internal fun to(@External event: TypeEntered) {
+        update {
+            name = event.type.name
+            type = event.type
+        }
     }
 }
 
