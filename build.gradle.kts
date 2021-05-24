@@ -24,19 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.gradle.internal.PublishingRepos
-import io.spine.gradle.internal.spinePublishing
+import io.spine.gradle.internal.Truth
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Protobuf
+import io.spine.internal.gradle.PublishingRepos
+import io.spine.internal.gradle.Scripts
+import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.spinePublishing
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+buildscript {
+
+    @Suppress("RemoveRedundantQualifierName")
+    io.spine.internal.gradle.doApplyStandard(repositories)
+
+    dependencies {
+        classpath("io.spine.tools:spine-mc-java:2.0.0-SNAPSHOT.29")
+        @Suppress("RemoveRedundantQualifierName")
+        classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.5.0"
     id("org.jetbrains.dokka") version "1.4.32"
-    id("io.spine.tools.gradle.bootstrap").version("1.7.0")
     idea
 }
 
@@ -53,23 +68,30 @@ spinePublishing {
 allprojects {
     group = "io.spine.protodata"
     version = "0.0.8"
+
+    repositories.applyStandard()
 }
 
 subprojects {
-    apply(plugin = "kotlin")
-    apply(plugin = "idea")
-    apply(plugin = "io.spine.tools.gradle.bootstrap")
-    apply(plugin = "org.jetbrains.dokka")
 
-    spine.enableJava().server()
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
+    apply {
+        plugin("kotlin")
+        plugin("idea")
+        plugin("org.jetbrains.dokka")
+        plugin("io.spine.mc-java")
+        plugin(Protobuf.GradlePlugin.id)
+        from(Scripts.modelCompiler(project))
     }
 
+    val spineCoreVersion = "2.0.0-SNAPSHOT.22"
+
     dependencies {
+        implementation("io.spine:spine-server:$spineCoreVersion")
+        Protobuf.libs.forEach { implementation(it) }
+
         testImplementation(kotlin("test-junit5"))
+        Truth.libs.forEach { implementation(it) }
+        testImplementation("io.spine.tools:spine-testutil-server:$spineCoreVersion")
         testRuntimeOnly(JUnit.runner)
     }
 

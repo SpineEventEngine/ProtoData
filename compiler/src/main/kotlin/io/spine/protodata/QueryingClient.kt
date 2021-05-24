@@ -40,7 +40,7 @@ import java.util.*
 /**
  * A builder for queries to the entities defined on top of the Protobuf compiler events.
  */
-public class QueryingClient<T : EntityState>
+public class QueryingClient<T : EntityState<*>>
 internal constructor(
     private val context: BoundedContext,
     private val type: Class<T>,
@@ -101,7 +101,7 @@ internal constructor(
  *
  * The observer persists the [found result][foundResult] as a list of messages.
  */
-private class Observer<T : EntityState>(
+private class Observer<T : EntityState<*>>(
     private val type: Class<T>
 ) : StreamObserver<QueryResponse> {
 

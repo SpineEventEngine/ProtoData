@@ -101,7 +101,7 @@ public abstract class Policy<E : EventMessage> : AbstractEventReactor(), Logging
      * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
      * prettier code.
      */
-    protected fun <P : EntityState> select(type: Class<P>): QueryingClient<P> {
+    protected fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(context!!, type, javaClass.name)
     }
 
@@ -110,7 +110,7 @@ public abstract class Policy<E : EventMessage> : AbstractEventReactor(), Logging
      *
      * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
      */
-    protected inline fun <reified P : EntityState> select(): QueryingClient<P> {
+    protected inline fun <reified P : EntityState<*>> select(): QueryingClient<P> {
         val cls = P::class.java
         return select(cls)
     }

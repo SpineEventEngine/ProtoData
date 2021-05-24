@@ -121,7 +121,7 @@ class `'Pipeline' should` {
 
     @Test
     fun `delete files`() {
-        val sourceFile = write("io/spine/protodata/test/_DeleteMe.java", "foo bar")
+        val sourceFile = write("io/spine/protodata/test/DeleteMe_.java", "foo bar")
         Pipeline(
             listOf(TestPlugin()),
             listOf(DeletingRenderer()),
@@ -135,7 +135,7 @@ class `'Pipeline' should` {
     @Test
     fun `write into insertion points`() {
         val initialContent = "foo bar"
-        val sourceFile = write("io/spine/protodata/test/_DeleteMe.java", initialContent)
+        val sourceFile = write("io/spine/protodata/test/DeleteMe_.java", initialContent)
         val renderer = PrependingRenderer()
         Pipeline(
             listOf(TestPlugin()),

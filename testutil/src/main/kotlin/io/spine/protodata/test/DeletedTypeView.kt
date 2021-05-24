@@ -51,7 +51,7 @@ public class DeletedTypeRepository
         super.setupEventRouting(routing)
         routing.route(TypeEntered::class.java) { e, _ ->
             val name = e.type.name
-            return@route if (name.simpleName.startsWith("_")) {
+            return@route if (name.simpleName.endsWith("_")) {
                 setOf(name)
             } else {
                 setOf()

@@ -27,13 +27,13 @@
 package io.spine.protodata.plugin
 
 import io.spine.base.EntityState
-import io.spine.protobuf.ValidatingBuilder
 import io.spine.server.DefaultRepository
 import io.spine.server.projection.Projection
 import io.spine.server.projection.ProjectionRepository
 import io.spine.server.projection.model.ProjectionClass
 import io.spine.server.route.EventRoute
 import io.spine.server.route.EventRouting
+import io.spine.validate.ValidatingBuilder
 
 /**
  * A view on the Protobuf sources.
@@ -76,7 +76,7 @@ import io.spine.server.route.EventRouting
  * @param M the type of the view's state; must be a Protobuf message
  * @param B the type of the view's state builder; must match `<M>`
  */
-public open class View<I, M : EntityState, B : ValidatingBuilder<M>> : Projection<I, M, B>()
+public open class View<I, M : EntityState<I>, B : ValidatingBuilder<M>> : Projection<I, M, B>()
 
 /**
  * A repository responsible for a certain type of [View]s.
@@ -90,14 +90,14 @@ public open class View<I, M : EntityState, B : ValidatingBuilder<M>> : Projectio
  * If no customization is required from a `ViewRepository`, users should prefer
  * [ViewRepository.default] to creating custom repository types.
  */
-public open class ViewRepository<I, V : View<I, S, *>, S : EntityState>
+public open class ViewRepository<I, V : View<I, S, *>, S : EntityState<I>>
     : ProjectionRepository<I, V, S>() {
 
     internal companion object {
 
         @Suppress("UNCHECKED_CAST")
         fun default(cls: Class<out View<*, *, *>>): ViewRepository<*, *, *> {
-            val cast = cls as Class<View<Any, EntityState, *>>
+            val cast = cls as Class<View<Any, EntityState<Any>, *>>
             return DefaultViewRepository(cast)
         }
     }
@@ -115,10 +115,10 @@ public open class ViewRepository<I, V : View<I, S, *>, S : EntityState>
  * should use `DefaultViewRepository` by calling [ViewRepository.default].
  */
 internal class DefaultViewRepository(
-    private val cls: Class<View<Any, EntityState, *>>
-) : ViewRepository<Any, View<Any, EntityState, *>, EntityState>(), DefaultRepository {
+    private val cls: Class<View<Any, EntityState<Any>, *>>
+) : ViewRepository<Any, View<Any, EntityState<Any>, *>, EntityState<Any>>(), DefaultRepository {
 
-    override fun entityModelClass(): ProjectionClass<View<Any, EntityState, *>> =
+    override fun entityModelClass(): ProjectionClass<View<Any, EntityState<Any>, *>> =
         ProjectionClass.asProjectionClass(cls)
 
     override fun logName(): String =
