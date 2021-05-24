@@ -147,6 +147,7 @@ class `'Pipeline' should` {
             .isEqualTo("""
                 // INSERT:'file_start'
                 Hello from ${renderer.javaClass.name}
+                // INSERT:'file_middle'
                 $initialContent
                 // INSERT:'file_end'
             """.trimIndent())
