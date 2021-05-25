@@ -32,6 +32,7 @@ import io.spine.protodata.TypeEntered
 import io.spine.protodata.TypeName
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
+import io.spine.server.entity.update
 import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
@@ -40,7 +41,9 @@ public class InternalMessageView
 
     @Subscribe
     internal fun on(@External e: TypeEntered) {
-        builder().name = e.type.name
+        update {
+            name = e.type.name
+        }
     }
 }
 

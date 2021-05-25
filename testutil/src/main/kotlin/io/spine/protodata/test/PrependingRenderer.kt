@@ -26,17 +26,17 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.language.CommonLanguages
+import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.theOnly
 import kotlin.io.path.name
 
-public class PrependingRenderer : Renderer(supportedLanguages = setOf(CommonLanguages.Java)) {
+public class PrependingRenderer : Renderer(supportedLanguages = setOf(Java)) {
 
     override fun doRender(sources: SourceSet) {
         val file = sources
-            .filter { it.path.name.startsWith("_") }
+            .filter { it.path.name.endsWith("_.java") }
             .theOnly()
         file.at(GenericInsertionPoint.FILE_START)
             .add("Hello from ${this.javaClass.name}")

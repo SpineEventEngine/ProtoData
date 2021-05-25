@@ -34,7 +34,7 @@ import io.spine.protobuf.AnyPacker
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.test.DoctorProto
-import io.spine.testing.server.blackbox.BlackBoxContext
+import io.spine.testing.server.blackbox.BlackBox
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat as assertMessage
@@ -49,7 +49,7 @@ class `'Code Generation' context should` {
 
     @Test
     fun `construct 'ProtobufSource' based on a descriptor set`() {
-        val ctx = BlackBoxContext.from(CodeGenerationContext.builder())
+        val ctx = BlackBox.from(CodeGenerationContext.builder())
         val protoDescriptor = DoctorProto.getDescriptor().toProto()
         val set = CodeGeneratorRequest
             .newBuilder()

@@ -69,9 +69,15 @@ public sealed class LineNumber {
          * Creates a `LineNumber` pointing at a given line.
          */
         @JvmStatic
-        // TODO:2021-05-17:dmytro.dashenkov: Should be a UInt. Migrate to unsigned when issue
-        //  resolved: https://youtrack.jetbrains.com/issue/KT-46725
         public fun at(number: Int): LineNumber = LineIndex(number)
+
+        /**
+         * Creates a `LineNumber` pointing at the start of the file.
+         *
+         * This is a convenience method equivalent to calling `at(0)`.
+         */
+        @JvmStatic
+        public fun startOfFile(): LineNumber = at(0)
 
         /**
          * Creates a `LineNumber` pointing at the end of the file, no matter the index of the actual
@@ -90,9 +96,12 @@ public sealed class LineNumber {
 
 /**
  * A [LineNumber] pointing at a particular line.
+ *
+ * Implementation note. We do not use unsigned integers here by design. `UInt`s in Kotlin are
+ * designed to only provide the whole bit range, not to insure invariants.
+ * See [this thread](https://youtrack.jetbrains.com/issue/KT-46144) for more details.
  */
 internal data class LineIndex constructor(val value: Int) : LineNumber() {
-
     init {
         if (value < 0) {
             throw IndexOutOfBoundsException("Invalid line number: `$value`.")

@@ -32,15 +32,17 @@ import io.spine.protodata.TypeEntered
 import io.spine.protodata.TypeName
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
+import io.spine.server.entity.update
 import io.spine.server.route.EventRouting
 
 public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>() {
 
     @Subscribe
     internal fun to(@External event: TypeEntered) {
-        builder()
-            .setName(event.type.name)
-            .setType(event.type)
+        update {
+            name = event.type.name
+            type = event.type
+        }
     }
 }
 
@@ -51,7 +53,7 @@ public class DeletedTypeRepository
         super.setupEventRouting(routing)
         routing.route(TypeEntered::class.java) { e, _ ->
             val name = e.type.name
-            return@route if (name.simpleName.startsWith("_")) {
+            return@route if (name.simpleName.endsWith("_")) {
                 setOf(name)
             } else {
                 setOf()

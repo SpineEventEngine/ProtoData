@@ -24,12 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.plugins
+import com.google.protobuf.gradle.protobuf
+import io.spine.gradle.internal.Grpc
+
 dependencies {
     implementation(project(":compiler"))
+    implementation(Grpc.stub)
+    implementation(Grpc.protobuf)
 }
 
-spine.enableJava {
-    codegen {
-        grpc = true
+val grpcPluginName = "grpc"
+
+protobuf {
+    generateProtoTasks {
+        all().whenTaskAdded {
+            plugins {
+                maybeCreate(grpcPluginName)
+            }
+        }
     }
 }

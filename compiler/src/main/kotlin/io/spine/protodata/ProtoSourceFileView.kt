@@ -29,6 +29,7 @@ package io.spine.protodata
 import io.spine.core.External
 import io.spine.core.Subscribe
 import io.spine.protodata.plugin.View
+import io.spine.server.entity.update
 
 /**
  * A view which collects information about a Protobuf source file.
@@ -38,118 +39,103 @@ internal class ProtoSourceFileView
 
     @Subscribe
     internal fun on(@External e: FileEntered) {
-        builder()
-            .setFilePath(e.file.path)
-            .setFile(e.file)
+        update {
+            filePath = e.file.path
+            file = e.file
+        }
     }
 
     @Subscribe
     internal fun on(@External e: FileOptionDiscovered) {
-        builder()
-            .fileBuilder
-            .addOption(e.option)
+        update {
+            fileBuilder.addOption(e.option)
+        }
     }
 
     @Subscribe
     internal fun on(@External e: TypeEntered) {
-        builder().putType(e.type.typeUrl(), e.type)
-    }
-
-    @Subscribe
-    internal fun on(@External e: TypeOptionDiscovered) {
-        modifyType(e.type) {
-            addOption(e.option)
+        update {
+            putType(e.type.typeUrl(), e.type)
         }
     }
 
     @Subscribe
-    internal fun on(@External e: OneofGroupEntered) {
-        modifyType(e.type) {
-            addOneofGroup(e.group)
+    internal fun on(@External e: TypeOptionDiscovered) = modifyType(e.type) {
+        addOption(e.option)
+    }
+
+    @Subscribe
+    internal fun on(@External e: OneofGroupEntered) = modifyType(e.type) {
+        addOneofGroup(e.group)
+    }
+
+    @Subscribe
+    internal fun on(@External e: OneofOptionDiscovered) = modifyType(e.type) {
+        val oneof = findOneof(e.group)
+        oneof.addOption(e.option)
+    }
+
+    @Subscribe
+    internal fun on(@External e: FieldEntered) = modifyType(e.type) {
+        if (e.field.isPartOfOneof()) {
+            val oneof = findOneof(e.field.oneofName)
+            oneof.addField(e.field)
+        } else {
+            addField(e.field)
         }
     }
 
     @Subscribe
-    internal fun on(@External e: OneofOptionDiscovered) {
-        modifyType(e.type) {
-            val oneof = findOneof(e.group)
-            oneof.addOption(e.option)
-        }
-    }
-
-    @Subscribe
-    internal fun on(@External e: FieldEntered) {
-        modifyType(e.type) {
-            if (e.field.isPartOfOneof()) {
-                val oneof = findOneof(e.field.oneofName)
-                oneof.addField(e.field)
-            } else {
-                addField(e.field)
-            }
-        }
-    }
-
-    @Subscribe
-    internal fun on(@External e: FieldOptionDiscovered) {
-        modifyType(e.type) {
-            val field = findField(e.field)
-            field.addOption(e.option)
-        }
+    internal fun on(@External e: FieldOptionDiscovered) = modifyType(e.type) {
+        val field = findField(e.field)
+        field.addOption(e.option)
     }
 
     @Subscribe
     internal fun on(@External e: EnumEntered) {
-        builder().putEnumType(e.type.typeUrl(), e.type)
-    }
-
-    @Subscribe
-    internal fun on(@External e: EnumOptionDiscovered) {
-        modifyEnum(e.type) {
-            addOption(e.option)
+        update {
+            putEnumType(e.type.typeUrl(), e.type)
         }
     }
 
     @Subscribe
-    internal fun on(@External e: EnumConstantEntered) {
-        modifyEnum(e.type) {
-            addConstant(e.constant)
-        }
+    internal fun on(@External e: EnumOptionDiscovered) = modifyEnum(e.type) {
+        addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: EnumConstantOptionDiscovered) {
-        modifyEnum(e.type) {
-            val const = constantBuilderList.find { it.name == e.constant }!!
-            const.addOption(e.option)
-        }
+    internal fun on(@External e: EnumConstantEntered) = modifyEnum(e.type) {
+        addConstant(e.constant)
+    }
+
+    @Subscribe
+    internal fun on(@External e: EnumConstantOptionDiscovered) = modifyEnum(e.type) {
+        val const = constantBuilderList.find { it.name == e.constant }!!
+        const.addOption(e.option)
     }
 
     @Subscribe
     internal fun on(@External e: ServiceEntered) {
-        builder().putService(e.service.typeUrl(), e.service)
-    }
-
-    @Subscribe
-    internal fun on(@External e: ServiceOptionDiscovered) {
-        modifyService(e.service) {
-            addOption(e.option)
+        update {
+            putService(e.service.typeUrl(), e.service)
         }
     }
 
     @Subscribe
-    internal fun on(@External e: RpcEntered) {
-        modifyService(e.service) {
-            addRpc(e.rpc)
-        }
+    internal fun on(@External e: ServiceOptionDiscovered) = modifyService(e.service) {
+        addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: RpcOptionDiscovered) {
-        modifyService(e.service) {
-            rpcBuilderList
-                .find { it.name == e.rpc }!!
-                .addOption(e.option)
-        }
+    internal fun on(@External e: RpcEntered) = modifyService(e.service) {
+        addRpc(e.rpc)
+    }
+
+    @Subscribe
+    internal fun on(@External e: RpcOptionDiscovered) = modifyService(e.service) {
+        rpcBuilderList
+            .find { it.name == e.rpc }!!
+            .addOption(e.option)
     }
 
     private fun modifyType(name: TypeName, changes: MessageType.Builder.() -> Unit) {
