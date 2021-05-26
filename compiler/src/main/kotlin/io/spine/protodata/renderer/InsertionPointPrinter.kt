@@ -50,17 +50,17 @@ public abstract class InsertionPointPrinter(
      *
      * The property getter may use [Renderer.select] to find out more info about the message types.
      */
-    protected abstract val supportedInsertionPoints: Set<InsertionPoint>
+    protected abstract fun supportedInsertionPoints(): Set<InsertionPoint>
 
     final override fun doRender(sources: SourceSet) {
         sources.prepareCode { file ->
             val lines = file.lines().toMutableList()
-            supportedInsertionPoints.forEach { point ->
+            supportedInsertionPoints().forEach { point ->
                 val lineNumber = point.locate(lines)
                 val comment = target.comment(point.codeLine)
                 when(lineNumber) {
                     is LineIndex -> {
-                        val index = lineNumber.value.toInt()
+                        val index = lineNumber.value
                         checkPositionIndex(index, lines.size, "Line number")
                         lines.add(index, comment)
                     }

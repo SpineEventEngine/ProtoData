@@ -34,8 +34,8 @@ import io.spine.protodata.renderer.LineNumber
 public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
     target = CommonLanguages.Java
 ) {
-    override val supportedInsertionPoints: Set<InsertionPoint>
-        get() = GenericInsertionPoint.values().toSet()
+    override fun supportedInsertionPoints(): Set<InsertionPoint> =
+        GenericInsertionPoint.values().toSet()
 }
 
 public enum class GenericInsertionPoint : InsertionPoint {
