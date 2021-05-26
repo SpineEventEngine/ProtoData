@@ -67,7 +67,7 @@ spinePublishing {
 
 allprojects {
     group = "io.spine.protodata"
-    version = "0.0.9"
+    version = "0.0.10"
 
     repositories.applyStandard()
 }
