@@ -26,6 +26,7 @@
 
 package io.spine.protodata.plugin
 
+import com.google.common.collect.ImmutableSet
 import io.spine.protodata.ConfigurationError
 import io.spine.server.BoundedContextBuilder
 
@@ -47,8 +48,8 @@ public interface Plugin {
      *
      * A [View] may not have a need for repository. In such case, use [Plugin.views] instead.
      */
-    public fun viewRepositories(): Set<ViewRepository<*, *, *>> =
-        setOf()
+    public fun viewRepositories(): ImmutableSet<ViewRepository<*, *, *>> =
+        ImmutableSet.of()
 
     /**
      * Obtains the [views][View] added by this plugin represented via their classes.
@@ -56,14 +57,14 @@ public interface Plugin {
      * A [View] may require a repository to route events. In such case, use
      * [Plugin.viewRepositories] instead.
      */
-    public fun views(): Set<Class<out View<*, *, *>>> =
-        setOf()
+    public fun views(): ImmutableSet<Class<out View<*, *, *>>> =
+        ImmutableSet.of()
 
     /**
      * Obtains the [policies][Policy] added by this plugin.
      */
-    public fun policies(): Set<Policy<*>> =
-        setOf()
+    public fun policies(): ImmutableSet<Policy<*>> =
+        ImmutableSet.of()
 }
 
 /**
