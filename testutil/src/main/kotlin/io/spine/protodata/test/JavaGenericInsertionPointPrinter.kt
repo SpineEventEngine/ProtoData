@@ -26,6 +26,7 @@
 
 package io.spine.protodata.test
 
+import com.google.common.collect.ImmutableSet
 import io.spine.protodata.language.CommonLanguages
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
@@ -34,8 +35,8 @@ import io.spine.protodata.renderer.LineNumber
 public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
     target = CommonLanguages.Java
 ) {
-    override fun supportedInsertionPoints(): Set<InsertionPoint> =
-        GenericInsertionPoint.values().toSet()
+    override fun supportedInsertionPoints(): ImmutableSet<InsertionPoint> =
+        ImmutableSet.copyOf(GenericInsertionPoint.values())
 }
 
 public enum class GenericInsertionPoint : InsertionPoint {
