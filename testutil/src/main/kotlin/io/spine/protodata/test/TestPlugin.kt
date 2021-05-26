@@ -31,6 +31,6 @@ import io.spine.protodata.plugin.ViewRepository
 
 public class TestPlugin: Plugin {
 
-    override val viewRepositories: Set<ViewRepository<*, *, *>>
-        get() = setOf(InternalMessageRepository(), DeletedTypeRepository())
+    override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
+        setOf(InternalMessageRepository(), DeletedTypeRepository())
 }

@@ -42,35 +42,36 @@ import io.spine.server.BoundedContextBuilder
 public interface Plugin {
 
     /**
-     * The [views][View] added by this plugin represented via their [repositories][ViewRepository].
+     * Obtains the [views][View] added by this plugin represented via their
+     * [repositories][ViewRepository].
      *
      * A [View] may not have a need for repository. In such case, use [Plugin.views] instead.
      */
-    public val viewRepositories: Set<ViewRepository<*, *, *>>
-        get() = setOf()
+    public fun viewRepositories(): Set<ViewRepository<*, *, *>> =
+        setOf()
 
     /**
-     * The [views][View] added by this plugin represented via their classes.
+     * Obtains the [views][View] added by this plugin represented via their classes.
      *
      * A [View] may require a repository to route events. In such case, use
      * [Plugin.viewRepositories] instead.
      */
-    public val views: Set<Class<out View<*, *, *>>>
-        get() = setOf()
+    public fun views(): Set<Class<out View<*, *, *>>> =
+        setOf()
 
     /**
-     * The [policies][Policy] added by this plugin.
+     * Obtains the [policies][Policy] added by this plugin.
      */
-    public val policies: Set<Policy<*>>
-        get() = setOf()
+    public fun policies(): Set<Policy<*>> =
+        setOf()
 }
 
 /**
  * Applies the given plugin to the receiver bounded context.
  */
 internal fun BoundedContextBuilder.apply(plugin: Plugin) {
-    val repos = plugin.viewRepositories.toMutableList()
-    val defaultRepos = plugin.views.map { ViewRepository.default(it) }
+    val repos = plugin.viewRepositories().toMutableList()
+    val defaultRepos = plugin.views().map { ViewRepository.default(it) }
     repos.addAll(defaultRepos)
     val repeatedView = repos.map { it.entityClass() }
                             .groupingBy { it }
@@ -85,7 +86,7 @@ internal fun BoundedContextBuilder.apply(plugin: Plugin) {
         )
     }
     repos.forEach(this::add)
-    plugin.policies.forEach {
+    plugin.policies().forEach {
         addEventDispatcher(it)
     }
 }

@@ -35,7 +35,14 @@ import io.spine.protodata.plugin.ViewRepository
  * A plugin which does whatever it's told.
  */
 public class DocilePlugin(
-    override val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
-    override val views: Set<Class<out View<*, *, *>>> = setOf(),
-    override val policies: Set<Policy<*>> = setOf()
-) : Plugin
+    private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
+    private val views: Set<Class<out View<*, *, *>>> = setOf(),
+    private val policies: Set<Policy<*>> = setOf()
+) : Plugin {
+
+    override fun viewRepositories(): Set<ViewRepository<*, *, *>> = viewRepositories
+
+    override fun views(): Set<Class<out View<*, *, *>>> = views
+
+    override fun policies(): Set<Policy<*>> = policies
+}
