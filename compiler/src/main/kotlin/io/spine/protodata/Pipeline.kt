@@ -27,6 +27,7 @@
 package io.spine.protodata
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.annotation.Internal
 import io.spine.environment.Production
 import io.spine.logging.Logging
 import io.spine.protodata.events.CompilerEvents
@@ -50,6 +51,7 @@ import io.spine.server.transport.memory.InMemoryTransportFactory
  * in the `Code Generation` context, alters the source set. This may include creating new files,
  * modifying, or deleting existing ones. Lastly, the source set is stored back onto the file system.
  */
+@Internal
 public class Pipeline(
     private val plugins: List<Plugin>,
     private val renderers:  List<Renderer>,

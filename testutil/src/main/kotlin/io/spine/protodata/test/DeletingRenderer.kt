@@ -26,13 +26,14 @@
 
 package io.spine.protodata.test
 
+import com.google.common.collect.ImmutableSet
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.javaFile
-import io.spine.protodata.language.CommonLanguages
+import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 
-public class DeletingRenderer : Renderer(supportedLanguages = setOf(CommonLanguages.Java)) {
+public class DeletingRenderer : Renderer(supportedLanguages = ImmutableSet.of(Java)) {
 
     override fun doRender(sources: SourceSet) {
         val types = select<DeletedType>().all()

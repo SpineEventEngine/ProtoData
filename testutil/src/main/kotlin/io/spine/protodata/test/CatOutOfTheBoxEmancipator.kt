@@ -26,7 +26,8 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.language.CommonLanguages
+import com.google.common.collect.ImmutableSet
+import io.spine.protodata.language.CommonLanguages.any
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 
@@ -37,7 +38,7 @@ import io.spine.protodata.renderer.SourceSet
  * Releases the proverbial Schrödinger's cat (insertion points) out of the box by observing
  * the code.
  */
-public class CatOutOfTheBoxEmancipator : Renderer(supportedLanguages = setOf(CommonLanguages.any)) {
+public class CatOutOfTheBoxEmancipator : Renderer(supportedLanguages = ImmutableSet.of(any)) {
 
     override fun doRender(sources: SourceSet) {
         sources.forEach {

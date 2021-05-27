@@ -26,7 +26,8 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.language.CommonLanguages
+import com.google.common.collect.ImmutableSet
+import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
@@ -36,7 +37,7 @@ import kotlin.io.path.Path
 /**
  * Creates a new package-private class for each [InternalType].
  */
-public class InternalAccessRenderer : Renderer(supportedLanguages = setOf(CommonLanguages.Java)) {
+public class InternalAccessRenderer : Renderer(supportedLanguages = ImmutableSet.of(Java)) {
 
     override fun doRender(sources: SourceSet) {
         val internalTypes = select<InternalType>().all()

@@ -27,6 +27,7 @@
 package io.spine.protodata.renderer
 
 import com.google.common.base.Preconditions.checkPositionIndex
+import com.google.common.collect.ImmutableSet
 import io.spine.protodata.language.Language
 
 /**
@@ -43,24 +44,24 @@ import io.spine.protodata.language.Language
  */
 public abstract class InsertionPointPrinter(
     private val target: Language
-) : Renderer(setOf(target)) {
+) : Renderer(ImmutableSet.of(target)) {
 
     /**
      * [InsertionPoint]s which could be added to source code by this `InsertionPointPrinter`.
      *
      * The property getter may use [Renderer.select] to find out more info about the message types.
      */
-    protected abstract val supportedInsertionPoints: Set<InsertionPoint>
+    protected abstract fun supportedInsertionPoints(): ImmutableSet<InsertionPoint>
 
     final override fun doRender(sources: SourceSet) {
         sources.prepareCode { file ->
             val lines = file.lines().toMutableList()
-            supportedInsertionPoints.forEach { point ->
+            supportedInsertionPoints().forEach { point ->
                 val lineNumber = point.locate(lines)
                 val comment = target.comment(point.codeLine)
                 when(lineNumber) {
                     is LineIndex -> {
-                        val index = lineNumber.value.toInt()
+                        val index = lineNumber.value
                         checkPositionIndex(index, lines.size, "Line number")
                         lines.add(index, comment)
                     }
