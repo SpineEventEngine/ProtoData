@@ -24,29 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+import io.spine.internal.dependency.JavaPoet
 
-include(
-    "compiler",
-    "cli",
-    "protoc",
-    "testutil",
-    "codegen-java"
-)
-
-project(":codegen-java").projectDir = file("$rootDir/codegen/java")
-
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
-
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
+depepndeices {
+    api(project(":compiler"))
+    api(JavaPoet.lib)
 }

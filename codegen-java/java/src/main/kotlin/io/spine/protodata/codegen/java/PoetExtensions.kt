@@ -24,29 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+@file:JvmName("Poet")
 
-include(
-    "compiler",
-    "cli",
-    "protoc",
-    "testutil",
-    "codegen-java"
-)
+package io.spine.protodata.codegen.java
 
-project(":codegen-java").projectDir = file("$rootDir/codegen/java")
+import com.google.common.collect.ImmutableList
+import com.squareup.javapoet.CodeBlock
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
-
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
+/**
+ * Splits this `CodeBlock` into lines.
+ */
+public fun CodeBlock.lines(): ImmutableList<String> {
+    val code = this.toString()
+    val lines = code.split(System.lineSeparator())
+    return ImmutableList.copyOf(lines)
 }
