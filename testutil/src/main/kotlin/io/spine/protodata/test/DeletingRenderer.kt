@@ -27,11 +27,14 @@
 package io.spine.protodata.test
 
 import com.google.common.collect.ImmutableSet
+import com.google.protobuf.StringValue
 import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.javaFile
+import io.spine.protodata.find
 import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
+import kotlin.io.path.Path
+import kotlin.io.path.div
 
 public class DeletingRenderer : Renderer(supportedLanguages = ImmutableSet.of(Java)) {
 
@@ -41,8 +44,12 @@ public class DeletingRenderer : Renderer(supportedLanguages = ImmutableSet.of(Ja
             val source = select<ProtobufSourceFile>()
                 .withId(it.type.file)
                 .orElseThrow(::IllegalStateException)
-            val javaClassFile = it.type.javaFile(source.file)
-            sources.file(javaClassFile)
+            val javaPackage = source.file.optionList
+                .find("java_package", StringValue::class.java)!!.value
+            val simpleName = it.type.name.simpleName
+            val javaFileDir = Path(javaPackage.replace('.', '/'))
+            val javaFile = javaFileDir/"$simpleName.java"
+            sources.file(javaFile)
                    .delete()
         }
     }

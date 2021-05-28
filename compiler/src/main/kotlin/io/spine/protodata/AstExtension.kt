@@ -134,6 +134,9 @@ public fun Field.isPartOfOneof(): Boolean = hasOneofName()
 /**
  * Looks up an option value by the [optionName].
  *
+ * If the option has a Protobuf primitive type, [cls] must be the wrapper type. For example,
+ * an `Int32Value` for `int32`, `StringValue` for `string`, etc.
+ *
  * @return the value of the option or a `null` if the option is not found.
  */
 public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>): T? {
