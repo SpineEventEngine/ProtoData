@@ -87,7 +87,7 @@ private val byteStringClass = ByteString::class.qualifiedName!!
  * An expression which yields the given byte string.
  */
 public class LiteralBytes(bytes: ByteString) : Expression(
-    "$byteStringClass.copyFrom(new bytes[]{${bytes.toByteArray().joinToString()}})"
+    "$byteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})"
 )
 
 /**

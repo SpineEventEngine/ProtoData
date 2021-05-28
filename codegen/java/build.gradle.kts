@@ -29,4 +29,6 @@ import io.spine.internal.dependency.JavaPoet
 dependencies {
     api(project(":compiler"))
     api(JavaPoet.lib)
+
+    testImplementation(project(":testutil"))
 }
