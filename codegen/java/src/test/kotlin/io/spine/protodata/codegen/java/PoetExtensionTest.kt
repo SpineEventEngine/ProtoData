@@ -24,21 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("Poet")
-
 package io.spine.protodata.codegen.java
 
-import com.google.common.collect.ImmutableList
+import com.google.common.truth.Truth.assertThat
 import com.squareup.javapoet.CodeBlock
+import org.junit.jupiter.api.Test
 
-/**
- * Splits this `CodeBlock` into lines.
- */
-public fun CodeBlock.lines(): ImmutableList<String> {
-    val code = this.toString()
-    if (code.isEmpty()) {
-        return ImmutableList.of()
+class `'Lines' method should` {
+
+    @Test
+    fun `split block into lines`() {
+        val block = CodeBlock.of(
+            """
+        |    System.out.println("Hello");
+        |
+        |    System.out.println("fom Java code.");
+        """.trimMargin())
+        val lines = block.lines()
+        assertThat(lines)
+            .containsExactly(
+                "    System.out.println(\"Hello\");",
+                "",
+                "    System.out.println(\"fom Java code.\");"
+            )
     }
-    val lines = code.split(System.lineSeparator())
-    return ImmutableList.copyOf(lines)
+
+    @Test
+    fun `for an empty block, return an empty list`() {
+        val block = CodeBlock.of("")
+        val lines = block.lines()
+        assertThat(lines)
+            .isEmpty()
+    }
 }
