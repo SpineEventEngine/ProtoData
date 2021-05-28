@@ -28,7 +28,6 @@
 
 package io.spine.protodata
 
-import com.google.protobuf.BoolValue
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
@@ -37,15 +36,12 @@ import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import com.google.protobuf.Message
-import com.google.protobuf.StringValue
 import io.spine.option.OptionsProto
 import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
 import io.spine.protodata.CallCardinality.CLIENT_STREAMING
 import io.spine.protodata.CallCardinality.SERVER_STREAMING
 import io.spine.protodata.CallCardinality.UNARY
-import java.io.File.separatorChar
-import java.nio.file.Path
-import kotlin.io.path.Path
+
 /**
  * Obtains the package and the name of the type.
  */
@@ -143,77 +139,6 @@ public fun Field.isPartOfOneof(): Boolean = hasOneofName()
 public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>): T? {
     val value = firstOrNull { it.name == optionName }?.value
     return value?.unpack(cls)
-}
-
-/**
- * Obtains the path to the `.java` file, generated from this message.
- *
- * The class which represents this message might not be the top level class of the Java file.
- */
-public fun MessageType.javaFile(declaredIn: File): Path {
-    val packageName = declaredIn.javaPackage()
-    val javaMultipleFiles = declaredIn.javaMultipleFiles()
-    val topLevelClassName = when {
-        !javaMultipleFiles -> declaredIn.javaOuterClassName()
-        name.nestingTypeNameList.isNotEmpty() -> name.nestingTypeNameList.first()
-        else -> name.simpleName
-    }
-    val packageAsPath = packageName.replace('.', separatorChar)
-    return Path(packageAsPath, "$topLevelClassName.java")
-}
-
-/**
- * Obtains the full name of the Java class, generated from this message.
- *
- * @return binary name of the class generated from this message.
- */
-public fun MessageType.javaClassName(declaredIn: File): String =
-    name.javaClassName(declaredIn)
-
-/**
- * Obtains the full name of the Java enum, generated from this Protobuf enum.
- *
- * @return binary name of the enum class generated from this enum.
- */
-public fun EnumType.javaClassName(declaredIn: File): String =
-    name.javaClassName(declaredIn)
-
-private fun TypeName.javaClassName(declaredIn: File): String {
-    val packageName = declaredIn.javaPackage()
-    val javaMultipleFiles = declaredIn.javaMultipleFiles()
-    val nameElements = mutableListOf<String>()
-    if (!javaMultipleFiles) {
-        nameElements.add(declaredIn.javaOuterClassName())
-    }
-    nameElements.addAll(nestingTypeNameList)
-    nameElements.add(simpleName)
-    val className = nameElements.joinToString(separator = "$")
-    return "${packageName}.${className}"
-}
-
-private fun File.javaPackage() =
-    optionList.find("java_package", StringValue::class.java)
-        ?.value
-        ?: packageName
-
-private fun File.javaMultipleFiles() =
-    optionList.find("java_multiple_files", BoolValue::class.java)
-        ?.value
-        ?: false
-
-private fun File.javaOuterClassName() =
-    optionList.find("java_outer_classname", StringValue::class.java)
-        ?.value
-        ?: nameWithoutExtension().camelCase()
-
-private fun File.nameWithoutExtension(): String {
-    val name = path.value.split("/").last()
-    val index = name.indexOf(".")
-    return if (index > 0) {
-        name.substring(0, index)
-    } else {
-        name
-    }
 }
 
 /**

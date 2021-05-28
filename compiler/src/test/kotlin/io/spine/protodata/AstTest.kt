@@ -27,168 +27,20 @@
 package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.BoolValue
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Empty
-import com.google.protobuf.StringValue
-import io.spine.protobuf.AnyPacker.pack
 import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
 import io.spine.protodata.CallCardinality.CLIENT_STREAMING
 import io.spine.protodata.CallCardinality.SERVER_STREAMING
 import io.spine.protodata.CallCardinality.UNARY
 import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.test.DoctorProto
-import java.io.File.separatorChar
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class `AST extensions should` {
 
-    @Nested
-    inner class `Obtain Java class name from` {
 
-        @Test
-        fun `top-level message`() {
-            val simpleName = "Anvil"
-            val type = MessageType
-                .newBuilder()
-                .setName(TypeName.newBuilder()
-                                 .setPackageName("ecme.example")
-                                 .setSimpleName(simpleName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(TestEnv.javaPackage)
-                .addOption(TestEnv.javaMultipleFiles)
-                .build()
-            val className = type.javaClassName(declaredIn = file)
-            assertThat(className)
-                .isEqualTo("${TestEnv.packageName}.${simpleName}")
-        }
-
-        @Test
-        fun `nested message`() {
-            val nestingTypeName = "RedDynamite"
-            val simpleName = "Fuse"
-            val type = MessageType
-                .newBuilder()
-                .setName(TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName)
-                    .addNestingTypeName(nestingTypeName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(TestEnv.javaPackage)
-                .addOption(TestEnv.javaMultipleFiles)
-                .build()
-            val className = type.javaClassName(declaredIn = file)
-            assertThat(className)
-                .isEqualTo("${TestEnv.packageName}.${nestingTypeName}$${simpleName}")
-        }
-
-        @Test
-        fun `message with Java outer class name`() {
-            val simpleName = "Fuse"
-            val type = MessageType
-                .newBuilder()
-                .setName(TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(TestEnv.javaPackage)
-                .addOption(TestEnv.javaOuterClassName)
-                .build()
-            val className = type.javaClassName(declaredIn = file)
-            assertThat(className)
-                .isEqualTo("${TestEnv.packageName}.${TestEnv.outerClassName}$${simpleName}")
-        }
-
-        @Test
-        fun enum() {
-            val simpleName = "ExplosiveType"
-            val type = EnumType
-                .newBuilder()
-                .setName(TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(TestEnv.javaPackage)
-                .addOption(TestEnv.javaMultipleFiles)
-                .build()
-            val className = type.javaClassName(declaredIn = file)
-            assertThat(className)
-                .isEqualTo("${TestEnv.packageName}.${simpleName}")
-        }
-    }
-
-    @Nested
-    inner class `Obtain Java file declaring generated class from` {
-
-        @Test
-        fun `top-level message`() {
-            val simpleName = "Anvil"
-            val type = MessageType
-                .newBuilder()
-                .setName(TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(TestEnv.javaPackage)
-                .addOption(TestEnv.javaMultipleFiles)
-                .build()
-            val className = type.javaFile(declaredIn = file)
-            assertThat(className.toString())
-                .isEqualTo("${TestEnv.packageNameAsPath}${simpleName}.java")
-        }
-
-        @Test
-        fun `nested message`() {
-            val firstNesting = "RedDynamite"
-            val simpleName = "Fuse"
-            val type = MessageType
-                .newBuilder()
-                .setName(TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName)
-                    .addNestingTypeName(firstNesting)
-                    .addNestingTypeName("Component"))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(TestEnv.javaPackage)
-                .addOption(TestEnv.javaMultipleFiles)
-                .build()
-            val className = type.javaFile(declaredIn = file)
-            assertThat(className.toString())
-                .isEqualTo("${TestEnv.packageNameAsPath}${firstNesting}.java")
-        }
-
-        @Test
-        fun `message with Java outer class name`() {
-            val simpleName = "Fuse"
-            val type = MessageType
-                .newBuilder()
-                .setName(TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(TestEnv.javaPackage)
-                .addOption(TestEnv.javaOuterClassName)
-                .build()
-            val className = type.javaFile(declaredIn = file)
-            assertThat(className.toString())
-                .isEqualTo("${TestEnv.packageNameAsPath}${TestEnv.outerClassName}.java")
-        }
-    }
 
     @Nested
     inner class `Check if a field is` {
@@ -262,26 +114,4 @@ class `AST extensions should` {
             return service.methods.find { it.name == name }!!
         }
     }
-}
-
-private object TestEnv {
-
-    const val packageName = "corp.ackme.example"
-    val packageNameAsPath = packageName.replace('.', separatorChar) + separatorChar
-    const val outerClassName = "CartoonExplosives"
-    val javaPackage: Option = Option
-        .newBuilder()
-        .setName("java_package")
-        .setValue(pack(StringValue.of(packageName)))
-        .build()
-    val javaMultipleFiles: Option = Option
-        .newBuilder()
-        .setName("java_multiple_files")
-        .setValue(pack(BoolValue.of(true)))
-        .build()
-    val javaOuterClassName: Option = Option
-        .newBuilder()
-        .setName("java_outer_classname")
-        .setValue(pack(StringValue.of(outerClassName)))
-        .build()
 }
