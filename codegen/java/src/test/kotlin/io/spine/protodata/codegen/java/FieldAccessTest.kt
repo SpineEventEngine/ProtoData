@@ -154,4 +154,3 @@ private fun assertCode(
     assertThat(expression.toCode())
         .isEqualTo("${prefix}msg.${accessor}${suffix}")
 }
-
