@@ -183,7 +183,7 @@ class `'ClassName' should` {
     }
 }
 
-internal fun assertCode(expression: Expression, code: String) {
+private fun assertCode(expression: Expression, code: String) {
     assertThat(expression.toCode())
         .isEqualTo(code)
 }
