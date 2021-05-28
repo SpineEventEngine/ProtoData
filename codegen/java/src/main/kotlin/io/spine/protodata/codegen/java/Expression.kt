@@ -66,6 +66,17 @@ public sealed class Expression(private val code: String) {
         val type = ClassName(TypeConverter::class)
         return type.call("toAny", arguments = listOf(this))
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as Expression
+        if (code != other.code) return false
+        return true
+    }
+
+    override fun hashCode(): Int =
+        code.hashCode()
 }
 
 /**
@@ -103,7 +114,7 @@ public class Literal(value: Any) : Expression(value.toString())
  * In Java, a class name is not a valid expression. Use one of the methods of this class to create
  * an expression from this class name.
  */
-public class ClassName
+public data class ClassName
 /**
  * Creates a class name from the given FQN.
  */
@@ -160,6 +171,9 @@ constructor(private val className: String) {
         generics: List<ClassName> = listOf()
     ): MethodCall =
         MethodCall(Literal(className), name, arguments, generics)
+
+    override fun toString(): String =
+        className
 }
 
 /**
@@ -222,6 +236,12 @@ internal constructor(
      */
     public fun put(key: Expression, value: Expression): MethodCall =
         MethodCall(message, putName, listOf(key, value))
+
+    /**
+     * Constructs an `putAllField(..)` expression for the associated field.
+     */
+    public fun putAll(value: Expression): MethodCall =
+        MethodCall(message, putAllName, listOf(value))
 
     private val getterName: String
         get() = when (cardinality) {

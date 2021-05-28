@@ -55,7 +55,7 @@ class `'FieldAccess' should` {
         val access = listField().access()
         assertCode(
             access.getter,
-            prefix = "${ImmutableList::class.qualifiedName}.copyOf(",
+            prefix = "$IMMUTABLE_LIST.copyOf(",
             accessor = "getRouteList()",
             suffix = ")"
         )
@@ -66,12 +66,57 @@ class `'FieldAccess' should` {
         val access = mapField().access()
         assertCode(
             access.getter,
-            prefix = "${ImmutableMap::class.qualifiedName}.copyOf(",
+            prefix = "$IMMUTABLE_MAP.copyOf(",
             accessor = "getAttributesMap()",
             suffix = ")"
         )
     }
+
+    @Test
+    fun `provide a setter`() {
+        val access = singleField().access()
+        assertCode(access.setter(Null), "setIncarnation(null)")
+    }
+
+    @Test
+    fun `provide add() method`() {
+        val access = listField().access()
+        assertCode(access.add(Literal(42)), "addRoute(42)")
+    }
+
+    @Test
+    fun `provide addAll() method`() {
+        val access = listField().access()
+        val expression = access.addAll(listExpression(listOf(Literal(3.14), Literal(2.71))))
+        assertCode(expression, "addAllRoute($IMMUTABLE_LIST.of(3.14, 2.71))")
+    }
+
+    @Test
+    fun `provide put() method`() {
+        val access = mapField().access()
+        val expression = access.put(LiteralString("foo"), LiteralString("bar"))
+        assertCode(expression, "putAttributes(\"foo\", \"bar\")")
+    }
+
+    @Test
+    fun `provide putAll() method`() {
+        val access = mapField().access()
+        val mapValue = mapExpression(
+            mapOf(LiteralString("foo") to LiteralString("bar")),
+            keyType = ClassName(String::class),
+            valueType = ClassName(String::class)
+        )
+        val expression = access.putAll(mapValue)
+        val type = String::class.java.canonicalName
+        assertCode(
+            expression,
+            "putAllAttributes($IMMUTABLE_MAP.<$type, $type>builder().put(\"foo\", \"bar\").build())"
+        )
+    }
 }
+
+private val IMMUTABLE_LIST = ImmutableList::class.qualifiedName!!
+private val IMMUTABLE_MAP = ImmutableMap::class.qualifiedName!!
 
 private fun Field.access() =
     MessageReference("msg").field(this)
