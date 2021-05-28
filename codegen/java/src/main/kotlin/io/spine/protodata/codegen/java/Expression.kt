@@ -41,6 +41,9 @@ import io.spine.protodata.FieldName
 import io.spine.protodata.camelCase
 import kotlin.reflect.KClass
 
+private const val COPY_OF = "copyOf"
+private const val OF = "of"
+
 private val immutableListClass = ClassName(ImmutableList::class)
 private val immutableMapClass = ClassName(ImmutableMap::class)
 
@@ -190,8 +193,8 @@ internal constructor(
         get() {
             val simpleAccess = MethodCall(message, getterName)
             return when (cardinality) {
-                LIST -> immutableListClass.call("copyOf", listOf(simpleAccess))
-                MAP -> immutableMapClass.call("copyOf", listOf(simpleAccess))
+                LIST -> immutableListClass.call(COPY_OF, listOf(simpleAccess))
+                MAP -> immutableMapClass.call(COPY_OF, listOf(simpleAccess))
                 else -> simpleAccess
             }
         }
@@ -305,7 +308,7 @@ constructor(
     /**
      * Constructs an expression chaining a call of the `build()` method.
      */
-    fun chainBuild(): MethodCall =
+    public fun chainBuild(): MethodCall =
         chain("build")
 
     private fun fieldName(value: String) = FieldName
@@ -320,7 +323,7 @@ constructor(
  * The resulting expression always yields an instance of Guava `ImmutableList`.
  */
 public fun listExpression(expressions: List<Expression>): MethodCall =
-    immutableListClass.call("of", expressions)
+    immutableListClass.call(OF, expressions)
 
 /**
  * Constructs an expression of a map of the given [expressions].
@@ -333,11 +336,13 @@ public fun listExpression(expressions: List<Expression>): MethodCall =
  * @param valueType the type of the values of the map;
  *                  must be non-null if the map is not empty, may be `null` otherwise
  */
-public fun mapExpression(expressions: Map<Expression, Expression>,
-                         keyType: ClassName?,
-                         valueType: ClassName?): MethodCall {
+public fun mapExpression(
+    expressions: Map<Expression, Expression>,
+    keyType: ClassName?,
+    valueType: ClassName?
+): MethodCall {
     if (expressions.isEmpty()) {
-        return immutableMapClass.call("of")
+        return immutableMapClass.call(OF)
     }
     checkNotNull(keyType)
     checkNotNull(valueType)

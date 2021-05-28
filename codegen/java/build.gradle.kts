@@ -26,7 +26,7 @@
 
 import io.spine.internal.dependency.JavaPoet
 
-depepndeices {
+dependencies {
     api(project(":compiler"))
     api(JavaPoet.lib)
 }
