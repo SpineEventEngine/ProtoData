@@ -24,33 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+import io.spine.internal.dependency.JavaPoet
 
-import com.google.common.collect.ImmutableSet
-import com.google.protobuf.StringValue
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.find
-import io.spine.protodata.language.CommonLanguages.Java
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
-import kotlin.io.path.Path
-import kotlin.io.path.div
+dependencies {
+    api(project(":compiler"))
+    api(JavaPoet.lib)
 
-public class DeletingRenderer : Renderer(supportedLanguages = ImmutableSet.of(Java)) {
-
-    override fun doRender(sources: SourceSet) {
-        val types = select<DeletedType>().all()
-        types.forEach {
-            val source = select<ProtobufSourceFile>()
-                .withId(it.type.file)
-                .orElseThrow(::IllegalStateException)
-            val javaPackage = source.file.optionList
-                .find("java_package", StringValue::class.java)!!.value
-            val simpleName = it.type.name.simpleName
-            val javaFileDir = Path(javaPackage.replace('.', '/'))
-            val javaFile = javaFileDir/"$simpleName.java"
-            sources.file(javaFile)
-                   .delete()
-        }
-    }
+    testImplementation(project(":testutil"))
 }

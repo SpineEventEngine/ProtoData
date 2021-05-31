@@ -43,7 +43,7 @@ buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
 
     dependencies {
-        classpath("io.spine.tools:spine-mc-java:2.0.0-SNAPSHOT.29")
+        classpath("io.spine.tools:spine-mc-java:2.0.0-SNAPSHOT.30")
         @Suppress("RemoveRedundantQualifierName")
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
@@ -60,14 +60,15 @@ spinePublishing {
     projectsToPublish.addAll(
         "cli",
         "compiler",
-        "protoc"
+        "protoc",
+        "codegen-java"
     )
     spinePrefix.set(false)
 }
 
 allprojects {
     group = "io.spine.protodata"
-    version = "0.0.10"
+    version = "0.0.11"
 
     repositories.applyStandard()
 }
@@ -83,7 +84,7 @@ subprojects {
         from(Scripts.modelCompiler(project))
     }
 
-    val spineCoreVersion = "2.0.0-SNAPSHOT.22"
+    val spineCoreVersion = "2.0.0-SNAPSHOT.23"
 
     dependencies {
         implementation("io.spine:spine-server:$spineCoreVersion")

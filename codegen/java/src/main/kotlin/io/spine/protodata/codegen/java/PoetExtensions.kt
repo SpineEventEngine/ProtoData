@@ -24,33 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+@file:JvmName("Poet")
 
-import com.google.common.collect.ImmutableSet
-import com.google.protobuf.StringValue
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.find
-import io.spine.protodata.language.CommonLanguages.Java
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
-import kotlin.io.path.Path
-import kotlin.io.path.div
+package io.spine.protodata.codegen.java
 
-public class DeletingRenderer : Renderer(supportedLanguages = ImmutableSet.of(Java)) {
+import com.google.common.collect.ImmutableList
+import com.squareup.javapoet.CodeBlock
 
-    override fun doRender(sources: SourceSet) {
-        val types = select<DeletedType>().all()
-        types.forEach {
-            val source = select<ProtobufSourceFile>()
-                .withId(it.type.file)
-                .orElseThrow(::IllegalStateException)
-            val javaPackage = source.file.optionList
-                .find("java_package", StringValue::class.java)!!.value
-            val simpleName = it.type.name.simpleName
-            val javaFileDir = Path(javaPackage.replace('.', '/'))
-            val javaFile = javaFileDir/"$simpleName.java"
-            sources.file(javaFile)
-                   .delete()
-        }
+/**
+ * Splits this `CodeBlock` into lines.
+ */
+public fun CodeBlock.lines(): ImmutableList<String> {
+    val code = this.toString()
+    if (code.isEmpty()) {
+        return ImmutableList.of()
     }
+    val lines = code.split(System.lineSeparator())
+    return ImmutableList.copyOf(lines)
 }

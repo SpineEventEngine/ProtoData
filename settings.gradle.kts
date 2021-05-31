@@ -26,10 +26,15 @@
 
 rootProject.name = "ProtoData"
 
-include("compiler")
-include("cli")
-include("protoc")
-include("testutil")
+include(
+    "compiler",
+    "cli",
+    "protoc",
+    "testutil",
+    "codegen-java"
+)
+
+project(":codegen-java").projectDir = file("$rootDir/codegen/java")
 
 dependencyResolutionManagement {
     repositories {

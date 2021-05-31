@@ -24,33 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.codegen.java
 
-import com.google.common.collect.ImmutableSet
-import com.google.protobuf.StringValue
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.find
-import io.spine.protodata.language.CommonLanguages.Java
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
-import kotlin.io.path.Path
-import kotlin.io.path.div
+import com.google.common.truth.Truth.assertThat
+import com.squareup.javapoet.CodeBlock
+import org.junit.jupiter.api.Test
 
-public class DeletingRenderer : Renderer(supportedLanguages = ImmutableSet.of(Java)) {
+class `'Lines' method should` {
 
-    override fun doRender(sources: SourceSet) {
-        val types = select<DeletedType>().all()
-        types.forEach {
-            val source = select<ProtobufSourceFile>()
-                .withId(it.type.file)
-                .orElseThrow(::IllegalStateException)
-            val javaPackage = source.file.optionList
-                .find("java_package", StringValue::class.java)!!.value
-            val simpleName = it.type.name.simpleName
-            val javaFileDir = Path(javaPackage.replace('.', '/'))
-            val javaFile = javaFileDir/"$simpleName.java"
-            sources.file(javaFile)
-                   .delete()
-        }
+    @Test
+    fun `split block into lines`() {
+        val block = CodeBlock.of(
+            """
+        |    System.out.println("Hello");
+        |
+        |    System.out.println("fom Java code.");
+        """.trimMargin())
+        val lines = block.lines()
+        assertThat(lines)
+            .containsExactly(
+                "    System.out.println(\"Hello\");",
+                "",
+                "    System.out.println(\"fom Java code.\");"
+            )
+    }
+
+    @Test
+    fun `for an empty block, return an empty list`() {
+        val block = CodeBlock.of("")
+        val lines = block.lines()
+        assertThat(lines)
+            .isEmpty()
     }
 }
