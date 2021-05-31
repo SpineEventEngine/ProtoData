@@ -40,7 +40,6 @@ import io.spine.protodata.test.Incarnation
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-
 class `'Expression' should` {
 
     @Test
