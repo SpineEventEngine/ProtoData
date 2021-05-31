@@ -60,7 +60,7 @@ class `Java-related AST extensions should` {
                 .addOption(javaMultipleFiles)
                 .build()
             val className = type.javaClassName(declaredIn = file)
-            assertThat(className)
+            assertThat(className.binary)
                 .isEqualTo("$packageName.$simpleName")
         }
 
@@ -82,7 +82,7 @@ class `Java-related AST extensions should` {
                 .addOption(javaMultipleFiles)
                 .build()
             val className = type.javaClassName(declaredIn = file)
-            assertThat(className)
+            assertThat(className.binary)
                 .isEqualTo("$packageName.$nestingTypeName$$simpleName")
         }
 
@@ -102,7 +102,7 @@ class `Java-related AST extensions should` {
                 .addOption(javaOuterClassName)
                 .build()
             val className = type.javaClassName(declaredIn = file)
-            assertThat(className)
+            assertThat(className.binary)
                 .isEqualTo("${packageName}.${outerClassName}$${simpleName}")
         }
 
@@ -122,7 +122,7 @@ class `Java-related AST extensions should` {
                 .addOption(javaMultipleFiles)
                 .build()
             val className = type.javaClassName(declaredIn = file)
-            assertThat(className)
+            assertThat(className.binary)
                 .isEqualTo("$packageName.$simpleName")
         }
     }

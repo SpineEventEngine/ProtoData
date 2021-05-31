@@ -148,9 +148,8 @@ class `'ClassName' should` {
 
     @Test
     fun `parse from a string`() {
-        val name = "com.acme.Cls"
-        val className = ClassName(name)
-        assertCode(className.getDefaultInstance(), "$name.getDefaultInstance()")
+        val className = ClassName("com.acme", listOf("Cls"))
+        assertCode(className.getDefaultInstance(), "com.acme.Cls.getDefaultInstance()")
     }
 
     @Test
@@ -180,6 +179,20 @@ class `'ClassName' should` {
         val cls = Incarnation::class
         val className = ClassName(cls)
         assertCode(className.enumValue(2), "${cls.qualifiedName}.forNumber(2)")
+    }
+
+    @Test
+    fun `obtain canonical name`() {
+        val cls = ClassName(Timestamp.Builder::class)
+        assertThat(cls.canonical)
+            .isEqualTo("com.google.protobuf.Timestamp.Builder")
+    }
+
+    @Test
+    fun `obtain binary name`() {
+        val cls = ClassName(Timestamp.Builder::class)
+        assertThat(cls.binary)
+            .isEqualTo("com.google.protobuf.Timestamp\$Builder")
     }
 }
 

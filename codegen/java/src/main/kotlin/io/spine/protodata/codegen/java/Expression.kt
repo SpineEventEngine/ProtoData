@@ -114,16 +114,34 @@ public class Literal(value: Any) : Expression(value.toString())
  * In Java, a class name is not a valid expression. Use one of the methods of this class to create
  * an expression from this class name.
  */
-public data class ClassName
-/**
- * Creates a class name from the given FQN.
- */
-constructor(private val className: String) {
+public class ClassName
+internal constructor(private val packageName: String, private val classNames: List<String>) {
+
+    /**
+     * The canonical name of the class.
+     *
+     * This is the name by which the class is referred to in Java code.
+     *
+     * For regular Java classes, This is similar to `binary`, except that in a binary name nested
+     * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
+     */
+    public val canonical: String = "$packageName.${classNames.joinToString(".")}"
+
+    /**
+     * The binary name of the class.
+     *
+     * This is the name by which the class is referred to in Bytecode.
+     *
+     * For regular Java classes, This is similar to `canonical`, except that in a binary name nested
+     * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
+     */
+    public val binary: String
+        get() = "$packageName.${classNames.joinToString("$")}"
 
     /**
      * Obtains the class name of the given Java class.
      */
-    public constructor(cls: Class<*>) : this(cls.canonicalName)
+    public constructor(cls: Class<*>) : this(cls.`package`.name, cls.names())
 
     /**
      * Obtains the Java class name of the given Kotlin class.
@@ -170,10 +188,25 @@ constructor(private val className: String) {
         arguments: List<Expression> = listOf(),
         generics: List<ClassName> = listOf()
     ): MethodCall =
-        MethodCall(Literal(className), name, arguments, generics)
+        MethodCall(Literal(canonical), name, arguments, generics)
 
-    override fun toString(): String =
-        className
+    override fun toString(): String = canonical
+}
+
+/**
+ * Obtains the simple name of this class including the names of the declaring classes.
+ */
+private fun Class<*>.names(): List<String> {
+    if (declaringClass == null) {
+        return listOf(this.simpleName)
+    }
+    val names = mutableListOf<String>()
+    var cls: Class<*>? = this
+    do {
+        names.add(cls!!.simpleName)
+        cls = cls.declaringClass
+    } while (cls != null)
+    return names.reversed()
 }
 
 /**
