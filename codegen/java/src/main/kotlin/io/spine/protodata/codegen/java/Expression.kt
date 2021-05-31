@@ -48,14 +48,27 @@ private val immutableListClass = ClassName(ImmutableList::class)
 private val immutableMapClass = ClassName(ImmutableMap::class)
 
 /**
+ * A piece of Java code.
+ *
+ * Can be an expression, a reference to a variable, an identifier, etc.
+ */
+public sealed interface JavaPrintable {
+
+    /**
+     * Prints this Java code.
+     */
+    public fun toCode(): String
+}
+
+/**
  * A piece of Java code which yields a value.
  */
-public sealed class Expression(private val code: String) {
+public sealed class Expression(private val code: String): JavaPrintable {
 
     /**
      * Prints this Java expression.
      */
-    public fun toCode(): String = code
+    public final override fun toCode(): String = code
 
     final override fun toString(): String = toCode()
 
@@ -115,7 +128,10 @@ public class Literal(value: Any) : Expression(value.toString())
  * an expression from this class name.
  */
 public class ClassName
-internal constructor(private val packageName: String, private val classNames: List<String>) {
+internal constructor(
+    private val packageName: String,
+    private val classNames: List<String>
+) : JavaPrintable {
 
     /**
      * The canonical name of the class.
@@ -188,7 +204,9 @@ internal constructor(private val packageName: String, private val classNames: Li
         arguments: List<Expression> = listOf(),
         generics: List<ClassName> = listOf()
     ): MethodCall =
-        MethodCall(Literal(canonical), name, arguments, generics)
+        MethodCall(this, name, arguments, generics)
+
+    override fun toCode(): String = canonical
 
     override fun toString(): String = canonical
 }
@@ -319,22 +337,31 @@ internal constructor(
 /**
  * An expression of a Java method call.
  *
- * Can be a static or an instance method. In the case of the former, the receiver expression
- * is a class name. In the case of the latter — the receiver object.
+ * Can be a static or an instance method. In the case of the former, the scope is a class name.
+ * In the case of the latter — an object reference.
  */
 public class MethodCall
+/**
+ * Creates a new `MethodCall`.
+ *
+ * @param scope the scope of the method invocation: an instance receiving the method call or
+ *              the name of the class declaring a static method
+ * @param name the name of the method
+ * @param arguments list of the arguments passed to the method
+ * @param generics the list of the type arguments passed to the method
+ */
 @JvmOverloads
 constructor(
-    receiver: Expression,
+    scope: JavaPrintable,
     name: String,
     arguments: List<Expression> = listOf(),
     generics: List<ClassName> = listOf()
 ) : Expression(
-    "${receiver.toCode()}.${generics.genericTypes()}$name(${arguments.formatParams()})"
+    "${scope.toCode()}.${generics.genericTypes()}$name(${arguments.formatParams()})"
 ) {
 
     /**
-     * Constructs an expression of another method call with the result of this call as the receiver.
+     * Constructs an expression of calling another method on the result of this method call.
      */
     @JvmOverloads
     public fun chain(name: String, arguments: List<Expression> = listOf()): MethodCall =
