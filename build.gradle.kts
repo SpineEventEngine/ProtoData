@@ -60,7 +60,8 @@ spinePublishing {
     projectsToPublish.addAll(
         "cli",
         "compiler",
-        "protoc"
+        "protoc",
+        "codegen-java"
     )
     spinePrefix.set(false)
 }

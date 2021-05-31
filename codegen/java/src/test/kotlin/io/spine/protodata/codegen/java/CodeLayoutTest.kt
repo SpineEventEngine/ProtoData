@@ -218,4 +218,3 @@ private val javaOuterClassName: Option = Option
     .setName("java_outer_classname")
     .setValue(AnyPacker.pack(StringValue.of(outerClassName)))
     .build()
-
