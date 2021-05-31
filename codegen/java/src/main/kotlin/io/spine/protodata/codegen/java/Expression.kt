@@ -80,7 +80,7 @@ public sealed class Expression(private val code: String) {
 }
 
 /**
- * An literal `null` expression.
+ * A literal `null` expression.
  */
 public object Null : Expression("null")
 
