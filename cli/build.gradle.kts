@@ -28,6 +28,7 @@ import io.spine.internal.dependency.Flogger
 
 plugins {
     application
+    `version-to-resources`
 }
 
 dependencies {
@@ -93,27 +94,4 @@ publishing {
             setArtifacts(project.configurations.getAt(executableArchivesConfig).allArtifacts)
         }
     }
-}
-
-val versionDir = "$buildDir/version"
-val versionFile = "$versionDir/version.txt"
-
-sourceSets {
-    main {
-        resources.srcDir(versionDir)
-    }
-}
-
-val createVersionFile by tasks.registering {
-
-    inputs.property("version", project.version)
-    outputs.file(versionFile)
-
-    doLast {
-        file(versionFile).writeText(project.version.toString())
-    }
-}
-
-tasks.processResources {
-    dependsOn(createVersionFile)
 }

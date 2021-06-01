@@ -24,22 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Protobuf.GradlePlugin
-import io.spine.internal.gradle.Scripts
-
-apply {
-    plugin("io.spine.mc-java")
-    plugin(GradlePlugin.id)
-    from(Scripts.modelCompiler(project))
+plugins {
+    java
 }
 
-val spineCoreVersion: String by extra
+val versionDir = "$buildDir/version"
+val versionFile = "$versionDir/version.txt"
 
-dependencies {
-    api("io.spine:spine-server:$spineCoreVersion")
-    io.spine.internal.dependency.Protobuf.libs.forEach { api(it) }
+sourceSets {
+    main {
+        resources.srcDir(versionDir)
+    }
+}
 
-    testImplementation(project(":testutil"))
-    testImplementation(JUnit.params)
+val createVersionFile by tasks.registering {
+
+    inputs.property("version", project.version)
+    outputs.file(versionFile)
+
+    doLast {
+        file(versionFile).writeText(project.version.toString())
+    }
+}
+
+tasks.processResources {
+    dependsOn(createVersionFile)
 }

@@ -24,22 +24,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Protobuf.GradlePlugin
-import io.spine.internal.gradle.Scripts
-
-apply {
-    plugin("io.spine.mc-java")
-    plugin(GradlePlugin.id)
-    from(Scripts.modelCompiler(project))
+plugins {
+    `java-gradle-plugin`
+    id("com.gradle.plugin-publish").version("0.15.0")
+    `version-to-resources`
 }
-
-val spineCoreVersion: String by extra
 
 dependencies {
-    api("io.spine:spine-server:$spineCoreVersion")
-    io.spine.internal.dependency.Protobuf.libs.forEach { api(it) }
-
-    testImplementation(project(":testutil"))
-    testImplementation(JUnit.params)
+    implementation(gradleApi())
 }
+
+gradlePlugin {
+    plugins {
+        create("protoDataPlugin") {
+            id = "io.spine.tools.gradle.bootstrap"
+            implementationClass = "io.spine.protodata.gradle.Plugin"
+            displayName = "Spine Bootstrap"
+            description = "Prepares a Gradle project for development on Spine."
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://spine.io/"
+    vcsUrl = "https://github.com/SpineEventEngine/ProtoData.git"
+    tags = listOf("spine", "protobuf", "protodata", "code generation")
+
+    mavenCoordinates {
+        groupId = "io.spine"
+        artifactId = "proto-data"
+        version = project.version.toString()
+    }
+
+    withDependencies { clear() }
+
+    plugins {
+        named("protoDataPlugin") {
+            version = project.version.toString()
+        }
+    }
+}
+
