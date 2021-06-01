@@ -26,7 +26,6 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.collect.ImmutableSet
 import io.spine.base.EntityState
 import io.spine.protodata.QueryingClient
 import io.spine.protodata.language.Language
@@ -41,7 +40,7 @@ import io.spine.server.BoundedContext
  */
 public abstract class Renderer
 protected constructor(
-    private val supportedLanguages: ImmutableSet<Language>
+    private val supportedLanguages: Set<Language>
 ) {
 
     internal lateinit var protoDataContext: BoundedContext

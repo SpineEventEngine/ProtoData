@@ -26,12 +26,11 @@
 
 package io.spine.protodata.test
 
-import com.google.common.collect.ImmutableSet
 import io.spine.protodata.language.CommonLanguages.JavaScript
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 
-public class JsRenderer : Renderer(supportedLanguages = ImmutableSet.of(JavaScript)) {
+public class JsRenderer : Renderer(supportedLanguages = setOf(JavaScript)) {
 
     override fun doRender(sources: SourceSet) {
         sources.forEach {

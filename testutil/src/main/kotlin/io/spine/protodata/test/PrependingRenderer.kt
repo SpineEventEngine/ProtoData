@@ -26,14 +26,13 @@
 
 package io.spine.protodata.test
 
-import com.google.common.collect.ImmutableSet
 import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.theOnly
 import kotlin.io.path.name
 
-public class PrependingRenderer : Renderer(supportedLanguages = ImmutableSet.of(Java)) {
+public class PrependingRenderer : Renderer(supportedLanguages = setOf(Java)) {
 
     override fun doRender(sources: SourceSet) {
         val file = sources
