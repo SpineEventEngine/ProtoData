@@ -26,12 +26,11 @@
 
 package io.spine.protodata.test
 
-import com.google.common.collect.ImmutableSet
 import io.spine.protodata.language.CommonLanguages.Kotlin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 
-public class KtRenderer : Renderer(supportedLanguages = ImmutableSet.of(Kotlin)) {
+public class KtRenderer : Renderer(supportedLanguages = setOf(Kotlin)) {
 
     override fun doRender(sources: SourceSet) {
         sources.forEach {

@@ -26,7 +26,6 @@
 
 package io.spine.protodata
 
-import com.google.common.collect.ImmutableSet
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.renderer.SourceSet
@@ -211,7 +210,7 @@ class `'Pipeline' should` {
         fun `a policy handles too many events at once`() {
             val policy = GreedyPolicy()
             val pipeline = Pipeline(
-                listOf(DocilePlugin(policies = ImmutableSet.of(policy))),
+                listOf(DocilePlugin(policies = setOf(policy))),
                 listOf(renderer),
                 SourceSet.fromContentsOf(srcRoot),
                 request
@@ -227,8 +226,8 @@ class `'Pipeline' should` {
             val viewClass = DeletedTypeView::class.java
             val pipeline = Pipeline(
                 listOf(DocilePlugin(
-                    views = ImmutableSet.of(viewClass),
-                    viewRepositories = ImmutableSet.of(DeletedTypeRepository())
+                    views = setOf(viewClass),
+                    viewRepositories = setOf(DeletedTypeRepository())
                 )),
                 listOf(renderer),
                 SourceSet.fromContentsOf(srcRoot),
