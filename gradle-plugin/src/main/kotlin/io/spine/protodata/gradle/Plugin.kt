@@ -38,6 +38,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.kotlin.dsl.withType
 import org.gradle.api.Plugin as GradlePlugin
 
 public class Plugin : GradlePlugin<Project> {
@@ -91,6 +93,8 @@ private fun createEvalTask(
         task.dependsOn(config.buildDependencies)
         task.dependsOn(extension.generateProtoTasks)
         task.buildCommand(config, extension)
+
+        target.tasks.withType<JavaCompile> { dependsOn(task) }
     }
 
 private fun Project.protoDataExecutable(): String {
