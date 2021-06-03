@@ -42,6 +42,33 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.withType
 import org.gradle.api.Plugin as GradlePlugin
 
+/**
+ * The ProtoData Gradle plugin.
+ *
+ * Adds the `installProtoData` task which installs the ProtoData executable onto
+ * the current machine.
+ *
+ * Adds the `launchProtoData` task which runs the executable with the arguments assembled from
+ * the configuration of this plugin.
+ *
+ * The users can submit configuration parameters, such as renderer and plugin class names, etc. via
+ * the `protoData { }` extension.
+ *
+ * The users can submit the user classpath to the ProtoData by declaring dependencies using
+ * the `protoData` configuration.
+ *
+ * Example:
+ * ```
+ * protoData {
+ *     renderers("com.acme.MyRenderer")
+ *     plugins("com.acme.MyPlugin")
+ * }
+ *
+ * dependencies {
+ *     protoData(project(":my-plugin"))
+ * }
+ * ```
+ */
 public class Plugin : GradlePlugin<Project> {
 
     override fun apply(target: Project) {
@@ -59,12 +86,19 @@ public class Plugin : GradlePlugin<Project> {
     }
 }
 
+/**
+ * The `protoData { }` Gradle extension.
+ */
 @Suppress("UnstableApiUsage") // Gradle Property API.
 public class Extension(private val project: Project) {
 
     internal  val plugins: ListProperty<String> =
         project.objects.listProperty(String::class.java)
 
+    /**
+     * Passes given names of Java classes to ProtoData as the `io.spine.protodata.plugin.Plugin`
+     * classes.
+     */
     public fun plugins(vararg classNames: String) {
         plugins.addAll(classNames.toList())
     }
@@ -72,6 +106,10 @@ public class Extension(private val project: Project) {
     internal val renderers: ListProperty<String> =
         project.objects.listProperty(String::class.java)
 
+    /**
+     * Passes given names of Java classes to ProtoData as the `io.spine.protodata.renderer.Renderer`
+     * classes.
+     */
     public fun renderers(vararg classNames: String) {
         renderers.addAll(classNames.toList())
     }
@@ -79,6 +117,10 @@ public class Extension(private val project: Project) {
     internal  val optionProviders: ListProperty<String> =
         project.objects.listProperty(String::class.java)
 
+    /**
+     * Passes given names of Java classes to ProtoData as
+     * the `io.spine.protodata.option.OptionsProvider` classes.
+     */
     public fun optionProviders(vararg classNames: String) {
         optionProviders.addAll(classNames.toList())
     }
@@ -88,6 +130,14 @@ public class Extension(private val project: Project) {
             project.layout.buildDirectory.file("protodata/request.bin")
         )
 
+    /**
+     * The location where to write and read the serialized `CodeGeneratorRequest`.
+     *
+     * The value accepted by this property it turned into a file via the Gradle's `Project.file(..)`
+     * method.
+     *
+     * By default, the request file is stored in a subdir inside the `build` directory.
+     */
     public var requestFile: Any
         get() = requestFileProperty.get()
         set(value) = requestFileProperty.set(project.file(value))
@@ -97,6 +147,11 @@ public class Extension(private val project: Project) {
             project.layout.projectDirectory.dir("generated/main/java")
         )
 
+    /**
+     * The location where the sources processed by ProtoData can be found.
+     *
+     * By default, `generated/main/java`.
+     */
     public var source: Any
         get() = sourceProperty.get()
         set(value) = sourceProperty.set(project.file(value))
@@ -104,6 +159,11 @@ public class Extension(private val project: Project) {
     internal val generateProtoTasks: ListProperty<String> =
         project.objects.listProperty(String::class.java).convention(listOf("generateProto"))
 
+    /**
+     * Adds the names of Gradle tasks which generate the sources processed by ProtoData.
+     *
+     * By default, only `generateProto` task is considered.
+     */
     public fun generateProtoTasks(vararg taskNames: String) {
         optionProviders.addAll(taskNames.toList())
     }
