@@ -60,24 +60,53 @@ public class Plugin : GradlePlugin<Project> {
 }
 
 @Suppress("UnstableApiUsage") // Gradle Property API.
-public class Extension(project: Project) {
+public class Extension(private val project: Project) {
 
-    public val plugins: ListProperty<String> =
+    internal  val plugins: ListProperty<String> =
         project.objects.listProperty(String::class.java)
-    public val renderers: ListProperty<String> =
+
+    public fun plugins(vararg classNames: String) {
+        plugins.addAll(classNames.toList())
+    }
+
+    internal val renderers: ListProperty<String> =
         project.objects.listProperty(String::class.java)
-    public val optionProviders: ListProperty<String> =
+
+    public fun renderers(vararg classNames: String) {
+        renderers.addAll(classNames.toList())
+    }
+
+    internal  val optionProviders: ListProperty<String> =
         project.objects.listProperty(String::class.java)
-    public val requestFile: RegularFileProperty =
+
+    public fun optionProviders(vararg classNames: String) {
+        optionProviders.addAll(classNames.toList())
+    }
+
+    internal val requestFileProperty: RegularFileProperty =
         project.objects.fileProperty().convention(
             project.layout.buildDirectory.file("protodata/request.bin")
         )
-    public val source: DirectoryProperty =
+
+    public var requestFile: Any
+        get() = requestFileProperty.get()
+        set(value) = requestFileProperty.set(project.file(value))
+
+    internal val sourceProperty: DirectoryProperty =
         project.objects.directoryProperty().convention(
             project.layout.projectDirectory.dir("generated/main/java")
         )
-    public val generateProtoTasks: ListProperty<String> =
+
+    public var source: Any
+        get() = sourceProperty.get()
+        set(value) = sourceProperty.set(project.file(value))
+
+    internal val generateProtoTasks: ListProperty<String> =
         project.objects.listProperty(String::class.java).convention(listOf("generateProto"))
+
+    public fun generateProtoTasks(vararg taskNames: String) {
+        optionProviders.addAll(taskNames.toList())
+    }
 }
 
 private const val EXECUTABLE = "protodata"
@@ -130,9 +159,9 @@ private fun Exec.buildCommand(config: Configuration,
         }
     }
     command.add("--request")
-    command.add(extension.requestFile.get().asFile.absolutePath)
+    command.add(extension.requestFileProperty.get().asFile.absolutePath)
     command.add("--src")
-    command.add(extension.source.asFile.get().absolutePath)
+    command.add(extension.sourceProperty.asFile.get().absolutePath)
     if (userClassPath.isNotEmpty()) {
         command.add("--user-classpath")
         command.add(userClassPath)
@@ -174,7 +203,7 @@ private fun configureProtobufPlugin(target: Project, extension: Extension, versi
             all().forEach {
                 it.plugins {
                     id(PROTOC_PLUGIN) {
-                        val requestFile = extension.requestFile.asFile.get().absolutePath
+                        val requestFile = extension.requestFileProperty.asFile.get().absolutePath
                         option(requestFile)
                     }
                 }
