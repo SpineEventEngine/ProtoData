@@ -41,7 +41,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("protoDataPlugin") {
-            id = "io.spine.tools.gradle.bootstrap"
+            id = "io.spine.proto-data"
             implementationClass = "io.spine.protodata.gradle.Plugin"
             displayName = "Spine Bootstrap"
             description = "Prepares a Gradle project for development on Spine."
