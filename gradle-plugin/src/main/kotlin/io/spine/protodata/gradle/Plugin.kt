@@ -26,10 +26,10 @@
 
 package io.spine.protodata.gradle
 
-import com.google.protobuf.gradle.ProtobufConvention
 import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
+import com.google.protobuf.gradle.protobuf
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.DirectoryProperty
@@ -192,8 +192,7 @@ private fun createInstallTask(target: Project, config: Configuration, version: S
 }
 
 private fun configureProtobufPlugin(target: Project, extension: Extension, version: String) {
-    val convention = target.extensions.getByType(ProtobufConvention::class.java)
-    convention.protobuf.apply {
+    target.protobuf {
         plugins {
             id(PROTOC_PLUGIN) {
                 artifact = "io.spine.protodata:protoc:$version:exe@jar"
