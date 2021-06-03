@@ -80,6 +80,7 @@ public class Extension(project: Project) {
 
 private const val EXECUTABLE = "protodata"
 private const val PROTO_DATA_LOCATION = "protoDataLocation"
+private const val PROTOC_PLUGIN = "protodata"
 
 private fun createEvalTask(
     target: Project,
@@ -156,8 +157,6 @@ private fun createInstallTask(target: Project, config: Configuration, version: S
         it.dependsOn(stageTask)
     }
 }
-
-private const val PROTOC_PLUGIN = "protodata"
 
 private fun configureProtobufPlugin(target: Project, extension: Extension, version: String) {
     val convention = target.extensions.getByType(ProtobufConvention::class.java)
