@@ -26,6 +26,10 @@
 
 package io.spine.protodata.gradle
 
+import com.google.protobuf.gradle.ProtobufConvention
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.id
+import com.google.protobuf.gradle.plugins
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.DirectoryProperty
@@ -44,8 +48,12 @@ public class Plugin : GradlePlugin<Project> {
         val protoDataConfiguration = target.configurations.create("protoData")
         createEvalTask(target, extension, protoDataConfiguration)
 
+        val resource = Plugin::class.java.classLoader.getResource("version.txt")!!
+        val version = resource.readText()
+        configureProtobufPlugin(target, extension, version)
+
         val protoDataRawConfiguration = target.configurations.create("protoDataRawArtifact")
-        createInstallTask(target, protoDataRawConfiguration)
+        createInstallTask(target, protoDataRawConfiguration, version)
     }
 }
 
@@ -127,9 +135,7 @@ private fun Exec.buildCommand(config: Configuration,
     commandLine(command)
 }
 
-private fun createInstallTask(target: Project, config: Configuration) {
-    val resource = Plugin::class.java.classLoader.getResource("version.txt")!!
-    val version = resource.readText()
+private fun createInstallTask(target: Project, config: Configuration, version: String) {
     val dependency = target.dependencies.add(config.name,
                                              "io.spine.protodata:executable:${version}")
     val stagingDir = "${target.buildDir}/protodata/staging"
@@ -148,5 +154,28 @@ private fun createInstallTask(target: Project, config: Configuration) {
         }
         it.commandLine(command)
         it.dependsOn(stageTask)
+    }
+}
+
+private const val PROTOC_PLUGIN = "protodata"
+
+private fun configureProtobufPlugin(target: Project, extension: Extension, version: String) {
+    val convention = target.extensions.getByType(ProtobufConvention::class.java)
+    convention.protobuf.apply {
+        plugins {
+            id(PROTOC_PLUGIN) {
+                artifact = "io.spine.protodata:protoc:$version:exe@jar"
+            }
+        }
+        generateProtoTasks {
+            all().forEach {
+                it.plugins {
+                    id(PROTOC_PLUGIN) {
+                        val requestFile = extension.requestFile.asFile.get().absolutePath
+                        option(requestFile)
+                    }
+                }
+            }
+        }
     }
 }

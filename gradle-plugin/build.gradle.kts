@@ -1,3 +1,5 @@
+import io.spine.internal.dependency.Protobuf
+
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -32,6 +34,8 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
+    implementation(gradleKotlinDsl())
+    implementation(Protobuf.GradlePlugin.lib)
 }
 
 gradlePlugin {
@@ -64,4 +68,3 @@ pluginBundle {
         }
     }
 }
-
