@@ -131,7 +131,7 @@ private fun Project.protoDataExecutable(): String {
     return if (location == null) {
         EXECUTABLE
     } else {
-        "$location/protodata/bin/protodata"
+        "$location/protodata/bin/$EXECUTABLE"
     }
 }
 
