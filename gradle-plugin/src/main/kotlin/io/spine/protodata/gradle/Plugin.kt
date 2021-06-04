@@ -37,7 +37,6 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.withType
 import org.gradle.api.Plugin as GradlePlugin
@@ -177,8 +176,7 @@ private fun createEvalTask(
     target: Project,
     extension: Extension,
     config: Configuration
-): TaskProvider<*> =
-    target.tasks.register("launchProtoData", Exec::class.java) { task ->
+) = target.tasks.create("launchProtoData", Exec::class.java) { task ->
         task.dependsOn(config.buildDependencies)
         task.dependsOn(extension.generateProtoTasks)
         task.buildCommand(config, extension)
