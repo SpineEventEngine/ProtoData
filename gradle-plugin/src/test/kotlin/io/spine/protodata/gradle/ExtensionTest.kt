@@ -74,6 +74,14 @@ class `Plugin extension should` {
     }
 
     @Test
+    fun `add 'OptionProvider' class names`() {
+        val className = "com.acme.MyOptions"
+        extension.optionProviders(className)
+        assertThat(extension.optionProviders.get())
+            .containsExactly(className)
+    }
+
+    @Test
     fun `add dependency tasks`() {
         val taskName = "generateCustomProto"
         extension.generateProtoTasks(taskName)
