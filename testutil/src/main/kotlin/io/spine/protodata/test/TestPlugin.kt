@@ -26,12 +26,11 @@
 
 package io.spine.protodata.test
 
-import com.google.common.collect.ImmutableSet
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.ViewRepository
 
 public class TestPlugin: Plugin {
 
-    override fun viewRepositories(): ImmutableSet<ViewRepository<*, *, *>> =
-        ImmutableSet.of(InternalMessageRepository(), DeletedTypeRepository())
+    override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
+        setOf(InternalMessageRepository(), DeletedTypeRepository())
 }

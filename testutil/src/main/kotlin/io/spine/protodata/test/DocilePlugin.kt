@@ -26,7 +26,6 @@
 
 package io.spine.protodata.test
 
-import com.google.common.collect.ImmutableSet
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.Policy
 import io.spine.protodata.plugin.View
@@ -36,14 +35,14 @@ import io.spine.protodata.plugin.ViewRepository
  * A plugin which does whatever it's told.
  */
 public class DocilePlugin(
-    private val viewRepositories: ImmutableSet<ViewRepository<*, *, *>> = ImmutableSet.of(),
-    private val views: ImmutableSet<Class<out View<*, *, *>>> = ImmutableSet.of(),
-    private val policies: ImmutableSet<Policy<*>> = ImmutableSet.of()
+    private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
+    private val views: Set<Class<out View<*, *, *>>> = setOf(),
+    private val policies: Set<Policy<*>> = setOf()
 ) : Plugin {
 
-    override fun viewRepositories(): ImmutableSet<ViewRepository<*, *, *>> = viewRepositories
+    override fun viewRepositories(): Set<ViewRepository<*, *, *>> = viewRepositories
 
-    override fun views(): ImmutableSet<Class<out View<*, *, *>>> = views
+    override fun views(): Set<Class<out View<*, *, *>>> = views
 
-    override fun policies(): ImmutableSet<Policy<*>> = policies
+    override fun policies(): Set<Policy<*>> = policies
 }

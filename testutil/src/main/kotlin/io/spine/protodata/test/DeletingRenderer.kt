@@ -26,7 +26,6 @@
 
 package io.spine.protodata.test
 
-import com.google.common.collect.ImmutableSet
 import com.google.protobuf.StringValue
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.find
@@ -36,7 +35,7 @@ import io.spine.protodata.renderer.SourceSet
 import kotlin.io.path.Path
 import kotlin.io.path.div
 
-public class DeletingRenderer : Renderer(supportedLanguages = ImmutableSet.of(Java)) {
+public class DeletingRenderer : Renderer(supportedLanguages = setOf(Java)) {
 
     override fun doRender(sources: SourceSet) {
         val types = select<DeletedType>().all()
