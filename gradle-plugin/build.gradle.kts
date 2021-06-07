@@ -32,10 +32,19 @@ plugins {
     `version-to-resources`
 }
 
+val spineBaseVersion: String by extra
+
 dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(Protobuf.GradlePlugin.lib)
+
+    testImplementation("io.spine.tools:spine-plugin-base:$spineBaseVersion")
+    testImplementation("io.spine.tools:spine-plugin-testlib:$spineBaseVersion")
+}
+
+tasks.withType<Test> {
+    dependsOn(":cli:publishToMavenLocal")
 }
 
 gradlePlugin {
