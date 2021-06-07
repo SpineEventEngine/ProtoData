@@ -26,23 +26,15 @@
 
 package io.spine.protodata.gradle
 
+import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
 import java.util.UUID.randomUUID
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 class `'installProtoData' task should` {
-
-    private var shell: String? = null
-
-    @BeforeEach
-    fun clearShell() {
-        shell = System.getenv("SHELL")
-        System.getenv()
-    }
 
     @Test
     fun `install ProtoData under the given location`(@TempDir projectDir: File) {
@@ -52,6 +44,7 @@ class `'installProtoData' task should` {
             .setProjectFolder(projectDir)
             .withPluginClasspath()
             .withProperty("protoDataLocation", targetLocation.absolutePath)
+            .withEnvironment(ImmutableMap.of())
             .build()
         project.executeTask { "installProtoData" }
         assertThat(targetLocation.resolve("bin").exists())
