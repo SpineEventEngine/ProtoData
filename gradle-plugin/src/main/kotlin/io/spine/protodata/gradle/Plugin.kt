@@ -113,7 +113,7 @@ public class Extension(private val project: Project) {
         renderers.addAll(classNames.toList())
     }
 
-    internal  val optionProviders: ListProperty<String> =
+    internal val optionProviders: ListProperty<String> =
         project.objects.listProperty(String::class.java)
 
     /**
