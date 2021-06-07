@@ -164,7 +164,7 @@ public class Extension(private val project: Project) {
      * By default, only `generateProto` task is considered.
      */
     public fun generateProtoTasks(vararg taskNames: String) {
-        optionProviders.addAll(taskNames.toList())
+        generateProtoTasks.addAll(taskNames.toList())
     }
 }
 
