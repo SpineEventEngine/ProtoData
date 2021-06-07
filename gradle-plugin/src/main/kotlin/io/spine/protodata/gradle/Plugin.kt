@@ -95,8 +95,8 @@ public class Extension(private val project: Project) {
         project.objects.listProperty(String::class.java)
 
     /**
-     * Passes given names of Java classes to ProtoData as the `io.spine.protodata.plugin.Plugin`
-     * classes.
+     * Passes given names of Java classes to ProtoData as
+     * the `io.spine.protodata.plugin.Plugin` classes.
      */
     public fun plugins(vararg classNames: String) {
         plugins.addAll(classNames.toList())
@@ -106,8 +106,8 @@ public class Extension(private val project: Project) {
         project.objects.listProperty(String::class.java)
 
     /**
-     * Passes given names of Java classes to ProtoData as the `io.spine.protodata.renderer.Renderer`
-     * classes.
+     * Passes given names of Java classes to ProtoData as
+     * the `io.spine.protodata.renderer.Renderer` classes.
      */
     public fun renderers(vararg classNames: String) {
         renderers.addAll(classNames.toList())
@@ -132,8 +132,8 @@ public class Extension(private val project: Project) {
     /**
      * The location where to write and read the serialized `CodeGeneratorRequest`.
      *
-     * The value accepted by this property it turned into a file via the Gradle's `Project.file(..)`
-     * method.
+     * The value accepted by this property it turned into a file via the Gradle's
+     * `Project.file(..)` method.
      *
      * By default, the request file is stored in a subdir inside the `build` directory.
      */
