@@ -74,7 +74,7 @@ public class Plugin : GradlePlugin<Project> {
         val extension = Extension(target)
         target.extensions.add("protoData", extension)
         val protoDataConfiguration = target.configurations.create("protoData")
-        createEvalTask(target, extension, protoDataConfiguration)
+        createLaunchTask(target, extension, protoDataConfiguration)
 
         val resource = Plugin::class.java.classLoader.getResource("version.txt")!!
         val version = resource.readText()
@@ -172,7 +172,7 @@ private const val EXECUTABLE = "protodata"
 private const val PROTO_DATA_LOCATION = "protoDataLocation"
 private const val PROTOC_PLUGIN = "protodata"
 
-private fun createEvalTask(
+private fun createLaunchTask(
     target: Project,
     extension: Extension,
     config: Configuration
@@ -185,6 +185,9 @@ private fun createEvalTask(
     }
 
 private fun Project.protoDataExecutable(): String {
+    if (!rootProject.hasProperty(PROTO_DATA_LOCATION)) {
+        return EXECUTABLE
+    }
     val location = rootProject.property(PROTO_DATA_LOCATION) as String?
     return if (location == null) {
         EXECUTABLE
@@ -239,10 +242,13 @@ private fun createInstallTask(target: Project, config: Configuration, version: S
 
     target.tasks.register("installProtoData", Exec::class.java) {
         val command = mutableListOf("$stagingDir/install.sh")
-        val location = target.rootProject.property(PROTO_DATA_LOCATION) as String?
-        if (location != null) {
-            val absoluteLocation = target.rootProject.file(location).absolutePath
-            command.add(absoluteLocation)
+        val rootProject = target.rootProject
+        if (rootProject.hasProperty(PROTO_DATA_LOCATION)) {
+            val location = target.rootProject.property(PROTO_DATA_LOCATION) as String?
+            if (location != null) {
+                val absoluteLocation = target.rootProject.file(location).absolutePath
+                command.add(absoluteLocation)
+            }
         }
         it.commandLine(command)
         it.dependsOn(stageTask)
