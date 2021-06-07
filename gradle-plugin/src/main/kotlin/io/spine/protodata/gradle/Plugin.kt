@@ -147,7 +147,7 @@ public class Extension(private val project: Project) {
         )
 
     /**
-     * The location where the sources processed by ProtoData can be found.
+     * The location where the sources to process with ProtoData can be found.
      *
      * By default, `generated/main/java`.
      */
