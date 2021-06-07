@@ -44,9 +44,6 @@ import org.gradle.api.Plugin as GradlePlugin
 /**
  * The ProtoData Gradle plugin.
  *
- * Adds the `installProtoData` task which installs the ProtoData executable onto
- * the current machine.
- *
  * Adds the `launchProtoData` task which runs the executable with the arguments assembled from
  * the configuration of this plugin.
  *
@@ -67,6 +64,10 @@ import org.gradle.api.Plugin as GradlePlugin
  *     protoData(project(":my-plugin"))
  * }
  * ```
+ *
+ * The plugin also adds the `installProtoData` task which installs the ProtoData executable onto
+ * the current machine. If the user does not have the ProtoData installed on their local machine,
+ * they can do that by simply running `installProtoData` task.
  */
 public class Plugin : GradlePlugin<Project> {
 
