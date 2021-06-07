@@ -28,7 +28,7 @@ jobs:
       - run: git submodule update --init --recursive
 
       - name: Decrypt Git SSH credentials
-        run: ./config/scripts/decrypt.sh "GRADLE_PORTAL_CREDENTIALS_KEY" ./gradle.secret.properties.gpg ./gradle.secret.properties
+        run: ./config/scripts/decrypt.sh "$GRADLE_PORTAL_CREDENTIALS_KEY" ./gradle.secret.properties.gpg ./gradle.secret.properties
         env:
           GRADLE_PORTAL_CREDENTIALS_KEY: ${{ secrets.GRADLE_PORTAL_CREDENTIALS_KEY }}
 
