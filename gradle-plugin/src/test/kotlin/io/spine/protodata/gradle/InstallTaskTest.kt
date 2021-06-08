@@ -24,22 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Protobuf.GradlePlugin
-import io.spine.internal.gradle.Scripts
+package io.spine.protodata.gradle
 
-apply {
-    plugin("io.spine.mc-java")
-    plugin(GradlePlugin.id)
-    from(Scripts.modelCompiler(project))
-}
+import com.google.common.collect.ImmutableMap
+import com.google.common.truth.Truth.assertThat
+import io.spine.tools.gradle.testing.GradleProject
+import java.io.File
+import java.util.UUID.randomUUID
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
-val spineCoreVersion: String by extra
+class `'installProtoData' task should` {
 
-dependencies {
-    api("io.spine:spine-server:$spineCoreVersion")
-    io.spine.internal.dependency.Protobuf.libs.forEach { api(it) }
-
-    testImplementation(project(":testutil"))
-    testImplementation(JUnit.params)
+    @Test
+    fun `install ProtoData under the given location`(@TempDir projectDir: File) {
+        val targetLocation = projectDir.resolve("protodata-${randomUUID()}")
+        val project = GradleProject.newBuilder()
+            .setProjectName("install-test")
+            .setProjectFolder(projectDir)
+            .withPluginClasspath()
+            .withProperty("protoDataLocation", targetLocation.absolutePath)
+            .withEnvironment(ImmutableMap.of())
+            .build()
+        project.executeTask { "installProtoData" }
+        assertThat(targetLocation.resolve("bin").exists())
+            .isTrue()
+    }
 }

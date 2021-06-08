@@ -26,9 +26,7 @@
 
 import io.spine.gradle.internal.Truth
 import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Protobuf
 import io.spine.internal.gradle.PublishingRepos
-import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.spinePublishing
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
@@ -42,8 +40,12 @@ buildscript {
     @Suppress("RemoveRedundantQualifierName")
     io.spine.internal.gradle.doApplyStandard(repositories)
 
+    apply(from = "$rootDir/version.gradle.kts")
+
+    val spineBaseVersion: String by extra
+
     dependencies {
-        classpath("io.spine.tools:spine-mc-java:2.0.0-SNAPSHOT.30")
+        classpath("io.spine.tools:spine-mc-java:$spineBaseVersion")
         @Suppress("RemoveRedundantQualifierName")
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
@@ -67,8 +69,10 @@ spinePublishing {
 }
 
 allprojects {
+    apply(from = "$rootDir/version.gradle.kts")
+
     group = "io.spine.protodata"
-    version = "0.0.12"
+    version = extra["protoDataVersion"]!!
 
     repositories.applyStandard()
 }
@@ -79,20 +83,14 @@ subprojects {
         plugin("kotlin")
         plugin("idea")
         plugin("org.jetbrains.dokka")
-        plugin("io.spine.mc-java")
-        plugin(Protobuf.GradlePlugin.id)
-        from(Scripts.modelCompiler(project))
     }
 
-    val spineCoreVersion = "2.0.0-SNAPSHOT.23"
+    val spineCoreVersion: String by extra
 
     dependencies {
-        implementation("io.spine:spine-server:$spineCoreVersion")
-        Protobuf.libs.forEach { implementation(it) }
-
-        testImplementation(kotlin("test-junit5"))
-        Truth.libs.forEach { implementation(it) }
         testImplementation("io.spine.tools:spine-testutil-server:$spineCoreVersion")
+        testImplementation(kotlin("test-junit5"))
+        Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
     }
 

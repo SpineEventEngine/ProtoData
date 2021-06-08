@@ -24,22 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Protobuf.GradlePlugin
-import io.spine.internal.gradle.Scripts
-
-apply {
-    plugin("io.spine.mc-java")
-    plugin(GradlePlugin.id)
-    from(Scripts.modelCompiler(project))
+plugins {
+    java
+    id("com.google.protobuf")
+    id("io.spine.proto-data")
 }
 
-val spineCoreVersion: String by extra
-
-dependencies {
-    api("io.spine:spine-server:$spineCoreVersion")
-    io.spine.internal.dependency.Protobuf.libs.forEach { api(it) }
-
-    testImplementation(project(":testutil"))
-    testImplementation(JUnit.params)
+repositories {
+    mavenLocal()
 }

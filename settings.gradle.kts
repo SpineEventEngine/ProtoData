@@ -31,7 +31,8 @@ include(
     "cli",
     "protoc",
     "testutil",
-    "codegen-java"
+    "codegen-java",
+    "gradle-plugin"
 )
 
 project(":codegen-java").projectDir = file("$rootDir/codegen/java")
