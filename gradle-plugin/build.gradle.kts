@@ -69,11 +69,14 @@ pluginBundle {
         version = project.version.toString()
     }
 
-    withDependencies { clear() }
-
     plugins {
         named("protoDataPlugin") {
             version = project.version.toString()
         }
     }
+}
+
+rootProject.afterEvaluate {
+    val pluginProject = project(":gradle-plugin")
+    pluginProject.tasks["publish"].dependsOn(pluginProject.tasks["publishPlugins"])
 }
