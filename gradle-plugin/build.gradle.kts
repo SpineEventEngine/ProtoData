@@ -69,8 +69,6 @@ pluginBundle {
         version = project.version.toString()
     }
 
-    withDependencies { clear() }
-
     plugins {
         named("protoDataPlugin") {
             version = project.version.toString()
