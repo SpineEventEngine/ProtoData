@@ -77,3 +77,8 @@ pluginBundle {
         }
     }
 }
+
+rootProject.afterEvaluate {
+    val pluginProject = project(":gradle-plugin")
+    pluginProject.tasks["publish"].dependsOn(pluginProject.tasks["publishPlugins"])
+}
