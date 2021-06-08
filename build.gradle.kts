@@ -24,8 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:Suppress("RemoveRedundantQualifierName")
+
 import io.spine.gradle.internal.Truth
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Kotlin
 import io.spine.internal.gradle.PublishingRepos
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.spinePublishing
@@ -36,8 +39,6 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-
-    @Suppress("RemoveRedundantQualifierName")
     io.spine.internal.gradle.doApplyStandard(repositories)
 
     apply(from = "$rootDir/version.gradle.kts")
@@ -46,14 +47,13 @@ buildscript {
 
     dependencies {
         classpath("io.spine.tools:spine-mc-java:$spineBaseVersion")
-        @Suppress("RemoveRedundantQualifierName")
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
 }
 
 plugins {
-    kotlin("jvm") version "1.5.0"
-    id("org.jetbrains.dokka") version "1.4.32"
+    kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
+    id(io.spine.internal.dependency.Kotlin.Dokka.pluginId) version(io.spine.internal.dependency.Kotlin.Dokka.version)
     idea
 }
 
@@ -82,7 +82,7 @@ subprojects {
     apply {
         plugin("kotlin")
         plugin("idea")
-        plugin("org.jetbrains.dokka")
+        plugin(Kotlin.Dokka.pluginId)
     }
 
     val spineCoreVersion: String by extra

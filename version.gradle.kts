@@ -24,6 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.12"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.33"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.23"
+extra["protoDataVersion"] = "0.0.13"
+extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.34"
+extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.24"
