@@ -10,9 +10,9 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - run: git submodule update --init --recursive
-      - name: Build project and run tests
-        run: ./gradlew build --stacktrace
+#      - run: git submodule update --init --recursive
+#      - name: Build project and run tests
+#        run: ./gradlew build --stacktrace
 
   publish:
     runs-on: ubuntu-latest
