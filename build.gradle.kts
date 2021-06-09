@@ -63,7 +63,8 @@ spinePublishing {
         "cli",
         "compiler",
         "protoc",
-        "codegen-java"
+        "codegen-java",
+        "gradle-plugin"
     )
     spinePrefix.set(false)
 }
