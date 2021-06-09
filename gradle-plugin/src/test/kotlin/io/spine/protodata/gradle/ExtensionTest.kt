@@ -82,18 +82,10 @@ class `Plugin extension should` {
     }
 
     @Test
-    fun `add dependency tasks`() {
-        val taskName = "generateCustomProto"
-        extension.generateProtoTasks(taskName)
-        assertThat(extension.generateProtoTasks.get())
-            .contains(taskName)
-    }
-
-    @Test
     fun `specify request file location`() {
-        val path = "/my/path/to/file.bin"
-        extension.requestFile = path
-        assertThat(extension.requestFileProperty.get().asFile)
+        val path = "/my/path/to/main.bin"
+        extension.requestFilesDir = path
+        assertThat(extension.requestFilesDirProperty.get().asFile)
             .isEqualTo(project.projectDir.resolve(path))
     }
 }

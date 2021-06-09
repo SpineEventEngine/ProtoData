@@ -75,6 +75,10 @@ public class Extension(private val project: Project) {
         optionProviders.addAll(classNames.toList())
     }
 
+    public var requestFilesDir: Any
+        get() = requestFilesDirProperty.get()
+        set(value) = requestFilesDirProperty.set(project.file(value))
+
     internal val requestFilesDirProperty: DirectoryProperty =
         project.objects.directoryProperty().convention(
             project.layout.buildDirectory.dir("protodata/requests")
