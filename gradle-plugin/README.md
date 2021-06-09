@@ -43,7 +43,7 @@ To do so, run:
 After running the task, the ProtoData executable might not turn up in the `PATH` environment
 variable at once. The command will print instructions to finalize the installation.
 
-If your environment goes not allow you to execute those instructions, e.g., on a CI instance, you
+If your environment does not allow you to execute those instructions, e.g., on a CI instance, you
 can specify the ProtoData installation location by hand:
 ```
 ./gradlew installProtoData -PprotoDataLocation="my/custom/path"
