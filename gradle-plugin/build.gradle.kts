@@ -1,5 +1,3 @@
-import io.spine.internal.dependency.Protobuf
-
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -25,6 +23,9 @@ import io.spine.internal.dependency.Protobuf
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+import io.spine.internal.dependency.Protobuf
+import io.spine.internal.gradle.Publish
 
 plugins {
     `java-gradle-plugin`
@@ -52,8 +53,8 @@ gradlePlugin {
         create("protoDataPlugin") {
             id = "io.spine.proto-data"
             implementationClass = "io.spine.protodata.gradle.Plugin"
-            displayName = "Spine Bootstrap"
-            description = "Prepares a Gradle project for development on Spine."
+            displayName = "ProtoData"
+            description = "Sets up the ProtoData tool to be used in your project."
         }
     }
 }
@@ -76,7 +77,6 @@ pluginBundle {
     }
 }
 
-rootProject.afterEvaluate {
-    val pluginProject = project(":gradle-plugin")
-    pluginProject.tasks["publish"].dependsOn(pluginProject.tasks["publishPlugins"])
+tasks.create(Publish.taskName) {
+    dependsOn("publishPlugins")
 }

@@ -5,6 +5,12 @@ _ProtoData_ is a collection of tools for generating quality domain models from P
 The project is under development right now. Proceed with caution.
 
 ## Installation
+
+### Gradle
+
+If you use Java and Gradle, you can install and launch ProtoData easily.
+See the [Gradle plugin](gradle-plugin/README.md) doc for more info.
+
 ### *nix
 
 To install ProtoData on a *nix system:
@@ -43,7 +49,7 @@ There is currently no installation script for Windows.
 
 Start using the app:
 
- 1. [download](https://github.com/SpineEventEngine/ProtoData/packages/710696) and extract 
+ 1. [Download](https://github.com/SpineEventEngine/ProtoData/packages/710696) and extract 
     the `executable-<version>.jar` archive.
 
  2. To launch the app, launch the `bin/protodata.bat` script.
