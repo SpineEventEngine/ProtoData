@@ -63,8 +63,8 @@ for more ways to define a Gradle property to avoid extra CLI arguments.
 
 ### Configuration
 
-ProtoData needs Renderers and Plugins to be useful. You can specify those and more via a Gradle
-extension.
+ProtoData requires Renderers and Plugins for meaningful operation. You can specify those and more
+via a Gradle extension.
 
 Here is the complete list of configuration options:
 
