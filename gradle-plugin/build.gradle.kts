@@ -53,8 +53,8 @@ gradlePlugin {
         create("protoDataPlugin") {
             id = "io.spine.proto-data"
             implementationClass = "io.spine.protodata.gradle.Plugin"
-            displayName = "Spine Bootstrap"
-            description = "Prepares a Gradle project for development on Spine."
+            displayName = "ProtoData"
+            description = "Sets up the ProtoData tool to be used in your project."
         }
     }
 }
