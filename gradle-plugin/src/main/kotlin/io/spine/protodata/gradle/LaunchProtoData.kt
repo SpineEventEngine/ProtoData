@@ -33,30 +33,42 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 
-internal open class LaunchProtoData : Exec() {
+/**
+ * A task which executes a single ProtoData command.
+ *
+ * This class is public to allow users configure dependencies, disable, or configure lazy execution
+ * for ProtoData tasks. Users should NOT change the CLI command, user directory, etc. directly.
+ * Please refer to the `protoData { }` extension to configure ProtoData.
+ */
+public open class LaunchProtoData : Exec() {
 
     @get:Input
-    lateinit var protoDataExecutable: String
+    internal lateinit var protoDataExecutable: String
 
     @get:Input
-    lateinit var renderers: List<String>
+    internal lateinit var renderers: List<String>
 
     @get:Input
-    lateinit var plugins: List<String>
+    internal lateinit var plugins: List<String>
 
     @get:Input
-    lateinit var optionProviders: List<String>
+    internal lateinit var optionProviders: List<String>
 
     @get:InputFile
-    lateinit var requestFile: RegularFile
+    internal lateinit var requestFile: RegularFile
 
     @get:InputDirectory
-    lateinit var source: Directory
+    internal lateinit var source: Directory
 
     @get:Input
-    lateinit var userClasspath: String
+    internal lateinit var userClasspath: String
 
-    fun compileCommandLine() {
+    /**
+     * Configures the CLI command for this task.
+     *
+     * This method *must* be called after all the configuration is done for the task.
+     */
+    internal fun compileCommandLine() {
         commandLine(sequence {
             yield(protoDataExecutable)
             plugins.forEach {

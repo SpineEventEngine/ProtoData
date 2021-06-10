@@ -141,6 +141,11 @@ public class Extension(private val project: Project) {
     private val srcSubdirProperty: Property<String> =
         project.objects.property<String>().convention("java")
 
+    /**
+     * Obtains the source directory for the given source set.
+     *
+     * @see srcBaseDir for the rules for the source dir construction
+     */
     internal fun sourceDir(sourceSet: SourceSet): Directory =
         srcBaseDirProperty.get().dir(sourceSet.name).dir(srcSubdirProperty).get()
 }
