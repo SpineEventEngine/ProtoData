@@ -42,9 +42,6 @@ import org.gradle.kotlin.dsl.property
 @Suppress("UnstableApiUsage") // Gradle Property API.
 public class Extension(private val project: Project) {
 
-    internal  val plugins: ListProperty<String> =
-        project.objects.listProperty(String::class.java).convention(listOf())
-
     /**
      * Passes given names of Java classes to ProtoData as
      * the `io.spine.protodata.plugin.Plugin` classes.
@@ -53,8 +50,8 @@ public class Extension(private val project: Project) {
         plugins.addAll(classNames.toList())
     }
 
-    internal val renderers: ListProperty<String> =
-        project.objects.listProperty<String>().convention(listOf())
+    internal val plugins: ListProperty<String> =
+        project.objects.listProperty(String::class.java).convention(listOf())
 
     /**
      * Passes given names of Java classes to ProtoData as
@@ -64,7 +61,7 @@ public class Extension(private val project: Project) {
         renderers.addAll(classNames.toList())
     }
 
-    internal val optionProviders: ListProperty<String> =
+    internal val renderers: ListProperty<String> =
         project.objects.listProperty<String>().convention(listOf())
 
     /**
@@ -75,6 +72,15 @@ public class Extension(private val project: Project) {
         optionProviders.addAll(classNames.toList())
     }
 
+    internal val optionProviders: ListProperty<String> =
+        project.objects.listProperty<String>().convention(listOf())
+
+    /**
+     * A directory where the serialized `CodeGeneratorRequest`s are stored.
+     *
+     * For each source set, we generate a separate request file. Files are named after
+     * the associated source set with the `.bin` extension.
+     */
     public var requestFilesDir: Any
         get() = requestFilesDirProperty.get()
         set(value) = requestFilesDirProperty.set(project.file(value))
@@ -87,12 +93,48 @@ public class Extension(private val project: Project) {
     internal fun requestFile(forSourceSet: String): RegularFile =
         requestFilesDirProperty.get().file("$forSourceSet.bin")
 
+    /**
+     * The base directory where the files generated from Protobuf resides.
+     *
+     * Files are placed under this dir and divided under subdirectories by source sets, and then by
+     * the [srcSubdir]s. For example, a Java class generated from a main-scope `.proto` definition
+     * would be placed under `$srcBaseDir/main/java`, where `main` is the name of the source set
+     * and `java` is the [srcSubdir].
+     *
+     * Neither `srcBaseDir` nor [srcSubdir] don't tell the Protobuf compiler where to put the files.
+     * These properties merely point at the location where the files are put so that ProtoData can
+     * find those files.
+     *
+     * By default, points to the directory which is specified in `protobuf.generatedFilesBaseDir`
+     * to the Protobuf Gradle plugin.
+     *
+     * @see srcSubdir
+     */
+    public var srcBaseDir: Any
+        get() = srcBaseDirProperty.get()
+        set(value) = srcBaseDirProperty.set(project.file(value))
+
     internal val srcBaseDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(provider {
             val protobuf = convention.getPlugin<ProtobufConvention>().protobuf
             layout.projectDirectory.dir(protobuf.generatedFilesBaseDir)
         })
     }
+
+    /**
+     * The subdirectory to which the files generated from Protobuf are placed.
+     *
+     * The default value is `"java"`.
+     *
+     * @see srcBaseDir
+     */
+    public var srcSubdir: String
+        get() = srcSubdirProperty.get()
+        set(value) {
+            if (value.isNotEmpty()) {
+                srcSubdirProperty.set(value)
+            }
+        }
 
     internal val srcSubdirProperty: Property<String> =
         project.objects.property<String>().convention("java")
