@@ -28,10 +28,12 @@ package io.spine.protodata.gradle
 
 import com.google.protobuf.gradle.ProtobufConvention
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.getPlugin
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
@@ -90,8 +92,8 @@ public class Extension(private val project: Project) {
             project.layout.buildDirectory.dir("protodata/requests")
         )
 
-    internal fun requestFile(forSourceSet: String): RegularFile =
-        requestFilesDirProperty.get().file("$forSourceSet.bin")
+    internal fun requestFile(forSourceSet: SourceSet): RegularFile =
+        requestFilesDirProperty.get().file("${forSourceSet.name}.bin")
 
     /**
      * The base directory where the files generated from Protobuf resides.
@@ -114,7 +116,7 @@ public class Extension(private val project: Project) {
         get() = srcBaseDirProperty.get()
         set(value) = srcBaseDirProperty.set(project.file(value))
 
-    internal val srcBaseDirProperty: DirectoryProperty = with(project) {
+    private val srcBaseDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(provider {
             val protobuf = convention.getPlugin<ProtobufConvention>().protobuf
             layout.projectDirectory.dir(protobuf.generatedFilesBaseDir)
@@ -136,6 +138,9 @@ public class Extension(private val project: Project) {
             }
         }
 
-    internal val srcSubdirProperty: Property<String> =
+    private val srcSubdirProperty: Property<String> =
         project.objects.property<String>().convention("java")
+
+    internal fun sourceDir(sourceSet: SourceSet): Directory =
+        srcBaseDirProperty.get().dir(sourceSet.name).dir(srcSubdirProperty).get()
 }

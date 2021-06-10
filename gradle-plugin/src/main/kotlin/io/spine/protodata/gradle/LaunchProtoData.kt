@@ -29,15 +29,31 @@ package io.spine.protodata.gradle
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
 
-public class LaunchProtoData : Exec() {
+public open class LaunchProtoData : Exec() {
 
+    @get:Input
     internal lateinit var protoDataExecutable: String
+
+    @get:Input
     internal lateinit var renderers: List<String>
+
+    @get:Input
     internal lateinit var plugins: List<String>
+
+    @get:Input
     internal lateinit var optionProviders: List<String>
+
+    @get:InputFile
     internal lateinit var requestFile: RegularFile
+
+    @get:InputDirectory
     internal lateinit var source: Directory
+
+    @get:Input
     internal lateinit var userClasspath: String
 
     internal fun compileCommandLine() {

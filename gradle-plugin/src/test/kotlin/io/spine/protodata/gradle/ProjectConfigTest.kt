@@ -32,6 +32,8 @@ import com.google.protobuf.gradle.ProtobufPlugin
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.SourceSet.MAIN_SOURCE_SET_NAME
+import org.gradle.api.tasks.SourceSet.TEST_SOURCE_SET_NAME
 import org.gradle.kotlin.dsl.apply
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeAll
@@ -56,14 +58,18 @@ class `ProtoData plugin should` {
             project.apply<Plugin>()
 
             project.repositories.mavenLocal()
+
+            project.sourceSets.maybeCreate(MAIN_SOURCE_SET_NAME)
+            project.sourceSets.maybeCreate(TEST_SOURCE_SET_NAME)
         }
     }
 
     @Test
     fun `add 'install' and 'launch' tasks to the project`() {
+        println(project.tasks.map { it.name })
         assertThat(project.tasks)
             .comparingElementsUsing(taskNames)
-            .containsAtLeast("installProtoData", "launchProtoData")
+            .containsAtLeast("installProtoData", "launchProtoDataMain", "launchProtoDataTest")
     }
 
     @Test
@@ -79,19 +85,14 @@ class `ProtoData plugin should` {
     fun `bind 'launchProtoData' to Java compilation`() {
         val task = project.tasks.getByName("compileJava")
         assertThat(task.dependsOn)
-            .comparingElementsUsing(taskByName)
-            .contains("launchProtoData")
+            .comparingElementsUsing(taskNames)
+            .contains("launchProtoDataMain")
     }
 }
 
-private val taskByName: Correspondence<Any, String> =
-    correspondence("task named") { something, name ->
+private val taskNames: Correspondence<Any, String> =
+    correspondence("is task named") { something, name ->
         something is Task && something.name == name!!
-    }
-
-private val taskNames: Correspondence<Task, String> =
-    correspondence("task named") { task, name ->
-        task!!.name == name!!
     }
 
 private fun <I, O> correspondence(

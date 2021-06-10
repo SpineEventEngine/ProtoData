@@ -35,6 +35,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -71,9 +72,9 @@ public class Plugin : GradlePlugin<Project> {
         val extension = Extension(target)
         target.extensions.add("protoData", extension)
         val protoDataConfiguration = target.configurations.create("protoData")
-        target.sourceSets.addRule("ProtoData task per source set") { name ->
-            val launch = createLaunchTask(target, extension, protoDataConfiguration, name)
-            target.javaCompileForSourceSet(name)?.dependsOn(launch)
+        target.sourceSets.forEach { sourceSet ->
+            val launch = createLaunchTask(target, extension, protoDataConfiguration, sourceSet)
+            target.javaCompileFor(sourceSet)?.dependsOn(launch)
         }
 
         val resource = Plugin::class.java.classLoader.getResource("version.txt")!!
@@ -91,9 +92,9 @@ private fun createLaunchTask(
     target: Project,
     ext: Extension,
     config: Configuration,
-    sourceSetName: String
+    sourceSet: SourceSet
 ): Task {
-    val taskName = launchTaskName(sourceSetName)
+    val taskName = launchTaskName(sourceSet)
     return target.tasks.create(taskName, LaunchProtoData::class.java) { task ->
         with(task) {
             dependsOn(config.buildDependencies)
@@ -102,10 +103,8 @@ private fun createLaunchTask(
             renderers = ext.renderers.get()
             plugins = ext.plugins.get()
             optionProviders = ext.optionProviders.get()
-            requestFile = ext.requestFile(sourceSetName)
-            source = with(ext) {
-                srcBaseDirProperty.get().dir(sourceSetName).dir(srcSubdirProperty).get()
-            }
+            requestFile = ext.requestFile(sourceSet)
+            source = ext.sourceDir(sourceSet)
             config.resolve()
             userClasspath = config.asPath
 
@@ -145,17 +144,16 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
         }
         generateProtoTasks {
             all().forEach {
-                val sourceSet = it.sourceSet.name
                 it.plugins {
                     id(PROTOC_PLUGIN) {
-                        val requestFile = extension.requestFile(sourceSet)
+                        val requestFile = extension.requestFile(it.sourceSet)
                         option(requestFile.asFile.absolutePath)
                     }
                 }
-                project.tasks.getByName(launchTaskName(sourceSet)).dependsOn(it)
+                project.tasks.getByName(launchTaskName(it.sourceSet)).dependsOn(it)
             }
         }
     }
 
-private fun launchTaskName(sourceSetName: String): String =
-    "launchProtoData${sourceSetName.capitalize()}"
+private fun launchTaskName(sourceSet: SourceSet): String =
+    "launchProtoData${sourceSet.name.capitalize()}"

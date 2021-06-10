@@ -39,7 +39,8 @@ internal const val PROTO_DATA_LOCATION = "protoDataLocation"
 internal val Project.sourceSets: SourceSetContainer
     get() = convention.getPlugin<JavaPluginConvention>().sourceSets
 
-internal fun Project.javaCompileForSourceSet(name: String): JavaCompile? {
+internal fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
+    val name = sourceSet.name
     val javaCompileInfix = if (name == SourceSet.MAIN_SOURCE_SET_NAME) "" else name.capitalize()
     val javaCompileName = "compile${javaCompileInfix}Java"
     return tasks.findByName(javaCompileName) as JavaCompile?
