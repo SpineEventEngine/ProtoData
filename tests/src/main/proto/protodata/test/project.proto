@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package protodata.test;
+
+option java_package = "io.spine.protodata.test";
+option java_outer_classname = "ProjectProto";
+option java_multiple_files = true;
+
+import "protodata/test/tag.proto";
+
+message ProjectId {
+    string uuid = 1;
+}
+
+message Project {
+
+    ProjectId id = 1;
+
+    string title = 2;
+
+    repeated protodata.test.Tag tag = 3;
+}
