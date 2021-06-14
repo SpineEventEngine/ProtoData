@@ -72,7 +72,7 @@ public fun MessageType.javaClassName(declaredIn: File): ClassName =
 public fun EnumType.javaClassName(declaredIn: File): ClassName =
     name.javaClassName(declaredIn)
 
-private fun TypeName.javaClassName(declaredIn: File): ClassName {
+internal fun TypeName.javaClassName(declaredIn: File): ClassName {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val nameElements = mutableListOf<String>()

@@ -24,15 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JavaPoet
+import io.spine.internal.dependency.Protobuf
+import io.spine.internal.gradle.Scripts
 
-plugins {
-    `build-proto-model`
+apply {
+    plugin("io.spine.mc-java")
+    plugin(Protobuf.GradlePlugin.id)
+    from(Scripts.modelCompiler(project))
 }
 
 dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
-
-    testImplementation(project(":testutil"))
+    Protobuf.libs.forEach { "api"(it) }
 }

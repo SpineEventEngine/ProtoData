@@ -24,15 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JavaPoet
+@file:JvmName("JavaNaming")
 
-plugins {
-    `build-proto-model`
-}
+package io.spine.protodata.codegen.java
 
-dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.Querying
+import io.spine.protodata.TypeName
+import io.spine.protodata.java.TypeDeclaration
+import io.spine.protodata.select
+import io.spine.protodata.typeUrl
 
-    testImplementation(project(":testutil"))
+public fun Querying.classNameOf(type: TypeName): ClassName {
+    val decl = select<TypeDeclaration>()
+        .withId(type)
+        .orElseThrow { IllegalArgumentException("Cannot find type with name `${type.typeUrl()}`.") }
+    val filePath = decl.whereDeclared
+    val source = select<ProtobufSourceFile>()
+        .withId(filePath)
+        .orElseThrow { IllegalStateException("Cannot find file `${filePath.value}`.") }
+    return type.javaClassName(declaredIn = source.file)
 }

@@ -155,6 +155,15 @@ internal constructor(
         get() = "$packageName.${classNames.joinToString("$")}"
 
     /**
+     * The simple name of this class.
+     *
+     * If the class is nested inside another class, the outer class name is NOT included.
+     */
+    @get:JvmName("simpleName")
+    public val simpleName: String
+        get() = classNames.last()
+
+    /**
      * Obtains the class name of the given Java class.
      */
     public constructor(cls: Class<*>) : this(cls.`package`.name, cls.names())

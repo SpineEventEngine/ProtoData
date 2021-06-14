@@ -24,15 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JavaPoet
+package io.spine.protodata.codegen.java
 
-plugins {
-    `build-proto-model`
-}
+import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.plugin.ViewRepository
 
-dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
+/**
+ * The ProtoData plugin which provides helpful shortcut views for generating Java code.
+ */
+public class JavaPlugin : Plugin {
 
-    testImplementation(project(":testutil"))
+    override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
+        setOf(TypeDeclarationView.Repository)
 }
