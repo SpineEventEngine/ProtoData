@@ -24,34 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.applyStandard
+package io.spine.protodata.test;
 
-@Suppress("RemoveRedundantQualifierName")
-plugins {
-    java
-    idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
-    }
-}
+import io.spine.core.External;
+import io.spine.core.Subscribe;
+import io.spine.core.Where;
+import io.spine.protodata.FieldEntered;
+import io.spine.protodata.TypeName;
+import io.spine.protodata.plugin.View;
 
-subprojects {
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("com.google.protobuf")
-        from("$rootDir/../version.gradle.kts")
-    }
+final class UuidTypeView extends View<TypeName, UuidType, UuidType.Builder> {
 
-    repositories.applyStandard()
-
-    protobuf {
-        generatedFilesBaseDir = "$projectDir/generated"
-    }
-
-    dependencies {
-        Protobuf.libs.forEach { implementation(it) }
+    @Subscribe
+    void on(@External @Where(field = "field.name.value", equals = "uuid") FieldEntered event) {
+        builder().setName(event.getType())
+                 .setDeclaredIn(event.getFile());
     }
 }

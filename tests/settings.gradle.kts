@@ -24,10 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+include(":consumer")
+include(":protodata-extension")
+
 includeBuild("..") {
     dependencySubstitution {
         substitute(module("io.spine:proto-data")).using(project(":gradle-plugin"))
+        substitute(module("io.spine.protodata:codegen-java")).using(project(":codegen-java"))
         substitute(module("io.spine.protodata:compiler")).using(project(":compiler"))
         substitute(module("io.spine.protodata:executable")).using(project(":cli"))
+        substitute(module("io.spine.protodata:protoc")).using(project(":protoc"))
     }
 }

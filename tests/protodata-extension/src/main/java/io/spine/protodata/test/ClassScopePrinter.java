@@ -24,34 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.applyStandard
+package io.spine.protodata.test;
 
-@Suppress("RemoveRedundantQualifierName")
-plugins {
-    java
-    idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
-    }
-}
+import io.spine.protodata.language.CommonLanguages;
+import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.protodata.renderer.InsertionPointPrinter;
 
-subprojects {
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("com.google.protobuf")
-        from("$rootDir/../version.gradle.kts")
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
+
+public final class ClassScopePrinter extends InsertionPointPrinter {
+
+    public ClassScopePrinter() {
+        super(CommonLanguages.java());
     }
 
-    repositories.applyStandard()
-
-    protobuf {
-        generatedFilesBaseDir = "$projectDir/generated"
-    }
-
-    dependencies {
-        Protobuf.libs.forEach { implementation(it) }
+    @Override
+    protected Set<InsertionPoint> supportedInsertionPoints() {
+        return select(UuidType.class).all()
+                                     .stream()
+                                     .map(type -> new ClassScope(type.getName()))
+                                     .collect(toSet());
     }
 }

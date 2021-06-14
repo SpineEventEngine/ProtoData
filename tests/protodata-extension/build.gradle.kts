@@ -24,34 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.Scripts
 
 @Suppress("RemoveRedundantQualifierName")
-plugins {
-    java
-    idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
+buildscript {
+    io.spine.internal.gradle.doApplyStandard(repositories)
+
+    apply(from = "$rootDir/../version.gradle.kts")
+
+    val spineBaseVersion: String by extra
+    dependencies {
+        classpath("io.spine.tools:spine-mc-java:$spineBaseVersion")
     }
 }
 
-subprojects {
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("com.google.protobuf")
-        from("$rootDir/../version.gradle.kts")
-    }
+apply {
+    plugin("io.spine.mc-java")
+    from(Scripts.modelCompiler(project))
+}
 
-    repositories.applyStandard()
-
-    protobuf {
-        generatedFilesBaseDir = "$projectDir/generated"
-    }
-
-    dependencies {
-        Protobuf.libs.forEach { implementation(it) }
-    }
+dependencies {
+    compileOnly("io.spine.protodata:compiler")
+    implementation("io.spine.protodata:codegen-java")
 }

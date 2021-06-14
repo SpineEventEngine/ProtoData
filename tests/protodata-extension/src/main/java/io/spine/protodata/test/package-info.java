@@ -24,34 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.applyStandard
+/**
+ * The ProtoData components for integration testing.
+ */
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.protodata.test;
 
-@Suppress("RemoveRedundantQualifierName")
-plugins {
-    java
-    idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
-    }
-}
+import com.google.errorprone.annotations.CheckReturnValue;
 
-subprojects {
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("com.google.protobuf")
-        from("$rootDir/../version.gradle.kts")
-    }
-
-    repositories.applyStandard()
-
-    protobuf {
-        generatedFilesBaseDir = "$projectDir/generated"
-    }
-
-    dependencies {
-        Protobuf.libs.forEach { implementation(it) }
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

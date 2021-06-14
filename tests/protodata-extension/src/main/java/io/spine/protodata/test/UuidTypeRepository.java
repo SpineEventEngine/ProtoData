@@ -24,34 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.applyStandard
+package io.spine.protodata.test;
 
-@Suppress("RemoveRedundantQualifierName")
-plugins {
-    java
-    idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
-    }
-}
+import io.spine.protodata.FieldEntered;
+import io.spine.protodata.TypeName;
+import io.spine.protodata.plugin.ViewRepository;
+import io.spine.server.route.EventRouting;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-subprojects {
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("com.google.protobuf")
-        from("$rootDir/../version.gradle.kts")
-    }
+import static io.spine.server.route.EventRoute.withId;
 
-    repositories.applyStandard()
+final class UuidTypeRepository extends ViewRepository<TypeName, UuidTypeView, UuidType> {
 
-    protobuf {
-        generatedFilesBaseDir = "$projectDir/generated"
-    }
-
-    dependencies {
-        Protobuf.libs.forEach { implementation(it) }
+    @Override
+    protected void setupEventRouting(@NonNull EventRouting<TypeName> routing) {
+        super.setupEventRouting(routing);
+        routing.route(FieldEntered.class,
+                      (message, context) -> withId(message.getType()));
     }
 }

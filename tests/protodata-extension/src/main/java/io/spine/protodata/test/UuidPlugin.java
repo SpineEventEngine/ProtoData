@@ -24,34 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.applyStandard
+package io.spine.protodata.test;
 
-@Suppress("RemoveRedundantQualifierName")
-plugins {
-    java
-    idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
-    }
-}
+import com.google.common.collect.ImmutableSet;
+import io.spine.protodata.plugin.Plugin;
+import io.spine.protodata.plugin.Policy;
+import io.spine.protodata.plugin.View;
+import io.spine.protodata.plugin.ViewRepository;
 
-subprojects {
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("com.google.protobuf")
-        from("$rootDir/../version.gradle.kts")
+import java.util.Set;
+
+public final class UuidPlugin implements Plugin {
+
+    @Override
+    public Set<ViewRepository<?, ?, ?>> viewRepositories() {
+        return ImmutableSet.of(new UuidTypeRepository());
     }
 
-    repositories.applyStandard()
-
-    protobuf {
-        generatedFilesBaseDir = "$projectDir/generated"
+    @Override
+    public Set<Class<? extends View<?, ?, ?>>> views() {
+        return Plugin.super.views();
     }
 
-    dependencies {
-        Protobuf.libs.forEach { implementation(it) }
+    @Override
+    public Set<Policy<?>> policies() {
+        return Plugin.super.policies();
     }
 }

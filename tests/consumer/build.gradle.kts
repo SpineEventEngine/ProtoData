@@ -24,34 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.applyStandard
+import io.spine.protodata.gradle.Extension
 
 @Suppress("RemoveRedundantQualifierName")
-plugins {
-    java
-    idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
+buildscript {
+    io.spine.internal.gradle.doApplyStandard(repositories)
+
+    dependencies {
+        classpath("io.spine:proto-data")
     }
 }
 
-subprojects {
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("com.google.protobuf")
-        from("$rootDir/../version.gradle.kts")
-    }
+apply(plugin = "io.spine.proto-data")
 
-    repositories.applyStandard()
+dependencies {
+    "protoData"(project(":protodata-extension"))
+}
 
-    protobuf {
-        generatedFilesBaseDir = "$projectDir/generated"
-    }
-
-    dependencies {
-        Protobuf.libs.forEach { implementation(it) }
-    }
+extensions.getByType<Extension>().apply {
+    renderers(
+        "io.spine.protodata.test.ClassScopePrinter", "io.spine.protodata.test.UuidJavaRenderer"
+    )
+    plugins(
+        "io.spine.protodata.test.UuidPlugin", "io.spine.protodata.codegen.java.JavaPlugin"
+    )
 }
