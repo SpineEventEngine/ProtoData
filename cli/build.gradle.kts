@@ -76,6 +76,20 @@ val executableAsJar by tasks.registering(Jar::class) {
     dependsOn(tasks.distZip)
 }
 
+val stagingDir = "$buildDir/staging"
+
+val stageProtoData by tasks.registering(Copy::class) {
+    from(zipTree(executableAsJar.get().archiveFile))
+    into(stagingDir)
+
+    dependsOn(executableAsJar)
+}
+
+tasks.register("installProtoData", Exec::class) {
+    commandLine("$stagingDir/install.sh")
+    dependsOn(stageProtoData)
+}
+
 val executableArchivesConfig = "executableArchives"
 
 configurations.create(executableArchivesConfig)
