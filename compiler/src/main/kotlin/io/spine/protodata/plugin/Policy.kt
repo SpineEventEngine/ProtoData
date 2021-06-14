@@ -32,6 +32,7 @@ import io.spine.base.EntityState
 import io.spine.base.EventMessage
 import io.spine.logging.Logging
 import io.spine.protodata.ConfigurationError
+import io.spine.protodata.Querying
 import io.spine.protodata.QueryingClient
 import io.spine.server.BoundedContext
 import io.spine.server.event.AbstractEventReactor
@@ -79,7 +80,7 @@ import io.spine.server.type.EventClass
  *
  * @param E the type of the event handled by this policy
  */
-public abstract class Policy<E : EventMessage> : AbstractEventReactor(), Logging {
+public abstract class Policy<E : EventMessage> : AbstractEventReactor(), Querying, Logging {
 
     private var context: BoundedContext? = null
 
@@ -93,26 +94,8 @@ public abstract class Policy<E : EventMessage> : AbstractEventReactor(), Logging
         this.context = context
     }
 
-    /**
-     * Creates a [QueryingClient] to find views of the given class.
-     *
-     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
-     *
-     * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
-     * prettier code.
-     */
-    protected fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
+    final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(context!!, type, javaClass.name)
-    }
-
-    /**
-     * Creates a [QueryingClient] to find views of the given type.
-     *
-     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
-     */
-    protected inline fun <reified P : EntityState<*>> select(): QueryingClient<P> {
-        val cls = P::class.java
-        return select(cls)
     }
 
     final override fun messageClasses(): ImmutableSet<EventClass> {

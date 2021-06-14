@@ -31,6 +31,7 @@ import io.spine.protodata.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.function.Consumer
 import kotlin.io.path.isRegularFile
 import kotlin.text.Charsets.UTF_8
 
@@ -90,6 +91,13 @@ internal constructor(
             throw IllegalArgumentException("File not found: `$path`.")
         }
         return filtered.values.theOnly()
+    }
+
+    public fun atEvery(point: InsertionPoint, action: Consumer<SourceAtPoint>) {
+        forEach {
+            val sourceAtPoint = it.at(point)
+            action.accept(sourceAtPoint)
+        }
     }
 
     /**

@@ -25,20 +25,17 @@
  */
 
 import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.Scripts
 
-apply {
-    plugin("io.spine.mc-java")
-    plugin(Protobuf.GradlePlugin.id)
-    from(Scripts.modelCompiler(project))
+plugins {
+    `build-proto-model`
 }
 
+val spineBaseVersion: String by extra
 val spineCoreVersion: String by extra
 
 dependencies {
+    api("io.spine:spine-base:$spineBaseVersion")
     api("io.spine:spine-server:$spineCoreVersion")
-    Protobuf.libs.forEach { api(it) }
 
     testImplementation(project(":testutil"))
     testImplementation(JUnit.params)

@@ -27,6 +27,7 @@
 package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
+import io.spine.protodata.Querying
 import io.spine.protodata.QueryingClient
 import io.spine.protodata.language.Language
 import io.spine.server.BoundedContext
@@ -41,7 +42,7 @@ import io.spine.server.BoundedContext
 public abstract class Renderer
 protected constructor(
     private val supportedLanguages: Set<Language>
-) {
+) : Querying {
 
     internal lateinit var protoDataContext: BoundedContext
 
@@ -64,25 +65,7 @@ protected constructor(
      */
     protected abstract fun doRender(sources: SourceSet)
 
-    /**
-     * Creates a [QueryingClient] to find views of the given class.
-     *
-     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
-     *
-     * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
-     * prettier code.
-     */
-    protected fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
+    final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)
-    }
-
-    /**
-     * Creates a [QueryingClient] to find views of the given type.
-     *
-     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
-     */
-    protected inline fun <reified P : EntityState<*>> select(): QueryingClient<P> {
-        val cls = P::class.java
-        return select(cls)
     }
 }

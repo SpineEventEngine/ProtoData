@@ -24,23 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata
 
-import io.spine.protodata.language.CommonLanguages.Java
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
-import io.spine.protodata.select
+import io.spine.base.EntityState
 
-public class TestRenderer : Renderer(supportedLanguages = setOf(Java)) {
+/**
+ * A component capable of querying states of views.
+ */
+public interface Querying {
 
-    override fun doRender(sources: SourceSet) {
-        val internalTypes = select<InternalType>().all()
-        internalTypes.forEach { internalType ->
-            val oldName = internalType.name.simpleName
-            val newName = "_$oldName"
-            sources.forEach {
-                it.overwrite(it.code().replace(oldName, newName))
-            }
-        }
-    }
+    /**
+     * Creates a [QueryingClient] to find views of the given class.
+     *
+     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
+     *
+     * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
+     * prettier code.
+     */
+    public fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P>
+}
+
+/**
+ * Creates a [QueryingClient] to find views of the given type.
+ *
+ * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
+ */
+public inline fun <reified P : EntityState<*>> Querying.select(): QueryingClient<P> {
+    val cls = P::class.java
+    return select(cls)
 }
