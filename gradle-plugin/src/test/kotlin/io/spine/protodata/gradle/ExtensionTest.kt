@@ -101,7 +101,7 @@ class `Plugin extension should` {
         extension.srcSubdir = subdir
 
         val sourceDir = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
-        assertThat(sourceDir.asFile.toPath())
+        assertThat(sourceDir.get().asFile.toPath())
             .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subdir)
     }
 }

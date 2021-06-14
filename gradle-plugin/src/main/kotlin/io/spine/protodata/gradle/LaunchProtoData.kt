@@ -28,10 +28,9 @@ package io.spine.protodata.gradle
 
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 
 /**
  * A task which executes a single ProtoData command.
@@ -42,26 +41,31 @@ import org.gradle.api.tasks.InputFile
  */
 public open class LaunchProtoData : Exec() {
 
-    @get:Input
+    @get:Internal
     internal lateinit var protoDataExecutable: String
 
-    @get:Input
-    internal lateinit var renderers: List<String>
+    @get:Internal
+    internal lateinit var renderers: Provider<List<String>>
 
-    @get:Input
-    internal lateinit var plugins: List<String>
+    @get:Internal
+    internal lateinit var plugins: Provider<List<String>>
 
-    @get:Input
-    internal lateinit var optionProviders: List<String>
+    @get:Internal
+    internal lateinit var optionProviders: Provider<List<String>>
 
-    @get:InputFile
-    internal lateinit var requestFile: RegularFile
+    @get:Internal
+    internal lateinit var requestFile: Provider<RegularFile>
 
-    @get:InputDirectory
-    internal lateinit var source: Directory
+    @get:Internal
+    internal lateinit var source: Provider<Directory>
 
-    @get:Input
-    internal lateinit var userClasspath: String
+    @get:Internal
+    internal lateinit var userClasspath: Provider<String>
+
+    init {
+        outputs.upToDateWhen { !requestFile.get().asFile.exists() }
+        isIgnoreExitValue = false
+    }
 
     /**
      * Configures the CLI command for this task.
@@ -71,26 +75,27 @@ public open class LaunchProtoData : Exec() {
     internal fun compileCommandLine() {
         commandLine(sequence {
             yield(protoDataExecutable)
-            plugins.forEach {
+            plugins.get().forEach {
                 yield("--plugin")
                 yield(it)
             }
-            renderers.forEach {
+            renderers.get().forEach {
                 yield("--renderer")
                 yield(it)
             }
-            optionProviders.forEach {
+            optionProviders.get().forEach {
                 yield("--options")
                 yield(it)
             }
             yield("--request")
-            yield(requestFile.asFile.absolutePath)
+            yield(requestFile.get().asFile.absolutePath)
 
             yield("--src")
-            yield(source.asFile.absolutePath)
-            if (userClasspath.isNotEmpty()) {
+            yield(source.get().asFile.absolutePath)
+            val userCp = userClasspath.get()
+            if (userCp.isNotEmpty()) {
                 yield("--user-classpath")
-                yield(userClasspath)
+                yield(userCp)
             }
         }.asIterable())
     }

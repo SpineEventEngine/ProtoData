@@ -33,6 +33,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.getPlugin
 import org.gradle.kotlin.dsl.listProperty
@@ -92,8 +93,8 @@ public class Extension(private val project: Project) {
             project.layout.buildDirectory.dir("protodata/requests")
         )
 
-    internal fun requestFile(forSourceSet: SourceSet): RegularFile =
-        requestFilesDirProperty.get().file("${forSourceSet.name}.bin")
+    internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
+        requestFilesDirProperty.file("${forSourceSet.name}.bin")
 
     /**
      * The base directory where the files generated from Protobuf resides.
@@ -146,6 +147,6 @@ public class Extension(private val project: Project) {
      *
      * @see srcBaseDir for the rules for the source dir construction
      */
-    internal fun sourceDir(sourceSet: SourceSet): Directory =
-        srcBaseDirProperty.get().dir(sourceSet.name).dir(srcSubdirProperty).get()
+    internal fun sourceDir(sourceSet: SourceSet): Provider<Directory> =
+        srcBaseDirProperty.get().dir(sourceSet.name).dir(srcSubdirProperty)
 }

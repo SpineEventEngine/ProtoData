@@ -100,15 +100,19 @@ private fun createLaunchTask(
             dependsOn(config.buildDependencies)
 
             protoDataExecutable = project.protoDataExecutable()
-            renderers = ext.renderers.get()
-            plugins = ext.plugins.get()
-            optionProviders = ext.optionProviders.get()
+            renderers = ext.renderers
+            plugins = ext.plugins
+            optionProviders = ext.optionProviders
             requestFile = ext.requestFile(sourceSet)
             source = ext.sourceDir(sourceSet)
-            config.resolve()
-            userClasspath = config.asPath
+            userClasspath = project.provider {
+                config.resolve()
+                config.asPath
+            }
 
-            compileCommandLine()
+            project.afterEvaluate {
+                compileCommandLine()
+            }
         }
     }
 }
@@ -147,7 +151,7 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                 it.plugins {
                     id(PROTOC_PLUGIN) {
                         val requestFile = extension.requestFile(it.sourceSet)
-                        option(requestFile.asFile.absolutePath)
+                        option(requestFile.get().asFile.absolutePath)
                     }
                 }
                 project.tasks.getByName(launchTaskName(it.sourceSet)).dependsOn(it)
