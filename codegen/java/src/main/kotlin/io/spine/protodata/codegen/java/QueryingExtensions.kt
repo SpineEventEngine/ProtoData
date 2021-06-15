@@ -35,6 +35,17 @@ import io.spine.protodata.java.TypeDeclaration
 import io.spine.protodata.select
 import io.spine.protodata.typeUrl
 
+/**
+ * Obtains the name of the class for the given Protobuf type name.
+ *
+ * The type name could represent a message or an enum type.
+ *
+ * This method performs a lookup over prepared [TypeDeclaration] views. In order for the method to
+ * work, [TypeDeclarationView] must be supplied by one of
+ * the [Plugins][io.spine.protodata.plugin.Plugin]. Otherwise, an error occurs.
+ *
+ * Include [JavaPlugin] into the ProtoData execution to make the necessary view available.
+ */
 public fun Querying.classNameOf(type: TypeName): ClassName {
     val decl = select<TypeDeclaration>()
         .withId(type)
