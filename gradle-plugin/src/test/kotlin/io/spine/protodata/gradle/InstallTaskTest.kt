@@ -30,7 +30,6 @@ import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
-import java.util.UUID.randomUUID
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -38,16 +37,17 @@ class `'installProtoData' task should` {
 
     @Test
     fun `install ProtoData under the given location`(@TempDir projectDir: File) {
-        val targetLocation = projectDir.resolve("protodata-${randomUUID()}")
+        val targetLocation = projectDir.resolve("protodata-exe")
+        val userHome = System.getProperty("user.home")
         val project = GradleProject.newBuilder()
             .setProjectName("install-test")
             .setProjectFolder(projectDir)
             .withPluginClasspath()
             .withProperty("protoDataLocation", targetLocation.absolutePath)
-            .withEnvironment(ImmutableMap.of())
+            .withEnvironment(ImmutableMap.of("HOME", userHome))
             .build()
         project.executeTask { "installProtoData" }
-        assertThat(targetLocation.resolve("bin").exists())
+        assertThat(targetLocation.resolve("protodata/bin").exists())
             .isTrue()
     }
 }
