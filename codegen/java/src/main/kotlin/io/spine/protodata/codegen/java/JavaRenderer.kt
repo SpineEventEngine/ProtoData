@@ -33,7 +33,7 @@ import io.spine.protodata.language.CommonLanguages
 import io.spine.protodata.renderer.Renderer
 
 /**
- * A [Renderer] which generated Java code.
+ * A [Renderer] which generates Java code.
  */
 public abstract class JavaRenderer : Renderer(setOf(CommonLanguages.Java)) {
 
