@@ -102,10 +102,6 @@ dependencies {
 
 ## Caveat
 
-This plugin is still in its early development stages.
-We do not yet support generation for two source sets in a single Project independently, e.g., for
-`main` and `test` sources.
-
 Also, the plugin relies on the Java Project structure, the Java Gradle plugin, the Protobuf Gradle
 plugin, and the ProtoData Maven repository.
 

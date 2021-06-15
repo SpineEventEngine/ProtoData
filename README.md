@@ -32,7 +32,6 @@ To install ProtoData on a *nix system:
  ```
  ./target/dir/install.sh $HOME/custom/installation/dir
  ```
- In any case, the directory must exist. Otherwise, `install.sh` will exit with an error.
 
  4. If you use either `bash` or `zsh` shell, you will be asked to run a `source` command to update
  the `PATH` environmental variable. If you use another shell, you will have to update the `PATH`
