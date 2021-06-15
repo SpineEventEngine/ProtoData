@@ -38,6 +38,11 @@ import static io.spine.protodata.Ast.qualifiedName;
 import static io.spine.protodata.Ast.typeUrl;
 import static java.lang.String.format;
 
+/**
+ * An {@link InsertionPoint} in the scope of a generated Java class.
+ *
+ * <p>New member declarations should go under this insertion point.
+ */
 final class ClassScope implements InsertionPoint {
 
     private static final String NATIVE_INSERTION_POINT_FMT =

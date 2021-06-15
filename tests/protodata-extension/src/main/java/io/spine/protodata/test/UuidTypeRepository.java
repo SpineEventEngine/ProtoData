@@ -34,6 +34,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import static io.spine.server.route.EventRoute.withId;
 
+/**
+ * The repository for the {@link UuidType} views.
+ *
+ * <p>Configures routing for {@code FieldEntered} events.
+ */
 final class UuidTypeRepository extends ViewRepository<TypeName, UuidTypeView, UuidType> {
 
     @Override

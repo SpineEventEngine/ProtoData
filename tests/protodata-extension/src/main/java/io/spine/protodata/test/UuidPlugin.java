@@ -34,6 +34,10 @@ import io.spine.protodata.plugin.ViewRepository;
 
 import java.util.Set;
 
+/**
+ * The plugin which supplies the {@link UuidType} view.
+ */
+@SuppressWarnings("unused") // Accessed reflectively.
 public final class UuidPlugin implements Plugin {
 
     @Override

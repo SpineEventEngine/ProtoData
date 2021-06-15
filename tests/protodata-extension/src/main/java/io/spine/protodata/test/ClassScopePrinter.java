@@ -34,6 +34,10 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
+/**
+ * Prints the {@link ClassScope} insertion point.
+ */
+@SuppressWarnings("unused") // Accessed reflectively.
 public final class ClassScopePrinter extends InsertionPointPrinter {
 
     public ClassScopePrinter() {

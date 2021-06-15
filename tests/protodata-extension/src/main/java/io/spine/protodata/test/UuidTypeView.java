@@ -33,6 +33,9 @@ import io.spine.protodata.FieldEntered;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.plugin.View;
 
+/**
+ * A view on a type which is a wrapper for a UUID string.
+ */
 final class UuidTypeView extends View<TypeName, UuidType, UuidType.Builder> {
 
     @Subscribe
