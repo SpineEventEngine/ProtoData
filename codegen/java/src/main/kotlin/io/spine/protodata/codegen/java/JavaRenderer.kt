@@ -26,6 +26,7 @@
 
 package io.spine.protodata.codegen.java
 
+import io.spine.protodata.File
 import io.spine.protodata.FilePath
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
@@ -42,10 +43,8 @@ public abstract class JavaRenderer : Renderer(setOf(CommonLanguages.Java)) {
      * Obtains the [ClassName] of the given Protobuf type.
      */
     protected fun classNameOf(type: TypeName, declaredIn: FilePath): ClassName {
-        val file = select(ProtobufSourceFile::class.java)
-            .withId(declaredIn)
-            .orElseThrow { IllegalStateException("Unknown file `${declaredIn.value}`.") }
-        return type.javaClassName(file.file)
+        val file = findFile(declaredIn)
+        return type.javaClassName(file)
     }
 
     /**
@@ -55,9 +54,12 @@ public abstract class JavaRenderer : Renderer(setOf(CommonLanguages.Java)) {
      * files in a [SourceSet][io.spine.protodata.renderer.SourceSet].
      */
     protected fun javaFileOf(type: TypeName, declaredIn: FilePath): Path {
-        val file = select(ProtobufSourceFile::class.java)
-            .withId(declaredIn)
-            .orElseThrow { IllegalStateException("Unknown file `${declaredIn.value}`.") }
-        return type.javaFile(file.file)
+        val file = findFile(declaredIn)
+        return type.javaFile(file)
     }
+
+    private fun findFile(path: FilePath): File =
+        select(ProtobufSourceFile::class.java)
+            .withId(path)
+            .orElseThrow { IllegalStateException("Unknown file `${path.value}`.") }.file
 }
