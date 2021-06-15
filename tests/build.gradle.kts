@@ -47,8 +47,14 @@ subprojects {
 
     repositories.applyStandard()
 
+    val generatedFiles = "$projectDir/generated"
+
     protobuf {
-        generatedFilesBaseDir = "$projectDir/generated"
+        generatedFilesBaseDir = generatedFiles
+    }
+
+    tasks.getByName<Delete>("clean") {
+        delete.add(generatedFiles)
     }
 
     dependencies {
