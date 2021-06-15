@@ -95,25 +95,24 @@ private fun createLaunchTask(
     sourceSet: SourceSet
 ): Task {
     val taskName = launchTaskName(sourceSet)
-    return target.tasks.create(taskName, LaunchProtoData::class.java) { task ->
-        with(task) {
-            dependsOn(config.buildDependencies)
+    return target.tasks.create(taskName, LaunchProtoData::class.java).apply {
+        dependsOn(config.buildDependencies)
 
-            protoDataExecutable = project.protoDataExecutable()
-            renderers = ext.renderers
-            plugins = ext.plugins
-            optionProviders = ext.optionProviders
-            requestFile = ext.requestFile(sourceSet)
-            source = ext.sourceDir(sourceSet)
-            userClasspath = project.provider {
-                config.resolve()
-                config.asPath
-            }
-
-            project.afterEvaluate {
-                compileCommandLine()
-            }
+        protoDataExecutable = project.protoDataExecutable()
+        renderers = ext.renderers
+        plugins = ext.plugins
+        optionProviders = ext.optionProviders
+        requestFile = ext.requestFile(sourceSet)
+        source = ext.sourceDir(sourceSet)
+        userClasspath = project.provider {
+            config.resolve()
+            config.asPath
         }
+
+        project.afterEvaluate {
+            compileCommandLine()
+        }
+        onlyIf { requestFile.get().asFile.exists() }
     }
 }
 
