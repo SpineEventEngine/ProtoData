@@ -80,6 +80,7 @@ open class RunBuild : DefaultTask() {
 
         val process = buildProcess(command, errorOut, debugOut)
         if (process.waitFor() != 0) {
+            logger.error(errorOut.readText())
             throw GradleException("Build FAILED. See $errorOut for details.")
         }
     }
