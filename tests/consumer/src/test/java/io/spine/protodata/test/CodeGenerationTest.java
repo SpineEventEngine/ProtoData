@@ -37,7 +37,7 @@ final class CodeGenerationTest {
     @Test
     @DisplayName("include factory methods for UUID wrapper types")
     void uuids() {
-        ProjectId id = ProjectId.randomUuid();
+        ProjectId id = ProjectId.randomId();
         assertThat(id.getUuid())
                 .isNotEmpty();
     }
