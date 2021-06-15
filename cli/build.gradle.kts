@@ -85,8 +85,14 @@ val stageProtoData by tasks.registering(Copy::class) {
     dependsOn(executableAsJar)
 }
 
+val protoDataLocationProperty: String by extra
+
 tasks.register("installProtoData", Exec::class) {
-    commandLine("$stagingDir/install.sh")
+    val cmd = mutableListOf("$stagingDir/install.sh")
+    if (rootProject.hasProperty(protoDataLocationProperty)) {
+        cmd.add(rootProject.property(protoDataLocationProperty)!!.toString())
+    }
+    commandLine(cmd)
     dependsOn(stageProtoData)
 }
 
