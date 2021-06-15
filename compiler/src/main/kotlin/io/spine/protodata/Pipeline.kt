@@ -78,7 +78,7 @@ public class Pipeline(
 
         renderers.forEach {
             it.protoDataContext = context
-            it.render(sourceSet)
+            it.renderSources(sourceSet)
         }
         sourceSet.write()
         context.close()

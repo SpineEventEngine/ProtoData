@@ -34,7 +34,7 @@ import kotlin.io.path.name
 
 public class PrependingRenderer : Renderer(supportedLanguages = setOf(Java)) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         val file = sources
             .filter { it.path.name.endsWith("_.java") }
             .theOnly()

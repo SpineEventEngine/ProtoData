@@ -32,7 +32,7 @@ import io.spine.protodata.renderer.SourceSet
 
 public class JsRenderer : Renderer(supportedLanguages = setOf(JavaScript)) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         sources.forEach {
             it.overwrite(it.code().replace("Hello", "Hello JavaScript"))
         }

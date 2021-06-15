@@ -38,7 +38,7 @@ import kotlin.io.path.div
 
 public class DeletingRenderer : Renderer(supportedLanguages = setOf(Java)) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         val types = select<DeletedType>().all()
         types.forEach {
             val source = select<ProtobufSourceFile>()

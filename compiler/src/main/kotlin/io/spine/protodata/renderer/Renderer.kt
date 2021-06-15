@@ -49,11 +49,11 @@ protected constructor(
     /**
      * Performs required changes to the given source set.
      */
-    internal fun render(sources: SourceSet) {
+    internal fun renderSources(sources: SourceSet) {
         val relevantFiles = supportedLanguages
             .map { it.filter(sources) }
             .reduce { left, right -> left.intersection(right) }
-        doRender(relevantFiles)
+        render(relevantFiles)
         sources.mergeBack(relevantFiles)
     }
 
@@ -63,7 +63,7 @@ protected constructor(
      * The source set is guaranteed to consist only of the files, containing the code in
      * the [supportedLanguages].
      */
-    protected abstract fun doRender(sources: SourceSet)
+    protected abstract fun render(sources: SourceSet)
 
     final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)

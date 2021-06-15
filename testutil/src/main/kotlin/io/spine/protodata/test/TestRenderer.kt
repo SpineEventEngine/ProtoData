@@ -33,7 +33,7 @@ import io.spine.protodata.select
 
 public class TestRenderer : Renderer(supportedLanguages = setOf(Java)) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         val internalTypes = select<InternalType>().all()
         internalTypes.forEach { internalType ->
             val oldName = internalType.name.simpleName

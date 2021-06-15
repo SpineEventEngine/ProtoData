@@ -39,7 +39,7 @@ import kotlin.io.path.Path
  */
 public class InternalAccessRenderer : Renderer(supportedLanguages = setOf(Java)) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         val internalTypes = select<InternalType>().all()
         internalTypes.forEach { internalType ->
             val path = internalType.name.qualifiedName().replace('.', File.separatorChar)

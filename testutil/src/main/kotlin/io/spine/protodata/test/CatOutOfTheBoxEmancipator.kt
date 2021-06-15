@@ -39,7 +39,7 @@ import io.spine.protodata.renderer.SourceSet
  */
 public class CatOutOfTheBoxEmancipator : Renderer(supportedLanguages = setOf(any)) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         sources.forEach {
             it.code()
         }

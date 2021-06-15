@@ -63,7 +63,7 @@ public final class UuidJavaRenderer extends JavaRenderer {
             '}' + lineSeparator();
 
     @Override
-    protected void doRender(SourceSet sources) {
+    protected void render(SourceSet sources) {
         Set<UuidType> uuidTypes = select(UuidType.class).all();
         for (UuidType type : uuidTypes) {
             TypeName typeName = type.getName();
