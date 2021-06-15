@@ -25,7 +25,7 @@
  */
 
 import com.google.protobuf.gradle.protobuf
-import io.spine.gradle.internal.JUnit
+import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.Scripts

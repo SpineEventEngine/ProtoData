@@ -27,7 +27,7 @@
 import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
-import io.spine.gradle.internal.Grpc
+import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.gradle.Scripts
 

@@ -26,9 +26,9 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
-import io.spine.gradle.internal.Truth
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Kotlin
+import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.PublishingRepos
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.spinePublishing
