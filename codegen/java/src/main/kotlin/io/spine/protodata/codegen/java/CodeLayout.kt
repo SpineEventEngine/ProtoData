@@ -59,7 +59,7 @@ public fun MessageType.javaFile(declaredIn: File): Path {
 /**
  * Obtains the full name of the Java class, generated from this message.
  *
- * @return binary name of the class generated from this message.
+ * @return name of the class generated from this message.
  */
 public fun MessageType.javaClassName(declaredIn: File): ClassName =
     name.javaClassName(declaredIn)
@@ -67,11 +67,16 @@ public fun MessageType.javaClassName(declaredIn: File): ClassName =
 /**
  * Obtains the full name of the Java enum, generated from this Protobuf enum.
  *
- * @return binary name of the enum class generated from this enum.
+ * @return name of the enum class generated from this enum.
  */
 public fun EnumType.javaClassName(declaredIn: File): ClassName =
     name.javaClassName(declaredIn)
 
+/**
+ * Obtains the full name of the Java class, generated from the Protobuf type with this name.
+ *
+ * @return name of the Java class.
+ */
 internal fun TypeName.javaClassName(declaredIn: File): ClassName {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()

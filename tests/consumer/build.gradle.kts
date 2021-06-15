@@ -46,6 +46,6 @@ extensions.getByType<Extension>().apply {
         "io.spine.protodata.test.ClassScopePrinter", "io.spine.protodata.test.UuidJavaRenderer"
     )
     plugins(
-        "io.spine.protodata.test.UuidPlugin", "io.spine.protodata.codegen.java.JavaPlugin"
+        "io.spine.protodata.test.UuidPlugin"
     )
 }

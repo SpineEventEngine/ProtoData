@@ -27,22 +27,26 @@
 package io.spine.protodata.test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.codegen.java.ClassName;
-import io.spine.protodata.language.CommonLanguages;
+import io.spine.protodata.codegen.java.JavaRenderer;
 import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.Renderer;
 import io.spine.protodata.renderer.SourceSet;
 
 import java.util.Set;
 import java.util.UUID;
 
-import static io.spine.protodata.codegen.java.JavaNaming.classNameOf;
 import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 
-public final class UuidJavaRenderer extends Renderer {
+/**
+ * A renderer which adds the {@code randomId()} factory methods to the UUID types.
+ *
+ * <p>A UUID type is a message which only has one field — a {@code string} field called
+ * {@code uuid}.
+ */
+@SuppressWarnings("unused") // Accessed by ProtoData via refection.
+public final class UuidJavaRenderer extends JavaRenderer {
 
     /**
      * The indentation level of one offset (four space characters).
@@ -56,16 +60,12 @@ public final class UuidJavaRenderer extends Renderer {
             "     ).build(); " + lineSeparator() +
             '}' + lineSeparator();
 
-    public UuidJavaRenderer() {
-        super(ImmutableSet.of(CommonLanguages.java()));
-    }
-
     @Override
     protected void doRender(SourceSet sources) {
         Set<UuidType> uuidTypes = select(UuidType.class).all();
         for (UuidType type : uuidTypes) {
             TypeName typeName = type.getName();
-            ClassName className = classNameOf(this, typeName);
+            ClassName className = classNameOf(typeName, type.getDeclaredIn());
             InsertionPoint classScope = new ClassScope(typeName);
             String code = format(METHOD_FORMAT, className, UUID.class.getName());
             sources.atEvery(classScope, s -> s.add(ImmutableList.of(code), INDENT_LEVEL));

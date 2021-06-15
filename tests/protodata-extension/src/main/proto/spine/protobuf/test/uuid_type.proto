@@ -11,10 +11,14 @@ option java_multiple_files = true;
 
 import "spine/protodata/ast.proto";
 
+// A type which is a wrapper for a UUID string.
+//
 message UuidType {
     option (entity).kind = PROJECTION;
 
+    // Name of the type.
     protodata.TypeName name = 1;
 
+    // The file where the type is declared.
     protodata.FilePath declared_in = 2;
 }

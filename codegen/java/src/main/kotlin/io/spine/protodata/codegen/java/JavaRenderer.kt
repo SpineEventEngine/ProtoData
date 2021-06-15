@@ -26,14 +26,24 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.plugin.ViewRepository
+import io.spine.protodata.FilePath
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.TypeName
+import io.spine.protodata.language.CommonLanguages
+import io.spine.protodata.renderer.Renderer
 
 /**
- * The ProtoData plugin which provides helpful shortcut views for generating Java code.
+ * A [Renderer] which generated Java code.
  */
-public class JavaPlugin : Plugin {
+public abstract class JavaRenderer : Renderer(setOf(CommonLanguages.Java)) {
 
-    override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
-        setOf(TypeDeclarationView.Repository)
+    /**
+     * Obtains the [ClassName] of the given Protobuf type.
+     */
+    protected fun classNameOf(type: TypeName, declaredIn: FilePath): ClassName {
+        val file = select(ProtobufSourceFile::class.java)
+            .withId(declaredIn)
+            .orElseThrow { IllegalStateException("Unknown file `${declaredIn.value}`.") }
+        return type.javaClassName(file.file)
+    }
 }
