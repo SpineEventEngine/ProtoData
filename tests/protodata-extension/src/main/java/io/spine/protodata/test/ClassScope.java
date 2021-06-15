@@ -26,12 +26,12 @@
 
 package io.spine.protodata.test;
 
+import com.google.common.base.Objects;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.protodata.renderer.LineNumber;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.protodata.Ast.qualifiedName;
@@ -57,13 +57,34 @@ final class ClassScope implements InsertionPoint {
     @Override
     public LineNumber locate(List<String> lines) {
         String pattern = format(NATIVE_INSERTION_POINT_FMT, qualifiedName(typeName));
-        Pattern regex = Pattern.compile(pattern);
         for (int lineNumber = 0; lineNumber < lines.size(); lineNumber++) {
             String line = lines.get(lineNumber);
-            if (regex.matcher(line).find()) {
+            if (line.contains(pattern)) {
                 return LineNumber.at(lineNumber);
             }
         }
         return LineNumber.notInFile();
+    }
+
+    @Override
+    public String toString() {
+        return getLabel();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ClassScope scope = (ClassScope) o;
+        return Objects.equal(typeName, scope.typeName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(typeName);
     }
 }
