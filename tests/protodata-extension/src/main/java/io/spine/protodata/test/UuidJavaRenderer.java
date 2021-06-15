@@ -27,12 +27,14 @@
 package io.spine.protodata.test;
 
 import com.google.common.collect.ImmutableList;
+import io.spine.protodata.FilePath;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.codegen.java.ClassName;
 import io.spine.protodata.codegen.java.JavaRenderer;
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.protodata.renderer.SourceSet;
 
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.UUID;
 
@@ -65,10 +67,14 @@ public final class UuidJavaRenderer extends JavaRenderer {
         Set<UuidType> uuidTypes = select(UuidType.class).all();
         for (UuidType type : uuidTypes) {
             TypeName typeName = type.getName();
-            ClassName className = classNameOf(typeName, type.getDeclaredIn());
+            FilePath file = type.getDeclaredIn();
+            ClassName className = classNameOf(typeName, file);
             InsertionPoint classScope = new ClassScope(typeName);
             String code = format(METHOD_FORMAT, className, UUID.class.getName());
-            sources.atEvery(classScope, s -> s.add(ImmutableList.of(code), INDENT_LEVEL));
+            Path javaFilePath = javaFileOf(typeName, file);
+            sources.file(javaFilePath)
+                   .at(classScope)
+                   .add(ImmutableList.of(code), INDENT_LEVEL);
         }
     }
 }

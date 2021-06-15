@@ -31,6 +31,7 @@ import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
 import io.spine.protodata.language.CommonLanguages
 import io.spine.protodata.renderer.Renderer
+import java.nio.file.Path
 
 /**
  * A [Renderer] which generates Java code.
@@ -45,5 +46,18 @@ public abstract class JavaRenderer : Renderer(setOf(CommonLanguages.Java)) {
             .withId(declaredIn)
             .orElseThrow { IllegalStateException("Unknown file `${declaredIn.value}`.") }
         return type.javaClassName(file.file)
+    }
+
+    /**
+     * Obtains the path the `.java` file generated from the given type.
+     *
+     * The path is relative to the generated source root. This path is useful for finding source
+     * files in a [SourceSet][io.spine.protodata.renderer.SourceSet].
+     */
+    protected fun javaFileOf(type: TypeName, declaredIn: FilePath): Path {
+        val file = select(ProtobufSourceFile::class.java)
+            .withId(declaredIn)
+            .orElseThrow { IllegalStateException("Unknown file `${declaredIn.value}`.") }
+        return type.javaFile(file.file)
     }
 }

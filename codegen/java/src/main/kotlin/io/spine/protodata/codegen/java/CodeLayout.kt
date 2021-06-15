@@ -44,13 +44,16 @@ import kotlin.io.path.Path
  *
  * The class which represents this message might not be the top level class of the Java file.
  */
-public fun MessageType.javaFile(declaredIn: File): Path {
+public fun MessageType.javaFile(declaredIn: File): Path =
+    name.javaFile(declaredIn)
+
+internal fun TypeName.javaFile(declaredIn: File): Path {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val topLevelClassName = when {
         !javaMultipleFiles -> declaredIn.javaOuterClassName()
-        name.nestingTypeNameList.isNotEmpty() -> name.nestingTypeNameList.first()
-        else -> name.simpleName
+        nestingTypeNameList.isNotEmpty() -> nestingTypeNameList.first()
+        else -> simpleName
     }
     val packageAsPath = packageName.replace('.', java.io.File.separatorChar)
     return Path(packageAsPath, "$topLevelClassName.java")
