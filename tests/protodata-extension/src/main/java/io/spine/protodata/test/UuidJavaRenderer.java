@@ -26,6 +26,7 @@
 
 package io.spine.protodata.test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.codegen.java.ClassName;
@@ -42,6 +43,11 @@ import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 
 public final class UuidJavaRenderer extends Renderer {
+
+    /**
+     * The indentation level of one offset (four space characters).
+     */
+    private static final int INDENT_LEVEL = 1;
 
     private static final String METHOD_FORMAT =
             "public static %s randomId() {" + lineSeparator() +
@@ -62,7 +68,7 @@ public final class UuidJavaRenderer extends Renderer {
             ClassName className = classNameOf(this, typeName);
             InsertionPoint classScope = new ClassScope(typeName);
             String code = format(METHOD_FORMAT, className, UUID.class.getName());
-            sources.atEvery(classScope, s -> s.add(code));
+            sources.atEvery(classScope, s -> s.add(ImmutableList.of(code), INDENT_LEVEL));
         }
     }
 }
