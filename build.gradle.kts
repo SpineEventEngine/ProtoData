@@ -55,6 +55,7 @@ plugins {
     kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
     id(io.spine.internal.dependency.Kotlin.Dokka.pluginId) version(io.spine.internal.dependency.Kotlin.Dokka.version)
     idea
+    `integration-test`
 }
 
 spinePublishing {
