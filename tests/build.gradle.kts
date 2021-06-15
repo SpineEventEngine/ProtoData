@@ -25,6 +25,7 @@
  */
 
 import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
@@ -55,6 +56,9 @@ subprojects {
 
     protobuf {
         generatedFilesBaseDir = generatedFiles
+        protoc {
+            artifact = Protobuf.compiler
+        }
     }
 
     tasks.getByName<Delete>("clean") {
