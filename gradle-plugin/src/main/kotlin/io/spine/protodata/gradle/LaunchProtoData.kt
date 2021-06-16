@@ -84,7 +84,7 @@ public open class LaunchProtoData : Exec() {
                 yield(it)
             }
             optionProviders.get().forEach {
-                yield("--options")
+                yield("--option-provider")
                 yield(it)
             }
             yield("--request")
