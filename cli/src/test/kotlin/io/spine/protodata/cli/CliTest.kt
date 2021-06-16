@@ -27,7 +27,7 @@
 package io.spine.protodata.cli
 
 import com.github.ajalt.clikt.core.MissingOption
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
@@ -38,7 +38,7 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -78,7 +78,7 @@ class `Command line application should` {
             "--src", srcRoot.toString(),
             "-t", codegenRequestFile.toString()
         )
-        Truth.assertThat(sourceFile.readText())
+        assertThat(sourceFile.readText())
             .isEqualTo("_${Project::class.simpleName}.getUuid() ")
     }
 
@@ -119,7 +119,7 @@ class `Command line application should` {
         }
 
         private fun assertMissingOption(block: () -> Unit) {
-            Assertions.assertThrows(MissingOption::class.java, block)
+            assertThrows(MissingOption::class.java, block)
         }
     }
 
