@@ -100,9 +100,25 @@ dependencies {
 
 ```
 
+## Source sets
+
+For each source set in the project, the plugin generates a distinct task launching ProtoData.
+Each task only processes the sources of the associated source set. This allows users to apply
+ProtoData to production and test code alike.
+
+To reference a specific task by name, use the following format: `launchProtoData<source set name>`,
+for example, `launchProtoDataMain`, `launchProtoDataTest`, `launchProtoDataIntegrationTest`, etc.
+
+To find all the tasks in a Gradle script, use the `LaunchProtoData` task type. For example:
+```kotlin
+tasks.withType<LaunchProtoData> {
+    onlyIf { moon.phase >= 0.7 }
+}
+```
+
 ## Caveat
 
-Also, the plugin relies on the Java Project structure, the Java Gradle plugin, the Protobuf Gradle
+The plugin relies on the Java Project structure, the Java Gradle plugin, the Protobuf Gradle
 plugin, and the ProtoData Maven repository.
 
 To make everything work, at this stage, users have to add the following config:
@@ -128,6 +144,6 @@ repositories {
 Users who wish to extend ProtoData must also add the dependency to the API:
 ```kotlin
 dependencies {
-    api("io.spine.protodata:compiler:<ProtoData version>")
+    implementation("io.spine.protodata:compiler:<ProtoData version>")
 }
 ```
