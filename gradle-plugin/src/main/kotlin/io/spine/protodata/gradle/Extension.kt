@@ -104,7 +104,7 @@ public class Extension(private val project: Project) {
      * would be placed under `$srcBaseDir/main/java`, where `main` is the name of the source set
      * and `java` is the [srcSubdir].
      *
-     * Neither `srcBaseDir` nor [srcSubdir] don't tell the Protobuf compiler where to put the files.
+     * Neither `srcBaseDir` nor [srcSubdir] tell the Protobuf compiler where to put the files.
      * These properties merely point at the location where the files are put so that ProtoData can
      * find those files.
      *
