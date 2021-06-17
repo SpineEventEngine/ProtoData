@@ -29,6 +29,12 @@ package io.spine.protodata.cli
 import com.github.ajalt.clikt.core.MissingOption
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos
+import io.spine.option.OptionsProto
+import io.spine.protodata.cli.given.CustomOptionPlugin
+import io.spine.protodata.cli.given.CustomOptionRenderer
+import io.spine.protodata.cli.given.TestOptionProvider
+import io.spine.protodata.cli.test.TestOptionsProto
+import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.TestPlugin
@@ -61,11 +67,16 @@ class `Command line application should` {
             ${Project::class.simpleName}.getUuid() 
         """.trimIndent())
 
-        val protoFile = ProjectProto.getDescriptor()
+        val project = ProjectProto.getDescriptor()
+        val testProto = TestProto.getDescriptor()
         val request = PluginProtos.CodeGeneratorRequest
             .newBuilder()
-            .addProtoFile(protoFile.toProto())
-            .addFileToGenerate(protoFile.name)
+            .addProtoFile(project.toProto())
+            .addProtoFile(testProto.toProto())
+            .addProtoFile(TestOptionsProto.getDescriptor().toProto())
+            .addProtoFile(OptionsProto.getDescriptor().toProto())
+            .addFileToGenerate(project.name)
+            .addFileToGenerate(testProto.name)
             .build()
         codegenRequestFile.writeBytes(request.toByteArray())
     }
@@ -80,6 +91,35 @@ class `Command line application should` {
         )
         assertThat(sourceFile.readText())
             .isEqualTo("_${Project::class.simpleName}.getUuid() ")
+    }
+
+    @Test
+    fun `supply options by file path`() {
+        launchApp(
+            "-p", CustomOptionPlugin::class.jvmName,
+            "-r", CustomOptionRenderer::class.jvmName,
+            "--src", srcRoot.toString(),
+            "-t", codegenRequestFile.toString(),
+            "-o", "spine/protodata/cli/test/options.proto",
+            "-o", "spine/options.proto"
+        )
+        val generatedFile = srcRoot.resolve(CustomOptionRenderer.FILE_NAME)
+        assertThat(generatedFile.readText())
+            .isEqualTo("custom_field_for_test")
+    }
+
+    @Test
+    fun `supply options by a provider`() {
+        launchApp(
+            "-p", CustomOptionPlugin::class.jvmName,
+            "-r", CustomOptionRenderer::class.jvmName,
+            "--src", srcRoot.toString(),
+            "-t", codegenRequestFile.toString(),
+            "--op", TestOptionProvider::class.jvmName
+        )
+        val generatedFile = srcRoot.resolve(CustomOptionRenderer.FILE_NAME)
+        assertThat(generatedFile.readText())
+            .isEqualTo("custom_field_for_test")
     }
 
     @Nested

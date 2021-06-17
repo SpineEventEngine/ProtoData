@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package spine.protodata.cli.test;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.cli.test";
+option java_outer_classname = "TestOptionsProto";
+option java_multiple_files = true;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+
+    Foo custom = 73900;
+}
+
+message Foo {
+    string bar = 1;
+}
