@@ -95,13 +95,13 @@ class `Plugin extension should` {
     @Test
     fun `produce source directory`() {
         val basePath = "my/path"
-        val subdir = "foobar"
+        val subDir = "foobar"
 
         extension.srcBaseDir = basePath
-        extension.srcSubdir = subdir
+        extension.srcSubDir = subDir
 
         val sourceDir = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
         assertThat(sourceDir.get().asFile.toPath())
-            .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subdir)
+            .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
     }
 }
