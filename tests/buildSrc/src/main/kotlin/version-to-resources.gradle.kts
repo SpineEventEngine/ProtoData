@@ -29,6 +29,13 @@ plugins {
 }
 
 val versionDir = "$buildDir/version"
+
+/**
+ * This file, containing the version of ProtoData, is generated at build time and included into
+ * the project's resources.
+ *
+ * Please search for the usages of "version.txt" when making changes.
+ */
 val versionFile = "$versionDir/version.txt"
 
 sourceSets {
