@@ -30,7 +30,7 @@ import io.spine.protodata.language.CommonLanguages.Kotlin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 
-public class KtRenderer : Renderer(supportedLanguages = setOf(Kotlin)) {
+public class KtRenderer : Renderer(Kotlin) {
 
     override fun render(sources: SourceSet) {
         sources.forEach {

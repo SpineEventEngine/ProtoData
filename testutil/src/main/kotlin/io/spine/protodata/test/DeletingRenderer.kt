@@ -36,7 +36,7 @@ import io.spine.protodata.select
 import kotlin.io.path.Path
 import kotlin.io.path.div
 
-public class DeletingRenderer : Renderer(supportedLanguages = setOf(Java)) {
+public class DeletingRenderer : Renderer(Java) {
 
     override fun render(sources: SourceSet) {
         val types = select<DeletedType>().all()

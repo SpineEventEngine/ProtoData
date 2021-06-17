@@ -26,14 +26,13 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.language.CommonLanguages
+import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.LineNumber
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(
-    target = CommonLanguages.Java
-) {
+public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(Java) {
+
     override fun supportedInsertionPoints(): Set<InsertionPoint> =
         GenericInsertionPoint.values().toSet()
 }
