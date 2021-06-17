@@ -104,12 +104,12 @@ public class Extension(private val project: Project) {
      * would be placed under `$srcBaseDir/main/java`, where `main` is the name of the source set
      * and `java` is the [srcSubDir].
      *
-     * Neither `srcBaseDir` nor [srcSubDir] tell the Protobuf compiler where to put the files.
-     * These properties merely point at the location where the files are put so that ProtoData can
-     * find those files.
+     * By default, `srcBaseDir` points to the directory which is specified in
+     * `protobuf.generatedFilesBaseDir` to the Protobuf Gradle plugin. If `srcBaseDir` is changed,
+     * Protobuf compiler settings are NOT affected.
      *
-     * By default, points to the directory which is specified in `protobuf.generatedFilesBaseDir`
-     * to the Protobuf Gradle plugin.
+     * To change the location where `protoc` stores files it generated, refer to
+     * the Protobuf Gradle plugin DSL.
      *
      * @see srcSubDir
      */

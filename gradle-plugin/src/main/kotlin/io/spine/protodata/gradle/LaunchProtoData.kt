@@ -35,8 +35,11 @@ import org.gradle.api.tasks.Internal
 /**
  * A task which executes a single ProtoData command.
  *
- * This class is public to allow users configure dependencies, disable, or configure lazy execution
- * for ProtoData tasks. Users should NOT change the CLI command, user directory, etc. directly.
+ * This class is public to allow users find ProtoData tasks by their type. This is useful
+ * to configure task dependencies, enable and disable individual tasks, add conditions
+ * via `onlyIf { }`, etc.
+ *
+ * Users should NOT change the CLI command, user directory, etc. directly.
  * Please refer to the `protoData { }` extension to configure ProtoData.
  */
 public open class LaunchProtoData : Exec() {

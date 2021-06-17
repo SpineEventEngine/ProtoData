@@ -44,8 +44,8 @@ import static java.lang.System.lineSeparator;
 /**
  * A renderer which adds the {@code randomId()} factory methods to the UUID types.
  *
- * <p>A UUID type is a message which only has one field — a {@code string} field called
- * {@code uuid}.
+ * <p>A UUID type is a message which only has one field — a {@code string} field
+ * called {@code uuid}.
  */
 @SuppressWarnings("unused") // Accessed by ProtoData via refection.
 public final class UuidJavaRenderer extends JavaRenderer {
