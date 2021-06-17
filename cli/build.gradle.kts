@@ -29,6 +29,7 @@ import io.spine.internal.dependency.Flogger
 plugins {
     application
     `version-to-resources`
+    `build-proto-model`
 }
 
 dependencies {

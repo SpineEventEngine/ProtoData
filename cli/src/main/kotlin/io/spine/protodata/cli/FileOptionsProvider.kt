@@ -24,21 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("OptionProviders")
-
-package io.spine.protodata.option
+package io.spine.protodata.cli
 
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.ExtensionRegistry
+import io.spine.protodata.camelCase
+import io.spine.protodata.option.OptionsProvider
 
-internal class FileOptionsProvider(
+/**
+ * An [OptionsProvider] which provides all the options defined in a single Protobuf file.
+ */
+public class FileOptionsProvider(
     private val descriptor: FileDescriptor
 ) : OptionsProvider {
 
     override fun dumpTo(registry: ExtensionRegistry) {
-        descriptor.extensions.forEach(registry::add)
+        val outerClassName = outerClassName()
+        val classLoader = this.javaClass.classLoader
+        val optionsClass = classLoader.loadClass(outerClassName)
+        val method = optionsClass.getDeclaredMethod(
+            "registerAllExtensions", ExtensionRegistry::class.java
+        )
+        method.invoke(null, registry)
+    }
+
+    private fun outerClassName(): String {
+        var simpleClassName = descriptor.options.javaOuterClassname
+        if (simpleClassName.isEmpty()) {
+            val name = descriptor.name
+            val startIndex = name.lastIndexOf('/') + 1
+            val endIndex = name.lastIndexOf('.')
+            simpleClassName = name.substring(startIndex, endIndex).camelCase()
+        }
+        var javaPackage = descriptor.options.javaPackage
+        if (javaPackage.isEmpty()) {
+            javaPackage = descriptor.`package`
+        }
+        return "$javaPackage.$simpleClassName"
     }
 }
-
-public fun providerFor(descriptor: FileDescriptor): OptionsProvider =
-    FileOptionsProvider(descriptor)

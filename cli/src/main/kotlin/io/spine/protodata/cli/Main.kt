@@ -41,7 +41,6 @@ import io.spine.code.proto.FileSet
 import io.spine.io.Resource
 import io.spine.protodata.Pipeline
 import io.spine.protodata.option.OptionsProvider
-import io.spine.protodata.option.providerFor
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
@@ -164,7 +163,7 @@ internal class Run(version: String) : CliktCommand(
         val fileProviders = options
             .map(FileName::of)
             .map { files.tryFind(it).orElseThrow { noSuchFile(it) } }
-            .map(::providerFor)
+            .map(::FileOptionsProvider)
 
         val allProviders = providers.toMutableList()
         allProviders.addAll(fileProviders)
