@@ -62,6 +62,14 @@ public final class UuidJavaRenderer extends JavaRenderer {
             "     ).build(); " + lineSeparator() +
             '}' + lineSeparator();
 
+    /**
+     * Renders the random ID factory method for all UUID types.
+     *
+     * <p>If a class represents a UUID type, places a public static method into the class scope.
+     * The method generates a new instance of the class with a random UUID value.
+     *
+     * <p>A UUID type is a message with a single string field called UUID.
+     */
     @Override
     protected void render(SourceSet sources) {
         Set<UuidType> uuidTypes = select(UuidType.class).all();
