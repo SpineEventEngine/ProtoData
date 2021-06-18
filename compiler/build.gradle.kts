@@ -30,11 +30,9 @@ plugins {
     `build-proto-model`
 }
 
-val spineBaseVersion: String by extra
 val spineCoreVersion: String by extra
 
 dependencies {
-    api("io.spine:spine-base:$spineBaseVersion")
     api("io.spine:spine-server:$spineCoreVersion")
 
     testImplementation(project(":testutil"))
