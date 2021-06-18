@@ -4,7 +4,7 @@ This Gradle project contains tests for the ProtoData tool and Gradle plugin.
 
 Despite being part of `ProtoData` Git repository, it is a separate Gradle project.
 In order to fetch artifacts from the primary Gradle project, `tests` includes it
-via a Gradle included build.
+via a Gradle [composite build](https://docs.gradle.org/current/userguide/composite_builds.html).
 
 ## Running tests
 
