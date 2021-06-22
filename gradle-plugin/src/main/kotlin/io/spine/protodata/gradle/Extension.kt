@@ -108,7 +108,7 @@ public class Extension(private val project: Project) {
      * `protobuf.generatedFilesBaseDir` to the Protobuf Gradle plugin. If `srcBaseDir` is changed,
      * Protobuf compiler settings are NOT affected.
      *
-     * To change the location where `protoc` stores files it generated, refer to
+     * To change the location where `protoc` stores files it generates, refer to
      * the Protobuf Gradle plugin DSL.
      *
      * @see srcSubDir
