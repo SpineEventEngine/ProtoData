@@ -31,14 +31,11 @@ import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.kotlin.dsl.withType
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -75,11 +72,14 @@ public class Plugin : GradlePlugin<Project> {
         val extension = Extension(target)
         target.extensions.add("protoData", extension)
         val protoDataConfiguration = target.configurations.create("protoData")
-        createLaunchTask(target, extension, protoDataConfiguration)
+        target.sourceSets.forEach { sourceSet ->
+            val launch = createLaunchTask(target, extension, protoDataConfiguration, sourceSet)
+            target.javaCompileFor(sourceSet)?.dependsOn(launch)
+        }
 
-        val resource = Plugin::class.java.classLoader.getResource("version.txt")!!
+        val resource = Plugin::class.java.classLoader.getResource(VERSION_RESOURCE)!!
         val version = resource.readText()
-        configureProtobufPlugin(target, extension, version)
+        target.configureProtobufPlugin(extension, version)
 
         val protoDataRawConfiguration = target.configurations.create("protoDataRawArtifact")
         createInstallTask(target, protoDataRawConfiguration, version)
@@ -87,148 +87,42 @@ public class Plugin : GradlePlugin<Project> {
 }
 
 /**
- * The `protoData { }` Gradle extension.
+ * The resource file containing the version of ProtoData.
+ *
+ * Such a resource name might be duplicated in other places in ProtoData code base. The reason for
+ * this is to avoid creating an extra dependency for the Gradle plugin, so that the users wouldn't
+ * have to declare a custom Maven repository to use the plugin.
  */
-@Suppress("UnstableApiUsage") // Gradle Property API.
-public class Extension(private val project: Project) {
+private const val VERSION_RESOURCE = "version.txt"
 
-    internal  val plugins: ListProperty<String> =
-        project.objects.listProperty(String::class.java)
-
-    /**
-     * Passes given names of Java classes to ProtoData as
-     * the `io.spine.protodata.plugin.Plugin` classes.
-     */
-    public fun plugins(vararg classNames: String) {
-        plugins.addAll(classNames.toList())
-    }
-
-    internal val renderers: ListProperty<String> =
-        project.objects.listProperty(String::class.java)
-
-    /**
-     * Passes given names of Java classes to ProtoData as
-     * the `io.spine.protodata.renderer.Renderer` classes.
-     */
-    public fun renderers(vararg classNames: String) {
-        renderers.addAll(classNames.toList())
-    }
-
-    internal val optionProviders: ListProperty<String> =
-        project.objects.listProperty(String::class.java)
-
-    /**
-     * Passes given names of Java classes to ProtoData as
-     * the `io.spine.protodata.option.OptionsProvider` classes.
-     */
-    public fun optionProviders(vararg classNames: String) {
-        optionProviders.addAll(classNames.toList())
-    }
-
-    internal val requestFileProperty: RegularFileProperty =
-        project.objects.fileProperty().convention(
-            project.layout.buildDirectory.file("protodata/request.bin")
-        )
-
-    /**
-     * The location where to write and read the serialized `CodeGeneratorRequest`.
-     *
-     * The value accepted by this property it turned into a file via the Gradle's
-     * `Project.file(..)` method.
-     *
-     * By default, the request file is stored in a subdir inside the `build` directory.
-     */
-    public var requestFile: Any
-        get() = requestFileProperty.get()
-        set(value) = requestFileProperty.set(project.file(value))
-
-    internal val sourceProperty: DirectoryProperty =
-        project.objects.directoryProperty().convention(
-            project.layout.projectDirectory.dir("generated/main/java")
-        )
-
-    /**
-     * The location where the sources to process with ProtoData can be found.
-     *
-     * By default, `generated/main/java`.
-     */
-    public var source: Any
-        get() = sourceProperty.get()
-        set(value) = sourceProperty.set(project.file(value))
-
-    internal val generateProtoTasks: ListProperty<String> =
-        project.objects.listProperty(String::class.java).convention(listOf("generateProto"))
-
-    /**
-     * Adds the names of Gradle tasks which generate the sources processed by ProtoData.
-     *
-     * By default, only `generateProto` task is considered.
-     */
-    public fun generateProtoTasks(vararg taskNames: String) {
-        generateProtoTasks.addAll(taskNames.toList())
-    }
-}
-
-private const val EXECUTABLE = "protodata"
-private const val PROTO_DATA_LOCATION = "protoDataLocation"
 private const val PROTOC_PLUGIN = "protodata"
 
 private fun createLaunchTask(
     target: Project,
-    extension: Extension,
-    config: Configuration
-) = target.tasks.create("launchProtoData", Exec::class.java) { task ->
-        task.dependsOn(config.buildDependencies)
-        task.dependsOn(extension.generateProtoTasks)
-        task.buildCommand(config, extension)
+    ext: Extension,
+    config: Configuration,
+    sourceSet: SourceSet
+): Task {
+    val taskName = launchTaskName(sourceSet)
+    return target.tasks.create(taskName, LaunchProtoData::class.java).apply {
+        dependsOn(config.buildDependencies)
 
-        target.tasks.withType<JavaCompile> { dependsOn(task) }
-    }
+        protoDataExecutable = project.protoDataExecutable()
+        renderers = ext.renderers
+        plugins = ext.plugins
+        optionProviders = ext.optionProviders
+        requestFile = ext.requestFile(sourceSet)
+        source = ext.sourceDir(sourceSet)
+        userClasspath = project.provider {
+            config.resolve()
+            config.asPath
+        }
 
-private fun Project.protoDataExecutable(): String {
-    if (!rootProject.hasProperty(PROTO_DATA_LOCATION)) {
-        return EXECUTABLE
-    }
-    val location = rootProject.property(PROTO_DATA_LOCATION) as String?
-    return if (location == null) {
-        EXECUTABLE
-    } else {
-        "$location/protodata/bin/$EXECUTABLE"
-    }
-}
-
-private fun Exec.buildCommand(config: Configuration,
-                              extension: Extension) {
-    config.resolve()
-    val userClassPath = config.asPath
-    val command = mutableListOf(project.protoDataExecutable())
-    if (extension.plugins.isPresent) {
-        extension.plugins.get().forEach {
-            command.add("--plugin")
-            command.add(it)
+        project.afterEvaluate {
+            compileCommandLine()
         }
+        onlyIf { requestFile.get().asFile.exists() }
     }
-    if (extension.renderers.isPresent) {
-        extension.renderers.get().forEach {
-            command.add("--renderer")
-            command.add(it)
-        }
-    }
-    if (extension.optionProviders.isPresent) {
-        extension.optionProviders.get().forEach {
-            command.add("--options")
-            command.add(it)
-        }
-    }
-    command.add("--request")
-    command.add(extension.requestFileProperty.get().asFile.absolutePath)
-    command.add("--src")
-    command.add(extension.sourceProperty.asFile.get().absolutePath)
-    if (userClassPath.isNotEmpty()) {
-        command.add("--user-classpath")
-        command.add(userClassPath)
-    }
-    commandLine(command)
 }
 
 private fun createInstallTask(target: Project, config: Configuration, version: String) {
@@ -243,21 +137,18 @@ private fun createInstallTask(target: Project, config: Configuration, version: S
 
     target.tasks.register("installProtoData", Exec::class.java) {
         val command = mutableListOf("$stagingDir/install.sh")
-        val rootProject = target.rootProject
-        if (rootProject.hasProperty(PROTO_DATA_LOCATION)) {
-            val location = target.rootProject.property(PROTO_DATA_LOCATION) as String?
-            if (location != null) {
-                val absoluteLocation = target.rootProject.file(location).absolutePath
-                command.add(absoluteLocation)
-            }
+        val protoDataLocation = target.rootProject.protoDataLocation
+        if (protoDataLocation != null) {
+            val absoluteLocation = target.rootProject.file(protoDataLocation).absolutePath
+            command.add(absoluteLocation)
         }
         it.commandLine(command)
         it.dependsOn(stageTask)
     }
 }
 
-private fun configureProtobufPlugin(target: Project, extension: Extension, version: String) {
-    target.protobuf {
+private fun Project.configureProtobufPlugin(extension: Extension, version: String) =
+    protobuf {
         plugins {
             id(PROTOC_PLUGIN) {
                 artifact = "io.spine.protodata:protoc:$version:exe@jar"
@@ -267,11 +158,14 @@ private fun configureProtobufPlugin(target: Project, extension: Extension, versi
             all().forEach {
                 it.plugins {
                     id(PROTOC_PLUGIN) {
-                        val requestFile = extension.requestFileProperty.asFile.get().absolutePath
-                        option(requestFile)
+                        val requestFile = extension.requestFile(it.sourceSet)
+                        option(requestFile.get().asFile.absolutePath)
                     }
                 }
+                project.tasks.getByName(launchTaskName(it.sourceSet)).dependsOn(it)
             }
         }
     }
-}
+
+private fun launchTaskName(sourceSet: SourceSet): String =
+    "launchProtoData${sourceSet.name.capitalize()}"

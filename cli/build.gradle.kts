@@ -76,6 +76,26 @@ val executableAsJar by tasks.registering(Jar::class) {
     dependsOn(tasks.distZip)
 }
 
+val stagingDir = "$buildDir/staging"
+
+val stageProtoData by tasks.registering(Copy::class) {
+    from(zipTree(executableAsJar.get().archiveFile))
+    into(stagingDir)
+
+    dependsOn(executableAsJar)
+}
+
+val protoDataLocationProperty: String by extra
+
+tasks.register("installProtoData", Exec::class) {
+    val cmd = mutableListOf("$stagingDir/install.sh")
+    if (rootProject.hasProperty(protoDataLocationProperty)) {
+        cmd.add(rootProject.property(protoDataLocationProperty)!!.toString())
+    }
+    commandLine(cmd)
+    dependsOn(stageProtoData)
+}
+
 val executableArchivesConfig = "executableArchives"
 
 configurations.create(executableArchivesConfig)

@@ -29,10 +29,11 @@ package io.spine.protodata.test
 import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.select
 
-public class TestRenderer : Renderer(supportedLanguages = setOf(Java)) {
+public class TestRenderer : Renderer(Java) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         val internalTypes = select<InternalType>().all()
         internalTypes.forEach { internalType ->
             val oldName = internalType.name.simpleName

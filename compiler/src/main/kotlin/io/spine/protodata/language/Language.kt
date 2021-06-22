@@ -104,6 +104,7 @@ public object CommonLanguages {
      *
      * Does not support [comments][Language.comment].
      */
+    @get:JvmName("any")
     @JvmStatic
     public val any: Language = object : Language("any language", Glob.any) {
         override fun comment(line: String): String {
@@ -111,10 +112,15 @@ public object CommonLanguages {
         }
     }
 
+    @get:JvmName("kotlin")
     @JvmStatic
     public val Kotlin: Language = SlashCommentLanguage("Kotlin", Glob.extension("kt"))
+
+    @get:JvmName("java")
     @JvmStatic
     public val Java: Language = SlashCommentLanguage("Java", Glob.extension("java"))
+
+    @get:JvmName("javaScript")
     @JvmStatic
     public val JavaScript: Language = SlashCommentLanguage("JavaScript", Glob.extension("js"))
 }

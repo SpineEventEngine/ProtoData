@@ -30,6 +30,8 @@ package io.spine.protodata.protoc
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse
+import java.nio.file.StandardOpenOption.CREATE
+import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import kotlin.io.path.Path
 import kotlin.io.path.writeBytes
 
@@ -38,14 +40,12 @@ import kotlin.io.path.writeBytes
  */
 public fun main() {
     val request = CodeGeneratorRequest.parseFrom(System.`in`)
-    val path = request.parameter
-
-    val requestFile = Path(path)
+    val requestFile = Path(request.parameter)
     requestFile.toFile()
                .parentFile
                .mkdirs()
-    requestFile.writeBytes(request.toByteArray())
+    requestFile.writeBytes(request.toByteArray(), CREATE, TRUNCATE_EXISTING)
 
-    val emptyResponce = CodeGeneratorResponse.newBuilder().build()
+    val emptyResponce = CodeGeneratorResponse.getDefaultInstance()
     System.out.write(emptyResponce.toByteArray())
 }

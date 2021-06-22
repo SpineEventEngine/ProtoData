@@ -30,15 +30,16 @@ import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.select
 import java.io.File
 import kotlin.io.path.Path
 
 /**
  * Creates a new package-private class for each [InternalType].
  */
-public class InternalAccessRenderer : Renderer(supportedLanguages = setOf(Java)) {
+public class InternalAccessRenderer : Renderer(Java) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         val internalTypes = select<InternalType>().all()
         internalTypes.forEach { internalType ->
             val path = internalType.name.qualifiedName().replace('.', File.separatorChar)

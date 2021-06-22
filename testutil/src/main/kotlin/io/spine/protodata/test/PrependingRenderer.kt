@@ -32,9 +32,9 @@ import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.theOnly
 import kotlin.io.path.name
 
-public class PrependingRenderer : Renderer(supportedLanguages = setOf(Java)) {
+public class PrependingRenderer : Renderer(Java) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         val file = sources
             .filter { it.path.name.endsWith("_.java") }
             .theOnly()

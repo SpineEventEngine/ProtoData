@@ -43,7 +43,7 @@ import io.spine.protodata.language.Language
  */
 public abstract class InsertionPointPrinter(
     private val target: Language
-) : Renderer(setOf(target)) {
+) : Renderer(target) {
 
     /**
      * [InsertionPoint]s which could be added to source code by this `InsertionPointPrinter`.
@@ -52,7 +52,7 @@ public abstract class InsertionPointPrinter(
      */
     protected abstract fun supportedInsertionPoints(): Set<InsertionPoint>
 
-    final override fun doRender(sources: SourceSet) {
+    final override fun render(sources: SourceSet) {
         sources.prepareCode { file ->
             val lines = file.lines().toMutableList()
             supportedInsertionPoints().forEach { point ->

@@ -43,6 +43,7 @@ fi
 if [ $# -eq 0 ]; then
     target="$HOME/Library"
 else
+    mkdir -p "$1"
     target="$1"
 fi
 

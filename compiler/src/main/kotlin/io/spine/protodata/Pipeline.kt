@@ -29,15 +29,14 @@ package io.spine.protodata
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.environment.Production
-import io.spine.logging.Logging
 import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
-import io.spine.server.ServerEnvironment
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
+import io.spine.server.under
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -57,12 +56,13 @@ public class Pipeline(
     private val renderers:  List<Renderer>,
     private val sourceSet: SourceSet,
     private val request: CodeGeneratorRequest
-) : Logging {
+) {
 
     init {
-        ServerEnvironment.`when`(Production::class.java)
-                         .use(InMemoryStorageFactory.newInstance())
-                         .use(InMemoryTransportFactory.newInstance())
+        under<Production> {
+            use(InMemoryStorageFactory.newInstance())
+            use(InMemoryTransportFactory.newInstance())
+        }
     }
 
     /**
@@ -78,7 +78,7 @@ public class Pipeline(
 
         renderers.forEach {
             it.protoDataContext = context
-            it.render(sourceSet)
+            it.renderSources(sourceSet)
         }
         sourceSet.write()
         context.close()

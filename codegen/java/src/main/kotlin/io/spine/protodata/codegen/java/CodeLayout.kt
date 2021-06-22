@@ -44,13 +44,16 @@ import kotlin.io.path.Path
  *
  * The class which represents this message might not be the top level class of the Java file.
  */
-public fun MessageType.javaFile(declaredIn: File): Path {
+public fun MessageType.javaFile(declaredIn: File): Path =
+    name.javaFile(declaredIn)
+
+internal fun TypeName.javaFile(declaredIn: File): Path {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val topLevelClassName = when {
         !javaMultipleFiles -> declaredIn.javaOuterClassName()
-        name.nestingTypeNameList.isNotEmpty() -> name.nestingTypeNameList.first()
-        else -> name.simpleName
+        nestingTypeNameList.isNotEmpty() -> nestingTypeNameList.first()
+        else -> simpleName
     }
     val packageAsPath = packageName.replace('.', java.io.File.separatorChar)
     return Path(packageAsPath, "$topLevelClassName.java")
@@ -59,7 +62,7 @@ public fun MessageType.javaFile(declaredIn: File): Path {
 /**
  * Obtains the full name of the Java class, generated from this message.
  *
- * @return binary name of the class generated from this message.
+ * @return name of the class generated from this message.
  */
 public fun MessageType.javaClassName(declaredIn: File): ClassName =
     name.javaClassName(declaredIn)
@@ -67,12 +70,17 @@ public fun MessageType.javaClassName(declaredIn: File): ClassName =
 /**
  * Obtains the full name of the Java enum, generated from this Protobuf enum.
  *
- * @return binary name of the enum class generated from this enum.
+ * @return name of the enum class generated from this enum.
  */
 public fun EnumType.javaClassName(declaredIn: File): ClassName =
     name.javaClassName(declaredIn)
 
-private fun TypeName.javaClassName(declaredIn: File): ClassName {
+/**
+ * Obtains the full name of the Java class, generated from the Protobuf type with this name.
+ *
+ * @return name of the Java class.
+ */
+internal fun TypeName.javaClassName(declaredIn: File): ClassName {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val nameElements = mutableListOf<String>()

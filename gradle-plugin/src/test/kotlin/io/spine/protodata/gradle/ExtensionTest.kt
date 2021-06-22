@@ -29,7 +29,9 @@ package io.spine.protodata.gradle
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.gradle.ProtobufPlugin
 import java.io.File
+import kotlin.io.path.div
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSet.MAIN_SOURCE_SET_NAME
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.testfixtures.ProjectBuilder
@@ -50,6 +52,7 @@ class `Plugin extension should` {
             .withProjectDir(projectDir)
             .build()
         project.apply(plugin = "java")
+        project.sourceSets.maybeCreate(MAIN_SOURCE_SET_NAME)
         project.apply<ProtobufPlugin>()
         project.apply<Plugin>()
 
@@ -82,18 +85,23 @@ class `Plugin extension should` {
     }
 
     @Test
-    fun `add dependency tasks`() {
-        val taskName = "generateCustomProto"
-        extension.generateProtoTasks(taskName)
-        assertThat(extension.generateProtoTasks.get())
-            .contains(taskName)
+    fun `specify request file location`() {
+        val path = "/my/path/to/main.bin"
+        extension.requestFilesDir = path
+        assertThat(extension.requestFilesDirProperty.get().asFile)
+            .isEqualTo(project.projectDir.resolve(path))
     }
 
     @Test
-    fun `specify request file location`() {
-        val path = "/my/path/to/file.bin"
-        extension.requestFile = path
-        assertThat(extension.requestFileProperty.get().asFile)
-            .isEqualTo(project.projectDir.resolve(path))
+    fun `produce source directory`() {
+        val basePath = "my/path"
+        val subDir = "foobar"
+
+        extension.srcBaseDir = basePath
+        extension.srcSubDir = subDir
+
+        val sourceDir = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
+        assertThat(sourceDir.get().asFile.toPath())
+            .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
     }
 }

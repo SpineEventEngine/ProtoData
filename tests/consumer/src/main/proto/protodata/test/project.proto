@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package protodata.test;
+
+option java_package = "io.spine.protodata.test";
+option java_outer_classname = "ProjectProto";
+option java_multiple_files = true;
+
+message ProjectId {
+    string uuid = 1;
+}

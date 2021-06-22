@@ -37,9 +37,9 @@ import io.spine.protodata.renderer.SourceSet
  * Releases the proverbial Schrödinger's cat (insertion points) out of the box by observing
  * the code.
  */
-public class CatOutOfTheBoxEmancipator : Renderer(supportedLanguages = setOf(any)) {
+public class CatOutOfTheBoxEmancipator : Renderer(any) {
 
-    override fun doRender(sources: SourceSet) {
+    override fun render(sources: SourceSet) {
         sources.forEach {
             it.code()
         }

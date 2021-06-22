@@ -26,6 +26,10 @@
 
 import io.spine.internal.dependency.JavaPoet
 
+plugins {
+    `build-proto-model`
+}
+
 dependencies {
     api(project(":compiler"))
     api(JavaPoet.lib)

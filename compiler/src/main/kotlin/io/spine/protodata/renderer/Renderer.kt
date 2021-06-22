@@ -27,6 +27,7 @@
 package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
+import io.spine.protodata.Querying
 import io.spine.protodata.QueryingClient
 import io.spine.protodata.language.Language
 import io.spine.server.BoundedContext
@@ -40,19 +41,17 @@ import io.spine.server.BoundedContext
  */
 public abstract class Renderer
 protected constructor(
-    private val supportedLanguages: Set<Language>
-) {
+    private val supportedLanguage: Language
+) : Querying {
 
     internal lateinit var protoDataContext: BoundedContext
 
     /**
      * Performs required changes to the given source set.
      */
-    internal fun render(sources: SourceSet) {
-        val relevantFiles = supportedLanguages
-            .map { it.filter(sources) }
-            .reduce { left, right -> left.intersection(right) }
-        doRender(relevantFiles)
+    internal fun renderSources(sources: SourceSet) {
+        val relevantFiles = supportedLanguage.filter(sources)
+        render(relevantFiles)
         sources.mergeBack(relevantFiles)
     }
 
@@ -62,27 +61,9 @@ protected constructor(
      * The source set is guaranteed to consist only of the files, containing the code in
      * the [supportedLanguages].
      */
-    protected abstract fun doRender(sources: SourceSet)
+    protected abstract fun render(sources: SourceSet)
 
-    /**
-     * Creates a [QueryingClient] to find views of the given class.
-     *
-     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
-     *
-     * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
-     * prettier code.
-     */
-    protected fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
+    final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)
-    }
-
-    /**
-     * Creates a [QueryingClient] to find views of the given type.
-     *
-     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
-     */
-    protected inline fun <reified P : EntityState<*>> select(): QueryingClient<P> {
-        val cls = P::class.java
-        return select(cls)
     }
 }
