@@ -38,12 +38,13 @@ import io.spine.server.integration.ThirdPartyContext
 /**
  * A factory for the `Code Generation` bounded context.
  */
-internal object CodeGenerationContext {
+public object CodeGenerationContext {
 
     /**
      * Creates a builder of the bounded context.
      */
-    fun builder(): BoundedContextBuilder {
+    @JvmStatic
+    public fun builder(): BoundedContextBuilder {
         val builder = BoundedContext
             .singleTenant("Code Generation")
         builder.add(ViewRepository.default(builtinView()))
