@@ -72,8 +72,9 @@ internal constructor(
          * Collects a source set from a given root directory.
          */
         public fun from(sourceRoot: Path, targetRoot: Path): SourceSet {
-            checkTarget(sourceRoot, targetRoot)
-
+            if (sourceRoot != targetRoot) {
+                checkTarget(targetRoot)
+            }
             val files = Files
                 .walk(sourceRoot)
                 .filter { it.isRegularFile() }
@@ -82,12 +83,22 @@ internal constructor(
             return SourceSet(files, targetRoot)
         }
 
-        @VisibleForTesting
-        internal fun from(sourceRoot: Path): SourceSet =
-            from(sourceRoot, sourceRoot)
+        /**
+         * Creates an empty source set which can be appended with new files and written to
+         * the given target directory.
+         */
+        public fun empty(target: Path): SourceSet {
+            checkTarget(target)
+            val files = setOf<SourceFile>()
+            return SourceSet(files, target)
+        }
 
-        private fun checkTarget(sourceRoot: Path, targetRoot: Path) {
-            if (sourceRoot != targetRoot && targetRoot.exists()) {
+        @VisibleForTesting
+        internal fun from(sourceAndTarget: Path): SourceSet =
+            from(sourceAndTarget, sourceAndTarget)
+
+        private fun checkTarget(targetRoot: Path) {
+            if (targetRoot.exists()) {
                 val target = targetRoot.toFile()
                 checkArgument(
                     target.isDirectory, "Target root `%s` must be a directory.", targetRoot
