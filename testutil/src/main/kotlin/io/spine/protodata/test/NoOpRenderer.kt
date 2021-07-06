@@ -24,40 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.file
+package io.spine.protodata.test
 
-import java.nio.file.FileSystems
-import java.nio.file.Path
-import java.nio.file.PathMatcher
+import io.spine.protodata.language.CommonLanguages.any
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceSet
 
-/**
- * A GLOB pattern for matching file paths.
- *
- * @see java.nio.file.FileSystem.getPathMatcher
- */
-public class Glob(pattern: String) {
+public class NoOpRenderer : Renderer(any) {
 
-    private val matcher: PathMatcher = FileSystems.getDefault()
-                                                  .getPathMatcher("glob:$pattern")
-
-    public companion object {
-
-        /**
-         * A pattern which matched any file.
-         */
-        public val any: Glob = Glob("**")
-
-        /**
-         * A pattern which matches any file with the given extension.
-         */
-        @JvmStatic
-        public fun extension(extension: String): Glob {
-            return Glob("**.$extension")
-        }
+    override fun render(sources: SourceSet) {
+        // Do nothing.
     }
-
-    /**
-     * Checks if the given path matches this pattern.
-     */
-    public fun matches(path: Path): Boolean = matcher.matches(path)
 }
