@@ -227,6 +227,24 @@ class `'Pipeline' should` {
             .isFalse()
     }
 
+    @Test
+    fun `copy all sources into the new destination`() {
+        val destination = Files.createTempDirectory("destination")
+            // JUnit reuses @TempDir from @BeforeEach and we need a fresh temp directory.
+            // https://github.com/junit-team/junit5/issues/1967
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(InternalAccessRenderer()),
+            SourceSet.from(srcRoot, destination),
+            request
+        )()
+
+        assertThat(sourceFile.exists())
+            .isTrue()
+        assertThat(destination.resolve(sourceFile.fileName).exists())
+            .isTrue()
+    }
+
     @Nested
     inner class `Fail to construct if` {
 
