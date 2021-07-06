@@ -142,6 +142,16 @@ public class Extension(private val project: Project) {
     private val srcSubDirProperty: Property<String> =
         project.objects.property<String>().convention("java")
 
+    public var targetBaseDir: Any
+        get() = targetBaseDirProperty.get()
+        set(value) = targetBaseDirProperty.set(project.file(value))
+
+    private val targetBaseDirProperty: DirectoryProperty = with(project) {
+        objects.directoryProperty().convention(
+            layout.projectDirectory.dir("generated")
+        )
+    }
+
     /**
      * Obtains the source directory for the given source set.
      *
@@ -149,4 +159,12 @@ public class Extension(private val project: Project) {
      */
     internal fun sourceDir(sourceSet: SourceSet): Provider<Directory> =
         srcBaseDirProperty.get().dir(sourceSet.name).dir(srcSubDirProperty)
+
+    /**
+     * Obtains the target directory for code generation.
+     *
+     * @see targetBaseDir for the rules for the target dir construction
+     */
+    internal fun targetDir(sourceSet: SourceSet): Provider<Directory> =
+        targetBaseDirProperty.get().dir(sourceSet.name).dir(srcSubDirProperty)
 }

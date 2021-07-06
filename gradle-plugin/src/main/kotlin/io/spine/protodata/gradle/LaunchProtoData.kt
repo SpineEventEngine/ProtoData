@@ -27,6 +27,7 @@
 package io.spine.protodata.gradle
 
 import org.gradle.api.file.Directory
+import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
@@ -63,6 +64,9 @@ public open class LaunchProtoData : Exec() {
     internal lateinit var source: Provider<Directory>
 
     @get:Internal
+    internal lateinit var target: Provider<Directory>
+
+    @get:Internal
     internal lateinit var userClasspath: Provider<String>
 
     init {
@@ -93,8 +97,12 @@ public open class LaunchProtoData : Exec() {
             yield("--request")
             yield(requestFile.get().asFile.absolutePath)
 
-            yield("--src")
-            yield(source.get().asFile.absolutePath)
+            yield("--source-root")
+            yield(source.absolutePath)
+
+            yield("--target-root")
+            yield(target.absolutePath)
+
             val userCp = userClasspath.get()
             if (userCp.isNotEmpty()) {
                 yield("--user-classpath")
@@ -103,3 +111,6 @@ public open class LaunchProtoData : Exec() {
         }.asIterable())
     }
 }
+
+private val Provider<out FileSystemLocation>.absolutePath: String
+    get() = get().asFile.absolutePath

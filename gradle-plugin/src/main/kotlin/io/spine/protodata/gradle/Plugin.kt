@@ -80,6 +80,7 @@ public class Plugin : GradlePlugin<Project> {
         val resource = Plugin::class.java.classLoader.getResource(VERSION_RESOURCE)!!
         val version = resource.readText()
         target.configureProtobufPlugin(extension, version)
+        target.configureSourceSets(extension)
 
         val protoDataRawConfiguration = target.configurations.create("protoDataRawArtifact")
         createInstallTask(target, protoDataRawConfiguration, version)
@@ -98,13 +99,13 @@ private const val VERSION_RESOURCE = "version.txt"
 private const val PROTOC_PLUGIN = "protodata"
 
 private fun createLaunchTask(
-    target: Project,
+    p: Project,
     ext: Extension,
     config: Configuration,
     sourceSet: SourceSet
 ): Task {
     val taskName = launchTaskName(sourceSet)
-    return target.tasks.create(taskName, LaunchProtoData::class.java).apply {
+    return p.tasks.create(taskName, LaunchProtoData::class.java).apply {
         dependsOn(config.buildDependencies)
 
         protoDataExecutable = project.protoDataExecutable()
@@ -113,6 +114,7 @@ private fun createLaunchTask(
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)
         source = ext.sourceDir(sourceSet)
+        target = ext.targetDir(sourceSet)
         userClasspath = project.provider {
             config.resolve()
             config.asPath
@@ -154,6 +156,11 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                 artifact = "io.spine.protodata:protoc:$version:exe@jar"
             }
         }
+
+        afterEvaluate {
+            generatedFilesBaseDir = "$buildDir/generated-proto/"
+        }
+
         generateProtoTasks {
             all().forEach {
                 it.plugins {
@@ -169,3 +176,12 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
 
 private fun launchTaskName(sourceSet: SourceSet): String =
     "launchProtoData${sourceSet.name.capitalize()}"
+
+
+private fun Project.configureSourceSets(extension: Extension) {
+    sourceSets.forEach { sourceSet ->
+        sourceSet.java {
+            it.srcDir(extension.targetDir(sourceSet))
+        }
+    }
+}
