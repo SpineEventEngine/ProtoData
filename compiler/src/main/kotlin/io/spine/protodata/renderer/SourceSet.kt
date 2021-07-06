@@ -46,6 +46,13 @@ internal constructor(
     files: Set<SourceFile>,
 
     /**
+     * A common root directory for all the files in this source set.
+     *
+     * Paths of the files must be either absolute or relative to this directory.
+     */
+    private val sourceRoot: Path,
+
+    /**
      * A directory where the source set should be placed after code generation.
      *
      * If same as the `sourceRoot`, all files will be overridden.
@@ -78,9 +85,9 @@ internal constructor(
             val files = Files
                 .walk(sourceRoot)
                 .filter { it.isRegularFile() }
-                .map { SourceFile.read(it) }
+                .map { SourceFile.read(sourceRoot.relativize(it), sourceRoot) }
                 .collect(toImmutableSet())
-            return SourceSet(files, targetRoot)
+            return SourceSet(files, sourceRoot, targetRoot)
         }
 
         /**
@@ -90,7 +97,7 @@ internal constructor(
         public fun empty(target: Path): SourceSet {
             checkTarget(target)
             val files = setOf<SourceFile>()
-            return SourceSet(files, target)
+            return SourceSet(files, target, target)
         }
 
         @VisibleForTesting
@@ -168,8 +175,9 @@ internal constructor(
             it.rm(rootDir = targetRoot)
         }
         targetRoot.toFile().mkdirs()
+        val forceWriteFiles = sourceRoot != targetRoot
         files.values.forEach {
-            it.write(charset, targetRoot)
+            it.write(targetRoot, charset, forceWriteFiles)
         }
     }
 
@@ -187,7 +195,7 @@ internal constructor(
     }
 
     internal fun subsetWhere(predicate: (SourceFile) -> Boolean) =
-        SourceSet(this.filter(predicate).toSet(), targetRoot)
+        SourceSet(this.filter(predicate).toSet(), sourceRoot, targetRoot)
 
     /**
      * Merges the other source set into this one.

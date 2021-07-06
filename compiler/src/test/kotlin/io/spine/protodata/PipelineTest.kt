@@ -43,6 +43,7 @@ import io.spine.protodata.test.JavaGenericInsertionPointPrinter
 import io.spine.protodata.test.Journey
 import io.spine.protodata.test.JsRenderer
 import io.spine.protodata.test.KtRenderer
+import io.spine.protodata.test.NoOpRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
@@ -234,7 +235,7 @@ class `'Pipeline' should` {
             // https://github.com/junit-team/junit5/issues/1967
         Pipeline(
             listOf(TestPlugin()),
-            listOf(InternalAccessRenderer()),
+            listOf(NoOpRenderer()),
             SourceSet.from(srcRoot, destination),
             request
         )()

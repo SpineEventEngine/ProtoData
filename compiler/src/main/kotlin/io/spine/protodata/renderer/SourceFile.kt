@@ -48,7 +48,7 @@ private constructor(
     private var code: String,
 
     /**
-     * The FS path to the file.
+     * The FS path to the file relative to the source root.
      */
     public val path: Path,
 
@@ -65,13 +65,21 @@ private constructor(
         /**
          * Reads the file from the given FS location.
          */
-        fun read(path: Path, charset: Charset = Charsets.UTF_8): SourceFile =
-            SourceFile(path.readText(charset), path)
+        fun read(
+            relativePath: Path,
+            sourceRoot: Path,
+            charset: Charset = Charsets.UTF_8
+        ): SourceFile {
+            val absolute = sourceRoot / relativePath
+            return SourceFile(absolute.readText(charset), relativePath)
+        }
+
 
         /**
          * Constructs a file from source code.
          *
-         * @param path the FS path for the file; the file might not exist on the file system
+         * @param path the FS path for the file relative to the source root; the file might
+         *             not exist on the file system
          * @param code the source code
          */
         fun fromCode(path: Path, code: String): SourceFile =
@@ -135,8 +143,12 @@ private constructor(
     /**
      * Writes the source code into the file on the file system.
      */
-    internal fun write(charset: Charset = Charsets.UTF_8, rootDir: Path) {
-        if (changed) {
+    internal fun write(
+        rootDir: Path,
+        charset: Charset = Charsets.UTF_8,
+        forceWrite: Boolean = false
+    ) {
+        if (changed || forceWrite) {
             val targetPath = rootDir / path
             targetPath.toFile()
                 .parentFile
