@@ -46,6 +46,7 @@ class `ProtoData plugin should` {
 
         private lateinit var project: Project
 
+        @Suppress("unused") // False positive: JUnit calls this method.
         @BeforeAll
         @JvmStatic
         fun prepareProject(@TempDir projectDir: File) {
