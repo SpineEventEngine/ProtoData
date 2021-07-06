@@ -97,7 +97,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(renderer),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         assertThat(sourceFile.readText())
@@ -109,7 +109,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(InternalAccessRenderer()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         val newClass = srcRoot.resolve("spine/protodata/test/JourneyInternal.java")
@@ -125,7 +125,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(DeletingRenderer()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         assertThat(sourceFile.exists())
@@ -140,7 +140,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JavaGenericInsertionPointPrinter(), renderer),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         assertThat(sourceFile.readText())
@@ -160,7 +160,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JsRenderer(), KtRenderer()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         assertThat(jsSource.readText())
@@ -174,7 +174,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxEmancipator()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         val assertCode = assertThat(sourceFile.readText())
@@ -191,7 +191,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JavaGenericInsertionPointPrinter(), JsRenderer()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         val assertCode = assertThat(sourceFile.readText())
@@ -212,7 +212,7 @@ class `'Pipeline' should` {
             val pipeline = Pipeline(
                 listOf(DocilePlugin(policies = setOf(policy))),
                 listOf(renderer),
-                SourceSet.fromContentsOf(srcRoot),
+                SourceSet.from(srcRoot),
                 request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
@@ -230,7 +230,7 @@ class `'Pipeline' should` {
                     viewRepositories = setOf(DeletedTypeRepository())
                 )),
                 listOf(renderer),
-                SourceSet.fromContentsOf(srcRoot),
+                SourceSet.from(srcRoot),
                 request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }

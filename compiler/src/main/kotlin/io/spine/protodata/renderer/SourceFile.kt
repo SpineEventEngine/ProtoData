@@ -146,6 +146,14 @@ private constructor(
     }
 
     /**
+     * Deletes this source file from the file system.
+     */
+    internal fun rm(rootDir: Path) {
+        val targetPath = rootDir / path
+        targetPath.toFile().deleteRecursively()
+    }
+
+    /**
      * Obtains the entire content of this file.
      */
     public fun code(): String {

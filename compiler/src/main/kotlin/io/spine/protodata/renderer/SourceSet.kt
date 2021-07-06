@@ -26,11 +26,15 @@
 
 package io.spine.protodata.renderer
 
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.base.Preconditions.checkArgument
 import com.google.common.collect.ImmutableSet.toImmutableSet
+import io.spine.annotation.Internal
 import io.spine.protodata.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
 import kotlin.text.Charsets.UTF_8
 
@@ -42,15 +46,17 @@ internal constructor(
     files: Set<SourceFile>,
 
     /**
-     * A common root directory for all the files in this source set.
+     * A directory where the source set should be placed after code generation.
      *
-     * Paths of the files must be either absolute or relative to this directory.
+     * If same as the `sourceRoot`, all files will be overridden.
+     *
+     * If different from the `sourceRoot`, the files in `sourceRoot` will not be changed.
      */
-    internal val rootDir: Path
+    private val targetRoot: Path
 ) : Iterable<SourceFile> by files {
 
     private val files: MutableMap<Path, SourceFile>
-    private val deletedFiles = mutableSetOf<Path>()
+    private val deletedFiles = mutableSetOf<SourceFile>()
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
 
     init {
@@ -59,19 +65,37 @@ internal constructor(
         this.files.values.forEach { it.attachTo(this) }
     }
 
+    @Internal
     public companion object {
 
         /**
          * Collects a source set from a given root directory.
          */
-        @JvmStatic
-        public fun fromContentsOf(directory: Path): SourceSet {
+        public fun from(sourceRoot: Path, targetRoot: Path): SourceSet {
+            checkTarget(sourceRoot, targetRoot)
+
             val files = Files
-                .walk(directory)
+                .walk(sourceRoot)
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read(it) }
                 .collect(toImmutableSet())
-            return SourceSet(files, directory)
+            return SourceSet(files, targetRoot)
+        }
+
+        @VisibleForTesting
+        internal fun from(sourceRoot: Path): SourceSet =
+            from(sourceRoot, sourceRoot)
+
+        private fun checkTarget(sourceRoot: Path, targetRoot: Path) {
+            if (sourceRoot != targetRoot && targetRoot.exists()) {
+                val target = targetRoot.toFile()
+                checkArgument(
+                    target.isDirectory, "Target root `%s` must be a directory.", targetRoot
+                )
+                checkArgument(
+                    target.list()!!.isEmpty(), "Target directory `%s` must be empty.", targetRoot
+                )
+            }
         }
     }
 
@@ -80,16 +104,19 @@ internal constructor(
      *
      * The [path] may be a relative or an absolute path the file.
      */
-    public fun file(path: Path): SourceFile {
+    public fun file(path: Path): SourceFile =
+        findFile(path).second
+
+    private fun findFile(path: Path): Pair<Path, SourceFile> {
         val file = files[path]
         if (file != null) {
-            return file
+            return path to file
         }
         val filtered = files.filterKeys { it.endsWith(path) }
         if (filtered.isEmpty()) {
             throw IllegalArgumentException("File not found: `$path`.")
         }
-        return filtered.values.theOnly()
+        return filtered.entries.theOnly().toPair()
     }
 
     /**
@@ -112,11 +139,9 @@ internal constructor(
      * the [write] method.
      */
     internal fun delete(file: Path) {
-        val value = files.remove(file)
-        if (value == null) {
-            throw IllegalStateException("File `$value` not found.")
-        }
-        deletedFiles.add(file)
+        val (path, sourceFile) = findFile(file)
+        files.remove(path)
+        deletedFiles.add(sourceFile)
     }
 
     /**
@@ -126,13 +151,12 @@ internal constructor(
      * directory structure and the new files are written.
      */
     internal fun write(charset: Charset = UTF_8) {
-        val rootDirFile = rootDir.toFile()
         deletedFiles.forEach {
-            it.toFile().deleteRecursively()
+            it.rm(rootDir = targetRoot)
         }
-        rootDirFile.mkdirs()
+        targetRoot.toFile().mkdirs()
         files.values.forEach {
-            it.write(charset, rootDir)
+            it.write(charset, targetRoot)
         }
     }
 
@@ -149,6 +173,9 @@ internal constructor(
         preReadActions.add(action)
     }
 
+    internal fun subsetWhere(predicate: (SourceFile) -> Boolean) =
+        SourceSet(this.filter(predicate).toSet(), targetRoot)
+
     /**
      * Merges the other source set into this one.
      */
@@ -156,7 +183,7 @@ internal constructor(
         files.putAll(other.files)
         deletedFiles.addAll(other.deletedFiles)
         other.deletedFiles.forEach {
-            files.remove(it)
+            files.remove(it.path)
         }
     }
 

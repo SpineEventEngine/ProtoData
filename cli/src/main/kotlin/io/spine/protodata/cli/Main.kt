@@ -135,7 +135,7 @@ internal class Run(version: String) : CliktCommand(
         val plugins = loadPlugins()
         val optionsProviders = loadOptions()
         val renderer = loadRenderers()
-        val sourceSet = SourceSet.fromContentsOf(sourceRoot)
+        val sourceSet = SourceSet.from(sourceRoot, sourceRoot)
 
         val registry = ExtensionRegistry.newInstance()
         optionsProviders.forEach { it.dumpTo(registry) }
