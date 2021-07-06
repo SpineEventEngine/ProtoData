@@ -119,6 +119,14 @@ internal class Run(version: String) : CliktCommand(
         canBeFile = false,
         canBeSymlink = false
     ).required()
+    private val targetRoot: Path? by option("--target-root", "--destination", "-d", help = """
+        The path where the processed files should be placed.
+        May be the same as `--sourceRoot`. For editing files in-place, skip this option. 
+    """.trimIndent()
+    ).path(
+        canBeFile = false,
+        canBeSymlink = false
+    )
     private val classPath: List<Path>? by option("--user-classpath" ,"--ucp", help = """
         The user classpath which contains all `--renderer` classes, user-defined policies, views,
         events, etc., as well as all their dependencies, which are not included as a part of
@@ -135,7 +143,8 @@ internal class Run(version: String) : CliktCommand(
         val plugins = loadPlugins()
         val optionsProviders = loadOptions()
         val renderer = loadRenderers()
-        val sourceSet = SourceSet.from(sourceRoot, sourceRoot)
+        val target = targetRoot ?: sourceRoot
+        val sourceSet = SourceSet.from(sourceRoot, target)
 
         val registry = ExtensionRegistry.newInstance()
         optionsProviders.forEach { it.dumpTo(registry) }
