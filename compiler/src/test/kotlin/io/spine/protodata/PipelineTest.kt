@@ -46,6 +46,7 @@ import io.spine.protodata.test.KtRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
@@ -201,6 +202,29 @@ class `'Pipeline' should` {
             .doesNotContain(GenericInsertionPoint.FILE_END.codeLine)
         assertCode
             .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
+    }
+
+    @Test
+    fun `write code into different destination`() {
+        val destination = Files.createTempDirectory("destination")
+            // JUnit reuses @TempDir from @BeforeEach and we need a fresh temp directory.
+            // https://github.com/junit-team/junit5/issues/1967
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(InternalAccessRenderer()),
+            SourceSet.from(srcRoot, destination),
+            request
+        )()
+
+        val path = "spine/protodata/test/JourneyInternal.java"
+        val newClass = destination.resolve(path)
+        assertThat(newClass.exists())
+            .isTrue()
+        assertThat(newClass.readText())
+            .contains("class JourneyInternal")
+        val newClassInSourceRoot = srcRoot.resolve(path)
+        assertThat(newClassInSourceRoot.exists())
+            .isFalse()
     }
 
     @Nested

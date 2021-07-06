@@ -28,7 +28,7 @@ package io.spine.protodata.cli
 
 import com.github.ajalt.clikt.core.MissingOption
 import com.github.ajalt.clikt.core.UsageError
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
@@ -79,7 +79,7 @@ class `Command line application should` {
             "--src", srcRoot.toString(),
             "-t", codegenRequestFile.toString()
         )
-        Truth.assertThat(sourceFile.readText())
+        assertThat(sourceFile.readText())
             .isEqualTo("_${Project::class.simpleName}.getUuid() ")
     }
 
