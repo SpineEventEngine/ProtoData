@@ -31,7 +31,11 @@ import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
 
 /**
  * A task which executes a single ProtoData command.
@@ -48,25 +52,25 @@ public open class LaunchProtoData : Exec() {
     @get:Internal
     internal lateinit var protoDataExecutable: String
 
-    @get:Internal
+    @get:Input
     internal lateinit var renderers: Provider<List<String>>
 
-    @get:Internal
+    @get:Input
     internal lateinit var plugins: Provider<List<String>>
 
-    @get:Internal
+    @get:Input
     internal lateinit var optionProviders: Provider<List<String>>
 
-    @get:Internal
+    @get:InputFile
     internal lateinit var requestFile: Provider<RegularFile>
 
-    @get:Internal
+    @get:InputDirectory
     internal lateinit var source: Provider<Directory>
 
-    @get:Internal
+    @get:OutputDirectory
     internal lateinit var target: Provider<Directory>
 
-    @get:Internal
+    @get:Input
     internal lateinit var userClasspath: Provider<String>
 
     init {
