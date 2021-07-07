@@ -73,11 +73,6 @@ public open class LaunchProtoData : Exec() {
     @get:Input
     internal lateinit var userClasspath: Provider<String>
 
-    init {
-        outputs.upToDateWhen { !requestFile.get().asFile.exists() }
-        isIgnoreExitValue = false
-    }
-
     /**
      * Configures the CLI command for this task.
      *
