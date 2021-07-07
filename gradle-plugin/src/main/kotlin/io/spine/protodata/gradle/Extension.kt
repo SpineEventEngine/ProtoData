@@ -100,9 +100,9 @@ public class Extension(private val project: Project) {
      * The base directory where the files generated from Protobuf resides.
      *
      * Files are placed under this dir and divided under sub-directories by source sets, and then by
-     * the [srcSubDir]s. For example, a Java class generated from a main-scope `.proto` definition
+     * the [subDir]s. For example, a Java class generated from a main-scope `.proto` definition
      * would be placed under `$srcBaseDir/main/java`, where `main` is the name of the source set
-     * and `java` is the [srcSubDir].
+     * and `java` is the [subDir].
      *
      * By default, `srcBaseDir` points to the directory which is specified in
      * `protobuf.generatedFilesBaseDir` to the Protobuf Gradle plugin. If `srcBaseDir` is changed,
@@ -111,7 +111,7 @@ public class Extension(private val project: Project) {
      * To change the location where `protoc` stores files it generates, refer to
      * the Protobuf Gradle plugin DSL.
      *
-     * @see srcSubDir
+     * @see subDir
      */
     public var srcBaseDir: Any
         get() = srcBaseDirProperty.get()
@@ -131,15 +131,15 @@ public class Extension(private val project: Project) {
      *
      * @see srcBaseDir
      */
-    public var srcSubDir: String
-        get() = srcSubDirProperty.get()
+    public var subDir: String
+        get() = subDirProperty.get()
         set(value) {
             if (value.isNotEmpty()) {
-                srcSubDirProperty.set(value)
+                subDirProperty.set(value)
             }
         }
 
-    private val srcSubDirProperty: Property<String> =
+    private val subDirProperty: Property<String> =
         project.objects.property<String>().convention("java")
 
     public var targetBaseDir: Any
@@ -158,7 +158,7 @@ public class Extension(private val project: Project) {
      * @see srcBaseDir for the rules for the source dir construction
      */
     internal fun sourceDir(sourceSet: SourceSet): Provider<Directory> =
-        srcBaseDirProperty.get().dir(sourceSet.name).dir(srcSubDirProperty)
+        srcBaseDirProperty.get().dir(sourceSet.name).dir(subDirProperty)
 
     /**
      * Obtains the target directory for code generation.
@@ -166,5 +166,5 @@ public class Extension(private val project: Project) {
      * @see targetBaseDir for the rules for the target dir construction
      */
     internal fun targetDir(sourceSet: SourceSet): Provider<Directory> =
-        targetBaseDirProperty.get().dir(sourceSet.name).dir(srcSubDirProperty)
+        targetBaseDirProperty.get().dir(sourceSet.name).dir(subDirProperty)
 }

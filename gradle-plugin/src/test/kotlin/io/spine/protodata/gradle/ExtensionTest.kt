@@ -98,7 +98,7 @@ class `Plugin extension should` {
         val subDir = "foobar"
 
         extension.srcBaseDir = basePath
-        extension.srcSubDir = subDir
+        extension.subDir = subDir
 
         val sourceDir = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
         assertThat(sourceDir.get().asFile.toPath())
