@@ -28,43 +28,87 @@ package io.spine.protodata.gradle
 
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
+import io.spine.testing.SlowTest
 import io.spine.tools.gradle.TaskName
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
 import java.util.*
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.TaskOutcome.SKIPPED
+import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
+@SlowTest
 class `ProtoData Gradle plugin should` {
 
+    private val protoFileName = "test.proto"
     private val taskName: TaskName = TaskName { "launchProtoDataMain" }
 
+    private lateinit var projectDir: File
     private lateinit var project: GradleProject
 
     @BeforeEach
-    fun prepareProject(@TempDir projectDir: File) {
-        val exeLocation = projectDir.resolve("protodata-${UUID.randomUUID()}")
-        project = GradleProject.newBuilder()
-            .setProjectName("launch-test")
-            .setProjectFolder(projectDir)
-            .withPluginClasspath()
-            .withProperty("protoDataLocation", exeLocation.absolutePath)
-            .withEnvironment(ImmutableMap.of())
-            .build()
+    fun prepareDir(@TempDir projectDir: File) {
+        this.projectDir = projectDir;
     }
 
     @Test
     fun `skip launch task if request file does not exist`() {
+        createEmptyProject()
         val result = launch()
         assertThat(result.task(taskName.path())!!.outcome)
             .isEqualTo(SKIPPED)
     }
 
+    @Test
+    fun `launch ProtoData`() {
+        createProjectWithProto()
+        val result = launch()
+        assertThat(result.task(taskName.path())!!.outcome)
+            .isEqualTo(SUCCESS)
+    }
+
+    @Test
+    fun `configure incremental compilation for launch task`() {
+        createProjectWithProto()
+        project.executeTask { "installProtoData" }
+
+        launchAndExpectResult(SUCCESS)
+        launchAndExpectResult(UP_TO_DATE)
+    }
+
+    private fun createEmptyProject() {
+        createProject("empty-test")
+    }
+
+    private fun createProjectWithProto() {
+        createProject("launch-test", protoFileName)
+    }
+
+    private fun launchAndExpectResult(outcome: TaskOutcome) {
+        val result = project.executeTask(taskName)!!
+        assertThat(result.task(taskName.path())!!.outcome)
+            .isEqualTo(outcome)
+    }
+
     private fun launch(): BuildResult {
         project.executeTask { "installProtoData" }
         return project.executeTask(taskName)!!
+    }
+
+    private fun createProject(name: String, vararg protoFiles: String) {
+        val exeLocation = projectDir.resolve("protodata-${UUID.randomUUID()}")
+        val builder = GradleProject.newBuilder()
+            .setProjectName(name)
+            .setProjectFolder(projectDir)
+            .withPluginClasspath()
+            .withProperty("protoDataLocation", exeLocation.absolutePath)
+            .withEnvironment(ImmutableMap.of())
+        protoFiles.forEach(builder::addProtoFile)
+        project = builder.build()
     }
 }
