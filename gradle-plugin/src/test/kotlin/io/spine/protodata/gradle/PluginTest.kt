@@ -53,7 +53,7 @@ class `ProtoData Gradle plugin should` {
 
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
-        this.projectDir = projectDir;
+        this.projectDir = projectDir
     }
 
     @Test
