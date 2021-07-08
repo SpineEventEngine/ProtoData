@@ -195,10 +195,10 @@ private fun Project.configureSourceSets(extension: Extension) {
 
             val sourceDir = file(extension.sourceDir(sourceSet))
             val task = javaCompileFor(sourceSet)!!
-            task.source = task.source.filter { file -> !file.liesInside(sourceDir) }.asFileTree
+            task.source = task.source.filter { file -> !file.residesIn(sourceDir) }.asFileTree
         }
     }
 }
 
-private fun File.liesInside(directory: File): Boolean =
+private fun File.residesIn(directory: File): Boolean =
     canonicalFile.startsWith(directory.canonicalFile)
