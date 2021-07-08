@@ -55,7 +55,7 @@ internal constructor(
     /**
      * A directory where the source set should be placed after code generation.
      *
-     * If same as the `sourceRoot`, all files will be overridden.
+     * If same as the `sourceRoot`, all files will be overwritten.
      *
      * If different from the `sourceRoot`, the files in `sourceRoot` will not be changed.
      */
