@@ -26,39 +26,27 @@
 
 package io.spine.protodata.test;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.protodata.renderer.InsertionPointPrinter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.lang.reflect.Method;
+import java.util.Set;
 
-import static com.google.common.truth.Truth.assertThat;
+import static io.spine.protodata.language.CommonLanguages.java;
+import static java.util.stream.Collectors.toSet;
 
-@DisplayName("Generated code should")
-final class CodeGenerationTest {
+public final class PrintFieldGetter extends InsertionPointPrinter {
 
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for production scope")
-    void mainScope() {
-        ProjectId id = ProjectId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
+    public PrintFieldGetter() {
+        super(java());
     }
 
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for test scope")
-    void testScope() {
-        TaskId id = TaskId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
-    }
-
-    @Test
-    @DisplayName("include changes caused by options declared via file name")
-    void fromOptions() throws NoSuchMethodException {
-        Class<ProjectId> idClass = ProjectId.class;
-        Method getter = idClass.getDeclaredMethod("getUuid");
-        GeneratedByProtoData annotation = getter.getAnnotation(GeneratedByProtoData.class);
-        assertThat(annotation)
-                .isNotNull();
+    @NonNull
+    @Override
+    protected Set<InsertionPoint> supportedInsertionPoints() {
+        Set<MetaAnnotated> fields = select(MetaAnnotated.class).all();
+        return fields.stream()
+                     .map(field -> new FieldGetter(field.getId()))
+                     .collect(toSet());
     }
 }

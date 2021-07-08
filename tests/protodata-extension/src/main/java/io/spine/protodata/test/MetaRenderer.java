@@ -26,39 +26,28 @@
 
 package io.spine.protodata.test;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.spine.protodata.codegen.java.JavaRenderer;
+import io.spine.protodata.renderer.SourceSet;
 
-import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.util.Set;
 
-import static com.google.common.truth.Truth.assertThat;
+public final class MetaRenderer extends JavaRenderer {
 
-@DisplayName("Generated code should")
-final class CodeGenerationTest {
-
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for production scope")
-    void mainScope() {
-        ProjectId id = ProjectId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
+    @Override
+    protected void render(SourceSet sources) {
+        Set<MetaAnnotated> annotatedFields = select(MetaAnnotated.class).all();
+        annotatedFields.forEach(
+                field -> renderFor(field, sources)
+        );
     }
 
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for test scope")
-    void testScope() {
-        TaskId id = TaskId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
-    }
-
-    @Test
-    @DisplayName("include changes caused by options declared via file name")
-    void fromOptions() throws NoSuchMethodException {
-        Class<ProjectId> idClass = ProjectId.class;
-        Method getter = idClass.getDeclaredMethod("getUuid");
-        GeneratedByProtoData annotation = getter.getAnnotation(GeneratedByProtoData.class);
-        assertThat(annotation)
-                .isNotNull();
+    private void renderFor(MetaAnnotated field, SourceSet sourceSet) {
+        FieldId id = field.getId();
+        FieldGetter getter = new FieldGetter(id);
+        Path path = javaFileOf(id.getType(), id.getFile());
+        sourceSet.file(path)
+                 .at(getter)
+                 .add('@' + field.getJavaAnnotation());
     }
 }

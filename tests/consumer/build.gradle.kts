@@ -39,13 +39,20 @@ apply(plugin = "io.spine.proto-data")
 
 dependencies {
     "protoData"(project(":protodata-extension"))
+    implementation(project(":protodata-extension"))
 }
 
 extensions.getByType<Extension>().apply {
     renderers(
-        "io.spine.protodata.test.ClassScopePrinter", "io.spine.protodata.test.UuidJavaRenderer"
+        "io.spine.protodata.test.ClassScopePrinter",
+        "io.spine.protodata.test.UuidJavaRenderer",
+
+        "io.spine.protodata.test.PrintFieldGetter",
+        "io.spine.protodata.test.MetaRenderer"
     )
     plugins(
-        "io.spine.protodata.test.UuidPlugin"
+        "io.spine.protodata.test.UuidPlugin",
+        "io.spine.protodata.test.MetaPlugin"
     )
+    options("spine/protodata/test/meta.proto")
 }

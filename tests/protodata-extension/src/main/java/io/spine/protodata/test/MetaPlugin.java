@@ -26,39 +26,16 @@
 
 package io.spine.protodata.test;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.google.common.collect.ImmutableSet;
+import io.spine.protodata.plugin.Plugin;
+import io.spine.protodata.plugin.ViewRepository;
 
-import java.lang.reflect.Method;
+import java.util.Set;
 
-import static com.google.common.truth.Truth.assertThat;
+public final class MetaPlugin implements Plugin {
 
-@DisplayName("Generated code should")
-final class CodeGenerationTest {
-
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for production scope")
-    void mainScope() {
-        ProjectId id = ProjectId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
-    }
-
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for test scope")
-    void testScope() {
-        TaskId id = TaskId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
-    }
-
-    @Test
-    @DisplayName("include changes caused by options declared via file name")
-    void fromOptions() throws NoSuchMethodException {
-        Class<ProjectId> idClass = ProjectId.class;
-        Method getter = idClass.getDeclaredMethod("getUuid");
-        GeneratedByProtoData annotation = getter.getAnnotation(GeneratedByProtoData.class);
-        assertThat(annotation)
-                .isNotNull();
+    @Override
+    public Set<ViewRepository<?, ?, ?>> viewRepositories() {
+        return ImmutableSet.of(new MetaAnnotatedView.Repo());
     }
 }

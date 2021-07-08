@@ -26,39 +26,45 @@
 
 package io.spine.protodata.test;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.protodata.renderer.LineNumber;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.lang.reflect.Method;
+import java.util.List;
+import java.util.regex.Pattern;
 
-import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.protodata.Ast.typeUrl;
+import static io.spine.protodata.Strings.camelCase;
+import static io.spine.protodata.renderer.LineNumber.notInFile;
+import static java.lang.String.format;
 
-@DisplayName("Generated code should")
-final class CodeGenerationTest {
+final class FieldGetter implements InsertionPoint {
 
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for production scope")
-    void mainScope() {
-        ProjectId id = ProjectId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
+    private final FieldId field;
+
+    FieldGetter(FieldId field) {
+        this.field = checkNotNull(field);
     }
 
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for test scope")
-    void testScope() {
-        TaskId id = TaskId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
+    @NonNull
+    @Override
+    public String getLabel() {
+        return format("getter-for:%s.%s", typeUrl(field.getType()), field.getField().getValue());
     }
 
-    @Test
-    @DisplayName("include changes caused by options declared via file name")
-    void fromOptions() throws NoSuchMethodException {
-        Class<ProjectId> idClass = ProjectId.class;
-        Method getter = idClass.getDeclaredMethod("getUuid");
-        GeneratedByProtoData annotation = getter.getAnnotation(GeneratedByProtoData.class);
-        assertThat(annotation)
-                .isNotNull();
+    @NonNull
+    @Override
+    public LineNumber locate(List<String> lines) {
+        String fieldName = camelCase(field.getField().getValue());
+        String getterName = "get" + fieldName;
+        Pattern pattern = Pattern.compile("public .+ " + getterName);
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (pattern.matcher(line).find()) {
+                return LineNumber.at(i);
+            }
+        }
+        return notInFile();
     }
 }
