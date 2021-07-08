@@ -97,7 +97,7 @@ public open class LaunchProtoData : Exec() {
                 yield(it)
             }
             options.get().forEach {
-                yield("--option")
+                yield("--options")
                 yield(it)
             }
             yield("--request")
