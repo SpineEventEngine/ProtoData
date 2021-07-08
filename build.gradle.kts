@@ -66,7 +66,8 @@ spinePublishing {
         "cli",
         "compiler",
         "protoc",
-        "codegen-java"
+        "codegen-java",
+        "testutil"
     )
     spinePrefix.set(false)
 }

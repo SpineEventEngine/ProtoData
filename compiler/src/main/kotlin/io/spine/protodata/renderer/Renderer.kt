@@ -50,7 +50,7 @@ protected constructor(
      * Performs required changes to the given source set.
      */
     internal fun renderSources(sources: SourceSet) {
-        val relevantFiles = supportedLanguage.filter(sources)
+        val relevantFiles = sources.subsetWhere { supportedLanguage.matches(it) }
         render(relevantFiles)
         sources.mergeBack(relevantFiles)
     }

@@ -27,6 +27,7 @@
 package io.spine.protodata.cli
 
 import com.github.ajalt.clikt.core.MissingOption
+import com.github.ajalt.clikt.core.UsageError
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos
 import io.spine.option.OptionsProto
@@ -48,6 +49,7 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
 class `Command line application should` {
@@ -137,8 +139,8 @@ class `Command line application should` {
         }
 
         @Test
-        fun `source root is missing`() {
-            assertMissingOption {
+        fun `source and target dirs are missing`() {
+            assertThrows<UsageError> {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
                     "-r", TestRenderer::class.jvmName,
@@ -159,7 +161,7 @@ class `Command line application should` {
         }
 
         private fun assertMissingOption(block: () -> Unit) {
-            assertThrows(MissingOption::class.java, block)
+            assertThrows<MissingOption>(block)
         }
     }
 

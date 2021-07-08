@@ -44,8 +44,14 @@ dependencies {
     testImplementation("io.spine.tools:spine-plugin-testlib:$spineBaseVersion")
 }
 
+val testsDependOnProjects = listOf(
+    "cli", "compiler", "protoc", "testutil"
+)
+
 tasks.withType<Test> {
-    dependsOn(":cli:publishToMavenLocal")
+    testsDependOnProjects.forEach {
+        dependsOn(":$it:publishToMavenLocal")
+    }
 }
 
 gradlePlugin {

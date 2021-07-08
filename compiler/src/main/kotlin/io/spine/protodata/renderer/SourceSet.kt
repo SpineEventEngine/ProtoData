@@ -26,11 +26,15 @@
 
 package io.spine.protodata.renderer
 
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.base.Preconditions.checkArgument
 import com.google.common.collect.ImmutableSet.toImmutableSet
+import io.spine.annotation.Internal
 import io.spine.protodata.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
 import kotlin.text.Charsets.UTF_8
 
@@ -46,32 +50,74 @@ internal constructor(
      *
      * Paths of the files must be either absolute or relative to this directory.
      */
-    internal val rootDir: Path
+    private val sourceRoot: Path,
+
+    /**
+     * A directory where the source set should be placed after code generation.
+     *
+     * If same as the `sourceRoot`, all files will be overwritten.
+     *
+     * If different from the `sourceRoot`, the files in `sourceRoot` will not be changed.
+     */
+    private val targetRoot: Path
 ) : Iterable<SourceFile> by files {
 
     private val files: MutableMap<Path, SourceFile>
-    private val deletedFiles = mutableSetOf<Path>()
+    private val deletedFiles = mutableSetOf<SourceFile>()
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
 
     init {
         val map = HashMap<Path, SourceFile>(files.size)
-        this.files = files.associateByTo(map) { it.path }
+        this.files = files.associateByTo(map) { it.relativePath }
         this.files.values.forEach { it.attachTo(this) }
     }
 
+    @Internal
     public companion object {
 
         /**
          * Collects a source set from a given root directory.
          */
-        @JvmStatic
-        public fun fromContentsOf(directory: Path): SourceSet {
+        public fun from(sourceRoot: Path, targetRoot: Path): SourceSet {
+            val source = sourceRoot.canonical()
+            val target = targetRoot.canonical()
+            if (source != target) {
+                checkTarget(target)
+            }
             val files = Files
-                .walk(directory)
+                .walk(source)
                 .filter { it.isRegularFile() }
-                .map { SourceFile.read(it) }
+                .map { SourceFile.read(source.relativize(it), source) }
                 .collect(toImmutableSet())
-            return SourceSet(files, directory)
+            return SourceSet(files, source, target)
+        }
+
+        /**
+         * Creates an empty source set which can be appended with new files and written to
+         * the given target directory.
+         */
+        public fun empty(target: Path): SourceSet {
+            checkTarget(target)
+            val files = setOf<SourceFile>()
+            return SourceSet(files, target, target)
+        }
+
+        @VisibleForTesting
+        internal fun from(sourceAndTarget: Path): SourceSet =
+            from(sourceAndTarget, sourceAndTarget)
+
+        private fun checkTarget(targetRoot: Path) {
+            if (targetRoot.exists()) {
+                val target = targetRoot.toFile()
+                checkArgument(
+                    target.isDirectory, "Target root `%s` must be a directory.", targetRoot
+                )
+
+                val children = target.list()!!
+                checkArgument(children.isEmpty(),
+                    "Target directory `%s` must be empty. Found children: %s.",
+                    targetRoot, children.joinToString())
+            }
         }
     }
 
@@ -80,16 +126,19 @@ internal constructor(
      *
      * The [path] may be a relative or an absolute path the file.
      */
-    public fun file(path: Path): SourceFile {
+    public fun file(path: Path): SourceFile =
+        findFile(path).second
+
+    private fun findFile(path: Path): Pair<Path, SourceFile> {
         val file = files[path]
         if (file != null) {
-            return file
+            return path to file
         }
         val filtered = files.filterKeys { it.endsWith(path) }
         if (filtered.isEmpty()) {
             throw IllegalArgumentException("File not found: `$path`.")
         }
-        return filtered.values.theOnly()
+        return filtered.entries.theOnly().toPair()
     }
 
     /**
@@ -97,7 +146,7 @@ internal constructor(
      */
     public fun createFile(path: Path, code: String): SourceFile {
         val file = SourceFile.fromCode(path, code)
-        files[file.path] = file
+        files[file.relativePath] = file
         file.attachTo(this)
         preReadActions.forEach {
             file.whenRead(it)
@@ -112,11 +161,9 @@ internal constructor(
      * the [write] method.
      */
     internal fun delete(file: Path) {
-        val value = files.remove(file)
-        if (value == null) {
-            throw IllegalStateException("File `$value` not found.")
-        }
-        deletedFiles.add(file)
+        val (path, sourceFile) = findFile(file)
+        files.remove(path)
+        deletedFiles.add(sourceFile)
     }
 
     /**
@@ -126,13 +173,13 @@ internal constructor(
      * directory structure and the new files are written.
      */
     internal fun write(charset: Charset = UTF_8) {
-        val rootDirFile = rootDir.toFile()
         deletedFiles.forEach {
-            it.toFile().deleteRecursively()
+            it.rm(rootDir = targetRoot)
         }
-        rootDirFile.mkdirs()
+        targetRoot.toFile().mkdirs()
+        val forceWriteFiles = sourceRoot != targetRoot
         files.values.forEach {
-            it.write(charset, rootDir)
+            it.write(targetRoot, charset, forceWriteFiles)
         }
     }
 
@@ -149,6 +196,9 @@ internal constructor(
         preReadActions.add(action)
     }
 
+    internal fun subsetWhere(predicate: (SourceFile) -> Boolean) =
+        SourceSet(this.filter(predicate).toSet(), sourceRoot, targetRoot)
+
     /**
      * Merges the other source set into this one.
      */
@@ -156,9 +206,13 @@ internal constructor(
         files.putAll(other.files)
         deletedFiles.addAll(other.deletedFiles)
         other.deletedFiles.forEach {
-            files.remove(it)
+            files.remove(it.relativePath)
         }
     }
 
     override fun toString(): String = toList().joinToString()
+}
+
+private fun Path.canonical(): Path {
+    return toAbsolutePath().normalize()
 }

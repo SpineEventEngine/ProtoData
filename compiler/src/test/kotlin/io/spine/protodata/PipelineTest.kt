@@ -43,9 +43,11 @@ import io.spine.protodata.test.JavaGenericInsertionPointPrinter
 import io.spine.protodata.test.Journey
 import io.spine.protodata.test.JsRenderer
 import io.spine.protodata.test.KtRenderer
+import io.spine.protodata.test.NoOpRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
@@ -97,7 +99,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(renderer),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         assertThat(sourceFile.readText())
@@ -109,7 +111,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(InternalAccessRenderer()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         val newClass = srcRoot.resolve("spine/protodata/test/JourneyInternal.java")
@@ -125,7 +127,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(DeletingRenderer()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         assertThat(sourceFile.exists())
@@ -140,7 +142,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JavaGenericInsertionPointPrinter(), renderer),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         assertThat(sourceFile.readText())
@@ -160,7 +162,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JsRenderer(), KtRenderer()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         assertThat(jsSource.readText())
@@ -174,7 +176,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxEmancipator()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         val assertCode = assertThat(sourceFile.readText())
@@ -191,7 +193,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JavaGenericInsertionPointPrinter(), JsRenderer()),
-            SourceSet.fromContentsOf(srcRoot),
+            SourceSet.from(srcRoot),
             request
         )()
         val assertCode = assertThat(sourceFile.readText())
@@ -203,6 +205,51 @@ class `'Pipeline' should` {
             .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
     }
 
+    @Test
+    fun `write code into different destination`() {
+        val destination = tempDir()
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(InternalAccessRenderer()),
+            SourceSet.from(srcRoot, destination),
+            request
+        )()
+
+        val path = "spine/protodata/test/JourneyInternal.java"
+        val newClass = destination.resolve(path)
+        assertThat(newClass.exists())
+            .isTrue()
+        assertThat(newClass.readText())
+            .contains("class JourneyInternal")
+        val newClassInSourceRoot = srcRoot.resolve(path)
+        assertThat(newClassInSourceRoot.exists())
+            .isFalse()
+    }
+
+    @Test
+    fun `copy all sources into the new destination`() {
+        val destination = tempDir()
+        Pipeline(
+            listOf(TestPlugin()),
+            listOf(NoOpRenderer()),
+            SourceSet.from(srcRoot, destination),
+            request
+        )()
+
+        assertThat(sourceFile.exists())
+            .isTrue()
+        assertThat(destination.resolve(sourceFile.fileName).exists())
+            .isTrue()
+    }
+
+    /**
+     * Creates a new unique temp directory.
+     *
+     * JUnit reuses @TempDir from @BeforeEach and we need a fresh temp directory.
+     * See [the JUnit issue](https://github.com/junit-team/junit5/issues/1967).
+     */
+    private fun tempDir() = Files.createTempDirectory("destination")
+
     @Nested
     inner class `Fail to construct if` {
 
@@ -212,7 +259,7 @@ class `'Pipeline' should` {
             val pipeline = Pipeline(
                 listOf(DocilePlugin(policies = setOf(policy))),
                 listOf(renderer),
-                SourceSet.fromContentsOf(srcRoot),
+                SourceSet.from(srcRoot),
                 request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
@@ -230,7 +277,7 @@ class `'Pipeline' should` {
                     viewRepositories = setOf(DeletedTypeRepository())
                 )),
                 listOf(renderer),
-                SourceSet.fromContentsOf(srcRoot),
+                SourceSet.from(srcRoot),
                 request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }

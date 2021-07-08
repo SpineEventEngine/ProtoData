@@ -38,9 +38,6 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.UUID;
 
-import static java.lang.String.format;
-import static java.lang.System.lineSeparator;
-
 /**
  * A renderer which adds the {@code randomId()} factory methods to the UUID types.
  *
@@ -55,12 +52,12 @@ public final class UuidJavaRenderer extends JavaRenderer {
      */
     private static final int INDENT_LEVEL = 1;
 
-    private static final String METHOD_FORMAT =
-            "public static %s randomId() {" + lineSeparator() +
-            "    return newBuilder().setUuid(" + lineSeparator() +
-                    "%s.randomUUID().toString()" + lineSeparator() +
-            "     ).build(); " + lineSeparator() +
-            '}' + lineSeparator();
+    private static final Template METHOD_FORMAT = Template.from(
+            "public static %s randomId() {",
+            "    return newBuilder().setUuid(",
+                    "%s.randomUUID().toString()",
+            "     ).build(); ",
+            "}");
 
     /**
      * Renders the random ID factory method for all UUID types.
@@ -78,11 +75,11 @@ public final class UuidJavaRenderer extends JavaRenderer {
             FilePath file = type.getDeclaredIn();
             ClassName className = classNameOf(typeName, file);
             InsertionPoint classScope = new ClassScope(typeName);
-            String code = format(METHOD_FORMAT, className, UUID.class.getName());
+            ImmutableList<String> lines = METHOD_FORMAT.format(className, UUID.class.getName());
             Path javaFilePath = javaFileOf(typeName, file);
             sources.file(javaFilePath)
                    .at(classScope)
-                   .add(ImmutableList.of(code), INDENT_LEVEL);
+                   .add(lines, INDENT_LEVEL);
         }
     }
 }

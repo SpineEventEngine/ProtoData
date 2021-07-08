@@ -38,6 +38,10 @@ import kotlin.io.path.writeText
 
 /**
  * A file with source code.
+ *
+ * This file is a part of a source set. It should be treated as a part of a software module rather
+ * than a file system object. One `SourceFile` may reflect multiple actual FS files. For example,
+ * a `SourceFile` may be read from one location on the FS and written into another location.
  */
 public class SourceFile
 private constructor(
@@ -48,9 +52,9 @@ private constructor(
     private var code: String,
 
     /**
-     * The FS path to the file.
+     * The FS path to the file relative to the source root.
      */
-    public val path: Path,
+    public val relativePath: Path,
 
     private var changed: Boolean = false
 ) {
@@ -59,23 +63,30 @@ private constructor(
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
     private var alreadyRead = false
 
-
     internal companion object {
 
         /**
          * Reads the file from the given FS location.
          */
-        fun read(path: Path, charset: Charset = Charsets.UTF_8): SourceFile =
-            SourceFile(path.readText(charset), path)
+        fun read(
+            relativePath: Path,
+            sourceRoot: Path,
+            charset: Charset = Charsets.UTF_8
+        ): SourceFile {
+            val absolute = sourceRoot / relativePath
+            return SourceFile(absolute.readText(charset), relativePath)
+        }
+
 
         /**
          * Constructs a file from source code.
          *
-         * @param path the FS path for the file; the file might not exist on the file system
+         * @param relativePath the FS path for the file relative to the source root; the file might
+         *             not exist on the file system
          * @param code the source code
          */
-        fun fromCode(path: Path, code: String): SourceFile =
-            SourceFile(code, path, changed = true)
+        fun fromCode(relativePath: Path, code: String): SourceFile =
+            SourceFile(code, relativePath, changed = true)
     }
 
     /**
@@ -103,7 +114,7 @@ private constructor(
      * After this method, the file will no longer be accessible via associated the `SourceSet`.
      */
     public fun delete() {
-        sourceSet.delete(path)
+        sourceSet.delete(relativePath)
     }
 
     /**
@@ -134,15 +145,46 @@ private constructor(
 
     /**
      * Writes the source code into the file on the file system.
+     *
+     * It may be the case that the file is read from one directory (source) and written into another
+     * directory (target). Thus, the initial path from where the file is read may not coincide with
+     * the path from where the file is written.
+     *
+     * @param rootDir the directory into which the file should be written;
+     *                this file's [relativePath] is resolved upon this directory
+     * @param charset the charset to use to write the file; UTF-8 is the default
+     * @param forceWrite if `true`, this file must be written to the FS even if no changes have been
+     *                   done upon it; otherwise, the file may not be written to avoid unnecessary
+     *                   file system operations
      */
-    internal fun write(charset: Charset = Charsets.UTF_8, rootDir: Path) {
-        if (changed) {
-            val targetPath = rootDir / path
+    internal fun write(
+        rootDir: Path,
+        charset: Charset = Charsets.UTF_8,
+        forceWrite: Boolean = false
+    ) {
+        if (changed || forceWrite) {
+            val targetPath = rootDir / relativePath
             targetPath.toFile()
                 .parentFile
                 .mkdirs()
             targetPath.writeText(code, charset, WRITE, TRUNCATE_EXISTING, CREATE)
         }
+    }
+
+    /**
+     * Deletes this source file from the file system.
+     *
+     * It may be the case that the file is read from one directory (source) and changed in another
+     * directory (target). Thus, the initial path from where the file is read may not coincide with
+     * the path from where the file is deleted.
+     *
+     * @param rootDir the root directory where the file lies; the [relativePath] is resolved upon
+     *                this directory
+     * @see write
+     */
+    internal fun rm(rootDir: Path) {
+        val targetPath = rootDir / relativePath
+        targetPath.toFile().deleteRecursively()
     }
 
     /**
@@ -174,7 +216,7 @@ private constructor(
         }
     }
 
-    override fun toString(): String = path.toString()
+    override fun toString(): String = relativePath.toString()
 }
 
 /**

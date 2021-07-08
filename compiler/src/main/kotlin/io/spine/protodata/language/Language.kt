@@ -27,7 +27,7 @@
 package io.spine.protodata.language
 
 import io.spine.protodata.file.Glob
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFile
 
 /**
  * A programming language or a specific syntax.
@@ -59,15 +59,10 @@ public abstract class Language(
     public abstract fun comment(line: String): String
 
     /**
-     * Filters a given source set retaining only the files in this language.
-     *
-     * @return a new source set with all the files from the given [sourceSet] which match.
-     *     the [filePattern] of this language
+     * Checks if the given file is a code file in this language.
      */
-    internal fun filter(sourceSet: SourceSet): SourceSet {
-        val files = sourceSet.filter { filePattern.matches(it.path) }.toSet()
-        return SourceSet(files, sourceSet.rootDir)
-    }
+    internal fun matches(file: SourceFile): Boolean =
+        filePattern.matches(file.relativePath)
 
     override fun toString(): String = name
 }

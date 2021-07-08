@@ -45,14 +45,14 @@ public class Glob(pattern: String) {
         /**
          * A pattern which matched any file.
          */
-        public val any: Glob = Glob("**/*")
+        public val any: Glob = Glob("**")
 
         /**
          * A pattern which matches any file with the given extension.
          */
         @JvmStatic
         public fun extension(extension: String): Glob {
-            return Glob("**/*.$extension")
+            return Glob("**.$extension")
         }
     }
 
