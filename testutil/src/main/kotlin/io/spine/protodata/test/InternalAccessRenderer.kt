@@ -37,7 +37,7 @@ import kotlin.io.path.Path
 /**
  * Creates a new package-private class for each [InternalType].
  */
-public class InternalAccessRenderer : Renderer(supportedLanguages = setOf(Java)) {
+public class InternalAccessRenderer : Renderer(Java) {
 
     override fun render(sources: SourceSet) {
         val internalTypes = select<InternalType>().all()

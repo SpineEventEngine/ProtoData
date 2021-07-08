@@ -49,6 +49,13 @@ import java.io.File.pathSeparator
 import java.nio.file.Path
 import kotlin.system.exitProcess
 
+/**
+ * The resource file containing the version of ProtoData.
+ *
+ * Such a resource name might be duplicated in other places in ProtoData code base. The reason for
+ * this is to avoid creating an extra dependencies. Search by the string value of this constant
+ * when making changes.
+ */
 private const val VERSION_FILE_NAME = "version.txt"
 
 /**

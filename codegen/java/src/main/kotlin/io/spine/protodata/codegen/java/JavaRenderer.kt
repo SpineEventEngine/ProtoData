@@ -30,14 +30,14 @@ import io.spine.protodata.File
 import io.spine.protodata.FilePath
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
-import io.spine.protodata.language.CommonLanguages
+import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
 import java.nio.file.Path
 
 /**
  * A [Renderer] which generates Java code.
  */
-public abstract class JavaRenderer : Renderer(setOf(CommonLanguages.Java)) {
+public abstract class JavaRenderer : Renderer(Java) {
 
     /**
      * Obtains the [ClassName] of the given Protobuf type.

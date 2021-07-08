@@ -28,8 +28,6 @@ package io.spine.protodata.test;
 
 import com.google.common.collect.ImmutableSet;
 import io.spine.protodata.plugin.Plugin;
-import io.spine.protodata.plugin.Policy;
-import io.spine.protodata.plugin.View;
 import io.spine.protodata.plugin.ViewRepository;
 
 import java.util.Set;
@@ -43,15 +41,5 @@ public final class UuidPlugin implements Plugin {
     @Override
     public Set<ViewRepository<?, ?, ?>> viewRepositories() {
         return ImmutableSet.of(new UuidTypeRepository());
-    }
-
-    @Override
-    public Set<Class<? extends View<?, ?, ?>>> views() {
-        return Plugin.super.views();
-    }
-
-    @Override
-    public Set<Policy<?>> policies() {
-        return Plugin.super.policies();
     }
 }

@@ -48,6 +48,10 @@ public interface Querying {
  * Creates a [QueryingClient] to find views of the given type.
  *
  * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
+ *
+ * This overload is for Kotlin API users. Java users cannot access `inline` methods. As the method
+ * is `inline`, it cannot be declared inside the interface. Thus, we use an extension method for
+ * this overload.
  */
 public inline fun <reified P : EntityState<*>> Querying.select(): QueryingClient<P> {
     val cls = P::class.java

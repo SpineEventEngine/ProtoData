@@ -150,24 +150,6 @@ internal constructor(
     }
 
     /**
-     * Produces an intersection of this source set and the [other] source set.
-     */
-    internal fun intersection(other: SourceSet): SourceSet {
-        if (rootDir != other.rootDir) {
-            throw IllegalArgumentException("""
-                Cannot intersect source sets with different root directories: 
-                    $rootDir
-                    AND
-                    ${other.rootDir}
-            """.trimIndent())
-        }
-        val result = SourceSet(setOf(), rootDir)
-        result.files.putAll(files)
-        result.files.putAll(other.files)
-        return result
-    }
-
-    /**
      * Merges the other source set into this one.
      */
     internal fun mergeBack(other: SourceSet) {

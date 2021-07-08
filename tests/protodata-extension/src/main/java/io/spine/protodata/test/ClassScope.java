@@ -59,6 +59,14 @@ final class ClassScope implements InsertionPoint {
         return format("class_scope:%s", typeUrl(typeName));
     }
 
+    /**
+     * Finds the place to put the {@code ClassScope} insertion point among the given code lines.
+     *
+     * <p>To locate our insertion point, we use Protoc native {@code class_scope} insertion point.
+     *
+     * <p>If there is no Protoc native insertion point to be found, the {@code ClassScope} point
+     * is not added either.
+     */
     @Override
     public LineNumber locate(List<String> lines) {
         String pattern = format(NATIVE_INSERTION_POINT_FMT, qualifiedName(typeName));

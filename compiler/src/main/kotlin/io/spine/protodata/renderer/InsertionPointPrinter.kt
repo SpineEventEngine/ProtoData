@@ -43,7 +43,7 @@ import io.spine.protodata.language.Language
  */
 public abstract class InsertionPointPrinter(
     private val target: Language
-) : Renderer(setOf(target)) {
+) : Renderer(target) {
 
     /**
      * [InsertionPoint]s which could be added to source code by this `InsertionPointPrinter`.

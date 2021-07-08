@@ -99,19 +99,19 @@ public class Extension(private val project: Project) {
     /**
      * The base directory where the files generated from Protobuf resides.
      *
-     * Files are placed under this dir and divided under subdirectories by source sets, and then by
-     * the [srcSubdir]s. For example, a Java class generated from a main-scope `.proto` definition
+     * Files are placed under this dir and divided under sub-directories by source sets, and then by
+     * the [srcSubDir]s. For example, a Java class generated from a main-scope `.proto` definition
      * would be placed under `$srcBaseDir/main/java`, where `main` is the name of the source set
-     * and `java` is the [srcSubdir].
+     * and `java` is the [srcSubDir].
      *
-     * Neither `srcBaseDir` nor [srcSubdir] don't tell the Protobuf compiler where to put the files.
-     * These properties merely point at the location where the files are put so that ProtoData can
-     * find those files.
+     * By default, `srcBaseDir` points to the directory which is specified in
+     * `protobuf.generatedFilesBaseDir` to the Protobuf Gradle plugin. If `srcBaseDir` is changed,
+     * Protobuf compiler settings are NOT affected.
      *
-     * By default, points to the directory which is specified in `protobuf.generatedFilesBaseDir`
-     * to the Protobuf Gradle plugin.
+     * To change the location where `protoc` stores files it generates, refer to
+     * the Protobuf Gradle plugin DSL.
      *
-     * @see srcSubdir
+     * @see srcSubDir
      */
     public var srcBaseDir: Any
         get() = srcBaseDirProperty.get()
@@ -125,21 +125,21 @@ public class Extension(private val project: Project) {
     }
 
     /**
-     * The subdirectory to which the files generated from Protobuf are placed.
+     * The sub-directory to which the files generated from Protobuf are placed.
      *
      * The default value is `"java"`.
      *
      * @see srcBaseDir
      */
-    public var srcSubdir: String
-        get() = srcSubdirProperty.get()
+    public var srcSubDir: String
+        get() = srcSubDirProperty.get()
         set(value) {
             if (value.isNotEmpty()) {
-                srcSubdirProperty.set(value)
+                srcSubDirProperty.set(value)
             }
         }
 
-    private val srcSubdirProperty: Property<String> =
+    private val srcSubDirProperty: Property<String> =
         project.objects.property<String>().convention("java")
 
     /**
@@ -148,5 +148,5 @@ public class Extension(private val project: Project) {
      * @see srcBaseDir for the rules for the source dir construction
      */
     internal fun sourceDir(sourceSet: SourceSet): Provider<Directory> =
-        srcBaseDirProperty.get().dir(sourceSet.name).dir(srcSubdirProperty)
+        srcBaseDirProperty.get().dir(sourceSet.name).dir(srcSubDirProperty)
 }

@@ -130,7 +130,7 @@ public class Literal(value: Any) : Expression(value.toString())
 public class ClassName
 internal constructor(
     private val packageName: String,
-    private val classNames: List<String>
+    private val simpleNames: List<String>
 ) : JavaPrintable {
 
     /**
@@ -141,7 +141,8 @@ internal constructor(
      * For regular Java classes, This is similar to `binary`, except that in a binary name nested
      * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
      */
-    public val canonical: String = "$packageName.${classNames.joinToString(".")}"
+    @get:JvmName("canonical")
+    public val canonical: String = "$packageName.${simpleNames.joinToString(".")}"
 
     /**
      * The binary name of the class.
@@ -151,8 +152,9 @@ internal constructor(
      * For regular Java classes, This is similar to `canonical`, except that in a binary name nested
      * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
      */
+    @get:JvmName("binary")
     public val binary: String
-        get() = "$packageName.${classNames.joinToString("$")}"
+        get() = "$packageName.${simpleNames.joinToString("$")}"
 
     /**
      * The simple name of this class.
@@ -161,7 +163,7 @@ internal constructor(
      */
     @get:JvmName("simpleName")
     public val simpleName: String
-        get() = classNames.last()
+        get() = simpleNames.last()
 
     /**
      * Obtains the class name of the given Java class.

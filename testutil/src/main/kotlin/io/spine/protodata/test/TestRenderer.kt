@@ -31,7 +31,7 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.select
 
-public class TestRenderer : Renderer(supportedLanguages = setOf(Java)) {
+public class TestRenderer : Renderer(Java) {
 
     override fun render(sources: SourceSet) {
         val internalTypes = select<InternalType>().all()

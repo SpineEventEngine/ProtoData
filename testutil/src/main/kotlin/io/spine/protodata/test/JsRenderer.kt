@@ -30,7 +30,7 @@ import io.spine.protodata.language.CommonLanguages.JavaScript
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
 
-public class JsRenderer : Renderer(supportedLanguages = setOf(JavaScript)) {
+public class JsRenderer : Renderer(JavaScript) {
 
     override fun render(sources: SourceSet) {
         sources.forEach {

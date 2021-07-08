@@ -35,9 +35,17 @@ import static com.google.common.truth.Truth.assertThat;
 final class CodeGenerationTest {
 
     @Test
-    @DisplayName("include factory methods for UUID wrapper types")
-    void uuids() {
+    @DisplayName("include factory methods for UUID wrapper types for production scope")
+    void mainScope() {
         ProjectId id = ProjectId.randomId();
+        assertThat(id.getUuid())
+                .isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("include factory methods for UUID wrapper types for test scope")
+    void testScope() {
+        TaskId id = TaskId.randomId();
         assertThat(id.getUuid())
                 .isNotEmpty();
     }

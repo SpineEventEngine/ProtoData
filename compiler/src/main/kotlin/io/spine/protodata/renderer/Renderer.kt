@@ -41,7 +41,7 @@ import io.spine.server.BoundedContext
  */
 public abstract class Renderer
 protected constructor(
-    private val supportedLanguages: Set<Language>
+    private val supportedLanguage: Language
 ) : Querying {
 
     internal lateinit var protoDataContext: BoundedContext
@@ -50,9 +50,7 @@ protected constructor(
      * Performs required changes to the given source set.
      */
     internal fun renderSources(sources: SourceSet) {
-        val relevantFiles = supportedLanguages
-            .map { it.filter(sources) }
-            .reduce { left, right -> left.intersection(right) }
+        val relevantFiles = supportedLanguage.filter(sources)
         render(relevantFiles)
         sources.mergeBack(relevantFiles)
     }

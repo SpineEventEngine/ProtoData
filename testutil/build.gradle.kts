@@ -28,13 +28,9 @@ import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.Grpc
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.Scripts
 
-apply {
-    plugin("io.spine.mc-java")
-    plugin(Protobuf.GradlePlugin.id)
-    from(Scripts.modelCompiler(project))
+plugins {
+    `build-proto-model`
 }
 
 dependencies {
