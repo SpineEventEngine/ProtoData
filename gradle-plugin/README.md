@@ -119,8 +119,8 @@ tasks.withType<LaunchProtoData> {
 ## Generated files
 
 The plugin changes the configuration of the Protobuf Gradle plugin in such a way that the files
-generated from Protobuf are placed under the `build` directory. After the files are than processed
-by ProtoData, they will turn up in ProtoData target directory, which is, by default,
+generated from Protobuf are placed under the `build` directory. After the files are then processed
+by ProtoData, they will end up in ProtoData target directory, which is, by default,
 `$projectDir/generated/`. To change the output dir, see the ProtoData plugin configuration.
 
 ## Caveat
