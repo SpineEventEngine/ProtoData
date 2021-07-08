@@ -207,9 +207,7 @@ class `'Pipeline' should` {
 
     @Test
     fun `write code into different destination`() {
-        val destination = Files.createTempDirectory("destination")
-            // JUnit reuses @TempDir from @BeforeEach and we need a fresh temp directory.
-            // https://github.com/junit-team/junit5/issues/1967
+        val destination = tempDir()
         Pipeline(
             listOf(TestPlugin()),
             listOf(InternalAccessRenderer()),
@@ -230,9 +228,7 @@ class `'Pipeline' should` {
 
     @Test
     fun `copy all sources into the new destination`() {
-        val destination = Files.createTempDirectory("destination")
-            // JUnit reuses @TempDir from @BeforeEach and we need a fresh temp directory.
-            // https://github.com/junit-team/junit5/issues/1967
+        val destination = tempDir()
         Pipeline(
             listOf(TestPlugin()),
             listOf(NoOpRenderer()),
@@ -245,6 +241,14 @@ class `'Pipeline' should` {
         assertThat(destination.resolve(sourceFile.fileName).exists())
             .isTrue()
     }
+
+    /**
+     * Creates a new unique temp directory.
+     *
+     * JUnit reuses @TempDir from @BeforeEach and we need a fresh temp directory.
+     * See [the JUnit issue](https://github.com/junit-team/junit5/issues/1967).
+     */
+    private fun tempDir() = Files.createTempDirectory("destination")
 
     @Nested
     inner class `Fail to construct if` {
