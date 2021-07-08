@@ -159,6 +159,9 @@ private constructor(
 
     /**
      * Deletes this source file from the file system.
+     *
+     * @param rootDir the root directory where the file lies; the [relativePath] is resolved upon
+     *                this directory
      */
     internal fun rm(rootDir: Path) {
         val targetPath = rootDir / relativePath
