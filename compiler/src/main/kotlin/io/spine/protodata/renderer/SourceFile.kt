@@ -50,7 +50,7 @@ private constructor(
     /**
      * The FS path to the file relative to the source root.
      */
-    public val path: Path,
+    public val relativePath: Path,
 
     private var changed: Boolean = false
 ) {
@@ -78,12 +78,12 @@ private constructor(
         /**
          * Constructs a file from source code.
          *
-         * @param path the FS path for the file relative to the source root; the file might
+         * @param relativePath the FS path for the file relative to the source root; the file might
          *             not exist on the file system
          * @param code the source code
          */
-        fun fromCode(path: Path, code: String): SourceFile =
-            SourceFile(code, path, changed = true)
+        fun fromCode(relativePath: Path, code: String): SourceFile =
+            SourceFile(code, relativePath, changed = true)
     }
 
     /**
@@ -111,7 +111,7 @@ private constructor(
      * After this method, the file will no longer be accessible via associated the `SourceSet`.
      */
     public fun delete() {
-        sourceSet.delete(path)
+        sourceSet.delete(relativePath)
     }
 
     /**
@@ -149,7 +149,7 @@ private constructor(
         forceWrite: Boolean = false
     ) {
         if (changed || forceWrite) {
-            val targetPath = rootDir / path
+            val targetPath = rootDir / relativePath
             targetPath.toFile()
                 .parentFile
                 .mkdirs()
@@ -161,7 +161,7 @@ private constructor(
      * Deletes this source file from the file system.
      */
     internal fun rm(rootDir: Path) {
-        val targetPath = rootDir / path
+        val targetPath = rootDir / relativePath
         targetPath.toFile().deleteRecursively()
     }
 
@@ -194,7 +194,7 @@ private constructor(
         }
     }
 
-    override fun toString(): String = path.toString()
+    override fun toString(): String = relativePath.toString()
 }
 
 /**

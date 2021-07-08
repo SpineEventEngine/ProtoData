@@ -62,7 +62,7 @@ public abstract class Language(
      * Checks if the given file is a code file in this language.
      */
     internal fun matches(file: SourceFile): Boolean =
-        filePattern.matches(file.path)
+        filePattern.matches(file.relativePath)
 
     override fun toString(): String = name
 }

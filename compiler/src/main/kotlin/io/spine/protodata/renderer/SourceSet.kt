@@ -68,7 +68,7 @@ internal constructor(
 
     init {
         val map = HashMap<Path, SourceFile>(files.size)
-        this.files = files.associateByTo(map) { it.path }
+        this.files = files.associateByTo(map) { it.relativePath }
         this.files.values.forEach { it.attachTo(this) }
     }
 
@@ -146,7 +146,7 @@ internal constructor(
      */
     public fun createFile(path: Path, code: String): SourceFile {
         val file = SourceFile.fromCode(path, code)
-        files[file.path] = file
+        files[file.relativePath] = file
         file.attachTo(this)
         preReadActions.forEach {
             file.whenRead(it)
@@ -206,7 +206,7 @@ internal constructor(
         files.putAll(other.files)
         deletedFiles.addAll(other.deletedFiles)
         other.deletedFiles.forEach {
-            files.remove(it.path)
+            files.remove(it.relativePath)
         }
     }
 

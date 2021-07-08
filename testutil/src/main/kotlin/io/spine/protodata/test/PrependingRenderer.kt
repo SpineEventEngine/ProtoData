@@ -36,7 +36,7 @@ public class PrependingRenderer : Renderer(Java) {
 
     override fun render(sources: SourceSet) {
         val file = sources
-            .filter { it.path.name.endsWith("_.java") }
+            .filter { it.relativePath.name.endsWith("_.java") }
             .theOnly()
         file.at(GenericInsertionPoint.FILE_START)
             .add("Hello from ${this.javaClass.name}")
