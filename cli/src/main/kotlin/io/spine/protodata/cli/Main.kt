@@ -27,7 +27,6 @@
 package io.spine.protodata.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.FileNotFound
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
@@ -35,6 +34,7 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
+import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileName
@@ -200,16 +200,28 @@ internal class Run(version: String) : CliktCommand(
         val files: FileSet = FileSet.of(request.protoFileList)
         val fileProviders = options
             .map(FileName::of)
-            .map { files.tryFind(it).orElseThrow { noSuchFile(it) } }
+            .flatMap { name -> files.findOptionFile(name).emptyOrSingleton() }
             .map(::FileOptionsProvider)
-
         val allProviders = providers.toMutableList()
         allProviders.addAll(fileProviders)
         return allProviders
     }
 
-    private fun noSuchFile(it: FileName?) =
-        FileNotFound(it.toString())
+    private fun FileSet.findOptionFile(name: FileName): FileDescriptor? {
+        val found = tryFind(name).orElse(null)
+        if (found == null) {
+            echo("WARNING. Option file `$name` not found.")
+        }
+        return found
+    }
+
+    private fun <T> T?.emptyOrSingleton(): List<T> {
+        return if (this == null) {
+            listOf()
+        } else {
+            listOf(this)
+        }
+    }
 
     private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {
         val classLoader = Thread.currentThread().contextClassLoader
