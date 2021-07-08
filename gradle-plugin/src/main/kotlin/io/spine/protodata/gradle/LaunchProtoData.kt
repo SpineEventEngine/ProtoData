@@ -79,7 +79,7 @@ public open class LaunchProtoData : Exec() {
      * This method *must* be called after all the configuration is done for the task.
      */
     internal fun compileCommandLine() {
-        commandLine(sequence {
+        val command = sequence {
             yield(protoDataExecutable)
             plugins.get().forEach {
                 yield("--plugin")
@@ -107,7 +107,11 @@ public open class LaunchProtoData : Exec() {
                 yield("--user-classpath")
                 yield(userCp)
             }
-        }.asIterable())
+        }.asIterable()
+        if (logger.isDebugEnabled) {
+            logger.debug("ProtoData command for ${path}: ${command.joinToString(separator = " ")}")
+        }
+        commandLine(command)
     }
 }
 

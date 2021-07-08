@@ -30,6 +30,7 @@ import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
+import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
@@ -69,21 +70,19 @@ import org.gradle.api.Plugin as GradlePlugin
 public class Plugin : GradlePlugin<Project> {
 
     override fun apply(target: Project) {
-        val extension = Extension(target)
-        target.extensions.add("protoData", extension)
-        val protoDataConfiguration = target.configurations.create("protoData")
-        target.sourceSets.forEach { sourceSet ->
-            val launch = createLaunchTask(target, extension, protoDataConfiguration, sourceSet)
-            target.javaCompileFor(sourceSet)?.dependsOn(launch)
+        val version = readVersion()
+        with(target) {
+            val extension = createExtension()
+            configureProtobufPlugin(extension, version)
+            createLaunchTasks(extension)
+            createInstallTask(version)
+            configureSourceSets(extension)
         }
+    }
 
+    private fun readVersion(): String {
         val resource = Plugin::class.java.classLoader.getResource(VERSION_RESOURCE)!!
-        val version = resource.readText()
-        target.configureProtobufPlugin(extension, version)
-        target.configureSourceSets(extension)
-
-        val protoDataRawConfiguration = target.configurations.create("protoDataRawArtifact")
-        createInstallTask(target, protoDataRawConfiguration, version)
+        return resource.readText()
     }
 }
 
@@ -97,6 +96,20 @@ public class Plugin : GradlePlugin<Project> {
 private const val VERSION_RESOURCE = "version.txt"
 
 private const val PROTOC_PLUGIN = "protodata"
+
+private fun Project.createLaunchTasks(extension: Extension) {
+    val protoDataConfiguration = configurations.create("protoData")
+    sourceSets.forEach { sourceSet ->
+        val launch = createLaunchTask(this, extension, protoDataConfiguration, sourceSet)
+        javaCompileFor(sourceSet)?.dependsOn(launch)
+    }
+}
+
+private fun Project.createExtension(): Extension {
+    val extension = Extension(this)
+    extensions.add("protoData", extension)
+    return extension
+}
 
 private fun createLaunchTask(
     p: Project,
@@ -127,21 +140,22 @@ private fun createLaunchTask(
     }
 }
 
-private fun createInstallTask(target: Project, config: Configuration, version: String) {
-    val dependency = target.dependencies.add(config.name,
+private fun Project.createInstallTask(version: String) {
+    val config = configurations.create("protoDataRawArtifact")
+    val dependency = dependencies.add(config.name,
                                              "io.spine.protodata:executable:${version}")
-    val stagingDir = "${target.buildDir}/protodata/staging"
-    val stageTask = target.tasks.register("stageProtoData", Copy::class.java) {
+    val stagingDir = "${buildDir}/protodata/staging"
+    val stageTask = tasks.register("stageProtoData", Copy::class.java) {
         val artifact = config.files(dependency).first().absoluteFile
-        it.from(target.zipTree(artifact))
+        it.from(zipTree(artifact))
         it.into(stagingDir)
     }
 
-    target.tasks.register("installProtoData", Exec::class.java) {
+    tasks.register("installProtoData", Exec::class.java) {
         val command = mutableListOf("$stagingDir/install.sh")
-        val protoDataLocation = target.rootProject.protoDataLocation
+        val protoDataLocation = rootProject.protoDataLocation
         if (protoDataLocation != null) {
-            val absoluteLocation = target.rootProject.file(protoDataLocation).absolutePath
+            val absoluteLocation = rootProject.file(protoDataLocation).absolutePath
             command.add(absoluteLocation)
         }
         it.commandLine(command)
@@ -156,11 +170,6 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                 artifact = "io.spine.protodata:protoc:$version:exe@jar"
             }
         }
-
-        afterEvaluate {
-            generatedFilesBaseDir = "$buildDir/generated-proto/"
-        }
-
         generateProtoTasks {
             all().forEach {
                 it.plugins {
@@ -172,6 +181,7 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                 project.tasks.getByName(launchTaskName(it.sourceSet)).dependsOn(it)
             }
         }
+        generatedFilesBaseDir = "$buildDir/generated-proto/"
     }
 
 private fun launchTaskName(sourceSet: SourceSet): String =
@@ -179,9 +189,16 @@ private fun launchTaskName(sourceSet: SourceSet): String =
 
 
 private fun Project.configureSourceSets(extension: Extension) {
-    sourceSets.forEach { sourceSet ->
-        sourceSet.java {
-            it.srcDir(extension.targetDir(sourceSet))
+    afterEvaluate {
+        sourceSets.forEach { sourceSet ->
+            sourceSet.java.srcDir(extension.targetDir(sourceSet))
+
+            val sourceDir = file(extension.sourceDir(sourceSet))
+            val task = javaCompileFor(sourceSet)!!
+            task.source = task.source.filter { file -> !file.liesInside(sourceDir) }.asFileTree
         }
     }
 }
+
+private fun File.liesInside(directory: File): Boolean =
+    canonicalFile.startsWith(directory.canonicalFile)

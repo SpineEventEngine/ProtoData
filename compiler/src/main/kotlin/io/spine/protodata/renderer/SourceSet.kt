@@ -79,15 +79,17 @@ internal constructor(
          * Collects a source set from a given root directory.
          */
         public fun from(sourceRoot: Path, targetRoot: Path): SourceSet {
-            if (sourceRoot != targetRoot) {
-                checkTarget(targetRoot)
+            val source = sourceRoot.canonical()
+            val target = targetRoot.canonical()
+            if (source != target) {
+                checkTarget(target)
             }
             val files = Files
-                .walk(sourceRoot)
+                .walk(source)
                 .filter { it.isRegularFile() }
-                .map { SourceFile.read(sourceRoot.relativize(it), sourceRoot) }
+                .map { SourceFile.read(source.relativize(it), source) }
                 .collect(toImmutableSet())
-            return SourceSet(files, sourceRoot, targetRoot)
+            return SourceSet(files, source, target)
         }
 
         /**
@@ -209,4 +211,8 @@ internal constructor(
     }
 
     override fun toString(): String = toList().joinToString()
+}
+
+private fun Path.canonical(): Path {
+    return toAbsolutePath().normalize()
 }
