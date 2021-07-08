@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.uuid;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;

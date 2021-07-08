@@ -24,22 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.protodata.test.uuid;
 
-import com.google.common.collect.ImmutableSet;
-import io.spine.protodata.plugin.Plugin;
-import io.spine.protodata.plugin.ViewRepository;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-import java.util.Set;
-
-/**
- * The plugin which supplies the {@link UuidType} view.
- */
-@SuppressWarnings("unused") // Accessed reflectively.
-public final class UuidPlugin implements Plugin {
-
-    @Override
-    public Set<ViewRepository<?, ?, ?>> viewRepositories() {
-        return ImmutableSet.of(new UuidTypeRepository());
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

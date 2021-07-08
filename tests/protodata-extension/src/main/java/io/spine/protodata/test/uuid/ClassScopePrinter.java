@@ -24,30 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.uuid;
 
-import io.spine.protodata.codegen.java.JavaRenderer;
-import io.spine.protodata.renderer.SourceSet;
+import io.spine.protodata.language.CommonLanguages;
+import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.protodata.renderer.InsertionPointPrinter;
+import io.spine.protodata.test.UuidType;
 
-import java.nio.file.Path;
 import java.util.Set;
 
-public final class MetaRenderer extends JavaRenderer {
+import static java.util.stream.Collectors.toSet;
 
-    @Override
-    protected void render(SourceSet sources) {
-        Set<MetaAnnotated> annotatedFields = select(MetaAnnotated.class).all();
-        annotatedFields.forEach(
-                field -> renderFor(field, sources)
-        );
+/**
+ * Prints the {@link ClassScope} insertion point.
+ */
+@SuppressWarnings("unused") // Accessed reflectively.
+public final class ClassScopePrinter extends InsertionPointPrinter {
+
+    public ClassScopePrinter() {
+        super(CommonLanguages.java());
     }
 
-    private void renderFor(MetaAnnotated field, SourceSet sourceSet) {
-        FieldId id = field.getId();
-        FieldGetter getter = new FieldGetter(id);
-        Path path = javaFileOf(id.getType(), id.getFile());
-        sourceSet.file(path)
-                 .at(getter)
-                 .add('@' + field.getJavaAnnotation());
+    @Override
+    protected Set<InsertionPoint> supportedInsertionPoints() {
+        return select(UuidType.class).all()
+                                     .stream()
+                                     .map(type -> new ClassScope(type.getName()))
+                                     .collect(toSet());
     }
 }

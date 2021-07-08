@@ -24,27 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.meta;
 
-import io.spine.protodata.FieldEntered;
-import io.spine.protodata.TypeName;
+import com.google.common.collect.ImmutableSet;
+import io.spine.protodata.plugin.Plugin;
 import io.spine.protodata.plugin.ViewRepository;
-import io.spine.server.route.EventRouting;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static io.spine.server.route.EventRoute.withId;
+import java.util.Set;
 
-/**
- * The repository for the {@link UuidType} views.
- *
- * <p>Configures routing for {@code FieldEntered} events.
- */
-final class UuidTypeRepository extends ViewRepository<TypeName, UuidTypeView, UuidType> {
+public final class MetaPlugin implements Plugin {
 
     @Override
-    protected void setupEventRouting(@NonNull EventRouting<TypeName> routing) {
-        super.setupEventRouting(routing);
-        routing.route(FieldEntered.class,
-                      (message, context) -> withId(message.getType()));
+    public Set<ViewRepository<?, ?, ?>> viewRepositories() {
+        return ImmutableSet.of(new MetaAnnotatedView.Repo());
     }
 }

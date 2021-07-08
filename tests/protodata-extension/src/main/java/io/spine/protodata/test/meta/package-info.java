@@ -24,29 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.protodata.test.meta;
 
-import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.InsertionPointPrinter;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-import java.util.Set;
-
-import static io.spine.protodata.language.CommonLanguages.java;
-import static java.util.stream.Collectors.toSet;
-
-public final class PrintFieldGetter extends InsertionPointPrinter {
-
-    public PrintFieldGetter() {
-        super(java());
-    }
-
-    @NonNull
-    @Override
-    protected Set<InsertionPoint> supportedInsertionPoints() {
-        Set<MetaAnnotated> fields = select(MetaAnnotated.class).all();
-        return fields.stream()
-                     .map(field -> new FieldGetter(field.getId()))
-                     .collect(toSet());
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

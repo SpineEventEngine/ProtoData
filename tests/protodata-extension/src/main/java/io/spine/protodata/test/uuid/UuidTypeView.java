@@ -24,18 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.uuid;
 
-import com.google.common.collect.ImmutableSet;
-import io.spine.protodata.plugin.Plugin;
-import io.spine.protodata.plugin.ViewRepository;
+import io.spine.core.External;
+import io.spine.core.Subscribe;
+import io.spine.core.Where;
+import io.spine.protodata.FieldEntered;
+import io.spine.protodata.TypeName;
+import io.spine.protodata.plugin.View;
+import io.spine.protodata.test.UuidType;
 
-import java.util.Set;
+/**
+ * A view on a type which is a wrapper for a UUID string.
+ */
+final class UuidTypeView extends View<TypeName, UuidType, UuidType.Builder> {
 
-public final class MetaPlugin implements Plugin {
-
-    @Override
-    public Set<ViewRepository<?, ?, ?>> viewRepositories() {
-        return ImmutableSet.of(new MetaAnnotatedView.Repo());
+    @Subscribe
+    void on(@External @Where(field = "field.name.value", equals = "uuid") FieldEntered event) {
+        builder().setName(event.getType())
+                 .setDeclaredIn(event.getFile());
     }
 }

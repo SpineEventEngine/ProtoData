@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.meta;
 
 import com.google.protobuf.StringValue;
 import io.spine.core.External;
@@ -33,6 +33,8 @@ import io.spine.core.Where;
 import io.spine.protodata.FieldOptionDiscovered;
 import io.spine.protodata.plugin.View;
 import io.spine.protodata.plugin.ViewRepository;
+import io.spine.protodata.test.FieldId;
+import io.spine.protodata.test.MetaAnnotated;
 import io.spine.server.route.EventRouting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 

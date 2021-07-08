@@ -26,6 +26,7 @@
 
 package io.spine.protodata.renderer
 
+import com.google.common.base.Preconditions.checkArgument
 import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
@@ -230,17 +231,17 @@ internal constructor(
     private val point: InsertionPoint
 ) {
 
+    private var indentLevel: Int = 0
+
     /**
-     * Adds the given code lines at the associated insertion point.
+     * Specifies extra indentation to be added to inserted code lines
      *
-     * @param lines
-     *      code lines
-     * @param extraIndentLevel
-     *      extra indentation to be added to the lines; each unit adds four spaces
+     * Each unit adds four spaces.
      */
-    @JvmOverloads
-    public fun add(vararg lines: String, extraIndentLevel: Int = 0) {
-        add(lines.toList(), extraIndentLevel)
+    public fun withExtraIndentation(level: Int): SourceAtPoint {
+        checkArgument(level >= 0, "Indentation level cannot be negative.")
+        indentLevel = level
+        return this
     }
 
     /**
@@ -248,15 +249,21 @@ internal constructor(
      *
      * @param lines
      *      code lines
-     * @param extraIndentLevel
-     *      extra indentation to be added to the lines; each unit adds four spaces
      */
-    @JvmOverloads
-    public fun add(lines: Iterable<String>, extraIndentLevel: Int = 0) {
+    public fun add(vararg lines: String): Unit =
+        add(lines.toList())
+
+    /**
+     * Adds the given code lines at the associated insertion point.
+     *
+     * @param lines
+     *      code lines
+     */
+    public fun add(lines: Iterable<String>) {
         val sourceLines = file.lines()
         val updatedLines = ArrayList(sourceLines)
         val pointMarker = point.codeLine
-        val newCode = lines.linesToCode(extraIndentLevel)
+        val newCode = lines.linesToCode(indentLevel)
         sourceLines.mapIndexed { index, line -> index to line }
                    .filter { (_, line) -> line.contains(pointMarker) }
                    .map { it.first + 1 }

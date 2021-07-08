@@ -44,15 +44,15 @@ dependencies {
 
 extensions.getByType<Extension>().apply {
     renderers(
-        "io.spine.protodata.test.ClassScopePrinter",
-        "io.spine.protodata.test.UuidJavaRenderer",
+        "io.spine.protodata.test.uuid.ClassScopePrinter",
+        "io.spine.protodata.test.uuid.UuidJavaRenderer",
 
-        "io.spine.protodata.test.PrintFieldGetter",
-        "io.spine.protodata.test.MetaRenderer"
+        "io.spine.protodata.test.meta.PrintFieldGetter",
+        "io.spine.protodata.test.meta.MetaRenderer"
     )
     plugins(
-        "io.spine.protodata.test.UuidPlugin",
-        "io.spine.protodata.test.MetaPlugin"
+        "io.spine.protodata.test.uuid.UuidPlugin",
+        "io.spine.protodata.test.meta.MetaPlugin"
     )
     options("spine/protodata/test/meta.proto")
 }

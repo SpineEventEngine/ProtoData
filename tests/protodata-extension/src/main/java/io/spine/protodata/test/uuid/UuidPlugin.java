@@ -24,31 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.uuid;
 
-import io.spine.protodata.language.CommonLanguages;
-import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.InsertionPointPrinter;
+import com.google.common.collect.ImmutableSet;
+import io.spine.protodata.plugin.Plugin;
+import io.spine.protodata.plugin.ViewRepository;
+import io.spine.protodata.test.UuidType;
 
 import java.util.Set;
 
-import static java.util.stream.Collectors.toSet;
-
 /**
- * Prints the {@link ClassScope} insertion point.
+ * The plugin which supplies the {@link UuidType} view.
  */
 @SuppressWarnings("unused") // Accessed reflectively.
-public final class ClassScopePrinter extends InsertionPointPrinter {
-
-    public ClassScopePrinter() {
-        super(CommonLanguages.java());
-    }
+public final class UuidPlugin implements Plugin {
 
     @Override
-    protected Set<InsertionPoint> supportedInsertionPoints() {
-        return select(UuidType.class).all()
-                                     .stream()
-                                     .map(type -> new ClassScope(type.getName()))
-                                     .collect(toSet());
+    public Set<ViewRepository<?, ?, ?>> viewRepositories() {
+        return ImmutableSet.of(new UuidTypeRepository());
     }
 }

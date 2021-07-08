@@ -26,6 +26,7 @@
 
 package io.spine.protodata.test;
 
+import io.spine.protodata.test.meta.GeneratedByProtoData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -24,23 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.meta;
 
-import io.spine.core.External;
-import io.spine.core.Subscribe;
-import io.spine.core.Where;
-import io.spine.protodata.FieldEntered;
-import io.spine.protodata.TypeName;
-import io.spine.protodata.plugin.View;
+import io.spine.protodata.codegen.java.JavaRenderer;
+import io.spine.protodata.renderer.SourceSet;
+import io.spine.protodata.test.FieldId;
+import io.spine.protodata.test.MetaAnnotated;
 
-/**
- * A view on a type which is a wrapper for a UUID string.
- */
-final class UuidTypeView extends View<TypeName, UuidType, UuidType.Builder> {
+import java.nio.file.Path;
+import java.util.Set;
 
-    @Subscribe
-    void on(@External @Where(field = "field.name.value", equals = "uuid") FieldEntered event) {
-        builder().setName(event.getType())
-                 .setDeclaredIn(event.getFile());
+public final class MetaRenderer extends JavaRenderer {
+
+    private static final int INDENT_LEVEL = 1;
+
+    @Override
+    protected void render(SourceSet sources) {
+        Set<MetaAnnotated> annotatedFields = select(MetaAnnotated.class).all();
+        annotatedFields.forEach(
+                field -> renderFor(field, sources)
+        );
+    }
+
+    private void renderFor(MetaAnnotated field, SourceSet sourceSet) {
+        FieldId id = field.getId();
+        FieldGetter getter = new FieldGetter(id);
+        Path path = javaFileOf(id.getType(), id.getFile());
+        sourceSet.file(path)
+                 .at(getter)
+                 .withExtraIndentation(INDENT_LEVEL)
+                 .add('@' + field.getJavaAnnotation());
     }
 }

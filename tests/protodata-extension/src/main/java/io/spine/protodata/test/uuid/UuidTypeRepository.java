@@ -24,47 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.uuid;
 
-import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.LineNumber;
+import io.spine.protodata.FieldEntered;
+import io.spine.protodata.TypeName;
+import io.spine.protodata.plugin.ViewRepository;
+import io.spine.protodata.test.UuidType;
+import io.spine.server.route.EventRouting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.List;
-import java.util.regex.Pattern;
+import static io.spine.server.route.EventRoute.withId;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.protodata.Ast.typeUrl;
-import static io.spine.protodata.Strings.camelCase;
-import static io.spine.protodata.renderer.LineNumber.notInFile;
-import static java.lang.String.format;
+/**
+ * The repository for the {@link UuidType} views.
+ *
+ * <p>Configures routing for {@code FieldEntered} events.
+ */
+final class UuidTypeRepository extends ViewRepository<TypeName, UuidTypeView, UuidType> {
 
-final class FieldGetter implements InsertionPoint {
-
-    private final FieldId field;
-
-    FieldGetter(FieldId field) {
-        this.field = checkNotNull(field);
-    }
-
-    @NonNull
     @Override
-    public String getLabel() {
-        return format("getter-for:%s.%s", typeUrl(field.getType()), field.getField().getValue());
-    }
-
-    @NonNull
-    @Override
-    public LineNumber locate(List<String> lines) {
-        String fieldName = camelCase(field.getField().getValue());
-        String getterName = "get" + fieldName;
-        Pattern pattern = Pattern.compile("public .+ " + getterName);
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            if (pattern.matcher(line).find()) {
-                return LineNumber.at(i);
-            }
-        }
-        return notInFile();
+    protected void setupEventRouting(@NonNull EventRouting<TypeName> routing) {
+        super.setupEventRouting(routing);
+        routing.route(FieldEntered.class,
+                      (message, context) -> withId(message.getType()));
     }
 }
