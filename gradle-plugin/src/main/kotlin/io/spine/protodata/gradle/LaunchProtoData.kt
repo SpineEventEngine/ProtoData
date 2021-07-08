@@ -57,6 +57,9 @@ public open class LaunchProtoData : Exec() {
     internal lateinit var optionProviders: Provider<List<String>>
 
     @get:Internal
+    internal lateinit var options: Provider<List<String>>
+
+    @get:Internal
     internal lateinit var requestFile: Provider<RegularFile>
 
     @get:Internal
@@ -88,6 +91,10 @@ public open class LaunchProtoData : Exec() {
             }
             optionProviders.get().forEach {
                 yield("--option-provider")
+                yield(it)
+            }
+            options.get().forEach {
+                yield("--option")
                 yield(it)
             }
             yield("--request")

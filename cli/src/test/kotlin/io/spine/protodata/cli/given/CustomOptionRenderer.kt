@@ -33,7 +33,7 @@ import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.select
 import kotlin.io.path.Path
 
-class CustomOptionRenderer : Renderer(setOf(CommonLanguages.any)) {
+class CustomOptionRenderer : Renderer(CommonLanguages.any) {
 
     companion object {
 

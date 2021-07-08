@@ -85,6 +85,14 @@ class `Plugin extension should` {
     }
 
     @Test
+    fun `add option file names`() {
+        val name = "acme/my_options.proto"
+        extension.options(name)
+        assertThat(extension.options.get())
+            .containsExactly(name)
+    }
+
+    @Test
     fun `specify request file location`() {
         val path = "/my/path/to/main.bin"
         extension.requestFilesDir = path
