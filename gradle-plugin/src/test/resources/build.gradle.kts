@@ -24,6 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
+
 plugins {
     java
     id("com.google.protobuf")
@@ -32,4 +35,23 @@ plugins {
 
 repositories {
     mavenLocal()
+    mavenCentral()
+
+    maven { url = uri("https://spine.mycloudrepo.io/public/repositories/releases") }
+    maven { url = uri("https://spine.mycloudrepo.io/public/repositories/snapshots") }
+}
+
+protoData {
+    renderers("io.spine.protodata.test.TestRenderer")
+    plugins("io.spine.protodata.test.TestPlugin")
+}
+
+dependencies {
+    implementation("io.spine.protodata:testutil:+")
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:+"
+    }
 }

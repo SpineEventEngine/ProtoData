@@ -27,10 +27,15 @@
 package io.spine.protodata.gradle
 
 import org.gradle.api.file.Directory
+import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
 
 /**
  * A task which executes a single ProtoData command.
@@ -47,28 +52,26 @@ public open class LaunchProtoData : Exec() {
     @get:Internal
     internal lateinit var protoDataExecutable: String
 
-    @get:Internal
+    @get:Input
     internal lateinit var renderers: Provider<List<String>>
 
-    @get:Internal
+    @get:Input
     internal lateinit var plugins: Provider<List<String>>
 
-    @get:Internal
+    @get:Input
     internal lateinit var optionProviders: Provider<List<String>>
 
-    @get:Internal
+    @get:InputFile
     internal lateinit var requestFile: Provider<RegularFile>
 
-    @get:Internal
+    @get:InputDirectory
     internal lateinit var source: Provider<Directory>
 
-    @get:Internal
-    internal lateinit var userClasspath: Provider<String>
+    @get:OutputDirectory
+    internal lateinit var target: Provider<Directory>
 
-    init {
-        outputs.upToDateWhen { !requestFile.get().asFile.exists() }
-        isIgnoreExitValue = false
-    }
+    @get:Input
+    internal lateinit var userClasspath: Provider<String>
 
     /**
      * Configures the CLI command for this task.
@@ -76,7 +79,7 @@ public open class LaunchProtoData : Exec() {
      * This method *must* be called after all the configuration is done for the task.
      */
     internal fun compileCommandLine() {
-        commandLine(sequence {
+        val command = sequence {
             yield(protoDataExecutable)
             plugins.get().forEach {
                 yield("--plugin")
@@ -93,13 +96,24 @@ public open class LaunchProtoData : Exec() {
             yield("--request")
             yield(requestFile.get().asFile.absolutePath)
 
-            yield("--src")
-            yield(source.get().asFile.absolutePath)
+            yield("--source-root")
+            yield(source.absolutePath)
+
+            yield("--target-root")
+            yield(target.absolutePath)
+
             val userCp = userClasspath.get()
             if (userCp.isNotEmpty()) {
                 yield("--user-classpath")
                 yield(userCp)
             }
-        }.asIterable())
+        }.asIterable()
+        if (logger.isDebugEnabled) {
+            logger.debug("ProtoData command for ${path}: ${command.joinToString(separator = " ")}")
+        }
+        commandLine(command)
     }
 }
+
+private val Provider<out FileSystemLocation>.absolutePath: String
+    get() = get().asFile.absolutePath

@@ -54,10 +54,8 @@ internal val Project.sourceSets: SourceSetContainer
  * will not find it.
  */
 internal fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
-    val name = sourceSet.name
-    val javaCompileInfix = if (name == SourceSet.MAIN_SOURCE_SET_NAME) "" else name.capitalize()
-    val javaCompileName = "compile${javaCompileInfix}Java"
-    return tasks.findByName(javaCompileName) as JavaCompile?
+    val taskName = sourceSet.compileJavaTaskName
+    return tasks.findByName(taskName) as JavaCompile?
 }
 
 /**

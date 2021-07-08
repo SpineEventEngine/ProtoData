@@ -24,54 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.Scripts
-import io.spine.internal.gradle.applyStandard
+package io.spine.protodata.test
 
-@Suppress("RemoveRedundantQualifierName")
-plugins {
-    java
-    idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
-    }
-}
+import io.spine.protodata.language.CommonLanguages.any
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceSet
 
-subprojects {
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("com.google.protobuf")
-        from("$rootDir/../version.gradle.kts")
-        from(Scripts.testOutput(project))
-    }
+public class NoOpRenderer : Renderer(any) {
 
-    repositories.applyStandard()
-
-    protobuf {
-        protoc {
-            artifact = Protobuf.compiler
-        }
-    }
-
-    val generatedFiles = "$projectDir/generated"
-    tasks.getByName<Delete>("clean") {
-        delete.add(generatedFiles)
-    }
-
-    dependencies {
-        Protobuf.libs.forEach { implementation(it) }
-
-        JUnit.api.forEach { testImplementation(it) }
-        Truth.libs.forEach { testImplementation(it) }
-        testRuntimeOnly(JUnit.runner)
-    }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
+    override fun render(sources: SourceSet) {
+        // Do nothing.
     }
 }

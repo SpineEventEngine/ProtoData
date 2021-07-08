@@ -98,9 +98,22 @@ class `Plugin extension should` {
         val subDir = "foobar"
 
         extension.srcBaseDir = basePath
-        extension.srcSubDir = subDir
+        extension.subDir = subDir
 
         val sourceDir = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
+        assertThat(sourceDir.get().asFile.toPath())
+            .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
+    }
+
+    @Test
+    fun `produce target directory`() {
+        val basePath = "my/path"
+        val subDir = "foobar"
+
+        extension.targetBaseDir = basePath
+        extension.subDir = subDir
+
+        val sourceDir = extension.targetDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
         assertThat(sourceDir.get().asFile.toPath())
             .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
     }

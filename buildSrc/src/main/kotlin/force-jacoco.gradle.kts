@@ -24,54 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.Scripts
-import io.spine.internal.gradle.applyStandard
+// TODO:2021-07-05:dmytro.dashenkov: https://github.com/SpineEventEngine/config/issues/214.
 
-@Suppress("RemoveRedundantQualifierName")
-plugins {
-    java
-    idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
-    }
-}
-
-subprojects {
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("com.google.protobuf")
-        from("$rootDir/../version.gradle.kts")
-        from(Scripts.testOutput(project))
-    }
-
-    repositories.applyStandard()
-
-    protobuf {
-        protoc {
-            artifact = Protobuf.compiler
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            eachDependency {
+                if (requested.group == "org.jacoco") {
+                    useVersion("0.8.7")
+                }
+            }
         }
-    }
-
-    val generatedFiles = "$projectDir/generated"
-    tasks.getByName<Delete>("clean") {
-        delete.add(generatedFiles)
-    }
-
-    dependencies {
-        Protobuf.libs.forEach { implementation(it) }
-
-        JUnit.api.forEach { testImplementation(it) }
-        Truth.libs.forEach { testImplementation(it) }
-        testRuntimeOnly(JUnit.runner)
-    }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
     }
 }

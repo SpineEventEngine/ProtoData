@@ -27,6 +27,7 @@
 package io.spine.protodata.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -111,14 +112,23 @@ internal class Run(version: String) : CliktCommand(
         canBeSymlink = false,
         mustBeReadable = true
     ).required()
-    private val sourceRoot: Path by option("--source-root", "--src", help = """
+    private val sourceRoot: Path? by option("--source-root", "--src", help = """
         The path to a directory which contains the source files to be processed.
+        Skip this argument if there is no initial source to modify.
     """.trimIndent()
     ).path(
         mustExist = true,
         canBeFile = false,
         canBeSymlink = false
-    ).required()
+    )
+    private val targetRoot: Path? by option("--target-root", "--destination", "-d", help = """
+        The path where the processed files should be placed.
+        May be the same as `--sourceRoot`. For editing files in-place, skip this option. 
+    """.trimIndent()
+    ).path(
+        canBeFile = false,
+        canBeSymlink = false
+    )
     private val classPath: List<Path>? by option("--user-classpath" ,"--ucp", help = """
         The user classpath which contains all `--renderer` classes, user-defined policies, views,
         events, etc., as well as all their dependencies, which are not included as a part of
@@ -132,17 +142,38 @@ internal class Run(version: String) : CliktCommand(
     ).split(pathSeparator)
 
     override fun run() {
+        val sourceSet = createSourceSet()
         val plugins = loadPlugins()
-        val optionsProviders = loadOptions()
         val renderer = loadRenderers()
-        val sourceSet = SourceSet.fromContentsOf(sourceRoot)
-
-        val registry = ExtensionRegistry.newInstance()
-        optionsProviders.forEach { it.dumpTo(registry) }
+        val registry = createRegistry()
         val codegenRequest = codegenRequestFile.inputStream().use {
             CodeGeneratorRequest.parseFrom(it, registry)
         }
         Pipeline(plugins, renderer, sourceSet, codegenRequest)()
+    }
+
+    private fun createRegistry(): ExtensionRegistry? {
+        val optionsProviders = loadOptions()
+        val registry = ExtensionRegistry.newInstance()
+        optionsProviders.forEach { it.dumpTo(registry) }
+        return registry
+    }
+
+    private fun createSourceSet(): SourceSet {
+        checkPaths()
+        val source = sourceRoot
+        val target = (targetRoot ?: source)!!
+        return if (source == null) {
+            SourceSet.empty(target)
+        } else {
+            SourceSet.from(source, target)
+        }
+    }
+
+    private fun checkPaths() {
+        if (sourceRoot == null && targetRoot == null) {
+            throw UsageError("Either source root or target root or both must be set.")
+        }
     }
 
     private fun loadPlugins() =
