@@ -34,10 +34,17 @@ import io.spine.protodata.option.OptionsProvider
 /**
  * An [OptionsProvider] which provides all the options defined in a single Protobuf file.
  */
-public class FileOptionsProvider(
+internal class FileOptionsProvider(
     private val descriptor: FileDescriptor
 ) : OptionsProvider {
 
+    /**
+     * Supplies the given [registry] with the options from the associated file descriptor.
+     *
+     * Reflectively calls the static `registerAllExtensions(..)` method, such
+     * as [io.spine.option.OptionsProto.registerAllExtensions], on the outer class generated for
+     * the Protobuf file where the custom options are declared.
+     */
     override fun dumpTo(registry: ExtensionRegistry) {
         val outerClassName = outerClassName()
         val classLoader = this.javaClass.classLoader
