@@ -199,8 +199,9 @@ internal class Run(version: String) : CliktCommand(
         val request = loadRequest()
         val files: FileSet = FileSet.of(request.protoFileList)
         val fileProviders = options
+            .asSequence()
             .map(FileName::of)
-            .flatMap { name -> files.findOptionFile(name).emptyOrSingleton() }
+            .mapNotNull { name -> files.findOptionFile(name) }
             .map(::FileOptionsProvider)
         val allProviders = providers.toMutableList()
         allProviders.addAll(fileProviders)
@@ -213,14 +214,6 @@ internal class Run(version: String) : CliktCommand(
             echo("WARNING. Option file `$name` not found.")
         }
         return found
-    }
-
-    private fun <T> T?.emptyOrSingleton(): List<T> {
-        return if (this == null) {
-            listOf()
-        } else {
-            listOf(this)
-        }
     }
 
     private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {
