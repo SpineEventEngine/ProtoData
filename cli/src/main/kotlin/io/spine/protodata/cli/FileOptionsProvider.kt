@@ -28,7 +28,7 @@ package io.spine.protodata.cli
 
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.ExtensionRegistry
-import io.spine.protodata.camelCase
+import io.spine.code.java.ClassName
 import io.spine.protodata.option.OptionsProvider
 
 /**
@@ -56,17 +56,7 @@ internal class FileOptionsProvider(
     }
 
     private fun outerClassName(): String {
-        var simpleClassName = descriptor.options.javaOuterClassname
-        if (simpleClassName.isEmpty()) {
-            val name = descriptor.name
-            val startIndex = name.lastIndexOf('/') + 1
-            val endIndex = name.lastIndexOf('.')
-            simpleClassName = name.substring(startIndex, endIndex).camelCase()
-        }
-        var javaPackage = descriptor.options.javaPackage
-        if (javaPackage.isEmpty()) {
-            javaPackage = descriptor.`package`
-        }
-        return "$javaPackage.$simpleClassName"
+        val outerClass = ClassName.outerClass(descriptor)
+        return outerClass.binaryName()
     }
 }
