@@ -26,15 +26,16 @@
 
 package io.spine.protodata.gradle
 
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.OutputDirectory
 
 /**
@@ -47,10 +48,7 @@ import org.gradle.api.tasks.OutputDirectory
  * Users should NOT change the CLI command, user directory, etc. directly.
  * Please refer to the `protoData { }` extension to configure ProtoData.
  */
-public open class LaunchProtoData : Exec() {
-
-    @get:Internal
-    internal lateinit var protoDataExecutable: String
+public open class LaunchProtoData : JavaExec() {
 
     @get:Input
     internal lateinit var renderers: Provider<List<String>>
@@ -73,8 +71,11 @@ public open class LaunchProtoData : Exec() {
     @get:OutputDirectory
     internal lateinit var target: Provider<Directory>
 
-    @get:Input
-    internal lateinit var userClasspath: Provider<String>
+    @get:InputFiles
+    internal lateinit var userClasspathConfig: Configuration
+
+    @get:InputFiles
+    internal lateinit var protoDataConfig: Configuration
 
     /**
      * Configures the CLI command for this task.
@@ -83,7 +84,6 @@ public open class LaunchProtoData : Exec() {
      */
     internal fun compileCommandLine() {
         val command = sequence {
-            yield(protoDataExecutable)
             plugins.get().forEach {
                 yield("--plugin")
                 yield(it)
@@ -109,7 +109,7 @@ public open class LaunchProtoData : Exec() {
             yield("--target-root")
             yield(target.absolutePath)
 
-            val userCp = userClasspath.get()
+            val userCp = userClasspathConfig.asPath
             if (userCp.isNotEmpty()) {
                 yield("--user-classpath")
                 yield(userCp)
@@ -118,7 +118,10 @@ public open class LaunchProtoData : Exec() {
         if (logger.isDebugEnabled) {
             logger.debug("ProtoData command for ${path}: ${command.joinToString(separator = " ")}")
         }
-        commandLine(command)
+        classpath(protoDataConfig)
+        classpath(userClasspathConfig)
+        main = "io.spine.protodata.cli.MainKt"
+        args(command)
     }
 }
 

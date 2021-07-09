@@ -47,7 +47,7 @@ protoData {
 }
 
 dependencies {
-    implementation("io.spine.protodata:testutil:+")
+    protoData("io.spine.protodata:testutil:+")
 }
 
 protobuf {

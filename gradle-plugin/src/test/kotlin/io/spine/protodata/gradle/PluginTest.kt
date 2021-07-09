@@ -75,8 +75,6 @@ class `ProtoData Gradle plugin should` {
     @Test
     fun `configure incremental compilation for launch task`() {
         createProjectWithProto()
-        project.executeTask { "installProtoData" }
-
         launchAndExpectResult(SUCCESS)
         launchAndExpectResult(UP_TO_DATE)
     }
@@ -96,7 +94,6 @@ class `ProtoData Gradle plugin should` {
     }
 
     private fun launch(): BuildResult {
-        project.executeTask { "installProtoData" }
         return project.executeTask(taskName)!!
     }
 

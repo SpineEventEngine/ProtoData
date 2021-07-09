@@ -70,7 +70,7 @@ class `ProtoData plugin should` {
         println(project.tasks.map { it.name })
         assertThat(project.tasks)
             .comparingElementsUsing(taskNames)
-            .containsAtLeast("installProtoData", "launchProtoDataMain", "launchProtoDataTest")
+            .containsAtLeast("launchProtoDataMain", "launchProtoDataTest")
     }
 
     @Test
