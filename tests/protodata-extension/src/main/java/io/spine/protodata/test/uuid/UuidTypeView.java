@@ -24,6 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.22"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.34"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.26"
+package io.spine.protodata.test.uuid;
+
+import io.spine.core.External;
+import io.spine.core.Subscribe;
+import io.spine.core.Where;
+import io.spine.protodata.FieldEntered;
+import io.spine.protodata.TypeName;
+import io.spine.protodata.plugin.View;
+import io.spine.protodata.test.UuidType;
+
+/**
+ * A view on a type which is a wrapper for a UUID string.
+ */
+final class UuidTypeView extends View<TypeName, UuidType, UuidType.Builder> {
+
+    @Subscribe
+    void on(@External @Where(field = "field.name.value", equals = "uuid") FieldEntered event) {
+        builder().setName(event.getType())
+                 .setDeclaredIn(event.getFile());
+    }
+}

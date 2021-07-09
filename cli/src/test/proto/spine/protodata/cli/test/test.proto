@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package spine.protodata.cli.test;
+
+import "spine/options.proto";
+import "spine/protodata/cli/test/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.cli.test";
+option java_outer_classname = "TestProto";
+option java_multiple_files = true;
+
+message Type {
+
+    string custom_field_for_test = 1 [(.spine.protodata.cli.test.custom) = { bar: "yes" }];
+}

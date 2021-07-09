@@ -24,31 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
-
-import io.spine.protodata.language.CommonLanguages;
-import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.InsertionPointPrinter;
-
-import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
-
 /**
- * Prints the {@link ClassScope} insertion point.
+ * ProtoData components for generating convenience API for UUID types.
  */
-@SuppressWarnings("unused") // Accessed reflectively.
-public final class ClassScopePrinter extends InsertionPointPrinter {
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.protodata.test.uuid;
 
-    public ClassScopePrinter() {
-        super(CommonLanguages.java());
-    }
+import com.google.errorprone.annotations.CheckReturnValue;
 
-    @Override
-    protected Set<InsertionPoint> supportedInsertionPoints() {
-        return select(UuidType.class).all()
-                                     .stream()
-                                     .map(type -> new ClassScope(type.getName()))
-                                     .collect(toSet());
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

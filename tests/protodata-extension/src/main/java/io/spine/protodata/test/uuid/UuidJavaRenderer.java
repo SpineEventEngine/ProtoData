@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.uuid;
 
 import com.google.common.collect.ImmutableList;
 import io.spine.protodata.FilePath;
@@ -33,6 +33,7 @@ import io.spine.protodata.codegen.java.ClassName;
 import io.spine.protodata.codegen.java.JavaRenderer;
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.protodata.renderer.SourceSet;
+import io.spine.protodata.test.UuidType;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -79,7 +80,8 @@ public final class UuidJavaRenderer extends JavaRenderer {
             Path javaFilePath = javaFileOf(typeName, file);
             sources.file(javaFilePath)
                    .at(classScope)
-                   .add(lines, INDENT_LEVEL);
+                   .withExtraIndentation(INDENT_LEVEL)
+                   .add(lines);
         }
     }
 }

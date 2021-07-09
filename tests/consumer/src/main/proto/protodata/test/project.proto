@@ -6,6 +6,11 @@ option java_package = "io.spine.protodata.test";
 option java_outer_classname = "ProjectProto";
 option java_multiple_files = true;
 
+import "spine/protodata/test/meta.proto";
+
 message ProjectId {
-    string uuid = 1;
+
+    string uuid = 1 [
+        (spine.protodata.test.java_annotation) = "io.spine.protodata.test.annotation.GeneratedByProtoData"
+    ];
 }

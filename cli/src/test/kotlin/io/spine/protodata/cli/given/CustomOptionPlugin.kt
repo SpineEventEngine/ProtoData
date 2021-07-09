@@ -24,6 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.22"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.34"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.26"
+package io.spine.protodata.cli.given
+
+import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.plugin.ViewRepository
+
+class CustomOptionPlugin : Plugin {
+
+    override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
+        setOf(CustomFieldView.Repository())
+}

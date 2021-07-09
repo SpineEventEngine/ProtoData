@@ -37,6 +37,8 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.SourceSet
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -77,6 +79,7 @@ public class Plugin : GradlePlugin<Project> {
             createLaunchTasks(extension)
             createInstallTask(version)
             configureSourceSets(extension)
+            configureIdea(extension)
         }
     }
 
@@ -125,6 +128,7 @@ private fun createLaunchTask(
         renderers = ext.renderers
         plugins = ext.plugins
         optionProviders = ext.optionProviders
+        options = ext.options
         requestFile = ext.requestFile(sourceSet)
         source = ext.sourceDir(sourceSet)
         target = ext.targetDir(sourceSet)
@@ -202,3 +206,20 @@ private fun Project.configureSourceSets(extension: Extension) {
 
 private fun File.residesIn(directory: File): Boolean =
     canonicalFile.startsWith(directory.canonicalFile)
+
+private fun Project.configureIdea(extension: Extension) {
+    afterEvaluate {
+        val duplicateClassesDir = file(extension.srcBaseDir)
+        pluginManager.withPlugin("idea") {
+            val idea = extensions.getByType<IdeaModel>()
+            with(idea.module) {
+                sourceDirs = filterSources(sourceDirs, duplicateClassesDir)
+                testSourceDirs = filterSources(testSourceDirs, duplicateClassesDir)
+                generatedSourceDirs = filterSources(generatedSourceDirs, duplicateClassesDir)
+            }
+        }
+    }
+}
+
+private fun filterSources(sources: Set<File>, excludeDir: File): Set<File> =
+    sources.filter { !it.residesIn(excludeDir) }.toSet()

@@ -34,8 +34,11 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
+import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.code.proto.FileName
+import io.spine.code.proto.FileSet
 import io.spine.io.Resource
 import io.spine.protodata.Pipeline
 import io.spine.protodata.option.OptionsProvider
@@ -73,11 +76,11 @@ private fun readVersion(): String {
  * The main CLI command which performs the ProtoData code generation tasks.
  *
  * The command accepts class names for the service provider interface implementations via the CLI
- * parameters, such as `--plugin`, `--renderer`, and `--options`, all of which can be repeated
- * parameters, if required. Then, using the classpath of the app and the user classpath supplied
- * via the `--user-classpath` parameter, loads those classes. `Code Generation` context accept
- * Protobuf compiler events, regarding the Protobuf types, listed in
- * the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter. Finally,
+ * parameters, such as `--plugin`, `--renderer`, `--option-provider`, and `--options`, all of which
+ * can be repeated parameters, if required. Then, using the classpath of the app and
+ * the user classpath supplied via the `--user-classpath` parameter, loads those classes.
+ * `Code Generation` context accept Protobuf compiler events, regarding the Protobuf types, listed
+ * in the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter. Finally,
  * the renderers apply required changes to the source set with the root path, supplied in
  * the `--source-root` parameter.
  */
@@ -98,10 +101,16 @@ internal class Run(version: String) : CliktCommand(
         There can only be multiple renderers. To pass more then one value, type:
            `<...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer`
     """.trimIndent()).multiple(required = true)
-    private val optionProviders: List<String> by option("--options", "-o", help = """
+    private val optionProviders: List<String> by option("--option-provider", "--op",
+        help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
-           `<...> -o com.foo.TypeOptionsProvider -o com.foo.FieldOptionsProvider`
+           `<...> --op com.foo.TypeOptionsProvider --op com.foo.FieldOptionsProvider`
+    """.trimIndent()).multiple()
+    private val options: List<String> by option("--options", "-o", help = """
+        A file which defines custom Protobuf options.
+        There can be multiple files. To pass more then one value, type:
+            `<...> -o acme/base/options.proto -o example/other_options.proto`
     """.trimIndent()).multiple()
     private val codegenRequestFile: File by option("--request", "-t", help =
     "The path to the binary file containing a serialized instance of " +
@@ -146,13 +155,16 @@ internal class Run(version: String) : CliktCommand(
         val plugins = loadPlugins()
         val renderer = loadRenderers()
         val registry = createRegistry()
-        val codegenRequest = codegenRequestFile.inputStream().use {
-            CodeGeneratorRequest.parseFrom(it, registry)
-        }
+        val codegenRequest = loadRequest(registry)
         Pipeline(plugins, renderer, sourceSet, codegenRequest)()
     }
 
-    private fun createRegistry(): ExtensionRegistry? {
+    private fun loadRequest(extensions: ExtensionRegistry = ExtensionRegistry.getEmptyRegistry()) =
+        codegenRequestFile.inputStream().use {
+            CodeGeneratorRequest.parseFrom(it, extensions)
+        }
+
+    private fun createRegistry(): ExtensionRegistry {
         val optionsProviders = loadOptions()
         val registry = ExtensionRegistry.newInstance()
         optionsProviders.forEach { it.dumpTo(registry) }
@@ -182,8 +194,27 @@ internal class Run(version: String) : CliktCommand(
     private fun loadRenderers() =
         load(RendererBuilder(), renderers)
 
-    private fun loadOptions() =
-        load(OptionsProviderBuilder(), optionProviders)
+    private fun loadOptions(): List<OptionsProvider> {
+        val providers = load(OptionsProviderBuilder(), optionProviders)
+        val request = loadRequest()
+        val files: FileSet = FileSet.of(request.protoFileList)
+        val fileProviders = options
+            .asSequence()
+            .map(FileName::of)
+            .mapNotNull { name -> files.findOptionFile(name) }
+            .map(::FileOptionsProvider)
+        val allProviders = providers.toMutableList()
+        allProviders.addAll(fileProviders)
+        return allProviders
+    }
+
+    private fun FileSet.findOptionFile(name: FileName): FileDescriptor? {
+        val found = tryFind(name).orElse(null)
+        if (found == null) {
+            echo("WARNING. Option file `$name` not found.")
+        }
+        return found
+    }
 
     private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {
         val classLoader = Thread.currentThread().contextClassLoader

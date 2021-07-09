@@ -24,23 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.uuid;
 
-import io.spine.core.External;
-import io.spine.core.Subscribe;
-import io.spine.core.Where;
 import io.spine.protodata.FieldEntered;
 import io.spine.protodata.TypeName;
-import io.spine.protodata.plugin.View;
+import io.spine.protodata.plugin.ViewRepository;
+import io.spine.protodata.test.UuidType;
+import io.spine.server.route.EventRouting;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import static io.spine.server.route.EventRoute.withId;
 
 /**
- * A view on a type which is a wrapper for a UUID string.
+ * The repository for the {@link UuidType} views.
+ *
+ * <p>Configures routing for {@code FieldEntered} events.
  */
-final class UuidTypeView extends View<TypeName, UuidType, UuidType.Builder> {
+final class UuidTypeRepository extends ViewRepository<TypeName, UuidTypeView, UuidType> {
 
-    @Subscribe
-    void on(@External @Where(field = "field.name.value", equals = "uuid") FieldEntered event) {
-        builder().setName(event.getType())
-                 .setDeclaredIn(event.getFile());
+    @Override
+    protected void setupEventRouting(@NonNull EventRouting<TypeName> routing) {
+        super.setupEventRouting(routing);
+        routing.route(FieldEntered.class,
+                      (message, context) -> withId(message.getType()));
     }
 }

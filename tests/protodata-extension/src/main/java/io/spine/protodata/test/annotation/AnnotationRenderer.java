@@ -24,6 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.22"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.34"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.26"
+package io.spine.protodata.test.annotation;
+
+import io.spine.protodata.codegen.java.JavaRenderer;
+import io.spine.protodata.renderer.SourceSet;
+import io.spine.protodata.test.Annotated;
+import io.spine.protodata.test.FieldId;
+
+import java.nio.file.Path;
+import java.util.Set;
+
+/**
+ * Renders Java annotations on field getters for fields marked with
+ * the {@code (java_annotation)} option.
+ */
+@SuppressWarnings("unused") // Accessed reflectively by ProtoData.
+public final class AnnotationRenderer extends JavaRenderer {
+
+    private static final int INDENT_LEVEL = 1;
+
+    @Override
+    protected void render(SourceSet sources) {
+        Set<Annotated> annotatedFields = select(Annotated.class).all();
+        annotatedFields.forEach(
+                field -> renderFor(field, sources)
+        );
+    }
+
+    private void renderFor(Annotated field, SourceSet sourceSet) {
+        FieldId id = field.getId();
+        FieldGetter getter = new FieldGetter(id);
+        Path path = javaFileOf(id.getType(), id.getFile());
+        sourceSet.file(path)
+                 .at(getter)
+                 .withExtraIndentation(INDENT_LEVEL)
+                 .add('@' + field.getJavaAnnotation());
+    }
+}

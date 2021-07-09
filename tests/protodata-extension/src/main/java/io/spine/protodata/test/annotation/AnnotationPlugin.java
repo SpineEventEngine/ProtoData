@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.test.annotation;
 
 import com.google.common.collect.ImmutableSet;
 import io.spine.protodata.plugin.Plugin;
@@ -33,13 +33,13 @@ import io.spine.protodata.plugin.ViewRepository;
 import java.util.Set;
 
 /**
- * The plugin which supplies the {@link UuidType} view.
+ * A plugin which exposes the {@code Annotated} view.
  */
-@SuppressWarnings("unused") // Accessed reflectively.
-public final class UuidPlugin implements Plugin {
+@SuppressWarnings("unused") // Accessed reflectively by ProtoData.
+public final class AnnotationPlugin implements Plugin {
 
     @Override
     public Set<ViewRepository<?, ?, ?>> viewRepositories() {
-        return ImmutableSet.of(new UuidTypeRepository());
+        return ImmutableSet.of(new AnnotatedView.Repo());
     }
 }

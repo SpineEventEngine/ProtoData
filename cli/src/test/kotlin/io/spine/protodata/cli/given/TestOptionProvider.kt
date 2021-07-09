@@ -24,27 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+package io.spine.protodata.cli.given
 
-import io.spine.protodata.FieldEntered;
-import io.spine.protodata.TypeName;
-import io.spine.protodata.plugin.ViewRepository;
-import io.spine.server.route.EventRouting;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import com.google.protobuf.ExtensionRegistry
+import io.spine.option.OptionsProto
+import io.spine.protodata.cli.test.TestOptionsProto
+import io.spine.protodata.option.OptionsProvider
 
-import static io.spine.server.route.EventRoute.withId;
+class TestOptionProvider : OptionsProvider {
 
-/**
- * The repository for the {@link UuidType} views.
- *
- * <p>Configures routing for {@code FieldEntered} events.
- */
-final class UuidTypeRepository extends ViewRepository<TypeName, UuidTypeView, UuidType> {
-
-    @Override
-    protected void setupEventRouting(@NonNull EventRouting<TypeName> routing) {
-        super.setupEventRouting(routing);
-        routing.route(FieldEntered.class,
-                      (message, context) -> withId(message.getType()));
+    override fun dumpTo(registry: ExtensionRegistry) {
+        OptionsProto.registerAllExtensions(registry)
+        TestOptionsProto.registerAllExtensions(registry)
     }
 }

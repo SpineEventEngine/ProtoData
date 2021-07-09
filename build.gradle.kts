@@ -53,7 +53,9 @@ buildscript {
 
 plugins {
     kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
-    id(io.spine.internal.dependency.Kotlin.Dokka.pluginId) version(io.spine.internal.dependency.Kotlin.Dokka.version)
+    io.spine.internal.dependency.Kotlin.Dokka.apply {
+        id(pluginId) version(version)
+    }
     idea
     `integration-test`
 }

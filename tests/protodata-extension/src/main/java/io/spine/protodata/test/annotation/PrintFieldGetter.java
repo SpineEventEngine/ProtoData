@@ -24,6 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.22"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.34"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.26"
+package io.spine.protodata.test.annotation;
+
+import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.protodata.renderer.InsertionPointPrinter;
+import io.spine.protodata.test.Annotated;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Set;
+
+import static io.spine.protodata.language.CommonLanguages.java;
+import static java.util.stream.Collectors.toSet;
+
+/**
+ * An {@link InsertionPointPrinter} for the {@link FieldGetter} insertion points.
+ */
+@SuppressWarnings("unused") // Accessed reflectively by ProtoData.
+public final class PrintFieldGetter extends InsertionPointPrinter {
+
+    public PrintFieldGetter() {
+        super(java());
+    }
+
+    @NonNull
+    @Override
+    protected Set<InsertionPoint> supportedInsertionPoints() {
+        Set<Annotated> fields = select(Annotated.class).all();
+        return fields.stream()
+                     .map(field -> new FieldGetter(field.getId()))
+                     .collect(toSet());
+    }
+}

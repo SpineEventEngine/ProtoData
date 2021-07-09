@@ -26,8 +26,11 @@
 
 package io.spine.protodata.test;
 
+import io.spine.protodata.test.annotation.GeneratedByProtoData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Method;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -48,5 +51,15 @@ final class CodeGenerationTest {
         TaskId id = TaskId.randomId();
         assertThat(id.getUuid())
                 .isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("include changes caused by options declared via file name")
+    void fromOptions() throws NoSuchMethodException {
+        Class<ProjectId> idClass = ProjectId.class;
+        Method getter = idClass.getDeclaredMethod("getUuid");
+        GeneratedByProtoData annotation = getter.getAnnotation(GeneratedByProtoData.class);
+        assertThat(annotation)
+                .isNotNull();
     }
 }

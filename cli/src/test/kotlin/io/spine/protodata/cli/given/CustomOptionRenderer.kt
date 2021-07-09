@@ -24,6 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.22"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.34"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.26"
+package io.spine.protodata.cli.given
+
+import io.spine.protodata.cli.test.CustomField
+import io.spine.protodata.language.CommonLanguages
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.select
+import kotlin.io.path.Path
+
+class CustomOptionRenderer : Renderer(CommonLanguages.any) {
+
+    companion object {
+        const val FILE_NAME = "custom_fields.csv"
+    }
+
+    override fun render(sources: SourceSet) {
+        val customFields = select<CustomField>().all()
+        sources.createFile(
+            Path(FILE_NAME),
+            customFields.joinToString(separator = ",") { it.field.value }
+        )
+    }
+}
