@@ -122,9 +122,14 @@ message MessageType {
     //
     // Does not include the fields belonging to a field group.
     //
+    // The fields are ordered by their order of declaration in the message.
+    //
     repeated Field field = 2;
 
     // The field groups defined in this type.
+    //
+    // The `oneof`s are ordered by their order of declaration in the message.
+    //
     repeated OneofGroup oneof_group = 3;
 
     // Message-level options.
@@ -137,9 +142,15 @@ message MessageType {
     TypeName declared_in = 6;
 
     // Message type declarations nested inside this type.
+    //
+    // The types are ordered by their order of declaration in the message.
+    //
     repeated TypeName nested_messages = 7;
 
     // Enum type declarations nested inside this type.
+    //
+    // The types are ordered by their order of declaration in the message.
+    //
     repeated TypeName nested_enums = 8;
 
     // Documentation of this type.
@@ -157,6 +168,10 @@ message EnumType {
     // Path to the file which declares this type.
     FilePath file = 3;
 
+    // The enum constants, a.k.a. values.
+    //
+    // The constants are ordered by their order of declaration in the enum.
+    //
     repeated EnumConstant constant = 4;
 
     // Name of the message type which hosts the declaration of this type.
@@ -343,6 +358,9 @@ message OneofGroup {
     OneofName name = 1;
 
     // Fields declared in this group.
+    //
+    // The fields are ordered by their order of declaration in the group.
+    //
     repeated Field field = 2;
 
     // Oneof-level options.
@@ -377,6 +395,9 @@ message Service {
     ServiceName name = 1;
 
     // The remote procedure call methods exposed by this service.
+    //
+    // The fields are ordered by their order of declaration in the service.
+    //
     repeated Rpc rpc = 2;
 
     // Service-level options.
