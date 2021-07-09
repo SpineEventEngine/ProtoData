@@ -42,7 +42,7 @@ import static io.spine.protobuf.AnyPacker.unpack;
 import static io.spine.server.route.EventRoute.withId;
 
 /**
- * A view on a fields which is marked with the {@code (java_annotation)} option.
+ * A view on a field which is marked with the {@code (java_annotation)} option.
  */
 final class AnnotatedView extends View<FieldId, Annotated, Annotated.Builder> {
 

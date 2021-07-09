@@ -396,7 +396,7 @@ message Service {
 
     // The remote procedure call methods exposed by this service.
     //
-    // The fields are ordered by their order of declaration in the service.
+    // The methods are ordered by their order of declaration in the service.
     //
     repeated Rpc rpc = 2;
 
