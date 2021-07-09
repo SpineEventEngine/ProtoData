@@ -24,20 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test.meta;
+package io.spine.protodata.test.annotation;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.protodata.renderer.InsertionPointPrinter;
+import io.spine.protodata.test.Annotated;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.util.Set;
 
-/**
- * Marks a field getter.
- *
- * This annotation is added to a Protobuf field getter via ProtoData.
- */
-@Retention(RUNTIME)
-@Target(METHOD)
-public @interface GeneratedByProtoData {
+import static io.spine.protodata.language.CommonLanguages.java;
+import static java.util.stream.Collectors.toSet;
+
+public final class PrintFieldGetter extends InsertionPointPrinter {
+
+    public PrintFieldGetter() {
+        super(java());
+    }
+
+    @NonNull
+    @Override
+    protected Set<InsertionPoint> supportedInsertionPoints() {
+        Set<Annotated> fields = select(Annotated.class).all();
+        return fields.stream()
+                     .map(field -> new FieldGetter(field.getId()))
+                     .collect(toSet());
+    }
 }

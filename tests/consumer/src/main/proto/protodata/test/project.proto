@@ -11,6 +11,6 @@ import "spine/protodata/test/meta.proto";
 message ProjectId {
 
     string uuid = 1 [
-        (spine.protodata.test.java_annotation) = "io.spine.protodata.test.meta.GeneratedByProtoData"
+        (spine.protodata.test.java_annotation) = "io.spine.protodata.test.annotation.GeneratedByProtoData"
     ];
 }

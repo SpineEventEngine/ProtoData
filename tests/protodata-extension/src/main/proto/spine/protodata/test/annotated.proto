@@ -11,7 +11,8 @@ option java_multiple_files = true;
 
 import "spine/protodata/ast.proto";
 
-message MetaAnnotated {
+// A view of an annotated
+message Annotated {
     option (entity).kind = PROJECTION;
 
     FieldId id = 1;

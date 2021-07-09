@@ -47,12 +47,12 @@ extensions.getByType<Extension>().apply {
         "io.spine.protodata.test.uuid.ClassScopePrinter",
         "io.spine.protodata.test.uuid.UuidJavaRenderer",
 
-        "io.spine.protodata.test.meta.PrintFieldGetter",
-        "io.spine.protodata.test.meta.MetaRenderer"
+        "io.spine.protodata.test.annotation.PrintFieldGetter",
+        "io.spine.protodata.test.annotation.AnnotationRenderer"
     )
     plugins(
         "io.spine.protodata.test.uuid.UuidPlugin",
-        "io.spine.protodata.test.meta.MetaPlugin"
+        "io.spine.protodata.test.annotation.AnnotationPlugin"
     )
     options("spine/protodata/test/meta.proto")
 }

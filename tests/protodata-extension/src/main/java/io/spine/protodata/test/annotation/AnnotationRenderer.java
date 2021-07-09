@@ -24,29 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test.meta;
+package io.spine.protodata.test.annotation;
 
 import io.spine.protodata.codegen.java.JavaRenderer;
 import io.spine.protodata.renderer.SourceSet;
+import io.spine.protodata.test.Annotated;
 import io.spine.protodata.test.FieldId;
-import io.spine.protodata.test.MetaAnnotated;
 
 import java.nio.file.Path;
 import java.util.Set;
 
-public final class MetaRenderer extends JavaRenderer {
+public final class AnnotationRenderer extends JavaRenderer {
 
     private static final int INDENT_LEVEL = 1;
 
     @Override
     protected void render(SourceSet sources) {
-        Set<MetaAnnotated> annotatedFields = select(MetaAnnotated.class).all();
+        Set<Annotated> annotatedFields = select(Annotated.class).all();
         annotatedFields.forEach(
                 field -> renderFor(field, sources)
         );
     }
 
-    private void renderFor(MetaAnnotated field, SourceSet sourceSet) {
+    private void renderFor(Annotated field, SourceSet sourceSet) {
         FieldId id = field.getId();
         FieldGetter getter = new FieldGetter(id);
         Path path = javaFileOf(id.getType(), id.getFile());

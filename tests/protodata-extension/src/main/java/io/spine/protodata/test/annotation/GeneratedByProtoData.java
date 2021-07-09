@@ -24,10 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.protodata.test.meta;
+package io.spine.protodata.test.annotation;
 
-import com.google.errorprone.annotations.CheckReturnValue;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+/**
+ * Marks a field getter.
+ *
+ * <p>This annotation is added to a Protobuf field getter via ProtoData.
+ */
+@Retention(RUNTIME)
+@Target(METHOD)
+public @interface GeneratedByProtoData {
+}

@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test.meta;
+package io.spine.protodata.test.annotation;
 
 import com.google.common.collect.ImmutableSet;
 import io.spine.protodata.plugin.Plugin;
@@ -32,10 +32,10 @@ import io.spine.protodata.plugin.ViewRepository;
 
 import java.util.Set;
 
-public final class MetaPlugin implements Plugin {
+public final class AnnotationPlugin implements Plugin {
 
     @Override
     public Set<ViewRepository<?, ?, ?>> viewRepositories() {
-        return ImmutableSet.of(new MetaAnnotatedView.Repo());
+        return ImmutableSet.of(new AnnotatedView.Repo());
     }
 }

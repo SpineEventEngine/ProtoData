@@ -24,30 +24,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test.meta;
+package io.spine.protodata.test.annotation;
 
 import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.InsertionPointPrinter;
-import io.spine.protodata.test.MetaAnnotated;
+import io.spine.protodata.renderer.LineNumber;
+import io.spine.protodata.test.FieldId;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Set;
+import java.util.List;
+import java.util.regex.Pattern;
 
-import static io.spine.protodata.language.CommonLanguages.java;
-import static java.util.stream.Collectors.toSet;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.protodata.Ast.typeUrl;
+import static io.spine.protodata.Strings.camelCase;
+import static io.spine.protodata.renderer.LineNumber.notInFile;
+import static java.lang.String.format;
 
-public final class PrintFieldGetter extends InsertionPointPrinter {
+final class FieldGetter implements InsertionPoint {
 
-    public PrintFieldGetter() {
-        super(java());
+    private final FieldId field;
+
+    FieldGetter(FieldId field) {
+        this.field = checkNotNull(field);
     }
 
     @NonNull
     @Override
-    protected Set<InsertionPoint> supportedInsertionPoints() {
-        Set<MetaAnnotated> fields = select(MetaAnnotated.class).all();
-        return fields.stream()
-                     .map(field -> new FieldGetter(field.getId()))
-                     .collect(toSet());
+    public String getLabel() {
+        return format("getter-for:%s.%s", typeUrl(field.getType()), field.getField().getValue());
+    }
+
+    @NonNull
+    @Override
+    public LineNumber locate(List<String> lines) {
+        String fieldName = camelCase(field.getField().getValue());
+        String getterName = "get" + fieldName;
+        Pattern pattern = Pattern.compile("public .+ " + getterName);
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (pattern.matcher(line).find()) {
+                return LineNumber.at(i);
+            }
+        }
+        return notInFile();
     }
 }

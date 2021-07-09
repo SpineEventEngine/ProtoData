@@ -24,42 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test;
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.protodata.test.annotation;
 
-import io.spine.protodata.test.annotation.GeneratedByProtoData;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-import java.lang.reflect.Method;
-
-import static com.google.common.truth.Truth.assertThat;
-
-@DisplayName("Generated code should")
-final class CodeGenerationTest {
-
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for production scope")
-    void mainScope() {
-        ProjectId id = ProjectId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
-    }
-
-    @Test
-    @DisplayName("include factory methods for UUID wrapper types for test scope")
-    void testScope() {
-        TaskId id = TaskId.randomId();
-        assertThat(id.getUuid())
-                .isNotEmpty();
-    }
-
-    @Test
-    @DisplayName("include changes caused by options declared via file name")
-    void fromOptions() throws NoSuchMethodException {
-        Class<ProjectId> idClass = ProjectId.class;
-        Method getter = idClass.getDeclaredMethod("getUuid");
-        GeneratedByProtoData annotation = getter.getAnnotation(GeneratedByProtoData.class);
-        assertThat(annotation)
-                .isNotNull();
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

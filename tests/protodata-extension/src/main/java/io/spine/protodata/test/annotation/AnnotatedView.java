@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test.meta;
+package io.spine.protodata.test.annotation;
 
 import com.google.protobuf.StringValue;
 import io.spine.core.External;
@@ -33,15 +33,15 @@ import io.spine.core.Where;
 import io.spine.protodata.FieldOptionDiscovered;
 import io.spine.protodata.plugin.View;
 import io.spine.protodata.plugin.ViewRepository;
+import io.spine.protodata.test.Annotated;
 import io.spine.protodata.test.FieldId;
-import io.spine.protodata.test.MetaAnnotated;
 import io.spine.server.route.EventRouting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import static io.spine.protobuf.AnyPacker.unpack;
 import static io.spine.server.route.EventRoute.withId;
 
-final class MetaAnnotatedView extends View<FieldId, MetaAnnotated, MetaAnnotated.Builder> {
+final class AnnotatedView extends View<FieldId, Annotated, Annotated.Builder> {
 
     private static final String OPTION_NAME = "java_annotation";
 
@@ -52,7 +52,7 @@ final class MetaAnnotatedView extends View<FieldId, MetaAnnotated, MetaAnnotated
         builder().setJavaAnnotation(value.getValue());
     }
 
-    static final class Repo extends ViewRepository<FieldId, MetaAnnotatedView, MetaAnnotated> {
+    static final class Repo extends ViewRepository<FieldId, AnnotatedView, Annotated> {
 
         @Override
         protected void setupEventRouting(@NonNull EventRouting<FieldId> routing) {
