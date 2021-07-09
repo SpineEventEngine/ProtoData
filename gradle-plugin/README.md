@@ -33,33 +33,14 @@ apply(plugin = "io.spine.proto-data")
 
 See the plugin [homepage](https://plugins.gradle.org/plugin/io.spine.proto-data) for more.
 
-### Installing and launching ProtoData
+### Launching ProtoData
 
-When using ProtoData for the first time, you will have to install the executable.
-To do so, run:
-```
-./gradlew installProtoData
-```
-After running the task, the ProtoData executable might not turn up in the `PATH` environment
-variable at once. The command will print instructions on how to finalize the installation.
+When used from Gradle, ProtoData does not require installation.
 
-If your environment does not allow you to execute those instructions, e.g., on a CI instance, you
-can specify the ProtoData installation location by hand:
+Just launch [configure](#Configuration) code generation and start a build:
 ```
-./gradlew installProtoData -PprotoDataLocation="my/custom/path"
+./gradlew build
 ```
-
-Now, as ProtoData is installed, simply run the build as usual. ProtoData will be launched
-automatically before Java compilation.
-
-If you used the custom installation path, just add the same Gradle property to all the other Gradle
-invocations. For example:
-```
-./gradlew build -PprotoDataLocation="my/custom/path"
-```
-
-See [this doc](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_configuration_properties)
-for more ways to define a Gradle property to avoid extra CLI arguments.
 
 ### Configuration
 
@@ -89,9 +70,11 @@ protoData {
     renderers("com.acme.MyInsertionPointPrinter", "com.acme.MyRenderer", "org.example.Renderer")
     plugins("com.acme.MyPlugin")
     optionProviders("com.acme.MyOptions")
+
     requestFile("${rootProject.buildDir}/commonRequestFile/request.bin")
-    source("$projectDir/generated/main/customSourceSet/")
-    generateProtoTasks("generateMyProto", "generateCustomSourceSet")
+    srcBaseDir("$projectDir/my-generated-files/")
+    targetBaseDir("$projectDir/my-complete-files/")
+    subDir("foobar")
 }
 
 dependencies {
