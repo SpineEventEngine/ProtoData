@@ -32,6 +32,10 @@ import io.spine.protodata.plugin.ViewRepository;
 
 import java.util.Set;
 
+/**
+ * A plugin which exposes the {@code Annotated} view.
+ */
+@SuppressWarnings("unused") // Accessed reflectively by ProtoData.
 public final class AnnotationPlugin implements Plugin {
 
     @Override

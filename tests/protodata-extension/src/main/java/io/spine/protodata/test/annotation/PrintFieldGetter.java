@@ -36,6 +36,10 @@ import java.util.Set;
 import static io.spine.protodata.language.CommonLanguages.java;
 import static java.util.stream.Collectors.toSet;
 
+/**
+ * An {@link InsertionPointPrinter} for the {@link FieldGetter} insertion points.
+ */
+@SuppressWarnings("unused") // Accessed reflectively by ProtoData.
 public final class PrintFieldGetter extends InsertionPointPrinter {
 
     public PrintFieldGetter() {

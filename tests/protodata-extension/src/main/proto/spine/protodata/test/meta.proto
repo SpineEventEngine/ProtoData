@@ -13,5 +13,9 @@ import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.FieldOptions {
 
+    // Class name of a Java annotation to mark the field with.
+    //
+    // The field's getter method will be annotated.
+    //
     string java_annotation = 73890;
 }

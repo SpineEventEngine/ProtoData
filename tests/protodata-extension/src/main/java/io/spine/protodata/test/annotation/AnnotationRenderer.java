@@ -34,6 +34,11 @@ import io.spine.protodata.test.FieldId;
 import java.nio.file.Path;
 import java.util.Set;
 
+/**
+ * Renders Java annotations on field getters for fields marked with
+ * the {@code (java_annotation)} option.
+ */
+@SuppressWarnings("unused") // Accessed reflectively by ProtoData.
 public final class AnnotationRenderer extends JavaRenderer {
 
     private static final int INDENT_LEVEL = 1;

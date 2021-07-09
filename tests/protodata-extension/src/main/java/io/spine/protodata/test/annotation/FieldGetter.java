@@ -40,6 +40,12 @@ import static io.spine.protodata.Strings.camelCase;
 import static io.spine.protodata.renderer.LineNumber.notInFile;
 import static java.lang.String.format;
 
+/**
+ * An insertion point at the line right before a getter method of the given field.
+ *
+ * <p>This implementation should only be used for test purposes. It might not cover all the possible
+ * edge cases when fining the line where the getter is.
+ */
 final class FieldGetter implements InsertionPoint {
 
     private final FieldId field;
