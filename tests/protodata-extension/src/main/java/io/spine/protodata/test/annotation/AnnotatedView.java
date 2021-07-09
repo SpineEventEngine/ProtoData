@@ -41,6 +41,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static io.spine.server.route.EventRoute.withId;
 
+/**
+ * A view on a fields which is marked with the {@code (java_annotation)} option.
+ */
 final class AnnotatedView extends View<FieldId, Annotated, Annotated.Builder> {
 
     private static final String OPTION_NAME = "java_annotation";

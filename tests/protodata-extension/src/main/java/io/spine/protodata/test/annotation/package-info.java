@@ -24,6 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * ProtoData components for generating annotations on field getters.
+ */
 @CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.protodata.test.annotation;
