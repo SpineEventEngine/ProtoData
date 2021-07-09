@@ -34,9 +34,6 @@ allprojects {
 
 val integrationTest by tasks.creating(RunBuild::class) {
     directory = "$rootDir/tests"
-    includeGradleProperties.add(protoDataLocationProperty)
-
-    dependsOn(":cli:installProtoData")
 }
 
 tasks["check"].finalizedBy(integrationTest)
