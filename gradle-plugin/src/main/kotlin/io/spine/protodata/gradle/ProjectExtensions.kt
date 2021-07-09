@@ -33,13 +33,6 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.getPlugin
 
-private const val EXECUTABLE = "protodata"
-
-/**
- * The name of the Gradle property pointing at the custom ProtoData installation location.
- */
-internal const val PROTO_DATA_LOCATION = "protoDataLocation"
-
 /**
  * The [sourceSets][SourceSetContainer] of this project.
  */
@@ -57,34 +50,3 @@ internal fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
     val taskName = sourceSet.compileJavaTaskName
     return tasks.findByName(taskName) as JavaCompile?
 }
-
-/**
- * Obtains the ProtoData executable for this project.
- *
- * If the [protoDataLocation] property is defined, uses in to locate the executable.
- * Otherwise, obtains the name of the executable with hopes that it is in the `PATH`.
- */
-internal fun Project.protoDataExecutable(): String {
-    val location = protoDataLocation
-    return if (location == null) {
-        EXECUTABLE
-    } else {
-        "$location/protodata/bin/$EXECUTABLE"
-    }
-}
-
-/**
- * The `protoDataLocation` Gradle property.
- *
- * Points at the custom installation location for ProtoData.
- *
- * The value is `null` if the property is not defined. Explicitly setting the property to `null`
- * is the same as not defining it at all.
- */
-internal val Project.protoDataLocation: String?
-    get() {
-        if (!rootProject.hasProperty(PROTO_DATA_LOCATION)) {
-            return null
-        }
-        return rootProject.property(PROTO_DATA_LOCATION) as String?
-    }

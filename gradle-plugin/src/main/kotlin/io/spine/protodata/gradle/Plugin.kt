@@ -34,8 +34,6 @@ import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
@@ -64,10 +62,6 @@ import org.gradle.api.Plugin as GradlePlugin
  *     protoData(project(":my-plugin"))
  * }
  * ```
- *
- * The plugin also adds the `installProtoData` task which installs the ProtoData executable onto
- * the current machine. If the user does not have the ProtoData installed on their local machine,
- * they can do that by simply running `installProtoData` task.
  */
 public class Plugin : GradlePlugin<Project> {
 
@@ -76,8 +70,7 @@ public class Plugin : GradlePlugin<Project> {
         with(target) {
             val extension = createExtension()
             configureProtobufPlugin(extension, version)
-            createLaunchTasks(extension)
-            createInstallTask(version)
+            createLaunchTasks(extension, version)
             configureSourceSets(extension)
             configureIdea(extension)
         }
@@ -100,10 +93,14 @@ private const val VERSION_RESOURCE = "version.txt"
 
 private const val PROTOC_PLUGIN = "protodata"
 
-private fun Project.createLaunchTasks(extension: Extension) {
-    val protoDataConfiguration = configurations.create("protoData")
+private fun Project.createLaunchTasks(extension: Extension, version: String) {
+    val artifactConfig = configurations.create("protoDataRawArtifact") {
+        it.isVisible = false
+    }
+    dependencies.add(artifactConfig.name, "io.spine.protodata:cli:$version")
+    val userCpConfig = configurations.create("protoData")
     sourceSets.forEach { sourceSet ->
-        val launch = createLaunchTask(this, extension, protoDataConfiguration, sourceSet)
+        val launch = createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
         javaCompileFor(sourceSet)?.dependsOn(launch)
     }
 }
@@ -114,17 +111,13 @@ private fun Project.createExtension(): Extension {
     return extension
 }
 
-private fun createLaunchTask(
-    p: Project,
-    ext: Extension,
-    config: Configuration,
-    sourceSet: SourceSet
+private fun Project.createLaunchTask(
+    ext: Extension, sourceSet: SourceSet, artifactConfig: Configuration, userCpConfig: Configuration
 ): Task {
     val taskName = launchTaskName(sourceSet)
-    return p.tasks.create(taskName, LaunchProtoData::class.java).apply {
-        dependsOn(config.buildDependencies)
+    return tasks.create(taskName, LaunchProtoData::class.java).apply {
+        dependsOn(artifactConfig.buildDependencies, userCpConfig.buildDependencies)
 
-        protoDataExecutable = project.protoDataExecutable()
         renderers = ext.renderers
         plugins = ext.plugins
         optionProviders = ext.optionProviders
@@ -132,38 +125,12 @@ private fun createLaunchTask(
         requestFile = ext.requestFile(sourceSet)
         source = ext.sourceDir(sourceSet)
         target = ext.targetDir(sourceSet)
-        userClasspath = project.provider {
-            config.resolve()
-            config.asPath
-        }
-
+        protoDataConfig = artifactConfig
+        userClasspathConfig = userCpConfig
         project.afterEvaluate {
             compileCommandLine()
         }
         onlyIf { requestFile.get().asFile.exists() }
-    }
-}
-
-private fun Project.createInstallTask(version: String) {
-    val config = configurations.create("protoDataRawArtifact")
-    val dependency = dependencies.add(config.name,
-                                             "io.spine.protodata:executable:${version}")
-    val stagingDir = "${buildDir}/protodata/staging"
-    val stageTask = tasks.register("stageProtoData", Copy::class.java) {
-        val artifact = config.files(dependency).first().absoluteFile
-        it.from(zipTree(artifact))
-        it.into(stagingDir)
-    }
-
-    tasks.register("installProtoData", Exec::class.java) {
-        val command = mutableListOf("$stagingDir/install.sh")
-        val protoDataLocation = rootProject.protoDataLocation
-        if (protoDataLocation != null) {
-            val absoluteLocation = rootProject.file(protoDataLocation).absolutePath
-            command.add(absoluteLocation)
-        }
-        it.commandLine(command)
-        it.dependsOn(stageTask)
     }
 }
 
