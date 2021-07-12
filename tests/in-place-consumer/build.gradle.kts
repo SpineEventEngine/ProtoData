@@ -24,38 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.protodata.gradle.Extension
-import com.google.protobuf.gradle.protobuf
-
-@Suppress("RemoveRedundantQualifierName")
-buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
-
-    dependencies {
-        classpath("io.spine:proto-data")
-    }
+plugins {
+    id("io.spine.proto-data")
 }
 
-//apply(plugin = "io.spine.proto-data")
-
 dependencies {
-//    "protoData"(project(":protodata-extension"))
+    protoData(project(":protodata-extension"))
 }
 
 val protobufDir = "$projectDir/generated/"
-//
-//extensions.getByType<Extension>().apply {
-//    renderers(
-//        "io.spine.protodata.test.uuid.ClassScopePrinter",
-//        "io.spine.protodata.test.uuid.UuidJavaRenderer"
-//    )
-//    plugins(
-//        "io.spine.protodata.test.uuid.UuidPlugin"
-//    )
-//    srcBaseDir = protobufDir
+
+protoData {
+    renderers(
+        "io.spine.protodata.test.uuid.ClassScopePrinter",
+        "io.spine.protodata.test.uuid.UuidJavaRenderer"
+    )
+    plugins(
+        "io.spine.protodata.test.uuid.UuidPlugin"
+    )
+    //    srcBaseDir = protobufDir
 //    targetBaseDir = protobufDir
-//}
-//
+}
+
 //protobuf {
 //    generatedFilesBaseDir = protobufDir
 //}
