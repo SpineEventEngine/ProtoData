@@ -32,9 +32,10 @@ import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import java.io.File
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.api.Plugin as GradlePlugin
@@ -100,8 +101,8 @@ private fun Project.createLaunchTasks(extension: Extension, version: String) {
     dependencies.add(artifactConfig.name, "io.spine.protodata:cli:$version")
     val userCpConfig = configurations.create("protoData")
     sourceSets.forEach { sourceSet ->
-        val launch = createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
-        javaCompileFor(sourceSet)?.dependsOn(launch)
+        createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
+        createCleanTask(extension, sourceSet)
     }
 }
 
@@ -113,11 +114,9 @@ private fun Project.createExtension(): Extension {
 
 private fun Project.createLaunchTask(
     ext: Extension, sourceSet: SourceSet, artifactConfig: Configuration, userCpConfig: Configuration
-): Task {
+) {
     val taskName = launchTaskName(sourceSet)
-    return tasks.create(taskName, LaunchProtoData::class.java).apply {
-        dependsOn(artifactConfig.buildDependencies, userCpConfig.buildDependencies)
-
+    tasks.create<LaunchProtoData>(taskName) {
         renderers = ext.renderers
         plugins = ext.plugins
         optionProviders = ext.optionProviders
@@ -130,7 +129,22 @@ private fun Project.createLaunchTask(
         project.afterEvaluate {
             compileCommandLine()
         }
+
         onlyIf { requestFile.get().asFile.exists() }
+        dependsOn(artifactConfig.buildDependencies, userCpConfig.buildDependencies)
+        javaCompileFor(sourceSet)?.dependsOn(this)
+    }
+}
+
+private fun Project.createCleanTask(
+    ext: Extension, sourceSet: SourceSet
+) {
+    val taskName = cleanTaskName(sourceSet)
+    tasks.create<Delete>(taskName) {
+        delete(ext.targetDir(sourceSet))
+
+        tasks.getByName("clean").dependsOn(this)
+        tasks.getByName(launchTaskName(sourceSet)).mustRunAfter(this)
     }
 }
 
@@ -158,6 +172,8 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
 private fun launchTaskName(sourceSet: SourceSet): String =
     "launchProtoData${sourceSet.name.capitalize()}"
 
+private fun cleanTaskName(sourceSet: SourceSet): String =
+    "cleanProtoData${sourceSet.name.capitalize()}"
 
 private fun Project.configureSourceSets(extension: Extension) {
     afterEvaluate {
