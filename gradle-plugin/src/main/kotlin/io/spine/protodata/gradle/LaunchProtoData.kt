@@ -26,6 +26,8 @@
 
 package io.spine.protodata.gradle
 
+import org.gradle.api.Action
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileSystemLocation
@@ -122,6 +124,26 @@ public open class LaunchProtoData : JavaExec() {
         classpath(userClasspathConfig)
         main = "io.spine.protodata.cli.MainKt"
         args(command)
+
+        doFirst(CleanAction())
+    }
+
+    /**
+     * Cleans the target directory to prepare it for ProtoData.
+     */
+    private inner class CleanAction : Action<Task> {
+
+        override fun execute(t: Task) {
+            val sourceDir = source.get().asFile.absoluteFile
+            val targetDir = target.get().asFile.absoluteFile
+            val differentDirs = sourceDir != targetDir
+
+            if (differentDirs && targetDir.exists() && targetDir.list()!!.isNotEmpty()) {
+                logger.info("Cleaning target directory `$targetDir`.")
+                project.delete(targetDir)
+            }
+        }
+
     }
 }
 
