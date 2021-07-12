@@ -29,14 +29,16 @@ package io.spine.protodata.test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.google.common.truth.Truth.assertThat;
+
 @DisplayName("Code generation should")
 final class CodeGenerationTest {
 
     @Test
     @DisplayName("add extra code in-place")
     void mainScope() {
-//        UserId id = UserId.randomId();
-//        assertThat(id.getUuid())
-//                .isNotEmpty();
+        UserId id = UserId.randomId();
+        assertThat(id.getUuid())
+                .isNotEmpty();
     }
 }

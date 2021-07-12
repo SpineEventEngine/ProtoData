@@ -178,11 +178,14 @@ private fun cleanTaskName(sourceSet: SourceSet): String =
 private fun Project.configureSourceSets(extension: Extension) {
     afterEvaluate {
         sourceSets.forEach { sourceSet ->
-            sourceSet.java.srcDir(extension.targetDir(sourceSet))
-
             val sourceDir = file(extension.sourceDir(sourceSet))
-            val task = javaCompileFor(sourceSet)!!
-            task.source = task.source.filter { file -> !file.residesIn(sourceDir) }.asFileTree
+            val targetDir = file(extension.targetDir(sourceSet))
+
+            sourceSet.java.srcDir(targetDir)
+            if (sourceDir != targetDir) {
+                val task = javaCompileFor(sourceSet)!!
+                task.source = task.source.filter { file -> !file.residesIn(sourceDir) }.asFileTree
+            }
         }
     }
 }
