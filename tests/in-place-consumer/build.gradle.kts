@@ -24,16 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include(":consumer")
-include(":in-place-consumer")
-include(":protodata-extension")
+import io.spine.protodata.gradle.Extension
+import com.google.protobuf.gradle.protobuf
 
-includeBuild("..") {
-    dependencySubstitution {
-        substitute(module("io.spine:proto-data")).using(project(":gradle-plugin"))
-        substitute(module("io.spine.protodata:cli")).using(project(":cli"))
-        substitute(module("io.spine.protodata:codegen-java")).using(project(":codegen-java"))
-        substitute(module("io.spine.protodata:compiler")).using(project(":compiler"))
-        substitute(module("io.spine.protodata:protoc")).using(project(":protoc"))
+@Suppress("RemoveRedundantQualifierName")
+buildscript {
+    io.spine.internal.gradle.doApplyStandard(repositories)
+
+    dependencies {
+        classpath("io.spine:proto-data")
     }
 }
+
+//apply(plugin = "io.spine.proto-data")
+
+dependencies {
+//    "protoData"(project(":protodata-extension"))
+}
+
+val protobufDir = "$projectDir/generated/"
+//
+//extensions.getByType<Extension>().apply {
+//    renderers(
+//        "io.spine.protodata.test.uuid.ClassScopePrinter",
+//        "io.spine.protodata.test.uuid.UuidJavaRenderer"
+//    )
+//    plugins(
+//        "io.spine.protodata.test.uuid.UuidPlugin"
+//    )
+//    srcBaseDir = protobufDir
+//    targetBaseDir = protobufDir
+//}
+//
+//protobuf {
+//    generatedFilesBaseDir = protobufDir
+//}
