@@ -175,7 +175,7 @@ public class Extension(private val project: Project) {
      * @see srcBaseDir for the rules for the source dir construction
      */
     internal fun sourceDir(sourceSet: SourceSet): Provider<Directory> =
-        srcBaseDirProperty.get().dir(sourceSet.name).dir(subDirProperty)
+        compileDir(sourceSet, srcBaseDirProperty)
 
     /**
      * Obtains the target directory for code generation.
@@ -183,5 +183,8 @@ public class Extension(private val project: Project) {
      * @see targetBaseDir for the rules for the target dir construction
      */
     internal fun targetDir(sourceSet: SourceSet): Provider<Directory> =
-        targetBaseDirProperty.get().dir(sourceSet.name).dir(subDirProperty)
+        compileDir(sourceSet, targetBaseDirProperty)
+
+    private fun compileDir(sourceSet: SourceSet, base: DirectoryProperty): Provider<Directory> =
+        base.dir(sourceSet.name).map { it.dir(subDirProperty).get() }
 }

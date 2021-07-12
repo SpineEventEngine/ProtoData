@@ -112,7 +112,6 @@ internal constructor(
                 checkArgument(
                     target.isDirectory, "Target root `%s` must be a directory.", targetRoot
                 )
-
                 val children = target.list()!!
                 checkArgument(children.isEmpty(),
                     "Target directory `%s` must be empty. Found children: %s.",
