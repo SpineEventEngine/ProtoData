@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.protobuf.gradle.protobuf
+
 plugins {
     id("io.spine.proto-data")
 }
@@ -32,7 +34,7 @@ dependencies {
     protoData(project(":protodata-extension"))
 }
 
-val protobufDir = "$projectDir/generated/"
+val protobufDir = "$projectDir/proto-gen/"
 
 protoData {
     renderers(
@@ -42,10 +44,10 @@ protoData {
     plugins(
         "io.spine.protodata.test.uuid.UuidPlugin"
     )
-    //    srcBaseDir = protobufDir
-//    targetBaseDir = protobufDir
+    srcBaseDir = protobufDir
+    targetBaseDir = protobufDir
 }
 
-//protobuf {
-//    generatedFilesBaseDir = protobufDir
-//}
+protobuf {
+    generatedFilesBaseDir = protobufDir
+}

@@ -24,19 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@CheckReturnValue
+@ParametersAreNonnullByDefault
 package io.spine.protodata.test;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-@DisplayName("Code generation should")
-final class CodeGenerationTest {
-
-    @Test
-    @DisplayName("add extra code in-place")
-    void mainScope() {
-//        UserId id = UserId.randomId();
-//        assertThat(id.getUuid())
-//                .isNotEmpty();
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;
