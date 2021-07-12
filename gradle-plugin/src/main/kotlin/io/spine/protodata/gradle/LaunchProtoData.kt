@@ -143,7 +143,6 @@ public open class LaunchProtoData : JavaExec() {
                 project.delete(targetDir)
             }
         }
-
     }
 }
 
