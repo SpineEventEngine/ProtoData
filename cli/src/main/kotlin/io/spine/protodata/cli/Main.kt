@@ -26,7 +26,9 @@
 
 package io.spine.protodata.cli
 
+import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
@@ -41,6 +43,11 @@ import io.spine.code.proto.FileName
 import io.spine.code.proto.FileSet
 import io.spine.io.Resource
 import io.spine.protodata.Pipeline
+import io.spine.protodata.config.Configuration
+import io.spine.protodata.config.ConfigurationFormat
+import io.spine.protodata.config.ConfigurationFormat.JSON
+import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
+import io.spine.protodata.config.ConfigurationFormat.YAML
 import io.spine.protodata.option.OptionsProvider
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
@@ -149,6 +156,40 @@ internal class Run(version: String) : CliktCommand(
         mustExist = true,
         mustBeReadable = true
     ).split(pathSeparator)
+    private val configurationFile: Path? by option(ConfigOpt.FILE, "-c", help = """
+        File which contains the custom configuration for ProtoData.
+
+        May be a JSON, a YAML, or a binary Protobuf file.
+        JSON files must have `.json` extension.
+        JSON files with Protobuf JSON format must have `.pb.json` extension.
+        YAML files must have `.yml` or `.yaml` extension.
+        Protobuf binary files must have `.pb` or `.bin` extension. Messages must not be delimited.
+    """.trimIndent()
+    ).path(
+        mustExist = true,
+        mustBeReadable = true,
+        canBeDir = false,
+        canBeSymlink = false
+    )
+    private val configurationValue: String? by option(ConfigOpt.VALUE, "--cv", help = """
+        Custom configuration for ProtoData.
+        May be a JSON or a YAML.
+        Must be used alongside with `--configuration-format`
+    """.trimIndent())
+    private val configurationFormat: String? by option(ConfigOpt.FORMAT, "--cf", help = """
+        The format of the custom configuration.
+        Must be one of: `yaml`, `json`, `proto_json`.
+        Must be used alongside with `--configuration-value`.
+    """.trimIndent(), completionCandidates = CompletionCandidates.Fixed(
+        setOf(YAML, JSON, PROTO_JSON).map { it.name.lowercase() }.toSet()
+    ))
+
+    private object ConfigOpt {
+
+        const val FILE = "--configuration-file"
+        const val VALUE = "--configuration-value"
+        const val FORMAT = "--configuration-format"
+    }
 
     override fun run() {
         val sourceSet = createSourceSet()
@@ -156,7 +197,32 @@ internal class Run(version: String) : CliktCommand(
         val renderer = loadRenderers()
         val registry = createRegistry()
         val codegenRequest = loadRequest(registry)
-        Pipeline(plugins, renderer, sourceSet, codegenRequest)()
+        val config = resolveConfig()
+        Pipeline(plugins, renderer, sourceSet, codegenRequest, config)()
+    }
+
+    private fun resolveConfig(): Configuration? {
+        val hasFile = configurationFile != null
+        val hasValue = configurationValue != null
+        val hasFormat = configurationFormat != null
+        if (hasFile && hasValue) {
+            throw MutuallyExclusiveGroupException(
+                listOf(ConfigOpt.FILE, ConfigOpt.VALUE)
+            )
+        }
+        if (hasValue != hasFormat) {
+            throw UsageError(
+                "Options `${ConfigOpt.VALUE}` and `${ConfigOpt.FORMAT}` must be used together."
+            )
+        }
+        return when {
+            hasFile -> Configuration.file(configurationFile!!)
+            hasValue -> {
+                val format = ConfigurationFormat.valueOf(configurationFormat!!.uppercase())
+                Configuration.rawValue(configurationValue!!, format)
+            }
+            else -> null
+        }
     }
 
     private fun loadRequest(extensions: ExtensionRegistry = ExtensionRegistry.getEmptyRegistry()) =

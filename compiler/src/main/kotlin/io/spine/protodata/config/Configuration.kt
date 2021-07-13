@@ -28,9 +28,6 @@ package io.spine.protodata.config
 
 import io.spine.annotation.Internal
 import io.spine.base.EventMessage
-import io.spine.protodata.config.ConfigurationFormat.JSON
-import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.config.ConfigurationFormat.YAML
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
@@ -43,11 +40,8 @@ public sealed class Configuration {
 
         public fun file(file: Path): Configuration = File(file)
 
-        public fun json(value: String): Configuration = Raw(value, JSON)
-
-        public fun protoJson(value: String): Configuration = Raw(value, PROTO_JSON)
-
-        public fun yaml(value: String): Configuration = Raw(value, YAML)
+        public fun rawValue(value: String, format: ConfigurationFormat): Configuration =
+            Raw(value, format)
     }
 }
 

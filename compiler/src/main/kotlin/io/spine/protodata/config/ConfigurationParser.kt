@@ -42,6 +42,7 @@ import io.spine.protodata.config.ConfigurationFormat.UNRECOGNIZED
 import io.spine.protodata.config.ConfigurationFormat.YAML
 import java.nio.charset.Charset.defaultCharset
 import java.nio.file.Path
+import kotlin.io.path.name
 
 internal sealed class ConfigurationParser {
 
@@ -111,7 +112,8 @@ private object YamlParser : JacksonParser() {
 }
 
 internal fun formatOf(file: Path): ConfigurationFormat =
-    ConfigurationFormat.values().first { it.matches(file) }
+    ConfigurationFormat.values().find { it.matches(file) }
+        ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")
 
 internal val ConfigurationFormat.parser: ConfigurationParser
     get() = when(this) {
