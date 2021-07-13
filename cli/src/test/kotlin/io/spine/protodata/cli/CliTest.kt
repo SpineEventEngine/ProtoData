@@ -36,16 +36,19 @@ import io.spine.protodata.cli.given.CustomOptionRenderer
 import io.spine.protodata.cli.given.TestOptionProvider
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
+import io.spine.protodata.test.GREETING_FILE
+import io.spine.protodata.test.GreetingRenderer
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
 import java.nio.file.Path
+import kotlin.io.path.createFile
+import kotlin.io.path.pathString
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -122,6 +125,29 @@ class `Command line application should` {
         val generatedFile = srcRoot.resolve(CustomOptionRenderer.FILE_NAME)
         assertThat(generatedFile.readText())
             .isEqualTo("custom_field_for_test")
+    }
+
+    @Nested
+    inner class `Receive custom configuration through` {
+
+        @Test
+        fun `configuration file`(@TempDir configDir: Path) {
+            val name = "Internet"
+            val configFile = configDir.resolve("name.json")
+            configFile.createFile()
+            configFile.writeText("""
+                { "value": "$name" }
+            """.trimIndent())
+
+            launchApp(
+                "-r", GreetingRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "-c", configFile.pathString
+            )
+            assertThat(srcRoot.resolve(GREETING_FILE).readText())
+                .isEqualTo(name)
+        }
     }
 
     @Nested
