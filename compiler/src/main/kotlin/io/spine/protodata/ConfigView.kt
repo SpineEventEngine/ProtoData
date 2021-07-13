@@ -35,7 +35,6 @@ import io.spine.protodata.config.RawConfigDiscovered
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.entity.alter
-import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
 internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
@@ -52,9 +51,16 @@ internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
 
     internal class Repo : ViewRepository<ConfigId, ConfigView, Config>() {
 
+        private val theId = setOf(
+            ConfigId
+                .newBuilder()
+                .setValue("configuration_instance")
+                .build()
+        )
+
         override fun setupEventRouting(routing: EventRouting<ConfigId>) {
             super.setupEventRouting(routing)
-            routing.replaceDefault { _, _ -> withId(ConfigId.getDefaultInstance()) }
+            routing.replaceDefault { _, _ -> theId }
         }
     }
 }
