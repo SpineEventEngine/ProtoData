@@ -27,8 +27,8 @@
 package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
-import io.spine.protodata.Querying
 import io.spine.protodata.QueryingClient
+import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.protodata.language.Language
 import io.spine.server.BoundedContext
 
@@ -42,7 +42,7 @@ import io.spine.server.BoundedContext
 public abstract class Renderer
 protected constructor(
     private val supportedLanguage: Language
-) : Querying {
+) : ConfiguredQuerying {
 
     internal lateinit var protoDataContext: BoundedContext
 
@@ -66,4 +66,6 @@ protected constructor(
     final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)
     }
+
+    final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
 }
