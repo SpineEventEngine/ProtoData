@@ -26,19 +26,42 @@
 
 package io.spine.protodata.test
 
+import com.google.protobuf.StringValue
+import io.spine.protobuf.AnyPacker
 import io.spine.protodata.config.configAs
-import io.spine.protodata.language.CommonLanguages
+import io.spine.protodata.language.CommonLanguages.any
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.tesst.Echo
+import io.spine.time.toInstant
 import kotlin.io.path.Path
 
-public const val GREETING_FILE: String = "name.txt";
+public const val ECHO_FILE: String = "name.txt"
 
-public class GreetingRenderer : Renderer(CommonLanguages.Java) {
+public class EchoRenderer : Renderer(any) {
 
     override fun render(sources: SourceSet) {
         val name = configAs<Name>()
-        sources.createFile(Path(GREETING_FILE), name.value)
+        sources.createFile(Path(ECHO_FILE), name.value)
+    }
+}
+
+public class ProtoEchoRenderer : Renderer(any) {
+
+    override fun render(sources: SourceSet) {
+        val echo = configAs<Echo>()
+        val message = buildString {
+            with(echo) {
+                append(`when`.toInstant())
+                append(':')
+                val arg = AnyPacker.unpack(arg, StringValue::class.java)
+                val formatted = message.format(arg.value)
+                append(formatted)
+                append(':')
+                append(extraMessage.value)
+            }
+        }
+        sources.createFile(Path(ECHO_FILE), message)
     }
 }
 
