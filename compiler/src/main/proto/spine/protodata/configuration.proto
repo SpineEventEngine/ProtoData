@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package spine.protodata;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.config";
+option java_outer_classname = "ConfigurationProto";
+option java_multiple_files = true;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/descriptor.proto";
+
+message Config {
+    option (entity).kind = PROJECTION;
+
+    ConfigId id = 1;
+
+    oneof kind {
+
+        google.protobuf.Empty empty = 2;
+
+        ConfigFile file = 3;
+
+        RawConfig raw = 4;
+    }
+}
+
+message ConfigId {}
+
+message ConfigFile {
+
+    string path = 1;
+}
+
+message RawConfig {
+
+    string value = 1;
+
+    ConfigurationFormat format = 2;
+}
+
+extend google.protobuf.EnumValueOptions {
+
+    repeated string extension = 73980;
+}
+
+enum ConfigurationFormat {
+
+    RCF_UNKNOWN = 0;
+
+    PROTO_BINARY = 1 [(extension) = "pb", (extension) = "bin"];
+
+    PROTO_JSON = 2 [(extension) = "pb.json"];
+
+    JSON = 3 [(extension) = "json"];
+
+    YAML = 4 [(extension) = "yaml", (extension) = "yml"];
+}
