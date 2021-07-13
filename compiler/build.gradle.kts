@@ -25,6 +25,7 @@
  */
 
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Jackson
 
 plugins {
     `build-proto-model`
@@ -34,6 +35,8 @@ val spineCoreVersion: String by extra
 
 dependencies {
     api("io.spine:spine-server:$spineCoreVersion")
+    implementation(Jackson.databind)
+    implementation(Jackson.dataformatYaml)
 
     testImplementation(project(":testutil"))
     testImplementation(JUnit.params)
