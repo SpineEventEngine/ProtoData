@@ -29,6 +29,7 @@ package io.spine.protodata
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.environment.Production
+import io.spine.protodata.config.Configuration
 import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
@@ -55,7 +56,8 @@ public class Pipeline(
     private val plugins: List<Plugin>,
     private val renderers:  List<Renderer>,
     private val sourceSet: SourceSet,
-    private val request: CodeGeneratorRequest
+    private val request: CodeGeneratorRequest,
+    private val config: Configuration? = null
 ) {
 
     init {
@@ -73,6 +75,10 @@ public class Pipeline(
         plugins.forEach { contextBuilder.apply(it) }
         val context = contextBuilder.build()
 
+        if (config != null) {
+            val event = config.produceEvent()
+            ProtobufCompilerContext.emitted(event)
+        }
         val events = CompilerEvents.parse(request)
         ProtobufCompilerContext.emitted(events)
 

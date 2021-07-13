@@ -44,12 +44,11 @@ public object CodeGenerationContext {
      * Creates a builder of the bounded context.
      */
     @JvmStatic
-    public fun builder(): BoundedContextBuilder {
-        val builder = BoundedContext
-            .singleTenant("Code Generation")
-        builder.add(ViewRepository.default(builtinView()))
-        return builder
-    }
+    public fun builder(): BoundedContextBuilder =
+        BoundedContext.singleTenant("Code Generation").apply {
+            add(ViewRepository.default(builtinView()))
+            add(ConfigView.Repo())
+        }
 
     @Suppress("UNCHECKED_CAST")
     private fun builtinView(): Class<View<*, *, *>> =
@@ -81,4 +80,7 @@ internal object ProtobufCompilerContext {
             context.emittedEvent(it, actor)
         }
     }
+
+    fun emitted(singleEvent: EventMessage) =
+        emitted(sequenceOf(singleEvent))
 }
