@@ -148,6 +148,20 @@ class `Command line application should` {
             assertThat(srcRoot.resolve(GREETING_FILE).readText())
                 .isEqualTo(name)
         }
+
+        @Test
+        fun `configuration value`() {
+            val name = "Mr. World"
+            launchApp(
+                "-r", GreetingRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "--cv", """{ "value": "$name" }""",
+                "--cf", "json"
+            )
+            assertThat(srcRoot.resolve(GREETING_FILE).readText())
+                .isEqualTo(name)
+        }
     }
 
     @Nested
