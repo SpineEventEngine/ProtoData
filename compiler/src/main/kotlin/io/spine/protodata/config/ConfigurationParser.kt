@@ -91,7 +91,7 @@ private sealed class JacksonParser : ConfigurationParser() {
     protected abstract val factory: JsonFactory
 
     final override fun <T> parse(source: ByteSource, cls: Class<T>): T {
-        val mapper = ObjectMapper(factory)
+        val mapper = ObjectMapper(factory).findAndRegisterModules()
         val charSource = source.asCharSource(defaultCharset())
         return charSource.openBufferedStream().use {
             mapper.readValue(it, cls)

@@ -37,6 +37,7 @@ dependencies {
     api("io.spine:spine-server:$spineCoreVersion")
     implementation(Jackson.databind)
     implementation(Jackson.dataformatYaml)
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4")
 
     testImplementation(project(":testutil"))
     testImplementation(JUnit.params)
