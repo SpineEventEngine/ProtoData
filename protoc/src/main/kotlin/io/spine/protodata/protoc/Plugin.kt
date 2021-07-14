@@ -46,6 +46,6 @@ public fun main() {
                .mkdirs()
     requestFile.writeBytes(request.toByteArray(), CREATE, TRUNCATE_EXISTING)
 
-    val emptyResponce = CodeGeneratorResponse.getDefaultInstance()
-    System.out.write(emptyResponce.toByteArray())
+    val emptyResponse = CodeGeneratorResponse.getDefaultInstance()
+    System.out.write(emptyResponse.toByteArray())
 }
