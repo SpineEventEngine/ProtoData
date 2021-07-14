@@ -14,7 +14,10 @@ jobs:
       - name: Build project and run tests
         run: ./gradlew build --stacktrace -PprotoDataLocation=$(pwd)/protodata-current-exe
       - name: Upload code coverage report
-        run: bash <(curl -s https://codecov.io/bash)
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
+          verbose: true
 
   publish:
     runs-on: ubuntu-latest
