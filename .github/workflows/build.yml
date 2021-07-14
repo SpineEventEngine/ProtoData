@@ -13,6 +13,8 @@ jobs:
       - run: git submodule update --init --recursive
       - name: Build project and run tests
         run: ./gradlew build --stacktrace -PprotoDataLocation=$(pwd)/protodata-current-exe
+      - name: Upload code coverage report
+        run: bash <(curl -s https://codecov.io/bash)
 
   publish:
     runs-on: ubuntu-latest
