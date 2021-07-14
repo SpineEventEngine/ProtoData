@@ -30,6 +30,7 @@ plugins {
     application
     `version-to-resources`
     `build-proto-model`
+    jacoco
 }
 
 dependencies {

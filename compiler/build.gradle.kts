@@ -29,6 +29,7 @@ import io.spine.internal.dependency.Jackson
 
 plugins {
     `build-proto-model`
+    jacoco
 }
 
 val spineCoreVersion: String by extra

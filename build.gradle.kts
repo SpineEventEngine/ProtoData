@@ -30,6 +30,7 @@ import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.PublishingRepos
+import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.spinePublishing
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
@@ -58,6 +59,8 @@ plugins {
     }
     idea
     `integration-test`
+    jacoco
+    `force-jacoco`
 }
 
 spinePublishing {
@@ -131,4 +134,8 @@ subprojects {
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
     }
+}
+
+afterEvaluate {
+    apply(from = Scripts.jacoco(project))
 }
