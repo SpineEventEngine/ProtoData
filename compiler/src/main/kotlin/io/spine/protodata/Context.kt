@@ -26,7 +26,6 @@
 
 package io.spine.protodata
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.core.UserId
 import io.spine.protodata.plugin.View
@@ -56,24 +55,20 @@ public object CodeGenerationContext {
 }
 
 /**
- * The `Protobuf Compiler` third-party bounded context.
+ * A an external bounded context.
+ *
+ * This context can emit events which are visible to the `Code Generation` context.
  */
-internal object ProtobufCompilerContext {
+internal sealed class ExternalContext(name: String) : AutoCloseable {
 
-    private const val NAME = "Protobuf Compiler"
-
-    private val context = ThirdPartyContext.singleTenant(NAME)
+    private val context = ThirdPartyContext.singleTenant(name)
     private val actor = UserId
         .newBuilder()
-        .setValue(NAME)
+        .setValue(name)
         .build()
 
     /**
-     * Produces and emits compiler events describing the types listed in
-     * the [CodeGeneratorRequest.getFileToGenerateList].
-     *
-     * The request must contain descriptors for the files to generate, as well as for their
-     * dependencies.
+     * Produces and emits events from given event messages.
      */
     fun emitted(events: Sequence<EventMessage>) {
         events.forEach {
@@ -81,6 +76,22 @@ internal object ProtobufCompilerContext {
         }
     }
 
+    /**
+     * Produces and emits an event from the given event message.
+     */
     fun emitted(singleEvent: EventMessage) =
         emitted(sequenceOf(singleEvent))
+
+    override fun close() =
+        context.close()
 }
+
+/**
+ * The `Protobuf Compiler` third-party bounded context.
+ */
+internal class ProtobufCompilerContext : ExternalContext("Protobuf Compiler")
+
+/**
+ * The `ProtoData Configuration` third-party bounded context.
+ */
+internal class ConfigurationContext : ExternalContext("ProtoData Configuration")

@@ -73,20 +73,24 @@ public class Pipeline(
     public operator fun invoke() {
         val contextBuilder = CodeGenerationContext.builder()
         plugins.forEach { contextBuilder.apply(it) }
-        val context = contextBuilder.build()
+        val codeGenContext = contextBuilder.build()
 
+        val configurationContext = ConfigurationContext()
+        val protocContext = ProtobufCompilerContext()
         if (config != null) {
             val event = config.produceEvent()
-            ProtobufCompilerContext.emitted(event)
+            configurationContext.emitted(event)
         }
         val events = CompilerEvents.parse(request)
-        ProtobufCompilerContext.emitted(events)
+        protocContext.emitted(events)
 
         renderers.forEach {
-            it.protoDataContext = context
+            it.protoDataContext = codeGenContext
             it.renderSources(sourceSet)
         }
         sourceSet.write()
-        context.close()
+        protocContext.close()
+        configurationContext.close()
+        codeGenContext.close()
     }
 }
