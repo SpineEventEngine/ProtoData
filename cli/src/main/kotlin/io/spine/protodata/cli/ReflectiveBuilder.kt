@@ -53,23 +53,12 @@ internal open class ReflectiveBuilder<T: Any> {
         return create(tClass)
     }
 
-    private fun create(cls: KClass<T>) : T {
+    private fun create(cls: KClass<T>): T {
         val ctor = cls.constructors.find {
             it.visibility == KVisibility.PUBLIC && it.parameters.isEmpty()
         } ?: throw IllegalStateException(
             "Class `${cls.qualifiedName} should have a public zero-parameter constructor.`"
         )
-        val instance = ctor.call()
-        prepareInstance(instance)
-        return instance
-    }
-
-    /**
-     * Initializes the [instance] after creation.
-     *
-     * This preparation is executed before the instance is returned to the caller of
-     * [createByName].
-     */
-    protected open fun prepareInstance(instance: T) {
+        return ctor.call()
     }
 }
