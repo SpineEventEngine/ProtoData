@@ -40,8 +40,6 @@ import org.junit.jupiter.api.Test
 
 class `AST extensions should` {
 
-
-
     @Nested
     inner class `Check if a field is` {
 
