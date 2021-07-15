@@ -31,15 +31,31 @@ import io.spine.base.EventMessage
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
+/**
+ * User-provided custom configuration for ProtoData.
+ *
+ * @see Configured
+ */
 @Internal
 public sealed class Configuration {
 
+    /**
+     * Constructs an event which contains the value of the configuration.
+     *
+     * The events belongs to the [io.spine.protodata.ConfigurationContext].
+     */
     internal abstract fun produceEvent(): EventMessage
 
     public companion object {
 
+        /**
+         * Creates a configuration written in a file with the given path.
+         */
         public fun file(file: Path): Configuration = File(file)
 
+        /**
+         * Creates a configuration from the given value in the given format.
+         */
         public fun rawValue(value: String, format: ConfigurationFormat): Configuration =
             Raw(value, format)
     }

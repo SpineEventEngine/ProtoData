@@ -30,6 +30,9 @@ import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.file.Glob
 import java.nio.file.Path
 
+/**
+ * Checks if the given file matches this configuration format.
+ */
 internal fun ConfigurationFormat.matches(file: Path): Boolean =
     extensions
             .map(Glob::extension)

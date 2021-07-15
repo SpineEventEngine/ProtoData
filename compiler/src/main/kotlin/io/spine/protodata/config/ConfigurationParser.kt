@@ -44,11 +44,20 @@ import java.nio.charset.Charset.defaultCharset
 import java.nio.file.Path
 import kotlin.io.path.name
 
+/**
+ * A parser for the ProtoData user-provided configuration.
+ */
 internal sealed class ConfigurationParser {
 
+    /**
+     * Attempts to deserialize the given configuration value into the given class.
+     */
     abstract fun <T> parse(source: ByteSource, cls: Class<T>): T
 }
 
+/**
+ * A configuration parser for Protobuf messages.
+ */
 private sealed class ProtobufParser : ConfigurationParser() {
 
     final override fun <T> parse(source: ByteSource, cls: Class<T>): T {
@@ -67,6 +76,9 @@ private sealed class ProtobufParser : ConfigurationParser() {
     protected fun Class<*>.asMessageClass() = this as Class<out Message>
 }
 
+/**
+ * A configuration parser for Protobuf messages encoded in the Protobuf binary format.
+ */
 private object ProtoBinaryParser : ProtobufParser() {
 
     override fun <T> doParse(source: ByteSource, cls: Class<T>): T {
@@ -76,6 +88,9 @@ private object ProtoBinaryParser : ProtobufParser() {
     }
 }
 
+/**
+ * A configuration parser for Protobuf messages encoded in the Protobuf JSON format.
+ */
 private object ProtoJsonParser : ProtobufParser() {
 
     override fun <T> doParse(source: ByteSource, cls: Class<T>): T {
@@ -86,6 +101,9 @@ private object ProtoJsonParser : ProtobufParser() {
     }
 }
 
+/**
+ * A configuration parser for text-based formats.
+ */
 private sealed class JacksonParser : ConfigurationParser() {
 
     protected abstract val factory: JsonFactory
@@ -99,22 +117,38 @@ private sealed class JacksonParser : ConfigurationParser() {
     }
 }
 
+/**
+ * A configuration parser for JSON.
+ */
 private object JsonParser : JacksonParser() {
 
     private val commonJsonFactory = JsonFactory()
     override val factory: JsonFactory by this::commonJsonFactory
 }
 
+/**
+ * A configuration parser for YAML.
+ */
 private object YamlParser : JacksonParser() {
 
     private val commonYamlFactory = YAMLFactory()
     override val factory: JsonFactory by this::commonYamlFactory
 }
 
+/**
+ * Obtains a [ConfigurationFormat] from the file extension of the given configuration file.
+ *
+ * @throws ConfigurationError if the format is not recognized
+ */
 internal fun formatOf(file: Path): ConfigurationFormat =
     ConfigurationFormat.values().find { it.matches(file) }
         ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")
 
+/**
+ * Obtains a [ConfigurationParser] for this format.
+ *
+ * @throws ConfigurationError if the format is a non-value
+ */
 internal val ConfigurationFormat.parser: ConfigurationParser
     get() = when(this) {
         PROTO_BINARY -> ProtoBinaryParser
