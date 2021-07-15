@@ -47,18 +47,18 @@ import kotlin.io.path.name
 /**
  * A parser for the ProtoData user-provided configuration.
  */
-internal sealed class ConfigurationParser {
+internal sealed interface ConfigurationParser {
 
     /**
      * Attempts to deserialize the given configuration value into the given class.
      */
-    abstract fun <T> parse(source: ByteSource, cls: Class<T>): T
+    fun <T> parse(source: ByteSource, cls: Class<T>): T
 }
 
 /**
  * A configuration parser for Protobuf messages.
  */
-private sealed class ProtobufParser : ConfigurationParser() {
+private sealed class ProtobufParser : ConfigurationParser {
 
     final override fun <T> parse(source: ByteSource, cls: Class<T>): T {
         if (!Message::class.java.isAssignableFrom(cls)) {
@@ -104,7 +104,7 @@ private object ProtoJsonParser : ProtobufParser() {
 /**
  * A configuration parser for text-based formats.
  */
-private sealed class JacksonParser : ConfigurationParser() {
+private sealed class JacksonParser : ConfigurationParser {
 
     protected abstract val factory: JsonFactory
 
