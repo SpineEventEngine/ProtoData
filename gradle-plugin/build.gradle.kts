@@ -31,6 +31,7 @@ plugins {
     `java-gradle-plugin`
     id("com.gradle.plugin-publish").version("0.15.0")
     `version-to-resources`
+    jacoco
 }
 
 val spineBaseVersion: String by extra

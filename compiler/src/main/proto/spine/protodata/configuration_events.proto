@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package spine.protodata;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.config";
+option java_outer_classname = "ConfigurationEventsProto";
+option java_multiple_files = true;
+
+import "spine/protodata/configuration.proto";
+
+// An event emitted when the user configures ProtoData via a config file.
+message FileConfigDiscovered {
+
+    ConfigFile file = 1;
+}
+
+// An event emitted when the user configures ProtoData via a raw string config value.
+message RawConfigDiscovered {
+
+    RawConfig config = 1;
+}

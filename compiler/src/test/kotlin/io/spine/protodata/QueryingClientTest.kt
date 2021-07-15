@@ -59,7 +59,9 @@ class `'QueryingClient' should` {
             .addAllFileToGenerate(files.map { it.name })
             .build()
         val events = CompilerEvents.parse(request)
-        ProtobufCompilerContext.emitted(events)
+        ProtobufCompilerContext().use {
+            it.emitted(events)
+        }
     }
 
     @AfterEach

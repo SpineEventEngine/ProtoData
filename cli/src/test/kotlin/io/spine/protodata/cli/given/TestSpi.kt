@@ -24,6 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.24"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.34"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.26"
+package io.spine.protodata.cli.given
+
+interface TestSpi
+
+class TestSpiImpl : TestSpi
+
+class PrivateCtorSpiImpl
+private constructor() : TestSpi
+
+class CtorWithArgsSpiImpl(@Suppress("UNUSED_PARAMETER") ignored: String) : TestSpi

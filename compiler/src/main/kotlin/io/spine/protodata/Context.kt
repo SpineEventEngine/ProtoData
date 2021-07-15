@@ -26,9 +26,9 @@
 
 package io.spine.protodata
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.core.UserId
+import io.spine.protodata.config.ConfigView
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.BoundedContext
@@ -44,12 +44,11 @@ public object CodeGenerationContext {
      * Creates a builder of the bounded context.
      */
     @JvmStatic
-    public fun builder(): BoundedContextBuilder {
-        val builder = BoundedContext
-            .singleTenant("Code Generation")
-        builder.add(ViewRepository.default(builtinView()))
-        return builder
-    }
+    public fun builder(): BoundedContextBuilder =
+        BoundedContext.singleTenant("Code Generation").apply {
+            add(ViewRepository.default(builtinView()))
+            add(ConfigView.Repo())
+        }
 
     @Suppress("UNCHECKED_CAST")
     private fun builtinView(): Class<View<*, *, *>> =
@@ -57,28 +56,43 @@ public object CodeGenerationContext {
 }
 
 /**
- * The `Protobuf Compiler` third-party bounded context.
+ * A an external bounded context.
+ *
+ * This context can emit events which are visible to the `Code Generation` context.
  */
-internal object ProtobufCompilerContext {
+internal sealed class ExternalContext(name: String) : AutoCloseable {
 
-    private const val NAME = "Protobuf Compiler"
-
-    private val context = ThirdPartyContext.singleTenant(NAME)
+    private val context = ThirdPartyContext.singleTenant(name)
     private val actor = UserId
         .newBuilder()
-        .setValue(NAME)
+        .setValue(name)
         .build()
 
     /**
-     * Produces and emits compiler events describing the types listed in
-     * the [CodeGeneratorRequest.getFileToGenerateList].
-     *
-     * The request must contain descriptors for the files to generate, as well as for their
-     * dependencies.
+     * Produces and emits events from given event messages.
      */
     fun emitted(events: Sequence<EventMessage>) {
         events.forEach {
             context.emittedEvent(it, actor)
         }
     }
+
+    /**
+     * Produces and emits an event from the given event message.
+     */
+    fun emitted(singleEvent: EventMessage) =
+        emitted(sequenceOf(singleEvent))
+
+    override fun close() =
+        context.close()
 }
+
+/**
+ * The `Protobuf Compiler` third-party bounded context.
+ */
+internal class ProtobufCompilerContext : ExternalContext("Protobuf Compiler")
+
+/**
+ * The `ProtoData Configuration` third-party bounded context.
+ */
+internal class ConfigurationContext : ExternalContext("ProtoData Configuration")

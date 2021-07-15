@@ -32,8 +32,8 @@ import io.spine.base.EntityState
 import io.spine.base.EventMessage
 import io.spine.logging.Logging
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.Querying
 import io.spine.protodata.QueryingClient
+import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.server.BoundedContext
 import io.spine.server.event.AbstractEventReactor
 import io.spine.server.type.EventClass
@@ -80,9 +80,12 @@ import io.spine.server.type.EventClass
  *
  * @param E the type of the event handled by this policy
  */
-public abstract class Policy<E : EventMessage> : AbstractEventReactor(), Querying, Logging {
+public abstract class Policy<E : EventMessage> :
+    AbstractEventReactor(),
+    ConfiguredQuerying,
+    Logging {
 
-    private var context: BoundedContext? = null
+    private lateinit var context: BoundedContext
 
     /**
      * Handles an event and produces some number of events in responce.
@@ -95,7 +98,7 @@ public abstract class Policy<E : EventMessage> : AbstractEventReactor(), Queryin
     }
 
     final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
-        return QueryingClient(context!!, type, javaClass.name)
+        return QueryingClient(context, type, javaClass.name)
     }
 
     final override fun messageClasses(): ImmutableSet<EventClass> {
@@ -112,4 +115,6 @@ public abstract class Policy<E : EventMessage> : AbstractEventReactor(), Queryin
             )
         }
     }
+
+    final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
 }

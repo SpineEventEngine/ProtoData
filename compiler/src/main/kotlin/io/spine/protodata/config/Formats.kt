@@ -24,6 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.24"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.34"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.26"
+package io.spine.protodata.config
+
+import com.google.common.annotations.VisibleForTesting
+import io.spine.protodata.file.Glob
+import java.nio.file.Path
+
+/**
+ * Checks if the given file matches this configuration format.
+ */
+internal fun ConfigurationFormat.matches(file: Path): Boolean =
+    extensions
+            .map(Glob::extension)
+            .any { it.matches(file) }
+
+@VisibleForTesting
+internal val ConfigurationFormat.extensions: Set<String>
+    get() = valueDescriptor.options.getExtension(ConfigurationProto.extension).toSet()

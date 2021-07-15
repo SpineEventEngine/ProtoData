@@ -26,18 +26,8 @@
 
 import io.spine.internal.gradle.RunBuild
 
-val protoDataLocationProperty = "protoDataLocation"
-
-allprojects {
-    extra["protoDataLocationProperty"] = protoDataLocationProperty
-}
-
 val integrationTest by tasks.creating(RunBuild::class) {
     directory = "$rootDir/tests"
-    includeGradleProperties.add(protoDataLocationProperty)
-
-    dependsOn(":cli:installProtoData")
 }
 
 tasks["check"].finalizedBy(integrationTest)
-

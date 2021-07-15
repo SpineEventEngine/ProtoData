@@ -25,15 +25,22 @@
  */
 
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Jackson
 
 plugins {
     `build-proto-model`
+    jacoco
 }
 
 val spineCoreVersion: String by extra
 
 dependencies {
     api("io.spine:spine-server:$spineCoreVersion")
+    with(Jackson) {
+        api(databind)
+        implementation(dataformatYaml)
+        runtimeOnly(moduleKotlin)
+    }
 
     testImplementation(project(":testutil"))
     testImplementation(JUnit.params)

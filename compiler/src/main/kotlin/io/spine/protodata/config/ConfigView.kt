@@ -24,27 +24,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.config
 
 import io.spine.core.External
-import io.spine.protodata.TypeEntered
-import io.spine.protodata.plugin.Just
-import io.spine.protodata.plugin.Policy
-import io.spine.server.event.React
-import io.spine.server.model.Nothing
+import io.spine.core.Subscribe
+import io.spine.protodata.plugin.View
+import io.spine.protodata.plugin.ViewRepository
+import io.spine.server.entity.alter
+import io.spine.server.route.EventRouting
 
 /**
- * A greedy policy reacts to more than one event.
+ * A view on the ProtoData user configuration.
+ *
+ * Can contain either a configuration file path or a string value of the configuration.
+ *
+ * @see io.spine.protodata.config.Configured for fetching the value of the user configuration
  */
-public class GreedyPolicy : Policy<TypeEntered>() {
+internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
 
-    @React
-    override fun whenever(@External event: TypeEntered): Just<Nothing> {
-        return Just(nothing())
+    @Subscribe
+    internal fun on(@External event: FileConfigDiscovered) = alter {
+        file = event.file
     }
 
-    @React
-    internal fun on(@Suppress("UNUSED_PARAMETER") e: ProjectCreated): Just<Nothing> {
-        return Just(nothing())
+    @Subscribe
+    internal fun on(@External event: RawConfigDiscovered) = alter {
+        raw = event.config
+    }
+
+    /**
+     * A repository for the `ConfigView`.
+     */
+    internal class Repo : ViewRepository<ConfigId, ConfigView, Config>() {
+
+        private val theId = setOf(
+            ConfigId
+                .newBuilder()
+                .setValue("configuration_instance")
+                .build()
+        )
+
+        override fun setupEventRouting(routing: EventRouting<ConfigId>) {
+            super.setupEventRouting(routing)
+            routing.replaceDefault { _, _ -> theId }
+        }
     }
 }

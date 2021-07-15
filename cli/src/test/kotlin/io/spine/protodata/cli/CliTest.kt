@@ -29,23 +29,36 @@ package io.spine.protodata.cli
 import com.github.ajalt.clikt.core.MissingOption
 import com.github.ajalt.clikt.core.UsageError
 import com.google.common.truth.Truth.assertThat
+import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.PluginProtos
+import io.spine.base.Time
+import io.spine.json.Json
 import io.spine.option.OptionsProto
+import io.spine.protobuf.AnyPacker
 import io.spine.protodata.cli.given.CustomOptionPlugin
 import io.spine.protodata.cli.given.CustomOptionRenderer
 import io.spine.protodata.cli.given.TestOptionProvider
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
+import io.spine.protodata.tesst.Echo
+import io.spine.protodata.test.ECHO_FILE
+import io.spine.protodata.test.EchoRenderer
+import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
+import io.spine.protodata.test.ProtoEchoRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
+import io.spine.time.LocalDates
+import io.spine.time.Month.SEPTEMBER
+import io.spine.time.toInstant
 import java.nio.file.Path
+import kotlin.io.path.createFile
+import kotlin.io.path.pathString
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -122,6 +135,152 @@ class `Command line application should` {
         val generatedFile = srcRoot.resolve(CustomOptionRenderer.FILE_NAME)
         assertThat(generatedFile.readText())
             .isEqualTo("custom_field_for_test")
+    }
+
+    @Nested
+    inner class `Receive custom configuration through` {
+
+        @Test
+        fun `configuration file`(@TempDir configDir: Path) {
+            val name = "Internet"
+            val configFile = configDir.resolve("name.json")
+            configFile.createFile()
+            configFile.writeText("""
+                { "value": "$name" }
+            """.trimIndent())
+
+            launchApp(
+                "-r", EchoRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "-c", configFile.pathString
+            )
+            assertThat(srcRoot.resolve(ECHO_FILE).readText())
+                .isEqualTo(name)
+        }
+
+        @Test
+        fun `configuration value`() {
+            val name = "Mr. World"
+            launchApp(
+                "-r", EchoRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "--cv", """{ "value": "$name" }""",
+                "--cf", "json"
+            )
+            assertThat(srcRoot.resolve(ECHO_FILE).readText())
+                .isEqualTo(name)
+        }
+    }
+
+    @Nested
+    inner class `Receive custom configuration as` {
+
+        @Test
+        fun `plain JSON`(@TempDir configDir: Path) {
+            val name = "Internet"
+            val configFile = configDir.resolve("name.json")
+            configFile.createFile()
+            configFile.writeText("""
+                { "value": "$name" }
+            """.trimIndent())
+
+            launchApp(
+                "-r", EchoRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "-c", configFile.pathString
+            )
+            assertThat(srcRoot.resolve(ECHO_FILE).readText())
+                .isEqualTo(name)
+        }
+
+        @Test
+        fun `Protobuf JSON`() {
+            val time = Time.currentTime()
+            val echo = Echo
+                .newBuilder()
+                .setMessage("English, %s!")
+                .setExtraMessage(StringValue.of("Do you speak it?"))
+                .setArg(AnyPacker.pack(StringValue.of("Adam Falkner")))
+                .setWhen(time)
+                .build()
+            val json = Json.toCompactJson(echo)
+            launchApp(
+                "-r", ProtoEchoRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "--cv", json,
+                "--cf", "proto_json"
+            )
+            val assertText = assertThat(srcRoot.resolve(ECHO_FILE).readText())
+            assertText
+                .startsWith(time.toInstant().toString())
+            assertText
+                .endsWith("English, Adam Falkner!:Do you speak it?")
+        }
+
+        @Test
+        fun `binary Protobuf`(@TempDir configDir: Path) {
+            val time = LocalDates.of(1962, SEPTEMBER, 12)
+            val echo = Echo
+                .newBuilder()
+                .setMessage("We choose to go to the %s.")
+                .setArg(AnyPacker.pack(StringValue.of("Moon")))
+                .setExtraMessage(StringValue.of("and do the other things"))
+                .setWhen(time.toTimestamp())
+                .build()
+
+            val configFile = configDir.resolve("config.bin")
+            configFile.createFile()
+            configFile.writeBytes(echo.toByteArray())
+
+            launchApp(
+                "-r", ProtoEchoRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "-c", configFile.pathString
+            )
+            val assertText = assertThat(srcRoot.resolve(ECHO_FILE).readText())
+            assertText
+                .startsWith(time.toInstant().toString())
+            assertText
+                .endsWith("We choose to go to the Moon.:and do the other things")
+        }
+
+        @Suppress("TestFunctionName")
+        @Test
+        fun YAML(@TempDir configDir: Path) {
+            val name = "Mr. Anderson"
+            val configFile = configDir.resolve("config.yml")
+            configFile.createFile()
+            configFile.writeText("""
+                value: $name
+            """.trimIndent())
+            launchApp(
+                "-r", EchoRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "-c", configFile.pathString
+            )
+            assertThat(srcRoot.resolve(ECHO_FILE).readText())
+                .isEqualTo(name)
+        }
+
+        @Test
+        fun `plain string`() {
+            val plainString = "dont.mail.me:42@example.org"
+            launchApp(
+                "-r", PlainStringRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "--cv", plainString,
+                "--cf", "plain"
+            )
+            assertThat(srcRoot.resolve(ECHO_FILE).readText())
+                .isEqualTo(plainString)
+        }
     }
 
     @Nested

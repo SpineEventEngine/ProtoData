@@ -26,6 +26,10 @@
 
 import io.spine.internal.dependency.Protobuf
 
+plugins {
+    jacoco
+}
+
 dependencies {
     Protobuf.libs.forEach { implementation(it) }
 }

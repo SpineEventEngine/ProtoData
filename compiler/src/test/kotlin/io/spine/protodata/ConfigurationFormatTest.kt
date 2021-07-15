@@ -24,6 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.24"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.34"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.26"
+package io.spine.protodata
+
+import com.google.common.truth.Truth.assertThat
+import io.spine.protodata.config.ConfigurationFormat.JSON
+import io.spine.protodata.config.ConfigurationFormat.PLAIN
+import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
+import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
+import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
+import io.spine.protodata.config.ConfigurationFormat.YAML
+import io.spine.protodata.config.extensions
+import org.junit.jupiter.api.Test
+
+class `ConfigurationFormat should` {
+
+    @Test
+    fun `provide allowed extensions`() {
+        assertThat(RCF_UNKNOWN.extensions)
+            .isEmpty()
+
+        assertThat(JSON.extensions)
+            .containsExactly("json")
+        assertThat(PROTO_JSON.extensions)
+            .containsExactly("pb.json")
+        assertThat(PROTO_BINARY.extensions)
+            .containsExactly("pb", "bin")
+        assertThat(YAML.extensions)
+            .containsExactly("yml", "yaml")
+        assertThat(PLAIN.extensions)
+            .isEmpty()
+    }
+}

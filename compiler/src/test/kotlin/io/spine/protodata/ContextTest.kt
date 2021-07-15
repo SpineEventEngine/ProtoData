@@ -56,7 +56,9 @@ class `'Code Generation' context should` {
             .addProtoFile(protoDescriptor)
             .addFileToGenerate(protoDescriptor.name)
             .build()
-        ProtobufCompilerContext.emitted(CompilerEvents.parse(set))
+        ProtobufCompilerContext().use {
+            it.emitted(CompilerEvents.parse(set))
+        }
 
         val path = DoctorProto.getDescriptor().path()
         val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileView::class.java)
