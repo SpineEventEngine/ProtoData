@@ -65,6 +65,7 @@ class `Collection extensions should` {
 
     companion object {
 
+        @Suppress("unused") // Used by JUnit.
         @JvmStatic
         fun interlaceCollections(): Stream<Arguments> = Stream.of(
             arguments(listOf(0, 1, 2), 42, listOf(0, 42, 1, 42, 2)),
