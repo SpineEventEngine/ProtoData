@@ -33,6 +33,9 @@ import io.spine.protodata.plugin.Policy
 import io.spine.server.event.React
 import io.spine.server.model.Nothing
 
+/**
+ * A greedy policy reacts to more than one event.
+ */
 public class GreedyPolicy : Policy<TypeEntered>() {
 
     @React
