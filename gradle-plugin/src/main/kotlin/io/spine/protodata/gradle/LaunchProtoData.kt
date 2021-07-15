@@ -32,11 +32,13 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.OutputDirectory
 
@@ -50,7 +52,7 @@ import org.gradle.api.tasks.OutputDirectory
  * Users should NOT change the CLI command, user directory, etc. directly.
  * Please refer to the `protoData { }` extension to configure ProtoData.
  */
-public open class LaunchProtoData : JavaExec() {
+public abstract class LaunchProtoData : JavaExec() {
 
     @get:Input
     internal lateinit var renderers: Provider<List<String>>
@@ -79,6 +81,9 @@ public open class LaunchProtoData : JavaExec() {
     @get:InputFiles
     internal lateinit var protoDataConfig: Configuration
 
+    @get:Internal
+    public abstract val configuration: RegularFileProperty
+
     /**
      * Configures the CLI command for this task.
      *
@@ -103,7 +108,7 @@ public open class LaunchProtoData : JavaExec() {
                 yield(it)
             }
             yield("--request")
-            yield(requestFile.get().asFile.absolutePath)
+            yield(project.file(requestFile).absolutePath)
 
             yield("--source-root")
             yield(source.absolutePath)
@@ -115,6 +120,11 @@ public open class LaunchProtoData : JavaExec() {
             if (userCp.isNotEmpty()) {
                 yield("--user-classpath")
                 yield(userCp)
+            }
+
+            if (configuration.isPresent) {
+                yield("--configuration-file")
+                yield(project.file(configuration).absolutePath)
             }
         }.asIterable()
         if (logger.isDebugEnabled) {

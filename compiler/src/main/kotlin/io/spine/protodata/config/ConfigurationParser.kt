@@ -64,16 +64,14 @@ private sealed class ProtobufParser : ConfigurationParser {
         if (!Message::class.java.isAssignableFrom(cls)) {
             throw IllegalStateException("Expected a message class but got `${cls.canonicalName}`.")
         }
-        return doParse(source, cls)
+        @Suppress("UNCHECKED_CAST")
+        return doParse(source, cls as Class<out Message>) as T
     }
 
-    abstract fun <T> doParse(source: ByteSource, cls: Class<T>): T
-
-    @Suppress("UNCHECKED_CAST")
-    protected fun <T> Message.asT() = this as T
-
-    @Suppress("UNCHECKED_CAST")
-    protected fun Class<*>.asMessageClass() = this as Class<out Message>
+    /**
+     * Deserializes the given bytes into a message with the given class.
+     */
+    abstract fun doParse(source: ByteSource, cls: Class<out Message>): Message
 }
 
 /**
@@ -81,10 +79,10 @@ private sealed class ProtobufParser : ConfigurationParser {
  */
 private object ProtoBinaryParser : ProtobufParser() {
 
-    override fun <T> doParse(source: ByteSource, cls: Class<T>): T {
-        val builder = Messages.builderFor(cls.asMessageClass())
+    override fun doParse(source: ByteSource, cls: Class<out Message>): Message {
+        val builder = Messages.builderFor(cls)
         builder.mergeFrom(source.read())
-        return builder.build().asT()
+        return builder.build()
     }
 }
 
@@ -93,11 +91,10 @@ private object ProtoBinaryParser : ProtobufParser() {
  */
 private object ProtoJsonParser : ProtobufParser() {
 
-    override fun <T> doParse(source: ByteSource, cls: Class<T>): T {
+    override fun doParse(source: ByteSource, cls: Class<out Message>): Message {
         val charSource = source.asCharSource(defaultCharset())
         val json = charSource.read()
-        val parsed = fromJson(json, cls.asMessageClass())
-        return parsed.asT()
+        return fromJson(json, cls)
     }
 }
 
