@@ -37,9 +37,9 @@ val spineCoreVersion: String by extra
 dependencies {
     api("io.spine:spine-server:$spineCoreVersion")
     with(Jackson) {
-        implementation(databind)
+        api(databind)
         implementation(dataformatYaml)
-        implementation(moduleKotlin)
+        runtimeOnly(moduleKotlin)
     }
 
     testImplementation(project(":testutil"))
