@@ -43,6 +43,7 @@ import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.tesst.Echo
 import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.EchoRenderer
+import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.ProtoEchoRenderer
@@ -265,6 +266,20 @@ class `Command line application should` {
             )
             assertThat(srcRoot.resolve(ECHO_FILE).readText())
                 .isEqualTo(name)
+        }
+
+        @Test
+        fun `plain string`() {
+            val plainString = "dont.mail.me:42@example.org"
+            launchApp(
+                "-r", PlainStringRenderer::class.jvmName,
+                "--src", srcRoot.toString(),
+                "-t", codegenRequestFile.toString(),
+                "--cv", plainString,
+                "--cf", "plain"
+            )
+            assertThat(srcRoot.resolve(ECHO_FILE).readText())
+                .isEqualTo(plainString)
         }
     }
 

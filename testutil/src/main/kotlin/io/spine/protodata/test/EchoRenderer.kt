@@ -65,4 +65,12 @@ public class ProtoEchoRenderer : Renderer(any) {
     }
 }
 
+public class PlainStringRenderer : Renderer(any) {
+
+    override fun render(sources: SourceSet) {
+        val echo = configAs<String>()
+        sources.createFile(Path(ECHO_FILE), echo)
+    }
+}
+
 public data class Name(public val value: String)

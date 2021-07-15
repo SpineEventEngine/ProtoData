@@ -35,6 +35,7 @@ import io.spine.json.Json.fromJson
 import io.spine.protobuf.Messages
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.config.ConfigurationFormat.JSON
+import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
@@ -133,6 +134,26 @@ private object YamlParser : JacksonParser() {
 }
 
 /**
+ * A parser for the plain string configuration.
+ *
+ * Does not actually parse anything. Simply checks that the expected type of
+ * the configuration is `java.lang.String`. If the type is wrong, throws a [ConfigurationError].
+ */
+private object PlainParser : ConfigurationParser {
+
+    override fun <T> parse(source: ByteSource, cls: Class<T>): T {
+        if (cls != String::class.java) {
+            throw ConfigurationError(
+                "Expected configuration of type `${cls.canonicalName}` but got a plain string."
+            )
+        }
+        val value = source.asCharSource(defaultCharset()).read()
+        @Suppress("UNCHECKED_CAST")
+        return value as T
+    }
+}
+
+/**
  * Obtains a [ConfigurationFormat] from the file extension of the given configuration file.
  *
  * @throws ConfigurationError if the format is not recognized
@@ -152,6 +173,7 @@ internal val ConfigurationFormat.parser: ConfigurationParser
         PROTO_JSON -> ProtoJsonParser
         JSON -> JsonParser
         YAML -> YamlParser
+        PLAIN -> PlainParser
         UNRECOGNIZED, RCF_UNKNOWN -> throw ConfigurationError(
             "Unable to parse configuration: unknown format."
         )

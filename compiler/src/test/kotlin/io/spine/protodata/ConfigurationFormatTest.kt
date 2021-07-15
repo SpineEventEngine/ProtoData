@@ -28,6 +28,7 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import io.spine.protodata.config.ConfigurationFormat.JSON
+import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
@@ -50,5 +51,7 @@ class `ConfigurationFormat should` {
             .containsExactly("pb", "bin")
         assertThat(YAML.extensions)
             .containsExactly("yml", "yaml")
+        assertThat(PLAIN.extensions)
+            .isEmpty()
     }
 }

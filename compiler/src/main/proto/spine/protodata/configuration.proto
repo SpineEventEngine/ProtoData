@@ -89,4 +89,7 @@ enum ConfigurationFormat {
 
     // A plain YAML value.
     YAML = 4 [(extension) = "yaml", (extension) = "yml"];
+
+    // A plain string value.
+    PLAIN = 5;
 }

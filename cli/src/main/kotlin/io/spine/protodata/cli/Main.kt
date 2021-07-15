@@ -46,6 +46,7 @@ import io.spine.protodata.Pipeline
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.config.ConfigurationFormat.JSON
+import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.config.ConfigurationFormat.YAML
 import io.spine.protodata.option.OptionsProvider
@@ -178,10 +179,10 @@ internal class Run(version: String) : CliktCommand(
     """.trimIndent())
     private val configurationFormat: String? by option(ConfigOpt.FORMAT, "--cf", help = """
         The format of the custom configuration.
-        Must be one of: `yaml`, `json`, `proto_json`.
+        Must be one of: `yaml`, `json`, `proto_json`, `plain`.
         Must be used alongside with `--configuration-value`.
     """.trimIndent(), completionCandidates = CompletionCandidates.Fixed(
-        setOf(YAML, JSON, PROTO_JSON).map { it.name.lowercase() }.toSet()
+        setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }.toSet()
     ))
 
     private object ConfigOpt {
