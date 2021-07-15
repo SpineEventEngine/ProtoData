@@ -52,6 +52,9 @@ internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
         raw = event.config
     }
 
+    /**
+     * A repository for the `ConfigView`.
+     */
     internal class Repo : ViewRepository<ConfigId, ConfigView, Config>() {
 
         private val theId = setOf(
