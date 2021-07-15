@@ -37,7 +37,7 @@ public interface Configured {
      * It is the API user's responsibility to know the format of the configuration and provide
      * an appropriate class.
      *
-     * For Protobuf messages, either encoded in binary or in the Protobuf JSON format, the [cls]
+     * For Protobuf messages, encoded either in binary or in the Protobuf JSON format, the [cls]
      * must be a subtype of [com.google.protobuf.Message] and must be able to deserialize from
      * the given binary/JSON.
      *
