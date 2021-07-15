@@ -12,6 +12,13 @@ option java_multiple_files = true;
 import "google/protobuf/empty.proto";
 import "google/protobuf/descriptor.proto";
 
+// A view on the ProtoData user configuration.
+//
+// Describes the parameters passed by the user to ProtoData. The user may then obtain those
+// parameters by finding the instance of this view.
+//
+// There can only ever be one `Config` instance.
+//
 message Config {
     option (entity).kind = PROJECTION;
 
@@ -27,15 +34,28 @@ message Config {
     }
 }
 
+// The ID of the `Config` view.
+//
+// It is required by the Spine framework that the ID was a non-empty message. By convention, there
+// is only one `Config` with the ID value "configuration_instance".
+//
 message ConfigId {
     string value = 1;
 }
 
+// A file which contains the configuration.
+//
+// The format of the configuration is inferred from the file extension.
+//
 message ConfigFile {
 
     string path = 1;
 }
 
+// The raw string representation of the configuration.
+//
+// The format of the raw configuration can be `PROTO_JSON`, `JSON`, or `YAML`.
+//
 message RawConfig {
 
     string value = 1;
@@ -45,18 +65,28 @@ message RawConfig {
 
 extend google.protobuf.EnumValueOptions {
 
-    repeated string extension = 73980;
+    // Possible file extensions associated with a file format.
+    //
+    // Only applicable to the `ConfigurationFormat` enum.
+    //
+    repeated string extension = 73980 [(internal) = true];
 }
 
+// The format of a custom configuration for ProtoData.
+//
 enum ConfigurationFormat {
 
     RCF_UNKNOWN = 0;
 
+    // A Protobuf message encoded in binary.
     PROTO_BINARY = 1 [(extension) = "pb", (extension) = "bin"];
 
+    // A Protobuf message encoded in Protobuf JSON.
     PROTO_JSON = 2 [(extension) = "pb.json"];
 
+    // A plain JSON value.
     JSON = 3 [(extension) = "json"];
 
+    // A plain YAML value.
     YAML = 4 [(extension) = "yaml", (extension) = "yml"];
 }

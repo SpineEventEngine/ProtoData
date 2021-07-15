@@ -26,10 +26,40 @@
 
 package io.spine.protodata.config
 
+/**
+ * A ProtoData component which obtains the configuration provided by the user.
+ */
 public interface Configured {
 
+    /**
+     * Obtains the configuration provided by the user as an instance of the given class.
+     *
+     * It is the API user's responsibility to know the format of the configuration and provide
+     * an appropriate class.
+     *
+     * For Protobuf messages, either encoded in binary or in the Protobuf JSON format, the [cls]
+     * must be a subtype of [com.google.protobuf.Message] and must be able to deserialize from
+     * the given binary/JSON.
+     *
+     * For JSON/YAML configuration, we use [Jackson](https://github.com/FasterXML/jackson) to
+     * deserialize values. Users may use Jackson's API, such as annotations and modules to define
+     * classes to represent the configuration. Modules will be included automatically via classpath
+     * scanning.
+     *
+     * In Kotlin, the simplest way to define a type compatible with a configuration is a data class.
+     * Jackson is capable of working with Kotlin `val`-s, so the data class can be immutable.
+     * In Java, Jackson is capable of working with immutable types as well, however it may require
+     * some annotations to be added to the class. See the Jackson doc for more info.
+     *
+     * @throws io.spine.protodata.ConfigurationError if no configuration is provided to ProtoData
+     */
     public fun <T> configAs(cls: Class<T>): T
 }
 
+/**
+ * Obtains the configuration provided by the user as an instance of the given class.
+ *
+ * This is Kotlin-specific convenience API. See [the general API][Configured.configAs] for more.
+ */
 public inline fun <reified T> Configured.configAs(): T =
     configAs(T::class.java)

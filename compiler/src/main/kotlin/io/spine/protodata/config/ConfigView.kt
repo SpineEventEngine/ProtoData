@@ -24,19 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.config
 
 import io.spine.core.External
 import io.spine.core.Subscribe
-import io.spine.protodata.config.Config
-import io.spine.protodata.config.ConfigId
-import io.spine.protodata.config.FileConfigDiscovered
-import io.spine.protodata.config.RawConfigDiscovered
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.entity.alter
 import io.spine.server.route.EventRouting
 
+/**
+ * A view on the ProtoData user configuration.
+ *
+ * Can contain either a configuration file path or a string value of the configuration.
+ *
+ * @see io.spine.protodata.config.Configured for fetching the value of the user configuration
+ */
 internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
 
     @Subscribe

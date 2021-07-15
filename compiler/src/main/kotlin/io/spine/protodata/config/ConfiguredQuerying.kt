@@ -28,6 +28,7 @@ package io.spine.protodata.config
 
 import com.google.common.io.CharSource
 import com.google.common.io.Files.asByteSource
+import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.Querying
 import io.spine.protodata.config.Config.KindCase.EMPTY
@@ -39,19 +40,28 @@ import io.spine.protodata.theOnly
 import java.nio.charset.Charset.defaultCharset
 import kotlin.io.path.Path
 
+/**
+ * A [Configured] component which accesses the ProtoData configuration via the [Config] view.
+ */
+@Internal
 public interface ConfiguredQuerying : Querying, Configured {
 
     override fun <T> configAs(cls: Class<T>): T {
         val configurations = select<Config>().all()
+        if (configurations.isEmpty()) {
+            noConfig(cls)
+        }
         val config = configurations.theOnly()
         return when (config.kindCase!!) {
             FILE -> parseFile(config.file, cls)
             RAW -> parseRaw(config.raw, cls)
-            EMPTY, KIND_NOT_SET -> throw ConfigurationError(
-                "No configuration provided. Expected `${cls.canonicalName}`."
-            )
+            EMPTY, KIND_NOT_SET -> noConfig(cls)
         }
     }
+}
+
+private fun noConfig(expectedType: Class<*>): Nothing {
+    throw ConfigurationError("No configuration provided. Expected `${expectedType.canonicalName}`.")
 }
 
 private fun <T> parseFile(file: ConfigFile, cls: Class<T>): T {

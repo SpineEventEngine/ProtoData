@@ -28,6 +28,7 @@ package io.spine.protodata
 
 import io.spine.base.EventMessage
 import io.spine.core.UserId
+import io.spine.protodata.config.ConfigView
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.BoundedContext
