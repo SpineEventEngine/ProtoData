@@ -25,7 +25,6 @@
  */
 
 import io.spine.internal.gradle.Scripts
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
@@ -36,21 +35,6 @@ buildscript {
     val spineBaseVersion: String by extra
     dependencies {
         classpath("io.spine.tools:spine-mc-java:$spineBaseVersion")
-    }
-}
-// TODO:2021-06-22:dmytro.dashenkov: https://github.com/SpineEventEngine/ProtoData/issues/24
-plugins {
-    kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = freeCompilerArgs + listOf(
-            "-Xopt-in=kotlin.io.path.ExperimentalPathApi,kotlin.ExperimentalUnsignedTypes",
-            "-Xinline-classes",
-            "-Xjvm-default=all"
-        )
     }
 }
 
