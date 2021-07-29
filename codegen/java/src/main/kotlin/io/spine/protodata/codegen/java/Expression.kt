@@ -264,9 +264,8 @@ public class MessageReference(label: String) : Expression(label) {
     /**
      * Obtains a [FieldAccess] to the field of this message with the given [fieldName].
      */
-    public fun field(fieldName: String, cardinality: CardinalityCase) {
+    public fun field(fieldName: String, cardinality: CardinalityCase): FieldAccess =
         FieldAccess(this, fieldName(fieldName), cardinality)
-    }
 }
 
 /**

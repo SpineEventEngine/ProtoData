@@ -34,6 +34,7 @@ import com.google.protobuf.Empty
 import com.google.protobuf.Timestamp
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.Field
+import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
 import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.test.Incarnation
@@ -75,6 +76,12 @@ class `'Expression' should` {
         }
 
         @Test
+        fun `literal 'this'`() {
+            val expression = This
+            assertCode(expression, "this")
+        }
+
+        @Test
         fun `a number`() {
             val expression = Literal(42)
             assertCode(expression, "42")
@@ -92,6 +99,17 @@ class `'Expression' should` {
             val expression = Literal(anything)
             assertCode(expression, anything)
         }
+    }
+}
+
+class `'This' should` {
+
+    @Test
+    fun `convert to a 'MessageReference'`() {
+        val msg = This.asMessage
+        val field = msg.field("foo", SINGLE)
+        assertThat(field.getter.toCode())
+            .isEqualTo("this.getFoo()")
     }
 }
 
