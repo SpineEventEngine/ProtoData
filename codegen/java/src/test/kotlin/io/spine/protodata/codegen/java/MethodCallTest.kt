@@ -31,7 +31,6 @@ import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.Duration
 import com.google.protobuf.FieldMask
 import com.google.protobuf.Timestamp
-import io.spine.protodata.FieldName
 import io.spine.protodata.test.Sidekick
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -93,7 +92,7 @@ class `'MethodCall' should` {
         @Test
         fun `a field setter by 'FieldName'`() {
             val defaultInstance = ClassName(Timestamp::class).newBuilder()
-            val setter = defaultInstance.chainSet(fieldName("seconds"), Literal(100_000L))
+            val setter = defaultInstance.chainSet("seconds", Literal(100_000L))
             assertThat(setter.toCode())
                 .isEqualTo("${Timestamp::class.qualifiedName}.newBuilder().setSeconds(100000)")
         }
@@ -115,8 +114,3 @@ class `'MethodCall' should` {
         }
     }
 }
-
-private fun fieldName(value: String) = FieldName
-    .newBuilder()
-    .setValue(value)
-    .build()
