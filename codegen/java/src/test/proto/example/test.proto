@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package example;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "org.example";
+option java_outer_classname = "Test";
+option java_multiple_files = false;
+
+message PersonName {
+    string first = 1;
+    string last = 2;
+}
+
+enum AccountType {
+
+    FREE = 0;
+    PAID = 1;
+}
