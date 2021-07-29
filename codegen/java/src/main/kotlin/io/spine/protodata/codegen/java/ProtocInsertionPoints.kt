@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:JvmName("ProtocInsertionPoints")
+
 package io.spine.protodata.codegen.java
 
 import io.spine.protodata.TypeName
