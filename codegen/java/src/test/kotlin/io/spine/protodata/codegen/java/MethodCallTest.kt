@@ -26,6 +26,7 @@
 
 package io.spine.protodata.codegen.java
 
+import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.Duration
@@ -103,6 +104,18 @@ class `'MethodCall' should` {
             val setter = defaultInstance.chainAdd("paths", Literal(3))
             assertThat(setter.toCode())
                 .isEqualTo("${FieldMask::class.qualifiedName}.newBuilder().addPaths(3)")
+        }
+
+        @Test
+        fun `addAll() method`() {
+            val defaultInstance = ClassName(FieldMask::class).newBuilder()
+            val setter = defaultInstance.chainAddAll(
+                "paths",
+                listExpression(Literal(1), Literal(2))
+            )
+            assertThat(setter.toCode())
+                .isEqualTo("${FieldMask::class.qualifiedName}.newBuilder()" +
+                        ".addAllPaths(${ImmutableList::class.qualifiedName}.of(1, 2))")
         }
 
         @Test
