@@ -422,12 +422,20 @@ constructor(
 }
 
 /**
- * Constructs an expression of a list of the given [expressions].
+ * Constructs an expression of a list from the given list of [expressions].
  *
  * The resulting expression always yields an instance of Guava `ImmutableList`.
  */
 public fun listExpression(expressions: List<Expression>): MethodCall =
     immutableListClass.call(OF, expressions)
+
+/**
+ * Constructs an expression of a list of the given [expressions].
+ *
+ * The resulting expression always yields an instance of Guava `ImmutableList`.
+ */
+public fun listExpression(vararg expressions: Expression): MethodCall =
+    listExpression(expressions.toList())
 
 /**
  * Constructs an expression of a map of the given [expressions].
