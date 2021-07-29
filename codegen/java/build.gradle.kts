@@ -40,6 +40,7 @@ dependencies {
     testImplementation(project(":testutil"))
 }
 
+// Allows test suites to fetch generated Java files as resources.
 protobuf {
     generateProtoTasks {
         ofSourceSet("test").forEach { task ->
