@@ -98,6 +98,18 @@ public sealed class Expression(private val code: String): JavaPrintable {
 public object Null : Expression("null")
 
 /**
+ * A literal `this` reference.
+ */
+public object This : Expression("this") {
+
+    /**
+     * Reference to `this` as a message reference.
+     */
+    @get:JvmName("asMessage")
+    public val asMessage: MessageReference = MessageReference(this.toCode())
+}
+
+/**
  * A string literal.
  *
  * Represented as the same value as the given string, wrapped in quotation marks. No extra character
@@ -202,7 +214,6 @@ internal constructor(
     public fun enumValue(number: Int): MethodCall =
         call("forNumber", listOf(Literal(number)))
 
-
     /**
      * Constructs a call to a static method of this class.
      *
@@ -210,6 +221,7 @@ internal constructor(
      * @param arguments the method arguments
      * @param generics the method type parameters
      */
+    @JvmOverloads
     public fun call(
         name: String,
         arguments: List<Expression> = listOf(),
@@ -248,6 +260,12 @@ public class MessageReference(label: String) : Expression(label) {
      */
     public fun field(field: Field): FieldAccess =
         FieldAccess(this, field.name, field.cardinalityCase)
+
+    /**
+     * Obtains a [FieldAccess] to the field of this message with the given [fieldName].
+     */
+    public fun field(fieldName: String, cardinality: CardinalityCase): FieldAccess =
+        FieldAccess(this, fieldName(fieldName), cardinality)
 }
 
 /**
@@ -381,40 +399,43 @@ constructor(
     /**
      * Constructs an expression chaining a setter call.
      */
-    public fun chainSet(name: FieldName, value: Expression): MethodCall =
-        FieldAccess(this, name).setter(value)
-
-    /**
-     * Constructs an expression chaining a setter call.
-     */
     public fun chainSet(name: String, value: Expression): MethodCall =
         FieldAccess(this, fieldName(name)).setter(value)
 
     /**
-     * Constructs an expression chaining a call of an `addField(..)` method.
+     * Constructs an expression chaining a call of an `addField(...)` method.
      */
     public fun chainAdd(name: String, value: Expression): MethodCall =
         FieldAccess(this, fieldName(name)).add(value)
+
+    /**
+     * Constructs an expression chaining a call of an `addAllField(...)` method.
+     */
+    public fun chainAddAll(name: String, value: Expression): MethodCall =
+        FieldAccess(this, fieldName(name)).addAll(value)
 
     /**
      * Constructs an expression chaining a call of the `build()` method.
      */
     public fun chainBuild(): MethodCall =
         chain("build")
-
-    private fun fieldName(value: String) = FieldName
-        .newBuilder()
-        .setValue(value)
-        .build()
 }
+
+/**
+ * Constructs an expression of a list from the given list of [expressions].
+ *
+ * The resulting expression always yields an instance of Guava `ImmutableList`.
+ */
+public fun listExpression(expressions: List<Expression>): MethodCall =
+    immutableListClass.call(OF, expressions)
 
 /**
  * Constructs an expression of a list of the given [expressions].
  *
  * The resulting expression always yields an instance of Guava `ImmutableList`.
  */
-public fun listExpression(expressions: List<Expression>): MethodCall =
-    immutableListClass.call(OF, expressions)
+public fun listExpression(vararg expressions: Expression): MethodCall =
+    listExpression(expressions.toList())
 
 /**
  * Constructs an expression of a map of the given [expressions].
@@ -435,8 +456,8 @@ public fun mapExpression(
     if (expressions.isEmpty()) {
         return immutableMapClass.call(OF)
     }
-    checkNotNull(keyType)
-    checkNotNull(valueType)
+    checkNotNull(keyType) { "Map key type is not set." }
+    checkNotNull(valueType) { "Map value type is not set." }
     var call = immutableMapClass.call("builder", generics = listOf(keyType, valueType))
     expressions.forEach { (k, v) ->
         call = call.chain("put", listOf(k, v))
@@ -455,3 +476,8 @@ private fun List<ClassName>.genericTypes() =
  */
 private fun List<Expression>.formatParams() =
     joinToString { it.toCode() }
+
+private fun fieldName(value: String) = FieldName
+    .newBuilder()
+    .setValue(value)
+    .build()
