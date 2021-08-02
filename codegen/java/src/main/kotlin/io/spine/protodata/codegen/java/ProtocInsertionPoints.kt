@@ -64,6 +64,10 @@ public enum class TypedInsertionPoint {
      * Only available for message types.
      *
      * Remember to add a comma after the interface name when using this insertion point.
+     * For example:
+     * ```
+     *   corp.acme.BuilderMixin,
+     * ```
      */
     MESSAGE_IMPLEMENTS,
 
@@ -73,6 +77,10 @@ public enum class TypedInsertionPoint {
      * Only available for message types.
      *
      * Remember to add a comma after the interface name when using this insertion point.
+     * For example:
+     * ```
+     *   corp.acme.BuilderMixin,
+     * ```
      */
     BUILDER_IMPLEMENTS;
 
