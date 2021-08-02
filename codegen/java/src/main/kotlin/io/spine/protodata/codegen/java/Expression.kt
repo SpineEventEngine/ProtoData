@@ -284,14 +284,7 @@ internal constructor(
      * A getter expression for the associated field.
      */
     public val getter: MethodCall
-        get() {
-            val simpleAccess = MethodCall(message, getterName)
-            return when (cardinality) {
-                LIST -> immutableListClass.call(COPY_OF, listOf(simpleAccess))
-                MAP -> immutableMapClass.call(COPY_OF, listOf(simpleAccess))
-                else -> simpleAccess
-            }
-        }
+        get() = MethodCall(message, getterName)
 
     /**
      * Constructs a setter expression for the associated field.
