@@ -55,9 +55,7 @@ class `'FieldAccess' should` {
         val access = listField().access()
         assertCode(
             access.getter,
-            prefix = "$IMMUTABLE_LIST.copyOf(",
             accessor = "getRouteList()",
-            suffix = ")"
         )
     }
 
@@ -66,9 +64,7 @@ class `'FieldAccess' should` {
         val access = mapField().access()
         assertCode(
             access.getter,
-            prefix = "$IMMUTABLE_MAP.copyOf(",
             accessor = "getAttributesMap()",
-            suffix = ")"
         )
     }
 
@@ -147,10 +143,8 @@ private fun oneofField() = Field
 
 private fun assertCode(
     expression: Expression,
-    accessor: String,
-    prefix: String = "",
-    suffix: String = ""
+    accessor: String
 ) {
     assertThat(expression.toCode())
-        .isEqualTo("${prefix}msg.${accessor}${suffix}")
+        .isEqualTo("msg.${accessor}")
 }
