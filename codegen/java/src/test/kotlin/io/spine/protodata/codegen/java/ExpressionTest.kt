@@ -26,8 +26,6 @@
 
 package io.spine.protodata.codegen.java
 
-import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.ByteString
 import com.google.protobuf.Empty
@@ -143,8 +141,7 @@ class `'MessageReference' should` {
             .setList(Empty.getDefaultInstance())
             .build()
         val fieldAccess = messageReference.field(field)
-        assertCode(fieldAccess.getter,
-                   "${ImmutableList::class.qualifiedName}.copyOf(msg.getBazList())")
+        assertCode(fieldAccess.getter, "msg.getBazList()")
     }
 
     @Test
@@ -156,8 +153,7 @@ class `'MessageReference' should` {
             .setMap(Field.OfMap.newBuilder().setKeyType(TYPE_STRING))
             .build()
         val fieldAccess = messageReference.field(field)
-        assertCode(fieldAccess.getter,
-                   "${ImmutableMap::class.qualifiedName}.copyOf(msg.getBazMap())")
+        assertCode(fieldAccess.getter, "msg.getBazMap()")
     }
 }
 
