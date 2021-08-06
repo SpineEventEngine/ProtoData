@@ -155,12 +155,12 @@ public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>
 /**
  * Obtains the name of this message type as a [TypeName].
  */
-internal fun Descriptor.name(): TypeName = buildTypeName(name, file, containingType)
+public fun Descriptor.name(): TypeName = buildTypeName(name, file, containingType)
 
 /**
  * Obtains the name of this enum type as a [TypeName].
  */
-internal fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containingType)
+public fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containingType)
 
 private fun buildTypeName(simpleName: String,
                           file: FileDescriptor,
