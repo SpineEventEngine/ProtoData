@@ -73,11 +73,11 @@ public fun EnumType.typeUrl(): String = name.typeUrl()
  * Obtains the package and the name from this `TypeName`.
  */
 public fun TypeName.qualifiedName(): String =
-    "${packageName}.${nestingTypesInfix()}${simpleName}"
+    listOf(packageName, nestingTypesInfix(), simpleName).joinToString(separator = ".")
 
 private fun TypeName.nestingTypesInfix() =
     if (nestingTypeNameCount > 0) {
-        nestingTypeNameList.joinToString(separator = ".") + "."
+        nestingTypeNameList.joinToString(separator = ".")
     } else {
         ""
     }
