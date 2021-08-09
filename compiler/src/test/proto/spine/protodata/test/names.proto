@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package spine.protodata.test;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.test";
+option java_outer_classname = "NamesProto";
+option java_multiple_files = true;
+
+message TopLevelMessage {
+
+    message NestedMessage {
+
+        message VeryNestedMessage {
+        }
+    }
+
+    enum NestedEnum {
+
+        TLM_NE_DEFAULT_VALUE = 0;
+    }
+}
+
+enum TopLevelEnum {
+
+    TLE_DEFAULT_VALUE = 0;
+}

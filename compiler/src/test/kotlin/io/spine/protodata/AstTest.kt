@@ -35,6 +35,10 @@ import io.spine.protodata.CallCardinality.SERVER_STREAMING
 import io.spine.protodata.CallCardinality.UNARY
 import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.test.TopLevelEnum
+import io.spine.protodata.test.TopLevelMessage
+import io.spine.protodata.test.TopLevelMessage.NestedEnum
+import io.spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -110,6 +114,38 @@ class `AST extensions should` {
         private fun method(name: String): MethodDescriptor {
             val service = DoctorProto.getDescriptor().services[0]
             return service.methods.find { it.name == name }!!
+        }
+    }
+
+    @Nested
+    inner class `Generate 'TypeName'` {
+
+        @Test
+        fun `for a top-level message`() {
+            val name = TopLevelMessage.getDescriptor().name()
+            assertThat(name.qualifiedName())
+                .isEqualTo("spine.protodata.test.TopLevelMessage")
+        }
+
+        @Test
+        fun `for a top-level enum`() {
+            val name = TopLevelEnum.getDescriptor().name()
+            assertThat(name.qualifiedName())
+                .isEqualTo("spine.protodata.test.TopLevelEnum")
+        }
+
+        @Test
+        fun `for a nested message`() {
+            val name = VeryNestedMessage.getDescriptor().name()
+            assertThat(name.qualifiedName())
+                .isEqualTo("spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage")
+        }
+
+        @Test
+        fun `for a nested enum`() {
+            val name = NestedEnum.getDescriptor().name()
+            assertThat(name.qualifiedName())
+                .isEqualTo("spine.protodata.test.TopLevelMessage.NestedEnum")
         }
     }
 }
