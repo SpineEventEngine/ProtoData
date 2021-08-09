@@ -25,12 +25,10 @@
  */
 
 import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.Scripts
 
 apply {
     plugin("io.spine.mc-java")
     plugin(Protobuf.GradlePlugin.id)
-    from(Scripts.modelCompiler(project))
 }
 
 dependencies {
