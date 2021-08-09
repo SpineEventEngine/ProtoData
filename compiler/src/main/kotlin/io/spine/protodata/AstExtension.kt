@@ -70,17 +70,15 @@ public fun MessageType.typeUrl(): String = name.typeUrl()
 public fun EnumType.typeUrl(): String = name.typeUrl()
 
 /**
- * Obtains the package and the name from this `TypeName`.
+ * Obtains the fully qualified name from this `TypeName`.
  */
-public fun TypeName.qualifiedName(): String =
-    listOf(packageName, nestingTypesInfix(), simpleName).joinToString(separator = ".")
-
-private fun TypeName.nestingTypesInfix() =
-    if (nestingTypeNameCount > 0) {
-        nestingTypeNameList.joinToString(separator = ".")
-    } else {
-        ""
-    }
+public fun TypeName.qualifiedName(): String {
+    val names = mutableListOf<String>()
+    names.add(packageName)
+    names.addAll(nestingTypeNameList)
+    names.add(simpleName)
+    return names.joinToString(separator = ".")
+}
 
 /**
  * Obtains the type URl from this `TypeName`.
