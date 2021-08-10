@@ -30,6 +30,7 @@ import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.Scripts
+import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 
 @Suppress("RemoveRedundantQualifierName")
@@ -51,6 +52,7 @@ subprojects {
     }
 
     repositories.applyStandard()
+    repositories.applyGitHubPackages(rootProject)
 
     protobuf {
         protoc {

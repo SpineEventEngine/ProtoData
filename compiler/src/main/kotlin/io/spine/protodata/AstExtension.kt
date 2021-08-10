@@ -70,12 +70,18 @@ public fun MessageType.typeUrl(): String = name.typeUrl()
 public fun EnumType.typeUrl(): String = name.typeUrl()
 
 /**
- * Obtains the package and the name from this `TypeName`.
+ * Obtains the fully qualified name from this `TypeName`.
  */
-public fun TypeName.qualifiedName(): String = "${packageName}.${simpleName}"
+public fun TypeName.qualifiedName(): String {
+    val names = mutableListOf<String>()
+    names.add(packageName)
+    names.addAll(nestingTypeNameList)
+    names.add(simpleName)
+    return names.joinToString(separator = ".")
+}
 
 /**
- * Obtains the type URl from this `TypeName`.
+ * Obtains the type URL from this `TypeName`.
  *
  * A type URL contains the type URL prefix and the qualified name of the type separated by
  * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
@@ -147,12 +153,12 @@ public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>
 /**
  * Obtains the name of this message type as a [TypeName].
  */
-internal fun Descriptor.name(): TypeName = buildTypeName(name, file, containingType)
+public fun Descriptor.name(): TypeName = buildTypeName(name, file, containingType)
 
 /**
  * Obtains the name of this enum type as a [TypeName].
  */
-internal fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containingType)
+public fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containingType)
 
 private fun buildTypeName(simpleName: String,
                           file: FileDescriptor,

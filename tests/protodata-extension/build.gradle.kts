@@ -24,8 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.gradle.Scripts
-
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
@@ -40,7 +38,6 @@ buildscript {
 
 apply {
     plugin("io.spine.mc-java")
-    from(Scripts.modelCompiler(project))
 }
 
 dependencies {

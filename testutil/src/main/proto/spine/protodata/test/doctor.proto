@@ -10,7 +10,6 @@ option java_outer_classname = "DoctorProto";
 option java_multiple_files = true;
 
 import "spine/time/time.proto";
-import "spine/people/person_name.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
@@ -80,11 +79,16 @@ service DoctorsPhone {
         option idempotency_level = NO_SIDE_EFFECTS;
     };
 
-    rpc rescue_call(stream spine.people.PersonName) returns (Yes);
+    rpc rescue_call(stream PersonName) returns (Yes);
 
     rpc where_are_you(google.protobuf.Empty) returns (stream google.protobuf.StringValue);
 
-    rpc which_actor(stream Episode) returns (stream spine.people.PersonName);
+    rpc which_actor(stream Episode) returns (stream PersonName);
+}
+
+message PersonName {
+
+    string name = 1;
 }
 
 // A test type ending with an underscore.
