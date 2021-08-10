@@ -132,7 +132,7 @@ public abstract class LaunchProtoData : JavaExec() {
         }
         classpath(protoDataConfig)
         classpath(userClasspathConfig)
-        main = "io.spine.protodata.cli.MainKt"
+        mainClass.set("io.spine.protodata.cli.MainKt")
         args(command)
 
         doFirst(CleanAction())
