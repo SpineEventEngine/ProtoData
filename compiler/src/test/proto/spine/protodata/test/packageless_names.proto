@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "io.spine.protodata.test.packageless";
+option java_outer_classname = "PackagelessNamesProto";
+option java_multiple_files = true;
+
+message GlobalMessage {
+    message LocalMessage {
+    }
+}

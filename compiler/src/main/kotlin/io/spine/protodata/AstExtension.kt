@@ -77,7 +77,9 @@ public fun TypeName.qualifiedName(): String {
     names.add(packageName)
     names.addAll(nestingTypeNameList)
     names.add(simpleName)
-    return names.joinToString(separator = ".")
+    return names
+        .filter { it.isNotEmpty() }
+        .joinToString(separator = ".")
 }
 
 /**
