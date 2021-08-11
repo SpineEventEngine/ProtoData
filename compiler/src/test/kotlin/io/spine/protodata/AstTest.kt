@@ -39,6 +39,8 @@ import io.spine.protodata.test.TopLevelEnum
 import io.spine.protodata.test.TopLevelMessage
 import io.spine.protodata.test.TopLevelMessage.NestedEnum
 import io.spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage
+import io.spine.protodata.test.packageless.GlobalMessage
+import io.spine.protodata.test.packageless.GlobalMessage.LocalMessage
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -146,6 +148,20 @@ class `AST extensions should` {
             val name = NestedEnum.getDescriptor().name()
             assertThat(name.qualifiedName())
                 .isEqualTo("spine.protodata.test.TopLevelMessage.NestedEnum")
+        }
+
+        @Test
+        fun `for a top-level message without a package`() {
+            val name = GlobalMessage.getDescriptor().name()
+            assertThat(name.typeUrl())
+                .isEqualTo("type.googleapis.com/GlobalMessage")
+        }
+
+        @Test
+        fun `for a nested message without a package`() {
+            val name = LocalMessage.getDescriptor().name()
+            assertThat(name.qualifiedName())
+                .isEqualTo("GlobalMessage.LocalMessage")
         }
     }
 }

@@ -129,6 +129,7 @@ public class Extension(private val project: Project) {
 
     private val srcBaseDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(provider {
+            @Suppress("DEPRECATION") // Protobuf Gradle plugin must migrate to extensions.
             val protobuf = convention.getPlugin<ProtobufConvention>().protobuf
             layout.projectDirectory.dir(protobuf.generatedFilesBaseDir)
         })
