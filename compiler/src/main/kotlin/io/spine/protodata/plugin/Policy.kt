@@ -31,13 +31,13 @@ import com.google.protobuf.Message
 import io.spine.base.EntityState
 import io.spine.base.EventMessage
 import io.spine.core.ContractFor
-import io.spine.core.Subscribe
 import io.spine.logging.Logging
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.QueryingClient
 import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.server.BoundedContext
 import io.spine.server.event.AbstractEventReactor
+import io.spine.server.event.React
 import io.spine.server.type.EventClass
 
 /**
@@ -92,7 +92,7 @@ public abstract class Policy<E : EventMessage> :
     /**
      * Handles an event and produces some number of events in responce.
      */
-    @ContractFor(handler = Subscribe::class)
+    @ContractFor(handler = React::class)
     public abstract fun whenever(event: E): Iterable<Message>
 
     final override fun registerWith(context: BoundedContext) {
