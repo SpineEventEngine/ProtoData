@@ -29,7 +29,7 @@ package io.spine.protodata.codegen.java.suppress
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.renderer.SourceSet
 
-private val SUPPRESSION = "${SuppressWarnings::class.java.simpleName}(\"ALL\")"
+private val SUPPRESSION = "@${SuppressWarnings::class.java.simpleName}(\"ALL\")"
 
 /**
  * Suppresses all the warnings in the generated code.
