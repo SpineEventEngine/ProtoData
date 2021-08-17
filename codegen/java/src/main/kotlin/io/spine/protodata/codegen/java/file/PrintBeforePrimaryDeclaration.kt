@@ -24,34 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java.suppress
+package io.spine.protodata.codegen.java.file
 
-import io.spine.protodata.codegen.java.JavaRenderer
-import io.spine.protodata.renderer.SourceSet
-
-private val SUPPRESSION = "@${SuppressWarnings::class.java.simpleName}(\"ALL\")"
+import io.spine.protodata.language.CommonLanguages
+import io.spine.protodata.renderer.InsertionPoint
+import io.spine.protodata.renderer.InsertionPointPrinter
 
 /**
- * Suppresses all the warnings in the generated code.
+ * Prints the [BeforePrimaryDeclaration] insertion point.
  *
- * Warnings in the generated code do no good for the user, as they cannot be fixed without changing
- * the code generation logic. We recommend suppressing them.
- *
- * In order to work, this renderer needs the [BeforePrimaryDeclaration] insertion point. Add
- * the [PrintBeforePrimaryDeclaration] before this renderer to make sure the insertion point are
- * present in the source files.
- *
- * *Tradeoff.* The negative side of using this renderer is in that the contents of all the files
- * are altered. Typically, ProtoData performs file loading and insertion point lookup lazily, as
- * those might be costly operations. This renderer undoes this effort by "touching" each file
- * in the source set.
+ * The insertion point is present in all the Java files.
  */
-@Suppress("unused") // Accessed by ProtoData via reflection.
-public class SuppressAll : JavaRenderer() {
+public class PrintBeforePrimaryDeclaration : InsertionPointPrinter(CommonLanguages.Java) {
 
-    override fun render(sources: SourceSet) {
-        sources.forEach {
-            it.at(BeforePrimaryDeclaration).add(SUPPRESSION)
-        }
+    override fun supportedInsertionPoints(): Set<InsertionPoint> {
+        return setOf(BeforePrimaryDeclaration)
     }
 }

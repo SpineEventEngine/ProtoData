@@ -29,6 +29,9 @@ package io.spine.protodata.codegen.java.suppress
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.Pipeline
+import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
+import io.spine.protodata.config.Configuration
+import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.renderer.SourceSet
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE_NEW
@@ -40,7 +43,7 @@ import org.junit.jupiter.api.io.TempDir
 
 private const val JAVA_FILE = "java/org/example/Test.java"
 
-class `'SuppressAll' should` {
+class `'SuppressRenderer' should` {
 
     private lateinit var sourceSet: SourceSet
 
@@ -54,10 +57,10 @@ class `'SuppressAll' should` {
     }
 
     @Test
-    fun `add the 'BeforePrimaryDeclaration' insertion point`() {
+    fun `suppress ALL warnings`() {
         Pipeline(
             plugins = listOf(),
-            renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressAll()),
+            renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer()),
             sourceSet = sourceSet,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
@@ -65,6 +68,26 @@ class `'SuppressAll' should` {
             .file(Path(JAVA_FILE))
             .code()
         assertThat(code)
-            .contains("@SuppressWarnings(\"ALL\")")
+            .contains("@SuppressWarnings({\"ALL\"})")
+    }
+
+    @Test
+    fun `suppress only selected warnings`() {
+        val deprecation = "deprecation"
+        val stringEqualsEmptyString = "StringEqualsEmptyString"
+        Pipeline(
+            plugins = listOf(),
+            renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer()),
+            sourceSet = sourceSet,
+            request = CodeGeneratorRequest.getDefaultInstance(),
+            config = Configuration.rawValue("""
+                {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
+            """.trimIndent(), PROTO_JSON)
+        )()
+        val code = sourceSet
+            .file(Path(JAVA_FILE))
+            .code()
+        assertThat(code)
+            .contains("""@SuppressWarnings({"deprecation", "StringEqualsEmptyString"})""")
     }
 }

@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java.suppress
+package io.spine.protodata.codegen.java.file
 
 import io.spine.logging.Logging
 import io.spine.protodata.renderer.InsertionPoint
