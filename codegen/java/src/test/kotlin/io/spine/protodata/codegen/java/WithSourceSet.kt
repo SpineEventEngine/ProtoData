@@ -35,6 +35,9 @@ import org.junit.jupiter.api.io.TempDir
 
 internal const val JAVA_FILE = "java/org/example/Test.java"
 
+/**
+ * A base for test cases that require a source set with a Java file to run.
+ */
 abstract class WithSourceSet {
 
     protected lateinit var sourceSet: SourceSet
