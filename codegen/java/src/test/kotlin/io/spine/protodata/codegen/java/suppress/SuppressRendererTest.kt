@@ -29,32 +29,15 @@ package io.spine.protodata.codegen.java.suppress
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.Pipeline
+import io.spine.protodata.codegen.java.JAVA_FILE
+import io.spine.protodata.codegen.java.WithSourceSet
 import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.renderer.SourceSet
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption.CREATE_NEW
 import kotlin.io.path.Path
-import kotlin.io.path.writeText
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 
-private const val JAVA_FILE = "java/org/example/Test.java"
-
-class `'SuppressRenderer' should` {
-
-    private lateinit var sourceSet: SourceSet
-
-    @BeforeEach
-    fun createFile(@TempDir path: Path) {
-        val targetFile = path.resolve(JAVA_FILE)
-        val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
-        targetFile.parent.toFile().mkdirs()
-        targetFile.writeText(contents, options = arrayOf(CREATE_NEW))
-        sourceSet = SourceSet.from(path, path)
-    }
+class `'SuppressRenderer' should` : WithSourceSet() {
 
     @Test
     fun `suppress ALL warnings`() {

@@ -35,27 +35,23 @@ import io.spine.protodata.codegen.java.TypedInsertionPoint.ENUM_SCOPE
 import io.spine.protodata.codegen.java.TypedInsertionPoint.MESSAGE_IMPLEMENTS
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.renderer.SourceSet
 import io.spine.protodata.renderer.codeLine
 import kotlin.io.path.Path
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-private const val JAVA_FILE = "java/org/example/Test.java"
 private const val PACKAGE = "example"
 private val PERSON_NAME = typeName(PACKAGE, "PersonName")
 private val ACCOUNT_TYPE = typeName(PACKAGE, "AccountType")
 
-class `'SourceFile' with Java should` {
+class `'SourceFile' with Java should` : WithSourceSet() {
 
     private lateinit var file: SourceFile
 
     @BeforeEach
     fun createFile() {
-        val sourceSet = SourceSet.empty(Path("./test"))
-        val javaCode = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
-        file = sourceSet.createFile(Path(JAVA_FILE), javaCode)
+        file = sourceSet.file(Path(JAVA_FILE))
     }
 
     @Nested
