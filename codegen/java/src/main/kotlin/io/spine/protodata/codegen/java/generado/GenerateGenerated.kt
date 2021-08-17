@@ -24,21 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java.suppress
+package io.spine.protodata.codegen.java.generado
 
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
-import io.spine.protodata.config.configAs
 import io.spine.protodata.renderer.SourceSet
+import javax.annotation.Generated
 
 /**
- * Suppresses warnings in the generated code.
- *
- * If no configuration is provided to ProtoData, suppresses all the warnings with `"ALL"`.
- * Otherwise, parses the config as a [SuppressConfig] and suppresses only the specified warnings.
- *
- * Warnings in the generated code do no good for the user, as they cannot be fixed without changing
- * the code generation logic. We recommend suppressing them.
+ * Adds the `javax.annotation.Generated` annotation to the top-level declaration of each Java file
+ * in the source set.
  *
  * In order to work, this renderer needs the [BeforePrimaryDeclaration] insertion point. Add
  * the [io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration] before this renderer
@@ -49,20 +44,15 @@ import io.spine.protodata.renderer.SourceSet
  * those might be costly operations. This renderer undoes this effort by "touching" each file
  * in the source set.
  *
- * @see io.spine.protodata.codegen.java.generado.GenerateGenerated
+ * @see io.spine.protodata.codegen.java.suppress.SuppressRenderer
  */
-public class SuppressRenderer : JavaRenderer() {
+public class GenerateGenerated : JavaRenderer() {
 
     override fun render(sources: SourceSet) {
-        val warnings = if (configIsPresent()) {
-            configAs<SuppressConfig>().warnings.valueList
-        } else {
-            listOf("ALL")
-        }
-        val warningsList = warnings.joinToString { '"' + it + '"' }
-        val suppression = "@${SuppressWarnings::class.java.simpleName}({$warningsList})"
         sources.forEach {
-            it.at(BeforePrimaryDeclaration).add(suppression)
+            it.at(BeforePrimaryDeclaration).add(
+                "@${Generated::class.qualifiedName}(\"by the Protobuf Compiler and/or ProtoData\")"
+            )
         }
     }
 }
