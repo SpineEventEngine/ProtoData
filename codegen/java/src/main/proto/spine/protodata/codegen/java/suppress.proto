@@ -25,6 +25,7 @@ message SuppressConfig {
     Warnings warnings = 42;
 }
 
+// Java compiler and inspection tools warnings that can be suppressed.
 message Warnings {
 
     repeated string value = 1;
