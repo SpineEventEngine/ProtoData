@@ -50,7 +50,7 @@ class `'GenerateGenerated' renderer should` : WithSourceSet() {
             .code()
         assertThat(code)
             .contains("""
-                @javax.annotation.Generated("by the Protobuf Compiler and/or ProtoData")
+                @javax.annotation.Generated("${GenerateGenerated.GENERATORS}")
             """.trimIndent())
     }
 }
