@@ -58,7 +58,7 @@ public abstract class InsertionPointPrinter(
             supportedInsertionPoints().forEach { point ->
                 val lineNumber = point.locate(lines)
                 val comment = target.comment(point.codeLine)
-                when(lineNumber) {
+                when (lineNumber) {
                     is LineIndex -> {
                         val index = lineNumber.value
                         checkPositionIndex(index, lines.size, "Line number")

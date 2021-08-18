@@ -24,6 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.32"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.40"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.41"
+package io.spine.protodata.codegen.java.file
+
+import io.spine.protodata.language.CommonLanguages
+import io.spine.protodata.renderer.InsertionPoint
+import io.spine.protodata.renderer.InsertionPointPrinter
+
+/**
+ * Prints the [BeforePrimaryDeclaration] insertion point.
+ *
+ * The insertion point is present in all the Java files.
+ */
+public class PrintBeforePrimaryDeclaration : InsertionPointPrinter(CommonLanguages.Java) {
+
+    override fun supportedInsertionPoints(): Set<InsertionPoint> {
+        return setOf(BeforePrimaryDeclaration)
+    }
+}

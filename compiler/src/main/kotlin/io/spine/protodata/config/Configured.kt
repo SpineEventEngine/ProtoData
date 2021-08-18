@@ -54,6 +54,13 @@ public interface Configured {
      * @throws io.spine.protodata.ConfigurationError if no configuration is provided to ProtoData
      */
     public fun <T> configAs(cls: Class<T>): T
+
+    /**
+     * Checks if ProtoData was supplied with any configuration.
+     *
+     * @return `true` if the caller provided the config, `false` otherwise
+     */
+    public fun configIsPresent(): Boolean
 }
 
 /**

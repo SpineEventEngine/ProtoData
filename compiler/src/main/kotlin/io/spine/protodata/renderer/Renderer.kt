@@ -68,4 +68,6 @@ protected constructor(
     }
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
+
+    final override fun configIsPresent(): Boolean = super.configIsPresent()
 }

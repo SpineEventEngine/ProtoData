@@ -58,6 +58,11 @@ public interface ConfiguredQuerying : Querying, Configured {
             EMPTY, KIND_NOT_SET -> noConfig(cls)
         }
     }
+
+    override fun configIsPresent(): Boolean {
+        val configurations = select<Config>().all()
+        return configurations.isNotEmpty()
+    }
 }
 
 private fun noConfig(expectedType: Class<*>): Nothing {

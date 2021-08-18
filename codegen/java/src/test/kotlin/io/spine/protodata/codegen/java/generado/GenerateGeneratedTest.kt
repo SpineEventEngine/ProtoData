@@ -24,6 +24,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.32"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.40"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.41"
+package io.spine.protodata.codegen.java.generado
+
+import com.google.common.truth.Truth.assertThat
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.protodata.Pipeline
+import io.spine.protodata.codegen.java.JAVA_FILE
+import io.spine.protodata.codegen.java.WithSourceSet
+import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
+import kotlin.io.path.Path
+import org.junit.jupiter.api.Test
+
+class `'GenerateGenerated' renderer should` : WithSourceSet() {
+
+    @Test
+    fun `add the annotation`() {
+        Pipeline(
+            plugins = listOf(),
+            renderers = listOf(PrintBeforePrimaryDeclaration(), GenerateGenerated()),
+            sourceSet = sourceSet,
+            request = CodeGeneratorRequest.getDefaultInstance()
+        )()
+        val code = sourceSet
+            .file(Path(JAVA_FILE))
+            .code()
+        assertThat(code)
+            .contains("""
+                @javax.annotation.Generated("${GenerateGenerated.GENERATORS}")
+            """.trimIndent())
+    }
+}
