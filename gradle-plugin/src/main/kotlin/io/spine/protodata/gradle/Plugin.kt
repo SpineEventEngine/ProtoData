@@ -170,10 +170,10 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
     }
 
 private fun launchTaskName(sourceSet: SourceSet): String =
-    "launchProtoData${sourceSet.name.capitalize()}"
+    "launchProtoData${sourceSet.name.replaceFirstChar { it.toUpperCase() }}"
 
 private fun cleanTaskName(sourceSet: SourceSet): String =
-    "cleanProtoData${sourceSet.name.capitalize()}"
+    "cleanProtoData${sourceSet.name.replaceFirstChar { it.toUpperCase() }}"
 
 private fun Project.configureSourceSets(extension: Extension) {
     afterEvaluate {
