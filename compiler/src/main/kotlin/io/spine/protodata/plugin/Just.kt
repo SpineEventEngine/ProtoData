@@ -34,4 +34,18 @@ import io.spine.server.tuple.Tuple
  *
  * Used when returning an iterable from a handler method for better readability over `List<E>`.
  */
-public class Just<E : EventMessage>(event: E) : Tuple(event)
+public class Just<E : EventMessage>(event: E) : Tuple(event) {
+
+    public companion object {
+
+        /**
+         * A factory method for Java.
+         *
+         * Prefer the primary constructor in Kotlin.
+         *
+         * This method is intended to be imported statically.
+         */
+        @JvmStatic
+        public fun <E : EventMessage> just(event: E): Just<E> = Just(event)
+    }
+}

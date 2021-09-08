@@ -24,6 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.0.33"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.53"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.54"
+package io.spine.protodata.plugin
+
+import com.google.common.truth.Truth.assertThat
+import io.spine.base.Identifier.newUuid
+import io.spine.protodata.test.ProjectCreated
+import org.junit.jupiter.api.Test
+
+class `Just should` {
+
+    @Test
+    fun `store one value`() {
+        val just = Just(validEvent)
+        assertThat(just)
+            .containsExactly(validEvent)
+    }
+
+    @Test
+    fun `initialize via static method`() {
+        val just = Just.just(validEvent)
+        assertThat(just)
+            .containsExactly(validEvent)
+    }
+}
+
+private val validEvent = ProjectCreated.newBuilder()
+    .setId(newUuid())
+    .vBuild()

@@ -93,7 +93,7 @@ public abstract class Policy<E : EventMessage> :
      * Handles an event and produces some number of events in responce.
      */
     @ContractFor(handler = React::class)
-    public abstract fun whenever(event: E): Iterable<Message>
+    protected abstract fun whenever(event: E): Iterable<Message>
 
     final override fun registerWith(context: BoundedContext) {
         super.registerWith(context)
