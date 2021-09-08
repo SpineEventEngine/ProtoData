@@ -48,7 +48,6 @@ class `Just should` {
     }
 }
 
-private val validEvent = ProjectCreated
-    .newBuilder()
+private val validEvent = ProjectCreated.newBuilder()
     .setId(newUuid())
-    .build()
+    .vBuild()
