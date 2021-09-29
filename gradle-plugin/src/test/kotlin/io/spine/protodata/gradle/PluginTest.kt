@@ -43,7 +43,6 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-@Disabled("no easy way to fetch `base-types` in a test project for now")
 @SlowTest
 class `ProtoData Gradle plugin should` {
 

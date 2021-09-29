@@ -65,7 +65,10 @@ plugins {
 }
 
 spinePublishing {
-    targetRepositories.add(PublishingRepos.gitHub("ProtoData"))
+    targetRepositories.addAll(
+        PublishingRepos.gitHub("ProtoData"),
+        PublishingRepos.cloudArtifactRegistry
+    )
     projectsToPublish.addAll(
         "cli",
         "compiler",

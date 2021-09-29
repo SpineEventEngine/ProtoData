@@ -27,18 +27,25 @@
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+
 plugins {
     java
     id("com.google.protobuf")
     id("io.spine.proto-data")
 }
 
+fun RepositoryHandler.addCouple(baseUrl: String) {
+    maven { url = uri("$baseUrl/releases") }
+    maven { url = uri("$baseUrl/snapshots") }
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
 
-    maven { url = uri("https://spine.mycloudrepo.io/public/repositories/releases") }
-    maven { url = uri("https://spine.mycloudrepo.io/public/repositories/snapshots") }
+    addCouple("https://spine.mycloudrepo.io/public/repositories")
+    addCouple("https://europe-maven.pkg.dev/spine-event-engine")
 }
 
 protoData {
