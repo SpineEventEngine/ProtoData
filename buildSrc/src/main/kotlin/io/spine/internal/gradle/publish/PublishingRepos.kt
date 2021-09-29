@@ -24,31 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.ofSourceSet
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.JavaPoet
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package io.spine.internal.gradle.publish
 
-plugins {
-    `build-proto-model`
+import io.spine.internal.gradle.Repository
+
+/**
+ * Repositories to which we may publish.
+ */
+object PublishingRepos {
+
+    @Suppress("HttpUrlsUsage") // HTTPS is not supported by this repository.
+    val mavenTeamDev = Repository(
+        name = "maven.teamdev.com",
+        releases = "http://maven.teamdev.com/repository/spine",
+        snapshots = "http://maven.teamdev.com/repository/spine-snapshots",
+        credentialsFile = "credentials.properties"
+    )
+
+    val cloudRepo = Repository(
+        name = "CloudRepo",
+        releases = "https://spine.mycloudrepo.io/public/repositories/releases",
+        snapshots = "https://spine.mycloudrepo.io/public/repositories/snapshots",
+        credentialsFile = "cloudrepo.properties"
+    )
+
+    val cloudArtifactRegistry = CloudArtifactRegistry.repository
+
+    /**
+     * Obtains a GitHub repository by the given name.
+     */
+    fun gitHub(repoName: String): Repository = GitHubPackages.repository(repoName)
 }
 
-dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
-
-    testImplementation(project(":testutil"))
-}
-
-// Allows test suites to fetch generated Java files as resources.
-protobuf {
-    generateProtoTasks {
-        ofSourceSet("test").forEach { task ->
-            tasks.processTestResources {
-                from(task.outputs)
-                duplicatesStrategy = INCLUDE
-            }
-        }
-    }
-}

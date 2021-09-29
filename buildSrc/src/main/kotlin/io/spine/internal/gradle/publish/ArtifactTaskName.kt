@@ -24,31 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.ofSourceSet
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.JavaPoet
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package io.spine.internal.gradle.publish
 
-plugins {
-    `build-proto-model`
-}
-
-dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
-
-    testImplementation(project(":testutil"))
-}
-
-// Allows test suites to fetch generated Java files as resources.
-protobuf {
-    generateProtoTasks {
-        ofSourceSet("test").forEach { task ->
-            tasks.processTestResources {
-                from(task.outputs)
-                duplicatesStrategy = INCLUDE
-            }
-        }
-    }
+/**
+ * Default artifact task names.
+ *
+ * These tasks, if not present on a project already, are created by the [Publish] plugin.
+ * Their output is published as project's artifacts.
+ */
+internal enum class ArtifactTaskName {
+    sourceJar,
+    testOutputJar,
+    javadocJar;
 }

@@ -24,30 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.ofSourceSet
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.JavaPoet
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+import org.gradle.api.Project
+import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.external.javadoc.CoreJavadocOptions
+import org.gradle.kotlin.dsl.named
 
-plugins {
-    `build-proto-model`
-}
+@Suppress("unused")
+object TravisLogs {
 
-dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
-
-    testImplementation(project(":testutil"))
-}
-
-// Allows test suites to fetch generated Java files as resources.
-protobuf {
-    generateProtoTasks {
-        ofSourceSet("test").forEach { task ->
-            tasks.processTestResources {
-                from(task.outputs)
-                duplicatesStrategy = INCLUDE
+    /**
+     * Specific setup for a Travis build, which prevents warning messages related to
+     * `javadoc` tasks in build logs.
+     *
+     * It is expected that warnings are viewed and analyzed during local builds.
+     */
+    fun hideJavadocWarnings(p: Project) {
+        //
+        val isTravis = System.getenv("TRAVIS") == "true"
+        if (isTravis) {
+            // Set the maximum number of Javadoc warnings to print.
+            // If the parameter value is zero, all warnings will be printed.
+            p.tasks.named<Javadoc>("javadoc") {
+                val opt = options
+                if (opt is CoreJavadocOptions) {
+                    opt.addStringOption("Xmaxwarns", "1")
+                }
             }
         }
     }

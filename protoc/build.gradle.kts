@@ -25,6 +25,7 @@
  */
 
 import io.spine.internal.dependency.Protobuf
+import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 plugins {
     jacoco
@@ -50,4 +51,6 @@ tasks.jar {
     // We should provide a classifier or else Protobuf Gradle plugin will substitute it with
     // an OS-specific one.
     archiveClassifier.set("exe")
+
+    duplicatesStrategy = INCLUDE
 }

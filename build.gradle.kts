@@ -26,13 +26,13 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
+import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.PublishingRepos
 import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.spinePublishing
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
@@ -55,7 +55,7 @@ buildscript {
 
 plugins {
     kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
-    io.spine.internal.dependency.Kotlin.Dokka.apply {
+    io.spine.internal.dependency.Dokka.apply {
         id(pluginId) version(version)
     }
     idea
@@ -83,7 +83,7 @@ allprojects {
     version = extra["protoDataVersion"]!!
 
     repositories.applyStandard()
-    repositories.applyGitHubPackages(rootProject)
+    repositories.applyGitHubPackages("base-types", rootProject)
 }
 
 subprojects {
@@ -91,7 +91,7 @@ subprojects {
     apply {
         plugin("kotlin")
         plugin("idea")
-        plugin(Kotlin.Dokka.pluginId)
+        plugin(Dokka.pluginId)
     }
 
     val spineCoreVersion: String by extra
@@ -139,13 +139,6 @@ subprojects {
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
     }
-
-    //TODO:2021-08-09:dmytro.dashenkov: Turn to WARN and investigate duplicates.
-    // see https://github.com/SpineEventEngine/base/issues/657
-    val duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    tasks.processResources.get().duplicatesStrategy = duplicatesStrategy
-    tasks.processTestResources.get().duplicatesStrategy = duplicatesStrategy
-    tasks.withType<Jar>().forEach { it.duplicatesStrategy = duplicatesStrategy }
 }
 
 afterEvaluate {

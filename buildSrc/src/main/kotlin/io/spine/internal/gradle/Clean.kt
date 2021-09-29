@@ -24,31 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.ofSourceSet
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.JavaPoet
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package io.spine.internal.gradle
 
-plugins {
-    `build-proto-model`
-}
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
-dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
-
-    testImplementation(project(":testutil"))
-}
-
-// Allows test suites to fetch generated Java files as resources.
-protobuf {
-    generateProtoTasks {
-        ofSourceSet("test").forEach { task ->
-            tasks.processTestResources {
-                from(task.outputs)
-                duplicatesStrategy = INCLUDE
-            }
-        }
+/**
+ * Cleans the folder and all of its content.
+ */
+fun cleanFolder(folder: File) {
+    if(!folder.exists()) {
+        return
     }
+    if(!folder.isDirectory) {
+        throw IllegalArgumentException("A folder to clean " +
+                "must be supplied: `${folder.absolutePath}`.")
+    }
+    Files.walk(folder.toPath())
+        .sorted(Comparator.reverseOrder())
+        .map(Path::toFile)
+        .forEach(File::delete)
 }

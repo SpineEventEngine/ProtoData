@@ -1,0 +1,29 @@
+# Ensures that the current lib version is not yet published but executing the Gradle
+# `checkVersionIncrement` task.
+
+name: Check version increment
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          java-version: 8
+          distribution: zulu
+          cache: gradle
+
+      - name: Pull config
+        run: git submodule update --init --recursive
+
+      - name: Check version is not yet published
+        shell: bash
+        run: ./gradlew checkVersionIncrement --stacktrace

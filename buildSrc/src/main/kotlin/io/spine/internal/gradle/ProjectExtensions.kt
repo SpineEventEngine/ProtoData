@@ -24,31 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.ofSourceSet
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.JavaPoet
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package io.spine.internal.gradle
 
-plugins {
-    `build-proto-model`
-}
+import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.kotlin.dsl.getByType
 
-dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
+/**
+ * This file contains extension methods and properties for the Gradle `Project`.
+ */
 
-    testImplementation(project(":testutil"))
-}
+/**
+ * Obtains the Java plugin extension of the project.
+ */
+val Project.javaPluginExtension: JavaPluginExtension
+    get() = extensions.getByType()
 
-// Allows test suites to fetch generated Java files as resources.
-protobuf {
-    generateProtoTasks {
-        ofSourceSet("test").forEach { task ->
-            tasks.processTestResources {
-                from(task.outputs)
-                duplicatesStrategy = INCLUDE
-            }
-        }
-    }
-}
+/**
+ * Obtains source set container of the Java project.
+ */
+val Project.sourceSets: SourceSetContainer
+    get() = javaPluginExtension.sourceSets
