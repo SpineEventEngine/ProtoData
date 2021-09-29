@@ -77,7 +77,11 @@ spinePublishing {
 }
 
 allprojects {
-    apply(from = "$rootDir/version.gradle.kts")
+    apply {
+        from("$rootDir/version.gradle.kts")
+        plugin("idea")
+        plugin("project-report")
+    }
 
     group = "io.spine.protodata"
     version = extra["protoDataVersion"]!!
@@ -90,8 +94,8 @@ subprojects {
 
     apply {
         plugin("kotlin")
-        plugin("idea")
         plugin(Dokka.pluginId)
+        from(Scripts.projectLicenseReport(project))
     }
 
     val spineCoreVersion: String by extra
@@ -139,6 +143,11 @@ subprojects {
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
     }
+}
+
+apply {
+    from(Scripts.repoLicenseReport(project))
+    from(Scripts.generatePom(project))
 }
 
 afterEvaluate {
