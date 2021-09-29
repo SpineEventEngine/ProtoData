@@ -1,5 +1,7 @@
 # ProtoData
 
+![example workflow](https://github.com/SpineEventEngine/ProtoData/actions/workflows/build.yml/badge.svg)
+
 _ProtoData_ is a collection of tools for generating quality domain models from Protobuf definitions.
 
 The project is under development right now. Proceed with caution.
