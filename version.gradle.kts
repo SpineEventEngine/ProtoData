@@ -25,5 +25,5 @@
  */
 
 extra["protoDataVersion"] = "0.1.0"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.53"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.54"
+extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.59"
+extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.61"
