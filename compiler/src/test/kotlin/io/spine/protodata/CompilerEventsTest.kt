@@ -214,13 +214,15 @@ class `'CompilerEvents' should` {
             .containsExactly("A Doctor's journey.", "", "A test type", "")
         assertThat(typeEntered.type.doc.trailingComment)
             .isEqualTo("Impl note: test type.")
-        assertThat(typeEntered.type.doc.detachedCommentList)
-            .containsExactly("Detached 1.", """
-               |Detached 2.
-               |Indentation is not preserved in Protobuf.
-               |
-               |Bla bla!
-               """.trimMargin())
+        assertThat(typeEntered.type.doc.detachedCommentList[0])
+            .isEqualTo("Detached 1.")
+        assertThat(typeEntered.type.doc.detachedCommentList[0].split(System.lineSeparator()))
+            .containsExactly(
+                "Detached 2.",
+                "Indentation is not preserved in Protobuf.",
+                "",
+                "Bla bla!"
+            )
     }
 
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
