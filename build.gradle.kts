@@ -114,10 +114,11 @@ subprojects {
         useJUnitPlatform()
 
         testLogging {
-            events = setOf(PASSED, FAILED, SKIPPED)
+            events = setOf(FAILED, SKIPPED)
             showExceptions = true
             showCauses = true
             showStackTraces = true
+            showStandardStreams = true
         }
     }
 
