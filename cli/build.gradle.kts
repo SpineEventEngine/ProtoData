@@ -36,7 +36,7 @@ plugins {
 dependencies {
     implementation(project(":compiler"))
     implementation(kotlin("reflect"))
-    implementation("com.github.ajalt.clikt:clikt:3.1.0")
+    implementation("com.github.ajalt.clikt:clikt:3.2.0")
     implementation(Flogger.lib)
 
     testImplementation(project(":testutil"))
