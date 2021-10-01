@@ -132,6 +132,7 @@ subprojects {
                 "-Xopt-in=" +
                         "kotlin.io.path.ExperimentalPathApi," +
                         "kotlin.ExperimentalUnsignedTypes," +
+                        "kotlin.ExperimentalStdlibApi," +
                         "kotlin.experimental.ExperimentalTypeInference",
                 "-Xinline-classes",
                 "-Xjvm-default=all"
