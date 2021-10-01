@@ -210,13 +210,8 @@ class `'CompilerEvents' should` {
                 .newBuilder()
                 .setName(TypeName.newBuilder().setSimpleName("Journey"))
                 .build())
-        assertThat(typeEntered.type.doc.leadingComment)
-            .contains("""
-                A Doctor's journey.
-
-                A test type
-
-            """.trimIndent())
+        assertThat(typeEntered.type.doc.leadingComment.split(System.lineSeparator()))
+            .containsExactly("A Doctor's journey.", "", "A test type", "")
         assertThat(typeEntered.type.doc.trailingComment)
             .isEqualTo("Impl note: test type.")
         assertThat(typeEntered.type.doc.detachedCommentList)
