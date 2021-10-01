@@ -40,7 +40,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>com.github.ajalt.clikt</groupId>
     <artifactId>clikt</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
