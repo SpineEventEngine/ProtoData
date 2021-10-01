@@ -146,7 +146,7 @@ class `'Pipeline' should` {
             request
         )()
         assertThat(sourceFile.readText())
-            .isEqualTo("""
+            .contains("""
                 // INSERT:'file_start'
                 Hello from ${renderer.javaClass.name}
                 // INSERT:'file_middle'

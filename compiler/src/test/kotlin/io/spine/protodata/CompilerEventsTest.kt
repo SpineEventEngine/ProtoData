@@ -211,7 +211,7 @@ class `'CompilerEvents' should` {
                 .setName(TypeName.newBuilder().setSimpleName("Journey"))
                 .build())
         assertThat(typeEntered.type.doc.leadingComment)
-            .isEqualTo("""
+            .contains("""
                 A Doctor's journey.
 
                 A test type
