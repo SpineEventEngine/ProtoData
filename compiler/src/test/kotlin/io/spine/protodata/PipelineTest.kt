@@ -147,7 +147,22 @@ class `'Pipeline' should` {
             request
         )()
         val resultFileContent = sourceFile.readText()
+
+        System.err.println("Actual:")
+        System.err.println("--------")
         System.err.println(resultFileContent)
+        System.err.println("--------")
+        System.err.println("Expected:")
+        System.err.println("--------")
+        System.err.println("""
+                // INSERT:'file_start'
+                Hello from ${renderer.javaClass.name}
+                // INSERT:'file_middle'
+                $initialContent
+                // INSERT:'file_end'
+            """.trimIndent())
+        System.err.println("--------")
+
         assertThat(resultFileContent)
             .contains("""
                 // INSERT:'file_start'
