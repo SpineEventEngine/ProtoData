@@ -146,31 +146,18 @@ class `'Pipeline' should` {
             SourceSet.from(srcRoot),
             request
         )()
-        val resultFileContent = sourceFile.readText()
+        val assertFileContent = assertThat(sourceFile.readText())
+        assertFileContent
+            .contains("// INSERT:'file_start'")
+        assertFileContent
+            .contains("Hello from ${renderer.javaClass.name}")
+        assertFileContent
+            .contains("// INSERT:'file_middle'")
+        assertFileContent
+            .contains(initialContent)
+        assertFileContent
+            .contains("// INSERT:'file_end'")
 
-        System.err.println("Actual:")
-        System.err.println("--------")
-        System.err.println(resultFileContent)
-        System.err.println("--------")
-        System.err.println("Expected:")
-        System.err.println("--------")
-        System.err.println("""
-                // INSERT:'file_start'
-                Hello from ${renderer.javaClass.name}
-                // INSERT:'file_middle'
-                $initialContent
-                // INSERT:'file_end'
-            """.trimIndent())
-        System.err.println("--------")
-
-        assertThat(resultFileContent)
-            .contains("""
-                // INSERT:'file_start'
-                Hello from ${renderer.javaClass.name}
-                // INSERT:'file_middle'
-                $initialContent
-                // INSERT:'file_end'
-            """.trimIndent())
     }
 
     @Test
