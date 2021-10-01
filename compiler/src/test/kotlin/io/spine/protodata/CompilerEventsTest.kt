@@ -216,7 +216,7 @@ class `'CompilerEvents' should` {
             .isEqualTo("Impl note: test type.")
         assertThat(typeEntered.type.doc.detachedCommentList[0])
             .isEqualTo("Detached 1.")
-        assertThat(typeEntered.type.doc.detachedCommentList[0].split(System.lineSeparator()))
+        assertThat(typeEntered.type.doc.detachedCommentList[1].split(System.lineSeparator()))
             .containsExactly(
                 "Detached 2.",
                 "Indentation is not preserved in Protobuf.",
