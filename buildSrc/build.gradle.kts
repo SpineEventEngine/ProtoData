@@ -36,10 +36,10 @@ buildscript {
     repositories {
         gradlePluginPortal()
     }
-    val licenseReportVersion = "1.16"
-    dependencies {
-        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
-    }
+//    val licenseReportVersion = "1.16"
+//    dependencies {
+//        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
+//    }
 }
 
 plugins {
@@ -47,8 +47,7 @@ plugins {
     groovy
     `kotlin-dsl`
     pmd
-    val licenseReportVersion = "1.16"
-    id("com.github.jk1.dependency-license-report").version(licenseReportVersion)
+    id("com.github.jk1.dependency-license-report").version("1.16")
 }
 
 repositories {
