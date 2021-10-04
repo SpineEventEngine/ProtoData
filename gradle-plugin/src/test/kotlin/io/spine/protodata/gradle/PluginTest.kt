@@ -40,8 +40,12 @@ import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS.WINDOWS
 import org.junit.jupiter.api.io.TempDir
 
+// TODO:2021-10-04:dmytro.dashenkov: Enable tests when resolved: https://github.com/SpineEventEngine/ProtoData/issues/43
+@DisabledOnOs(WINDOWS)
 @SlowTest
 class `ProtoData Gradle plugin should` {
 
