@@ -94,12 +94,8 @@ class `Plugin extension should` {
 
     @Test
     fun `specify request file location`() {
-        val path = "/my/path/to/main.bin"
+        val path = "my/path/to/main.bin"
         extension.requestFilesDir = path
-        System.err.println(">>>>>>")
-        System.err.println(extension.requestFilesDirProperty.get().asFile)
-        System.err.println("<<<<<<")
-        System.err.println(project.projectDir.resolve(path))
         assertThat(extension.requestFilesDirProperty.get().asFile)
             .isEqualTo(project.projectDir.resolve(path))
     }
