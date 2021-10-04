@@ -100,7 +100,7 @@ public class Extension(private val project: Project) {
 
     internal val requestFilesDirProperty: DirectoryProperty =
         project.objects.directoryProperty().convention(
-            project.layout.buildDirectory.dir("protodata/requests")
+            project.layout.buildDirectory.dir("protodata").map { it.dir("requests") }
         )
 
     internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
