@@ -95,6 +95,13 @@ class UpdateGitHubPages : Plugin<Project> {
     private lateinit var rootFolder: File
 
     /**
+     * The external inputs to include into the publishing.
+     *
+     * The inputs are evaluated according to [Copy.from] specification.
+     */
+    private lateinit var includedInputs: Set<Any>
+
+    /**
      * Path to the temp folder used to gather the Javadoc output
      * before submitting it to the GitHub Pages update.
      */
@@ -146,12 +153,25 @@ class UpdateGitHubPages : Plugin<Project> {
             val projectVersion = project.version.toString()
             val isSnapshot = isSnapshot(projectVersion)
             if (isSnapshot) {
-                println(
-                    "GitHub Pages update will be skipped since this project" +
-                            " is a snapshot: `${project.name}-${project.version}`."
-                )
+                registerNoOpTask()
             } else {
                 registerTasks(extension, project)
+            }
+        }
+    }
+
+    /**
+     * Registers `updateGitHubPages` task which performs no actual update, but prints the message
+     * telling the update is skipped, since the project is in its `SNAPSHOT` version.
+     */
+    private fun Project.registerNoOpTask() {
+        tasks.register(taskName) {
+            doLast {
+                val project = this@registerNoOpTask
+                println(
+                    "GitHub Pages update will be skipped since this project is a snapshot: " +
+                            "`${project.name}-${project.version}`."
+                )
             }
         }
     }
@@ -159,6 +179,7 @@ class UpdateGitHubPages : Plugin<Project> {
     private fun registerTasks(extension: UpdateGitHubPagesExtension, project: Project) {
         val includeInternal = extension.allowInternalJavadoc()
         rootFolder = extension.rootFolder()
+        includedInputs = extension.includedInputs()
         val tasks = project.tasks
         if (!includeInternal) {
             InternalJavadocFilter.registerTask(project)
@@ -224,16 +245,27 @@ class UpdateGitHubPages : Plugin<Project> {
         taskName: String,
         tasks: TaskContainer
     ) {
+        val inputs = composeInputs(tasks, allowInternalJavadoc)
         tasks.register(taskName, Copy::class.java) {
             doLast {
-                if (allowInternalJavadoc) {
-                    from(tasks.javadocTask(InternalJavadocFilter.taskName))
-                } else {
-                    from(tasks.javadocTask(JavadocTask.name))
-                }
+                from(*inputs.toTypedArray())
                 into(javadocOutputPath)
             }
         }
+    }
+
+    private fun composeInputs(
+        tasks: TaskContainer,
+        allowInternalJavadoc: Boolean
+    ): MutableList<Any> {
+        val inputs = mutableListOf<Any>()
+        if (allowInternalJavadoc) {
+            inputs.add(tasks.javadocTask(InternalJavadocFilter.taskName))
+        } else {
+            inputs.add(tasks.javadocTask(JavadocTask.name))
+        }
+        inputs.addAll(includedInputs)
+        return inputs
     }
 
     private fun commitAndPush(repoBaseDir: File, project: Project) {
