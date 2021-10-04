@@ -45,7 +45,7 @@ import org.junit.jupiter.api.condition.OS.WINDOWS
 import org.junit.jupiter.api.io.TempDir
 
 // TODO:2021-10-04:dmytro.dashenkov: Enable tests when resolved: https://github.com/SpineEventEngine/ProtoData/issues/43
-@DisabledOnOs(WINDOWS)
+//@DisabledOnOs(WINDOWS)
 @SlowTest
 class `ProtoData Gradle plugin should` {
 
