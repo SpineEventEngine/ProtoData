@@ -32,15 +32,15 @@
  * Therefore, when a version of [io.spine.internal.dependency.LicenseReport] changes, it should be
  * changed in the Kotlin object _and_ in this file below thrice.
  */
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-//    val licenseReportVersion = "1.16"
-//    dependencies {
-//        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
+//buildscript {
+//    repositories {
+//        gradlePluginPortal()
 //    }
-}
+////    val licenseReportVersion = "1.16"
+////    dependencies {
+////        classpath("com.github.jk1:gradle-license-report:${licenseReportVersion}")
+////    }
+//}
 
 plugins {
     java
