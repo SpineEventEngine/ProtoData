@@ -94,7 +94,7 @@ class `ProtoData Gradle plugin should` {
     }
 
     private fun launch(): BuildResult {
-        val result = project.executeTask(taskName)!!
+        val result = try { project.executeTask(taskName)!! } catch (e: Throwable) { project.executeAndFail(taskName)!! }
         System.err.println("----")
         System.err.println(result.output)
         System.err.println("----")
