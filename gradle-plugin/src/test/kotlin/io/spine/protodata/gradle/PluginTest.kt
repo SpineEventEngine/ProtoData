@@ -59,17 +59,13 @@ class `ProtoData Gradle plugin should` {
     @Test
     fun `skip launch task if request file does not exist`() {
         createEmptyProject()
-        val result = launch()
-        assertThat(result.task(taskName.path())!!.outcome)
-            .isEqualTo(SKIPPED)
+        launchAndExpectResult(SKIPPED)
     }
 
     @Test
     fun `launch ProtoData`() {
         createProjectWithProto()
-        val result = launch()
-        assertThat(result.task(taskName.path())!!.outcome)
-            .isEqualTo(SUCCESS)
+        launchAndExpectResult(SUCCESS)
     }
 
     @Test
@@ -88,7 +84,7 @@ class `ProtoData Gradle plugin should` {
     }
 
     private fun launchAndExpectResult(outcome: TaskOutcome) {
-        val result = project.executeTask(taskName)!!
+        val result = launch()
         assertThat(result.task(taskName.path())!!.outcome)
             .isEqualTo(outcome)
     }
