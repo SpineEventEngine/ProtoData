@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: 8
           distribution: zulu
-#          cache: gradle
+          cache: gradle
 
       - name: Pull config
         run: git submodule update --init --recursive

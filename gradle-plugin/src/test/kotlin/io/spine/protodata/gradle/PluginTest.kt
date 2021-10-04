@@ -29,7 +29,6 @@ package io.spine.protodata.gradle
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import io.spine.testing.SlowTest
-import io.spine.testing.TempDir
 import io.spine.tools.gradle.TaskName
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
@@ -41,6 +40,7 @@ import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 @SlowTest
 class `ProtoData Gradle plugin should` {
@@ -52,8 +52,8 @@ class `ProtoData Gradle plugin should` {
     private lateinit var project: GradleProject
 
     @BeforeEach
-    fun prepareDir() {
-        this.projectDir = TempDir.forClass(javaClass)
+    fun prepareDir(@TempDir projectDir: File) {
+        this.projectDir = projectDir
     }
 
     @Test
