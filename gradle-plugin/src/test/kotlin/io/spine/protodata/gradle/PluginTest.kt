@@ -94,7 +94,11 @@ class `ProtoData Gradle plugin should` {
     }
 
     private fun launch(): BuildResult {
-        return project.executeTask(taskName)!!
+        val result = project.executeTask(taskName)!!
+        System.err.println("----")
+        System.err.println(result.output)
+        System.err.println("----")
+        return result
     }
 
     private fun createProject(name: String, vararg protoFiles: String) {
