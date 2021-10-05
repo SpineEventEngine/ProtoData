@@ -33,7 +33,6 @@ plugins {
 
 dependencies {
     Protobuf.libs.forEach { implementation(it) }
-
 }
 
 tasks.jar {

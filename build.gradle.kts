@@ -117,8 +117,6 @@ subprojects {
             events = setOf(FAILED, SKIPPED)
             showExceptions = true
             showCauses = true
-            showStackTraces = true
-            showStandardStreams = true
         }
     }
 
