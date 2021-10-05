@@ -24,28 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("Plugin")
+package io.spine.protodata.gradle
 
-package io.spine.protodata.protoc
-
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse
-import java.nio.file.StandardOpenOption.CREATE
-import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-import kotlin.io.path.Path
-import kotlin.io.path.writeBytes
+import com.google.common.base.Charsets.UTF_8
+import java.util.*
 
 /**
- * Stores the received `CodeGeneratorRequest` to the file passed as the parameter.
+ * Encodes this string in Base64 using the UTF-8 charset.
+ *
+ * @return the encoded string
  */
-public fun main() {
-    val request = CodeGeneratorRequest.parseFrom(System.`in`)
-    val requestFile = Path(request.parameter.decodeBase64())
-    requestFile.toFile()
-               .parentFile
-               .mkdirs()
-    requestFile.writeBytes(request.toByteArray(), CREATE, TRUNCATE_EXISTING)
-
-    val emptyResponse = CodeGeneratorResponse.getDefaultInstance()
-    System.out.write(emptyResponse.toByteArray())
+internal fun String.base64Encoded(): String {
+    val bytes = toByteArray(UTF_8)
+    return Base64.getEncoder().encodeToString(bytes)
 }

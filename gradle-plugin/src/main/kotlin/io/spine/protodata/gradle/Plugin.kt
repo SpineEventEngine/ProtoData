@@ -160,7 +160,8 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                 it.plugins {
                     id(PROTOC_PLUGIN) {
                         val requestFile = extension.requestFile(it.sourceSet)
-                        option(requestFile.get().asFile.absolutePath)
+                        val path = requestFile.get().asFile.absolutePath
+                        option(path.base64Encoded())
                     }
                 }
                 project.tasks.getByName(launchTaskName(it.sourceSet)).dependsOn(it)
