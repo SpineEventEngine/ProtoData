@@ -27,12 +27,14 @@
 package io.spine.protodata.renderer
 
 import com.google.common.base.Preconditions.checkArgument
+import com.google.common.base.Splitter
 import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.nio.file.StandardOpenOption.WRITE
+import java.util.regex.Pattern
 import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -64,12 +66,19 @@ private constructor(
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
     private var alreadyRead = false
 
-    internal companion object {
+    public companion object {
+
+        /**
+         * A splitter to divide code fragments into lines.
+         *
+         * Uses a regular expression to match line breaks, with or without carriage returns.
+         */
+        public val lineSplitter: Splitter = Splitter.on(Pattern.compile("\r?\n"))
 
         /**
          * Reads the file from the given FS location.
          */
-        fun read(
+        internal fun read(
             relativePath: Path,
             sourceRoot: Path,
             charset: Charset = Charsets.UTF_8
@@ -86,7 +95,7 @@ private constructor(
          *             not exist on the file system
          * @param code the source code
          */
-        fun fromCode(relativePath: Path, code: String): SourceFile =
+        internal fun fromCode(relativePath: Path, code: String): SourceFile =
             SourceFile(code, relativePath, changed = true)
     }
 
@@ -200,7 +209,7 @@ private constructor(
      * Obtains the entire content of this file as a list of lines.
      */
     public fun lines(): List<String> {
-        return code().split(lineSeparator())
+        return lineSplitter.splitToList(code())
     }
 
     internal fun whenRead(action: (SourceFile) -> Unit) {
