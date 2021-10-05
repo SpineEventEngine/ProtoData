@@ -27,11 +27,12 @@
 package io.spine.protodata.protoc
 
 import java.util.*
+import kotlin.text.Charsets.UTF_8
 
 /**
  * Decodes a UTF-8 string encoded in Base64 in this string.
  */
 internal fun String.decodeBase64(): String {
     val bytes = Base64.getDecoder().decode(this)
-    return String(bytes, Charsets.UTF_8)
+    return String(bytes, UTF_8)
 }

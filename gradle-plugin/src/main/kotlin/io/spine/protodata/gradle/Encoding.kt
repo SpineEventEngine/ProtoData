@@ -26,7 +26,6 @@
 
 package io.spine.protodata.gradle
 
-import com.google.common.base.Charsets.UTF_8
 import java.util.*
 
 /**
@@ -35,6 +34,6 @@ import java.util.*
  * @return the encoded string
  */
 internal fun String.base64Encoded(): String {
-    val bytes = toByteArray(UTF_8)
+    val bytes = encodeToByteArray()
     return Base64.getEncoder().encodeToString(bytes)
 }
