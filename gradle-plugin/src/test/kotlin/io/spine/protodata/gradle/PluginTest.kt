@@ -26,7 +26,6 @@
 
 package io.spine.protodata.gradle
 
-import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import io.spine.testing.SlowTest
 import io.spine.tools.gradle.TaskName
@@ -40,12 +39,8 @@ import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledOnOs
-import org.junit.jupiter.api.condition.OS.WINDOWS
 import org.junit.jupiter.api.io.TempDir
 
-// TODO:2021-10-04:dmytro.dashenkov: Enable tests when resolved: https://github.com/SpineEventEngine/ProtoData/issues/43
-//@DisabledOnOs(WINDOWS)
 @SlowTest
 class `ProtoData Gradle plugin should` {
 
@@ -93,22 +88,14 @@ class `ProtoData Gradle plugin should` {
             .isEqualTo(outcome)
     }
 
-    private fun launch(): BuildResult {
-        val result = try { project.executeTask(taskName)!! } catch (e: Throwable) { project.executeAndFail(taskName)!! }
-        System.err.println("----")
-        System.err.println(result.output)
-        System.err.println("----")
-        return result
-    }
+    private fun launch(): BuildResult =
+        project.executeTask(taskName)!!
 
     private fun createProject(name: String, vararg protoFiles: String) {
-        val exeLocation = projectDir.resolve("protodata-${UUID.randomUUID()}")
         val builder = GradleProject.newBuilder()
             .setProjectName(name)
             .setProjectFolder(projectDir)
             .withPluginClasspath()
-            .withProperty("protoDataLocation", exeLocation.absolutePath)
-            .withEnvironment(ImmutableMap.of())
         protoFiles.forEach(builder::addProtoFile)
         project = builder.build()
     }
