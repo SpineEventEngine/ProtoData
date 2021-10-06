@@ -24,19 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.gradle.github.pages
 
-@Suppress("unused")
-object Jackson {
-    private const val version = "2.12.4"
-    // https://github.com/FasterXML/jackson-core
-    const val core = "com.fasterxml.jackson.core:jackson-core:${version}"
-    // https://github.com/FasterXML/jackson-databind
-    const val databind = "com.fasterxml.jackson.core:jackson-databind:${version}"
-    // https://github.com/FasterXML/jackson-dataformat-xml/releases
-    const val dataformatXml = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${version}"
-    // https://github.com/FasterXML/jackson-dataformats-text/releases
-    const val dataformatYaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${version}"
-    // https://github.com/FasterXML/jackson-module-kotlin/releases
-    const val moduleKotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:${version}"
+/**
+ * An author of updates to GitHub pages.
+ */
+class AuthorEmail(val value: String) {
+
+    companion object {
+
+        /**
+         * The name of the environment variable that contains the email to use for authoring
+         * the commits to the GitHub Pages branch.
+         */
+        @Suppress("MemberVisibilityCanBePrivate") // for documentation purposes.
+        const val environmentVariable = "FORMAL_GIT_HUB_PAGES_AUTHOR"
+
+        /**
+         * Obtains the author from the system [environment variable][environmentVariable].
+         */
+        fun fromVar() : AuthorEmail {
+            val envValue = System.getenv(environmentVariable)
+            if (envValue.isNullOrEmpty()) {
+                throw IllegalStateException(
+                    "Unable to obtain an author from `${environmentVariable}`."
+                )
+            }
+            return AuthorEmail(envValue)
+        }
+    }
+
+    override fun toString(): String = value
 }
