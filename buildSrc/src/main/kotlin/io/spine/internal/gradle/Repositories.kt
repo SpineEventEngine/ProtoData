@@ -26,11 +26,9 @@
 
 package io.spine.internal.gradle
 
-import com.google.auth.oauth2.GoogleCredentials
-import com.google.cloud.artifactregistry.auth.DefaultCredentialProvider
-import io.spine.internal.gradle.PublishingRepos.gitHub
+import io.spine.internal.gradle.publish.PublishingRepos
+import io.spine.internal.gradle.publish.PublishingRepos.gitHub
 import java.io.File
-import java.io.IOException
 import java.net.URI
 import java.util.*
 import org.gradle.api.Project
@@ -93,129 +91,31 @@ data class Credentials(
 )
 
 /**
- * Repositories to which we may publish. Normally, only one repository will be used.
- *
- * See `publish.gradle` for details of the publishing process.
- */
-object PublishingRepos {
-
-    private const val CLOUD_ARTIFACT_REGISTRY = "https://europe-maven.pkg.dev/spine-event-engine"
-
-    @Suppress("HttpUrlsUsage") // HTTPS is not supported by this repository.
-    val mavenTeamDev = Repository(
-        name = "maven.teamdev.com",
-        releases = "http://maven.teamdev.com/repository/spine",
-        snapshots = "http://maven.teamdev.com/repository/spine-snapshots",
-        credentialsFile = "credentials.properties"
-    )
-    val cloudRepo = Repository(
-        name = "CloudRepo",
-        releases = "https://spine.mycloudrepo.io/public/repositories/releases",
-        snapshots = "https://spine.mycloudrepo.io/public/repositories/snapshots",
-        credentialsFile = "cloudrepo.properties"
-    )
-
-    /**
-     * The experimental Google Cloud Artifact Registry repository.
-     *
-     * In order to successfully publish into this repository, a service account key is needed.
-     * The published must create a service account, grant it the permission to write into
-     * Artifact Registry, and generate a JSON key.
-     * Then, the key must be placed somewhere on the file system and the environment variable
-     * `GOOGLE_APPLICATION_CREDENTIALS` must be set to point at the key file.
-     * Once these preconditions are met, publishing becomes possible.
-     *
-     * ## Implementation note
-     * Google provides [tools](https://github.com/GoogleCloudPlatform/artifact-registry-maven-tools)
-     * for configuring authentication for the Maven repositories, including a Gradle plugin.
-     * However, the plugin is incompatible with Gradle 7.x at the moment.
-     * For now, we reproduce what the plugin does manually. This makes the whole `buildSrc`
-     * depend on the `artifactregistry-auth-common` artifact. Track [this issue](https://github.com/GoogleCloudPlatform/artifact-registry-maven-tools/issues/52)
-     * for the progress on Gradle 7.x support.
-     */
-    val cloudArtifactRegistry = Repository(
-        releases = "$CLOUD_ARTIFACT_REGISTRY/releases",
-        snapshots = "$CLOUD_ARTIFACT_REGISTRY/snapshots",
-        credentialValues = this::fetchGoogleCreds
-    )
-
-    private fun fetchGoogleCreds(p: Project): Credentials? {
-        return try {
-            val googleCreds = DefaultCredentialProvider()
-            val creds = googleCreds.credential as GoogleCredentials
-            creds.refreshIfExpired()
-            Credentials("oauth2accesstoken", creds.accessToken.tokenValue)
-        } catch (e: IOException) {
-            p.logger.info("Unable to fetch credentials for Google Cloud Artifact Registry." +
-                    " Reason: '${e.message}'." +
-                    " See debug output for details.")
-            null
-        }
-    }
-
-    fun gitHub(repoName: String): Repository {
-        var githubActor: String? = System.getenv("GITHUB_ACTOR")
-        githubActor = if (githubActor.isNullOrEmpty()) {
-            "developers@spine.io"
-        } else {
-            githubActor
-        }
-
-        return Repository(
-            name = "GitHub Packages",
-            releases = "https://maven.pkg.github.com/SpineEventEngine/$repoName",
-            snapshots = "https://maven.pkg.github.com/SpineEventEngine/$repoName",
-            credentialValues = { project ->
-                Credentials(
-                    username = githubActor,
-                    // This is a trick. Gradle only supports password or AWS credentials. Thus,
-                    // we pass the GitHub token as a "password".
-                    // https://docs.github.com/en/actions/guides/publishing-java-packages-with-gradle#publishing-packages-to-github-packages
-                    password = readGitHubToken(project)
-                )
-            }
-        )
-    }
-
-    private fun readGitHubToken(project: Project): String {
-        val githubToken: String? = System.getenv("GITHUB_TOKEN")
-        return if (githubToken.isNullOrEmpty()) {
-            // Use the personal access token for the `developers@spine.io` account.
-            // Only has the permission to read public GitHub packages.
-            val targetDir = "${project.buildDir}/token"
-            project.file(targetDir).mkdirs()
-            val fileToUnzip = "${project.rootDir}/buildSrc/aus.weis"
-
-            project.logger.info("GitHub Packages: reading token " +
-                    "by unzipping `$fileToUnzip` into `$targetDir`.")
-            project.exec {
-                // Unzip with password "123", allow overriding, quietly,
-                // into the target dir, the given archive.
-                commandLine("unzip", "-P", "123", "-oq", "-d", targetDir, fileToUnzip)
-            }
-            val file = project.file("$targetDir/token.txt")
-            file.readText()
-        } else {
-            githubToken
-        }
-    }
-}
-
-/**
  * Defines names of additional repositories commonly used in the framework projects.
  *
  * @see [applyStandard]
  */
 @Suppress("unused")
 object Repos {
+    @Deprecated(
+        message = "Please use another repository.",
+        replaceWith = ReplaceWith("artifactRegistry"),
+        level = DeprecationLevel.ERROR
+    )
     val oldSpine = PublishingRepos.mavenTeamDev.releases
+
+    @Deprecated(
+        message = "Please use another repository.",
+        replaceWith = ReplaceWith("artifactRegistrySnapshots"),
+        level = DeprecationLevel.ERROR
+    )
     val oldSpineSnapshots = PublishingRepos.mavenTeamDev.snapshots
 
     val spine = PublishingRepos.cloudRepo.releases
     val spineSnapshots = PublishingRepos.cloudRepo.snapshots
 
-    val cloudArchive = PublishingRepos.cloudArtifactRegistry.releases
-    val cloudArchiveSnapshots = PublishingRepos.cloudArtifactRegistry.snapshots
+    val artifactRegistry = PublishingRepos.cloudArtifactRegistry.releases
+    val artifactRegistrySnapshots = PublishingRepos.cloudArtifactRegistry.snapshots
 
     @Deprecated(
         message = "Sonatype release repository redirects to the Maven Central",
@@ -232,35 +132,48 @@ object Repos {
  * To be used in `buildscript` clauses when a fully-qualified call must be made.
  */
 @Suppress("unused")
-fun doApplyStandard(repositories: RepositoryHandler) {
-    repositories.applyStandard()
-}
+fun doApplyStandard(repositories: RepositoryHandler) = repositories.applyStandard()
 
 /**
  * Registers the selected GitHub Packages repos as Maven repositories.
  *
  * To be used in `buildscript` clauses when a fully-qualified call must be made.
  *
+ * @param repositories
+ *          the handler to accept registration of the GitHub Packages repository
+ * @param shortRepositoryName
+ *          the short name of the GitHub repository (e.g. "core-java")
+ * @param project
+ *          the project which is going to consume or publish artifacts from
+ *          the registered repository
  * @see applyGitHubPackages
  */
 @Suppress("unused")
-fun doApplyGitHubPackages(repositories: RepositoryHandler, project: Project) {
-    repositories.applyGitHubPackages(project)
-}
+fun doApplyGitHubPackages(
+    repositories: RepositoryHandler,
+    shortRepositoryName: String,
+    project: Project
+) = repositories.applyGitHubPackages(shortRepositoryName, project)
 
 /**
  * Applies the repositories hosted at GitHub Packages, to which Spine artifacts were published.
  *
  * This method should be used by those wishing to have Spine artifacts published
  * to GitHub Packages as dependencies.
+ *
+ * @param shortRepositoryName
+ *          the short name of the GitHub repository (e.g. "core-java")
+ * @param project
+ *          the project which is going to consume or publish artifacts from
+ *          the registered repository
  */
-fun RepositoryHandler.applyGitHubPackages(project: Project) {
-    val baseTypes = gitHub("base-types")
-    val gprCreds = baseTypes.credentials(project)
+fun RepositoryHandler.applyGitHubPackages(shortRepositoryName: String, project: Project) {
+    val repository = gitHub(shortRepositoryName)
+    val credentials = repository.credentials(project)
 
-    gprCreds?.let {
-        spineMavenRepo(it, baseTypes.releases)
-        spineMavenRepo(it, baseTypes.snapshots)
+    credentials?.let {
+        spineMavenRepo(it, repository.releases)
+        spineMavenRepo(it, repository.snapshots)
     }
 }
 
@@ -280,8 +193,8 @@ fun RepositoryHandler.applyStandard() {
     val spineRepos = listOf(
         Repos.spine,
         Repos.spineSnapshots,
-        Repos.cloudArchive,
-        Repos.cloudArchiveSnapshots
+        Repos.artifactRegistry,
+        Repos.artifactRegistrySnapshots
     )
 
     spineRepos

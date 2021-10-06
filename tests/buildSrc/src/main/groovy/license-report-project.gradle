@@ -25,8 +25,9 @@
  */
 //file:noinspection UnnecessaryQualifiedReference
 
+import com.github.jk1.license.*
 import com.github.jk1.license.render.ReportRenderer
-import io.spine.internal.gradle.PublishExtension
+import io.spine.internal.gradle.publish.PublishExtension
 
 /**
  * This script plugin generates the license report for all dependencies used in a project.
@@ -101,7 +102,7 @@ class MarkdownReportRenderer implements ReportRenderer {
      * <p>If the {@code PublishExtension} has the property {@code spinePrefix} set to {@code true}
      * returns {@code "spine-"}, otherwise an empty string.
      */
-    private String prefixFor(final Project project) {
+    private static String prefixFor(final Project project) {
         final publishExtension = project.rootProject.extensions.findByType(PublishExtension.class)
         final prefix = (publishExtension?.spinePrefix?.getOrElse(false) ?: false)
                 ? "spine-"

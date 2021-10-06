@@ -160,7 +160,8 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                 it.plugins {
                     id(PROTOC_PLUGIN) {
                         val requestFile = extension.requestFile(it.sourceSet)
-                        option(requestFile.get().asFile.absolutePath)
+                        val path = requestFile.get().asFile.absolutePath
+                        option(path.base64Encoded())
                     }
                 }
                 project.tasks.getByName(launchTaskName(it.sourceSet)).dependsOn(it)
@@ -170,10 +171,13 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
     }
 
 private fun launchTaskName(sourceSet: SourceSet): String =
-    "launchProtoData${sourceSet.name.capitalize()}"
+    "launchProtoData${sourceSet.capitalizedName}"
 
 private fun cleanTaskName(sourceSet: SourceSet): String =
-    "cleanProtoData${sourceSet.name.capitalize()}"
+    "cleanProtoData${sourceSet.capitalizedName}"
+
+private val SourceSet.capitalizedName: String
+    get() = name.replaceFirstChar { it.uppercase() }
 
 private fun Project.configureSourceSets(extension: Extension) {
     afterEvaluate {

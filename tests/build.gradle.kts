@@ -52,7 +52,7 @@ subprojects {
     }
 
     repositories.applyStandard()
-    repositories.applyGitHubPackages(rootProject)
+    repositories.applyGitHubPackages("base-types", rootProject)
 
     protobuf {
         protoc {

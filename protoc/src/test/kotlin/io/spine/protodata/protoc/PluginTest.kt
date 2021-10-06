@@ -32,17 +32,25 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.PluginProtos.Version
 import java.io.ByteArrayInputStream
 import java.io.File
+import java.util.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 class `Protobuf compiler plugin should` {
 
-    private lateinit var file: File
+    private lateinit var requestFile: File
+
+    private val requestFileEncoded: String
+        get() {
+            val path = requestFile.absolutePath
+            val pathBytes = path.encodeToByteArray()
+            return Base64.getEncoder().encodeToString(pathBytes)
+        }
 
     @BeforeEach
     fun prepareFile(@TempDir dir: File) {
-        file = dir.resolve("request.bin")
+        requestFile = dir.resolve("request.bin")
     }
 
     @Test
@@ -52,8 +60,8 @@ class `Protobuf compiler plugin should` {
 
     @Test
     fun `overwrite existing file`() {
-        file.writeText("""
-               This is a place holder designed to be longer than
+        requestFile.writeText("""
+               This is a placeholder designed to be longer than
                the code generation request.
         """.trimIndent().repeat(100))
 
@@ -63,7 +71,7 @@ class `Protobuf compiler plugin should` {
     private fun checkWritesRequestToFile() {
         val request = constructRequest()
         launchMain(request)
-        val read = file.readBytes()
+        val read = requestFile.readBytes()
         val restoredRequest = CodeGeneratorRequest.parseFrom(read)
         assertThat(restoredRequest)
             .isEqualTo(request)
@@ -81,7 +89,7 @@ class `Protobuf compiler plugin should` {
             .addProtoFile(TimestampProto.getDescriptor().toProto())
             .addFileToGenerate("google/protobuf/timestamp.proto")
             .setCompilerVersion(version)
-            .setParameter(file.absolutePath)
+            .setParameter(requestFileEncoded)
             .build()
     }
 

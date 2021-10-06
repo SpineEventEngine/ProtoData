@@ -26,6 +26,9 @@
 
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Jackson
+import io.spine.internal.gradle.CheckVersionIncrement
+import io.spine.internal.gradle.IncrementGuard
+import io.spine.internal.gradle.publish.PublishingRepos
 
 plugins {
     `build-proto-model`
@@ -44,4 +47,10 @@ dependencies {
 
     testImplementation(project(":testutil"))
     testImplementation(JUnit.params)
+}
+
+apply<IncrementGuard>()
+
+tasks.withType<CheckVersionIncrement> {
+    repository = PublishingRepos.cloudArtifactRegistry
 }

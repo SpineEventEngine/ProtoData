@@ -58,6 +58,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
+import java.lang.System
 
 class `'Pipeline' should` {
 
@@ -145,14 +146,18 @@ class `'Pipeline' should` {
             SourceSet.from(srcRoot),
             request
         )()
-        assertThat(sourceFile.readText())
-            .isEqualTo("""
-                // INSERT:'file_start'
-                Hello from ${renderer.javaClass.name}
-                // INSERT:'file_middle'
-                $initialContent
-                // INSERT:'file_end'
-            """.trimIndent())
+        val assertFileContent = assertThat(sourceFile.readText())
+        assertFileContent
+            .contains("// INSERT:'file_start'")
+        assertFileContent
+            .contains("Hello from ${renderer.javaClass.name}")
+        assertFileContent
+            .contains("// INSERT:'file_middle'")
+        assertFileContent
+            .contains(initialContent)
+        assertFileContent
+            .contains("// INSERT:'file_end'")
+
     }
 
     @Test

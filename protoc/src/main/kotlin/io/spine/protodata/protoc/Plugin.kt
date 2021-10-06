@@ -40,7 +40,7 @@ import kotlin.io.path.writeBytes
  */
 public fun main() {
     val request = CodeGeneratorRequest.parseFrom(System.`in`)
-    val requestFile = Path(request.parameter)
+    val requestFile = Path(request.parameter.decodeBase64())
     requestFile.toFile()
                .parentFile
                .mkdirs()

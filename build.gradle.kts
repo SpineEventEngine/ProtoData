@@ -26,13 +26,13 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
+import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.PublishingRepos
 import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.spinePublishing
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
@@ -55,7 +55,7 @@ buildscript {
 
 plugins {
     kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
-    io.spine.internal.dependency.Kotlin.Dokka.apply {
+    io.spine.internal.dependency.Dokka.apply {
         id(pluginId) version(version)
     }
     idea
@@ -65,7 +65,10 @@ plugins {
 }
 
 spinePublishing {
-    targetRepositories.add(PublishingRepos.gitHub("ProtoData"))
+    targetRepositories.addAll(
+        PublishingRepos.gitHub("ProtoData"),
+        PublishingRepos.cloudArtifactRegistry
+    )
     projectsToPublish.addAll(
         "cli",
         "compiler",
@@ -77,21 +80,25 @@ spinePublishing {
 }
 
 allprojects {
-    apply(from = "$rootDir/version.gradle.kts")
+    apply {
+        from("$rootDir/version.gradle.kts")
+        plugin("idea")
+        plugin("project-report")
+    }
 
     group = "io.spine.protodata"
     version = extra["protoDataVersion"]!!
 
     repositories.applyStandard()
-    repositories.applyGitHubPackages(rootProject)
+    repositories.applyGitHubPackages("base-types", rootProject)
 }
 
 subprojects {
 
     apply {
         plugin("kotlin")
-        plugin("idea")
-        plugin(Kotlin.Dokka.pluginId)
+        plugin(Dokka.pluginId)
+        from(Scripts.projectLicenseReport(project))
     }
 
     val spineCoreVersion: String by extra
@@ -107,10 +114,9 @@ subprojects {
         useJUnitPlatform()
 
         testLogging {
-            events = setOf(PASSED, FAILED, SKIPPED)
+            events = setOf(FAILED, SKIPPED)
             showExceptions = true
             showCauses = true
-            showStackTraces = true
         }
     }
 
@@ -125,6 +131,7 @@ subprojects {
                 "-Xopt-in=" +
                         "kotlin.io.path.ExperimentalPathApi," +
                         "kotlin.ExperimentalUnsignedTypes," +
+                        "kotlin.ExperimentalStdlibApi," +
                         "kotlin.experimental.ExperimentalTypeInference",
                 "-Xinline-classes",
                 "-Xjvm-default=all"
@@ -139,13 +146,11 @@ subprojects {
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
     }
+}
 
-    //TODO:2021-08-09:dmytro.dashenkov: Turn to WARN and investigate duplicates.
-    // see https://github.com/SpineEventEngine/base/issues/657
-    val duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    tasks.processResources.get().duplicatesStrategy = duplicatesStrategy
-    tasks.processTestResources.get().duplicatesStrategy = duplicatesStrategy
-    tasks.withType<Jar>().forEach { it.duplicatesStrategy = duplicatesStrategy }
+apply {
+    from(Scripts.repoLicenseReport(project))
+    from(Scripts.generatePom(project))
 }
 
 afterEvaluate {

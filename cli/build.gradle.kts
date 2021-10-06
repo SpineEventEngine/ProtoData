@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.internal.dependency.Clikt
 import io.spine.internal.dependency.Flogger
 
 plugins {
@@ -36,7 +37,7 @@ plugins {
 dependencies {
     implementation(project(":compiler"))
     implementation(kotlin("reflect"))
-    implementation("com.github.ajalt.clikt:clikt:3.1.0")
+    implementation(Clikt.lib)
     implementation(Flogger.lib)
 
     testImplementation(project(":testutil"))

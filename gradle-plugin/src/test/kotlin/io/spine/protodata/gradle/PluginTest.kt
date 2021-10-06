@@ -26,7 +26,6 @@
 
 package io.spine.protodata.gradle
 
-import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import io.spine.testing.SlowTest
 import io.spine.tools.gradle.TaskName
@@ -39,11 +38,9 @@ import org.gradle.testkit.runner.TaskOutcome.SKIPPED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-@Disabled("no easy way to fetch `base-types` in a test project for now")
 @SlowTest
 class `ProtoData Gradle plugin should` {
 
@@ -61,17 +58,13 @@ class `ProtoData Gradle plugin should` {
     @Test
     fun `skip launch task if request file does not exist`() {
         createEmptyProject()
-        val result = launch()
-        assertThat(result.task(taskName.path())!!.outcome)
-            .isEqualTo(SKIPPED)
+        launchAndExpectResult(SKIPPED)
     }
 
     @Test
     fun `launch ProtoData`() {
         createProjectWithProto()
-        val result = launch()
-        assertThat(result.task(taskName.path())!!.outcome)
-            .isEqualTo(SUCCESS)
+        launchAndExpectResult(SUCCESS)
     }
 
     @Test
@@ -90,23 +83,19 @@ class `ProtoData Gradle plugin should` {
     }
 
     private fun launchAndExpectResult(outcome: TaskOutcome) {
-        val result = project.executeTask(taskName)!!
+        val result = launch()
         assertThat(result.task(taskName.path())!!.outcome)
             .isEqualTo(outcome)
     }
 
-    private fun launch(): BuildResult {
-        return project.executeTask(taskName)!!
-    }
+    private fun launch(): BuildResult =
+        project.executeTask(taskName)!!
 
     private fun createProject(name: String, vararg protoFiles: String) {
-        val exeLocation = projectDir.resolve("protodata-${UUID.randomUUID()}")
         val builder = GradleProject.newBuilder()
             .setProjectName(name)
             .setProjectFolder(projectDir)
             .withPluginClasspath()
-            .withProperty("protoDataLocation", exeLocation.absolutePath)
-            .withEnvironment(ImmutableMap.of())
         protoFiles.forEach(builder::addProtoFile)
         project = builder.build()
     }
