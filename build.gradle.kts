@@ -35,7 +35,6 @@ import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.spinePublishing
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
