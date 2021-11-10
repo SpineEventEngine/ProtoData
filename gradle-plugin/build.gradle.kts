@@ -34,15 +34,15 @@ plugins {
     jacoco
 }
 
-val spineBaseVersion: String by extra
+val spineMcVersion: String by extra
 
 dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(Protobuf.GradlePlugin.lib)
 
-    testImplementation("io.spine.tools:spine-plugin-base:$spineBaseVersion")
-    testImplementation("io.spine.tools:spine-plugin-testlib:$spineBaseVersion")
+    testImplementation("io.spine.tools:spine-plugin-base:$spineMcVersion")
+    testImplementation("io.spine.tools:spine-plugin-testlib:$spineMcVersion")
 }
 
 val testsDependOnProjects = listOf(
