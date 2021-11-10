@@ -29,10 +29,10 @@
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.publish.PublishingRepos
+import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
 import io.spine.internal.gradle.spinePublishing
@@ -153,6 +153,4 @@ subprojects {
 PomGenerator.applyTo(project)
 LicenseReporter.mergeAllReports(project)
 
-afterEvaluate {
-    apply(from = Scripts.jacoco(project))
-}
+JacocoConfig.applyTo(project)
