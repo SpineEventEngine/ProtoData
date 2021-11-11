@@ -29,10 +29,12 @@
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.publish.PublishingRepos
+import io.spine.internal.gradle.report.coverage.JacocoConfig
+import io.spine.internal.gradle.report.license.LicenseReporter
+import io.spine.internal.gradle.report.pom.PomGenerator
 import io.spine.internal.gradle.spinePublishing
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
@@ -44,10 +46,10 @@ buildscript {
 
     apply(from = "$rootDir/version.gradle.kts")
 
-    val spineBaseVersion: String by extra
+    val spineMcVersion: String by extra
 
     dependencies {
-        classpath("io.spine.tools:spine-mc-java:$spineBaseVersion")
+        classpath("io.spine.tools:spine-mc-java:$spineMcVersion")
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
 }
@@ -97,8 +99,9 @@ subprojects {
     apply {
         plugin("kotlin")
         plugin(Dokka.pluginId)
-        from(Scripts.projectLicenseReport(project))
     }
+
+    LicenseReporter.generateReportIn(project)
 
     val spineCoreVersion: String by extra
 
@@ -147,11 +150,7 @@ subprojects {
     }
 }
 
-apply {
-    from(Scripts.repoLicenseReport(project))
-    from(Scripts.generatePom(project))
-}
+PomGenerator.applyTo(project)
+LicenseReporter.mergeAllReports(project)
 
-afterEvaluate {
-    apply(from = Scripts.jacoco(project))
-}
+JacocoConfig.applyTo(project)
