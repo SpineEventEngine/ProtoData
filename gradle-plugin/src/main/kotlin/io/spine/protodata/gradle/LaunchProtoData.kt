@@ -40,6 +40,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 
 /**
@@ -69,7 +70,14 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:InputFile
     internal lateinit var requestFile: Provider<RegularFile>
 
+    /**
+     * The path to the directory with the generated source code.
+     *
+     * May not be available, if `protoc` built-ins were turned off, resulting in no source code
+     * being generated. In such a mode `protoc` worked only generating descriptor set files.
+     */
     @get:InputDirectory
+    @get:Optional
     internal lateinit var source: Provider<Directory>
 
     @get:OutputDirectory
