@@ -122,13 +122,17 @@ subprojects {
         }
     }
 
+    val javaVersion = JavaVersion.VERSION_11.toString()
     kotlin {
         explicitApi()
+        jvmToolchain {
+            (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(javaVersion))
+        }
     }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = javaVersion
             freeCompilerArgs = freeCompilerArgs + listOf(
                 "-Xopt-in=" +
                         "kotlin.io.path.ExperimentalPathApi," +
