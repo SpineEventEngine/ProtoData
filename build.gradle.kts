@@ -27,10 +27,12 @@
 @file:Suppress("RemoveRedundantQualifierName")
 
 import io.spine.internal.dependency.Dokka
+import io.spine.internal.dependency.Flogger
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
@@ -94,6 +96,8 @@ allprojects {
     repositories.applyGitHubPackages("base-types", rootProject)
 }
 
+val spineBaseVersion: String by extra
+
 subprojects {
 
     apply {
@@ -110,6 +114,19 @@ subprojects {
         testImplementation(kotlin("test-junit5"))
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
+    }
+
+    with(configurations) {
+        forceVersions()
+        all {
+            resolutionStrategy {
+                force(
+                    "io.spine:spine-base:$spineBaseVersion",
+                    Flogger.lib,
+                    Flogger.Runtime.systemBackend
+                )
+            }
+        }
     }
 
     tasks.test {
