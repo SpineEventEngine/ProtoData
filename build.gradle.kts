@@ -55,7 +55,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
+    kotlin("jvm")
     io.spine.internal.dependency.Dokka.apply {
         id(pluginId) version(version)
     }
