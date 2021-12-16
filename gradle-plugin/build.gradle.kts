@@ -56,9 +56,11 @@ tasks.withType<Test> {
     }
 }
 
+val pluginName = "protoDataPlugin"
+
 gradlePlugin {
     plugins {
-        create("protoDataPlugin") {
+        create(pluginName) {
             id = "io.spine.proto-data"
             implementationClass = "io.spine.protodata.gradle.Plugin"
             displayName = "ProtoData"
@@ -70,7 +72,7 @@ gradlePlugin {
 pluginBundle {
     website = "https://spine.io/"
     vcsUrl = "https://github.com/SpineEventEngine/ProtoData.git"
-    tags = listOf("spine", "protobuf", "protodata", "code generation")
+    tags = listOf("spine", "protobuf", "protodata", "code generation", "codegen")
 
     mavenCoordinates {
         groupId = "io.spine"
@@ -79,7 +81,7 @@ pluginBundle {
     }
 
     plugins {
-        named("protoDataPlugin") {
+        named(pluginName) {
             version = project.version.toString()
         }
     }
