@@ -48,10 +48,10 @@ buildscript {
 
     apply(from = "$rootDir/version.gradle.kts")
 
-    val spineMcVersion: String by extra
+    val mcJavaVersion: String by extra
 
     dependencies {
-        classpath("io.spine.tools:spine-mc-java:$spineMcVersion")
+        classpath("io.spine.tools:spine-mc-java:$mcJavaVersion")
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
 }
@@ -96,7 +96,6 @@ allprojects {
     repositories.applyGitHubPackages("base-types", rootProject)
 }
 
-val spineBaseVersion: String by extra
 
 subprojects {
 
@@ -107,23 +106,31 @@ subprojects {
 
     LicenseReporter.generateReportIn(project)
 
-    val spineCoreVersion: String by extra
+    val coreVersion: String by extra
 
     dependencies {
-        testImplementation("io.spine.tools:spine-testutil-server:$spineCoreVersion")
+        testImplementation("io.spine.tools:spine-testutil-server:$coreVersion")
         testImplementation(kotlin("test-junit5"))
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
     }
+
+    val baseVersion: String by extra
+    val protoDataVersion: String by extra
 
     with(configurations) {
         forceVersions()
         all {
             resolutionStrategy {
                 force(
-                    "io.spine:spine-base:$spineBaseVersion",
+                    "io.spine:spine-base:$baseVersion",
+                    "io.spine:spine-server:$coreVersion",
+                    "io.spine.tools:spine-testlib:$baseVersion",
                     Flogger.lib,
-                    Flogger.Runtime.systemBackend
+                    Flogger.Runtime.systemBackend,
+                    JUnit.runner,
+                    JUnit.bom,
+                    "io.spine.protodata:compiler:$protoDataVersion"
                 )
             }
         }
