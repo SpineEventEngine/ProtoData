@@ -29,17 +29,15 @@ import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.testing.configureLogging
 
 @Suppress("RemoveRedundantQualifierName")
 plugins {
     java
     idea
-    with(io.spine.internal.dependency.Protobuf.GradlePlugin) {
-        id(id) version version
-    }
+    id(io.spine.internal.dependency.Protobuf.GradlePlugin.id)
 }
 
 subprojects {
@@ -48,7 +46,6 @@ subprojects {
         plugin("idea")
         plugin("com.google.protobuf")
         from("$rootDir/../version.gradle.kts")
-        from(Scripts.testOutput(project))
     }
 
     repositories.applyStandard()
@@ -75,5 +72,6 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        configureLogging()
     }
 }
