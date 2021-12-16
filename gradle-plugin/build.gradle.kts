@@ -25,11 +25,12 @@
  */
 
 import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.Publish
+import io.spine.internal.gradle.isSnapshot
 
 plugins {
     `java-gradle-plugin`
-    id("com.gradle.plugin-publish").version("0.15.0")
+    `maven-publish`
+    id("com.gradle.plugin-publish").version("0.18.0")
     `version-to-resources`
     jacoco
 }
@@ -84,6 +85,12 @@ pluginBundle {
     }
 }
 
-tasks.create(Publish.taskName) {
-    dependsOn("publishPlugins")
+val protoDataVersion: String by extra
+
+val publishPlugins: Task by tasks.getting {
+    enabled = !protoDataVersion.isSnapshot()
+}
+
+val publish: Task by tasks.getting {
+    dependsOn(publishPlugins)
 }
