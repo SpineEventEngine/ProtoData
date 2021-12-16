@@ -118,8 +118,10 @@ public abstract class LaunchProtoData : JavaExec() {
             yield("--request")
             yield(project.file(requestFile).absolutePath)
 
-            yield("--source-root")
-            yield(source.absolutePath)
+            if (source.isPresent) {
+                yield("--source-root")
+                yield(source.absolutePath)
+            }
 
             yield("--target-root")
             yield(target.absolutePath)
@@ -152,7 +154,9 @@ public abstract class LaunchProtoData : JavaExec() {
     private inner class CleanAction : Action<Task> {
 
         override fun execute(t: Task) {
-            val sourceDir = source.get().asFile.absoluteFile
+            val sourceDir =
+                if (source.isPresent) source.get().asFile.absoluteFile
+                else null
             val targetDir = target.get().asFile.absoluteFile
             val differentDirs = sourceDir != targetDir
 
