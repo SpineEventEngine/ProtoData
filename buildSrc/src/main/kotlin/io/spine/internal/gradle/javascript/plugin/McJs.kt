@@ -24,16 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.gradle.javascript.plugin
 
-// https://github.com/google/flogger
-object Flogger {
-    internal const val version = "0.7.2"
-    const val lib     = "com.google.flogger:flogger:${version}"
-    @Suppress("unused")
-    object Runtime {
-        const val systemBackend = "com.google.flogger:flogger-system-backend:${version}"
-        const val log4J         = "com.google.flogger:flogger-log4j:${version}"
-        const val slf4J         = "com.google.flogger:slf4j-backend-factory:${version}"
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.withGroovyBuilder
+
+/**
+ * Applies `mc-js` plugin and specifies directories for generated code.
+ *
+ * @see JsPlugins
+ */
+fun JsPlugins.mcJs() {
+
+    plugins {
+        apply("io.spine.mc-js")
+    }
+
+    // Temporarily use GroovyInterop.
+    // Currently, it is not possible to obtain `McJsPlugin` on the classpath of `buildSrc`.
+    // See issue: https://github.com/SpineEventEngine/config/issues/298
+
+    project.withGroovyBuilder {
+        "protoJs" {
+            setProperty("generatedMainDir", genProtoMain)
+            setProperty("generatedTestDir", genProtoTest)
+        }
     }
 }
+
+/**
+ * Locates `generateJsonParsers` in this [TaskContainer].
+ *
+ * The task generates JSON-parsing code for JavaScript messages compiled from Protobuf.
+ */
+val TaskContainer.generateJsonParsers: TaskProvider<Task>
+    get() = named("generateJsonParsers")

@@ -24,16 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.gradle.dart.plugin
 
-// https://github.com/google/flogger
-object Flogger {
-    internal const val version = "0.7.2"
-    const val lib     = "com.google.flogger:flogger:${version}"
-    @Suppress("unused")
-    object Runtime {
-        const val systemBackend = "com.google.flogger:flogger-system-backend:${version}"
-        const val log4J         = "com.google.flogger:flogger-log4j:${version}"
-        const val slf4J         = "com.google.flogger:slf4j-backend-factory:${version}"
+import com.google.protobuf.gradle.builtins
+import com.google.protobuf.gradle.id
+import com.google.protobuf.gradle.plugins
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.remove
+import io.spine.internal.dependency.Protobuf
+
+/**
+ * Applies `protobuf` plugin and configures `GenerateProtoTask` to work with a Dart module.
+ *
+ * @see DartPlugins
+ */
+fun DartPlugins.protobuf() {
+
+    plugins.apply(Protobuf.GradlePlugin.id)
+
+    project.protobuf {
+        generateProtoTasks.all().forEach { task ->
+            task.apply {
+                plugins { id("dart") }
+                builtins { remove("java") }
+            }
+        }
     }
 }

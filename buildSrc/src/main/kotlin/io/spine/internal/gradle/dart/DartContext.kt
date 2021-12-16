@@ -24,16 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.gradle.dart
 
-// https://github.com/google/flogger
-object Flogger {
-    internal const val version = "0.7.2"
-    const val lib     = "com.google.flogger:flogger:${version}"
-    @Suppress("unused")
-    object Runtime {
-        const val systemBackend = "com.google.flogger:flogger-system-backend:${version}"
-        const val log4J         = "com.google.flogger:flogger-log4j:${version}"
-        const val slf4J         = "com.google.flogger:slf4j-backend-factory:${version}"
-    }
+import org.gradle.api.Project
+import org.gradle.api.tasks.Exec
+
+/**
+ * Provides access to the current [DartEnvironment] and shortcuts for running `pub` tool.
+ */
+open class DartContext(dartEnv: DartEnvironment, internal val project: Project)
+    : DartEnvironment by dartEnv
+{
+    /**
+     * Executes `pub` command in this [Exec] task.
+     *
+     * The Dart ecosystem uses packages to manage shared software such as libraries and tools.
+     * To get or publish Dart packages, the `pub` package manager is to be used.
+     */
+    fun Exec.pub(vararg args: Any) = commandLine(pubExecutable, *args)
 }
