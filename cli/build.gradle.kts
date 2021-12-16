@@ -39,6 +39,7 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(Clikt.lib)
     implementation(Flogger.lib)
+    runtimeOnly(Flogger.Runtime.systemBackend)
 
     testImplementation(project(":testutil"))
 }
