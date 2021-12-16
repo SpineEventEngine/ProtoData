@@ -28,10 +28,9 @@ package io.spine.protodata.gradle
 
 import com.google.common.truth.Truth.assertThat
 import io.spine.testing.SlowTest
-import io.spine.tools.gradle.TaskName
+import io.spine.tools.gradle.task.TaskName
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
-import java.util.*
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.TaskOutcome.SKIPPED
@@ -44,7 +43,6 @@ import org.junit.jupiter.api.io.TempDir
 @SlowTest
 class `ProtoData Gradle plugin should` {
 
-    private val protoFileName = "test.proto"
     private val taskName: TaskName = TaskName { "launchProtoDataMain" }
 
     private lateinit var projectDir: File
@@ -79,7 +77,7 @@ class `ProtoData Gradle plugin should` {
     }
 
     private fun createProjectWithProto() {
-        createProject("launch-test", protoFileName)
+        createProject("launch-test")
     }
 
     private fun launchAndExpectResult(outcome: TaskOutcome) {
@@ -89,14 +87,12 @@ class `ProtoData Gradle plugin should` {
     }
 
     private fun launch(): BuildResult =
-        project.executeTask(taskName)!!
+        project.executeTask(taskName)
 
-    private fun createProject(name: String, vararg protoFiles: String) {
-        val builder = GradleProject.newBuilder()
-            .setProjectName(name)
-            .setProjectFolder(projectDir)
+    private fun createProject(resourceDir: String) {
+        val builder = GradleProject.setupAt(projectDir)
+            .fromResources(resourceDir)
             .withPluginClasspath()
-        protoFiles.forEach(builder::addProtoFile)
-        project = builder.build()
+        project = builder.create()
     }
 }
