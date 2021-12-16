@@ -24,16 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.gradle.javascript
 
-// https://github.com/google/flogger
-object Flogger {
-    internal const val version = "0.7.2"
-    const val lib     = "com.google.flogger:flogger:${version}"
-    @Suppress("unused")
-    object Runtime {
-        const val systemBackend = "com.google.flogger:flogger-system-backend:${version}"
-        const val log4J         = "com.google.flogger:flogger-log4j:${version}"
-        const val slf4J         = "com.google.flogger:slf4j-backend-factory:${version}"
+import java.io.File
+import org.gradle.api.Project
+
+/**
+ * Provides access to the current [JsEnvironment] and shortcuts for running `npm` tool.
+ */
+open class JsContext(jsEnv: JsEnvironment, internal val project: Project)
+    : JsEnvironment by jsEnv
+{
+    /**
+     * Executes `npm` command in a separate process.
+     *
+     * [JsEnvironment.projectDir] is used as a working directory.
+     */
+    fun npm(vararg args: String) = projectDir.npm(*args)
+
+    /**
+     * Executes `npm` command in a separate process.
+     *
+     * This [File] is used as a working directory.
+     */
+    fun File.npm(vararg args: String) = project.exec {
+
+        workingDir(this@npm)
+        commandLine(npmExecutable)
+        args(*args)
+
+        // Using private packages in a CI/CD workflow | npm Docs
+        // https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow
+
+        environment["NPM_TOKEN"] = npmAuthToken
     }
 }

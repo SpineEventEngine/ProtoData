@@ -24,16 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.gradle
 
-// https://github.com/google/flogger
-object Flogger {
-    internal const val version = "0.7.2"
-    const val lib     = "com.google.flogger:flogger:${version}"
-    @Suppress("unused")
-    object Runtime {
-        const val systemBackend = "com.google.flogger:flogger-system-backend:${version}"
-        const val log4J         = "com.google.flogger:flogger-log4j:${version}"
-        const val slf4J         = "com.google.flogger:slf4j-backend-factory:${version}"
+import kotlin.reflect.KClass
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
+
+/**
+ * A name and a type of a Gradle task.
+ */
+internal class TaskName<T : Task>(
+    val value: String,
+    val clazz: KClass<T>,
+) {
+    companion object {
+
+        fun of(name: String) = TaskName(name, Task::class)
+
+        fun <T : Task> of(name: String, clazz: KClass<T>) = TaskName(name, clazz)
     }
 }
+
+/**
+ * Locates [the task][TaskName] in this [TaskContainer].
+ */
+internal fun <T : Task> TaskContainer.named(name: TaskName<T>) = named(name.value, name.clazz)
+
+/**
+ * Registers [the task][TaskName] in this [TaskContainer].
+ */
+internal fun <T : Task> TaskContainer.register(name: TaskName<T>, init: T.() -> Unit) =
+    register(name.value, name.clazz, init)
