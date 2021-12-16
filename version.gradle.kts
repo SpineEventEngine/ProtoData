@@ -24,7 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extra["protoDataVersion"] = "0.1.3"
-extra["spineBaseVersion"] = "2.0.0-SNAPSHOT.75"
-extra["spineMcVersion"] = "2.0.0-SNAPSHOT.74"
-extra["spineCoreVersion"] = "2.0.0-SNAPSHOT.75"
+val baseVersion: String by extra("2.0.0-SNAPSHOT.80")
+val coreVersion: String by extra("2.0.0-SNAPSHOT.89")
+
+val mcVersion: String by extra("2.0.0-SNAPSHOT.87")
+val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.87")
+val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.80")
+
+val protoDataVersion: String by extra("0.1.3")
