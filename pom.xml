@@ -56,13 +56,13 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>com.google.protobuf</groupId>
     <artifactId>protobuf-java</artifactId>
-    <version>3.18.0</version>
+    <version>3.19.1</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>com.google.protobuf</groupId>
     <artifactId>protobuf-java-util</artifactId>
-    <version>3.18.0</version>
+    <version>3.19.1</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -74,13 +74,13 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.grpc</groupId>
     <artifactId>grpc-protobuf</artifactId>
-    <version>1.38.0</version>
+    <version>1.43.0</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>io.grpc</groupId>
     <artifactId>grpc-stub</artifactId>
-    <version>1.38.0</version>
+    <version>1.43.0</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
