@@ -92,6 +92,7 @@ class `ProtoData Gradle plugin should` {
     private fun createProject(resourceDir: String) {
         val builder = GradleProject.setupAt(projectDir)
             .fromResources(resourceDir)
+            .copyBuildSrc()
             .withPluginClasspath()
         project = builder.create()
     }

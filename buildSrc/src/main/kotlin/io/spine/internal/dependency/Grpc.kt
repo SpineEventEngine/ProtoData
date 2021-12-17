@@ -30,7 +30,7 @@ package io.spine.internal.dependency
 @Suppress("unused")
 object Grpc {
     @Suppress("MemberVisibilityCanBePrivate")
-    const val version        = "1.38.0"
+    const val version        = "1.43.0"
     const val api            = "io.grpc:grpc-api:${version}"
     const val core           = "io.grpc:grpc-core:${version}"
     const val context        = "io.grpc:grpc-context:${version}"
