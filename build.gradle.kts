@@ -30,6 +30,7 @@ import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.Flogger
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Truth
+import io.spine.internal.dependency.Grpc
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.forceVersions
@@ -123,13 +124,16 @@ subprojects {
         all {
             resolutionStrategy {
                 force(
+                    Flogger.lib,
+                    Flogger.Runtime.systemBackend,
+                    Grpc.stub,
+                    Grpc.protobuf,
+                    Grpc.api,
+                    JUnit.runner,
+                    JUnit.bom,
                     "io.spine:spine-base:$baseVersion",
                     "io.spine:spine-server:$coreVersion",
                     "io.spine.tools:spine-testlib:$baseVersion",
-                    Flogger.lib,
-                    Flogger.Runtime.systemBackend,
-                    JUnit.runner,
-                    JUnit.bom,
                     "io.spine.protodata:compiler:$protoDataVersion"
                 )
             }
