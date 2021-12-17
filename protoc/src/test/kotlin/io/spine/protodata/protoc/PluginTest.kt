@@ -78,14 +78,12 @@ class `Protobuf compiler plugin should` {
     }
 
     private fun constructRequest(): CodeGeneratorRequest {
-        val version = Version
-            .newBuilder()
+        val version = Version.newBuilder()
             .setMajor(42)
             .setMinor(314)
             .setPatch(271)
             .build()
-        return CodeGeneratorRequest
-            .newBuilder()
+        return CodeGeneratorRequest.newBuilder()
             .addProtoFile(TimestampProto.getDescriptor().toProto())
             .addFileToGenerate("google/protobuf/timestamp.proto")
             .setCompilerVersion(version)
