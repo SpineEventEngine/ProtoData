@@ -100,7 +100,9 @@ private fun Project.createLaunchTasks(extension: Extension, version: String) {
         it.isVisible = false
     }
     dependencies.add(artifactConfig.name, "io.spine.protodata:cli:$version")
-    val userCpConfig = configurations.create("protoData")
+    val userCpConfig = configurations.create("protoData") {
+        it.exclude(group = "io.spine.protodata", module = "compiler")
+    }
     sourceSets.forEach { sourceSet ->
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
         createCleanTask(extension, sourceSet)
