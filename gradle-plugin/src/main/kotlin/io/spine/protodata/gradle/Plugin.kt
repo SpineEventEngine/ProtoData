@@ -36,6 +36,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.api.Plugin as GradlePlugin
@@ -70,7 +71,7 @@ public class Plugin : GradlePlugin<Project> {
         val version = readVersion()
         with(target) {
             val extension = createExtension()
-            configureProtobufPlugin(extension, version)
+            configureWithProtobufPlugin(extension, version)
             createLaunchTasks(extension, version)
             configureSourceSets(extension)
             configureIdea(extension)
@@ -143,6 +144,16 @@ private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
 
         tasks.getByName("clean").dependsOn(this)
         tasks.getByName(launchTaskName(sourceSet)).mustRunAfter(this)
+    }
+}
+
+private fun Project.configureWithProtobufPlugin(extension: Extension, version: String) {
+    if (pluginManager.hasPlugin("com.google.protobuf")) {
+        configureProtobufPlugin(extension, version)
+    } else {
+        pluginManager.withPlugin("com.google.protobuf") {
+            configureProtobufPlugin(extension, version)
+        }
     }
 }
 
