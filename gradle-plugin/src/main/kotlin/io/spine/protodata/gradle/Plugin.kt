@@ -95,6 +95,8 @@ private const val VERSION_RESOURCE = "version.txt"
 
 private const val PROTOC_PLUGIN = "protodata"
 
+private const val PROTOBUF_PLUGIN = "com.google.protobuf"
+
 private fun Project.createLaunchTasks(extension: Extension, version: String) {
     val artifactConfig = configurations.create("protoDataRawArtifact") {
         it.isVisible = false
@@ -150,10 +152,10 @@ private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
 }
 
 private fun Project.configureWithProtobufPlugin(extension: Extension, version: String) {
-    if (pluginManager.hasPlugin("com.google.protobuf")) {
+    if (pluginManager.hasPlugin(PROTOBUF_PLUGIN)) {
         configureProtobufPlugin(extension, version)
     } else {
-        pluginManager.withPlugin("com.google.protobuf") {
+        pluginManager.withPlugin(PROTOBUF_PLUGIN) {
             configureProtobufPlugin(extension, version)
         }
     }
