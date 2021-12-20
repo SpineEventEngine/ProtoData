@@ -133,8 +133,7 @@ subprojects {
                     JUnit.bom,
                     "io.spine:spine-base:$baseVersion",
                     "io.spine:spine-server:$coreVersion",
-                    "io.spine.tools:spine-testlib:$baseVersion",
-                    "io.spine.protodata:compiler:$protoDataVersion"
+                    "io.spine.tools:spine-testlib:$baseVersion"
                 )
             }
         }
