@@ -37,10 +37,12 @@ import org.gradle.testkit.runner.TaskOutcome.SKIPPED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 @SlowTest
+@Disabled
 class `ProtoData Gradle plugin should` {
 
     private val taskName: TaskName = TaskName { "launchProtoDataMain" }
@@ -93,6 +95,8 @@ class `ProtoData Gradle plugin should` {
         val builder = GradleProject.setupAt(projectDir)
             .fromResources(resourceDir)
             .copyBuildSrc()
+            //TODO:2021-12-21:alexander.yevsyukov: Remove after debugging.
+            .enableRunnerDebug()
             .withPluginClasspath()
         project = builder.create()
     }
