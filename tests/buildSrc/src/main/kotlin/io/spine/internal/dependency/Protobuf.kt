@@ -44,7 +44,7 @@ object Protobuf {
          *
          * When changing the version, also change the version used in the `build.gradle.kts`.
          */
-        const val version = "0.8.17"
+        const val version = "0.8.18"
         const val id = "com.google.protobuf"
         const val lib = "com.google.protobuf:protobuf-gradle-plugin:${version}"
     }
