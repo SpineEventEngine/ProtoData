@@ -116,28 +116,30 @@ subprojects {
         testRuntimeOnly(JUnit.runner)
     }
 
-    val baseVersion: String by extra
-    val protoDataVersion: String by extra
-
-    with(configurations) {
-        forceVersions()
-        all {
-            resolutionStrategy {
-                force(
-                    Flogger.lib,
-                    Flogger.Runtime.systemBackend,
-                    Grpc.stub,
-                    Grpc.protobuf,
-                    Grpc.api,
-                    JUnit.runner,
-                    JUnit.bom,
-                    "io.spine:spine-base:$baseVersion",
-                    "io.spine:spine-server:$coreVersion",
-                    "io.spine.tools:spine-testlib:$baseVersion"
-                )
-            }
-        }
-    }
+//TODO:2021-12-21:alexander.yevsyukov: Uncomment when circular `compiler` dependency is fixed.
+//    val baseVersion: String by extra
+//    val protoDataVersion: String by extra
+//
+//    with(configurations) {
+//        forceVersions()
+//        all {
+//            resolutionStrategy {
+//                force(
+//                    Flogger.lib,
+//                    Flogger.Runtime.systemBackend,
+//                    Grpc.stub,
+//                    Grpc.protobuf,
+//                    Grpc.api,
+//                    JUnit.runner,
+//                    JUnit.bom,
+//                    "io.spine:spine-base:$baseVersion",
+//                    "io.spine:spine-server:$coreVersion",
+//                    "io.spine.tools:spine-testlib:$baseVersion",
+//                    //"io.spine.protodata:compiler:$protoDataVersion"
+//                )
+//            }
+//        }
+//    }
 
     tasks.test {
         useJUnitPlatform()
