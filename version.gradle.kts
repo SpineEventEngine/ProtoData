@@ -28,7 +28,12 @@ val baseVersion: String by extra("2.0.0-SNAPSHOT.80")
 val coreVersion: String by extra("2.0.0-SNAPSHOT.89")
 
 val mcVersion: String by extra("2.0.0-SNAPSHOT.87")
-val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.83")
+
+val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.88")
+
+// The version in which there is no circular dependencies onto ProtoData. Yet.
+//val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.83")
+
 val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
 
-val protoDataVersion: String by extra("0.1.3")
+val protoDataVersion: String by extra("0.1.5")

@@ -98,6 +98,7 @@ public abstract class LaunchProtoData : JavaExec() {
      * This method *must* be called after all the configuration is done for the task.
      */
     internal fun compileCommandLine() {
+        println("!!! The `substituted` version of ProtoData Gradle plugin is compiling the cmd line. !!!")
         val command = sequence {
             plugins.get().forEach {
                 yield("--plugin")

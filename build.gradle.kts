@@ -31,6 +31,7 @@ import io.spine.internal.dependency.Flogger
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Truth
 import io.spine.internal.dependency.Grpc
+import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.forceVersions
@@ -53,6 +54,8 @@ buildscript {
 
     dependencies {
         classpath("io.spine.tools:spine-mc-java:$mcJavaVersion")
+        //TODO:2021-12-24:alexander.yevsyukov: uncomment when experimenting again.
+        classpath("io.spine.protodata:gradle-plugin:0.1.4")
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
 }
@@ -62,8 +65,9 @@ plugins {
     io.spine.internal.dependency.Dokka.apply {
         id(pluginId) version(version)
     }
+    //TODO:2021-12-24:alexander.yevsyukov: uncomment when experimenting again.
+    id("io.spine.proto-data").version("0.1.4").apply(false)
     idea
-    `integration-test`
     jacoco
     `force-jacoco`
 }
@@ -185,5 +189,10 @@ subprojects {
 
 PomGenerator.applyTo(project)
 LicenseReporter.mergeAllReports(project)
-
 JacocoConfig.applyTo(project)
+
+//val integrationTest by tasks.creating(RunBuild::class) {
+//    directory = "$rootDir/tests"
+//}
+//
+//tasks["check"].finalizedBy(integrationTest)

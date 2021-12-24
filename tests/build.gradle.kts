@@ -29,6 +29,9 @@ import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
+import io.spine.internal.dependency.Flogger
+import io.spine.internal.dependency.Grpc
+import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.testing.configureLogging
@@ -69,6 +72,30 @@ subprojects {
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
     }
+
+//    val baseVersion: String by extra
+//    val coreVersion: String by extra
+//    val protoDataVersion: String by extra
+//
+//    with(configurations) {
+//        forceVersions()
+//        all {
+//            resolutionStrategy {
+//                force(
+//                    Flogger.lib,
+//                    Flogger.Runtime.systemBackend,
+//                    Grpc.stub,
+//                    Grpc.protobuf,
+//                    Grpc.api,
+//                    JUnit.runner,
+//                    JUnit.bom,
+//                    "io.spine:spine-base:$baseVersion",
+//                    "io.spine:spine-server:$coreVersion",
+//                    "io.spine.tools:spine-testlib:$baseVersion",
+//                )
+//            }
+//        }
+//    }
 
     tasks.withType<Test> {
         useJUnitPlatform()

@@ -24,10 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.gradle.RunBuild
-
-val integrationTest by tasks.creating(RunBuild::class) {
-    directory = "$rootDir/tests"
+pluginManagement {
+    repositories {
+        mavenLocal()
+    }
 }
-
-tasks["check"].finalizedBy(integrationTest)

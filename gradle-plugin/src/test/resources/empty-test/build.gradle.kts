@@ -28,11 +28,16 @@ import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.kotlin.dsl.apply
+
+buildscript {
+    io.spine.internal.gradle.doApplyStandard(repositories)
+}
 
 plugins {
     java
     id("com.google.protobuf")
-    id("io.spine.proto-data")
+    id("io.spine.proto-data") version "0.1.4"
 }
 
 fun RepositoryHandler.addCouple(baseUrl: String) {

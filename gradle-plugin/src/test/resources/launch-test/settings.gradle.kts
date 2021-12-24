@@ -24,35 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.protodata.gradle.Extension
-
-@Suppress("RemoveRedundantQualifierName")
-buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
-
-    dependencies {
-        classpath("io.spine:proto-data:+")
+pluginManagement {
+    repositories {
+        mavenLocal()
     }
-}
-
-apply(plugin = "io.spine.proto-data")
-
-dependencies {
-    "protoData"(project(":protodata-extension"))
-    implementation(project(":protodata-extension"))
-}
-
-extensions.getByType<Extension>().apply {
-    renderers(
-        "io.spine.protodata.test.uuid.ClassScopePrinter",
-        "io.spine.protodata.test.uuid.UuidJavaRenderer",
-
-        "io.spine.protodata.test.annotation.PrintFieldGetter",
-        "io.spine.protodata.test.annotation.AnnotationRenderer"
-    )
-    plugins(
-        "io.spine.protodata.test.uuid.UuidPlugin",
-        "io.spine.protodata.test.annotation.AnnotationPlugin"
-    )
-    options("spine/protodata/test/meta.proto")
 }

@@ -1,6 +1,6 @@
 
 
-# Dependencies of `io.spine.protodata:cli:0.1.3`
+# Dependencies of `io.spine.protodata:cli:0.1.5`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.13.0.**No license information found**
@@ -227,7 +227,8 @@
      * **Project URL:** [https://github.com/googleapis/java-iam/proto-google-common-protos](https://github.com/googleapis/java-iam/proto-google-common-protos)
      * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.auto. **Name** : auto-common. **Version** : 0.10.
+1.  **Group** : com.google.auto. **Name** : auto-common. **Version** : 1.1.2.
+     * **Project URL:** [https://github.com/google/auto/tree/master/common](https://github.com/google/auto/tree/master/common)
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.auto.service. **Name** : auto-service-annotations. **Version** : 1.0-rc6.
@@ -253,7 +254,10 @@
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.10.0.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
@@ -265,10 +269,13 @@
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_check_api. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_check_api. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_core. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_core. **Version** : 2.10.0.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.8.0.
@@ -308,6 +315,10 @@
 
 1.  **Group** : com.google.guava. **Name** : guava. **Version** : 30.1.1-jre.
      * **Project URL:** [https://github.com/google/guava/](https://github.com/google/guava/)
+     * **License:** [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.guava. **Name** : guava. **Version** : 31.0.1-jre.
+     * **Project URL:** [https://github.com/google/guava](https://github.com/google/guava)
      * **License:** [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.guava. **Name** : guava-testlib. **Version** : 30.1.1-jre.
@@ -417,7 +428,7 @@
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : protoc-gen-grpc-java. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : protoc-gen-grpc-java. **Version** : 1.43.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -573,7 +584,7 @@
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.5.31.
+1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -605,19 +616,11 @@
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-common. **Version** : 1.5.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-common. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -629,19 +632,11 @@
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk7. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk7. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk8. **Version** : 1.5.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk8. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -755,12 +750,12 @@
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Dec 24 22:04:45 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:codegen-java:0.1.3`
+# Dependencies of `io.spine.protodata:codegen-java:0.1.5`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.13.0.**No license information found**
@@ -981,7 +976,8 @@ This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://github.com/googleapis/java-iam/proto-google-common-protos](https://github.com/googleapis/java-iam/proto-google-common-protos)
      * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.auto. **Name** : auto-common. **Version** : 0.10.
+1.  **Group** : com.google.auto. **Name** : auto-common. **Version** : 1.1.2.
+     * **Project URL:** [https://github.com/google/auto/tree/master/common](https://github.com/google/auto/tree/master/common)
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.auto.service. **Name** : auto-service-annotations. **Version** : 1.0-rc6.
@@ -1007,7 +1003,10 @@ This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-Lice
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.10.0.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
@@ -1019,10 +1018,13 @@ This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-Lice
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_check_api. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_check_api. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_core. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_core. **Version** : 2.10.0.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.8.0.
@@ -1050,6 +1052,10 @@ This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-Lice
 
 1.  **Group** : com.google.guava. **Name** : guava. **Version** : 30.1.1-jre.
      * **Project URL:** [https://github.com/google/guava/](https://github.com/google/guava/)
+     * **License:** [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.guava. **Name** : guava. **Version** : 31.0.1-jre.
+     * **Project URL:** [https://github.com/google/guava](https://github.com/google/guava)
      * **License:** [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.guava. **Name** : guava-testlib. **Version** : 30.1.1-jre.
@@ -1159,7 +1165,7 @@ This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : protoc-gen-grpc-java. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : protoc-gen-grpc-java. **Version** : 1.43.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1298,10 +1304,6 @@ This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.5.31.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -1334,19 +1336,11 @@ This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-common. **Version** : 1.5.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-common. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -1358,19 +1352,11 @@ This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk7. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk7. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk8. **Version** : 1.5.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk8. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -1469,12 +1455,12 @@ This report was generated on **Tue Dec 21 20:29:14 EET 2021** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Dec 24 22:04:45 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:compiler:0.1.3`
+# Dependencies of `io.spine.protodata:compiler:0.1.5`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.13.0.**No license information found**
@@ -1691,7 +1677,8 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://github.com/googleapis/java-iam/proto-google-common-protos](https://github.com/googleapis/java-iam/proto-google-common-protos)
      * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.auto. **Name** : auto-common. **Version** : 0.10.
+1.  **Group** : com.google.auto. **Name** : auto-common. **Version** : 1.1.2.
+     * **Project URL:** [https://github.com/google/auto/tree/master/common](https://github.com/google/auto/tree/master/common)
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.auto.service. **Name** : auto-service-annotations. **Version** : 1.0-rc6.
@@ -1717,7 +1704,10 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.10.0.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
@@ -1729,10 +1719,13 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_check_api. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_check_api. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_core. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_core. **Version** : 2.10.0.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.8.0.
@@ -1760,6 +1753,10 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
 
 1.  **Group** : com.google.guava. **Name** : guava. **Version** : 30.1.1-jre.
      * **Project URL:** [https://github.com/google/guava/](https://github.com/google/guava/)
+     * **License:** [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.guava. **Name** : guava. **Version** : 31.0.1-jre.
+     * **Project URL:** [https://github.com/google/guava](https://github.com/google/guava)
      * **License:** [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.guava. **Name** : guava-testlib. **Version** : 30.1.1-jre.
@@ -1869,7 +1866,7 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : protoc-gen-grpc-java. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : protoc-gen-grpc-java. **Version** : 1.43.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -2024,10 +2021,6 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.5.31.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -2064,10 +2057,6 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -2080,10 +2069,6 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-common. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-common. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -2092,19 +2077,11 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk7. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk7. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk8. **Version** : 1.5.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk8. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -2197,12 +2174,12 @@ This report was generated on **Tue Dec 21 20:29:15 EET 2021** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Dec 21 20:29:16 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Dec 24 22:04:46 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:gradle-plugin:0.1.3`
+# Dependencies of `io.spine.protodata:gradle-plugin:0.1.5`
 
 ## Runtime
 1.  **Group** : com.google.code.findbugs. **Name** : jsr305. **Version** : 3.0.2.
@@ -2719,12 +2696,12 @@ This report was generated on **Tue Dec 21 20:29:16 EET 2021** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Dec 21 20:29:17 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Dec 24 22:04:46 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protoc:0.1.3`
+# Dependencies of `io.spine.protodata:protoc:0.1.5`
 
 ## Runtime
 1.  **Group** : com.google.code.findbugs. **Name** : jsr305. **Version** : 3.0.2.
@@ -3206,12 +3183,12 @@ This report was generated on **Tue Dec 21 20:29:17 EET 2021** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Dec 24 22:04:47 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:testutil:0.1.3`
+# Dependencies of `io.spine.protodata:testutil:0.1.5`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.13.0.**No license information found**
@@ -3428,7 +3405,8 @@ This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://github.com/googleapis/java-iam/proto-google-common-protos](https://github.com/googleapis/java-iam/proto-google-common-protos)
      * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.auto. **Name** : auto-common. **Version** : 0.10.
+1.  **Group** : com.google.auto. **Name** : auto-common. **Version** : 1.1.2.
+     * **Project URL:** [https://github.com/google/auto/tree/master/common](https://github.com/google/auto/tree/master/common)
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.auto.service. **Name** : auto-service-annotations. **Version** : 1.0-rc6.
@@ -3454,7 +3432,10 @@ This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-Lice
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.10.0.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
@@ -3466,10 +3447,13 @@ This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-Lice
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_check_api. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_check_api. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_core. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_core. **Version** : 2.10.0.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.10.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.8.0.
@@ -3501,6 +3485,10 @@ This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-Lice
 
 1.  **Group** : com.google.guava. **Name** : guava. **Version** : 30.1.1-jre.
      * **Project URL:** [https://github.com/google/guava/](https://github.com/google/guava/)
+     * **License:** [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.guava. **Name** : guava. **Version** : 31.0.1-jre.
+     * **Project URL:** [https://github.com/google/guava](https://github.com/google/guava)
      * **License:** [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.guava. **Name** : guava-testlib. **Version** : 30.1.1-jre.
@@ -3590,7 +3578,7 @@ This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : protoc-gen-grpc-java. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : protoc-gen-grpc-java. **Version** : 1.43.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -3734,10 +3722,6 @@ This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.5.31.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -3770,19 +3754,11 @@ This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-common. **Version** : 1.5.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-common. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -3794,19 +3770,11 @@ This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk7. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk7. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk8. **Version** : 1.5.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-stdlib-jdk8. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -3905,4 +3873,4 @@ This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Dec 21 20:29:18 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Dec 24 22:04:47 EET 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).

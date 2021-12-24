@@ -94,7 +94,9 @@ private fun readVersion(): String {
  */
 internal class Run(version: String) : CliktCommand(
     name = "protodata",
-    help = "ProtoData tool helps build better multi-platform code generation. Version ${version}.",
+    help = "ProtoData tool helps build better multi-platform code generation." +
+            System.lineSeparator() +
+            "Version ${version}.",
     epilog = "https://github.com/SpineEventEngine/ProtoData/",
     printHelpOnEmptyArgs = true
 ) {
@@ -106,9 +108,9 @@ internal class Run(version: String) : CliktCommand(
     """.trimIndent()).multiple()
     private  val renderers: List<String> by option("--renderer", "-r", help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
-        There can only be multiple renderers. To pass more then one value, type:
+        There can only be multiple renderers. To pass more than one value, type:
            `<...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer`
-    """.trimIndent()).multiple(required = true)
+    """.trimIndent()).multiple(default = listOf())
     private val optionProviders: List<String> by option("--option-provider", "--op",
         help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.

@@ -32,6 +32,7 @@ plugins {
     `version-to-resources`
     `build-proto-model`
     jacoco
+    id("com.github.johnrengelman.shadow").version("7.1.1")
 }
 
 dependencies {
@@ -117,5 +118,25 @@ publishing {
 
             setArtifacts(project.configurations.getAt(executableArchivesConfig).allArtifacts)
         }
+
+        create("fat-jar", MavenPublication::class) {
+            groupId = project.group.toString()
+            artifactId = "fat-cli"
+            version = project.version.toString()
+
+            artifact(tasks.shadowJar)
+        }
     }
+}
+
+tasks.publish {
+    dependsOn(tasks.shadowJar)
+}
+
+// See https://github.com/johnrengelman/shadow/issues/153.
+tasks.shadowDistTar.get().enabled = false
+tasks.shadowDistZip.get().enabled = false
+
+artifacts {
+    archives(tasks.shadowJar)
 }

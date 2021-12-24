@@ -97,11 +97,35 @@ private const val PROTOC_PLUGIN = "protodata"
 
 private const val PROTOBUF_PLUGIN = "com.google.protobuf"
 
+/**
+ * If set to any value, enables the development mode for ProtoData.
+ *
+ * Should only be used when developing ProtoData itself.
+ *
+ * Switches to all-in-one ProtoData's `cli` artifact and eliminates the dependency conflict between
+ * the "published" modules and those currently under development.
+ */
+private const val DEV_MODE_SYSTEM_PROPERTY = "spine.internal.protodata.devmode.enabled"
+
 private fun Project.createLaunchTasks(extension: Extension, version: String) {
     val artifactConfig = configurations.create("protoDataRawArtifact") {
         it.isVisible = false
     }
-    dependencies.add(artifactConfig.name, "io.spine.protodata:cli:$version")
+
+    val devModeEnabled = isDevMode()
+    val cliDependency =
+        if (devModeEnabled) {
+            logger.warn("ProtoData's development mode is enabled " +
+                    "via `$DEV_MODE_SYSTEM_PROPERTY` system property.")
+            // "fat-cli" is an all-in-one distribution of ProtoData, published somewhat in the past.
+            // Ironically, we need it in ProtoData development.
+            // It removes the dependency conflicts between ProtoData-s.
+            "io.spine.protodata:fat-cli:$version"
+        } else {
+            "io.spine.protodata:cli:$version";
+        }
+
+    dependencies.add(artifactConfig.name, cliDependency)
     val userCpConfig = configurations.create("protoData") {
         it.exclude(group = "io.spine.protodata", module = "compiler")
     }
@@ -109,6 +133,12 @@ private fun Project.createLaunchTasks(extension: Extension, version: String) {
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
         createCleanTask(extension, sourceSet)
     }
+}
+
+private fun isDevMode(): Boolean {
+    val value = System.getProperty(DEV_MODE_SYSTEM_PROPERTY)
+    val devModeEnabled = value != null
+    return devModeEnabled
 }
 
 private fun Project.createExtension(): Extension {

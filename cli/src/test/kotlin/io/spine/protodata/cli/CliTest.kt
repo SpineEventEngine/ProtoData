@@ -60,6 +60,7 @@ import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -287,6 +288,7 @@ class `Command line application should` {
     inner class `Fail if` {
 
         @Test
+        @Disabled("Until command line option substitution for missing --renderer is introduced")
         fun `renderer is missing`() {
             assertMissingOption {
                 launchApp(
