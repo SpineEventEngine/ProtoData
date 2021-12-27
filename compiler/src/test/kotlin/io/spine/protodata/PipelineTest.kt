@@ -79,8 +79,7 @@ class `'Pipeline' should` {
         """.trimIndent())
 
         val protoFile = DoctorProto.getDescriptor()
-        request = CodeGeneratorRequest
-            .newBuilder()
+        request = CodeGeneratorRequest.newBuilder()
             .addProtoFile(protoFile.toProto())
             .addFileToGenerate(protoFile.name)
             .build()
