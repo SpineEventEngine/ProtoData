@@ -133,6 +133,10 @@ tasks.publish {
     dependsOn(tasks.shadowJar)
 }
 
+tasks.shadowJar {
+    mergeServiceFiles("desc.ref")
+}
+
 // See https://github.com/johnrengelman/shadow/issues/153.
 tasks.shadowDistTar.get().enabled = false
 tasks.shadowDistZip.get().enabled = false
