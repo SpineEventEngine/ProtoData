@@ -168,6 +168,7 @@ private fun Project.createLaunchTask(
         onlyIf { requestFile.get().asFile.exists() }
         dependsOn(artifactConfig.buildDependencies, userCpConfig.buildDependencies)
         javaCompileFor(sourceSet)?.dependsOn(this)
+        kotlinCompileFor(sourceSet)?.dependsOn(this)
     }
 }
 
