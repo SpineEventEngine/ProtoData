@@ -51,8 +51,7 @@ class `'Code Generation' context should` {
     fun `construct 'ProtobufSource' based on a descriptor set`() {
         val ctx = BlackBox.from(CodeGenerationContext.builder())
         val protoDescriptor = DoctorProto.getDescriptor().toProto()
-        val set = CodeGeneratorRequest
-            .newBuilder()
+        val set = CodeGeneratorRequest.newBuilder()
             .addProtoFile(protoDescriptor)
             .addFileToGenerate(protoDescriptor.name)
             .build()
