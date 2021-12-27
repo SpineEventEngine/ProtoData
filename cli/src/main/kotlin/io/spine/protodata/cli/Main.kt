@@ -106,22 +106,26 @@ internal class Run(version: String) : CliktCommand(
         There can be multiple providers. To pass more then one value, type:
            `<...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin`
     """.trimIndent()).multiple()
+
     private  val renderers: List<String> by option("--renderer", "-r", help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
         There can only be multiple renderers. To pass more than one value, type:
            `<...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer`
     """.trimIndent()).multiple(default = listOf())
+
     private val optionProviders: List<String> by option("--option-provider", "--op",
         help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
            `<...> --op com.foo.TypeOptionsProvider --op com.foo.FieldOptionsProvider`
     """.trimIndent()).multiple()
+
     private val options: List<String> by option("--options", "-o", help = """
         A file which defines custom Protobuf options.
         There can be multiple files. To pass more then one value, type:
             `<...> -o acme/base/options.proto -o example/other_options.proto`
     """.trimIndent()).multiple()
+
     private val codegenRequestFile: File by option("--request", "-t", help =
     "The path to the binary file containing a serialized instance of " +
             "`${CodeGeneratorRequest.getDescriptor().name}`."
@@ -131,6 +135,7 @@ internal class Run(version: String) : CliktCommand(
         canBeSymlink = false,
         mustBeReadable = true
     ).required()
+
     private val sourceRoot: Path? by option("--source-root", "--src", help = """
         The path to a directory which contains the source files to be processed.
         Skip this argument if there is no initial source to modify.
@@ -140,6 +145,7 @@ internal class Run(version: String) : CliktCommand(
         canBeFile = false,
         canBeSymlink = false
     )
+
     private val targetRoot: Path? by option("--target-root", "--destination", "-d", help = """
         The path where the processed files should be placed.
         May be the same as `--sourceRoot`. For editing files in-place, skip this option. 
@@ -148,6 +154,7 @@ internal class Run(version: String) : CliktCommand(
         canBeFile = false,
         canBeSymlink = false
     )
+
     private val classPath: List<Path>? by option("--user-classpath" ,"--ucp", help = """
         The user classpath which contains all `--renderer` classes, user-defined policies, views,
         events, etc., as well as all their dependencies, which are not included as a part of
@@ -159,6 +166,7 @@ internal class Run(version: String) : CliktCommand(
         mustExist = true,
         mustBeReadable = true
     ).split(pathSeparator)
+
     private val configurationFile: Path? by option(ConfigOpt.FILE, "-c", help = """
         File which contains the custom configuration for ProtoData.
 
@@ -174,11 +182,13 @@ internal class Run(version: String) : CliktCommand(
         canBeDir = false,
         canBeSymlink = false
     )
+
     private val configurationValue: String? by option(ConfigOpt.VALUE, "--cv", help = """
         Custom configuration for ProtoData.
         May be a JSON or a YAML.
         Must be used alongside with `--configuration-format`
     """.trimIndent())
+
     private val configurationFormat: String? by option(ConfigOpt.FORMAT, "--cf", help = """
         The format of the custom configuration.
         Must be one of: `yaml`, `json`, `proto_json`, `plain`.
@@ -280,7 +290,10 @@ internal class Run(version: String) : CliktCommand(
     private fun FileSet.findOptionFile(name: FileName): FileDescriptor? {
         val found = tryFind(name).orElse(null)
         if (found == null) {
-            echo("WARNING. Option file `$name` not found.")
+            val nl = System.lineSeparator()
+            echo("${nl}WARNING: option file `$name` not found.")
+            // Print also file set to help with the diagnostics of why the options file is missing.
+            echo("`${this}`.${nl}")
         }
         return found
     }
