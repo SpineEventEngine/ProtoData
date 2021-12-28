@@ -54,5 +54,4 @@ extensions.getByType<Extension>().apply {
         "io.spine.protodata.test.uuid.UuidPlugin",
         "io.spine.protodata.test.annotation.AnnotationPlugin"
     )
-    options("spine/protodata/test/meta.proto")
 }
