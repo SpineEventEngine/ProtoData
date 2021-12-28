@@ -73,30 +73,6 @@ subprojects {
         testRuntimeOnly(JUnit.runner)
     }
 
-//    val baseVersion: String by extra
-//    val coreVersion: String by extra
-//    val protoDataVersion: String by extra
-//
-//    with(configurations) {
-//        forceVersions()
-//        all {
-//            resolutionStrategy {
-//                force(
-//                    Flogger.lib,
-//                    Flogger.Runtime.systemBackend,
-//                    Grpc.stub,
-//                    Grpc.protobuf,
-//                    Grpc.api,
-//                    JUnit.runner,
-//                    JUnit.bom,
-//                    "io.spine:spine-base:$baseVersion",
-//                    "io.spine:spine-server:$coreVersion",
-//                    "io.spine.tools:spine-testlib:$baseVersion",
-//                )
-//            }
-//        }
-//    }
-
     tasks.withType<Test> {
         useJUnitPlatform()
         configureLogging()
