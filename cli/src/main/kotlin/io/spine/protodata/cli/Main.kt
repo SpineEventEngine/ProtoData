@@ -102,9 +102,31 @@ internal class Run(version: String) : CliktCommand(
     epilog = "https://github.com/SpineEventEngine/ProtoData/",
     printHelpOnEmptyArgs = true
 ) {
-//@formatter:off
+    /** Option names that are used in the help texts of other options. */
+    private object Op {
+        const val RENDERER = "--renderer"
+        const val SOURCE_ROOT = "--source-root"
+    }
+
+    /** Configuration option names that are used in the help texts of other options. */
+    private object ConfigOpt {
+        const val FILE = "--configuration-file"
+        const val VALUE = "--configuration-value"
+        const val FORMAT = "--configuration-format"
+    }
+
+    /** Abbreviation extension. */
     private fun String.ti() = trimIndent()
 
+    /*
+     * The section guarded by `formatter:off/on` below contains definitions of CLI options.
+     *
+     * The names of the options usually have one or two long names and a short version.
+     * A one-letter option name is prefixed with one dash.
+     * For names with more than one letter, two dashes are used.
+     */
+
+//@formatter:off
     private val plugins: List<String> by option("--plugin", "-p",
         help = """
         The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
@@ -112,7 +134,7 @@ internal class Run(version: String) : CliktCommand(
            `<...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin`.""".ti())
         .multiple()
 
-    private val renderers: List<String> by option("--renderer", "-r",
+    private val renderers: List<String> by option(Op.RENDERER, "-r",
         help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
         There can only be multiple renderers. To pass more than one value, type:
@@ -126,7 +148,7 @@ internal class Run(version: String) : CliktCommand(
            `<...> --op com.foo.TypeOptionsProvider --op com.foo.FieldOptionsProvider`.""".ti())
         .multiple()
 
-    private val codegenRequestFile: File by option("--request", "-t", // "-r" is already used.
+    private val codegenRequestFile: File by option("--request", "-t", // "-r" is taken.
         help = "The path to the binary file containing a serialized instance of " +
             "`${CodeGeneratorRequest.getDescriptor().name}`."
     ).file(
@@ -136,7 +158,7 @@ internal class Run(version: String) : CliktCommand(
         mustBeReadable = true
     ).required()
 
-    private val sourceRoot: Path? by option("--source-root", "--src",
+    private val sourceRoot: Path? by option(Op.SOURCE_ROOT, "--src",
         help = """
         The path to a directory which contains the source files to be processed.
         Skip this argument if there is no initial source to modify.""".ti()
@@ -149,7 +171,8 @@ internal class Run(version: String) : CliktCommand(
     private val targetRoot: Path? by option("--target-root", "--destination", "-d",
         help = """
         The path where the processed files should be placed.
-        May be the same as `--sourceRoot`. For editing files in-place, skip this option.""".ti()
+        May be the same as `${Op.SOURCE_ROOT}`. For editing files in-place, skip this option.
+        """.ti()
     ).path(
         canBeFile = false,
         canBeSymlink = false
@@ -157,10 +180,10 @@ internal class Run(version: String) : CliktCommand(
 
     private val classPath: List<Path>? by option("--user-classpath" ,"--ucp",
         help = """
-        The user classpath which contains all `--renderer` classes, user-defined policies, views,
-        events, etc., as well as all their dependencies, which are not included as a part of
-        the ProtoData library. This may be omitted if the classes are already present in
-        the ProtoData classpath. May be one path to a JAR, a ZIP, or a directory. Or may be many
+        The user classpath which contains all `${Op.RENDERER}` classes, user-defined policies,
+        views, events, etc., as well as all their dependencies, which are not included as a part of
+        the ProtoData library. This option may be omitted if the classes are already present in
+        the ProtoData classpath. May be one path to a JAR, a ZIP, or a directory. Or, may be many
         paths separated by the `$pathSeparator` separator char (system-dependent).""".ti()
     ).path(
         mustExist = true,
@@ -188,23 +211,17 @@ internal class Run(version: String) : CliktCommand(
         help = """
         Custom configuration for ProtoData.
         May be a JSON or a YAML.
-        Must be used alongside with `--configuration-format`.""".ti())
+        Must be used alongside with `${ConfigOpt.FORMAT}`.""".ti())
 
     private val configurationFormat: String? by option(ConfigOpt.FORMAT, "--cf",
         help = """
         The format of the custom configuration.
         Must be one of: `yaml`, `json`, `proto_json`, `plain`.
-        Must be used alongside with `--configuration-value`.""".ti(),
+        Must be used alongside with `${ConfigOpt.VALUE}`.""".ti(),
         completionCandidates = CompletionCandidates.Fixed(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }.toSet()
     ))
 //@formatter:on
-
-    private object ConfigOpt {
-        const val FILE = "--configuration-file"
-        const val VALUE = "--configuration-value"
-        const val FORMAT = "--configuration-format"
-    }
 
     override fun run() {
         val sourceSet = createSourceSet()
