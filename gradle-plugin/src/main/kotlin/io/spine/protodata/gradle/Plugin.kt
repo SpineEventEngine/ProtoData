@@ -155,7 +155,6 @@ private fun Project.createLaunchTask(
         renderers = ext.renderers
         plugins = ext.plugins
         optionProviders = ext.optionProviders
-        options = ext.options
         requestFile = ext.requestFile(sourceSet)
         source = ext.sourceDir(sourceSet)
         target = ext.targetDir(sourceSet)

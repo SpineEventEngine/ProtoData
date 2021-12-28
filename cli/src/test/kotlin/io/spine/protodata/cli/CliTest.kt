@@ -110,21 +110,6 @@ class `Command line application should` {
     }
 
     @Test
-    fun `supply options by file path`() {
-        launchApp(
-            "-p", CustomOptionPlugin::class.jvmName,
-            "-r", CustomOptionRenderer::class.jvmName,
-            "--src", srcRoot.toString(),
-            "-t", codegenRequestFile.toString(),
-            "-o", "spine/protodata/cli/test/options.proto",
-            "-o", "spine/options.proto"
-        )
-        val generatedFile = srcRoot.resolve(CustomOptionRenderer.FILE_NAME)
-        assertThat(generatedFile.readText())
-            .isEqualTo("custom_field_for_test")
-    }
-
-    @Test
     fun `supply options by a provider`() {
         launchApp(
             "-p", CustomOptionPlugin::class.jvmName,

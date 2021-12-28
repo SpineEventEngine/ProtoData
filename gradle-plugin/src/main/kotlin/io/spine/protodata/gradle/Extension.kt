@@ -79,16 +79,6 @@ public class Extension(private val project: Project) {
         project.objects.listProperty<String>().convention(listOf())
 
     /**
-     * Passes the given names of Protobuf files which declare custom options to ProtoData.
-     */
-    public fun options(vararg protoFiles: String) {
-        options.addAll(protoFiles.toList())
-    }
-
-    internal val options: ListProperty<String> =
-        project.objects.listProperty<String>().convention(listOf())
-
-    /**
      * A directory where the serialized `CodeGeneratorRequest`s are stored.
      *
      * For each source set, we generate a separate request file. Files are named after
