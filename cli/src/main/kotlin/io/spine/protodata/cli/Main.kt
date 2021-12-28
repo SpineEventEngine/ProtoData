@@ -50,7 +50,7 @@ import io.spine.protodata.config.ConfigurationFormat.YAML
 import io.spine.protodata.option.OptionsProvider
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 import java.io.File
 import java.io.File.pathSeparator
 import java.nio.file.Path
@@ -224,13 +224,13 @@ internal class Run(version: String) : CliktCommand(
 //@formatter:on
 
     override fun run() {
-        val sourceSet = createSourceSet()
+        val sources = createSourceFileSet()
         val plugins = loadPlugins()
         val renderer = loadRenderers()
         val registry = createRegistry()
         val codegenRequest = loadRequest(registry)
         val config = resolveConfig()
-        Pipeline(plugins, renderer, sourceSet, codegenRequest, config)()
+        Pipeline(plugins, renderer, sources, codegenRequest, config)()
     }
 
     private fun resolveConfig(): Configuration? {
@@ -269,14 +269,14 @@ internal class Run(version: String) : CliktCommand(
         return registry
     }
 
-    private fun createSourceSet(): SourceSet {
+    private fun createSourceFileSet(): SourceFileSet {
         checkPaths()
         val source = sourceRoot
         val target = (targetRoot ?: source)!!
         return if (source == null) {
-            SourceSet.empty(target)
+            SourceFileSet.empty(target)
         } else {
-            SourceSet.from(source, target)
+            SourceFileSet.from(source, target)
         }
     }
 

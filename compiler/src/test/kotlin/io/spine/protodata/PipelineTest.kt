@@ -28,7 +28,7 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.DeletedTypeRepository
@@ -99,7 +99,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(renderer),
-            SourceSet.from(srcRoot),
+            SourceFileSet.from(srcRoot),
             request
         )()
         assertThat(sourceFile.readText())
@@ -111,7 +111,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(InternalAccessRenderer()),
-            SourceSet.from(srcRoot),
+            SourceFileSet.from(srcRoot),
             request
         )()
         val newClass = srcRoot.resolve("spine/protodata/test/JourneyInternal.java")
@@ -127,7 +127,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(DeletingRenderer()),
-            SourceSet.from(srcRoot),
+            SourceFileSet.from(srcRoot),
             request
         )()
         assertThat(sourceFile.exists())
@@ -142,7 +142,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JavaGenericInsertionPointPrinter(), renderer),
-            SourceSet.from(srcRoot),
+            SourceFileSet.from(srcRoot),
             request
         )()
         val assertFileContent = assertThat(sourceFile.readText())
@@ -166,7 +166,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JsRenderer(), KtRenderer()),
-            SourceSet.from(srcRoot),
+            SourceFileSet.from(srcRoot),
             request
         )()
         assertThat(jsSource.readText())
@@ -180,7 +180,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxEmancipator()),
-            SourceSet.from(srcRoot),
+            SourceFileSet.from(srcRoot),
             request
         )()
         val assertCode = assertThat(sourceFile.readText())
@@ -197,7 +197,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(JavaGenericInsertionPointPrinter(), JsRenderer()),
-            SourceSet.from(srcRoot),
+            SourceFileSet.from(srcRoot),
             request
         )()
         val assertCode = assertThat(sourceFile.readText())
@@ -215,7 +215,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(InternalAccessRenderer()),
-            SourceSet.from(srcRoot, destination),
+            SourceFileSet.from(srcRoot, destination),
             request
         )()
 
@@ -236,7 +236,7 @@ class `'Pipeline' should` {
         Pipeline(
             listOf(TestPlugin()),
             listOf(NoOpRenderer()),
-            SourceSet.from(srcRoot, destination),
+            SourceFileSet.from(srcRoot, destination),
             request
         )()
 
@@ -263,7 +263,7 @@ class `'Pipeline' should` {
             val pipeline = Pipeline(
                 listOf(DocilePlugin(policies = setOf(policy))),
                 listOf(renderer),
-                SourceSet.from(srcRoot),
+                SourceFileSet.from(srcRoot),
                 request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
@@ -281,7 +281,7 @@ class `'Pipeline' should` {
                     viewRepositories = setOf(DeletedTypeRepository())
                 )),
                 listOf(renderer),
-                SourceSet.from(srcRoot),
+                SourceFileSet.from(srcRoot),
                 request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }

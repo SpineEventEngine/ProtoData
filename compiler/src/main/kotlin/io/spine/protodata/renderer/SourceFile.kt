@@ -62,7 +62,7 @@ private constructor(
     private var changed: Boolean = false
 ) {
 
-    private lateinit var sourceSet: SourceSet
+    private lateinit var sources: SourceFileSet
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
     private var alreadyRead = false
 
@@ -124,7 +124,7 @@ private constructor(
      * After this method, the file will no longer be accessible via associated the `SourceSet`.
      */
     public fun delete() {
-        sourceSet.delete(relativePath)
+        sources.delete(relativePath)
     }
 
     /**
@@ -147,10 +147,10 @@ private constructor(
     }
 
     /**
-     * Injects the given [sourceSet].
+     * Injects the given [sources].
      */
-    internal fun attachTo(sourceSet: SourceSet) {
-        this.sourceSet = sourceSet
+    internal fun attachTo(sources: SourceFileSet) {
+        this.sources = sources
     }
 
     /**

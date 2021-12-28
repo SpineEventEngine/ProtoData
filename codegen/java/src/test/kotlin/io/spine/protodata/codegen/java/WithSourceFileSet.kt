@@ -26,7 +26,7 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.writeText
@@ -36,11 +36,11 @@ import org.junit.jupiter.api.io.TempDir
 internal const val JAVA_FILE = "java/org/example/Test.java"
 
 /**
- * A base for test cases that require a source set with a Java file to run.
+ * A base for test cases that require a source file set with a Java file to run.
  */
-abstract class WithSourceSet {
+abstract class WithSourceFileSet {
 
-    protected lateinit var sourceSet: SourceSet
+    protected lateinit var sources: SourceFileSet
         private set
 
     @BeforeEach
@@ -49,6 +49,6 @@ abstract class WithSourceSet {
         val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
         targetFile.parent.toFile().mkdirs()
         targetFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sourceSet = SourceSet.from(path, path)
+        sources = SourceFileSet.from(path, path)
     }
 }

@@ -29,7 +29,7 @@ package io.spine.protodata.codegen.java.suppress
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.config.configAs
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 
 /**
  * Suppresses warnings in the generated code.
@@ -53,7 +53,7 @@ import io.spine.protodata.renderer.SourceSet
  */
 public class SuppressRenderer : JavaRenderer() {
 
-    override fun render(sources: SourceSet) {
+    override fun render(sources: SourceFileSet) {
         val warnings = if (configIsPresent()) {
             configAs<SuppressConfig>().warnings.valueList
         } else {

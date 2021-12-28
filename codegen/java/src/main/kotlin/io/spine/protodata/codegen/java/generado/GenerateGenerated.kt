@@ -29,7 +29,7 @@ package io.spine.protodata.codegen.java.generado
 import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 import javax.annotation.Generated
 
 /**
@@ -55,7 +55,7 @@ public class GenerateGenerated : JavaRenderer() {
         internal const val GENERATORS = "by the Protobuf Compiler and modified by ProtoData"
     }
 
-    override fun render(sources: SourceSet) {
+    override fun render(sources: SourceFileSet) {
         sources.forEach {
             it.at(BeforePrimaryDeclaration).add(
                 "@${Generated::class.qualifiedName}(\"$GENERATORS\")"

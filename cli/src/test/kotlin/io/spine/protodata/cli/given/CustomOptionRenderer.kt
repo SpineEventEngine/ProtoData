@@ -29,7 +29,7 @@ package io.spine.protodata.cli.given
 import io.spine.protodata.cli.test.CustomField
 import io.spine.protodata.language.CommonLanguages
 import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.select
 import kotlin.io.path.Path
 
@@ -39,7 +39,7 @@ class CustomOptionRenderer : Renderer(CommonLanguages.any) {
         const val FILE_NAME = "custom_fields.csv"
     }
 
-    override fun render(sources: SourceSet) {
+    override fun render(sources: SourceFileSet) {
         val customFields = select<CustomField>().all()
         sources.createFile(
             Path(FILE_NAME),

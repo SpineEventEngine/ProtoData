@@ -51,7 +51,7 @@ public abstract class JavaRenderer : Renderer(Java) {
      * Obtains the path the `.java` file generated from the given type.
      *
      * The path is relative to the generated source root. This path is useful for finding source
-     * files in a [SourceSet][io.spine.protodata.renderer.SourceSet].
+     * files in a [SourceSet][io.spine.protodata.renderer.SourceFileSet].
      */
     protected fun javaFileOf(type: TypeName, declaredIn: FilePath): Path {
         val file = findFile(declaredIn)

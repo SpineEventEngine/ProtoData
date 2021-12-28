@@ -52,7 +52,7 @@ public abstract class InsertionPointPrinter(
      */
     protected abstract fun supportedInsertionPoints(): Set<InsertionPoint>
 
-    final override fun render(sources: SourceSet) {
+    final override fun render(sources: SourceFileSet) {
         sources.prepareCode { file ->
             val lines = file.lines().toMutableList()
             supportedInsertionPoints().forEach { point ->

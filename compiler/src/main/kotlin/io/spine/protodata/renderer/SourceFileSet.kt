@@ -41,7 +41,7 @@ import kotlin.text.Charsets.UTF_8
 /**
  * A set of source files.
  */
-public class SourceSet
+public class SourceFileSet
 internal constructor(
     files: Set<SourceFile>,
 
@@ -78,7 +78,7 @@ internal constructor(
         /**
          * Collects a source set from a given root directory.
          */
-        public fun from(sourceRoot: Path, targetRoot: Path): SourceSet {
+        public fun from(sourceRoot: Path, targetRoot: Path): SourceFileSet {
             val source = sourceRoot.canonical()
             val target = targetRoot.canonical()
             if (source != target) {
@@ -89,21 +89,21 @@ internal constructor(
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read(source.relativize(it), source) }
                 .collect(toImmutableSet())
-            return SourceSet(files, source, target)
+            return SourceFileSet(files, source, target)
         }
 
         /**
          * Creates an empty source set which can be appended with new files and written to
          * the given target directory.
          */
-        public fun empty(target: Path): SourceSet {
+        public fun empty(target: Path): SourceFileSet {
             checkTarget(target)
             val files = setOf<SourceFile>()
-            return SourceSet(files, target, target)
+            return SourceFileSet(files, target, target)
         }
 
         @VisibleForTesting
-        internal fun from(sourceAndTarget: Path): SourceSet =
+        internal fun from(sourceAndTarget: Path): SourceFileSet =
             from(sourceAndTarget, sourceAndTarget)
 
         private fun checkTarget(targetRoot: Path) {
@@ -196,12 +196,12 @@ internal constructor(
     }
 
     internal fun subsetWhere(predicate: (SourceFile) -> Boolean) =
-        SourceSet(this.filter(predicate).toSet(), sourceRoot, targetRoot)
+        SourceFileSet(this.filter(predicate).toSet(), sourceRoot, targetRoot)
 
     /**
      * Merges the other source set into this one.
      */
-    internal fun mergeBack(other: SourceSet) {
+    internal fun mergeBack(other: SourceFileSet) {
         files.putAll(other.files)
         deletedFiles.addAll(other.deletedFiles)
         other.deletedFiles.forEach {
