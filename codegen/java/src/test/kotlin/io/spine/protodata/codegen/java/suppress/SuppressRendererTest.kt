@@ -44,7 +44,7 @@ class `'SuppressRenderer' should` : WithSourceFileSet() {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer()),
-            sourceSet = sources,
+            sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
         val code = sources
@@ -61,7 +61,7 @@ class `'SuppressRenderer' should` : WithSourceFileSet() {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer()),
-            sourceSet = sources,
+            sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance(),
             config = Configuration.rawValue("""
                 {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
