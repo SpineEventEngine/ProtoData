@@ -42,7 +42,7 @@ class `'GenerateGenerated' renderer should` : WithSourceFileSet() {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(PrintBeforePrimaryDeclaration(), GenerateGenerated()),
-            sourceSet = sources,
+            sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
         val code = sources
