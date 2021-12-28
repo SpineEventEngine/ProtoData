@@ -265,7 +265,7 @@ internal class Run(version: String) : CliktCommand(
     private fun createRegistry(): ExtensionRegistry {
         val optionsProviders = loadOptions()
         val registry = ExtensionRegistry.newInstance()
-        optionsProviders.forEach { it.dumpTo(registry) }
+        optionsProviders.forEach { it.registerAt(registry) }
         return registry
     }
 
