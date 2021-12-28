@@ -124,7 +124,13 @@ publishing {
             artifactId = "fat-cli"
             version = project.version.toString()
 
-            artifact(tasks.shadowJar)
+            artifact(tasks.shadowJar) {
+                // Avoid `-all` suffix in the published artifact.
+                // We cannot remove the suffix by setting the `archiveClassifier` for
+                // the `shadowJar` task because of the duplication check for pairs
+                // (classifier, artifact extension) performed by `ValidatingMavenPublisher` class.
+                classifier = ""
+            }
         }
     }
 }
