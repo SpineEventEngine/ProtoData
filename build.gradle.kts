@@ -51,14 +51,17 @@ buildscript {
     apply(from = "$rootDir/version.gradle.kts")
 
     val mcJavaVersion: String by extra
+    val devProtoDataVersion: String by extra
 
     dependencies {
         classpath("io.spine.tools:spine-mc-java:$mcJavaVersion")
         //TODO:2021-12-24:alexander.yevsyukov: uncomment when experimenting again.
-        classpath("io.spine.protodata:gradle-plugin:0.1.4")
+//        classpath("io.spine.protodata:gradle-plugin:$devProtoDataVersion")
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
 }
+
+val devProtoDataVersion: String by extra
 
 plugins {
     kotlin("jvm")
@@ -66,7 +69,7 @@ plugins {
         id(pluginId) version(version)
     }
     //TODO:2021-12-24:alexander.yevsyukov: uncomment when experimenting again.
-    id("io.spine.proto-data").version("0.1.4").apply(false)
+//    id("io.spine.proto-data").version(devProtoDataVersion).apply(false)
     idea
     jacoco
     `force-jacoco`
@@ -101,7 +104,6 @@ allprojects {
     repositories.applyGitHubPackages("base-types", rootProject)
 }
 
-
 subprojects {
 
     apply {
@@ -119,31 +121,6 @@ subprojects {
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
     }
-
-//TODO:2021-12-21:alexander.yevsyukov: Uncomment when circular `compiler` dependency is fixed.
-//    val baseVersion: String by extra
-//    val protoDataVersion: String by extra
-//
-//    with(configurations) {
-//        forceVersions()
-//        all {
-//            resolutionStrategy {
-//                force(
-//                    Flogger.lib,
-//                    Flogger.Runtime.systemBackend,
-//                    Grpc.stub,
-//                    Grpc.protobuf,
-//                    Grpc.api,
-//                    JUnit.runner,
-//                    JUnit.bom,
-//                    "io.spine:spine-base:$baseVersion",
-//                    "io.spine:spine-server:$coreVersion",
-//                    "io.spine.tools:spine-testlib:$baseVersion",
-//                    //"io.spine.protodata:compiler:$protoDataVersion"
-//                )
-//            }
-//        }
-//    }
 
     tasks.test {
         useJUnitPlatform()
@@ -191,8 +168,8 @@ PomGenerator.applyTo(project)
 LicenseReporter.mergeAllReports(project)
 JacocoConfig.applyTo(project)
 
-//val integrationTest by tasks.creating(RunBuild::class) {
-//    directory = "$rootDir/tests"
-//}
-//
-//tasks["check"].finalizedBy(integrationTest)
+val integrationTest by tasks.creating(RunBuild::class) {
+    directory = "$rootDir/tests"
+}
+
+tasks["check"].finalizedBy(integrationTest)
