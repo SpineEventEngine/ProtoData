@@ -36,10 +36,8 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
-import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.code.proto.FileName
 import io.spine.code.proto.FileSet
 import io.spine.io.Resource
 import io.spine.protodata.Pipeline
@@ -84,12 +82,16 @@ private fun readVersion(): String {
  * The main CLI command which performs the ProtoData code generation tasks.
  *
  * The command accepts class names for the service provider interface implementations via the CLI
- * parameters, such as `--plugin`, `--renderer`, `--option-provider`, and `--options`, all of which
- * can be repeated parameters, if required. Then, using the classpath of the app and
- * the user classpath supplied via the `--user-classpath` parameter, loads those classes.
+ * parameters, such as `--plugin`, `--renderer`, and `--option-provider`, all of which
+ * can be repeated parameters, if required.
+ *
+ * Then, using the classpath of the app and the user classpath supplied via the `--user-classpath`
+ * parameter, loads those classes.
+ *
  * `Code Generation` context accept Protobuf compiler events, regarding the Protobuf types, listed
- * in the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter. Finally,
- * the renderers apply required changes to the source set with the root path, supplied in
+ * in the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter.
+ *
+ * Finally, the renderers apply required changes to the source set with the root path, supplied in
  * the `--source-root` parameter.
  */
 internal class Run(version: String) : CliktCommand(
@@ -100,34 +102,32 @@ internal class Run(version: String) : CliktCommand(
     epilog = "https://github.com/SpineEventEngine/ProtoData/",
     printHelpOnEmptyArgs = true
 ) {
+//@formatter:off
+    private fun String.ti() = trimIndent()
 
-    private val plugins: List<String> by option("--plugin", "-p", help = """
+    private val plugins: List<String> by option("--plugin", "-p",
+        help = """
         The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
-           `<...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin`
-    """.trimIndent()).multiple()
+           `<...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin`.""".ti())
+        .multiple()
 
-    private  val renderers: List<String> by option("--renderer", "-r", help = """
+    private val renderers: List<String> by option("--renderer", "-r",
+        help = """
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
         There can only be multiple renderers. To pass more than one value, type:
-           `<...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer`
-    """.trimIndent()).multiple(default = listOf())
+           `<...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer`.""".ti())
+        .multiple(default = listOf())
 
     private val optionProviders: List<String> by option("--option-provider", "--op",
         help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers. To pass more then one value, type:
-           `<...> --op com.foo.TypeOptionsProvider --op com.foo.FieldOptionsProvider`
-    """.trimIndent()).multiple()
+           `<...> --op com.foo.TypeOptionsProvider --op com.foo.FieldOptionsProvider`.""".ti())
+        .multiple()
 
-    private val options: List<String> by option("--options", "-o", help = """
-        A file which defines custom Protobuf options.
-        There can be multiple files. To pass more then one value, type:
-            `<...> -o acme/base/options.proto -o example/other_options.proto`
-    """.trimIndent()).multiple()
-
-    private val codegenRequestFile: File by option("--request", "-t", help =
-    "The path to the binary file containing a serialized instance of " +
+    private val codegenRequestFile: File by option("--request", "-t", // "-r" is already used.
+        help = "The path to the binary file containing a serialized instance of " +
             "`${CodeGeneratorRequest.getDescriptor().name}`."
     ).file(
         mustExist = true,
@@ -136,46 +136,47 @@ internal class Run(version: String) : CliktCommand(
         mustBeReadable = true
     ).required()
 
-    private val sourceRoot: Path? by option("--source-root", "--src", help = """
+    private val sourceRoot: Path? by option("--source-root", "--src",
+        help = """
         The path to a directory which contains the source files to be processed.
-        Skip this argument if there is no initial source to modify.
-    """.trimIndent()
+        Skip this argument if there is no initial source to modify.""".ti()
     ).path(
         mustExist = true,
         canBeFile = false,
         canBeSymlink = false
     )
 
-    private val targetRoot: Path? by option("--target-root", "--destination", "-d", help = """
+    private val targetRoot: Path? by option("--target-root", "--destination", "-d",
+        help = """
         The path where the processed files should be placed.
-        May be the same as `--sourceRoot`. For editing files in-place, skip this option. 
-    """.trimIndent()
+        May be the same as `--sourceRoot`. For editing files in-place, skip this option.""".ti()
     ).path(
         canBeFile = false,
         canBeSymlink = false
     )
 
-    private val classPath: List<Path>? by option("--user-classpath" ,"--ucp", help = """
+    private val classPath: List<Path>? by option("--user-classpath" ,"--ucp",
+        help = """
         The user classpath which contains all `--renderer` classes, user-defined policies, views,
         events, etc., as well as all their dependencies, which are not included as a part of
         the ProtoData library. This may be omitted if the classes are already present in
         the ProtoData classpath. May be one path to a JAR, a ZIP, or a directory. Or may be many
-        paths separated by the `$pathSeparator` separator char (system-dependent).
-    """.trimIndent()
+        paths separated by the `$pathSeparator` separator char (system-dependent).""".ti()
     ).path(
         mustExist = true,
         mustBeReadable = true
     ).split(pathSeparator)
 
-    private val configurationFile: Path? by option(ConfigOpt.FILE, "-c", help = """
+    private val configurationFile: Path? by option(ConfigOpt.FILE, "-c",
+        help = """
         File which contains the custom configuration for ProtoData.
 
         May be a JSON, a YAML, or a binary Protobuf file.
         JSON files must have `.json` extension.
         JSON files with Protobuf JSON format must have `.pb.json` extension.
         YAML files must have `.yml` or `.yaml` extension.
-        Protobuf binary files must have `.pb` or `.bin` extension. Messages must not be delimited.
-    """.trimIndent()
+        Protobuf binary files must have `.pb` or `.bin` extension.
+        Messages must not be delimited.""".ti()
     ).path(
         mustExist = true,
         mustBeReadable = true,
@@ -183,22 +184,23 @@ internal class Run(version: String) : CliktCommand(
         canBeSymlink = false
     )
 
-    private val configurationValue: String? by option(ConfigOpt.VALUE, "--cv", help = """
+    private val configurationValue: String? by option(ConfigOpt.VALUE, "--cv",
+        help = """
         Custom configuration for ProtoData.
         May be a JSON or a YAML.
-        Must be used alongside with `--configuration-format`
-    """.trimIndent())
+        Must be used alongside with `--configuration-format`.""".ti())
 
-    private val configurationFormat: String? by option(ConfigOpt.FORMAT, "--cf", help = """
+    private val configurationFormat: String? by option(ConfigOpt.FORMAT, "--cf",
+        help = """
         The format of the custom configuration.
         Must be one of: `yaml`, `json`, `proto_json`, `plain`.
-        Must be used alongside with `--configuration-value`.
-    """.trimIndent(), completionCandidates = CompletionCandidates.Fixed(
+        Must be used alongside with `--configuration-value`.""".ti(),
+        completionCandidates = CompletionCandidates.Fixed(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }.toSet()
     ))
+//@formatter:on
 
     private object ConfigOpt {
-
         const val FILE = "--configuration-file"
         const val VALUE = "--configuration-value"
         const val FORMAT = "--configuration-format"
@@ -277,25 +279,18 @@ internal class Run(version: String) : CliktCommand(
         val providers = load(OptionsProviderBuilder(), optionProviders)
         val request = loadRequest()
         val files: FileSet = FileSet.of(request.protoFileList)
-        val fileProviders = options
-            .asSequence()
-            .map(FileName::of)
-            .mapNotNull { name -> files.findOptionFile(name) }
-            .map(::FileOptionsProvider)
+        val fileProviders = filterOptionFiles(files)
         val allProviders = providers.toMutableList()
         allProviders.addAll(fileProviders)
         return allProviders
     }
 
-    private fun FileSet.findOptionFile(name: FileName): FileDescriptor? {
-        val found = tryFind(name).orElse(null)
-        if (found == null) {
-            val nl = System.lineSeparator()
-            echo("${nl}WARNING: option file `$name` not found.")
-            // Print also file set to help with the diagnostics of why the options file is missing.
-            echo("`${this}`.${nl}")
-        }
-        return found
+    private fun filterOptionFiles(files: FileSet): Sequence<FileOptionsProvider> {
+        val fileProviders = files.files()
+            .filter { it.extensions.isNotEmpty() }
+            .map(::FileOptionsProvider)
+            .asSequence()
+        return fileProviders
     }
 
     private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {
