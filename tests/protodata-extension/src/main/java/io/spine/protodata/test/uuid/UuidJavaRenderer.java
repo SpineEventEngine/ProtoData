@@ -32,7 +32,7 @@ import io.spine.protodata.TypeName;
 import io.spine.protodata.codegen.java.ClassName;
 import io.spine.protodata.codegen.java.JavaRenderer;
 import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.SourceSet;
+import io.spine.protodata.renderer.SourceFileSet;
 import io.spine.protodata.test.UuidType;
 
 import java.nio.file.Path;
@@ -69,7 +69,7 @@ public final class UuidJavaRenderer extends JavaRenderer {
      * <p>A UUID type is a message with a single string field called UUID.
      */
     @Override
-    protected void render(SourceSet sources) {
+    protected void render(SourceFileSet sources) {
         Set<UuidType> uuidTypes = select(UuidType.class).all();
         for (UuidType type : uuidTypes) {
             TypeName typeName = type.getName();

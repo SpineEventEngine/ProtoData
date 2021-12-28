@@ -27,7 +27,7 @@
 package io.spine.protodata.test.annotation;
 
 import io.spine.protodata.codegen.java.JavaRenderer;
-import io.spine.protodata.renderer.SourceSet;
+import io.spine.protodata.renderer.SourceFileSet;
 import io.spine.protodata.test.Annotated;
 import io.spine.protodata.test.FieldId;
 
@@ -44,14 +44,14 @@ public final class AnnotationRenderer extends JavaRenderer {
     private static final int INDENT_LEVEL = 1;
 
     @Override
-    protected void render(SourceSet sources) {
+    protected void render(SourceFileSet sources) {
         Set<Annotated> annotatedFields = select(Annotated.class).all();
         annotatedFields.forEach(
                 field -> renderFor(field, sources)
         );
     }
 
-    private void renderFor(Annotated field, SourceSet sourceSet) {
+    private void renderFor(Annotated field, SourceFileSet sourceSet) {
         FieldId id = field.getId();
         FieldGetter getter = new FieldGetter(id);
         Path path = javaFileOf(id.getType(), id.getFile());
