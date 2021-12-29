@@ -41,4 +41,3 @@ val protoDataVersion: String by extra("0.1.4")
 
 /** The version of ProtoData used for developing [protoDataVersion]. */
 val devProtoDataVersion: String by extra("0.1.2")
-
