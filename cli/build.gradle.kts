@@ -143,6 +143,11 @@ tasks.shadowJar {
     mergeServiceFiles("desc.ref")
 }
 
+val createVersionFile: Task by tasks.getting
+tasks.sourceJar {
+    dependsOn(createVersionFile)
+}
+
 // See https://github.com/johnrengelman/shadow/issues/153.
 tasks.shadowDistTar.get().enabled = false
 tasks.shadowDistZip.get().enabled = false
