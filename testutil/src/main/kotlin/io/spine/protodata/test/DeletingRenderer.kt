@@ -31,14 +31,14 @@ import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.find
 import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.select
 import kotlin.io.path.Path
 import kotlin.io.path.div
 
 public class DeletingRenderer : Renderer(Java) {
 
-    override fun render(sources: SourceSet) {
+    override fun render(sources: SourceFileSet) {
         val types = select<DeletedType>().all()
         types.forEach {
             val source = select<ProtobufSourceFile>()

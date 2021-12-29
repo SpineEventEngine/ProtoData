@@ -34,7 +34,7 @@ import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
@@ -55,7 +55,7 @@ import io.spine.server.under
 public class Pipeline(
     private val plugins: List<Plugin>,
     private val renderers:  List<Renderer>,
-    private val sourceSet: SourceSet,
+    private val sources: SourceFileSet,
     private val request: CodeGeneratorRequest,
     private val config: Configuration? = null
 ) {
@@ -86,9 +86,9 @@ public class Pipeline(
 
         renderers.forEach {
             it.protoDataContext = codeGenContext
-            it.renderSources(sourceSet)
+            it.renderSources(sources)
         }
-        sourceSet.write()
+        sources.write()
         protocContext.close()
         configurationContext.close()
         codeGenContext.close()

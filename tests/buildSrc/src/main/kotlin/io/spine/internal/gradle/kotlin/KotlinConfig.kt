@@ -24,31 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
+package io.spine.internal.gradle.kotlin
 
-import io.spine.protodata.renderer.SourceSet
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption
-import kotlin.io.path.writeText
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.io.TempDir
-
-internal const val JAVA_FILE = "java/org/example/Test.java"
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaToolchainSpec
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
- * A base for test cases that require a source set with a Java file to run.
+ * Sets [Java toolchain](https://kotlinlang.org/docs/gradle.html#gradle-java-toolchains-support)
+ * to the specified version (e.g. 11 or 8).
  */
-abstract class WithSourceSet {
+fun KotlinJvmProjectExtension.applyJvmToolchain(version: Int) {
+    jvmToolchain {
+        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(version))
+    }
+}
 
-    protected lateinit var sourceSet: SourceSet
-        private set
+/**
+ * Sets [Java toolchain](https://kotlinlang.org/docs/gradle.html#gradle-java-toolchains-support)
+ * to the specified version (e.g. "11" or "8").
+ */
+@Suppress("unused")
+fun KotlinJvmProjectExtension.applyJvmToolchain(version: String) =
+    applyJvmToolchain(version.toInt())
 
-    @BeforeEach
-    fun createSourceSet(@TempDir path: Path) {
-        val targetFile = path.resolve(JAVA_FILE)
-        val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
-        targetFile.parent.toFile().mkdirs()
-        targetFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sourceSet = SourceSet.from(path, path)
+/**
+ * Opts-in to experimental features that we use in our codebase.
+ */
+fun KotlinCompile.setFreeCompilerArgs() {
+    kotlinOptions {
+        freeCompilerArgs = listOf(
+            "-Xskip-prerelease-check",
+            "-Xjvm-default=all",
+            "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+            "-Xopt-in=kotlin.ExperimentalStdlibApi"
+        )
     }
 }

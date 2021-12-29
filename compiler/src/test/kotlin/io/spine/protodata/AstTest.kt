@@ -51,8 +51,7 @@ class `AST extensions should` {
 
         @Test
         fun `repeated if list`() {
-            val field = Field
-                .newBuilder()
+            val field = Field.newBuilder()
                 .setList(Empty.getDefaultInstance())
                 .buildPartial()
             assertThat(field.isRepeated())
@@ -61,8 +60,7 @@ class `AST extensions should` {
 
         @Test
         fun `repeated if map`() {
-            val field = Field
-                .newBuilder()
+            val field = Field.newBuilder()
                 .setMap(Field.OfMap.newBuilder()
                     .setKeyType(TYPE_STRING)
                     .build())
@@ -73,8 +71,7 @@ class `AST extensions should` {
 
         @Test
         fun `not repeated`() {
-            val field = Field
-                .newBuilder()
+            val field = Field.newBuilder()
                 .setSingle(Empty.getDefaultInstance())
                 .buildPartial()
             assertThat(field.isRepeated())

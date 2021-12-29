@@ -40,6 +40,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 
 /**
@@ -63,13 +64,17 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:Input
     internal lateinit var optionProviders: Provider<List<String>>
 
-    @get:Input
-    internal lateinit var options: Provider<List<String>>
-
     @get:InputFile
     internal lateinit var requestFile: Provider<RegularFile>
 
+    /**
+     * The path to the directory with the generated source code.
+     *
+     * May not be available, if `protoc` built-ins were turned off, resulting in no source code
+     * being generated. In such a mode `protoc` worked only generating descriptor set files.
+     */
     @get:InputDirectory
+    @get:Optional
     internal lateinit var source: Provider<Directory>
 
     @get:OutputDirectory
@@ -103,15 +108,13 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield("--option-provider")
                 yield(it)
             }
-            options.get().forEach {
-                yield("--options")
-                yield(it)
-            }
             yield("--request")
             yield(project.file(requestFile).absolutePath)
 
-            yield("--source-root")
-            yield(source.absolutePath)
+            if (source.isPresent) {
+                yield("--source-root")
+                yield(source.absolutePath)
+            }
 
             yield("--target-root")
             yield(target.absolutePath)
@@ -144,7 +147,9 @@ public abstract class LaunchProtoData : JavaExec() {
     private inner class CleanAction : Action<Task> {
 
         override fun execute(t: Task) {
-            val sourceDir = source.get().asFile.absoluteFile
+            val sourceDir =
+                if (source.isPresent) source.get().asFile.absoluteFile
+                else null
             val targetDir = target.get().asFile.absoluteFile
             val differentDirs = sourceDir != targetDir
 

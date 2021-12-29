@@ -45,7 +45,7 @@ internal class FileOptionsProvider(
      * as [io.spine.option.OptionsProto.registerAllExtensions], on the outer class generated for
      * the Protobuf file where the custom options are declared.
      */
-    override fun dumpTo(registry: ExtensionRegistry) {
+    override fun registerIn(registry: ExtensionRegistry) {
         val outerClassName = outerClassName()
         val classLoader = this.javaClass.classLoader
         val optionsClass = classLoader.loadClass(outerClassName)

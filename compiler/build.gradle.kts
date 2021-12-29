@@ -35,10 +35,10 @@ plugins {
     jacoco
 }
 
-val spineCoreVersion: String by extra
+val coreVersion: String by extra
 
 dependencies {
-    api("io.spine:spine-server:$spineCoreVersion")
+    api("io.spine:spine-server:$coreVersion")
     with(Jackson) {
         api(databind)
         implementation(dataformatYaml)

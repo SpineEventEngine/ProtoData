@@ -32,6 +32,7 @@ plugins {
     `version-to-resources`
     `build-proto-model`
     jacoco
+    id("com.github.johnrengelman.shadow").version("7.1.1")
 }
 
 dependencies {
@@ -39,6 +40,7 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(Clikt.lib)
     implementation(Flogger.lib)
+    runtimeOnly(Flogger.Runtime.systemBackend)
 
     testImplementation(project(":testutil"))
 }
@@ -116,5 +118,40 @@ publishing {
 
             setArtifacts(project.configurations.getAt(executableArchivesConfig).allArtifacts)
         }
+
+        create("fat-jar", MavenPublication::class) {
+            groupId = project.group.toString()
+            artifactId = "fat-cli"
+            version = project.version.toString()
+
+            artifact(tasks.shadowJar) {
+                // Avoid `-all` suffix in the published artifact.
+                // We cannot remove the suffix by setting the `archiveClassifier` for
+                // the `shadowJar` task because of the duplication check for pairs
+                // (classifier, artifact extension) performed by `ValidatingMavenPublisher` class.
+                classifier = ""
+            }
+        }
     }
+}
+
+tasks.publish {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.shadowJar {
+    mergeServiceFiles("desc.ref")
+}
+
+val createVersionFile: Task by tasks.getting
+tasks.sourceJar {
+    dependsOn(createVersionFile)
+}
+
+// See https://github.com/johnrengelman/shadow/issues/153.
+tasks.shadowDistTar.get().enabled = false
+tasks.shadowDistZip.get().enabled = false
+
+artifacts {
+    archives(tasks.shadowJar)
 }

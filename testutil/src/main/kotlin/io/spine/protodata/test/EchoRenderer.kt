@@ -31,7 +31,7 @@ import io.spine.protobuf.AnyPacker
 import io.spine.protodata.config.configAs
 import io.spine.protodata.language.CommonLanguages.any
 import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.tesst.Echo
 import io.spine.time.toInstant
 import kotlin.io.path.Path
@@ -40,7 +40,7 @@ public const val ECHO_FILE: String = "name.txt"
 
 public class EchoRenderer : Renderer(any) {
 
-    override fun render(sources: SourceSet) {
+    override fun render(sources: SourceFileSet) {
         val name = configAs<Name>()
         sources.createFile(Path(ECHO_FILE), name.value)
     }
@@ -48,7 +48,7 @@ public class EchoRenderer : Renderer(any) {
 
 public class ProtoEchoRenderer : Renderer(any) {
 
-    override fun render(sources: SourceSet) {
+    override fun render(sources: SourceFileSet) {
         val echo = configAs<Echo>()
         val message = buildString {
             with(echo) {
@@ -67,7 +67,7 @@ public class ProtoEchoRenderer : Renderer(any) {
 
 public class PlainStringRenderer : Renderer(any) {
 
-    override fun render(sources: SourceSet) {
+    override fun render(sources: SourceFileSet) {
         val echo = configAs<String>()
         sources.createFile(Path(ECHO_FILE), echo)
     }

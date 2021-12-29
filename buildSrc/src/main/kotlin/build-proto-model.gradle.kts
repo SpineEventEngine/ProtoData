@@ -26,9 +26,15 @@
 
 import io.spine.internal.dependency.Protobuf
 
+/**
+ * The dependency onto Spine Validation causes the circular dependency in this Gradle project.
+ * Therefore, we disable the validation altogether.
+ */
+System.setProperty("spine.internal.validation.disabled", "true")
+
 apply {
-    plugin("io.spine.mc-java")
     plugin(Protobuf.GradlePlugin.id)
+    plugin("io.spine.mc-java")
 }
 
 dependencies {

@@ -34,17 +34,17 @@ import com.google.protobuf.ExtensionRegistry
 public interface OptionsProvider {
 
     /**
-     * Registers some custom options in the given [registry].
+     * Registers custom options in the given [registry].
      *
-     * See the `registerAllExtensions(..)` method in the Java class generated from the file with
-     * the extensions.
+     * See the `registerAllExtensions(..)` method in the outer Java class generated from
+     * the file with the extensions.
      *
      * Example:
      * ```kotlin
-     * override fun dumpTo(registry: ExtensionRegistry) {
+     * override fun registerIn(registry: ExtensionRegistry) {
      *     MyOptionsProto.registerAllExtensions(registry)
      * }
      * ```
      */
-    public fun dumpTo(registry: ExtensionRegistry)
+    public fun registerIn(registry: ExtensionRegistry)
 }

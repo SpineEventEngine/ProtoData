@@ -57,8 +57,7 @@ class `'CompilerEvents' should` {
                                     .asTypeSet()
                                     .messageTypes()
                                     .map { it.descriptor().file.toProto() }
-        val request = CodeGeneratorRequest
-            .newBuilder()
+        val request = CodeGeneratorRequest.newBuilder()
             .addFileToGenerate(DoctorProto.getDescriptor().fullName)
             .addAllProtoFile(allTheTypes)
             .build()

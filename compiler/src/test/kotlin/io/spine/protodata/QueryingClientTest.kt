@@ -53,8 +53,7 @@ class `'QueryingClient' should` {
     @BeforeEach
     fun initContext() {
         context = CodeGenerationContext.builder().build()
-        val request = CodeGeneratorRequest
-            .newBuilder()
+        val request = CodeGeneratorRequest.newBuilder()
             .addAllProtoFile(files.map { it.toProto() })
             .addAllFileToGenerate(files.map { it.name })
             .build()

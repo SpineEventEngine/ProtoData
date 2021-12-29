@@ -24,10 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.gradle.RunBuild
+package io.spine.protodata.codegen.java
 
-val integrationTest by tasks.creating(RunBuild::class) {
-    directory = "$rootDir/tests"
+import io.spine.protodata.renderer.SourceFileSet
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption
+import kotlin.io.path.writeText
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.io.TempDir
+
+internal const val JAVA_FILE = "java/org/example/Test.java"
+
+/**
+ * A base for test cases that require a source file set with a Java file to run.
+ */
+abstract class WithSourceFileSet {
+
+    protected lateinit var sources: SourceFileSet
+        private set
+
+    @BeforeEach
+    fun createSourceSet(@TempDir path: Path) {
+        val targetFile = path.resolve(JAVA_FILE)
+        val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
+        targetFile.parent.toFile().mkdirs()
+        targetFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
+        sources = SourceFileSet.from(path, path)
+    }
 }
-
-tasks["check"].finalizedBy(integrationTest)

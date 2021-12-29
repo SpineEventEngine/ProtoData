@@ -33,7 +33,7 @@ import io.spine.protodata.language.Language
 import io.spine.server.BoundedContext
 
 /**
- * A `Renderer` takes an existing [SourceSet] and modifies it, changing the contents of existing
+ * A `Renderer` takes an existing [SourceFileSet] and modifies it, changing the contents of existing
  * source files, creating new ones, or deleting unwanted files.
  *
  * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
@@ -49,7 +49,7 @@ protected constructor(
     /**
      * Performs required changes to the given source set.
      */
-    internal fun renderSources(sources: SourceSet) {
+    internal fun renderSources(sources: SourceFileSet) {
         val relevantFiles = sources.subsetWhere { supportedLanguage.matches(it) }
         render(relevantFiles)
         sources.mergeBack(relevantFiles)
@@ -61,7 +61,7 @@ protected constructor(
      * The source set is guaranteed to consist only of the files, containing the code in
      * the [supportedLanguages].
      */
-    protected abstract fun render(sources: SourceSet)
+    protected abstract fun render(sources: SourceFileSet)
 
     final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)

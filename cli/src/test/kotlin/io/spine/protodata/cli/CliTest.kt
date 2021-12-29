@@ -60,6 +60,7 @@ import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -106,21 +107,6 @@ class `Command line application should` {
         )
         assertThat(sourceFile.readText())
             .isEqualTo("_${Project::class.simpleName}.getUuid() ")
-    }
-
-    @Test
-    fun `supply options by file path`() {
-        launchApp(
-            "-p", CustomOptionPlugin::class.jvmName,
-            "-r", CustomOptionRenderer::class.jvmName,
-            "--src", srcRoot.toString(),
-            "-t", codegenRequestFile.toString(),
-            "-o", "spine/protodata/cli/test/options.proto",
-            "-o", "spine/options.proto"
-        )
-        val generatedFile = srcRoot.resolve(CustomOptionRenderer.FILE_NAME)
-        assertThat(generatedFile.readText())
-            .isEqualTo("custom_field_for_test")
     }
 
     @Test
@@ -287,6 +273,7 @@ class `Command line application should` {
     inner class `Fail if` {
 
         @Test
+        @Disabled("Until command line option substitution for missing --renderer is introduced")
         fun `renderer is missing`() {
             assertMissingOption {
                 launchApp(

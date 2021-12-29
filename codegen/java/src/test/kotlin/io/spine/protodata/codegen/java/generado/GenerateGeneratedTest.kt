@@ -30,22 +30,22 @@ import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
-import io.spine.protodata.codegen.java.WithSourceSet
+import io.spine.protodata.codegen.java.WithSourceFileSet
 import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
 import kotlin.io.path.Path
 import org.junit.jupiter.api.Test
 
-class `'GenerateGenerated' renderer should` : WithSourceSet() {
+class `'GenerateGenerated' renderer should` : WithSourceFileSet() {
 
     @Test
     fun `add the annotation`() {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(PrintBeforePrimaryDeclaration(), GenerateGenerated()),
-            sourceSet = sourceSet,
+            sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
-        val code = sourceSet
+        val code = sources
             .file(Path(JAVA_FILE))
             .code()
         assertThat(code)

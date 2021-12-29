@@ -30,24 +30,24 @@ import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
-import io.spine.protodata.codegen.java.WithSourceSet
+import io.spine.protodata.codegen.java.WithSourceFileSet
 import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import kotlin.io.path.Path
 import org.junit.jupiter.api.Test
 
-class `'SuppressRenderer' should` : WithSourceSet() {
+class `'SuppressRenderer' should` : WithSourceFileSet() {
 
     @Test
     fun `suppress ALL warnings`() {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer()),
-            sourceSet = sourceSet,
+            sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
-        val code = sourceSet
+        val code = sources
             .file(Path(JAVA_FILE))
             .code()
         assertThat(code)
@@ -61,13 +61,13 @@ class `'SuppressRenderer' should` : WithSourceSet() {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer()),
-            sourceSet = sourceSet,
+            sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance(),
             config = Configuration.rawValue("""
                 {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
             """.trimIndent(), PROTO_JSON)
         )()
-        val code = sourceSet
+        val code = sources
             .file(Path(JAVA_FILE))
             .code()
         assertThat(code)

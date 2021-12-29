@@ -27,8 +27,8 @@
 import io.spine.internal.dependency.Protobuf
 
 apply {
-    plugin("io.spine.mc-java")
     plugin(Protobuf.GradlePlugin.id)
+    plugin("io.spine.mc-java")
 }
 
 dependencies {

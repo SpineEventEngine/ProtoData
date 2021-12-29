@@ -79,16 +79,6 @@ public class Extension(private val project: Project) {
         project.objects.listProperty<String>().convention(listOf())
 
     /**
-     * Passes the given names of Protobuf files which declare custom options to ProtoData.
-     */
-    public fun options(vararg protoFiles: String) {
-        options.addAll(protoFiles.toList())
-    }
-
-    internal val options: ListProperty<String> =
-        project.objects.listProperty<String>().convention(listOf())
-
-    /**
      * A directory where the serialized `CodeGeneratorRequest`s are stored.
      *
      * For each source set, we generate a separate request file. Files are named after
@@ -109,16 +99,17 @@ public class Extension(private val project: Project) {
     /**
      * The base directory where the files generated from Protobuf resides.
      *
-     * Files are placed under this dir and divided under sub-directories by source sets, and then by
+     * Files are placed under this dir and divided under subdirectories by source sets, and then by
      * the [subDir]s. For example, a Java class generated from a main-scope `.proto` definition
      * would be placed under `$srcBaseDir/main/java`, where `main` is the name of the source set
      * and `java` is the [subDir].
      *
      * By default, `srcBaseDir` points to the directory which is specified in
-     * `protobuf.generatedFilesBaseDir` to the Protobuf Gradle plugin. If `srcBaseDir` is changed,
-     * Protobuf compiler settings are NOT affected.
+     * `protobuf.generatedFilesBaseDir` to the Protobuf Gradle plugin.
      *
-     * To change the location where `protoc` stores files it generates, refer to
+     * If `srcBaseDir` is changed, Protobuf compiler settings are NOT affected.
+     *
+     * To change the location where `protoc` stores files it generates, please refer to
      * the Protobuf Gradle plugin DSL.
      *
      * @see subDir
@@ -136,7 +127,7 @@ public class Extension(private val project: Project) {
     }
 
     /**
-     * The sub-directory to which the files generated from Protobuf are placed.
+     * The subdirectory to which the files generated from Protobuf are placed.
      *
      * The default value is `"java"`.
      *

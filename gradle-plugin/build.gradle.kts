@@ -25,28 +25,29 @@
  */
 
 import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.Publish
+import io.spine.internal.gradle.isSnapshot
 
 plugins {
     `java-gradle-plugin`
-    id("com.gradle.plugin-publish").version("0.15.0")
+    `maven-publish`
+    id("com.gradle.plugin-publish").version("0.18.0")
     `version-to-resources`
     jacoco
 }
 
-val spineMcVersion: String by extra
+val toolBaseVersion: String by extra
 
 dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(Protobuf.GradlePlugin.lib)
 
-    testImplementation("io.spine.tools:spine-plugin-base:$spineMcVersion")
-    testImplementation("io.spine.tools:spine-plugin-testlib:$spineMcVersion")
+    testImplementation("io.spine.tools:spine-plugin-base:$toolBaseVersion")
+    testImplementation("io.spine.tools:spine-plugin-testlib:$toolBaseVersion")
 }
 
 val testsDependOnProjects = listOf(
-    "cli", "compiler", "protoc", "testutil"
+    "cli", "compiler", "protoc", "testutil", "gradle-plugin"
 )
 
 tasks.withType<Test> {
@@ -55,9 +56,11 @@ tasks.withType<Test> {
     }
 }
 
+val pluginName = "protoDataPlugin"
+
 gradlePlugin {
     plugins {
-        create("protoDataPlugin") {
+        create(pluginName) {
             id = "io.spine.proto-data"
             implementationClass = "io.spine.protodata.gradle.Plugin"
             displayName = "ProtoData"
@@ -69,7 +72,7 @@ gradlePlugin {
 pluginBundle {
     website = "https://spine.io/"
     vcsUrl = "https://github.com/SpineEventEngine/ProtoData.git"
-    tags = listOf("spine", "protobuf", "protodata", "code generation")
+    tags = listOf("spine", "protobuf", "protodata", "code generation", "codegen")
 
     mavenCoordinates {
         groupId = "io.spine"
@@ -78,12 +81,18 @@ pluginBundle {
     }
 
     plugins {
-        named("protoDataPlugin") {
+        named(pluginName) {
             version = project.version.toString()
         }
     }
 }
 
-tasks.create(Publish.taskName) {
-    dependsOn("publishPlugins")
+val protoDataVersion: String by extra
+
+val publishPlugins: Task by tasks.getting {
+    enabled = !protoDataVersion.isSnapshot()
+}
+
+val publish: Task by tasks.getting {
+    dependsOn(publishPlugins)
 }

@@ -45,13 +45,13 @@ private const val PACKAGE = "example"
 private val PERSON_NAME = typeName(PACKAGE, "PersonName")
 private val ACCOUNT_TYPE = typeName(PACKAGE, "AccountType")
 
-class `'SourceFile' with Java should` : WithSourceSet() {
+class `'SourceFile' with Java should` : WithSourceFileSet() {
 
     private lateinit var file: SourceFile
 
     @BeforeEach
     fun createFile() {
-        file = sourceSet.file(Path(JAVA_FILE))
+        file = sources.file(Path(JAVA_FILE))
     }
 
     @Nested

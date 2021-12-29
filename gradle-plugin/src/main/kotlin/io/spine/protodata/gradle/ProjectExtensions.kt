@@ -27,6 +27,7 @@
 package io.spine.protodata.gradle
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
@@ -49,4 +50,16 @@ internal val Project.sourceSets: SourceSetContainer
 internal fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
     val taskName = sourceSet.compileJavaTaskName
     return tasks.findByName(taskName) as JavaCompile?
+}
+
+/**
+ * Attempts to obtain the Kotlin compilation Gradle task for the given source set.
+ *
+ * Typically, the task is named by a pattern: `compile<SourceSet name>Kotlin`, or just
+ * `compileKotlin` if the source set name is `"main"`. If the task does not fit this described
+ * pattern, this method will not find it.
+ */
+internal fun Project.kotlinCompileFor(sourceSet: SourceSet): Task? {
+    val taskName = sourceSet.getCompileTaskName("Kotlin")
+    return tasks.findByName(taskName)
 }

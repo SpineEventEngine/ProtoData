@@ -36,6 +36,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.api.Plugin as GradlePlugin
@@ -70,7 +71,7 @@ public class Plugin : GradlePlugin<Project> {
         val version = readVersion()
         with(target) {
             val extension = createExtension()
-            configureProtobufPlugin(extension, version)
+            configureWithProtobufPlugin(extension, version)
             createLaunchTasks(extension, version)
             configureSourceSets(extension)
             configureIdea(extension)
@@ -86,24 +87,58 @@ public class Plugin : GradlePlugin<Project> {
 /**
  * The resource file containing the version of ProtoData.
  *
- * Such a resource name might be duplicated in other places in ProtoData code base. The reason for
- * this is to avoid creating an extra dependency for the Gradle plugin, so that the users wouldn't
- * have to declare a custom Maven repository to use the plugin.
+ * Such a resource name might be duplicated in other places in ProtoData code base.
+ * The reason for this is to avoid creating an extra dependency for the Gradle plugin,
+ * so that the users wouldn't have to declare a custom Maven repository to use the plugin.
  */
 private const val VERSION_RESOURCE = "version.txt"
 
 private const val PROTOC_PLUGIN = "protodata"
 
+private const val PROTOBUF_PLUGIN = "com.google.protobuf"
+
+/**
+ * If set to any value, enables the development mode for ProtoData.
+ *
+ * Should only be used when developing ProtoData itself.
+ *
+ * Switches to all-in-one ProtoData's `cli` artifact and eliminates the dependency conflict between
+ * the "published" modules and those currently under development.
+ */
+private const val DEV_MODE_SYSTEM_PROPERTY = "spine.internal.protodata.devmode.enabled"
+
 private fun Project.createLaunchTasks(extension: Extension, version: String) {
     val artifactConfig = configurations.create("protoDataRawArtifact") {
         it.isVisible = false
     }
-    dependencies.add(artifactConfig.name, "io.spine.protodata:cli:$version")
-    val userCpConfig = configurations.create("protoData")
+
+    val devModeEnabled = isDevMode()
+    val cliDependency =
+        if (devModeEnabled) {
+            logger.warn("ProtoData's development mode is enabled " +
+                    "via `$DEV_MODE_SYSTEM_PROPERTY` system property.")
+            // "fat-cli" is an all-in-one distribution of ProtoData, published somewhat in the past.
+            // Ironically, we need it in ProtoData development.
+            // It removes the dependency conflicts between ProtoData-s.
+            "io.spine.protodata:fat-cli:$version"
+        } else {
+            "io.spine.protodata:cli:$version";
+        }
+
+    dependencies.add(artifactConfig.name, cliDependency)
+    val userCpConfig = configurations.create("protoData") {
+        it.exclude(group = "io.spine.protodata", module = "compiler")
+    }
     sourceSets.forEach { sourceSet ->
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
         createCleanTask(extension, sourceSet)
     }
+}
+
+private fun isDevMode(): Boolean {
+    val value = System.getProperty(DEV_MODE_SYSTEM_PROPERTY)
+    val devModeEnabled = value != null
+    return devModeEnabled
 }
 
 private fun Project.createExtension(): Extension {
@@ -120,7 +155,6 @@ private fun Project.createLaunchTask(
         renderers = ext.renderers
         plugins = ext.plugins
         optionProviders = ext.optionProviders
-        options = ext.options
         requestFile = ext.requestFile(sourceSet)
         source = ext.sourceDir(sourceSet)
         target = ext.targetDir(sourceSet)
@@ -133,18 +167,27 @@ private fun Project.createLaunchTask(
         onlyIf { requestFile.get().asFile.exists() }
         dependsOn(artifactConfig.buildDependencies, userCpConfig.buildDependencies)
         javaCompileFor(sourceSet)?.dependsOn(this)
+        kotlinCompileFor(sourceSet)?.dependsOn(this)
     }
 }
 
-private fun Project.createCleanTask(
-    ext: Extension, sourceSet: SourceSet
-) {
+private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
     val taskName = cleanTaskName(sourceSet)
     tasks.create<Delete>(taskName) {
         delete(ext.targetDir(sourceSet))
 
         tasks.getByName("clean").dependsOn(this)
         tasks.getByName(launchTaskName(sourceSet)).mustRunAfter(this)
+    }
+}
+
+private fun Project.configureWithProtobufPlugin(extension: Extension, version: String) {
+    if (pluginManager.hasPlugin(PROTOBUF_PLUGIN)) {
+        configureProtobufPlugin(extension, version)
+    } else {
+        pluginManager.withPlugin(PROTOBUF_PLUGIN) {
+            configureProtobufPlugin(extension, version)
+        }
     }
 }
 

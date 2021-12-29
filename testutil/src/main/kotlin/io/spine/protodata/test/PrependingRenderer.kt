@@ -28,13 +28,13 @@ package io.spine.protodata.test
 
 import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceSet
+import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.theOnly
 import kotlin.io.path.name
 
 public class PrependingRenderer : Renderer(Java) {
 
-    override fun render(sources: SourceSet) {
+    override fun render(sources: SourceFileSet) {
         val file = sources
             .filter { it.relativePath.name.endsWith("_.java") }
             .theOnly()

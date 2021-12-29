@@ -24,41 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
+package io.spine.internal.gradle.kotlin
 
-import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaToolchainSpec
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-plugins {
-    java
-    id("com.google.protobuf")
-    id("io.spine.proto-data")
+/**
+ * Sets [Java toolchain](https://kotlinlang.org/docs/gradle.html#gradle-java-toolchains-support)
+ * to the specified version (e.g. 11 or 8).
+ */
+fun KotlinJvmProjectExtension.applyJvmToolchain(version: Int) {
+    jvmToolchain {
+        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(version))
+    }
 }
 
-fun RepositoryHandler.addCouple(baseUrl: String) {
-    maven { url = uri("$baseUrl/releases") }
-    maven { url = uri("$baseUrl/snapshots") }
-}
+/**
+ * Sets [Java toolchain](https://kotlinlang.org/docs/gradle.html#gradle-java-toolchains-support)
+ * to the specified version (e.g. "11" or "8").
+ */
+@Suppress("unused")
+fun KotlinJvmProjectExtension.applyJvmToolchain(version: String) =
+    applyJvmToolchain(version.toInt())
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-
-    addCouple("https://spine.mycloudrepo.io/public/repositories")
-    addCouple("https://europe-maven.pkg.dev/spine-event-engine")
-}
-
-protoData {
-    renderers("io.spine.protodata.test.TestRenderer")
-    plugins("io.spine.protodata.test.TestPlugin")
-}
-
-dependencies {
-    protoData("io.spine.protodata:testutil:+")
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:+"
+/**
+ * Opts-in to experimental features that we use in our codebase.
+ */
+fun KotlinCompile.setFreeCompilerArgs() {
+    kotlinOptions {
+        freeCompilerArgs = listOf(
+            "-Xskip-prerelease-check",
+            "-Xjvm-default=all",
+            "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+            "-Xopt-in=kotlin.ExperimentalStdlibApi"
+        )
     }
 }

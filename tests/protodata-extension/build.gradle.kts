@@ -30,9 +30,9 @@ buildscript {
 
     apply(from = "$rootDir/../version.gradle.kts")
 
-    val spineMcVersion: String by extra
+    val mcJavaVersion: String by extra
     dependencies {
-        classpath("io.spine.tools:spine-mc-java:$spineMcVersion")
+        classpath("io.spine.tools:spine-mc-java:$mcJavaVersion")
     }
 }
 
