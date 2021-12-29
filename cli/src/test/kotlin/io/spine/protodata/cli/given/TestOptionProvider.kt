@@ -33,7 +33,7 @@ import io.spine.protodata.option.OptionsProvider
 
 class TestOptionProvider : OptionsProvider {
 
-    override fun registerAt(registry: ExtensionRegistry) {
+    override fun registerIn(registry: ExtensionRegistry) {
         OptionsProto.registerAllExtensions(registry)
         TestOptionsProto.registerAllExtensions(registry)
     }

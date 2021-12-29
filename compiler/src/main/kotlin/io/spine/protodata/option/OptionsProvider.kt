@@ -46,5 +46,5 @@ public interface OptionsProvider {
      * }
      * ```
      */
-    public fun registerAt(registry: ExtensionRegistry)
+    public fun registerIn(registry: ExtensionRegistry)
 }
