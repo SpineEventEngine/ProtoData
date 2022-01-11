@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, TeamDev. All rights reserved.
+ * Copyright 2022, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,18 +32,12 @@ object GoogleCloud {
     // https://github.com/googleapis/java-core
     const val core = "com.google.cloud:google-cloud-core:2.3.3"
 
-    // https://github.com/googleapis/java-pubsub
-    const val pubSubGrpcApi = "com.google.api.grpc:proto-google-cloud-pubsub-v1:1.115.0"
+    // https://github.com/googleapis/java-pubsub/tree/main/proto-google-cloud-pubsub-v1
+    const val pubSubGrpcApi = "com.google.api.grpc:proto-google-cloud-pubsub-v1:1.97.0"
 
     // https://github.com/googleapis/java-trace
-    // Release 2.0.0 introduces breaking changes:
-    // https://github.com/googleapis/java-trace/releases/tag/v2.0.0
-    // Latest: https://github.com/googleapis/java-trace/releases/tag/v2.1.0
-    const val trace = "com.google.cloud:google-cloud-trace:1.4.2"
+    const val trace = "com.google.cloud:google-cloud-trace:2.1.0"
 
     // https://github.com/googleapis/java-datastore
-    // Release 2.0.0 introduces breaking changes:
-    // https://github.com/googleapis/java-datastore/releases/tag/v2.0.0
-    // Latest: https://github.com/googleapis/java-datastore/releases/tag/v2.2.1
-    const val datastore = "com.google.cloud:google-cloud-datastore:1.107.1"
+    const val datastore = "com.google.cloud:google-cloud-datastore:2.2.1"
 }
