@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, TeamDev. All rights reserved.
+ * Copyright 2022, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ buildscript {
 plugins {
     java
     id("com.google.protobuf")
-    id("io.spine.proto-data") version "0.1.4"
+    id("io.spine.proto-data") version "0.1.5"
 }
 
 fun RepositoryHandler.addCouple(baseUrl: String) {

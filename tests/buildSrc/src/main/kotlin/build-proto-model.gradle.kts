@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, TeamDev. All rights reserved.
+ * Copyright 2022, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,12 @@
  */
 
 import io.spine.internal.dependency.Protobuf
+
+/**
+ * The dependency onto Spine Validation causes the circular dependency in this Gradle project.
+ * Therefore, we disable the validation altogether.
+ */
+System.setProperty("spine.internal.validation.disabled", "true")
 
 apply {
     plugin(Protobuf.GradlePlugin.id)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, TeamDev. All rights reserved.
+ * Copyright 2022, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.83")
 val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
 
 // The version of ProtoData being developed.
-val protoDataVersion: String by extra("0.1.4")
+val protoDataVersion: String by extra("0.1.5")
 
 /** The version of ProtoData used for developing [protoDataVersion]. */
 val devProtoDataVersion: String by extra("0.1.2")
