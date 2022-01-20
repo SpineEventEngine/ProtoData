@@ -26,8 +26,8 @@
 
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Jackson
-import io.spine.internal.gradle.CheckVersionIncrement
-import io.spine.internal.gradle.IncrementGuard
+import io.spine.internal.gradle.publish.CheckVersionIncrement
+import io.spine.internal.gradle.publish.IncrementGuard
 import io.spine.internal.gradle.publish.PublishingRepos
 
 plugins {
