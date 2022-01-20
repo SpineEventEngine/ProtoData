@@ -305,6 +305,12 @@ internal class Run(version: String) : CliktCommand(
     private fun filterOptionFiles(files: FileSet): Sequence<FileOptionsProvider> {
         val fileProviders = files.files()
             .filter { it.extensions.isNotEmpty() }
+            // Filter out files that do not have outer classes yet.
+            // These are `.proto` files being processed by ProtoData that contain
+            // option definitions. We cannot use these files because there is no binary Java
+            // code generated for them at this stage. Because of this they cannot be added to
+            // an `ExtensionRegistry` later.
+            .filter { it.outerClass != null }
             .map(::FileOptionsProvider)
             .asSequence()
         return fileProviders
@@ -315,8 +321,10 @@ internal class Run(version: String) : CliktCommand(
         return classNames.map { builder.tryCreate(it, classLoader) }
     }
 
-    private fun <T: Any> ReflectiveBuilder<T>.tryCreate(className: String,
-                                                        classLoader: ClassLoader): T {
+    private fun <T : Any> ReflectiveBuilder<T>.tryCreate(
+        className: String,
+        classLoader: ClassLoader
+    ): T {
         try {
             return createByName(className, classLoader)
         } catch (e: ClassNotFoundException) {
