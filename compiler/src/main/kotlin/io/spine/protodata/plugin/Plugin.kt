@@ -30,7 +30,7 @@ import io.spine.protodata.ConfigurationError
 import io.spine.server.BoundedContextBuilder
 
 /**
- * An plugin into the code generation process.
+ * A plugin into the code generation process.
  *
  * ProtoData uses the reactive approach to handling Protobuf source info. We handle events which
  * describe a Protobuf source set via a set of [views][View] and [policies][Policy].
