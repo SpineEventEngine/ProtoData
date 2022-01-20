@@ -42,7 +42,7 @@ public sealed class Configuration {
     /**
      * Constructs an event which contains the value of the configuration.
      *
-     * The events belongs to the [io.spine.protodata.ConfigurationContext].
+     * The events belong to the [io.spine.protodata.ConfigurationContext].
      */
     internal abstract fun produceEvent(): EventMessage
 
@@ -63,13 +63,11 @@ public sealed class Configuration {
 
 private class File(private val file: Path) : Configuration() {
 
-    override fun produceEvent() = FileConfigDiscovered
-        .newBuilder()
+    override fun produceEvent() = FileConfigDiscovered.newBuilder()
         .setFile(file.toConfigFile())
         .build()
 
-    private fun Path.toConfigFile() = ConfigFile
-        .newBuilder()
+    private fun Path.toConfigFile() = ConfigFile.newBuilder()
         .setPath(absolutePathString())
         .build()
 }
@@ -79,13 +77,11 @@ private class Raw(
     private val format: ConfigurationFormat
 ) : Configuration() {
 
-    override fun produceEvent() = RawConfigDiscovered
-        .newBuilder()
+    override fun produceEvent() = RawConfigDiscovered.newBuilder()
         .setConfig(config())
         .build()
 
-    private fun config() = RawConfig
-        .newBuilder()
+    private fun config() = RawConfig.newBuilder()
         .setFormat(format)
         .setValue(value)
         .build()
