@@ -32,12 +32,19 @@ val mcVersion: String by extra("2.0.0-SNAPSHOT.88")
 //val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.88")
 
 // The version in which there is no circular dependencies onto ProtoData. Yet.
-val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.87")
+val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.88")
 
 val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.89")
 
 // The version of ProtoData being developed.
 val protoDataVersion: String by extra("0.1.6")
 
+/**
+ * Tell artifacts that depend on ProtoData that we're running in the mode of developing ProtoData.
+ *
+ * They should use `fat-cli` instead of `cli` in this mode.
+ */
+//System.setProperty("spine.internal.protodata.devmode.enabled", "true")
+
 /** The version of ProtoData used for developing [protoDataVersion]. */
-val devProtoDataVersion: String by extra("0.1.5")
+//val devProtoDataVersion: String by extra("0.1.5")
