@@ -43,8 +43,10 @@ internal open class ReflectiveBuilder<T: Any> {
      * It is necessary that the class defined by the [className] parameter is a subtype of `T`.
      * Otherwise, a casting error occurs.
      *
-     * @param className name of the concrete class to instantiate
-     * @param classLoader the [ClassLoader] to load the class by its name
+     * @param className
+     *         name of the concrete class to instantiate
+     * @param classLoader
+     *         the [ClassLoader] to load the class by its name
      */
     fun createByName(className: String, classLoader: ClassLoader): T {
         val cls = classLoader.loadClass(className).kotlin
