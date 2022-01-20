@@ -37,6 +37,7 @@ include(
 
 project(":codegen-java").projectDir = file("$rootDir/codegen/java")
 
+/**
 dependencyResolutionManagement {
     repositories {
         mavenLocal()
@@ -52,3 +53,4 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+ **/
