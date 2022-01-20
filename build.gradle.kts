@@ -51,7 +51,7 @@ buildscript {
     apply(from = "$rootDir/version.gradle.kts")
 
     val mcJavaVersion: String by extra
-    val devProtoDataVersion: String by extra
+//    val devProtoDataVersion: String by extra
 
     dependencies {
         classpath("io.spine.tools:spine-mc-java:$mcJavaVersion")
@@ -61,7 +61,7 @@ buildscript {
     }
 }
 
-val devProtoDataVersion: String by extra
+// val devProtoDataVersion: String by extra
 
 plugins {
     kotlin("jvm")
