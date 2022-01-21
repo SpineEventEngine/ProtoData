@@ -79,7 +79,7 @@ spinePublishing {
         "codegen-java",
         "testutil"
     )
-    spinePrefix.set(false)
+    customPrefix.set("protodata-")
 }
 
 allprojects {
