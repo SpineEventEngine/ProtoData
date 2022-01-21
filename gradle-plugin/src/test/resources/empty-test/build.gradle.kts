@@ -64,6 +64,6 @@ dependencies {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:+"
+        artifact = io.spine.internal.dependency.Protobuf.compiler
     }
 }

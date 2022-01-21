@@ -28,35 +28,20 @@ package io.spine.protodata.cli
 
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.ExtensionRegistry
-import io.spine.code.java.ClassName
 import io.spine.protodata.option.OptionsProvider
 
 /**
  * An [OptionsProvider] which provides all the options defined in a single Protobuf file.
  */
-internal class FileOptionsProvider(
-    private val descriptor: FileDescriptor
-) : OptionsProvider {
+internal class FileOptionsProvider(private val descriptor: FileDescriptor) : OptionsProvider {
 
     /**
-     * Supplies the given [registry] with the options from the associated file descriptor.
+     * Supplies the given [registry] with the options from the associated descriptor
+     * of the proto file. The outer class for the file must exist.
      *
-     * Reflectively calls the static `registerAllExtensions(..)` method, such
-     * as [io.spine.option.OptionsProto.registerAllExtensions], on the outer class generated for
-     * the Protobuf file where the custom options are declared.
+     * @throws IllegalStateException if the outer class for the proto file does not exist.
      */
     override fun registerIn(registry: ExtensionRegistry) {
-        val outerClassName = outerClassName()
-        val classLoader = this.javaClass.classLoader
-        val optionsClass = classLoader.loadClass(outerClassName)
-        val method = optionsClass.getDeclaredMethod(
-            "registerAllExtensions", ExtensionRegistry::class.java
-        )
-        method.invoke(null, registry)
-    }
-
-    private fun outerClassName(): String {
-        val outerClass = ClassName.outerClass(descriptor)
-        return outerClass.binaryName()
+        descriptor.registerAllExtensions(registry)
     }
 }

@@ -26,9 +26,8 @@
 
 @file:Suppress("unused")
 
-package io.spine.internal.gradle
+package io.spine.internal.gradle.publish
 
-import io.spine.internal.gradle.publish.PublishingRepos
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
