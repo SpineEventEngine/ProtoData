@@ -65,7 +65,7 @@ internal val FileDescriptor.outerClass: Class<*>?
 internal fun FileDescriptor.registerAllExtensions(registry: ExtensionRegistry) {
     if (outerClass == null) {
         throw IllegalStateException(
-            "The outer class $outerClassName for the file $name does not exist."
+            "The outer class `$outerClassName` for the file `$name` does not exist."
         )
     }
     val method = outerClass!!.getDeclaredMethod(

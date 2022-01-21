@@ -94,6 +94,14 @@ allprojects {
 
     repositories.applyStandard()
     repositories.applyGitHubPackages("base-types", rootProject)
+
+    configurations.all {
+        resolutionStrategy {
+            force(
+                io.spine.internal.dependency.Grpc.protobufPlugin
+            )
+        }
+    }
 }
 
 subprojects {
