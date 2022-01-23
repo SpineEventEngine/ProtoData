@@ -120,14 +120,14 @@ private fun Project.createLaunchTasks(extension: Extension, version: String) {
             // "fat-cli" is an all-in-one distribution of ProtoData, published somewhat in the past.
             // Ironically, we need it in ProtoData development.
             // It removes the dependency conflicts between ProtoData-s.
-            "io.spine.protodata:fat-cli:$version"
+            "io.spine.protodata:protodata-fat-cli:$version"
         } else {
-            "io.spine.protodata:cli:$version";
+            "io.spine.protodata:protodata-cli:$version"
         }
 
     dependencies.add(artifactConfig.name, cliDependency)
     val userCpConfig = configurations.create("protoData") {
-        it.exclude(group = "io.spine.protodata", module = "compiler")
+        it.exclude(group = "io.spine.protodata", module = "protodata-compiler")
     }
     sourceSets.forEach { sourceSet ->
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
@@ -195,7 +195,7 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
     protobuf {
         plugins {
             id(PROTOC_PLUGIN) {
-                artifact = "io.spine.protodata:protoc:$version:exe@jar"
+                artifact = "io.spine.protodata:protodata-protoc:$version:exe@jar"
             }
         }
         generateProtoTasks {
