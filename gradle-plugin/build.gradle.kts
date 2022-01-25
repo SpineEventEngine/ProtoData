@@ -52,7 +52,7 @@ val testsDependOnProjects = listOf(
 
 tasks.withType<Test> {
     testsDependOnProjects.forEach {
-        dependsOn(":$it:publishToMavenLocal")
+        this@withType.dependsOn(":$it:publishToMavenLocal")
     }
 }
 
