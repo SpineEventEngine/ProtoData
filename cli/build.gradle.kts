@@ -113,7 +113,7 @@ publishing {
     publications {
         create("exec", MavenPublication::class) {
             groupId = project.group.toString()
-            artifactId = "executable"
+            artifactId = "$appName-exe"
             version = project.version.toString()
 
             setArtifacts(project.configurations.getAt(executableArchivesConfig).allArtifacts)
@@ -121,7 +121,7 @@ publishing {
 
         create("fat-jar", MavenPublication::class) {
             groupId = project.group.toString()
-            artifactId = "fat-cli"
+            artifactId = "$appName-fat-cli"
             version = project.version.toString()
 
             artifact(tasks.shadowJar) {
