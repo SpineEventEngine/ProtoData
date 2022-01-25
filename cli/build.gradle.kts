@@ -113,7 +113,7 @@ publishing {
     publications {
         create("exec", MavenPublication::class) {
             groupId = project.group.toString()
-            artifactId = "$appName-exe"
+            artifactId = "$appName-setup"
             version = project.version.toString()
 
             setArtifacts(project.configurations.getAt(executableArchivesConfig).allArtifacts)

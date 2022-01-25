@@ -23,7 +23,7 @@ See the [Gradle plugin](gradle-plugin/README.md) doc for more info.
 To install ProtoData on a *nix system:
 
  1. [Download](https://github.com/SpineEventEngine/ProtoData/packages/710696) 
-    the `protodata-exe-<version>.jar` archive.
+    the `protodata-setup-<version>.jar` archive.
 
  2. Unzip the archive:
  ```
@@ -56,7 +56,7 @@ There is currently no installation script for Windows.
 Start using the app:
 
  1. [Download](https://github.com/SpineEventEngine/ProtoData/packages/710696) and extract 
-    the `protodata-exe-<version>.jar` archive.
+    the `protodata-setup-<version>.jar` archive.
 
  2. To launch the app, launch the `bin/protodata.bat` script.
 
