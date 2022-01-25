@@ -32,7 +32,7 @@ plugins {
     `version-to-resources`
     `build-proto-model`
     jacoco
-    id("com.github.johnrengelman.shadow").version("7.1.1")
+    id("com.github.johnrengelman.shadow").version("7.1.2")
 }
 
 dependencies {
