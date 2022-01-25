@@ -32,6 +32,7 @@ import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.publish.PublishExtension
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
 import io.spine.internal.gradle.report.coverage.JacocoConfig
@@ -168,8 +169,22 @@ PomGenerator.applyTo(project)
 LicenseReporter.mergeAllReports(project)
 JacocoConfig.applyTo(project)
 
+/**
+ * Collect `publishToMavenLocal` tasks for all subprojects that are specified for
+ * publishing in the root project.
+ */
+val projectsToPublish: Set<String> = the<PublishExtension>().projectsToPublish.get()
+val localPublish by tasks.registering {
+    val pubTasks = projectsToPublish.map { p ->
+        val subProject = project(p)
+        subProject.tasks["publishToMavenLocal"]
+    }
+    dependsOn(pubTasks)
+}
+
 val integrationTest by tasks.creating(RunBuild::class) {
     directory = "$rootDir/tests"
+    dependsOn(localPublish)
 }
 
 tasks["check"].finalizedBy(integrationTest)
