@@ -37,7 +37,7 @@ buildscript {
 plugins {
     java
     id("com.google.protobuf")
-    id("io.spine.proto-data") version "0.1.7"
+    id("io.spine.proto-data") version "0.1.8"
 }
 
 fun RepositoryHandler.addCouple(baseUrl: String) {
