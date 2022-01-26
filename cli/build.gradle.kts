@@ -72,7 +72,7 @@ tasks.getByName<CreateStartScripts>("startScripts") {
  * Some Maven repositories, particularly GitHub Packages, do not support publishing arbitrary files.
  * This way, we trick it to accept this file (as a JAR).
  */
-val executableAsJar by tasks.registering(Jar::class) {
+val setupJar by tasks.registering(Jar::class) {
     from(zipTree(tasks.distZip.get().archiveFile))
     from("$projectDir/install.sh")
 
@@ -84,10 +84,10 @@ val executableAsJar by tasks.registering(Jar::class) {
 val stagingDir = "$buildDir/staging"
 
 val stageProtoData by tasks.registering(Copy::class) {
-    from(zipTree(executableAsJar.get().archiveFile))
+    from(zipTree(setupJar.get().archiveFile))
     into(stagingDir)
 
-    dependsOn(executableAsJar)
+    dependsOn(setupJar)
 }
 
 val protoDataLocationProperty = "protoDataLocation"
@@ -106,12 +106,12 @@ val executableArchivesConfig = "executableArchives"
 configurations.create(executableArchivesConfig)
 
 artifacts {
-    add(executableArchivesConfig, executableAsJar)
+    add(executableArchivesConfig, setupJar)
 }
 
 publishing {
     publications {
-        create("exec", MavenPublication::class) {
+        create("setup", MavenPublication::class) {
             groupId = project.group.toString()
             artifactId = "$appName-setup"
             version = project.version.toString()
