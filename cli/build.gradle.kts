@@ -101,28 +101,33 @@ tasks.register("installProtoData", Exec::class) {
     dependsOn(stageProtoData)
 }
 
-val executableArchivesConfig = "executableArchives"
-
-configurations.create(executableArchivesConfig)
-
+/**
+ * Create a configuration for re-archived distribution ZIP so that it later can be used
+ * for the publication.
+ */
+val setupArchiveConfig = "setupArchive"
+configurations.create(setupArchiveConfig)
 artifacts {
-    add(executableArchivesConfig, setupJar)
+    add(setupArchiveConfig, setupJar)
 }
 
 publishing {
+    val pGroup = project.group.toString()
+    val pVersion = project.version.toString()
+
     publications {
         create("setup", MavenPublication::class) {
-            groupId = project.group.toString()
+            groupId = pGroup
             artifactId = "$appName-setup"
-            version = project.version.toString()
+            version = pVersion
 
-            setArtifacts(project.configurations.getAt(executableArchivesConfig).allArtifacts)
+            setArtifacts(project.configurations.getAt(setupArchiveConfig).allArtifacts)
         }
 
         create("fat-jar", MavenPublication::class) {
-            groupId = project.group.toString()
+            groupId = pGroup
             artifactId = "$appName-fat-cli"
-            version = project.version.toString()
+            version = pVersion
 
             artifact(tasks.shadowJar) {
                 // Avoid `-all` suffix in the published artifact.
