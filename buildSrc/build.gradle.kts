@@ -38,7 +38,7 @@ plugins {
     groovy
     `kotlin-dsl`
     pmd
-    val licenseReportVersion = "2.0"
+    val licenseReportVersion = "2.1"
     id("com.github.jk1.dependency-license-report").version(licenseReportVersion)
 }
 
@@ -57,7 +57,7 @@ repositories {
 val jacksonVersion = "2.13.0"
 
 val googleAuthToolVersion = "2.1.2"
-val licenseReportVersion = "2.0"
+val licenseReportVersion = "2.1"
 val grGitVersion = "3.1.1"
 
 /**
