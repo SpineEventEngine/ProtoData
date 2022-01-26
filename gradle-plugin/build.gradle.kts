@@ -47,7 +47,7 @@ dependencies {
 }
 
 val testsDependOnProjects = listOf(
-    "cli", "compiler", "protoc", "testutil", "gradle-plugin"
+    "cli", "compiler", "protoc", "test-env", "gradle-plugin"
 )
 
 tasks.withType<Test> {

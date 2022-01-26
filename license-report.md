@@ -1,6 +1,6 @@
 
 
-# Dependencies of `io.spine.protodata:protodata-cli:0.1.6`
+# Dependencies of `io.spine.protodata:protodata-cli:0.1.7`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.13.1.**No license information found**
@@ -45,10 +45,11 @@
      * **Project URL:** [http://findbugs.sourceforge.net/](http://findbugs.sourceforge.net/)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
-     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.flogger. **Name** : flogger. **Version** : 0.7.4.
@@ -85,27 +86,27 @@
 1.  **Group** : com.google.protobuf. **Name** : protobuf-kotlin. **Version** : 3.19.3.
      * **License:** [3-Clause BSD License](https://opensource.org/licenses/BSD-3-Clause)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -256,6 +257,10 @@
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
+
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -379,15 +384,7 @@
      * **Project URL:** [https://github.com/java-diff-utils/java-diff-utils](https://github.com/java-diff-utils/java-diff-utils)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.38.0.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.38.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -395,11 +392,7 @@
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -407,15 +400,7 @@
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.38.0.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.38.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -461,10 +446,6 @@
      * **License:** [LGPL, version 2.1](http://www.gnu.org/licenses/licenses.html)
 
 1.  **Group** : net.ltgt.gradle. **Name** : gradle-errorprone-plugin. **Version** : 2.0.2.**No license information found**
-1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.1.
-     * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.2.
      * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -684,17 +665,8 @@
      * **Project URL:** [https://jsoup.org/](https://jsoup.org/)
      * **License:** [The MIT License](https://jsoup.org/license)
 
-1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.7.1.**No license information found**
 1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.8.2.**No license information found**
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.8.2.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-engine. **Version** : 5.7.1.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
@@ -702,23 +674,11 @@
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.8.2.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
-1.  **Group** : org.junit.platform. **Name** : junit-platform-commons. **Version** : 1.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.platform. **Name** : junit-platform-commons. **Version** : 1.8.2.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
-1.  **Group** : org.junit.platform. **Name** : junit-platform-engine. **Version** : 1.7.1.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
@@ -761,12 +721,12 @@
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jan 26 19:57:14 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-codegen-java:0.1.6`
+# Dependencies of `io.spine.protodata:protodata-codegen-java:0.1.7`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.13.1.**No license information found**
@@ -806,10 +766,11 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [http://findbugs.sourceforge.net/](http://findbugs.sourceforge.net/)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
-     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.flogger. **Name** : flogger. **Version** : 0.6.
@@ -850,27 +811,27 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [http://github.com/square/javapoet/](http://github.com/square/javapoet/)
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -895,7 +856,7 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [http://www.jetbrains.org](http://www.jetbrains.org)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
+1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -1016,10 +977,11 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
-     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.8.0.
@@ -1127,15 +1089,7 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/java-diff-utils/java-diff-utils](https://github.com/java-diff-utils/java-diff-utils)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.38.0.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.38.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1143,11 +1097,7 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1155,15 +1105,7 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.38.0.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.38.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1209,10 +1151,6 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **License:** [LGPL, version 2.1](http://www.gnu.org/licenses/licenses.html)
 
 1.  **Group** : net.ltgt.gradle. **Name** : gradle-errorprone-plugin. **Version** : 2.0.2.**No license information found**
-1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.1.
-     * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.2.
      * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -1311,10 +1249,6 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.5.31.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -1419,17 +1353,8 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://jsoup.org/](https://jsoup.org/)
      * **License:** [The MIT License](https://jsoup.org/license)
 
-1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.7.1.**No license information found**
 1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.8.2.**No license information found**
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.8.2.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-engine. **Version** : 5.7.1.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
@@ -1437,23 +1362,11 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.8.2.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
-1.  **Group** : org.junit.platform. **Name** : junit-platform-commons. **Version** : 1.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.platform. **Name** : junit-platform-commons. **Version** : 1.8.2.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
-1.  **Group** : org.junit.platform. **Name** : junit-platform-engine. **Version** : 1.7.1.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
@@ -1481,12 +1394,12 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jan 26 19:57:15 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-compiler:0.1.6`
+# Dependencies of `io.spine.protodata:protodata-compiler:0.1.7`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.13.1.**No license information found**
@@ -1526,10 +1439,11 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [http://findbugs.sourceforge.net/](http://findbugs.sourceforge.net/)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
-     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.flogger. **Name** : flogger. **Version** : 0.6.
@@ -1566,27 +1480,27 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
 1.  **Group** : com.google.protobuf. **Name** : protobuf-kotlin. **Version** : 3.19.3.
      * **License:** [3-Clause BSD License](https://opensource.org/licenses/BSD-3-Clause)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1611,7 +1525,7 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [http://www.jetbrains.org](http://www.jetbrains.org)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
+1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -1732,10 +1646,11 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
-     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.8.0.
@@ -1843,15 +1758,7 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/java-diff-utils/java-diff-utils](https://github.com/java-diff-utils/java-diff-utils)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.38.0.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.38.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1859,11 +1766,7 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1871,15 +1774,7 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.38.0.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.38.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1925,10 +1820,6 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **License:** [LGPL, version 2.1](http://www.gnu.org/licenses/licenses.html)
 
 1.  **Group** : net.ltgt.gradle. **Name** : gradle-errorprone-plugin. **Version** : 2.0.2.**No license information found**
-1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.1.
-     * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.2.
      * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -2043,10 +1934,6 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.5.31.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -2215,12 +2102,12 @@ This report was generated on **Tue Jan 25 14:41:54 EET 2022** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jan 26 19:57:15 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-gradle-plugin:0.1.6`
+# Dependencies of `io.spine.protodata:protodata-gradle-plugin:0.1.7`
 
 ## Runtime
 1.  **Group** : com.google.code.findbugs. **Name** : jsr305. **Version** : 3.0.2.
@@ -2338,13 +2225,17 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
+
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.2.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.7.1.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.8.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.8.0.
@@ -2392,7 +2283,7 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/google/protobuf-gradle-plugin](https://github.com/google/protobuf-gradle-plugin)
      * **License:** [BSD 3-Clause](http://opensource.org/licenses/BSD-3-Clause)
 
-1.  **Group** : com.google.protobuf. **Name** : protobuf-java. **Version** : 3.18.0.
+1.  **Group** : com.google.protobuf. **Name** : protobuf-java. **Version** : 3.19.1.
      * **Project URL:** [https://developers.google.com/protocol-buffers/](https://developers.google.com/protocol-buffers/)
      * **License:** [3-Clause BSD License](https://opensource.org/licenses/BSD-3-Clause)
 
@@ -2424,27 +2315,27 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [http://commons.apache.org/lang/](http://commons.apache.org/lang/)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -2480,10 +2371,6 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/java-native-access/jna](https://github.com/java-native-access/jna)
      * **License:** [Apache License v2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
      * **License:** [LGPL, version 2.1](http://www.gnu.org/licenses/licenses.html)
-
-1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.1.
-     * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.2.
      * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
@@ -2587,10 +2474,6 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -2676,12 +2559,7 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://jsoup.org/](https://jsoup.org/)
      * **License:** [The MIT License](https://jsoup.org/license)
 
-1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.7.1.**No license information found**
 1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.8.2.**No license information found**
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.8.2.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
@@ -2690,15 +2568,7 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.8.2.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
-1.  **Group** : org.junit.platform. **Name** : junit-platform-commons. **Version** : 1.7.1.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
@@ -2737,12 +2607,12 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jan 26 19:57:15 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-protoc:0.1.6`
+# Dependencies of `io.spine.protodata:protodata-protoc:0.1.7`
 
 ## Runtime
 1.  **Group** : com.google.code.findbugs. **Name** : jsr305. **Version** : 3.0.2.
@@ -2855,13 +2725,17 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
+
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.7.1.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.8.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.8.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.8.0.
@@ -2924,27 +2798,27 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/korlibs/korte](https://github.com/korlibs/korte)
      * **License:** [MIT License](https://raw.githubusercontent.com/korlibs/korte/master/LICENSE)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -2976,10 +2850,6 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/java-native-access/jna](https://github.com/java-native-access/jna)
      * **License:** [Apache License v2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
      * **License:** [LGPL, version 2.1](http://www.gnu.org/licenses/licenses.html)
-
-1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.1.
-     * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.2.
      * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
@@ -3080,10 +2950,6 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -3169,12 +3035,7 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://jsoup.org/](https://jsoup.org/)
      * **License:** [The MIT License](https://jsoup.org/license)
 
-1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.7.1.**No license information found**
 1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.8.2.**No license information found**
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.8.2.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
@@ -3183,15 +3044,7 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.8.2.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
-1.  **Group** : org.junit.platform. **Name** : junit-platform-commons. **Version** : 1.7.1.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
@@ -3230,12 +3083,12 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jan 26 19:57:15 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-testutil:0.1.6`
+# Dependencies of `io.spine.protodata:protodata-test-env:0.1.7`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.13.1.**No license information found**
@@ -3275,8 +3128,9 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [http://findbugs.sourceforge.net/](http://findbugs.sourceforge.net/)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
-     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.9.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -3323,7 +3177,7 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -3360,7 +3214,7 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [http://www.jetbrains.org](http://www.jetbrains.org)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
+1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
@@ -3480,6 +3334,10 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
 
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
+     * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
+     * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotation. **Version** : 2.8.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -3604,7 +3462,7 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.38.0.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -3658,10 +3516,6 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **License:** [LGPL, version 2.1](http://www.gnu.org/licenses/licenses.html)
 
 1.  **Group** : net.ltgt.gradle. **Name** : gradle-errorprone-plugin. **Version** : 2.0.2.**No license information found**
-1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.1.
-     * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.apiguardian. **Name** : apiguardian-api. **Version** : 1.1.2.
      * **Project URL:** [https://github.com/apiguardian-team/apiguardian](https://github.com/apiguardian-team/apiguardian)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -3768,10 +3622,6 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.0.
-     * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
-     * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : org.jetbrains.kotlin. **Name** : kotlin-reflect. **Version** : 1.6.10.
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -3873,17 +3723,8 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://jsoup.org/](https://jsoup.org/)
      * **License:** [The MIT License](https://jsoup.org/license)
 
-1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.7.1.**No license information found**
 1.  **Group** : org.junit. **Name** : junit-bom. **Version** : 5.8.2.**No license information found**
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-api. **Version** : 5.8.2.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-engine. **Version** : 5.7.1.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
@@ -3891,23 +3732,11 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
-1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.jupiter. **Name** : junit-jupiter-params. **Version** : 5.8.2.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
-1.  **Group** : org.junit.platform. **Name** : junit-platform-commons. **Version** : 1.7.1.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
 1.  **Group** : org.junit.platform. **Name** : junit-platform-commons. **Version** : 1.8.2.
-     * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
-     * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
-
-1.  **Group** : org.junit.platform. **Name** : junit-platform-engine. **Version** : 1.7.1.
      * **Project URL:** [https://junit.org/junit5/](https://junit.org/junit5/)
      * **License:** [Eclipse Public License v2.0](https://www.eclipse.org/legal/epl-v20.html)
 
@@ -3935,4 +3764,4 @@ This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jan 25 14:41:55 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jan 26 19:57:16 EET 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).

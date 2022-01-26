@@ -78,7 +78,7 @@ spinePublishing {
         "compiler",
         "protoc",
         "codegen-java",
-        "testutil"
+        "test-env"
     )
     customPrefix.set("protodata-")
 }

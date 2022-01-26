@@ -32,7 +32,7 @@ plugins {
     `version-to-resources`
     `build-proto-model`
     jacoco
-    id("com.github.johnrengelman.shadow").version("7.1.1")
+    id("com.github.johnrengelman.shadow").version("7.1.2")
 }
 
 dependencies {
@@ -42,7 +42,7 @@ dependencies {
     implementation(Flogger.lib)
     runtimeOnly(Flogger.Runtime.systemBackend)
 
-    testImplementation(project(":testutil"))
+    testImplementation(project(":test-env"))
 }
 
 val appName = "protodata"
@@ -72,7 +72,7 @@ tasks.getByName<CreateStartScripts>("startScripts") {
  * Some Maven repositories, particularly GitHub Packages, do not support publishing arbitrary files.
  * This way, we trick it to accept this file (as a JAR).
  */
-val executableAsJar by tasks.registering(Jar::class) {
+val setupJar by tasks.registering(Jar::class) {
     from(zipTree(tasks.distZip.get().archiveFile))
     from("$projectDir/install.sh")
 
@@ -84,10 +84,10 @@ val executableAsJar by tasks.registering(Jar::class) {
 val stagingDir = "$buildDir/staging"
 
 val stageProtoData by tasks.registering(Copy::class) {
-    from(zipTree(executableAsJar.get().archiveFile))
+    from(zipTree(setupJar.get().archiveFile))
     into(stagingDir)
 
-    dependsOn(executableAsJar)
+    dependsOn(setupJar)
 }
 
 val protoDataLocationProperty = "protoDataLocation"
@@ -101,28 +101,33 @@ tasks.register("installProtoData", Exec::class) {
     dependsOn(stageProtoData)
 }
 
-val executableArchivesConfig = "executableArchives"
-
-configurations.create(executableArchivesConfig)
-
+/**
+ * Create a configuration for re-archived distribution ZIP so that it later can be used
+ * for the publication.
+ */
+val setupArchiveConfig = "setupArchive"
+configurations.create(setupArchiveConfig)
 artifacts {
-    add(executableArchivesConfig, executableAsJar)
+    add(setupArchiveConfig, setupJar)
 }
 
 publishing {
-    publications {
-        create("exec", MavenPublication::class) {
-            groupId = project.group.toString()
-            artifactId = "$appName-exe"
-            version = project.version.toString()
+    val pGroup = project.group.toString()
+    val pVersion = project.version.toString()
 
-            setArtifacts(project.configurations.getAt(executableArchivesConfig).allArtifacts)
+    publications {
+        create("setup", MavenPublication::class) {
+            groupId = pGroup
+            artifactId = "$appName-setup"
+            version = pVersion
+
+            setArtifacts(project.configurations.getAt(setupArchiveConfig).allArtifacts)
         }
 
         create("fat-jar", MavenPublication::class) {
-            groupId = project.group.toString()
+            groupId = pGroup
             artifactId = "$appName-fat-cli"
-            version = project.version.toString()
+            version = pVersion
 
             artifact(tasks.shadowJar) {
                 // Avoid `-all` suffix in the published artifact.

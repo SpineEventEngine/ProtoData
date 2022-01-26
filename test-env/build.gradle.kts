@@ -24,22 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Apply this script if it is needed to use test classes of the current project in other projects.
-// The dependency looks like this:
-//
-// testCompile project(path: ":projectWithTests", configuration: 'testArtifacts')
-//
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.plugins
+import com.google.protobuf.gradle.protobuf
+import io.spine.internal.dependency.Grpc
 
-println("`test-artifacts.gradle` script is deprecated. " +
-        "Please use the `Project.exposeTestArtifacts()` utility instead.")
+plugins {
+    `build-proto-model`
+}
 
-configurations {
-    testArtifacts.extendsFrom testRuntime
+dependencies {
+    implementation(project(":compiler"))
+    implementation(Grpc.stub)
+    implementation(Grpc.protobuf)
 }
-task testJar(type: Jar) {
-    classifier "test"
-    from sourceSets.test.output
+
+val grpcPluginName = "grpc"
+
+protobuf {
+    generateProtoTasks {
+        all().whenTaskAdded {
+            plugins {
+                maybeCreate(grpcPluginName)
+            }
+        }
+    }
 }
-artifacts {
-    testArtifacts testJar
+
+/**
+ * We only need to publish `test-env` locally for integration tests.
+ * Do not publish to public Maven repositories.
+ * See https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:tasks
+ */
+val publish: Task by tasks.getting
+
+afterEvaluate {
+    publish.enabled = false
 }
