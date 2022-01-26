@@ -40,7 +40,7 @@ dependencies {
     api(JavaPoet.lib)
 
     testImplementation(JavaX.annotations)
-    testImplementation(project(":testutil"))
+    testImplementation(project(":test-env"))
 }
 
 // Allows test suites to fetch generated Java files as resources.

@@ -51,5 +51,5 @@ protobuf {
     }
 }
 
-// We only need to publish `testutil` locally for integration tests.
+// We only need to publish `test-env` locally for integration tests.
 tasks["publish"].enabled = false

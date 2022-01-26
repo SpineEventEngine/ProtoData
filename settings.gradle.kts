@@ -30,7 +30,7 @@ include(
     "compiler",
     "cli",
     "protoc",
-    "testutil",
+    "test-env",
     "codegen-java",
     "gradle-plugin"
 )

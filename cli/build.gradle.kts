@@ -42,7 +42,7 @@ dependencies {
     implementation(Flogger.lib)
     runtimeOnly(Flogger.Runtime.systemBackend)
 
-    testImplementation(project(":testutil"))
+    testImplementation(project(":test-env"))
 }
 
 val appName = "protodata"
