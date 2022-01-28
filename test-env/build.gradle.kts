@@ -54,10 +54,9 @@ protobuf {
 /**
  * We only need to publish `test-env` locally for integration tests.
  * Do not publish to public Maven repositories.
- * See https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:tasks
+ * 
+ * See https://bit.ly/gradle-cond-pub for details.
  */
-val publish: Task by tasks.getting
-
-afterEvaluate {
-    publish.enabled = false
+tasks.withType<PublishToMavenRepository>().configureEach {
+    onlyIf { false }
 }
