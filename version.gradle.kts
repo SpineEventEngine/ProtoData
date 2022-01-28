@@ -40,4 +40,4 @@ val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
 val devProtoDataVersion: String by extra("0.1.2")
 
 // The version of ProtoData being developed.
-val protoDataVersion: String by extra("0.1.8")
+val protoDataVersion: String by extra("0.1.9")
