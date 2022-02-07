@@ -24,17 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.85")
+val baseVersion: String by extra("2.0.0-SNAPSHOT.86")
 val coreVersion: String by extra("2.0.0-SNAPSHOT.91")
 
-val mcVersion: String by extra("2.0.0-SNAPSHOT.87")
+val mcVersion: String by extra("2.0.0-SNAPSHOT.88")
 
 //val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.88")
 
 // The version in which there is no circular dependencies onto ProtoData. Yet.
 val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.83")
 
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
+val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.90")
 
 /** The version of ProtoData used for developing [protoDataVersion]. */
 val devProtoDataVersion: String by extra("0.1.2")
