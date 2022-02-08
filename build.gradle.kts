@@ -175,7 +175,15 @@ JacocoConfig.applyTo(project)
  */
 val projectsToPublish: Set<String> = the<PublishExtension>().projectsToPublish.get()
 val localPublish by tasks.registering {
-    val pubTasks = projectsToPublish.map { p ->
+    /*
+       Integration tests need the plugin subproject published to Maven Local too
+       because they apply the plugin.
+
+       The plugin subproject is not added to the list of `projectsToPublish` because
+       it is published from inside its `build.gradle.kts`.
+     */
+    val includingPlugin = projectsToPublish + "gradle-plugin"
+    val pubTasks = includingPlugin.map { p ->
         val subProject = project(p)
         subProject.tasks["publishToMavenLocal"]
     }
