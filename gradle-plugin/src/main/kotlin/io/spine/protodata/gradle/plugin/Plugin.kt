@@ -30,6 +30,7 @@ import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
+import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.ProtoDataApi
 import java.io.File
 import org.gradle.api.Project
@@ -118,17 +119,14 @@ private fun Project.createLaunchTasks(extension: Extension, version: String) {
         if (devModeEnabled) {
             logger.warn("ProtoData's development mode is enabled " +
                     "via `$DEV_MODE_SYSTEM_PROPERTY` system property.")
-            // "fat-cli" is an all-in-one distribution of ProtoData, published somewhat in the past.
-            // Ironically, we need it in ProtoData development.
-            // It removes the dependency conflicts between ProtoData-s.
-            "io.spine.protodata:protodata-fat-cli:$version"
+            Artifacts.fatCli(version)
         } else {
-            "io.spine.protodata:protodata-cli:$version"
+            Artifacts.cli(version)
         }
 
     dependencies.add(artifactConfig.name, cliDependency)
     val userCpConfig = configurations.create("protoData") {
-        it.exclude(group = "io.spine.protodata", module = "protodata-compiler")
+        it.exclude(group = Artifacts.group, module = "protodata-compiler")
     }
     sourceSets.forEach { sourceSet ->
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
@@ -196,7 +194,7 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
     protobuf {
         plugins {
             id(PROTOC_PLUGIN) {
-                artifact = "io.spine.protodata:protodata-protoc:$version:exe@jar"
+                artifact = Artifacts.protocPlugin(version)
             }
         }
         generateProtoTasks {
