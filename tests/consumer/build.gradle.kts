@@ -31,15 +31,16 @@ buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
 
     dependencies {
-        classpath("io.spine:proto-data:0.1.9")
+        classpath("io.spine.protodata:gradle-plugin:0.1.9")
     }
 }
 
 apply(plugin = "io.spine.proto-data")
 
 dependencies {
-    "protoData"(project(":protodata-extension"))
-    implementation(project(":protodata-extension"))
+    val extensionSubproject = project(":protodata-extension")
+    "protoData"(extensionSubproject)
+    implementation(extensionSubproject)
 }
 
 extensions.getByType<Extension>().apply {
