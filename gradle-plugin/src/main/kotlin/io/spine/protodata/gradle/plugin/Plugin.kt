@@ -31,6 +31,7 @@ import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import io.spine.protodata.gradle.Artifacts
+import io.spine.protodata.gradle.DevMode
 import io.spine.protodata.gradle.ProtoDataApi
 import java.io.File
 import org.gradle.api.Project
@@ -99,26 +100,16 @@ private const val PROTOC_PLUGIN = "protodata"
 
 private const val PROTOBUF_PLUGIN = "com.google.protobuf"
 
-/**
- * If set to any value, enables the development mode for ProtoData.
- *
- * Should only be used when developing ProtoData itself.
- *
- * Switches to all-in-one ProtoData's `cli` artifact and eliminates the dependency conflict between
- * the "published" modules and those currently under development.
- */
-private const val DEV_MODE_SYSTEM_PROPERTY = "spine.internal.protodata.devmode.enabled"
-
 private fun Project.createLaunchTasks(extension: Extension, version: String) {
     val artifactConfig = configurations.create("protoDataRawArtifact") {
         it.isVisible = false
     }
 
-    val devModeEnabled = isDevMode()
+    val devModeEnabled = DevMode.isEnabled()
     val cliDependency =
         if (devModeEnabled) {
             logger.warn("ProtoData's development mode is enabled " +
-                    "via `$DEV_MODE_SYSTEM_PROPERTY` system property.")
+                    "via `${DevMode.systemProperty}` system property.")
             Artifacts.fatCli(version)
         } else {
             Artifacts.cli(version)
@@ -132,12 +123,6 @@ private fun Project.createLaunchTasks(extension: Extension, version: String) {
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
         createCleanTask(extension, sourceSet)
     }
-}
-
-private fun isDevMode(): Boolean {
-    val value = System.getProperty(DEV_MODE_SYSTEM_PROPERTY)
-    val devModeEnabled = value != null
-    return devModeEnabled
 }
 
 private fun Project.createExtension(): Extension {
