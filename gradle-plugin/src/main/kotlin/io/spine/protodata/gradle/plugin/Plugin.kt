@@ -33,6 +33,7 @@ import com.google.protobuf.gradle.protobuf
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.DevMode
 import io.spine.protodata.gradle.ProtoDataApi
+import io.spine.protodata.gradle.TaskName
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -134,7 +135,7 @@ private fun Project.createExtension(): Extension {
 private fun Project.createLaunchTask(
     ext: Extension, sourceSet: SourceSet, artifactConfig: Configuration, userCpConfig: Configuration
 ) {
-    val taskName = launchTaskName(sourceSet)
+    val taskName = TaskName.launch(sourceSet)
     tasks.create<LaunchProtoData>(taskName) {
         renderers = ext.renderers
         plugins = ext.plugins
@@ -156,12 +157,12 @@ private fun Project.createLaunchTask(
 }
 
 private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
-    val taskName = cleanTaskName(sourceSet)
+    val taskName = TaskName.clean(sourceSet)
     tasks.create<Delete>(taskName) {
         delete(ext.targetDir(sourceSet))
 
         tasks.getByName("clean").dependsOn(this)
-        tasks.getByName(launchTaskName(sourceSet)).mustRunAfter(this)
+        tasks.getByName(TaskName.launch(sourceSet)).mustRunAfter(this)
     }
 }
 
@@ -191,20 +192,11 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                         option(path.base64Encoded())
                     }
                 }
-                project.tasks.getByName(launchTaskName(it.sourceSet)).dependsOn(it)
+                project.tasks.getByName(TaskName.launch(it.sourceSet)).dependsOn(it)
             }
         }
         generatedFilesBaseDir = "$buildDir/generated-proto/"
     }
-
-private fun launchTaskName(sourceSet: SourceSet): String =
-    "launchProtoData${sourceSet.capitalizedName}"
-
-private fun cleanTaskName(sourceSet: SourceSet): String =
-    "cleanProtoData${sourceSet.capitalizedName}"
-
-private val SourceSet.capitalizedName: String
-    get() = name.replaceFirstChar { it.uppercase() }
 
 private fun Project.configureSourceSets(extension: Extension) {
     afterEvaluate {

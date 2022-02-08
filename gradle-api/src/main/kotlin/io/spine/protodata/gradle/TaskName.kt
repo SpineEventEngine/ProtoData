@@ -24,6 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    implementation(gradleApi())
+package io.spine.protodata.gradle
+
+import org.gradle.api.tasks.SourceSet
+
+/**
+ * Provides names of the tasks that ProtoData Gradle plugin creates.
+ */
+public object TaskName {
+
+    public fun launch(sourceSet: SourceSet): String =
+        "launchProtoData${sourceSet.capitalizedName}"
+
+    public fun clean(sourceSet: SourceSet): String =
+        "cleanProtoData${sourceSet.capitalizedName}"
 }
+
+private val SourceSet.capitalizedName: String
+    get() = name.replaceFirstChar { it.uppercase() }
