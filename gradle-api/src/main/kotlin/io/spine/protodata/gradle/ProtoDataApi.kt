@@ -24,32 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata.gradle
 
-include(
-    "compiler",
-    "cli",
-    "protoc",
-    "test-env",
-    "codegen-java",
-    "gradle-api",
-    "gradle-plugin"
-)
+public interface ProtoDataApi {
 
-project(":codegen-java").projectDir = file("$rootDir/codegen/java")
+    public fun plugins(vararg classNames: String)
+    public fun renderers(vararg classNames: String)
+    public fun optionProviders(vararg classNames: String)
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
+    public var srcBaseDir: Any
+    public var subDir: String
+    public var targetBaseDir: Any
 }

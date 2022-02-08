@@ -24,12 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
+package io.spine.protodata.gradle.plugin
 
 import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
+import io.spine.protodata.gradle.ProtoDataApi
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -143,7 +144,7 @@ private fun isDevMode(): Boolean {
 
 private fun Project.createExtension(): Extension {
     val extension = Extension(this)
-    extensions.add("protoData", extension)
+    extensions.add(ProtoDataApi::class.java, "protoData", extension)
     return extension
 }
 

@@ -41,6 +41,7 @@ dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(Protobuf.GradlePlugin.lib)
+    api(project(":gradle-api"))
 
     testImplementation("io.spine.tools:spine-plugin-base:$toolBaseVersion")
     testImplementation("io.spine.tools:spine-plugin-testlib:$toolBaseVersion")
@@ -62,7 +63,7 @@ gradlePlugin {
     plugins {
         create(pluginName) {
             id = "io.spine.proto-data"
-            implementationClass = "io.spine.protodata.gradle.Plugin"
+            implementationClass = "io.spine.protodata.gradle.plugin.Plugin"
             displayName = "ProtoData"
             description = "Sets up the ProtoData tool to be used in your project."
         }

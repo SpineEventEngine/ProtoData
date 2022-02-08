@@ -24,9 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
+package io.spine.protodata.gradle.plugin
 
 import com.google.protobuf.gradle.ProtobufConvention
+import io.spine.protodata.gradle.ProtoDataApi
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -43,13 +44,13 @@ import org.gradle.kotlin.dsl.property
  * The `protoData { }` Gradle extension.
  */
 @Suppress("UnstableApiUsage") // Gradle Property API.
-public class Extension(private val project: Project) {
+public class Extension(private val project: Project): ProtoDataApi {
 
     /**
      * Passes given names of Java classes to ProtoData as
      * the `io.spine.protodata.plugin.Plugin` classes.
      */
-    public fun plugins(vararg classNames: String) {
+    public override fun plugins(vararg classNames: String) {
         plugins.addAll(classNames.toList())
     }
 
@@ -60,7 +61,7 @@ public class Extension(private val project: Project) {
      * Passes given names of Java classes to ProtoData as
      * the `io.spine.protodata.renderer.Renderer` classes.
      */
-    public fun renderers(vararg classNames: String) {
+    public override fun renderers(vararg classNames: String) {
         renderers.addAll(classNames.toList())
     }
 
@@ -71,7 +72,7 @@ public class Extension(private val project: Project) {
      * Passes given names of Java classes to ProtoData as
      * the `io.spine.protodata.option.OptionsProvider` classes.
      */
-    public fun optionProviders(vararg classNames: String) {
+    public override fun optionProviders(vararg classNames: String) {
         optionProviders.addAll(classNames.toList())
     }
 
@@ -114,7 +115,7 @@ public class Extension(private val project: Project) {
      *
      * @see subDir
      */
-    public var srcBaseDir: Any
+    public override var srcBaseDir: Any
         get() = srcBaseDirProperty.get()
         set(value) = srcBaseDirProperty.set(project.file(value))
 
@@ -133,7 +134,7 @@ public class Extension(private val project: Project) {
      *
      * @see srcBaseDir
      */
-    public var subDir: String
+    public override var subDir: String
         get() = subDirProperty.get()
         set(value) {
             if (value.isNotEmpty()) {
@@ -151,7 +152,7 @@ public class Extension(private val project: Project) {
      *
      * @see srcBaseDir
      */
-    public var targetBaseDir: Any
+    public override var targetBaseDir: Any
         get() = targetBaseDirProperty.get()
         set(value) = targetBaseDirProperty.set(project.file(value))
 
