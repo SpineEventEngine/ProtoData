@@ -36,9 +36,11 @@ plugins {
 }
 
 val coreVersion: String by extra
+val toolBaseVersion: String by extra
 
 dependencies {
     api("io.spine:spine-server:$coreVersion")
+    api("io.spine.tools:spine-tool-base:$toolBaseVersion")
     with(Jackson) {
         api(databind)
         implementation(dataformatYaml)

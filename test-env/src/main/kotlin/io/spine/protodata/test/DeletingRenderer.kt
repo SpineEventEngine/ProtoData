@@ -29,10 +29,10 @@ package io.spine.protodata.test
 import com.google.protobuf.StringValue
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.find
-import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.select
+import io.spine.tools.code.CommonLanguages.Java
 import kotlin.io.path.Path
 import kotlin.io.path.div
 

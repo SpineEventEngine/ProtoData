@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
 
-import static io.spine.protodata.language.CommonLanguages.java;
+import static io.spine.tools.code.CommonLanguages.java;
 import static java.util.stream.Collectors.toSet;
 
 /**

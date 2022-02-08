@@ -31,7 +31,7 @@ buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
 
     dependencies {
-        classpath("io.spine:proto-data:+")
+        classpath("io.spine:proto-data:0.1.9")
     }
 }
 

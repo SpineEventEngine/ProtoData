@@ -27,7 +27,7 @@
 import com.google.protobuf.gradle.protobuf
 
 plugins {
-    id("io.spine.proto-data")
+    id("io.spine.proto-data") version "0.1.9"
 }
 
 dependencies {

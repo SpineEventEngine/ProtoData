@@ -29,8 +29,8 @@ package io.spine.protodata.renderer
 import io.spine.base.EntityState
 import io.spine.protodata.QueryingClient
 import io.spine.protodata.config.ConfiguredQuerying
-import io.spine.protodata.language.Language
 import io.spine.server.BoundedContext
+import io.spine.tools.code.Language
 
 /**
  * A `Renderer` takes an existing [SourceFileSet] and modifies it, changing the contents of existing
@@ -50,7 +50,7 @@ protected constructor(
      * Performs required changes to the given source set.
      */
     internal fun renderSources(sources: SourceFileSet) {
-        val relevantFiles = sources.subsetWhere { supportedLanguage.matches(it) }
+        val relevantFiles = sources.subsetWhere { supportedLanguage.matches(it.relativePath) }
         render(relevantFiles)
         sources.mergeBack(relevantFiles)
     }
@@ -63,7 +63,7 @@ protected constructor(
      */
     protected abstract fun render(sources: SourceFileSet)
 
-    final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
+    public final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)
     }
 

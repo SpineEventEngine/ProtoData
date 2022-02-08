@@ -27,7 +27,7 @@
 package io.spine.protodata.renderer
 
 import com.google.common.base.Preconditions.checkPositionIndex
-import io.spine.protodata.language.Language
+import io.spine.tools.code.Language
 
 /**
  * A [Renderer] which adds [InsertionPoint]s to the code.

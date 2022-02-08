@@ -26,7 +26,7 @@
 
 package io.spine.protodata.test.uuid;
 
-import io.spine.protodata.language.CommonLanguages;
+import io.spine.tools.code.CommonLanguages;
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.protodata.renderer.InsertionPointPrinter;
 import io.spine.protodata.test.UuidType;

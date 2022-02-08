@@ -27,7 +27,7 @@
 package io.spine.protodata.config
 
 import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.file.Glob
+import io.spine.io.Glob
 import java.nio.file.Path
 
 /**
@@ -35,7 +35,7 @@ import java.nio.file.Path
  */
 internal fun ConfigurationFormat.matches(file: Path): Boolean =
     extensions
-            .map(Glob::extension)
+            .map { Glob.extension(it) }
             .any { it.matches(file) }
 
 @VisibleForTesting

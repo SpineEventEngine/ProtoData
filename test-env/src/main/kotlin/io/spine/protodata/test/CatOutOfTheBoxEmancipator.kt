@@ -26,9 +26,9 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.language.CommonLanguages.any
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.tools.code.CommonLanguages.any
 
 /**
  * Reads every file in the source set and obtains its code, invoking the insertion point rendering,
