@@ -35,6 +35,10 @@ import io.spine.protodata.gradle.DevMode
 import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.ProtoDataApi
 import io.spine.protodata.gradle.CleanTask
+import io.spine.protodata.gradle.Names.EXTENSION_NAME
+import io.spine.protodata.gradle.Names.PROTOC_PLUGIN
+import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
+import io.spine.protodata.gradle.Names.VERSION_RESOURCE
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -89,47 +93,42 @@ public class Plugin : GradlePlugin<Project> {
     }
 }
 
-/**
- * The resource file containing the version of ProtoData.
- *
- * Such a resource name might be duplicated in other places in ProtoData code base.
- * The reason for this is to avoid creating an extra dependency for the Gradle plugin,
- * so that the users wouldn't have to declare a custom Maven repository to use the plugin.
- */
-private const val VERSION_RESOURCE = "version.txt"
-
-private const val PROTOC_PLUGIN = "protodata"
-
-private const val PROTOBUF_PLUGIN = "com.google.protobuf"
-
 private fun Project.createLaunchTasks(extension: Extension, version: String) {
     val artifactConfig = configurations.create("protoDataRawArtifact") {
         it.isVisible = false
     }
-
-    val devModeEnabled = DevMode.isEnabled()
-    val cliDependency =
-        if (devModeEnabled) {
-            logger.warn("ProtoData's development mode is enabled " +
-                    "via `${DevMode.systemProperty}` system property.")
-            Artifacts.fatCli(version)
-        } else {
-            Artifacts.cli(version)
-        }
-
+    val cliDependency = cliDependency(version)
     dependencies.add(artifactConfig.name, cliDependency)
-    val userCpConfig = configurations.create("protoData") {
-        it.exclude(group = Artifacts.group, module = "protodata-compiler")
-    }
+    val userCpConfig = userClasspathConfiguration()
     sourceSets.forEach { sourceSet ->
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
         createCleanTask(extension, sourceSet)
     }
 }
 
+private fun Project.cliDependency(version: String): String {
+    val devModeEnabled = DevMode.isEnabled()
+    val cliDependency =
+        if (devModeEnabled) {
+            logger.warn(
+                "ProtoData self-development mode is enabled " +
+                        "via `${DevMode.systemProperty}` system property."
+            )
+            Artifacts.fatCli(version)
+        } else {
+            Artifacts.cli(version)
+        }
+    return cliDependency
+}
+
+private fun Project.userClasspathConfiguration() =
+    configurations.create(USER_CLASSPATH_CONFIGURATION_NAME) {
+        it.exclude(group = Artifacts.group, module = "protodata-compiler")
+    }
+
 private fun Project.createExtension(): Extension {
     val extension = Extension(this)
-    extensions.add(ProtoDataApi::class.java, "protoData", extension)
+    extensions.add(ProtoDataApi::class.java, EXTENSION_NAME, extension)
     return extension
 }
 
@@ -168,6 +167,8 @@ private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
         launchTask.mustRunAfter(this)
     }
 }
+
+private const val PROTOBUF_PLUGIN = "com.google.protobuf"
 
 private fun Project.configureWithProtobufPlugin(extension: Extension, version: String) {
     if (pluginManager.hasPlugin(PROTOBUF_PLUGIN)) {
