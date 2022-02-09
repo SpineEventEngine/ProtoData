@@ -26,7 +26,6 @@
 
 package io.spine.protodata.gradle
 
-
 /**
  * Constants for locating ProtoData in Maven repositories.
  */
