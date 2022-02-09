@@ -112,7 +112,7 @@ private fun Project.cliDependency(version: String): String {
         if (devModeEnabled) {
             logger.warn(
                 "ProtoData self-development mode is enabled " +
-                        "via `${DevMode.systemProperty}` system property."
+                        "via `${DevMode.SYSTEM_PROPERTY_NAME}` system property."
             )
             Artifacts.fatCli(version)
         } else {

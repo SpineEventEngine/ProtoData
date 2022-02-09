@@ -39,13 +39,13 @@ public object DevMode {
      * Switches to all-in-one ProtoData's `cli` artifact and eliminates the dependency conflict
      * between the "published" modules and those currently under development.
      */
-    public const val systemProperty: String = "spine.internal.protodata.devmode.enabled"
+    public const val SYSTEM_PROPERTY_NAME: String = "spine.internal.protodata.devmode.enabled"
 
     /**
      * Detects if ProtoData is being used for developing ProtoData itself.
      */
     public fun isEnabled(): Boolean {
-        val value = System.getProperty(systemProperty)
+        val value = System.getProperty(SYSTEM_PROPERTY_NAME)
         val devModeEnabled = value != null
         return devModeEnabled
     }
