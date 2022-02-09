@@ -32,6 +32,10 @@ public interface ProtoDataApi {
     public fun renderers(vararg classNames: String)
     public fun optionProviders(vararg classNames: String)
 
+    @Deprecated("Left for compatibility reason. Has no effect. Planned for removal in v2.0.0.")
+    public fun options(vararg classNames: String) {
+    }
+
     public var srcBaseDir: Any
     public var subDir: String
     public var targetBaseDir: Any
