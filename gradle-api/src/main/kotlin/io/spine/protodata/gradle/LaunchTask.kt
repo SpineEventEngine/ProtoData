@@ -26,19 +26,27 @@
 
 package io.spine.protodata.gradle
 
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.SourceSet
 
 /**
- * Provides names of the tasks that ProtoData Gradle plugin creates.
+ * Launches the ProtoData command-line utility from a Gradle project.
  */
-public object TaskName {
+public object LaunchTask {
 
-    public fun launch(sourceSet: SourceSet): String =
-        "launchProtoData${sourceSet.capitalizedName}"
+    private const val prefix: String = "launchProtoData"
 
-    public fun clean(sourceSet: SourceSet): String =
-        "cleanProtoData${sourceSet.capitalizedName}"
+    /**
+     * Obtains a name of the task for the given source set.
+     */
+    public fun nameFor(sourceSet: SourceSet): String = "$prefix${sourceSet.capitalizedName}"
+
+    /**
+     * Obtains an instance of the task in the given project for the specified source set.
+     */
+    public fun get(project: Project, sourceSet: SourceSet): Task {
+        val name = nameFor(sourceSet)
+        return project.tasks.getByName(name)
+    }
 }
-
-private val SourceSet.capitalizedName: String
-    get() = name.replaceFirstChar { it.uppercase() }

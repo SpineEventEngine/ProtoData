@@ -32,8 +32,9 @@ import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.DevMode
+import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.ProtoDataApi
-import io.spine.protodata.gradle.TaskName
+import io.spine.protodata.gradle.CleanTask
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -135,7 +136,7 @@ private fun Project.createExtension(): Extension {
 private fun Project.createLaunchTask(
     ext: Extension, sourceSet: SourceSet, artifactConfig: Configuration, userCpConfig: Configuration
 ) {
-    val taskName = TaskName.launch(sourceSet)
+    val taskName = LaunchTask.nameFor(sourceSet)
     tasks.create<LaunchProtoData>(taskName) {
         renderers = ext.renderers
         plugins = ext.plugins
@@ -157,12 +158,14 @@ private fun Project.createLaunchTask(
 }
 
 private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
-    val taskName = TaskName.clean(sourceSet)
+    val project = this
+    val taskName = CleanTask.nameFor(sourceSet)
     tasks.create<Delete>(taskName) {
         delete(ext.targetDir(sourceSet))
 
         tasks.getByName("clean").dependsOn(this)
-        tasks.getByName(TaskName.launch(sourceSet)).mustRunAfter(this)
+        val launchTask = LaunchTask.get(project, sourceSet)
+        launchTask.mustRunAfter(this)
     }
 }
 
@@ -192,7 +195,8 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                         option(path.base64Encoded())
                     }
                 }
-                project.tasks.getByName(TaskName.launch(it.sourceSet)).dependsOn(it)
+                val launchTask = LaunchTask.get(project, it.sourceSet)
+                launchTask.dependsOn(it /* GenerateProtoTask */)
             }
         }
         generatedFilesBaseDir = "$buildDir/generated-proto/"
