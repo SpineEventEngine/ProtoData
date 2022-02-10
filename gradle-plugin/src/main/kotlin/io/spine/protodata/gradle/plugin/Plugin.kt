@@ -123,7 +123,7 @@ private fun Project.cliDependency(version: String): String {
 
 private fun Project.userClasspathConfiguration() =
     configurations.create(USER_CLASSPATH_CONFIGURATION_NAME) {
-        it.exclude(group = Artifacts.group, module = "protodata-compiler")
+        it.exclude(group = Artifacts.group, module = Artifacts.compiler)
     }
 
 private fun Project.createExtension(): Extension {

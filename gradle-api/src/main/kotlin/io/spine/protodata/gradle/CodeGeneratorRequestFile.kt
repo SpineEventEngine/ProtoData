@@ -26,42 +26,21 @@
 
 package io.spine.protodata.gradle
 
+import org.gradle.api.tasks.SourceSet
+
 /**
- * Constants for locating ProtoData in Maven repositories.
+ * Utilities for working with `CodeGeneratorRequest` files.
  */
-public object Artifacts {
+public object CodeGeneratorRequestFile {
 
     /**
-     * The Maven group of the ProtoData artifacts.
+     * The default name of the subdirectory of the `build` directory where code generation
+     * request files are placed.
      */
-    public const val group: String = "io.spine.protodata"
+    public const val DEFAULT_DIRECTORY: String = "protodata/requests"
 
     /**
-     * The name of the artifact of ProtoData Compiler.
+     * Obtains the name of the file with the code generation request for the given source set.
      */
-    public const val compiler: String = "protodata-compiler"
-
-    /**
-     * The infix to be used in an artifact name before a submodule name.
-     */
-    private const val infix: String = "protodata"
-
-    /**
-     * Obtains Maven coordinates of the `fat-cli` variant of command-line application.
-     *
-     * "fat-cli" is an all-in-one distribution of ProtoData, published somewhat in the past.
-     * Ironically, we need it in ProtoData development.
-     * It removes the dependency conflicts between ProtoData-s.
-     */
-    public fun fatCli(version: String): String = "$group:$infix-fat-cli:$version"
-
-    /**
-     * Obtains Maven coordinates for ProtoData command-line application.
-     */
-    public fun cli(version: String): String = "$group:$infix-cli:$version"
-
-    /**
-     * Obtains Maven coordinates for the ProtoData plugin to Google Protobuf Compiler (`protoc`).
-     */
-    public fun protocPlugin(version: String): String = "$group:$infix-protoc:$version:exe@jar"
+    public fun name(sourceSet: SourceSet): String = "${sourceSet.name}.bin"
 }
