@@ -46,6 +46,11 @@ public object Names {
     public const val PROTOC_PLUGIN: String = "protodata"
 
     /**
+     * The ID of the ProtoData Gradle plugin.
+     */
+    public const val GRADLE_PLUGIN_ID: String = "io.spine.proto-data"
+
+    /**
      * The name of the Gradle extension added by ProtoData Gradle plugin.
      */
     public const val EXTENSION_NAME: String = "protoData"

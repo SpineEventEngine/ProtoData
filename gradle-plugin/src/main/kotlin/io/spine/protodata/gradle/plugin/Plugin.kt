@@ -26,6 +26,7 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
@@ -87,9 +88,17 @@ public class Plugin : GradlePlugin<Project> {
         }
     }
 
-    private fun readVersion(): String {
-        val resource = Plugin::class.java.classLoader.getResource(VERSION_RESOURCE)!!
-        return resource.readText()
+    public companion object {
+
+        /**
+         * Reads the version of the plugin from the resoures.
+         */
+        @JvmStatic
+        @VisibleForTesting
+        public fun readVersion(): String {
+            val resource = Plugin::class.java.classLoader.getResource(VERSION_RESOURCE)!!
+            return resource.readText()
+        }
     }
 }
 

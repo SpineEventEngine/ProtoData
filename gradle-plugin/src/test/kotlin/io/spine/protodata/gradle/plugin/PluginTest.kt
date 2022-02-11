@@ -27,6 +27,8 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.truth.Truth.assertThat
+import io.spine.protodata.gradle.Names
+import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
 import io.spine.tools.gradle.task.TaskName
 import io.spine.tools.gradle.testing.GradleProject
@@ -90,8 +92,11 @@ class `ProtoData Gradle plugin should` {
         project.executeTask(taskName)
 
     private fun createProject(resourceDir: String) {
+        val version = Plugin.readVersion()
         val builder = GradleProject.setupAt(projectDir)
             .fromResources(resourceDir)
+            .replace("@PROTODATA_PLUGIN_ID@", GRADLE_PLUGIN_ID)
+            .replace("@PROTODATA_VERIONS@", version)
             .copyBuildSrc()
         project = builder.create()
     }
