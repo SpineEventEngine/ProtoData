@@ -27,7 +27,6 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.truth.Truth.assertThat
-import io.spine.protodata.gradle.Names
 import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
 import io.spine.tools.gradle.task.TaskName
