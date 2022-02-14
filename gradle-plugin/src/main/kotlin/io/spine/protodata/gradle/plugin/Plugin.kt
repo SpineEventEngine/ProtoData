@@ -91,7 +91,7 @@ public class Plugin : GradlePlugin<Project> {
     public companion object {
 
         /**
-         * Reads the version of the plugin from the resoures.
+         * Reads the version of the plugin from the resources.
          */
         @JvmStatic
         @VisibleForTesting
