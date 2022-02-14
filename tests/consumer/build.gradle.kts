@@ -29,9 +29,10 @@ import io.spine.protodata.gradle.ProtoDataApi
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
-
+    apply(from = "$rootDir/../version.gradle.kts")
+    val protoDataVersion: String by extra
     dependencies {
-        classpath("io.spine.protodata:gradle-plugin:0.1.9")
+        classpath("io.spine.protodata:gradle-plugin:$protoDataVersion")
     }
 }
 

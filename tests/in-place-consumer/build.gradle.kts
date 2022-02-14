@@ -26,8 +26,17 @@
 
 import com.google.protobuf.gradle.protobuf
 
+buildscript {
+    io.spine.internal.gradle.doApplyStandard(repositories)
+    apply(from = "$rootDir/../version.gradle.kts")
+    val protoDataVersion: String by extra
+    dependencies {
+        classpath("io.spine.protodata:gradle-plugin:$protoDataVersion")
+    }
+}
+
 plugins {
-    id("io.spine.proto-data") version "0.1.9"
+    id("io.spine.proto-data")
 }
 
 dependencies {
