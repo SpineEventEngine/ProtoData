@@ -10,7 +10,7 @@ To apply the plugin to the project, use the `plugins { }` block syntax.
 
 ```kotlin
 plugins {
-    id("io.spine.proto-data") version("<ProtoData version>")
+    id("io.spine.protodata") version("<ProtoData version>")
 }
 ```
 
@@ -24,14 +24,14 @@ buildscript {
     }
     
     dependencies {
-        classpath("io.spine:proto-data:<ProtoData version>")
+        classpath("io.spine:protodata:<ProtoData version>")
     }
 }
 
-apply(plugin = "io.spine.proto-data")
+apply(plugin = "io.spine.protodata")
 ```
 
-See the plugin [homepage](https://plugins.gradle.org/plugin/io.spine.proto-data) for more.
+See the plugin [homepage](https://plugins.gradle.org/plugin/io.spine.protodata) for more.
 
 ### Launching ProtoData
 
@@ -63,7 +63,7 @@ Configuration `protoData` | Dependencies | The dependencies required to launch P
 A complete configuration may look as follows:
 ```kotlin
 plugins {
-    id("io.spine.proto-data") version("<ProtoData version>")
+    id("io.spine.protodata") version("<ProtoData version>")
 }
 
 protoData {
@@ -117,7 +117,7 @@ To make everything work, at this stage, users have to add the following config:
 plugins {
     java
     id("com.google.protobuf") version("<Protobuf plugin version>")
-    id("io.spine.proto-data") version("<ProtoData version>")
+    id("io.spine.protodata") version("<ProtoData version>")
 }
 
 repositories {
@@ -134,6 +134,6 @@ repositories {
 Users who wish to extend ProtoData must also add the dependency to the API:
 ```kotlin
 dependencies {
-    implementation("io.spine.protodata:compiler:<ProtoData version>")
+    implementation("io.spine.protodata:protodata-compiler:<ProtoData version>")
 }
 ```

@@ -36,7 +36,7 @@ buildscript {
     }
 }
 
-apply(plugin = "io.spine.proto-data")
+apply(plugin = "io.spine.protodata")
 
 dependencies {
     val extensionSubproject = project(":protodata-extension")

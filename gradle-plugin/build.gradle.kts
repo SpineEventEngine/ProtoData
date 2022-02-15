@@ -62,7 +62,7 @@ val pluginName = "protoDataPlugin"
 gradlePlugin {
     plugins {
         create(pluginName) {
-            id = "io.spine.proto-data"
+            id = "io.spine.protodata"
             implementationClass = "io.spine.protodata.gradle.plugin.Plugin"
             displayName = "ProtoData"
             description = "Sets up the ProtoData tool to be used in your project."
@@ -77,7 +77,7 @@ pluginBundle {
 
     mavenCoordinates {
         groupId = "io.spine"
-        artifactId = "proto-data"
+        artifactId = "protodata"
         version = project.version.toString()
     }
 

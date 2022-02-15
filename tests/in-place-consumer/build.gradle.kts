@@ -36,7 +36,7 @@ buildscript {
 }
 
 plugins {
-    id("io.spine.proto-data")
+    id("io.spine.protodata")
 }
 
 dependencies {
