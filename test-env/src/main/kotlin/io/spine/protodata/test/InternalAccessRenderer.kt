@@ -26,7 +26,7 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.language.CommonLanguages.Java
+import io.spine.tools.code.CommonLanguages.Java
 import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet

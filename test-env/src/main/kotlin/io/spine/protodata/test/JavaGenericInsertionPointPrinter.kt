@@ -26,7 +26,7 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.language.CommonLanguages.Java
+import io.spine.tools.code.CommonLanguages.Java
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.LineNumber

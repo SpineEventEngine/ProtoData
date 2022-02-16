@@ -24,25 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.protodata.gradle.Extension
+import io.spine.protodata.gradle.CodegenSettings
 
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
-
+    apply(from = "$rootDir/../version.gradle.kts")
+    val protoDataVersion: String by extra
     dependencies {
-        classpath("io.spine:proto-data:+")
+        classpath("io.spine.protodata:gradle-plugin:$protoDataVersion")
     }
 }
 
-apply(plugin = "io.spine.proto-data")
+apply(plugin = "io.spine.protodata")
 
 dependencies {
-    "protoData"(project(":protodata-extension"))
-    implementation(project(":protodata-extension"))
+    val extensionSubproject = project(":protodata-extension")
+    "protoData"(extensionSubproject)
+    implementation(extensionSubproject)
 }
 
-extensions.getByType<Extension>().apply {
+extensions.getByType<CodegenSettings>().apply {
     renderers(
         "io.spine.protodata.test.uuid.ClassScopePrinter",
         "io.spine.protodata.test.uuid.UuidJavaRenderer",

@@ -24,42 +24,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
-
-import io.spine.protodata.File
-import io.spine.protodata.FilePath
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.TypeName
-import io.spine.protodata.renderer.Renderer
-import io.spine.tools.code.CommonLanguages.Java
-import java.nio.file.Path
+package io.spine.protodata.gradle
 
 /**
- * A [Renderer] which generates Java code.
+ * Constants for locating ProtoData in Maven repositories.
  */
-public abstract class JavaRenderer : Renderer(Java) {
+public object Artifacts {
 
     /**
-     * Obtains the [ClassName] of the given Protobuf type.
+     * The Maven group of the ProtoData artifacts.
      */
-    protected fun classNameOf(type: TypeName, declaredIn: FilePath): ClassName {
-        val file = findFile(declaredIn)
-        return type.javaClassName(file)
-    }
+    public const val group: String = "io.spine.protodata"
 
     /**
-     * Obtains the path the `.java` file generated from the given type.
+     * The name of the artifact of ProtoData Compiler.
+     */
+    public const val compiler: String = "protodata-compiler"
+
+    /**
+     * The infix to be used in an artifact name before a submodule name.
+     */
+    private const val infix: String = "protodata"
+
+    /**
+     * Obtains Maven coordinates of the `fat-cli` variant of command-line application.
      *
-     * The path is relative to the generated source root. This path is useful for finding source
-     * files in a [SourceSet][io.spine.protodata.renderer.SourceFileSet].
+     * "fat-cli" is an all-in-one distribution of ProtoData, published somewhat in the past.
+     * Ironically, we need it in ProtoData development.
+     * It removes the dependency conflicts between ProtoData-s.
      */
-    protected fun javaFileOf(type: TypeName, declaredIn: FilePath): Path {
-        val file = findFile(declaredIn)
-        return type.javaFile(file)
-    }
+    public fun fatCli(version: String): String = "$group:$infix-fat-cli:$version"
 
-    private fun findFile(path: FilePath): File =
-        select(ProtobufSourceFile::class.java)
-            .withId(path)
-            .orElseThrow { IllegalStateException("Unknown file `${path.value}`.") }.file
+    /**
+     * Obtains Maven coordinates for ProtoData command-line application.
+     */
+    public fun cli(version: String): String = "$group:$infix-cli:$version"
+
+    /**
+     * Obtains Maven coordinates for the ProtoData plugin to Google Protobuf Compiler (`protoc`).
+     */
+    public fun protocPlugin(version: String): String = "$group:$infix-protoc:$version:exe@jar"
 }

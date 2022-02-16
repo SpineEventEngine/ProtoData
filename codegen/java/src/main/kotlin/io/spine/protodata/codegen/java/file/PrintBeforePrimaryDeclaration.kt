@@ -26,9 +26,9 @@
 
 package io.spine.protodata.codegen.java.file
 
-import io.spine.protodata.language.CommonLanguages
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
+import io.spine.tools.code.CommonLanguages
 
 /**
  * Prints the [BeforePrimaryDeclaration] insertion point.

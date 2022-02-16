@@ -24,32 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test.uuid;
-
-import io.spine.tools.code.CommonLanguages;
-import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.InsertionPointPrinter;
-import io.spine.protodata.test.UuidType;
-
-import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
+package io.spine.protodata.gradle
 
 /**
- * Prints the {@link ClassScope} insertion point.
+ * Serves the detection of the special mode when ProtoData is being used for developing
+ * itself, or ProtoData extensions.
  */
-@SuppressWarnings("unused") // Accessed reflectively.
-public final class ClassScopePrinter extends InsertionPointPrinter {
+public object DevMode {
 
-    public ClassScopePrinter() {
-        super(CommonLanguages.java());
-    }
+    /**
+     * If set to any value, enables the development mode for ProtoData.
+     *
+     * Should only be used when developing ProtoData itself.
+     *
+     * Switches to all-in-one ProtoData's `cli` artifact and eliminates the dependency conflict
+     * between the "published" modules and those currently under development.
+     */
+    public const val SYSTEM_PROPERTY_NAME: String = "spine.internal.protodata.devmode.enabled"
 
-    @Override
-    protected Set<InsertionPoint> supportedInsertionPoints() {
-        return select(UuidType.class).all()
-                                     .stream()
-                                     .map(type -> new ClassScope(type.getName()))
-                                     .collect(toSet());
+    /**
+     * Detects if ProtoData is being used for developing ProtoData itself.
+     */
+    public fun isEnabled(): Boolean {
+        val value = System.getProperty(SYSTEM_PROPERTY_NAME)
+        val devModeEnabled = value != null
+        return devModeEnabled
     }
 }

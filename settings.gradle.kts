@@ -32,6 +32,7 @@ include(
     "protoc",
     "test-env",
     "codegen-java",
+    "gradle-api",
     "gradle-plugin"
 )
 

@@ -24,32 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test.uuid;
+package io.spine.protodata.gradle
 
-import io.spine.tools.code.CommonLanguages;
-import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.InsertionPointPrinter;
-import io.spine.protodata.test.UuidType;
-
-import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
+import org.gradle.api.tasks.SourceSet
 
 /**
- * Prints the {@link ClassScope} insertion point.
+ * Obtains the name of this source set with the first letter capitalized.
  */
-@SuppressWarnings("unused") // Accessed reflectively.
-public final class ClassScopePrinter extends InsertionPointPrinter {
-
-    public ClassScopePrinter() {
-        super(CommonLanguages.java());
-    }
-
-    @Override
-    protected Set<InsertionPoint> supportedInsertionPoints() {
-        return select(UuidType.class).all()
-                                     .stream()
-                                     .map(type -> new ClassScope(type.getName()))
-                                     .collect(toSet());
-    }
-}
+internal val SourceSet.capitalizedName: String
+    get() = name.replaceFirstChar { it.uppercase() }

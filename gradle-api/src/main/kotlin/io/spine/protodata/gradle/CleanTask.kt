@@ -24,32 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test.uuid;
+package io.spine.protodata.gradle
 
-import io.spine.tools.code.CommonLanguages;
-import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.InsertionPointPrinter;
-import io.spine.protodata.test.UuidType;
-
-import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
+import org.gradle.api.tasks.SourceSet
 
 /**
- * Prints the {@link ClassScope} insertion point.
+ * Performs cleaning of generated files.
  */
-@SuppressWarnings("unused") // Accessed reflectively.
-public final class ClassScopePrinter extends InsertionPointPrinter {
+public object CleanTask {
 
-    public ClassScopePrinter() {
-        super(CommonLanguages.java());
-    }
+    private const val prefix = "cleanProtoData"
 
-    @Override
-    protected Set<InsertionPoint> supportedInsertionPoints() {
-        return select(UuidType.class).all()
-                                     .stream()
-                                     .map(type -> new ClassScope(type.getName()))
-                                     .collect(toSet());
-    }
+    /**
+     * Obtains a name of the task for the given source set.
+     */
+    public fun nameFor(sourceSet: SourceSet): String = "$prefix${sourceSet.capitalizedName}"
 }

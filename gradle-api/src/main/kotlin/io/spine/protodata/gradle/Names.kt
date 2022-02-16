@@ -26,14 +26,38 @@
 
 package io.spine.protodata.gradle
 
-import java.util.*
-
 /**
- * Encodes this string in Base64 using the UTF-8 charset.
- *
- * @return the encoded string
+ * The name of various objects in ProtoData Gradle API.
  */
-internal fun String.base64Encoded(): String {
-    val bytes = encodeToByteArray()
-    return Base64.getEncoder().encodeToString(bytes)
+public object Names {
+
+    /**
+     * The resource file containing the version of ProtoData.
+     *
+     * Such a resource name might be duplicated in other places in ProtoData code base.
+     * The reason for this is to avoid creating an extra dependency for the Gradle plugin,
+     * so that the users wouldn't have to declare a custom Maven repository to use the plugin.
+     */
+    public const val VERSION_RESOURCE: String = "version.txt"
+
+    /**
+     * The name of the `protoc` plugin exposed by ProtoData.
+     */
+    public const val PROTOC_PLUGIN: String = "protodata"
+
+    /**
+     * The ID of the ProtoData Gradle plugin.
+     */
+    public const val GRADLE_PLUGIN_ID: String = "io.spine.protodata"
+
+    /**
+     * The name of the Gradle extension added by ProtoData Gradle plugin.
+     */
+    public const val EXTENSION_NAME: String = "protoData"
+
+    /**
+     * The name of the Gradle Configuration created by ProtoData Gradle plugin for holding
+     * user-defined classpath.
+     */
+    public const val USER_CLASSPATH_CONFIGURATION_NAME: String = "protoData"
 }

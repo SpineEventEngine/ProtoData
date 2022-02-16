@@ -28,38 +28,25 @@ package io.spine.protodata.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.kotlin.dsl.getByType
 
 /**
- * The [sourceSets][SourceSetContainer] of this project.
+ * Launches the ProtoData command-line utility from a Gradle project.
  */
-internal val Project.sourceSets: SourceSetContainer
-    get() = extensions.getByType<JavaPluginExtension>().sourceSets
+public object LaunchTask {
 
-/**
- * Attempts to obtain the Java compilation Gradle task for the given source set.
- *
- * Typically, the task is named by a pattern: `compile<SourceSet name>Java`, or just `compileJava`
- * if the source set name is `"main"`. If the task does not fit this described pattern, this method
- * will not find it.
- */
-internal fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
-    val taskName = sourceSet.compileJavaTaskName
-    return tasks.findByName(taskName) as JavaCompile?
-}
+    private const val prefix: String = "launchProtoData"
 
-/**
- * Attempts to obtain the Kotlin compilation Gradle task for the given source set.
- *
- * Typically, the task is named by a pattern: `compile<SourceSet name>Kotlin`, or just
- * `compileKotlin` if the source set name is `"main"`. If the task does not fit this described
- * pattern, this method will not find it.
- */
-internal fun Project.kotlinCompileFor(sourceSet: SourceSet): Task? {
-    val taskName = sourceSet.getCompileTaskName("Kotlin")
-    return tasks.findByName(taskName)
+    /**
+     * Obtains a name of the task for the given source set.
+     */
+    public fun nameFor(sourceSet: SourceSet): String = "$prefix${sourceSet.capitalizedName}"
+
+    /**
+     * Obtains an instance of the task in the given project for the specified source set.
+     */
+    public fun get(project: Project, sourceSet: SourceSet): Task {
+        val name = nameFor(sourceSet)
+        return project.tasks.getByName(name)
+    }
 }

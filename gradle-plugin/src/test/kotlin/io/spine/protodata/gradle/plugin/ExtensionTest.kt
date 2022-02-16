@@ -24,10 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
+package io.spine.protodata.gradle.plugin
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.gradle.ProtobufPlugin
+import io.spine.protodata.gradle.CodegenSettings
 import java.io.File
 import kotlin.io.path.div
 import org.gradle.api.Project
@@ -43,20 +44,21 @@ class `Plugin extension should` {
 
     private lateinit var project: Project
     private lateinit var extension: Extension
-
-
+    
     @BeforeEach
     fun prepareProject(@TempDir projectDir: File) {
-        project = ProjectBuilder
-            .builder()
+        project = ProjectBuilder.builder()
             .withProjectDir(projectDir)
             .build()
-        project.apply(plugin = "java")
-        project.sourceSets.maybeCreate(MAIN_SOURCE_SET_NAME)
-        project.apply<ProtobufPlugin>()
-        project.apply<Plugin>()
 
-        extension = project.extensions.getByType()
+        with(project) {
+            apply(plugin = "java")
+            sourceSets.maybeCreate(MAIN_SOURCE_SET_NAME)
+            apply<ProtobufPlugin>()
+            apply<Plugin>()
+            
+            extension = extensions.getByType<CodegenSettings>() as Extension
+        }
     }
 
     @Test

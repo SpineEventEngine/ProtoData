@@ -26,10 +26,10 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.language.CommonLanguages.Java
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.select
+import io.spine.tools.code.CommonLanguages.Java
 
 public class TestRenderer : Renderer(Java) {
 

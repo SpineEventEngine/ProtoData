@@ -24,40 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.file
+package io.spine.protodata.gradle.plugin
 
-import java.nio.file.FileSystems
-import java.nio.file.Path
-import java.nio.file.PathMatcher
+import java.util.*
 
 /**
- * A GLOB pattern for matching file paths.
+ * Encodes this string in Base64 using the UTF-8 charset.
  *
- * @see java.nio.file.FileSystem.getPathMatcher
+ * @return the encoded string
  */
-public class Glob(pattern: String) {
-
-    private val matcher: PathMatcher = FileSystems.getDefault()
-                                                  .getPathMatcher("glob:$pattern")
-
-    public companion object {
-
-        /**
-         * A pattern which matched any file.
-         */
-        public val any: Glob = Glob("**")
-
-        /**
-         * A pattern which matches any file with the given extension.
-         */
-        @JvmStatic
-        public fun extension(extension: String): Glob {
-            return Glob("**.$extension")
-        }
-    }
-
-    /**
-     * Checks if the given path matches this pattern.
-     */
-    public fun matches(path: Path): Boolean = matcher.matches(path)
+internal fun String.base64Encoded(): String {
+    val bytes = encodeToByteArray()
+    return Base64.getEncoder().encodeToString(bytes)
 }

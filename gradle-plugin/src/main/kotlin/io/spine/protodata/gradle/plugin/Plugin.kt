@@ -24,12 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
+package io.spine.protodata.gradle.plugin
 
+import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
+import io.spine.protodata.gradle.Artifacts
+import io.spine.protodata.gradle.DevMode
+import io.spine.protodata.gradle.LaunchTask
+import io.spine.protodata.gradle.CodegenSettings
+import io.spine.protodata.gradle.CleanTask
+import io.spine.protodata.gradle.Names.EXTENSION_NAME
+import io.spine.protodata.gradle.Names.PROTOC_PLUGIN
+import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
+import io.spine.protodata.gradle.Names.VERSION_RESOURCE
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -78,79 +88,63 @@ public class Plugin : GradlePlugin<Project> {
         }
     }
 
-    private fun readVersion(): String {
-        val resource = Plugin::class.java.classLoader.getResource(VERSION_RESOURCE)!!
-        return resource.readText()
+    public companion object {
+
+        /**
+         * Reads the version of the plugin from the resources.
+         */
+        @JvmStatic
+        @VisibleForTesting
+        public fun readVersion(): String {
+            val resource = Plugin::class.java.classLoader.getResource(VERSION_RESOURCE)!!
+            return resource.readText()
+        }
     }
 }
-
-/**
- * The resource file containing the version of ProtoData.
- *
- * Such a resource name might be duplicated in other places in ProtoData code base.
- * The reason for this is to avoid creating an extra dependency for the Gradle plugin,
- * so that the users wouldn't have to declare a custom Maven repository to use the plugin.
- */
-private const val VERSION_RESOURCE = "version.txt"
-
-private const val PROTOC_PLUGIN = "protodata"
-
-private const val PROTOBUF_PLUGIN = "com.google.protobuf"
-
-/**
- * If set to any value, enables the development mode for ProtoData.
- *
- * Should only be used when developing ProtoData itself.
- *
- * Switches to all-in-one ProtoData's `cli` artifact and eliminates the dependency conflict between
- * the "published" modules and those currently under development.
- */
-private const val DEV_MODE_SYSTEM_PROPERTY = "spine.internal.protodata.devmode.enabled"
 
 private fun Project.createLaunchTasks(extension: Extension, version: String) {
     val artifactConfig = configurations.create("protoDataRawArtifact") {
         it.isVisible = false
     }
-
-    val devModeEnabled = isDevMode()
-    val cliDependency =
-        if (devModeEnabled) {
-            logger.warn("ProtoData's development mode is enabled " +
-                    "via `$DEV_MODE_SYSTEM_PROPERTY` system property.")
-            // "fat-cli" is an all-in-one distribution of ProtoData, published somewhat in the past.
-            // Ironically, we need it in ProtoData development.
-            // It removes the dependency conflicts between ProtoData-s.
-            "io.spine.protodata:protodata-fat-cli:$version"
-        } else {
-            "io.spine.protodata:protodata-cli:$version"
-        }
-
+    val cliDependency = cliDependency(version)
     dependencies.add(artifactConfig.name, cliDependency)
-    val userCpConfig = configurations.create("protoData") {
-        it.exclude(group = "io.spine.protodata", module = "protodata-compiler")
-    }
+    val userCpConfig = userClasspathConfiguration()
     sourceSets.forEach { sourceSet ->
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
         createCleanTask(extension, sourceSet)
     }
 }
 
-private fun isDevMode(): Boolean {
-    val value = System.getProperty(DEV_MODE_SYSTEM_PROPERTY)
-    val devModeEnabled = value != null
-    return devModeEnabled
+private fun Project.cliDependency(version: String): String {
+    val devModeEnabled = DevMode.isEnabled()
+    val cliDependency =
+        if (devModeEnabled) {
+            logger.warn(
+                "ProtoData self-development mode is enabled " +
+                        "via `${DevMode.SYSTEM_PROPERTY_NAME}` system property."
+            )
+            Artifacts.fatCli(version)
+        } else {
+            Artifacts.cli(version)
+        }
+    return cliDependency
 }
+
+private fun Project.userClasspathConfiguration() =
+    configurations.create(USER_CLASSPATH_CONFIGURATION_NAME) {
+        it.exclude(group = Artifacts.group, module = Artifacts.compiler)
+    }
 
 private fun Project.createExtension(): Extension {
     val extension = Extension(this)
-    extensions.add("protoData", extension)
+    extensions.add(CodegenSettings::class.java, EXTENSION_NAME, extension)
     return extension
 }
 
 private fun Project.createLaunchTask(
     ext: Extension, sourceSet: SourceSet, artifactConfig: Configuration, userCpConfig: Configuration
 ) {
-    val taskName = launchTaskName(sourceSet)
+    val taskName = LaunchTask.nameFor(sourceSet)
     tasks.create<LaunchProtoData>(taskName) {
         renderers = ext.renderers
         plugins = ext.plugins
@@ -172,14 +166,18 @@ private fun Project.createLaunchTask(
 }
 
 private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
-    val taskName = cleanTaskName(sourceSet)
+    val project = this
+    val taskName = CleanTask.nameFor(sourceSet)
     tasks.create<Delete>(taskName) {
         delete(ext.targetDir(sourceSet))
 
         tasks.getByName("clean").dependsOn(this)
-        tasks.getByName(launchTaskName(sourceSet)).mustRunAfter(this)
+        val launchTask = LaunchTask.get(project, sourceSet)
+        launchTask.mustRunAfter(this)
     }
 }
+
+private const val PROTOBUF_PLUGIN = "com.google.protobuf"
 
 private fun Project.configureWithProtobufPlugin(extension: Extension, version: String) {
     if (pluginManager.hasPlugin(PROTOBUF_PLUGIN)) {
@@ -195,7 +193,7 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
     protobuf {
         plugins {
             id(PROTOC_PLUGIN) {
-                artifact = "io.spine.protodata:protodata-protoc:$version:exe@jar"
+                artifact = Artifacts.protocPlugin(version)
             }
         }
         generateProtoTasks {
@@ -207,20 +205,12 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                         option(path.base64Encoded())
                     }
                 }
-                project.tasks.getByName(launchTaskName(it.sourceSet)).dependsOn(it)
+                val launchTask = LaunchTask.get(project, it.sourceSet)
+                launchTask.dependsOn(it /* GenerateProtoTask */)
             }
         }
         generatedFilesBaseDir = "$buildDir/generated-proto/"
     }
-
-private fun launchTaskName(sourceSet: SourceSet): String =
-    "launchProtoData${sourceSet.capitalizedName}"
-
-private fun cleanTaskName(sourceSet: SourceSet): String =
-    "cleanProtoData${sourceSet.capitalizedName}"
-
-private val SourceSet.capitalizedName: String
-    get() = name.replaceFirstChar { it.uppercase() }
 
 private fun Project.configureSourceSets(extension: Extension) {
     afterEvaluate {
