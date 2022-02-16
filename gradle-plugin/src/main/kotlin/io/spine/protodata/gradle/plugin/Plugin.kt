@@ -34,7 +34,7 @@ import com.google.protobuf.gradle.protobuf
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.DevMode
 import io.spine.protodata.gradle.LaunchTask
-import io.spine.protodata.gradle.ProtoDataApi
+import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.gradle.CleanTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTOC_PLUGIN
@@ -137,7 +137,7 @@ private fun Project.userClasspathConfiguration() =
 
 private fun Project.createExtension(): Extension {
     val extension = Extension(this)
-    extensions.add(ProtoDataApi::class.java, EXTENSION_NAME, extension)
+    extensions.add(CodegenSettings::class.java, EXTENSION_NAME, extension)
     return extension
 }
 

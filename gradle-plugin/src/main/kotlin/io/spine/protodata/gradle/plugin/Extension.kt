@@ -29,7 +29,7 @@ package io.spine.protodata.gradle.plugin
 import com.google.protobuf.gradle.ProtobufConvention
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodeGeneratorRequestFile.DEFAULT_DIRECTORY
-import io.spine.protodata.gradle.ProtoDataApi
+import io.spine.protodata.gradle.CodegenSettings
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -46,7 +46,7 @@ import org.gradle.kotlin.dsl.property
  * The `protoData { }` Gradle extension.
  */
 @Suppress("UnstableApiUsage") // Gradle Property API.
-public class Extension(private val project: Project): ProtoDataApi {
+public class Extension(private val project: Project): CodegenSettings {
 
     public override fun plugins(vararg classNames: String) {
         plugins.addAll(classNames.toList())

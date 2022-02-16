@@ -28,7 +28,7 @@ package io.spine.protodata.gradle.plugin
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.gradle.ProtobufPlugin
-import io.spine.protodata.gradle.ProtoDataApi
+import io.spine.protodata.gradle.CodegenSettings
 import java.io.File
 import kotlin.io.path.div
 import org.gradle.api.Project
@@ -57,7 +57,7 @@ class `Plugin extension should` {
             apply<ProtobufPlugin>()
             apply<Plugin>()
             
-            extension = extensions.getByType<ProtoDataApi>() as Extension
+            extension = extensions.getByType<CodegenSettings>() as Extension
         }
     }
 

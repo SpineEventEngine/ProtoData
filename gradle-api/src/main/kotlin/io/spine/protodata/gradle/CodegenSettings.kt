@@ -29,7 +29,7 @@ package io.spine.protodata.gradle
 /**
  * Configures code generation process performed by ProtoData.
  */
-public interface ProtoDataApi {
+public interface CodegenSettings {
 
     /**
      * Passes given names of Java classes to ProtoData as
