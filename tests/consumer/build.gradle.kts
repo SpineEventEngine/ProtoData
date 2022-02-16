@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.protodata.gradle.ProtoDataApi
+import io.spine.protodata.gradle.CodegenSettings
 
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
@@ -44,7 +44,7 @@ dependencies {
     implementation(extensionSubproject)
 }
 
-extensions.getByType<ProtoDataApi>().apply {
+extensions.getByType<CodegenSettings>().apply {
     renderers(
         "io.spine.protodata.test.uuid.ClassScopePrinter",
         "io.spine.protodata.test.uuid.UuidJavaRenderer",
