@@ -95,7 +95,7 @@ class `ProtoData Gradle plugin should` {
         val builder = GradleProject.setupAt(projectDir)
             .fromResources(resourceDir)
             .replace("@PROTODATA_PLUGIN_ID@", GRADLE_PLUGIN_ID)
-            .replace("@PROTODATA_VERIONS@", version)
+            .replace("@PROTODATA_VERSION@", version)
             .copyBuildSrc()
         project = builder.create()
     }
