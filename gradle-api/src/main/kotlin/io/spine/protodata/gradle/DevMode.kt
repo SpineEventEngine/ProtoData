@@ -27,7 +27,8 @@
 package io.spine.protodata.gradle
 
 /**
- * Serves the detection of the special mode when ProtoData is being used for developing itself.
+ * Serves the detection of the special mode when ProtoData is being used for developing
+ * itself, or ProtoData extensions.
  */
 public object DevMode {
 
