@@ -35,7 +35,7 @@ import java.lang.System.lineSeparator
 /**
  * A pattern matching a top-level Java declaration.
  *
- * This pattern matches a type declaration, such as a class, an interface, an annotation
+ * This pattern matches a type declaration, such as a class, an interface, an annotation,
  * or an enum.
  *
  * The pattern expects the matched string to have at least one empty space character after
