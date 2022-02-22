@@ -14,5 +14,14 @@ message Task {
 
     string title = 2;
 
-    google.protobuf.Timestamp when_completed = 3;
+    Status status = 3;
+
+    google.protobuf.Timestamp when_closed = 4;
+}
+
+enum Status {
+    TASK_STATUS_UNKNOWN = 0;
+    OPEN = 1;
+    FINISHED = 2;
+    CANCELED = 3;
 }
