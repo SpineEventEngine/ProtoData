@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package protodata.test;
+
+option java_package = "io.spine.protodata.test";
+option java_outer_classname = "TaskProto";
+option java_multiple_files = false;
+
+import "google/protobuf/timestamp.proto";
+
+message Task {
+
+    string uuid = 1;
+
+    string title = 2;
+
+    google.protobuf.Timestamp when_completed = 3;
+}
