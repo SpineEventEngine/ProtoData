@@ -32,7 +32,9 @@ import io.spine.protodata.renderer.LineNumber
 import io.spine.protodata.renderer.LineNumber.Companion.notInFile
 import java.lang.System.lineSeparator
 
-private val pattern = Regex("(public\\s+)?(final\\s+)?(abstract\\s+)?((class)|(@?interface)|(enum))\\s+")
+private val pattern = Regex(
+    "(public\\s+)?(final\\s+)?(abstract\\s+)?((class)|(@?interface)|(enum))\\s+"
+)
 
 /**
  * An insertion point located just before the primary declaration of a Java file.
