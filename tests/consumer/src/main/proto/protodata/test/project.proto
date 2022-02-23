@@ -13,4 +13,12 @@ message ProjectId {
     string uuid = 1 [
         (spine.protodata.test.java_annotation) = "io.spine.protodata.test.annotation.GeneratedByProtoData"
     ];
+
+    ProjectStatus status = 2;
+}
+
+enum ProjectStatus {
+    PSTATUS_UNKNOWN = 0;
+    ACTIVE = 1;
+    COMPLETED = 2;
 }

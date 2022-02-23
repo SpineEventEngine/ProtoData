@@ -25,6 +25,7 @@
  */
 
 import io.spine.protodata.gradle.CodegenSettings
+import io.spine.internal.dependency.JavaX
 
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
@@ -42,15 +43,18 @@ dependencies {
     val extensionSubproject = project(":protodata-extension")
     "protoData"(extensionSubproject)
     implementation(extensionSubproject)
+    implementation(JavaX.annotations)
 }
 
 extensions.getByType<CodegenSettings>().apply {
     renderers(
         "io.spine.protodata.test.uuid.ClassScopePrinter",
         "io.spine.protodata.test.uuid.UuidJavaRenderer",
+        "io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration",
 
         "io.spine.protodata.test.annotation.PrintFieldGetter",
-        "io.spine.protodata.test.annotation.AnnotationRenderer"
+        "io.spine.protodata.test.annotation.AnnotationRenderer",
+        "io.spine.protodata.codegen.java.generado.GenerateGenerated"
     )
     plugins(
         "io.spine.protodata.test.uuid.UuidPlugin",

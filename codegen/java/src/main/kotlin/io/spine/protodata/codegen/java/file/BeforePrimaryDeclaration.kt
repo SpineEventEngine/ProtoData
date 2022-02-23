@@ -32,13 +32,24 @@ import io.spine.protodata.renderer.LineNumber
 import io.spine.protodata.renderer.LineNumber.Companion.notInFile
 import java.lang.System.lineSeparator
 
-private val pattern = Regex("(public\\s+)?(final\\s+)?(abstract\\s+)?(class)|(@?interface)")
+/**
+ * A pattern matching a top-level Java declaration.
+ *
+ * This pattern matches a type declaration, such as a class, an interface, an annotation,
+ * or an enum.
+ *
+ * The pattern expects the matched string to have at least one empty space character after
+ * the keyword declaring the type. However, regular expression pattern matching cannot guarantee
+ * that there will be no false positives, i.e. no structure, such as a comment, is going to yield
+ * an unwanted match.
+ */
+private val pattern = Regex("((class)|(@?interface)|(enum))\\s+")
 
 /**
  * An insertion point located just before the primary declaration of a Java file.
  *
- * The primary declaration is the top-level class, interface, or annotation type, which matches by
- * name with the class.
+ * The primary declaration is the top-level class, interface, annotation, or an enum type,
+ * which matches by name with the class.
  *
  * While technically Java allows other top-level declarations is the same file, those are rarely
  * used. `BeforePrimaryDeclaration` does not account for such declarations when searching for
@@ -53,15 +64,15 @@ internal object BeforePrimaryDeclaration : InsertionPoint, Logging {
         get() = this.javaClass.simpleName
 
     override fun locate(lines: List<String>): LineNumber {
-        var isComment = false
+        var isBlockComment = false
         lines.forEachIndexed { index, line ->
             if (line.contains("/*")) {
-                isComment = true
+                isBlockComment = true
             }
             if (line.contains("*/")) {
-                isComment = false
+                isBlockComment = false
             }
-            if (!isComment && pattern.find(line) != null) {
+            if (!isBlockComment && pattern.find(line) != null) {
                 return LineNumber.at(index)
             }
         }
