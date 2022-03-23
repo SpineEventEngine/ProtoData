@@ -29,6 +29,7 @@ import io.spine.internal.dependency.Flogger
 
 plugins {
     application
+    publishing
     `version-to-resources`
     `build-proto-model`
     jacoco
@@ -149,7 +150,7 @@ tasks.shadowJar {
 }
 
 val createVersionFile: Task by tasks.getting
-tasks.sourceJar {
+val sourcesJar: Task by tasks.getting {
     dependsOn(createVersionFile)
 }
 
