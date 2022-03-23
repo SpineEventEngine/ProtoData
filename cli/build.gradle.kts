@@ -29,9 +29,9 @@ import io.spine.internal.dependency.Flogger
 
 plugins {
     application
-    publishing
     `version-to-resources`
     `build-proto-model`
+    `maven-publish`
     jacoco
     id("com.github.johnrengelman.shadow").version("7.1.2")
 }
@@ -124,7 +124,6 @@ publishing {
 
             setArtifacts(project.configurations.getAt(setupArchiveConfig).allArtifacts)
         }
-
         create("fat-jar", MavenPublication::class) {
             groupId = pGroup
             artifactId = "$appName-fat-cli"
@@ -149,15 +148,14 @@ tasks.shadowJar {
     mergeServiceFiles("desc.ref")
 }
 
-val createVersionFile: Task by tasks.getting
-val sourcesJar: Task by tasks.getting {
-    dependsOn(createVersionFile)
+afterEvaluate {
+    val createVersionFile: Task by tasks.getting
+    @Suppress("UNUSED_VARIABLE")
+    val sourcesJar: Task by tasks.getting {
+        dependsOn(createVersionFile)
+    }
 }
 
 // See https://github.com/johnrengelman/shadow/issues/153.
 tasks.shadowDistTar.get().enabled = false
 tasks.shadowDistZip.get().enabled = false
-
-artifacts {
-    archives(tasks.shadowJar)
-}
