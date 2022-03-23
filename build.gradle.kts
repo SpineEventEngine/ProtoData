@@ -96,6 +96,7 @@ allprojects {
 
     repositories.applyStandard()
     repositories.applyGitHubPackages("base-types", rootProject)
+    repositories.applyGitHubPackages("core-java", rootProject)
 
     configurations.all {
         resolutionStrategy {
