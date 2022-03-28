@@ -81,7 +81,7 @@ spinePublishing {
         PublishingRepos.gitHub("ProtoData"),
         PublishingRepos.cloudArtifactRegistry
     )
-    artifactPrefix = "protodata-"
+    artifactPrefix = "protodata"
 }
 
 allprojects {
