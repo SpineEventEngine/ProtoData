@@ -12,8 +12,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           java-version: 11
-          distribution: temurin
-          cache: gradle
+          distribution: zulu
 
       - name: Pull config
         run: git submodule update --init --recursive
