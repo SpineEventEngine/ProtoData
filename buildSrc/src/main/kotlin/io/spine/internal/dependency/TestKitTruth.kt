@@ -24,32 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.publish
-
-import io.spine.internal.gradle.sourceSets
-import java.io.File
-import org.gradle.api.Project
-import org.gradle.api.file.SourceDirectorySet
-import org.gradle.kotlin.dsl.get
-
+package io.spine.internal.dependency
 
 /**
- * Tells whether there are any Proto sources in "main" source set.
- */
-internal fun Project.hasProto(): Boolean {
-    val protoSources = protoSources()
-    val result = protoSources.any { it.exists() }
-    return result
-}
-
-/**
- * Locates Proto sources in "main" source set.
+ * Gradle TestKit extension for Google Truth.
  *
- * "main" source set is added by `java` plugin. Special treatment for Proto sources is needed,
- * because they are not Java-related, and, thus, not included in `sourceSets["main"].allSource`.
+ * Source code:
+ * https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/tree/main/testkit-truth
+ *
+ * Usage description:
+ * https://dev.to/autonomousapps/gradle-all-the-way-down-testing-your-gradle-plugin-with-gradle-testkit-2hmc
  */
-internal fun Project.protoSources(): Set<File> {
-    val mainSourceSet = sourceSets["main"]
-    val protoSourceDirs = mainSourceSet.extensions.findByName("proto") as SourceDirectorySet?
-    return protoSourceDirs?.srcDirs ?: emptySet()
+@Suppress("unused")
+object TestKitTruth {
+    private const val version = "1.1"
+    const val lib = "com.autonomousapps:testkit-truth:$version"
 }
