@@ -60,9 +60,8 @@ val devProtoDataVersion: String by extra
 
 plugins {
     kotlin("jvm")
-    io.spine.internal.dependency.Dokka.apply {
-        id(pluginId) version(version)
-    }
+    val dokka = io.spine.internal.dependency.Dokka
+    id(dokka.pluginId) version(dokka.version)
     idea
     jacoco
     `force-jacoco`
@@ -108,9 +107,9 @@ allprojects {
 }
 
 subprojects {
-
     apply {
         plugin("kotlin")
+        plugin("jacoco")
         plugin(Dokka.pluginId)
     }
 

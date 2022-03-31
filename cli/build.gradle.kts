@@ -32,7 +32,6 @@ plugins {
     `version-to-resources`
     `build-proto-model`
     `maven-publish`
-    jacoco
     id("com.github.johnrengelman.shadow").version("7.1.2")
 }
 

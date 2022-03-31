@@ -27,10 +27,6 @@
 import io.spine.internal.dependency.Protobuf
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
-plugins {
-    jacoco
-}
-
 dependencies {
     Protobuf.libs.forEach { implementation(it) }
 }

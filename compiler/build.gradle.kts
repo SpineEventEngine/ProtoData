@@ -32,7 +32,6 @@ import io.spine.internal.gradle.publish.PublishingRepos
 
 plugins {
     `build-proto-model`
-    jacoco
 }
 
 val coreVersion: String by extra

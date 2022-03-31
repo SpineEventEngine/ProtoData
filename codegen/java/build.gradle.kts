@@ -33,7 +33,6 @@ import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 plugins {
     `build-proto-model`
-    jacoco
 }
 
 dependencies {
