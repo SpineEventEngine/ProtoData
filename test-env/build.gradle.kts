@@ -31,6 +31,7 @@ import io.spine.internal.dependency.Grpc
 
 plugins {
     `build-proto-model`
+    jacoco
 }
 
 dependencies {
