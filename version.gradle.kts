@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.87")
+val baseVersion: String by extra("2.0.0-SNAPSHOT.88")
 val coreVersion: String by extra("2.0.0-SNAPSHOT.91")
 
 val mcVersion: String by extra("2.0.0-SNAPSHOT.88")
