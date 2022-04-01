@@ -32,6 +32,7 @@ plugins {
     `maven-publish`
     id("com.gradle.plugin-publish").version("0.18.0")
     `version-to-resources`
+    jacoco
 }
 
 val toolBaseVersion: String by extra

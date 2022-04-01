@@ -109,7 +109,6 @@ allprojects {
 subprojects {
     apply {
         plugin("kotlin")
-        plugin("jacoco")
         plugin(Dokka.pluginId)
     }
 
