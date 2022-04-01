@@ -219,32 +219,32 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>all-modules-page-plugin</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>dokka-base</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>dokka-core</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>gfm-template-processing-plugin</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>javadoc-plugin</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>jekyll-template-processing-plugin</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
