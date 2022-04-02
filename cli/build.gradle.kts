@@ -26,13 +26,15 @@
 
 import io.spine.internal.dependency.Clikt
 import io.spine.internal.dependency.Flogger
+import io.spine.internal.gradle.publish.SpinePublishing
 
 plugins {
     application
     `version-to-resources`
     `build-proto-model`
-    jacoco
+    `maven-publish`
     id("com.github.johnrengelman.shadow").version("7.1.2")
+    jacoco
 }
 
 dependencies {
@@ -45,14 +47,42 @@ dependencies {
     testImplementation(project(":test-env"))
 }
 
-val appName = "protodata"
+/** The publishing settings from the root project. */
+val spinePublishing = rootProject.the<SpinePublishing>()
+
+/** Use the same prefix for naming application files as for published artifacts. */
+val appName = spinePublishing.artifactPrefix.replace("-", "")
+
+/** The names of the published modules defined the parent project. */
+val modules: Set<String> = spinePublishing.modules
+
+/**
+ * A callback for distribution archive tasks that prepends [appName] to the file name,
+ * if the file is an archive of a project module. Otherwise, the file name is intact.
+ *
+ * This is used to make archives with our code more visible and grouped together (by their names)
+ * under the `lib` folder.
+ */
+fun addPrefixIfModule(fcd: FileCopyDetails) {
+    val sourceName = fcd.sourceName
+    val isModule = modules.any { sourceName.startsWith("$it-") }
+    if (isModule) {
+        fcd.name = "$appName-$sourceName"
+    }
+}
 
 tasks.distZip {
     archiveFileName.set("${appName}.zip")
+    eachFile {
+        addPrefixIfModule(this)
+    }
 }
 
 tasks.distTar {
     archiveFileName.set("${appName}.tar")
+    eachFile {
+        addPrefixIfModule(this)
+    }
 }
 
 application {
@@ -123,7 +153,6 @@ publishing {
 
             setArtifacts(project.configurations.getAt(setupArchiveConfig).allArtifacts)
         }
-
         create("fat-jar", MavenPublication::class) {
             groupId = pGroup
             artifactId = "$appName-fat-cli"
@@ -148,15 +177,14 @@ tasks.shadowJar {
     mergeServiceFiles("desc.ref")
 }
 
-val createVersionFile: Task by tasks.getting
-tasks.sourceJar {
-    dependsOn(createVersionFile)
+afterEvaluate {
+    val createVersionFile: Task by tasks.getting
+    @Suppress("UNUSED_VARIABLE")
+    val sourcesJar: Task by tasks.getting {
+        dependsOn(createVersionFile)
+    }
 }
 
 // See https://github.com/johnrengelman/shadow/issues/153.
 tasks.shadowDistTar.get().enabled = false
 tasks.shadowDistZip.get().enabled = false
-
-artifacts {
-    archives(tasks.shadowJar)
-}

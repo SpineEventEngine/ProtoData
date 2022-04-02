@@ -24,11 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.publish
+package io.spine.internal.dependency
 
 /**
- * Popular names of Gradle configurations.
+ * Gradle TestKit extension for Google Truth.
+ *
+ * Source code:
+ * https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/tree/main/testkit-truth
+ *
+ * Usage description:
+ * https://dev.to/autonomousapps/gradle-all-the-way-down-testing-your-gradle-plugin-with-gradle-testkit-2hmc
  */
-internal object ConfigurationName {
-    const val archives = "archives"
+@Suppress("unused")
+object TestKitTruth {
+    private const val version = "1.1"
+    const val lib = "com.autonomousapps:testkit-truth:$version"
 }

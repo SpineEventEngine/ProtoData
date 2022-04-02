@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.86")
+val baseVersion: String by extra("2.0.0-SNAPSHOT.88")
 val coreVersion: String by extra("2.0.0-SNAPSHOT.91")
 
 val mcVersion: String by extra("2.0.0-SNAPSHOT.88")
@@ -40,4 +40,4 @@ val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.90")
 val devProtoDataVersion: String by extra("0.1.2")
 
 // The version of ProtoData being developed.
-val protoDataVersion: String by extra("0.2.2")
+val protoDataVersion: String by extra("0.2.3")

@@ -32,8 +32,8 @@ import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
-import io.spine.internal.gradle.publish.PublishExtension
 import io.spine.internal.gradle.publish.PublishingRepos
+import io.spine.internal.gradle.publish.SpinePublishing
 import io.spine.internal.gradle.publish.spinePublishing
 import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
@@ -60,20 +60,15 @@ val devProtoDataVersion: String by extra
 
 plugins {
     kotlin("jvm")
-    io.spine.internal.dependency.Dokka.apply {
-        id(pluginId) version(version)
-    }
+    val dokka = io.spine.internal.dependency.Dokka
+    id(dokka.pluginId) version(dokka.version)
     idea
     jacoco
     `force-jacoco`
 }
 
 spinePublishing {
-    targetRepositories.addAll(
-        PublishingRepos.gitHub("ProtoData"),
-        PublishingRepos.cloudArtifactRegistry
-    )
-    projectsToPublish.addAll(
+    modules = setOf(
         "cli",
         "compiler",
         "protoc",
@@ -81,7 +76,11 @@ spinePublishing {
         "gradle-api",
         "test-env"
     )
-    customPrefix.set("protodata-")
+    destinations = setOf(
+        PublishingRepos.gitHub("ProtoData"),
+        PublishingRepos.cloudArtifactRegistry
+    )
+    artifactPrefix = "protodata-"
 }
 
 allprojects {
@@ -96,6 +95,7 @@ allprojects {
 
     repositories.applyStandard()
     repositories.applyGitHubPackages("base-types", rootProject)
+    repositories.applyGitHubPackages("core-java", rootProject)
 
     configurations.all {
         resolutionStrategy {
@@ -107,7 +107,6 @@ allprojects {
 }
 
 subprojects {
-
     apply {
         plugin("kotlin")
         plugin(Dokka.pluginId)
@@ -174,7 +173,7 @@ JacocoConfig.applyTo(project)
  * Collect `publishToMavenLocal` tasks for all subprojects that are specified for
  * publishing in the root project.
  */
-val projectsToPublish: Set<String> = the<PublishExtension>().projectsToPublish.get()
+val projectsToPublish: Set<String> = the<SpinePublishing>().modules
 val localPublish by tasks.registering {
     /*
        Integration tests need the plugin subproject published to Maven Local too
