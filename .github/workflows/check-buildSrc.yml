@@ -1,0 +1,24 @@
+# Ensures that `buildSrc` directories are the same under:
+#  - the root of the project;
+#  - integration tests directory (`tests`).
+
+name: Check buildSrc copies
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Pull config
+        run: git submodule update --init --recursive
+
+      - name: Check root and `tests` copies are the same
+        shell: bash
+        run: ./config/scripts/compare-dirs.sh ./buildSrc ./tests/buildSrc
