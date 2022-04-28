@@ -33,6 +33,7 @@ import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
+import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.SpinePublishing
 import io.spine.internal.gradle.publish.spinePublishing
@@ -141,20 +142,7 @@ subprojects {
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = javaVersion
-            freeCompilerArgs = listOf(
-                "-Xskip-prerelease-check",
-                "-Xjvm-default=all",
-                "-Xinline-classes",
-                "-opt-in=" +
-                        "kotlin.contracts.ExperimentalContracts," +
-                        "kotlin.io.path.ExperimentalPathApi," +
-                        "kotlin.ExperimentalUnsignedTypes," +
-                        "kotlin.ExperimentalStdlibApi," +
-                        "kotlin.experimental.ExperimentalTypeInference",
-            )
-        }
+        setFreeCompilerArgs()
     }
 
     val dokkaJavadoc by tasks.getting(DokkaTask::class)
