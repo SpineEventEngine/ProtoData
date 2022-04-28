@@ -32,6 +32,7 @@ import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.kotlin.applyJvmToolchain
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.SpinePublishing
 import io.spine.internal.gradle.publish.spinePublishing
@@ -136,22 +137,22 @@ subprojects {
     val javaVersion = JavaVersion.VERSION_11.toString()
     kotlin {
         explicitApi()
-        jvmToolchain {
-            (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(javaVersion))
-        }
+        applyJvmToolchain(javaVersion)
     }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = javaVersion
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-Xopt-in=" +
+            freeCompilerArgs = listOf(
+                "-Xskip-prerelease-check",
+                "-Xjvm-default=all",
+                "-Xinline-classes",
+                "-opt-in=" +
+                        "kotlin.contracts.ExperimentalContracts," +
                         "kotlin.io.path.ExperimentalPathApi," +
                         "kotlin.ExperimentalUnsignedTypes," +
                         "kotlin.ExperimentalStdlibApi," +
                         "kotlin.experimental.ExperimentalTypeInference",
-                "-Xinline-classes",
-                "-Xjvm-default=all"
             )
         }
     }
