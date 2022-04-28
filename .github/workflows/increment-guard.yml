@@ -19,6 +19,7 @@ jobs:
         with:
           java-version: 11
           distribution: zulu
+          cache: gradle
 
       - name: Pull config
         run: git submodule update --init --recursive

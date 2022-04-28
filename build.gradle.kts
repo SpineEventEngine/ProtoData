@@ -60,8 +60,8 @@ val devProtoDataVersion: String by extra
 
 plugins {
     kotlin("jvm")
-    val dokka = io.spine.internal.dependency.Dokka
-    id(dokka.pluginId) version(dokka.version)
+    val dokkaPlugin = io.spine.internal.dependency.Dokka.GradlePlugin
+    id(dokkaPlugin.id)
     idea
     jacoco
     `force-jacoco`
@@ -109,7 +109,7 @@ allprojects {
 subprojects {
     apply {
         plugin("kotlin")
-        plugin(Dokka.pluginId)
+        plugin(Dokka.GradlePlugin.id)
     }
 
     LicenseReporter.generateReportIn(project)
