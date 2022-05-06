@@ -32,14 +32,14 @@ import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import io.spine.protodata.gradle.Artifacts
+import io.spine.protodata.gradle.CleanTask
+import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.gradle.DevMode
 import io.spine.protodata.gradle.LaunchTask
-import io.spine.protodata.gradle.CodegenSettings
-import io.spine.protodata.gradle.CleanTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
-import io.spine.protodata.gradle.Names.VERSION_RESOURCE
+import io.spine.tools.code.manifest.Version
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -96,8 +96,8 @@ public class Plugin : GradlePlugin<Project> {
         @JvmStatic
         @VisibleForTesting
         public fun readVersion(): String {
-            val resource = Plugin::class.java.classLoader.getResource(VERSION_RESOURCE)!!
-            return resource.readText()
+            val version = Version.fromManifestOf(Plugin::class.java).value
+            return version
         }
     }
 }
