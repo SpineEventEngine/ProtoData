@@ -40,7 +40,7 @@ plugins {
 }
 
 /**
- * Obtains a string value of a [Sysmtem] property with the given key.
+ * Obtains a string value of a [System] property with the given key.
  */
 fun prop(key: String): String = System.getProperties()[key].toString()
 
@@ -66,7 +66,7 @@ val spinePublishing = rootProject.the<SpinePublishing>()
 val artifactPrefix = spinePublishing.artifactPrefix
 
 /**
- * Obtains the imlementation title for the project using project group,
+ * Obtains the implementation title for the project using project group,
  * artifact prefix from [SpinePublishing], and the name of the project to which
  * this script plugin is applied.
  */
@@ -153,7 +153,7 @@ tasks.jar {
  * Makes Gradle ignore the [BUILD_TIMESTAMP] attribute during normalization.
  *
  * See [Java META-INF normalization](https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:meta_inf_normalization)
- * sectio of the Gradle documentation for details.
+ * section of the Gradle documentation for details.
  */
 normalization {
     runtimeClasspath {
