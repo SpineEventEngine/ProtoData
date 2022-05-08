@@ -29,6 +29,8 @@ package io.spine.internal.gradle.publish
 import io.spine.internal.gradle.Credentials
 import io.spine.internal.gradle.Repository
 import org.gradle.api.Project
+import org.apache.tools.ant.taskdefs.condition.Os
+import net.lingala.zip4j.ZipFile
 
 /**
  * Maven repositories of Spine Event Engine projects hosted at GitHub Packages.
@@ -73,22 +75,40 @@ private fun Project.credentialsWithToken(githubActor: String) = Credentials(
 private fun Project.readGitHubToken(): String {
     val githubToken: String? = System.getenv("GITHUB_TOKEN")
     return if (githubToken.isNullOrEmpty()) {
-        // Use the personal access token for the `developers@spine.io` account.
-        // Only has the permission to read public GitHub packages.
-        val targetDir = "${buildDir}/token"
-        file(targetDir).mkdirs()
-        val fileToUnzip = "${rootDir}/buildSrc/aus.weis"
-
-        logger.info("GitHub Packages: reading token " +
-                "by unzipping `$fileToUnzip` into `$targetDir`.")
-        exec {
-            // Unzip with password "123", allow overriding, quietly,
-            // into the target dir, the given archive.
-            commandLine("unzip", "-P", "123", "-oq", "-d", targetDir, fileToUnzip)
-        }
-        val file = file("$targetDir/token.txt")
-        file.readText()
+        readTokenFromArchive()
     } else {
         githubToken
     }
+}
+
+/**
+ * Read the personal access token for the `developers@spine.io` account which
+ * has only the permission to read publish GitHub packages.
+ *
+ * The token is extracted from the archive called `aus.weis` stored under `buildSrc`.
+ * The archive has such an unusual name to avoid scanning for tokens placed in reposiotories
+ * which is performed by GitHub. Since we do not violate any security, it is OK to
+ * use such a workaround.
+ */
+private fun Project.readTokenFromArchive(): String {
+    val targetDir = "${buildDir}/token"
+    file(targetDir).mkdirs()
+    val fileToUnzip = "${rootDir}/buildSrc/aus.weis"
+
+    logger.info("GitHub Packages: reading token " +
+            "by unzipping `$fileToUnzip` into `$targetDir`.")
+    val pass = "123"
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        val zipFile = ZipFile(fileToUnzip, pass.toCharArray())
+        zipFile.extractAll(targetDir)
+    } else {
+        exec {
+            // Unzip with password "123", allow overriding, quietly,
+            // into the target dir, the given archive.
+            commandLine("unzip", "-P", pass, "-oq", "-d", targetDir, fileToUnzip)
+        }
+    }
+    val file = file("$targetDir/token.txt")
+    val result = file.readText()
+    return result
 }
