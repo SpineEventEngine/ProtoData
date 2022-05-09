@@ -96,7 +96,7 @@ class `ProtoData Gradle plugin should` {
             .fromResources(resourceDir)
             .replace("@PROTODATA_PLUGIN_ID@", GRADLE_PLUGIN_ID)
             .replace("@PROTODATA_VERSION@", version)
-            .enableRunnerDebug()
+            //.enableRunnerDebug()
             .copyBuildSrc()
         project = builder.create()
     }
