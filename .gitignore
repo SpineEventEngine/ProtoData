@@ -41,3 +41,4 @@ hs_err_pid*
 **/generated
 
 tests/in-place-consumer/proto-gen/**
+tests/_out/**
