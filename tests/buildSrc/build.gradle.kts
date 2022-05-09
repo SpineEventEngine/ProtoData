@@ -146,4 +146,7 @@ dependencies {
     implementation("gradle.plugin.com.google.protobuf:protobuf-gradle-plugin:$protobufPluginVersion")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}")
     implementation("org.jetbrains.dokka:dokka-base:${dokkaVersion}")
+
+    // https://github.com/srikanth-lingala/zip4j
+    implementation("net.lingala.zip4j:zip4j:2.10.0")
 }
