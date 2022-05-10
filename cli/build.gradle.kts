@@ -30,6 +30,7 @@ import io.spine.internal.gradle.publish.SpinePublishing
 
 plugins {
     application
+    `version-to-resources`
     `write-manifest`
     `build-proto-model`
     `maven-publish`
