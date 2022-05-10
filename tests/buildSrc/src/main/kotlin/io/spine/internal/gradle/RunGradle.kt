@@ -159,7 +159,7 @@ open class RunGradle : DefaultTask() {
     }
 
     private fun buildScript(): String {
-        val runsOnWindows = OperatingSystem.current().isWindows()
+        val runsOnWindows = OperatingSystem.current().isWindows
         return if (runsOnWindows) "gradlew.bat" else "gradlew"
     }
 
