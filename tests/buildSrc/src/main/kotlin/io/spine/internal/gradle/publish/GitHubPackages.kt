@@ -29,7 +29,6 @@ package io.spine.internal.gradle.publish
 import io.spine.internal.gradle.Credentials
 import io.spine.internal.gradle.Repository
 import org.gradle.api.Project
-import org.apache.tools.ant.taskdefs.condition.Os
 import net.lingala.zip4j.ZipFile
 
 /**
@@ -95,19 +94,10 @@ private fun Project.readTokenFromArchive(): String {
     file(targetDir).mkdirs()
     val fileToUnzip = "${rootDir}/buildSrc/aus.weis"
 
-    logger.info("GitHub Packages: reading token " +
-            "by unzipping `$fileToUnzip` into `$targetDir`.")
-    val pass = "123"
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        val zipFile = ZipFile(fileToUnzip, pass.toCharArray())
-        zipFile.extractAll(targetDir)
-    } else {
-        exec {
-            // Unzip with password "123", allow overriding, quietly,
-            // into the target dir, the given archive.
-            commandLine("unzip", "-P", pass, "-oq", "-d", targetDir, fileToUnzip)
-        }
-    }
+    logger.info(
+        "GitHub Packages: reading token by unzipping `$fileToUnzip` into `$targetDir`."
+    )
+    ZipFile(fileToUnzip, "123".toCharArray()).extractAll(targetDir)
     val file = file("$targetDir/token.txt")
     val result = file.readText()
     return result
