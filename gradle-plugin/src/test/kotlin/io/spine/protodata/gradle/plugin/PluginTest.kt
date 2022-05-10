@@ -96,6 +96,13 @@ class `ProtoData Gradle plugin should` {
             .fromResources(resourceDir)
             .replace("@PROTODATA_PLUGIN_ID@", GRADLE_PLUGIN_ID)
             .replace("@PROTODATA_VERSION@", version)
+            /* Uncomment the following if you need to debug the build process.
+               Please note that:
+                 1) Test will run much slower.
+                 2) Under Windows it may cause this issue to occur:
+                    https://github.com/gradle/native-platform/issues/274
+               After finishing the debug, please comment out this call again. */    
+            //.enableRunnerDebug()
             .copyBuildSrc()
         project = builder.create()
     }

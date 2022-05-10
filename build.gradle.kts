@@ -32,6 +32,8 @@ import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.kotlin.applyJvmToolchain
+import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.SpinePublishing
 import io.spine.internal.gradle.publish.spinePublishing
@@ -60,8 +62,8 @@ val devProtoDataVersion: String by extra
 
 plugins {
     kotlin("jvm")
-    val dokka = io.spine.internal.dependency.Dokka
-    id(dokka.pluginId) version(dokka.version)
+    val dokkaPlugin = io.spine.internal.dependency.Dokka.GradlePlugin
+    id(dokkaPlugin.id)
     idea
     jacoco
     `force-jacoco`
@@ -109,7 +111,7 @@ allprojects {
 subprojects {
     apply {
         plugin("kotlin")
-        plugin(Dokka.pluginId)
+        plugin(Dokka.GradlePlugin.id)
     }
 
     LicenseReporter.generateReportIn(project)
@@ -136,24 +138,11 @@ subprojects {
     val javaVersion = JavaVersion.VERSION_11.toString()
     kotlin {
         explicitApi()
-        jvmToolchain {
-            (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(javaVersion))
-        }
+        applyJvmToolchain(javaVersion)
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = javaVersion
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-Xopt-in=" +
-                        "kotlin.io.path.ExperimentalPathApi," +
-                        "kotlin.ExperimentalUnsignedTypes," +
-                        "kotlin.ExperimentalStdlibApi," +
-                        "kotlin.experimental.ExperimentalTypeInference",
-                "-Xinline-classes",
-                "-Xjvm-default=all"
-            )
-        }
+        setFreeCompilerArgs()
     }
 
     val dokkaJavadoc by tasks.getting(DokkaTask::class)

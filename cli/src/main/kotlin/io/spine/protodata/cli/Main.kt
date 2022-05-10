@@ -39,7 +39,6 @@ import com.github.ajalt.clikt.parameters.types.path
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
-import io.spine.io.Resource
 import io.spine.protodata.Pipeline
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
@@ -51,19 +50,11 @@ import io.spine.protodata.option.OptionsProvider
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.tools.code.manifest.Version
 import java.io.File
 import java.io.File.pathSeparator
 import java.nio.file.Path
 import kotlin.system.exitProcess
-
-/**
- * The resource file containing the version of ProtoData.
- *
- * Such a resource name might be duplicated in other places in ProtoData code base.
- * The reason for this is to avoid creating extra dependencies just to get the version number.
- * Search by the string value of this constant when making changes.
- */
-private const val VERSION_FILE_NAME = "version.txt"
 
 /**
  * Launches the CLI application.
@@ -73,10 +64,7 @@ private const val VERSION_FILE_NAME = "version.txt"
 public fun main(args: Array<String>): Unit =
     Run(readVersion()).main(args)
 
-private fun readVersion(): String {
-    val versionFile = Resource.file(VERSION_FILE_NAME, Run::class.java.classLoader)
-    return versionFile.read()
-}
+private fun readVersion(): String = Version.fromManifestOf(Run::class.java).value
 
 /**
  * The main CLI command which performs the ProtoData code generation tasks.

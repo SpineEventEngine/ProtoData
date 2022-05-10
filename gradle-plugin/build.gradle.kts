@@ -32,6 +32,7 @@ plugins {
     `maven-publish`
     id("com.gradle.plugin-publish").version("0.18.0")
     `version-to-resources`
+    `write-manifest`
     jacoco
 }
 
@@ -42,6 +43,8 @@ dependencies {
     implementation(gradleKotlinDsl())
     implementation(Protobuf.GradlePlugin.lib)
     api(project(":gradle-api"))
+
+    implementation("io.spine.tools:spine-tool-base:$toolBaseVersion")
 
     testImplementation("io.spine.tools:spine-plugin-base:$toolBaseVersion")
     testImplementation("io.spine.tools:spine-plugin-testlib:$toolBaseVersion")

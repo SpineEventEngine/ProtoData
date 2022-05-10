@@ -31,6 +31,7 @@ import io.spine.internal.gradle.publish.SpinePublishing
 plugins {
     application
     `version-to-resources`
+    `write-manifest`
     `build-proto-model`
     `maven-publish`
     id("com.github.johnrengelman.shadow").version("7.1.2")
@@ -175,14 +176,6 @@ tasks.publish {
 
 tasks.shadowJar {
     mergeServiceFiles("desc.ref")
-}
-
-afterEvaluate {
-    val createVersionFile: Task by tasks.getting
-    @Suppress("UNUSED_VARIABLE")
-    val sourcesJar: Task by tasks.getting {
-        dependsOn(createVersionFile)
-    }
 }
 
 // See https://github.com/johnrengelman/shadow/issues/153.

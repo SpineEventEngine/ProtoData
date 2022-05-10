@@ -32,15 +32,6 @@ package io.spine.protodata.gradle
 public object Names {
 
     /**
-     * The resource file containing the version of ProtoData.
-     *
-     * Such a resource name might be duplicated in other places in ProtoData code base.
-     * The reason for this is to avoid creating an extra dependency for the Gradle plugin,
-     * so that the users wouldn't have to declare a custom Maven repository to use the plugin.
-     */
-    public const val VERSION_RESOURCE: String = "version.txt"
-
-    /**
      * The name of the `protoc` plugin exposed by ProtoData.
      */
     public const val PROTOC_PLUGIN: String = "protodata"
