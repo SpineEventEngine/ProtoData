@@ -75,7 +75,7 @@ fun implementationTitle() = "${project.group}:$artifactPrefix${project.name}"
 /**
  * The name of the manifest attribute holding the timestamp of the build.
  */
-val BUILD_TIMESTAMP = "Build-Timestamp"
+val buildTimestampAttr = "Build-Timestamp"
 
 /**
  * The attributes we put into the JAR manifest.
@@ -85,7 +85,7 @@ val BUILD_TIMESTAMP = "Build-Timestamp"
  */
 val manifestAttributes = mapOf(
     "Built-By" to prop("user.name"),
-    BUILD_TIMESTAMP to currentTime(),
+    buildTimestampAttr to currentTime(),
     "Created-By" to "Gradle ${gradle.gradleVersion}",
     "Build-Jdk" to buildJdk(),
     "Build-OS" to buildOs(),
@@ -150,7 +150,7 @@ tasks.jar {
 }
 
 /**
- * Makes Gradle ignore the [BUILD_TIMESTAMP] attribute during normalization.
+ * Makes Gradle ignore the [buildTimestampAttr] attribute during normalization.
  *
  * See [Java META-INF normalization](https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:meta_inf_normalization)
  * section of the Gradle documentation for details.
@@ -158,7 +158,7 @@ tasks.jar {
 normalization {
     runtimeClasspath {
         metaInf {
-            ignoreAttribute(BUILD_TIMESTAMP)
+            ignoreAttribute(buildTimestampAttr)
         }
     }
 }
