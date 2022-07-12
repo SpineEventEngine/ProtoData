@@ -48,9 +48,9 @@ class `ConfigurationFormat should` {
         assertThat(PROTO_JSON.extensions)
             .containsExactly("pb.json")
         assertThat(PROTO_BINARY.extensions)
-            .containsExactly("pb", "bin")
+            .containsExactly("bin")
         assertThat(YAML.extensions)
-            .containsExactly("yml", "yaml")
+            .containsExactly("yml")
         assertThat(PLAIN.extensions)
             .isEmpty()
     }
