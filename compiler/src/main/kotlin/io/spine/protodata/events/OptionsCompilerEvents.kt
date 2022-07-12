@@ -35,6 +35,7 @@ import io.spine.base.EventMessage
 import io.spine.protobuf.AnyPacker
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.Option
+import java.util.*
 
 /**
  * Yields events regarding a set of options.
@@ -49,15 +50,30 @@ internal suspend fun SequenceScope<EventMessage>.produceOptionEvents(
     ctor: (Option) -> EventMessage
 ) {
     options.allFields.forEach { (optionDescriptor, value) ->
-        val optionValue = fieldToAny(optionDescriptor, value)
-        val option = Option.newBuilder()
-            .setName(optionDescriptor.name)
-            .setNumber(optionDescriptor.number)
-            .setType(optionDescriptor.type())
-            .setValue(optionValue)
-            .build()
-        yield(ctor(option))
+        if(value is Collection<*>) {
+            value.forEach {
+                val option = toOption(optionDescriptor, it!!)
+                yield(ctor(option))
+            }
+        } else {
+            val option = toOption(optionDescriptor, value)
+            yield(ctor(option))
+        }
     }
+}
+
+private fun toOption(
+    optionDescriptor: FieldDescriptor,
+    value: Any
+): Option {
+    val optionValue = fieldToAny(optionDescriptor, value)
+    val option = Option.newBuilder()
+        .setName(optionDescriptor.name)
+        .setNumber(optionDescriptor.number)
+        .setType(optionDescriptor.type())
+        .setValue(optionValue)
+        .build()
+    return option
 }
 
 private fun fieldToAny(field: FieldDescriptor, value: Any): com.google.protobuf.Any =
