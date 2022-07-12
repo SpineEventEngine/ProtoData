@@ -51,6 +51,14 @@ dependencies {
     testImplementation(JUnit.params)
 }
 
+modelCompiler {
+    java {
+        codegen {
+            validation { skipValidation() }
+        }
+    }
+}
+
 apply<IncrementGuard>()
 
 tasks.withType<CheckVersionIncrement> {
