@@ -35,7 +35,6 @@ import io.spine.base.EventMessage
 import io.spine.protobuf.AnyPacker
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.Option
-import java.util.*
 
 /**
  * Yields events regarding a set of options.
