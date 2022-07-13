@@ -10,6 +10,8 @@ option java_outer_classname = "DoctorProto";
 option java_multiple_files = true;
 
 import "spine/time/time.proto";
+
+import "google/protobuf/descriptor.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
@@ -98,4 +100,14 @@ message PersonName {
 // Please, DO NOT delete this type.
 //
 message DeleteMe_ {
+}
+
+extend google.protobuf.FieldOptions {
+
+    repeated string rhyme = 98765;
+}
+
+message Word {
+
+    string test = 1 [(rhyme) = "best", (rhyme) = "west", (rhyme) = "nest"];
 }

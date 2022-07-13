@@ -224,6 +224,19 @@ class `'CompilerEvents' should` {
             )
     }
 
+    @Test
+    fun `parse repeated values of custom options`() {
+        assertEmits(
+            TypeEntered::class,
+            FieldEntered::class,
+            FieldOptionDiscovered::class,
+            FieldOptionDiscovered::class,
+            FieldOptionDiscovered::class,
+            FieldExited::class,
+            TypeExited::class,
+        )
+    }
+
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
         assertThat(events)
