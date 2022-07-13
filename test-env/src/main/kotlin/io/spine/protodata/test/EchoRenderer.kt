@@ -32,7 +32,7 @@ import io.spine.protodata.config.configAs
 import io.spine.tools.code.CommonLanguages.any
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.tesst.Echo
+import io.spine.protodata.test.Echo
 import io.spine.time.toInstant
 import kotlin.io.path.Path
 
