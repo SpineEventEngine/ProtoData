@@ -90,27 +90,27 @@
      * **Project URL:** [http://github.com/square/javapoet/](http://github.com/square/javapoet/)
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -377,19 +377,11 @@
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.2.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.46.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -401,15 +393,7 @@
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -421,19 +405,11 @@
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.2.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.46.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -756,7 +732,7 @@
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jul 12 20:50:17 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jul 13 09:43:07 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -846,27 +822,27 @@ This report was generated on **Tue Jul 12 20:50:17 EEST 2022** using [Gradle-Lic
      * **Project URL:** [http://github.com/square/javapoet/](http://github.com/square/javapoet/)
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1126,19 +1102,11 @@ This report was generated on **Tue Jul 12 20:50:17 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.2.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.46.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1150,15 +1118,7 @@ This report was generated on **Tue Jul 12 20:50:17 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1170,19 +1130,11 @@ This report was generated on **Tue Jul 12 20:50:17 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.2.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.46.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1504,7 +1456,7 @@ This report was generated on **Tue Jul 12 20:50:17 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jul 12 20:50:18 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jul 13 09:43:08 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -1594,27 +1546,27 @@ This report was generated on **Tue Jul 12 20:50:18 EEST 2022** using [Gradle-Lic
      * **Project URL:** [http://github.com/square/javapoet/](http://github.com/square/javapoet/)
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1878,19 +1830,11 @@ This report was generated on **Tue Jul 12 20:50:18 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.2.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.46.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1902,15 +1846,7 @@ This report was generated on **Tue Jul 12 20:50:18 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -1922,19 +1858,11 @@ This report was generated on **Tue Jul 12 20:50:18 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.2.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
 1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.46.0.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -2256,7 +2184,7 @@ This report was generated on **Tue Jul 12 20:50:18 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jul 12 20:50:19 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jul 13 09:43:10 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -2378,7 +2306,7 @@ This report was generated on **Tue Jul 12 20:50:19 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/google/j2objc/](https://github.com/google/j2objc/)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.protobuf. **Name** : protobuf-java. **Version** : 3.19.2.
+1.  **Group** : com.google.protobuf. **Name** : protobuf-java. **Version** : 3.19.1.
      * **Project URL:** [https://developers.google.com/protocol-buffers/](https://developers.google.com/protocol-buffers/)
      * **License:** [3-Clause BSD License](https://opensource.org/licenses/BSD-3-Clause)
 
@@ -2402,27 +2330,27 @@ This report was generated on **Tue Jul 12 20:50:19 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/korlibs/korge-next](https://github.com/korlibs/korge-next)
      * **License:** [MIT](https://raw.githubusercontent.com/korlibs/korge-next/master/korge/LICENSE.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -2691,7 +2619,7 @@ This report was generated on **Tue Jul 12 20:50:19 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jul 12 20:50:20 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jul 13 09:43:14 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -2935,27 +2863,27 @@ This report was generated on **Tue Jul 12 20:50:20 EEST 2022** using [Gradle-Lic
      * **Project URL:** [http://commons.apache.org/lang/](http://commons.apache.org/lang/)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -3236,7 +3164,7 @@ This report was generated on **Tue Jul 12 20:50:20 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jul 12 20:50:20 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jul 13 09:43:15 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -3431,27 +3359,27 @@ This report was generated on **Tue Jul 12 20:50:20 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/korlibs/korge-next](https://github.com/korlibs/korge-next)
      * **License:** [MIT](https://raw.githubusercontent.com/korlibs/korge-next/master/korge/LICENSE.txt)
 
-1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-api. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-context. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-protobuf-lite. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-stub. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -3725,7 +3653,7 @@ This report was generated on **Tue Jul 12 20:50:20 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jul 12 20:50:21 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jul 13 09:43:15 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -3823,7 +3751,7 @@ This report was generated on **Tue Jul 12 20:50:21 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
+1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -4115,10 +4043,6 @@ This report was generated on **Tue Jul 12 20:50:21 EEST 2022** using [Gradle-Lic
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.1.
-     * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
-     * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
-
-1.  **Group** : io.grpc. **Name** : grpc-core. **Version** : 1.43.2.
      * **Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
@@ -4465,4 +4389,4 @@ This report was generated on **Tue Jul 12 20:50:21 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Jul 12 20:50:22 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Jul 13 09:43:16 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
