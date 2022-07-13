@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package spine.protodata.tesst;
+package spine.protodata.test;
 
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.tesst";
+option java_package = "io.spine.protodata.test";
 option java_outer_classname = "EchoProto";
 option java_multiple_files = true;
 

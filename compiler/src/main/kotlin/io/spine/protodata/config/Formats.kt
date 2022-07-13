@@ -40,4 +40,10 @@ internal fun ConfigurationFormat.matches(file: Path): Boolean =
 
 @VisibleForTesting
 internal val ConfigurationFormat.extensions: Set<String>
-    get() = valueDescriptor.options.getExtension(ConfigurationProto.extension).toSet()
+    get() {
+        val value = valueDescriptor.options.getExtension(ConfigurationProto.extension)
+        return if (value.isEmpty())
+            setOf()
+        else
+            setOf(value)
+    }

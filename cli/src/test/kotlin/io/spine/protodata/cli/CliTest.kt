@@ -40,7 +40,7 @@ import io.spine.protodata.cli.given.CustomOptionRenderer
 import io.spine.protodata.cli.given.TestOptionProvider
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
-import io.spine.protodata.tesst.Echo
+import io.spine.protodata.test.Echo
 import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.EchoRenderer
 import io.spine.protodata.test.PlainStringRenderer
