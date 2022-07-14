@@ -69,7 +69,7 @@ extend google.protobuf.EnumValueOptions {
     //
     // Only applicable to the `ConfigurationFormat` enum.
     //
-    string extension = 73981 [(internal) = true];
+    repeated string extension = 73980 [(internal) = true];
 }
 
 // The format of a custom configuration for ProtoData.
@@ -79,7 +79,7 @@ enum ConfigurationFormat {
     RCF_UNKNOWN = 0;
 
     // A Protobuf message encoded in binary.
-    PROTO_BINARY = 1 [(extension) = "bin"];        /*(extension) = "pb",*/
+    PROTO_BINARY = 1 [(extension) = "pb", (extension) = "bin"];
 
     // A Protobuf message encoded in Protobuf JSON.
     PROTO_JSON = 2 [(extension) = "pb.json"];
@@ -88,7 +88,7 @@ enum ConfigurationFormat {
     JSON = 3 [(extension) = "json"];
 
     // A plain YAML value.
-    YAML = 4 [(extension) = "yml"];                /*, (extension) = "yaml"*/
+    YAML = 4 [(extension) = "yml", (extension) = "yaml"];
 
     // A plain string value.
     PLAIN = 5;
