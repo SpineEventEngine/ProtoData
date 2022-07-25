@@ -35,6 +35,8 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.server.ServerEnvironment
+import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
@@ -69,8 +71,17 @@ public class Pipeline(
 
     /**
      * Executes the processing pipeline.
+     *
+     * The execution is performed in `Delivery.direct()` mode, meaning
+     * that no concurrent modification of entity states is allowed.
+     * Therefore, the execution of the code related to the signal processing
+     * should be single-threaded.
      */
     public operator fun invoke() {
+        ServerEnvironment
+            .`when`(Production::class.java)
+            .use(Delivery.direct())
+
         val contextBuilder = CodeGenerationContext.builder()
         plugins.forEach { contextBuilder.apply(it) }
         val codeGenContext = contextBuilder.build()
