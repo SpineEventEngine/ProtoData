@@ -48,6 +48,16 @@ dependencies {
     testImplementation(project(":test-env"))
 }
 
+// For some reason, `validation-runtime` dependency appears on both compile and runtime classpaths.
+// This expression explicitly excludes this dependency from the list.
+modelCompiler {
+    java {
+        codegen {
+            validation { skipValidation() }
+        }
+    }
+}
+
 /** The publishing settings from the root project. */
 val spinePublishing = rootProject.the<SpinePublishing>()
 

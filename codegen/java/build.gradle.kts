@@ -55,3 +55,13 @@ protobuf {
         }
     }
 }
+
+// For some reason, `validation-runtime` dependency appears on both compile and runtime classpaths.
+// This expression explicitly excludes this dependency from the list.
+modelCompiler {
+    java {
+        codegen {
+            validation { skipValidation() }
+        }
+    }
+}
