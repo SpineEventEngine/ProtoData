@@ -85,6 +85,7 @@ spinePublishing {
     artifactPrefix = "protodata-"
 }
 
+val coreVersion: String by extra
 allprojects {
     apply {
         from("$rootDir/version.gradle.kts")
@@ -102,7 +103,8 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             force(
-                io.spine.internal.dependency.Grpc.protobufPlugin
+                io.spine.internal.dependency.Grpc.protobufPlugin,
+                "io.spine:spine-server:$coreVersion"
             )
         }
     }
