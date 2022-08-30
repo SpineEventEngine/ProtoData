@@ -28,8 +28,8 @@ package io.spine.internal.gradle.publish
 
 import io.spine.internal.gradle.Credentials
 import io.spine.internal.gradle.Repository
-import org.gradle.api.Project
 import net.lingala.zip4j.ZipFile
+import org.gradle.api.Project
 
 /**
  * Maven repositories of Spine Event Engine projects hosted at GitHub Packages.
@@ -85,7 +85,7 @@ private fun Project.readGitHubToken(): String {
  * has only the permission to read public GitHub packages.
  *
  * The token is extracted from the archive called `aus.weis` stored under `buildSrc`.
- * The archive has such an unusual name to avoid scanning for tokens placed in reposiotories
+ * The archive has such an unusual name to avoid scanning for tokens placed in repositories
  * which is performed by GitHub. Since we do not violate any security, it is OK to
  * use such a workaround.
  */

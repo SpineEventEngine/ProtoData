@@ -24,24 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.github.pages
+package io.spine.internal.gradle.dokka
 
-object TaskName {
+import org.gradle.api.tasks.TaskContainer
+import org.jetbrains.dokka.gradle.DokkaTask
 
-    /**
-     * The name of the task which updates the GitHub Pages.
-     */
-    const val updateGitHubPages = "updateGitHubPages"
-
-    /**
-     * The name of the helper task to gather the generated Javadoc before updating
-     * GitHub Pages.
-     */
-    const val copyJavadoc = "copyJavadoc"
-
-    /**
-     * The name of the helper task to gather Dokka-generated documentation before
-     * updating GitHub Pages.
-     */
-    const val copyDokka = "copyDokka"
-}
+/**
+ * Finds the `dokkaHtml` Gradle task.
+ */
+fun TaskContainer.dokkaHtmlTask() = this.getByName("dokkaHtml") as DokkaTask

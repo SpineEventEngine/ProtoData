@@ -24,24 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.github.pages
+package io.spine.internal.gradle.git
 
-object TaskName {
-
-    /**
-     * The name of the task which updates the GitHub Pages.
-     */
-    const val updateGitHubPages = "updateGitHubPages"
-
-    /**
-     * The name of the helper task to gather the generated Javadoc before updating
-     * GitHub Pages.
-     */
-    const val copyJavadoc = "copyJavadoc"
-
-    /**
-     * The name of the helper task to gather Dokka-generated documentation before
-     * updating GitHub Pages.
-     */
-    const val copyDokka = "copyDokka"
+/**
+ * Contains information about a Git user.
+ *
+ * Determines the author and committer fields of a commit.
+ *
+ * @constructor throws an [IllegalArgumentException] if the name or the email
+ *              is an empty string.
+ */
+data class UserInfo(val name: String, val email: String) {
+    init {
+        require(name.isNotBlank()) { "Name cannot be an empty string." }
+        require(email.isNotBlank()) { "Email cannot be an empty string." }
+    }
 }
