@@ -27,6 +27,7 @@
 package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
+import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat.PLAIN
@@ -92,6 +93,7 @@ class `'Pipeline' should` {
         renderer = TestRenderer()
     }
 
+    @CanIgnoreReturnValue
     private fun write(path: String, code: String): Path {
         val file = srcRoot.resolve(path)
         file.parent.toFile().mkdirs()
@@ -251,8 +253,17 @@ class `'Pipeline' should` {
             .isTrue()
     }
 
+    /**
+     * Creates a new unique temp directory.
+     *
+     * JUnit reuses @TempDir from @BeforeEach and we need a fresh temp directory.
+     * See [the JUnit issue](https://github.com/junit-team/junit5/issues/1967).
+     */
+    private fun tempDir() = Files.createTempDirectory("destination")
+
     @Nested
     inner class `When given multiple source file sets` {
+
         @Test
         fun `preserve source set when copying files`() {
             val destination1 = tempDir()
@@ -315,15 +326,40 @@ class `'Pipeline' should` {
             assertThat(secondFile.readText())
                 .isEqualTo(expectedContent)
         }
-    }
+        @Test
+        fun `change files using insertion points`() {
+            val destination1 = tempDir()
+            val destination2 = tempDir()
+            val source2 = tempDir()
 
-    /**
-     * Creates a new unique temp directory.
-     *
-     * JUnit reuses @TempDir from @BeforeEach and we need a fresh temp directory.
-     * See [the JUnit issue](https://github.com/junit-team/junit5/issues/1967).
-     */
-    private fun tempDir() = Files.createTempDirectory("destination")
+            val expectedContent = "0987654321"
+            val existingFilePath = "io/spine/protodata/test/OnlyInFirstDir_.java"
+            write(existingFilePath, expectedContent)
+
+            Pipeline(
+                listOf(TestPlugin()),
+                listOf(
+                    JavaGenericInsertionPointPrinter(),
+                    PrependingRenderer()
+                ),
+                listOf(
+                    SourceFileSet.from(srcRoot, destination1),
+                    SourceFileSet.from(source2, destination2)
+                ),
+                request
+            )()
+
+            destination2.toFile().walkTopDown().forEach { println(it.name) }
+            println(destination2.resolve(existingFilePath))
+            assertThat(destination2.resolve(existingFilePath).exists())
+                .isFalse()
+            val writtenFile = destination1.resolve(existingFilePath)
+            assertThat(writtenFile.exists())
+                .isTrue()
+            assertThat(writtenFile.readText())
+                .contains(expectedContent)
+        }
+    }
 
     @Nested
     inner class `Fail to construct if` {
