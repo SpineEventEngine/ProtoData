@@ -57,7 +57,7 @@ import io.spine.server.under
 public class Pipeline(
     private val plugins: List<Plugin>,
     private val renderers:  List<Renderer>,
-    private val sources: SourceFileSet,
+    private val sources: List<SourceFileSet>,
     private val request: CodeGeneratorRequest,
     private val config: Configuration? = null
 ) {
@@ -95,11 +95,11 @@ public class Pipeline(
         val events = CompilerEvents.parse(request)
         protocContext.emitted(events)
 
-        renderers.forEach {
-            it.protoDataContext = codeGenContext
-            it.renderSources(sources)
+        renderers.forEach { r ->
+            r.protoDataContext = codeGenContext
+            sources.forEach(r::renderSources)
         }
-        sources.write()
+        sources.forEach { it.write() }
         protocContext.close()
         configurationContext.close()
         codeGenContext.close()

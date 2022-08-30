@@ -47,7 +47,7 @@ class `'SuppressRenderer' should` : WithSourceFileSet() {
             sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
-        val code = sources
+        val code = sources.first()
             .file(Path(JAVA_FILE))
             .code()
         assertThat(code)
@@ -61,13 +61,13 @@ class `'SuppressRenderer' should` : WithSourceFileSet() {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer()),
-            sources = this.sources,
+            sources = sources,
             request = CodeGeneratorRequest.getDefaultInstance(),
             config = Configuration.rawValue("""
                 {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
             """.trimIndent(), PROTO_JSON)
         )()
-        val code = sources
+        val code = sources.first()
             .file(Path(JAVA_FILE))
             .code()
         assertThat(code)

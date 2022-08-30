@@ -212,13 +212,13 @@ internal class Run(version: String) : CliktCommand(
 //@formatter:on
 
     override fun run() {
-        val sources = createSourceFileSet()
+        val sources = createSourceDirs()
         val plugins = loadPlugins()
         val renderer = loadRenderers()
         val registry = createRegistry()
         val codegenRequest = loadRequest(registry)
         val config = resolveConfig()
-        Pipeline(plugins, renderer, sources, codegenRequest, config)()
+        Pipeline(plugins, renderer, listOf(sources), codegenRequest, config)()
     }
 
     private fun resolveConfig(): Configuration? {
@@ -257,7 +257,7 @@ internal class Run(version: String) : CliktCommand(
         return registry
     }
 
-    private fun createSourceFileSet(): SourceFileSet {
+    private fun createSourceDirs(): SourceFileSet {
         checkPaths()
         val source = sourceRoot
         val target = (targetRoot ?: source)!!

@@ -40,7 +40,7 @@ internal const val JAVA_FILE = "java/org/example/Test.java"
  */
 abstract class WithSourceFileSet {
 
-    protected lateinit var sources: SourceFileSet
+    protected lateinit var sources: List<SourceFileSet>
         private set
 
     @BeforeEach
@@ -49,6 +49,6 @@ abstract class WithSourceFileSet {
         val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
         targetFile.parent.toFile().mkdirs()
         targetFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sources = SourceFileSet.from(path, path)
+        sources = listOf(SourceFileSet.from(path, path))
     }
 }
