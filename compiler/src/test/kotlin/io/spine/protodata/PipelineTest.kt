@@ -28,6 +28,8 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.protodata.config.Configuration
+import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
@@ -36,6 +38,7 @@ import io.spine.protodata.test.DeletedTypeView
 import io.spine.protodata.test.DeletingRenderer
 import io.spine.protodata.test.DocilePlugin
 import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.GenericInsertionPoint
 import io.spine.protodata.test.GreedyPolicy
 import io.spine.protodata.test.InternalAccessRenderer
@@ -44,11 +47,14 @@ import io.spine.protodata.test.Journey
 import io.spine.protodata.test.JsRenderer
 import io.spine.protodata.test.KtRenderer
 import io.spine.protodata.test.NoOpRenderer
+import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.TestRenderer
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createFile
+import kotlin.io.path.div
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
@@ -58,7 +64,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
-import java.lang.System
 
 class `'Pipeline' should` {
 
@@ -244,6 +249,72 @@ class `'Pipeline' should` {
             .isTrue()
         assertThat(destination.resolve(sourceFile.fileName).exists())
             .isTrue()
+    }
+
+    @Nested
+    inner class `When given multiple source file sets` {
+        @Test
+        fun `preserve source set when copying files`() {
+            val destination1 = tempDir()
+            val destination2 = tempDir()
+            val source2 = tempDir()
+            val secondSourceFile = source2 / "second.txt"
+            secondSourceFile.createFile().writeText("foo bar")
+
+            Pipeline(
+                listOf(TestPlugin()),
+                listOf(NoOpRenderer()),
+                listOf(
+                    SourceFileSet.from(srcRoot, destination1),
+                    SourceFileSet.from(source2, destination2)
+                ),
+                request
+            )()
+
+            assertThat(sourceFile.exists())
+                .isTrue()
+            assertThat(destination1.resolve(sourceFile.fileName).exists())
+                .isTrue()
+            assertThat(destination2.resolve(secondSourceFile.fileName).exists())
+                .isTrue()
+            assertThat(destination2.resolve(secondSourceFile.fileName).readText())
+                .isEqualTo(secondSourceFile.readText())
+
+            assertThat(destination1.resolve(secondSourceFile.fileName).exists())
+                .isFalse()
+            assertThat(destination2.resolve(sourceFile.fileName).exists())
+                .isFalse()
+        }
+
+        @Test
+        fun `generate new files by relative path`() {
+            val destination1 = tempDir()
+            val destination2 = tempDir()
+            val source2 = tempDir()
+
+            val expectedContent = "123456789"
+            Pipeline(
+                listOf(TestPlugin()),
+                listOf(PlainStringRenderer()),
+                listOf(
+                    SourceFileSet.from(srcRoot, destination1),
+                    SourceFileSet.from(source2, destination2)
+                ),
+                request,
+                Configuration.rawValue(expectedContent, PLAIN)
+            )()
+
+            val firstFile = destination1.resolve(ECHO_FILE)
+            val secondFile = destination2.resolve(ECHO_FILE)
+            assertThat(firstFile.exists())
+                .isTrue()
+            assertThat(secondFile.exists())
+                .isTrue()
+            assertThat(firstFile.readText())
+                .isEqualTo(expectedContent)
+            assertThat(secondFile.readText())
+                .isEqualTo(expectedContent)
+        }
     }
 
     /**
