@@ -56,7 +56,7 @@ import io.spine.server.under
 @Internal
 public class Pipeline(
     private val plugins: List<Plugin>,
-    private val renderers:  List<Renderer>,
+    private val renderers: List<Renderer>,
     private val sources: List<SourceFileSet>,
     private val request: CodeGeneratorRequest,
     private val config: Configuration? = null

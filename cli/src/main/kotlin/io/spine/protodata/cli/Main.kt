@@ -146,25 +146,36 @@ internal class Run(version: String) : CliktCommand(
         mustBeReadable = true
     ).required()
 
-    private val sourceRoot: Path? by option(Op.SOURCE_ROOT, "--src",
+    private val sourceRoots: List<Path>? by option(Op.SOURCE_ROOT, "--src",
         help = """
         The path to a directory which contains the source files to be processed.
-        Skip this argument if there is no initial source to modify.""".ti()
+        Skip this argument if there is no initial source to modify.
+        
+        Multiple directories can be listed separated by the `$pathSeparator` symbol. In such a case,
+        the number of directories must match the number of `--target-root` directories; source and
+        target directories are paired up according to the order they are provided in, so that
+        the files from first source are written to the first target and so on.
+        """.ti()
     ).path(
         mustExist = true,
         canBeFile = false,
         canBeSymlink = false
-    )
+    ).split(pathSeparator)
 
-    private val targetRoot: Path? by option("--target-root", "--destination", "-d",
+    private val targetRoots: List<Path>? by option("--target-root", "--destination", "-d",
         help = """
         The path where the processed files should be placed.
         May be the same as `${Op.SOURCE_ROOT}`. For editing files in-place, skip this option.
+        
+        Multiple directories can be listed separated by the `$pathSeparator` symbol. In such a case,
+        the number of directories must match the number of `--src` directories; source and
+        target directories are paired up according to the order they are provided in, so that
+        the files from first source are written to the first target and so on.
         """.ti()
     ).path(
         canBeFile = false,
         canBeSymlink = false
-    )
+    ).split(pathSeparator)
 
     private val classPath: List<Path>? by option("--user-classpath" ,"--ucp",
         help = """
@@ -212,13 +223,13 @@ internal class Run(version: String) : CliktCommand(
 //@formatter:on
 
     override fun run() {
-        val sources = createSourceDirs()
+        val sources = createSourceFileSets()
         val plugins = loadPlugins()
         val renderer = loadRenderers()
         val registry = createRegistry()
         val codegenRequest = loadRequest(registry)
         val config = resolveConfig()
-        Pipeline(plugins, renderer, listOf(sources), codegenRequest, config)()
+        Pipeline(plugins, renderer, sources, codegenRequest, config)()
     }
 
     private fun resolveConfig(): Configuration? {
@@ -257,21 +268,36 @@ internal class Run(version: String) : CliktCommand(
         return registry
     }
 
-    private fun createSourceDirs(): SourceFileSet {
+    private fun createSourceFileSets(): List<SourceFileSet> {
         checkPaths()
-        val source = sourceRoot
-        val target = (targetRoot ?: source)!!
-        return if (source == null) {
-            SourceFileSet.empty(target)
-        } else {
-            SourceFileSet.from(source, target)
-        }
+        val sources = sourceRoots
+        val targets = (targetRoots ?: sources)!!
+        return sources
+            ?.zip(targets)
+            ?.map { (s, t) -> SourceFileSet.from(s, t) }
+            ?: targets.oneSetWithNoFiles()
     }
 
+    private fun List<Path>.oneSetWithNoFiles() =
+        listOf(SourceFileSet.empty(first()))
+
     private fun checkPaths() {
-        if (sourceRoot == null && targetRoot == null) {
+        if (sourceRoots == null && targetRoots == null) {
             throw UsageError("Either source root or target root or both must be set.")
         }
+        if (sourceRoots == null && targetRoots!!.size != 1) {
+            throw UsageError(
+                "When not providing a source directory, only one target directory must be present."
+            )
+        }
+        sourceRoots?.let { sources -> targetRoots?.let { targets ->
+            if (sources.size != targets.size) {
+                throw UsageError(
+                    "Mismatched amount of directories. Given ${sourceRoots!!.size} sources " +
+                            "and ${targetRoots!!.size} targets."
+                )
+            }
+        }}
     }
 
     private fun loadPlugins() =
