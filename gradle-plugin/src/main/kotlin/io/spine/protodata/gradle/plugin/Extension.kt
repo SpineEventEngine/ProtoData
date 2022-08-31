@@ -35,18 +35,15 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.getPlugin
 import org.gradle.kotlin.dsl.listProperty
-import org.gradle.kotlin.dsl.property
 
 /**
  * The `protoData { }` Gradle extension.
  */
-@Suppress("UnstableApiUsage") // Gradle Property API.
-public class Extension(private val project: Project): CodegenSettings {
+public class Extension(internal val project: Project): CodegenSettings {
 
     public override fun plugins(vararg classNames: String) {
         plugins.addAll(classNames.toList())
@@ -96,7 +93,16 @@ public class Extension(private val project: Project): CodegenSettings {
         })
     }
 
+    @Deprecated("Use `subDirs` instead.")
     public override var subDir: String
+        get() = subDirProperty.get().first()
+        set(value) {
+            if (value.isNotEmpty()) {
+                subDirProperty.set(listOf(value))
+            }
+        }
+
+    public override var subDirs: List<String>
         get() = subDirProperty.get()
         set(value) {
             if (value.isNotEmpty()) {
@@ -104,8 +110,8 @@ public class Extension(private val project: Project): CodegenSettings {
             }
         }
 
-    private val subDirProperty: Property<String> =
-        factory.property<String>().convention("java")
+    private val subDirProperty: ListProperty<String> =
+        factory.listProperty<String>().convention(listOf("java"))
 
     public override var targetBaseDir: Any
         get() = targetBaseDirProperty.get()
@@ -122,7 +128,7 @@ public class Extension(private val project: Project): CodegenSettings {
      *
      * @see srcBaseDir for the rules for the source dir construction
      */
-    internal fun sourceDir(sourceSet: SourceSet): Provider<Directory> =
+    internal fun sourceDir(sourceSet: SourceSet): Provider<List<Directory>> =
         compileDir(sourceSet, srcBaseDirProperty)
 
     /**
@@ -130,11 +136,11 @@ public class Extension(private val project: Project): CodegenSettings {
      *
      * @see targetBaseDir for the rules for the target dir construction
      */
-    internal fun targetDir(sourceSet: SourceSet): Provider<Directory> =
+    internal fun targetDir(sourceSet: SourceSet): Provider<List<Directory>> =
         compileDir(sourceSet, targetBaseDirProperty)
 
-    private fun compileDir(sourceSet: SourceSet, base: DirectoryProperty): Provider<Directory> =
-        base.dir(sourceSet.name).map {
-            it.dir(subDirProperty).get() 
-        }
+    private fun compileDir(sourceSet: SourceSet, base: DirectoryProperty): Provider<List<Directory>> {
+        val sourceSetDir = base.dir(sourceSet.name)
+        return sourceSetDir.map { root -> subDirs.map { root.dir(it) } }
+    }
 }

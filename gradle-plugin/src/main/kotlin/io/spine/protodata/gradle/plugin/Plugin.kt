@@ -43,6 +43,7 @@ import io.spine.tools.code.manifest.Version
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.Directory
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.create
@@ -214,21 +215,32 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
 
 private fun Project.configureSourceSets(extension: Extension) {
     afterEvaluate {
-        sourceSets.forEach { sourceSet ->
-            val sourceDir = file(extension.sourceDir(sourceSet))
-            val targetDir = file(extension.targetDir(sourceSet))
-
-            sourceSet.java.srcDir(targetDir)
-            if (sourceDir != targetDir) {
-                val task = javaCompileFor(sourceSet)!!
-                task.source = task.source.filter { file -> !file.residesIn(sourceDir) }.asFileTree
-            }
-        }
+        sourceSets.forEach(extension::configureSourceSet)
     }
 }
 
+private fun Extension.configureSourceSet(sourceSet: SourceSet) {
+    val sourceDirs = sourceDir(sourceSet).getOrElse(listOf())
+    val targetDirs = targetDir(sourceSet).get()
+
+    sourceSet.java.srcDir(targetDirs)
+    if (sourceDirs.isEmpty()) {
+        return
+    }
+    val task = project.javaCompileFor(sourceSet)!!
+    sourceDirs.asSequence()
+        .zip(targetDirs.asSequence())
+        .filter { it.first != it.second }
+        .forEach { (sourceDir, _) ->
+            task.source = task.source.filter { file -> !file.residesIn(sourceDir) }.asFileTree
+        }
+}
+
+private fun File.residesIn(directory: Directory): Boolean =
+    residesIn(directory.asFile)
+
 private fun File.residesIn(directory: File): Boolean =
-    canonicalFile.startsWith(directory.canonicalFile)
+    canonicalFile.startsWith(directory.absolutePath)
 
 private fun Project.configureIdea(extension: Extension) {
     afterEvaluate {

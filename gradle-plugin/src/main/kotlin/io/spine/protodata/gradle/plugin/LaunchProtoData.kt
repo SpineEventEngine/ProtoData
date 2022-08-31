@@ -26,22 +26,21 @@
 
 package io.spine.protodata.gradle.plugin
 
+import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
-import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputDirectories
 
 /**
  * A task which executes a single ProtoData command.
@@ -73,12 +72,12 @@ public abstract class LaunchProtoData : JavaExec() {
      * May not be available, if `protoc` built-ins were turned off, resulting in no source code
      * being generated. In such a mode `protoc` worked only generating descriptor set files.
      */
-    @get:InputDirectory
+    @get:InputFiles
     @get:Optional
-    internal lateinit var source: Provider<Directory>
+    internal lateinit var source: Provider<List<Directory>>
 
-    @get:OutputDirectory
-    internal lateinit var target: Provider<Directory>
+    @get:OutputDirectories
+    internal lateinit var target: Provider<List<Directory>>
 
     @get:InputFiles
     internal lateinit var userClasspathConfig: Configuration
@@ -113,11 +112,11 @@ public abstract class LaunchProtoData : JavaExec() {
 
             if (source.isPresent) {
                 yield("--source-root")
-                yield(source.absolutePath)
+                yield(source.absolutePaths())
             }
 
             yield("--target-root")
-            yield(target.absolutePath)
+            yield(target.absolutePaths())
 
             val userCp = userClasspathConfig.asPath
             if (userCp.isNotEmpty()) {
@@ -147,19 +146,29 @@ public abstract class LaunchProtoData : JavaExec() {
     private inner class CleanAction : Action<Task> {
 
         override fun execute(t: Task) {
-            val sourceDir =
-                if (source.isPresent) source.get().asFile.absoluteFile
-                else null
-            val targetDir = target.get().asFile.absoluteFile
-            val differentDirs = sourceDir != targetDir
+            val sourceDirs = source.absoluteDirs()
+            val targetDirs = target.absoluteDirs()
 
-            if (differentDirs && targetDir.exists() && targetDir.list()!!.isNotEmpty()) {
-                logger.info("Cleaning target directory `$targetDir`.")
-                project.delete(targetDir)
+            if (sourceDirs.isEmpty()) {
+                return
             }
+            sourceDirs.asSequence()
+                .zip(targetDirs.asSequence())
+                .filter { (s, t) -> s != t }
+                .map { it.second }
+                .filter { it.exists() && it.list()!!.isNotEmpty() }
+                .forEach {
+                    logger.info("Cleaning target directory `$it`.")
+                    project.delete(it)
+                }
         }
     }
 }
 
-private val Provider<out FileSystemLocation>.absolutePath: String
-    get() = get().asFile.absolutePath
+private fun Provider<List<Directory>>.absoluteDirs() = takeIf { it.isPresent }
+    ?.get()
+    ?.map { it.asFile.absoluteFile }
+    ?: listOf()
+
+private fun Provider<List<Directory>>.absolutePaths(): String =
+    absoluteDirs().joinToString(pathSeparator)
