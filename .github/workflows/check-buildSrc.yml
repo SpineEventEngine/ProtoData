@@ -14,11 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Pull config
-        run: git submodule update --init --recursive
-
-      - name: Check root and `tests` copies are the same
+      - name: Check root and `tests` copies are the same.
         shell: bash
-        run: ./config/scripts/compare-dirs.sh ./buildSrc ./tests/buildSrc
+        run: ./script/same-dir.sh ./buildSrc ./tests/buildSrc
