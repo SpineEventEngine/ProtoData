@@ -74,7 +74,7 @@ public abstract class LaunchProtoData : JavaExec() {
      * May not be available, if `protoc` built-ins were turned off, resulting in no source code
      * being generated. In such a mode `protoc` worked only generating descriptor set files.
      *
-     * This property is deprecated. [sources] should be used in its stead. Accessing this property
+     * This property is deprecated. [sources] should be used instead of it. Accessing this property
      * delegates to [sources].
      */
     @get:InputDirectory
@@ -91,7 +91,7 @@ public abstract class LaunchProtoData : JavaExec() {
     /**
      * The path to the directory with the processed source code.
      *
-     * This property is deprecated. [targets] should be used in its stead. Accessing this property
+     * This property is deprecated. [targets] should be used instead of it. Accessing this property
      * delegates to [targets].
      */
     @get:OutputDirectory
