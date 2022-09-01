@@ -51,7 +51,7 @@ class `'SourceFile' with Java should` : WithSourceFileSet() {
 
     @BeforeEach
     fun createFile() {
-        file = sources.file(Path(JAVA_FILE))
+        file = sources.first().file(Path(JAVA_FILE))
     }
 
     @Nested

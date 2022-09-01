@@ -26,11 +26,11 @@
 
 package io.spine.protodata.gradle.plugin
 
+import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
-import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
@@ -41,6 +41,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.OutputDirectory
 
 /**
@@ -72,13 +73,52 @@ public abstract class LaunchProtoData : JavaExec() {
      *
      * May not be available, if `protoc` built-ins were turned off, resulting in no source code
      * being generated. In such a mode `protoc` worked only generating descriptor set files.
+     *
+     * This property is deprecated. [sources] should be used instead of it. Accessing this property
+     * delegates to [sources].
      */
     @get:InputDirectory
     @get:Optional
-    internal lateinit var source: Provider<Directory>
+    @Deprecated("Use `sources` instead.")
+    internal var source: Provider<Directory>
+        set(value) {
+            sources = value.map { listOf(it) }
+        }
+        get() {
+            return sources.map { it.first() }
+        }
 
+    /**
+     * The path to the directory with the processed source code.
+     *
+     * This property is deprecated. [targets] should be used instead of it. Accessing this property
+     * delegates to [targets].
+     */
     @get:OutputDirectory
-    internal lateinit var target: Provider<Directory>
+    @Deprecated("Use `targets` instead.")
+    internal var target: Provider<Directory>
+        set(value) {
+            targets = value.map { listOf(it) }
+        }
+        get() {
+            return targets.map { it.first() }
+        }
+
+    /**
+     * The paths to the directories with the generated source code.
+     *
+     * May not be available, if `protoc` built-ins were turned off, resulting in no source code
+     * being generated. In such a mode `protoc` worked only generating descriptor set files.
+     */
+    @get:InputFiles
+    @get:Optional
+    internal lateinit var sources: Provider<List<Directory>>
+
+    /**
+     * The paths to the directories where the source code processed by ProtoData should go.
+     */
+    @get:OutputDirectories
+    internal lateinit var targets: Provider<List<Directory>>
 
     @get:InputFiles
     internal lateinit var userClasspathConfig: Configuration
@@ -111,13 +151,13 @@ public abstract class LaunchProtoData : JavaExec() {
             yield("--request")
             yield(project.file(requestFile).absolutePath)
 
-            if (source.isPresent) {
+            if (sources.isPresent) {
                 yield("--source-root")
-                yield(source.absolutePath)
+                yield(sources.absolutePaths())
             }
 
             yield("--target-root")
-            yield(target.absolutePath)
+            yield(targets.absolutePaths())
 
             val userCp = userClasspathConfig.asPath
             if (userCp.isNotEmpty()) {
@@ -147,19 +187,29 @@ public abstract class LaunchProtoData : JavaExec() {
     private inner class CleanAction : Action<Task> {
 
         override fun execute(t: Task) {
-            val sourceDir =
-                if (source.isPresent) source.get().asFile.absoluteFile
-                else null
-            val targetDir = target.get().asFile.absoluteFile
-            val differentDirs = sourceDir != targetDir
+            val sourceDirs = sources.absoluteDirs()
+            val targetDirs = targets.absoluteDirs()
 
-            if (differentDirs && targetDir.exists() && targetDir.list()!!.isNotEmpty()) {
-                logger.info("Cleaning target directory `$targetDir`.")
-                project.delete(targetDir)
+            if (sourceDirs.isEmpty()) {
+                return
             }
+            sourceDirs.asSequence()
+                .zip(targetDirs.asSequence())
+                .filter { (s, t) -> s != t }
+                .map { it.second }
+                .filter { it.exists() && it.list()!!.isNotEmpty() }
+                .forEach {
+                    logger.info("Cleaning target directory `$it`.")
+                    project.delete(it)
+                }
         }
     }
 }
 
-private val Provider<out FileSystemLocation>.absolutePath: String
-    get() = get().asFile.absolutePath
+private fun Provider<List<Directory>>.absoluteDirs() = takeIf { it.isPresent }
+    ?.get()
+    ?.map { it.asFile.absoluteFile }
+    ?: listOf()
+
+private fun Provider<List<Directory>>.absolutePaths(): String =
+    absoluteDirs().joinToString(pathSeparator)

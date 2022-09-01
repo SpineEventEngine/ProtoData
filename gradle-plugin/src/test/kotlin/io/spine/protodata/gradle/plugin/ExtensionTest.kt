@@ -26,12 +26,15 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.google.common.truth.Correspondence.transforming
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.gradle.ProtobufPlugin
 import io.spine.protodata.gradle.CodegenSettings
 import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.div
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.tasks.SourceSet.MAIN_SOURCE_SET_NAME
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.getByType
@@ -100,10 +103,10 @@ class `Plugin extension should` {
         val subDir = "foobar"
 
         extension.srcBaseDir = basePath
-        extension.subDir = subDir
+        extension.subDirs = listOf(subDir)
 
         val sourceDir = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
-        assertThat(sourceDir.get().asFile.toPath())
+        assertThat(sourceDir.get().first().asFile.toPath())
             .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
     }
 
@@ -113,10 +116,40 @@ class `Plugin extension should` {
         val subDir = "foobar"
 
         extension.targetBaseDir = basePath
-        extension.subDir = subDir
+        extension.subDirs = listOf(subDir)
 
-        val sourceDir = extension.targetDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
-        assertThat(sourceDir.get().asFile.toPath())
+        val targetDirs = extension.targetDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
+        assertThat(targetDirs.get().first().asFile.toPath())
             .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
+    }
+
+    @Test
+    fun `reproduce source file structure in the target dir`() {
+        val srcBasePath = "my/path"
+        val targetBasePath = "my/other/path"
+        val firstSubDir = "foobar"
+        val secondSubDir = "fisbus"
+
+        extension.srcBaseDir = srcBasePath
+        extension.targetBaseDir = targetBasePath
+        extension.subDirs = listOf(firstSubDir, secondSubDir)
+
+        val absolutePath = transforming<Directory, Path>({ it.asFile.toPath() }, "absolute path")
+
+        val sourceDirs = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
+        assertThat(sourceDirs.get())
+            .comparingElementsUsing(absolutePath)
+            .containsExactly(
+                project.projectDir.toPath() / srcBasePath / MAIN_SOURCE_SET_NAME / firstSubDir,
+                project.projectDir.toPath() / srcBasePath / MAIN_SOURCE_SET_NAME / secondSubDir,
+            )
+
+        val targetDirs = extension.targetDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
+        assertThat(targetDirs.get())
+            .comparingElementsUsing(absolutePath)
+            .containsExactly(
+                project.projectDir.toPath() / targetBasePath / MAIN_SOURCE_SET_NAME / firstSubDir,
+                project.projectDir.toPath() / targetBasePath / MAIN_SOURCE_SET_NAME / secondSubDir,
+            )
     }
 }

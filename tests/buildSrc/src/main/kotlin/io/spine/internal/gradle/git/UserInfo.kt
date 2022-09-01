@@ -24,31 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
-
-import io.spine.protodata.renderer.SourceFileSet
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption
-import kotlin.io.path.writeText
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.io.TempDir
-
-internal const val JAVA_FILE = "java/org/example/Test.java"
+package io.spine.internal.gradle.git
 
 /**
- * A base for test cases that require a source file set with a Java file to run.
+ * Contains information about a Git user.
+ *
+ * Determines the author and committer fields of a commit.
+ *
+ * @constructor throws an [IllegalArgumentException] if the name or the email
+ *              is an empty string.
  */
-abstract class WithSourceFileSet {
-
-    protected lateinit var sources: List<SourceFileSet>
-        private set
-
-    @BeforeEach
-    fun createSourceSet(@TempDir path: Path) {
-        val targetFile = path.resolve(JAVA_FILE)
-        val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
-        targetFile.parent.toFile().mkdirs()
-        targetFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sources = listOf(SourceFileSet.from(path, path))
+data class UserInfo(val name: String, val email: String) {
+    init {
+        require(name.isNotBlank()) { "Name cannot be an empty string." }
+        require(email.isNotBlank()) { "Email cannot be an empty string." }
     }
 }

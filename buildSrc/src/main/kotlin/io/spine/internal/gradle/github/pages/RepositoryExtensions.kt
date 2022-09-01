@@ -24,31 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
+package io.spine.internal.gradle.github.pages
 
-import io.spine.protodata.renderer.SourceFileSet
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption
-import kotlin.io.path.writeText
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.io.TempDir
-
-internal const val JAVA_FILE = "java/org/example/Test.java"
+import io.spine.internal.gradle.RepoSlug
+import io.spine.internal.gradle.git.Branch
+import io.spine.internal.gradle.git.Repository
+import io.spine.internal.gradle.git.UserInfo
 
 /**
- * A base for test cases that require a source file set with a Java file to run.
+ * Clones the current project repository with the branch dedicated to publishing
+ * documentation to GitHub Pages checked out.
+ *
+ * The repository's GitHub SSH URL is derived from the `REPO_SLUG` environment
+ * variable. The [branch][Branch.documentation] dedicated to publishing documentation
+ * is automatically checked out in this repository. Also, the username and the email
+ * of the git user are automatically configured. The username is set
+ * to "UpdateGitHubPages Plugin", and the email is derived from
+ * the `FORMAL_GIT_HUB_PAGES_AUTHOR` environment variable.
+ *
+ * @throws GradleException if any of the environment variables described above
+ *         is not set.
  */
-abstract class WithSourceFileSet {
+internal fun Repository.Factory.forPublishingDocumentation(): Repository {
+    val host = RepoSlug.fromVar().gitHost()
 
-    protected lateinit var sources: List<SourceFileSet>
-        private set
+    val username = "UpdateGitHubPages Plugin"
+    val userEmail = AuthorEmail.fromVar().toString()
+    val user = UserInfo(username, userEmail)
 
-    @BeforeEach
-    fun createSourceSet(@TempDir path: Path) {
-        val targetFile = path.resolve(JAVA_FILE)
-        val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
-        targetFile.parent.toFile().mkdirs()
-        targetFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sources = listOf(SourceFileSet.from(path, path))
-    }
+    val branch = Branch.documentation
+
+    return of(host, user, branch)
 }

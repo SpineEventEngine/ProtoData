@@ -45,7 +45,7 @@ class `'GenerateGenerated' renderer should` : WithSourceFileSet() {
             sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
-        val code = sources
+        val code = sources.first()
             .file(Path(JAVA_FILE))
             .code()
         assertThat(code)

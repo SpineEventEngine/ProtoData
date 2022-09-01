@@ -24,31 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
+package io.spine.internal.gradle.dokka
 
-import io.spine.protodata.renderer.SourceFileSet
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption
-import kotlin.io.path.writeText
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.io.TempDir
-
-internal const val JAVA_FILE = "java/org/example/Test.java"
+import org.gradle.api.tasks.TaskContainer
+import org.jetbrains.dokka.gradle.DokkaTask
 
 /**
- * A base for test cases that require a source file set with a Java file to run.
+ * Finds the `dokkaHtml` Gradle task.
  */
-abstract class WithSourceFileSet {
-
-    protected lateinit var sources: List<SourceFileSet>
-        private set
-
-    @BeforeEach
-    fun createSourceSet(@TempDir path: Path) {
-        val targetFile = path.resolve(JAVA_FILE)
-        val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
-        targetFile.parent.toFile().mkdirs()
-        targetFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sources = listOf(SourceFileSet.from(path, path))
-    }
-}
+fun TaskContainer.dokkaHtmlTask() = this.getByName("dokkaHtml") as DokkaTask
