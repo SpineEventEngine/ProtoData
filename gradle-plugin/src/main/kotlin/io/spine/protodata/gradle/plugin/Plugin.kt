@@ -151,8 +151,8 @@ private fun Project.createLaunchTask(
         plugins = ext.plugins
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)
-        source = ext.sourceDir(sourceSet)
-        target = ext.targetDir(sourceSet)
+        sources = ext.sourceDir(sourceSet)
+        targets = ext.targetDir(sourceSet)
         protoDataConfig = artifactConfig
         userClasspathConfig = userCpConfig
         project.afterEvaluate {
