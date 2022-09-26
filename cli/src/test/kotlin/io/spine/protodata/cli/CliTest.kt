@@ -37,11 +37,13 @@ import io.spine.option.OptionsProto
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.cli.given.CustomOptionPlugin
 import io.spine.protodata.cli.given.CustomOptionRenderer
+import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
+import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
 import io.spine.protodata.cli.given.TestOptionProvider
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
-import io.spine.protodata.test.Echo
 import io.spine.protodata.test.ECHO_FILE
+import io.spine.protodata.test.Echo
 import io.spine.protodata.test.EchoRenderer
 import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.Project
@@ -121,6 +123,19 @@ class `Command line application should` {
         val generatedFile = srcRoot.resolve(CustomOptionRenderer.FILE_NAME)
         assertThat(generatedFile.readText())
             .isEqualTo("custom_field_for_test")
+    }
+
+    @Test
+    fun `provide Spine options by default`() {
+        launchApp(
+            "-p", DefaultOptionsCounterPlugin::class.jvmName,
+            "-r", DefaultOptionsCounterRenderer::class.jvmName,
+            "--src", srcRoot.toString(),
+            "-t", codegenRequestFile.toString(),
+        )
+        val generatedFile = srcRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
+        assertThat(generatedFile.readText())
+            .isEqualTo("true")
     }
 
     @Nested
