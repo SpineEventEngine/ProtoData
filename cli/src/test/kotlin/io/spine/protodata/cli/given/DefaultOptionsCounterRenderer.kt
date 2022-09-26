@@ -43,8 +43,7 @@ class DefaultOptionsCounterRenderer : Renderer(CommonLanguages.any) {
         val counters = select<DefaultOptionsCounter>().all()
         sources.createFile(
             Path(FILE_NAME),
-            counters.joinToString(separator = ",")
-            {
+            counters.joinToString(separator = ",") {
                 it.timestampInFutureEncountered.toString() + ", " +
                         it.requiredFieldForTestEncountered.toString()
             }
