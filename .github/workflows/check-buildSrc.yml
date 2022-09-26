@@ -18,4 +18,4 @@ jobs:
 
       - name: Check root and `tests` copies are the same.
         shell: bash
-        run: ./script/same-dir.sh ./buildSrc ./tests/buildSrc
+        run: ./config/scripts/compare-dirs.sh ./buildSrc ./tests/buildSrc
