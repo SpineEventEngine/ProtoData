@@ -33,7 +33,7 @@ import io.spine.protodata.select
 import io.spine.tools.code.CommonLanguages
 import kotlin.io.path.Path
 
-class DefaultOptionsCounterRenderer : Renderer(CommonLanguages.any)  {
+class DefaultOptionsCounterRenderer : Renderer(CommonLanguages.any) {
 
     companion object {
         const val FILE_NAME = "default_opts_counted.txt"
@@ -44,7 +44,10 @@ class DefaultOptionsCounterRenderer : Renderer(CommonLanguages.any)  {
         sources.createFile(
             Path(FILE_NAME),
             counters.joinToString(separator = ",")
-            { it.timestampInFutureEncountered.toString() }
+            {
+                it.timestampInFutureEncountered.toString() + ", " +
+                        it.requiredFieldForTestEncountered.toString()
+            }
         )
     }
 }

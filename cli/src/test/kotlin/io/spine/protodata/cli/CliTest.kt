@@ -135,7 +135,7 @@ class `Command line application should` {
         )
         val generatedFile = srcRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
         assertThat(generatedFile.readText())
-            .isEqualTo("true")
+            .isEqualTo("true, true")
     }
 
     @Nested

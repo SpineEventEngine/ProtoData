@@ -17,4 +17,6 @@ message DefaultOptionsCounter {
     protodata.TypeName type_name = 1;
 
     bool timestamp_in_future_encountered = 2;
+
+    bool required_field_for_test_encountered = 3;
 }

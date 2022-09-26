@@ -41,14 +41,31 @@ import io.spine.server.route.EventRouting
 import io.spine.time.validation.Time
 import io.spine.time.validation.TimeOption
 
+/**
+ * Records the processing of options defined for `SpineAnnotatedType` in `test.proto`
+ *
+ * The options are defined in Spine-default `options.proto` and `time_options.proto`.
+ * The corresponding test case in `CliTest` checks that these Proto options are provided
+ * to ProtoData by default.
+ */
 class DefaultOptionsCounterView
-    : View<TypeName, DefaultOptionsCounter, DefaultOptionsCounter.Builder>()  {
+    : View<TypeName, DefaultOptionsCounter, DefaultOptionsCounter.Builder>() {
 
     @Subscribe
-    internal fun on(@External @Where(field = "option.name", equals = "when")
-                    event: FieldOptionDiscovered
+    internal fun onWhen(
+        @External @Where(field = "option.name", equals = "when")
+        event: FieldOptionDiscovered
     ) = alter {
         timestampInFutureEncountered = readTimeOption(event).`in`.equals(Time.FUTURE)
+    }
+
+    @Subscribe
+    internal fun onRequired(
+        @External @Where(field = "option.name", equals = "required")
+        event: FieldOptionDiscovered
+    ) = alter {
+        requiredFieldForTestEncountered = requiredFieldForTestEncountered ||
+                event.field.value.equals("required_field_for_test")
     }
 
     private fun readTimeOption(event: FieldOptionDiscovered): TimeOption =
