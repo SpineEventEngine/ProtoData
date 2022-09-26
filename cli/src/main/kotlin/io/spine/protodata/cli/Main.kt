@@ -118,7 +118,7 @@ internal class Run(version: String) : CliktCommand(
     private val plugins: List<String> by option("--plugin", "-p",
         help = """
         The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
-        There can be multiple providers. To pass more then one value, type:
+        There can be multiple providers. To pass more than one value, type:
            `<...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin`.""".ti())
         .multiple()
 
@@ -132,7 +132,7 @@ internal class Run(version: String) : CliktCommand(
     private val optionProviders: List<String> by option("--option-provider", "--op",
         help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
-        There can be multiple providers. To pass more then one value, type:
+        There can be multiple providers. To pass more than one value, type:
            `<...> --op com.foo.TypeOptionsProvider --op com.foo.FieldOptionsProvider`.""".ti())
         .multiple()
 
