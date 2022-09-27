@@ -426,7 +426,6 @@
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.spine.validation. **Name** : runtime. **Version** : 2.0.0-SNAPSHOT.12.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-runtime. **Version** : 2.0.0-SNAPSHOT.19.**No license information found**
 1.  **Group** : jakarta.activation. **Name** : jakarta.activation-api. **Version** : 1.2.1.
      * **Project URL:** [https://www.eclipse.org](https://www.eclipse.org)
      * **License:** [EDL 1.0](http://www.eclipse.org/org/documents/edl-v10.php)
@@ -701,7 +700,7 @@
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Sep 27 13:26:40 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Sep 27 14:53:52 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -1120,7 +1119,6 @@ This report was generated on **Tue Sep 27 13:26:40 EEST 2022** using [Gradle-Lic
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.spine.validation. **Name** : runtime. **Version** : 2.0.0-SNAPSHOT.12.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-runtime. **Version** : 2.0.0-SNAPSHOT.19.**No license information found**
 1.  **Group** : jakarta.activation. **Name** : jakarta.activation-api. **Version** : 1.2.1.
      * **Project URL:** [https://www.eclipse.org](https://www.eclipse.org)
      * **License:** [EDL 1.0](http://www.eclipse.org/org/documents/edl-v10.php)
@@ -1390,7 +1388,7 @@ This report was generated on **Tue Sep 27 13:26:40 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Sep 27 13:26:41 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Sep 27 14:53:52 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -1814,7 +1812,6 @@ This report was generated on **Tue Sep 27 13:26:41 EEST 2022** using [Gradle-Lic
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.spine.validation. **Name** : runtime. **Version** : 2.0.0-SNAPSHOT.12.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-runtime. **Version** : 2.0.0-SNAPSHOT.19.**No license information found**
 1.  **Group** : jakarta.activation. **Name** : jakarta.activation-api. **Version** : 1.2.1.
      * **Project URL:** [https://www.eclipse.org](https://www.eclipse.org)
      * **License:** [EDL 1.0](http://www.eclipse.org/org/documents/edl-v10.php)
@@ -2096,7 +2093,7 @@ This report was generated on **Tue Sep 27 13:26:41 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Sep 27 13:26:42 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Sep 27 14:53:53 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -2176,9 +2173,6 @@ This report was generated on **Tue Sep 27 13:26:42 EEST 2022** using [Gradle-Lic
      * **Project URL:** [http://findbugs.sourceforge.net/](http://findbugs.sourceforge.net/)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.6.
-     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
 1.  **Group** : com.google.code.gson. **Name** : gson. **Version** : 2.8.9.
      * **Project URL:** [https://github.com/google/gson/gson](https://github.com/google/gson/gson)
      * **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -2186,7 +2180,10 @@ This report was generated on **Tue Sep 27 13:26:42 EEST 2022** using [Gradle-Lic
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.11.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.11.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.13.1.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.13.1.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.flogger. **Name** : flogger. **Version** : 0.7.4.
@@ -2215,16 +2212,16 @@ This report was generated on **Tue Sep 27 13:26:42 EEST 2022** using [Gradle-Lic
      * **Project URL:** [https://github.com/google/j2objc/](https://github.com/google/j2objc/)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.protobuf. **Name** : protobuf-java. **Version** : 3.19.4.
+1.  **Group** : com.google.protobuf. **Name** : protobuf-java. **Version** : 3.20.1.
      * **Project URL:** [https://developers.google.com/protocol-buffers/](https://developers.google.com/protocol-buffers/)
-     * **License:** [3-Clause BSD License](https://opensource.org/licenses/BSD-3-Clause)
+     * **License:** [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
 
-1.  **Group** : com.google.protobuf. **Name** : protobuf-java-util. **Version** : 3.19.4.
+1.  **Group** : com.google.protobuf. **Name** : protobuf-java-util. **Version** : 3.20.1.
      * **Project URL:** [https://developers.google.com/protocol-buffers/](https://developers.google.com/protocol-buffers/)
-     * **License:** [3-Clause BSD License](https://opensource.org/licenses/BSD-3-Clause)
+     * **License:** [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
 
-1.  **Group** : com.google.protobuf. **Name** : protobuf-kotlin. **Version** : 3.19.4.
-     * **License:** [3-Clause BSD License](https://opensource.org/licenses/BSD-3-Clause)
+1.  **Group** : com.google.protobuf. **Name** : protobuf-kotlin. **Version** : 3.20.1.
+     * **License:** [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
 
 1.  **Group** : com.google.truth. **Name** : truth. **Version** : 1.1.3.
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -2512,7 +2509,7 @@ This report was generated on **Tue Sep 27 13:26:42 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Sep 27 13:26:43 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Sep 27 14:53:54 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -3034,7 +3031,7 @@ This report was generated on **Tue Sep 27 13:26:43 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Sep 27 13:26:44 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Sep 27 14:53:54 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -3163,10 +3160,13 @@ This report was generated on **Tue Sep 27 13:26:44 EEST 2022** using [Gradle-Lic
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.11.0.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.13.1.
+     * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
 1.  **Group** : com.google.errorprone. **Name** : error_prone_annotations. **Version** : 2.5.1.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.11.0.
+1.  **Group** : com.google.errorprone. **Name** : error_prone_type_annotations. **Version** : 2.13.1.
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1.  **Group** : com.google.flogger. **Name** : flogger. **Version** : 0.7.4.
@@ -3501,7 +3501,7 @@ This report was generated on **Tue Sep 27 13:26:44 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Sep 27 13:26:45 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Sep 27 14:53:55 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -3620,7 +3620,6 @@ This report was generated on **Tue Sep 27 13:26:45 EEST 2022** using [Gradle-Lic
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.spine.validation. **Name** : runtime. **Version** : 2.0.0-SNAPSHOT.12.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-runtime. **Version** : 2.0.0-SNAPSHOT.19.**No license information found**
 1.  **Group** : javax.annotation. **Name** : javax.annotation-api. **Version** : 1.3.2.
      * **Project URL:** [http://jcp.org/en/jsr/detail?id=250](http://jcp.org/en/jsr/detail?id=250)
      * **License:** [CDDL + GPLv2 with classpath exception](https://github.com/javaee/javax.annotation/blob/master/LICENSE)
@@ -3928,11 +3927,10 @@ This report was generated on **Tue Sep 27 13:26:45 EEST 2022** using [Gradle-Lic
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.spine.validation. **Name** : runtime. **Version** : 2.0.0-SNAPSHOT.12.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-configuration. **Version** : 2.0.0-SNAPSHOT.19.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-context. **Version** : 2.0.0-SNAPSHOT.19.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-java. **Version** : 2.0.0-SNAPSHOT.19.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-model. **Version** : 2.0.0-SNAPSHOT.19.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-runtime. **Version** : 2.0.0-SNAPSHOT.19.**No license information found**
+1.  **Group** : io.spine.validation. **Name** : spine-validation-configuration. **Version** : 2.0.0-SNAPSHOT.22.**No license information found**
+1.  **Group** : io.spine.validation. **Name** : spine-validation-context. **Version** : 2.0.0-SNAPSHOT.22.**No license information found**
+1.  **Group** : io.spine.validation. **Name** : spine-validation-java. **Version** : 2.0.0-SNAPSHOT.22.**No license information found**
+1.  **Group** : io.spine.validation. **Name** : spine-validation-model. **Version** : 2.0.0-SNAPSHOT.22.**No license information found**
 1.  **Group** : jakarta.activation. **Name** : jakarta.activation-api. **Version** : 1.2.1.
      * **Project URL:** [https://www.eclipse.org](https://www.eclipse.org)
      * **License:** [EDL 1.0](http://www.eclipse.org/org/documents/edl-v10.php)
@@ -4215,4 +4213,4 @@ This report was generated on **Tue Sep 27 13:26:45 EEST 2022** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Tue Sep 27 13:26:47 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Sep 27 14:53:56 EEST 2022** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
