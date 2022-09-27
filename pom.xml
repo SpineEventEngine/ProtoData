@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.2.9</version>
+<version>0.2.10</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -235,12 +235,12 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>org.jacoco</groupId>
     <artifactId>org.jacoco.agent</artifactId>
-    <version>0.8.7</version>
+    <version>0.8.8</version>
   </dependency>
   <dependency>
     <groupId>org.jacoco</groupId>
     <artifactId>org.jacoco.ant</artifactId>
-    <version>0.8.7</version>
+    <version>0.8.8</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
