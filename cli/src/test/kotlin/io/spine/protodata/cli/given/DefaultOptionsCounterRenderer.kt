@@ -24,14 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.95")
-val coreVersion: String by extra("2.0.0-SNAPSHOT.106")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.93")
-val mcVersion: String by extra("2.0.0-SNAPSHOT.89")
-val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.97")
+package io.spine.protodata.cli.given
 
-/** The version of ProtoData used for developing [protoDataVersion]. */
-val devProtoDataVersion: String by extra("0.2.9")
+import io.spine.protodata.cli.test.DefaultOptionsCounter
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.select
+import io.spine.tools.code.CommonLanguages
+import kotlin.io.path.Path
 
-// The version of ProtoData being developed.
-val protoDataVersion: String by extra("0.2.10")
+class DefaultOptionsCounterRenderer : Renderer(CommonLanguages.any) {
+
+    companion object {
+        const val FILE_NAME = "default_opts_counted.txt"
+    }
+
+    override fun render(sources: SourceFileSet) {
+        val counters = select<DefaultOptionsCounter>().all()
+        sources.createFile(
+            Path(FILE_NAME),
+            counters.joinToString(separator = ",") {
+                it.timestampInFutureEncountered.toString() + ", " +
+                        it.requiredFieldForTestEncountered.toString()
+            }
+        )
+    }
+}

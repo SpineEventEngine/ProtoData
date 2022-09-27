@@ -24,14 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.95")
-val coreVersion: String by extra("2.0.0-SNAPSHOT.106")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.93")
-val mcVersion: String by extra("2.0.0-SNAPSHOT.89")
-val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.97")
+package io.spine.protodata.cli.given
 
-/** The version of ProtoData used for developing [protoDataVersion]. */
-val devProtoDataVersion: String by extra("0.2.9")
+import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.plugin.ViewRepository
 
-// The version of ProtoData being developed.
-val protoDataVersion: String by extra("0.2.10")
+class DefaultOptionsCounterPlugin : Plugin {
+
+    override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
+        setOf(DefaultOptionsCounterView.Repository())
+}

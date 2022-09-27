@@ -40,6 +40,7 @@ plugins {
 
 dependencies {
     implementation(project(":compiler"))
+    implementation(project(":codegen-java"))
     implementation(kotlin("reflect"))
     implementation(Clikt.lib)
     implementation(Flogger.lib)

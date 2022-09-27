@@ -134,7 +134,9 @@ internal class Run(version: String) : CliktCommand(
     private val optionProviders: List<String> by option("--option-provider", "--op",
         help = """
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
-        There can be multiple providers. To pass more than one value, type:
+        There can be multiple providers.
+        Spine's `options.proto` and `time_options.proto` are provided by default.
+        To pass more than one value, type:
            `<...> --op com.foo.TypeOptionsProvider --op com.foo.FieldOptionsProvider`.""".ti())
         .multiple()
 
@@ -324,6 +326,7 @@ internal class Run(version: String) : CliktCommand(
         val fileProviders = filterOptionFiles(files)
         val allProviders = providers.toMutableList()
         allProviders.addAll(fileProviders)
+        allProviders.add(SpineOptionsProvider())
         return allProviders
     }
 
