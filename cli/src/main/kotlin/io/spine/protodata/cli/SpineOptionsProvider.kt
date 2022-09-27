@@ -24,14 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.95")
-val coreVersion: String by extra("2.0.0-SNAPSHOT.106")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.93")
-val mcVersion: String by extra("2.0.0-SNAPSHOT.89")
-val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.97")
+package io.spine.protodata.cli
 
-/** The version of ProtoData used for developing [protoDataVersion]. */
-val devProtoDataVersion: String by extra("0.2.8")
+import com.google.protobuf.ExtensionRegistry
+import io.spine.option.OptionsProto
+import io.spine.protodata.option.OptionsProvider
+import io.spine.time.validation.TimeOptionsProto
 
-// The version of ProtoData being developed.
-val protoDataVersion: String by extra("0.2.9")
+/**
+ * Registers the definitions from {@code spine/options.proto} and {@code spine/time_options.proto}
+ * in the {@code ExtensionRegistry}.
+ */
+internal class SpineOptionsProvider : OptionsProvider {
+
+    override fun registerIn(registry: ExtensionRegistry) {
+        OptionsProto.registerAllExtensions(registry)
+        TimeOptionsProto.registerAllExtensions(registry)
+    }
+}

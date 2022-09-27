@@ -41,6 +41,7 @@ import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -131,7 +132,7 @@ subprojects {
         useJUnitPlatform()
 
         testLogging {
-            events = setOf(FAILED, SKIPPED)
+            events = setOf(PASSED, FAILED, SKIPPED)
             showExceptions = true
             showCauses = true
         }
