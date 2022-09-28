@@ -34,6 +34,7 @@ import io.spine.protodata.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.*
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
 import kotlin.text.Charsets.UTF_8
@@ -121,23 +122,31 @@ internal constructor(
     }
 
     /**
-     * Looks up a file by its path.
+     * Looks up a file by its path and throws an `IllegalArgumentException` if not found.
      *
-     * The [path] may be a relative or an absolute path the file.
+     * The [path] may be absolute or relative to the source root.
      */
     public fun file(path: Path): SourceFile =
-        findFile(path).second
+        findFile(path).orElseThrow { IllegalArgumentException("File not found: `$path`.") }
 
-    private fun findFile(path: Path): Pair<Path, SourceFile> {
+    /**
+     * Looks up a file by its path.
+     *
+     * The [path] may be absolute or relative to the source root.
+     *
+     * @return the source file or an `Optional.empty()` if the file is missing from this set.
+     */
+    public fun findFile(path: Path): Optional<SourceFile> {
         val file = files[path]
         if (file != null) {
-            return path to file
+            return Optional.of(file)
         }
-        val filtered = files.filterKeys { it.endsWith(path) }
-        if (filtered.isEmpty()) {
-            throw IllegalArgumentException("File not found: `$path`.")
+        val filtered = files.filterKeys { path.endsWith(it) }
+        return if (filtered.isEmpty()) {
+            Optional.empty()
+        } else {
+            Optional.of(filtered.entries.theOnly().value)
         }
-        return filtered.entries.theOnly().toPair()
     }
 
     /**
@@ -160,8 +169,8 @@ internal constructor(
      * the [write] method.
      */
     internal fun delete(file: Path) {
-        val (path, sourceFile) = findFile(file)
-        files.remove(path)
+        val sourceFile = file(file)
+        files.remove(sourceFile.relativePath)
         deletedFiles.add(sourceFile)
     }
 
