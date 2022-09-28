@@ -34,7 +34,6 @@ import com.google.protobuf.gradle.protobuf
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.CleanTask
 import io.spine.protodata.gradle.CodegenSettings
-import io.spine.protodata.gradle.DevMode
 import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTOC_PLUGIN
@@ -107,28 +106,13 @@ private fun Project.createLaunchTasks(extension: Extension, version: String) {
     val artifactConfig = configurations.create("protoDataRawArtifact") {
         it.isVisible = false
     }
-    val cliDependency = cliDependency(version)
+    val cliDependency = Artifacts.fatCli(version)
     dependencies.add(artifactConfig.name, cliDependency)
     val userCpConfig = userClasspathConfiguration()
     sourceSets.forEach { sourceSet ->
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
         createCleanTask(extension, sourceSet)
     }
-}
-
-private fun Project.cliDependency(version: String): String {
-    val devModeEnabled = DevMode.isEnabled()
-    val cliDependency =
-        if (devModeEnabled) {
-            logger.warn(
-                "ProtoData self-development mode is enabled " +
-                        "via `${DevMode.SYSTEM_PROPERTY_NAME}` system property."
-            )
-            Artifacts.fatCli(version)
-        } else {
-            Artifacts.cli(version)
-        }
-    return cliDependency
 }
 
 private fun Project.userClasspathConfiguration() =
