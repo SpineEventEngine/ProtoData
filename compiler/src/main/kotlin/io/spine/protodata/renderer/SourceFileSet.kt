@@ -142,10 +142,11 @@ internal constructor(
             return Optional.of(file)
         }
         val filtered = files.filterKeys { path.endsWith(it) }
-        if (filtered.isEmpty()) {
-            return Optional.empty()
+        return if (filtered.isEmpty()) {
+            Optional.empty()
+        } else {
+            Optional.of(filtered.entries.theOnly().value)
         }
-        return Optional.of(filtered.entries.theOnly().value)
     }
 
     /**
