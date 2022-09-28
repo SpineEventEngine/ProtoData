@@ -124,7 +124,7 @@ internal constructor(
     /**
      * Looks up a file by its path and throws an `IllegalArgumentException` if not found.
      *
-     * The [path] may be a relative or an absolute path the file.
+     * The [path] may be absolute or relative to the source root.
      */
     public fun file(path: Path): SourceFile =
         findFile(path).orElseThrow { IllegalArgumentException("File not found: `$path`.") }
@@ -132,7 +132,7 @@ internal constructor(
     /**
      * Looks up a file by its path.
      *
-     * The [path] may be a relative or an absolute path the file.
+     * The [path] may be absolute or relative to the source root.
      *
      * @return the source file or an `Optional.empty()` if the file is missing from this set.
      */
