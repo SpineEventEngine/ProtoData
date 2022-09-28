@@ -74,7 +74,7 @@ class `'SourceFile' should` {
 
     @Test
     fun `not find a non-existing file`() {
-        val found = set.findFile(existingSourceFile)
+        val found = set.findFile(Path("non/existing/file.txt"))
         assertThat(found)
             .isEmpty()
     }
