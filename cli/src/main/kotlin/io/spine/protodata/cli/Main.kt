@@ -30,6 +30,7 @@ import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -54,6 +55,7 @@ import io.spine.tools.code.manifest.Version
 import java.io.File
 import java.io.File.pathSeparator
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.system.exitProcess
 
 /**
@@ -118,7 +120,7 @@ internal class Run(version: String) : CliktCommand(
     private val plugins: List<String> by option("--plugin", "-p",
         help = """
         The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
-        There can be multiple providers. To pass more then one value, type:
+        There can be multiple providers. To pass more than one value, type:
            `<...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin`.""".ti())
         .multiple()
 
@@ -134,7 +136,7 @@ internal class Run(version: String) : CliktCommand(
         The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
         There can be multiple providers.
         Spine's `options.proto` and `time_options.proto` are provided by default.
-        To pass more then one value, type:
+        To pass more than one value, type:
            `<...> --op com.foo.TypeOptionsProvider --op com.foo.FieldOptionsProvider`.""".ti())
         .multiple()
 
@@ -159,7 +161,6 @@ internal class Run(version: String) : CliktCommand(
         the files from first source are written to the first target and so on.
         """.ti()
     ).path(
-        mustExist = true,
         canBeFile = false,
         canBeSymlink = false
     ).split(pathSeparator)
@@ -222,6 +223,15 @@ internal class Run(version: String) : CliktCommand(
         completionCandidates = CompletionCandidates.Fixed(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }.toSet()
     ))
+
+    private val allowMissingDirs: Boolean by option("--ignore-missing", "-i",
+        help = """
+        If set, allows some source directories to be non-existent.
+        
+        Even with this flag set, at least one existing source directory must exist.
+        Otherwise, the process ends with an error. 
+        """.ti()
+    ).flag(default = false)
 //@formatter:on
 
     override fun run() {
@@ -276,6 +286,7 @@ internal class Run(version: String) : CliktCommand(
         val targets = (targetRoots ?: sources)!!
         return sources
             ?.zip(targets)
+            ?.filter { (s, _) -> s.exists() }
             ?.map { (s, t) -> SourceFileSet.from(s, t) }
             ?: targets.oneSetWithNoFiles()
     }
