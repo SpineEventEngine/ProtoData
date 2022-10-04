@@ -54,7 +54,7 @@ buildscript {
     val mcJavaVersion: String by extra
 
     dependencies {
-        classpath("io.spine.tools:spine-mc-java:$mcJavaVersion")
+        classpath("io.spine.tools:spine-mc-java-plugins:${mcJavaVersion}:all")
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
 }
@@ -87,6 +87,7 @@ spinePublishing {
 }
 
 val coreVersion: String by extra
+val baseVersion: String by extra
 allprojects {
     apply {
         from("$rootDir/version.gradle.kts")
@@ -105,6 +106,7 @@ allprojects {
         resolutionStrategy {
             force(
                 io.spine.internal.dependency.Grpc.protobufPlugin,
+                "io.spine:spine-base:$baseVersion",
                 "io.spine:spine-server:$coreVersion"
             )
         }
