@@ -87,6 +87,7 @@ spinePublishing {
 }
 
 val coreVersion: String by extra
+val baseVersion: String by extra
 allprojects {
     apply {
         from("$rootDir/version.gradle.kts")
@@ -105,6 +106,7 @@ allprojects {
         resolutionStrategy {
             force(
                 io.spine.internal.dependency.Grpc.protobufPlugin,
+                "io.spine:spine-base:$baseVersion",
                 "io.spine:spine-server:$coreVersion"
             )
         }

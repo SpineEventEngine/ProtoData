@@ -28,7 +28,7 @@ package io.spine.protodata
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
-import io.spine.environment.Production
+import io.spine.environment.DefaultMode
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.events.CompilerEvents
 import io.spine.protodata.plugin.Plugin
@@ -39,7 +39,6 @@ import io.spine.server.ServerEnvironment
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
-import io.spine.server.under
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -63,10 +62,11 @@ public class Pipeline(
 ) {
 
     init {
-        under<Production> {
-            use(InMemoryStorageFactory.newInstance())
-            use(InMemoryTransportFactory.newInstance())
-        }
+        /* Once `spine-server` is updated,
+        `io.spine.server.under` extension should be used here, for brevity. */
+        ServerEnvironment.`when`(DefaultMode::class.java)
+            .use(InMemoryStorageFactory.newInstance())
+            .use(InMemoryTransportFactory.newInstance())
     }
 
     /**
@@ -79,7 +79,7 @@ public class Pipeline(
      */
     public operator fun invoke() {
         ServerEnvironment
-            .`when`(Production::class.java)
+            .`when`(DefaultMode::class.java)
             .use(Delivery.direct())
 
         val contextBuilder = CodeGenerationContext.builder()
