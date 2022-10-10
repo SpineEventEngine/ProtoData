@@ -50,8 +50,8 @@ fun Project.configureTaskDependencies() {
     fun String.dependOn(taskName: String) {
         val whoDepends = this
         val dependOntoTask: Task? = tasks.findByName(taskName)
-        dependOntoTask?.apply {
-            tasks.findByName(whoDepends)?.dependsOn(this)
+        dependOntoTask?.let {
+            tasks.findByName(whoDepends)?.dependsOn(it)
         }
     }
 
