@@ -34,4 +34,4 @@ val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.101")
 val devProtoDataVersion: String by extra("0.2.16")
 
 // The version of ProtoData being developed.
-val protoDataVersion: String by extra("0.2.17")
+val protoDataVersion: String by extra("0.2.18")
