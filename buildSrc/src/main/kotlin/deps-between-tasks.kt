@@ -1,6 +1,3 @@
-import org.gradle.api.Project
-import org.gradle.api.Task
-
 /*
  * Copyright 2022, TeamDev. All rights reserved.
  *
@@ -27,6 +24,9 @@ import org.gradle.api.Task
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.gradle.api.Project
+import org.gradle.api.Task
+
 /**
  * Configures the dependencies between third-party Gradle tasks
  * and those defined via ProtoData and Spine Model Compiler.
@@ -35,6 +35,7 @@ import org.gradle.api.Task
  * usage of Spine-specific task output by other tasks,
  * e.g. the output of `launchProtoDataMain` is used by `compileKotlin`.
  */
+@Suppress("unused")
 fun Project.configureTaskDependencies() {
 
     /**
