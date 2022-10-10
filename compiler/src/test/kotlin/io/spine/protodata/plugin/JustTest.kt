@@ -50,4 +50,4 @@ class `Just should` {
 
 private val validEvent = ProjectCreated.newBuilder()
     .setId(newUuid())
-    .vBuild()
+    .build()

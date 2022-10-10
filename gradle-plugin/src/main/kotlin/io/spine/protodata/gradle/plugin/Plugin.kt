@@ -233,7 +233,7 @@ private fun Project.configureIdea(extension: Extension) {
             val idea = extensions.getByType<IdeaModel>()
             with(idea.module) {
                 sourceDirs = filterSources(sourceDirs, duplicateClassesDir)
-                testSourceDirs = filterSources(testSourceDirs, duplicateClassesDir)
+                testSources.filter { !it.residesIn(duplicateClassesDir) }
                 generatedSourceDirs = filterSources(generatedSourceDirs, duplicateClassesDir)
             }
         }
