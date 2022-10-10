@@ -62,5 +62,6 @@ fun Project.configureTaskDependencies() {
         "sourcesJar".dependOn("createVersionFile")
         "dokkaHtml".dependOn("launchProtoDataMain")
         "dokkaJavadoc".dependOn("launchProtoDataMain")
+        ":publishPluginJar".dependOn("createVersionFile")
     }
 }
