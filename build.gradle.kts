@@ -27,11 +27,14 @@
 @file:Suppress("RemoveRedundantQualifierName")
 
 import io.spine.internal.dependency.Dokka
+import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.javac.configureErrorProne
+import io.spine.internal.gradle.javac.configureJavac
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.publish.PublishingRepos
@@ -65,6 +68,7 @@ plugins {
     kotlin("jvm")
     val dokkaPlugin = io.spine.internal.dependency.Dokka.GradlePlugin
     id(dokkaPlugin.id)
+    id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
     idea
     jacoco
     `force-jacoco`
@@ -116,6 +120,7 @@ allprojects {
 subprojects {
     apply {
         plugin("kotlin")
+        plugin("net.ltgt.errorprone")
         plugin(Dokka.GradlePlugin.id)
     }
 
@@ -124,6 +129,9 @@ subprojects {
     val coreVersion: String by extra
 
     dependencies {
+        ErrorProne.apply {
+            errorprone(core)
+        }
         testImplementation("io.spine.tools:spine-testutil-server:$coreVersion")
         testImplementation(kotlin("test-junit5"))
         Truth.libs.forEach { testImplementation(it) }
@@ -141,6 +149,19 @@ subprojects {
     }
 
     val javaVersion = JavaVersion.VERSION_11.toString()
+
+    java {
+        tasks {
+            withType<JavaCompile>().configureEach {
+                configureJavac()
+                configureErrorProne()
+            }
+            withType<org.gradle.jvm.tasks.Jar>().configureEach {
+                duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            }
+        }
+    }
+
     kotlin {
         explicitApi()
         applyJvmToolchain(javaVersion)
@@ -157,6 +178,8 @@ subprojects {
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
     }
+//
+//    project.configureTaskDependencies()
 }
 
 PomGenerator.applyTo(project)
