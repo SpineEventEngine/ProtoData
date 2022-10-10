@@ -178,8 +178,8 @@ subprojects {
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
     }
-//
-//    project.configureTaskDependencies()
+
+    project.configureTaskDependencies()
 }
 
 PomGenerator.applyTo(project)
