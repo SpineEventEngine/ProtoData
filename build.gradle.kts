@@ -29,6 +29,7 @@
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.applyGitHubPackages
@@ -54,10 +55,9 @@ buildscript {
 
     apply(from = "$rootDir/version.gradle.kts")
 
-    val mcJavaVersion: String by extra
-
+    val spine = io.spine.internal.dependency.Spine(project)
     dependencies {
-        classpath("io.spine.tools:spine-mc-java-plugins:${mcJavaVersion}:all")
+        classpath(spine.mcJavaPlugin)
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
 }
@@ -90,6 +90,8 @@ spinePublishing {
     artifactPrefix = "protodata-"
 }
 
+val spine = Spine(project)
+
 val coreVersion: String by extra
 val baseVersion: String by extra
 allprojects {
@@ -110,8 +112,8 @@ allprojects {
         resolutionStrategy {
             force(
                 io.spine.internal.dependency.Grpc.protobufPlugin,
-                "io.spine:spine-base:$baseVersion",
-                "io.spine:spine-server:$coreVersion"
+                spine.base,
+                spine.server
             )
         }
     }
@@ -132,7 +134,7 @@ subprojects {
         ErrorProne.apply {
             errorprone(core)
         }
-        testImplementation("io.spine.tools:spine-testutil-server:$coreVersion")
+        testImplementation(spine.core.testUtilServer)
         testImplementation(kotlin("test-junit5"))
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
