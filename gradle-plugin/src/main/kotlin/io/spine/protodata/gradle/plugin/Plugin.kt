@@ -183,6 +183,7 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
         }
         generateProtoTasks {
             all().forEach {
+                it.builtins.maybeCreate("kotlin")
                 it.plugins {
                     id(PROTOC_PLUGIN) {
                         val requestFile = extension.requestFile(it.sourceSet)
