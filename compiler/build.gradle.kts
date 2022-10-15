@@ -26,6 +26,7 @@
 
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Jackson
+import io.spine.internal.dependency.Spine
 import io.spine.internal.gradle.publish.CheckVersionIncrement
 import io.spine.internal.gradle.publish.IncrementGuard
 import io.spine.internal.gradle.publish.PublishingRepos
@@ -35,12 +36,10 @@ plugins {
     jacoco
 }
 
-val coreVersion: String by extra
-val toolBaseVersion: String by extra
-
+val spine = Spine(project)
 dependencies {
-    api("io.spine:spine-server:$coreVersion")
-    api("io.spine.tools:spine-tool-base:$toolBaseVersion")
+    api(spine.server)
+    api(spine.toolBase)
     with(Jackson) {
         api(databind)
         implementation(dataformatYaml)
