@@ -26,9 +26,13 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
@@ -38,6 +42,7 @@ import io.spine.internal.gradle.javac.configureErrorProne
 import io.spine.internal.gradle.javac.configureJavac
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
+import io.spine.internal.gradle.protobuf.suppressDeprecationsInKotlin
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.SpinePublishing
 import io.spine.internal.gradle.publish.spinePublishing
@@ -61,8 +66,6 @@ buildscript {
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
 }
-
-val devProtoDataVersion: String by extra
 
 plugins {
     kotlin("jvm")
@@ -92,8 +95,6 @@ spinePublishing {
 
 val spine = Spine(project)
 
-val coreVersion: String by extra
-val baseVersion: String by extra
 allprojects {
     apply {
         from("$rootDir/version.gradle.kts")
@@ -119,16 +120,21 @@ allprojects {
     }
 }
 
+// Temporarily use this version, since 3.21.x is known to provide
+// a broken `protoc-gen-js` artifact and Kotlin code without access modifiers.
+// See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
+//     https://github.com/protocolbuffers/protobuf/issues/10593
+val protocArtifact = "com.google.protobuf:protoc:3.19.6"
+
 subprojects {
     apply {
         plugin("kotlin")
         plugin("net.ltgt.errorprone")
         plugin(Dokka.GradlePlugin.id)
+        plugin(Protobuf.GradlePlugin.id)
     }
 
     LicenseReporter.generateReportIn(project)
-
-    val coreVersion: String by extra
 
     dependencies {
         ErrorProne.apply {
@@ -138,6 +144,14 @@ subprojects {
         testImplementation(kotlin("test-junit5"))
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            force(
+                io.spine.internal.dependency.Protobuf.compiler,
+            )
+        }
     }
 
     tasks.test {
@@ -179,6 +193,34 @@ subprojects {
         from(dokkaJavadoc.outputDirectory)
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
+    }
+
+    val generatedDir = "$projectDir/generated"
+    protobuf {
+        generatedFilesBaseDir = generatedDir
+
+        protoc {
+            // Temporarily use this version, since 3.21.x is known to provide
+            // a broken `protoc-gen-js` artifact.
+            // See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
+            //
+            // Once it is addressed, this artifact should be `Protobuf.compiler`.
+            //
+            // Also, this fixes the explicit API more for the generated Kotlin code.
+            //
+            artifact = protocArtifact
+        }
+
+        generateProtoTasks {
+            all().forEach { task ->
+                task.builtins {
+                    maybeCreate("kotlin")
+                }
+                task.doLast {
+                    suppressDeprecationsInKotlin(generatedDir, task.sourceSet.name)
+                }
+            }
+        }
     }
 
     project.configureTaskDependencies()
