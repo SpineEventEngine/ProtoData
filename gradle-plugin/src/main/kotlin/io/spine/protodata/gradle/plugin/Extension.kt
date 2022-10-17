@@ -40,6 +40,11 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.getPlugin
 import org.gradle.kotlin.dsl.listProperty
 
+
+private val defaultSubdirectories = listOf("java"/*, "kotlin"*/)
+
+private const val DEFAULT_TARGET_DIR = "generated"
+
 /**
  * The `protoData { }` Gradle extension.
  */
@@ -111,7 +116,7 @@ public class Extension(internal val project: Project): CodegenSettings {
         }
 
     private val subDirProperty: ListProperty<String> =
-        factory.listProperty<String>().convention(listOf("java"))
+        factory.listProperty<String>().convention(defaultSubdirectories)
 
     public override var targetBaseDir: Any
         get() = targetBaseDirProperty.get()
@@ -119,7 +124,7 @@ public class Extension(internal val project: Project): CodegenSettings {
 
     private val targetBaseDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(
-            layout.projectDirectory.dir("generated")
+            layout.projectDirectory.dir(DEFAULT_TARGET_DIR)
         )
     }
 
