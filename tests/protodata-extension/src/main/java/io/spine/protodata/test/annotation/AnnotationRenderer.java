@@ -45,6 +45,9 @@ public final class AnnotationRenderer extends JavaRenderer {
 
     @Override
     protected void render(SourceFileSet sources) {
+//        if (!sources.sourceRoot.endsWith("java")) {
+//            return;
+//        }
         Set<Annotated> annotatedFields = select(Annotated.class).all();
         annotatedFields.forEach(
                 field -> renderFor(field, sources)
@@ -55,6 +58,13 @@ public final class AnnotationRenderer extends JavaRenderer {
         FieldId id = field.getId();
         FieldGetter getter = new FieldGetter(id);
         Path path = javaFileOf(id.getType(), id.getFile());
+
+        // If there are no Java files, we deal with another language.
+        // Have this workaround until we get access to the `sourceRoot` property.
+        if (sourceSet.findFile(path).isEmpty()) {
+            return;
+        }
+
         sourceSet.file(path)
                  .at(getter)
                  .withExtraIndentation(INDENT_LEVEL)

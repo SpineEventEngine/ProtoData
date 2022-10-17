@@ -70,9 +70,9 @@ public final class UuidJavaRenderer extends JavaRenderer {
      */
     @Override
     protected void render(SourceFileSet sources) {
-        if (!sources.sourceRoot.endsWith("java")) {
-            return;
-        }
+//        if (!sources.sourceRoot.endsWith("java")) {
+//            return;
+//        }
         Set<UuidType> uuidTypes = select(UuidType.class).all();
         for (UuidType type : uuidTypes) {
             TypeName typeName = type.getName();
@@ -81,6 +81,13 @@ public final class UuidJavaRenderer extends JavaRenderer {
             InsertionPoint classScope = new ClassScope(typeName);
             ImmutableList<String> lines = METHOD_FORMAT.format(className, UUID.class.getName());
             Path javaFilePath = javaFileOf(typeName, file);
+
+            // If there are no Java files, we deal with another language.
+            // Have this workaround until we get access to the `sourceRoot` property.
+            if (sources.findFile(javaFilePath).isEmpty()) {
+                return;
+            }
+
             sources.file(javaFilePath)
                    .at(classScope)
                    .withExtraIndentation(INDENT_LEVEL)
