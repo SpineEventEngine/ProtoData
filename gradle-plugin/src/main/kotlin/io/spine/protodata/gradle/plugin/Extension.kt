@@ -40,9 +40,14 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.getPlugin
 import org.gradle.kotlin.dsl.listProperty
 
+/**
+ * Default subdirectories under a generated source set.
+ */
+private val defaultSubdirectories = listOf("java", "kotlin")
 
-private val defaultSubdirectories = listOf("java"/*, "kotlin"*/)
-
+/**
+ * The default name of the output directory of ProtoData placed under the project root.
+ */
 private const val DEFAULT_TARGET_DIR = "generated"
 
 /**
