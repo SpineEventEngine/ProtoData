@@ -174,6 +174,15 @@ private fun Project.configureWithProtobufPlugin(extension: Extension, version: S
     }
 }
 
+private fun Project.hasJavaOrKotlin(): Boolean {
+    if (pluginManager.hasPlugin("java")) {
+        return true
+    }
+    val compileKotlin = tasks.findByName("compileKotlin")
+    val compileTestKotlin = tasks.findByName("compileTestKotlin")
+    return compileKotlin != null || compileTestKotlin != null
+}
+
 private fun Project.configureProtobufPlugin(extension: Extension, version: String) =
     protobuf {
         plugins {
@@ -183,7 +192,7 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
         }
         generateProtoTasks {
             all().forEach { task ->
-                if (pluginManager.hasPlugin("java") || pluginManager.hasPlugin("kotlin")) {
+                if (hasJavaOrKotlin()) {
                     task.builtins.maybeCreate("kotlin")
                 }
                 val sourceSet = task.sourceSet
