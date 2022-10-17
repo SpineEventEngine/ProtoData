@@ -195,10 +195,7 @@ subprojects {
         dependsOn(dokkaJavadoc)
     }
 
-    val generatedDir = "$projectDir/generated"
     protobuf {
-        generatedFilesBaseDir = generatedDir
-
         protoc {
             // Temporarily use this version, since 3.21.x is known to provide
             // a broken `protoc-gen-js` artifact.
@@ -209,17 +206,6 @@ subprojects {
             // Also, this fixes the explicit API more for the generated Kotlin code.
             //
             artifact = protocArtifact
-        }
-
-        generateProtoTasks {
-            all().forEach { task ->
-                task.builtins {
-                    maybeCreate("kotlin")
-                }
-                task.doLast {
-                    suppressDeprecationsInKotlin(generatedDir, task.sourceSet.name)
-                }
-            }
         }
     }
 
