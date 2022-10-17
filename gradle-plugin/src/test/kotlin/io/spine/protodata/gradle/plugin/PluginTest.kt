@@ -73,6 +73,14 @@ class `ProtoData Gradle plugin should` {
         launchAndExpectResult(UP_TO_DATE)
     }
 
+    @Test
+    fun `not add 'kotlin' built-in of 'protoc' if 'java' plugin is NOT added to the project`() {
+        createProject("non-java")
+        launchAndExpectResult(SUCCESS)
+        val kotlinDir = projectDir.resolve("generated/kotlin")
+        assertThat(kotlinDir.exists()).isFalse()
+    }
+
     private fun createEmptyProject() {
         createProject("empty-test")
     }

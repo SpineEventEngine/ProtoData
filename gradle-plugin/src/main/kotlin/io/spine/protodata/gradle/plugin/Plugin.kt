@@ -183,7 +183,9 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
         }
         generateProtoTasks {
             all().forEach { task ->
-                task.builtins.maybeCreate("kotlin")
+                if (pluginManager.hasPlugin("java") || pluginManager.hasPlugin("kotlin")) {
+                    task.builtins.maybeCreate("kotlin")
+                }
                 val sourceSet = task.sourceSet
                 task.plugins {
                     id(PROTOC_PLUGIN) {
