@@ -182,17 +182,18 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
             }
         }
         generateProtoTasks {
-            all().forEach {
-                it.builtins.maybeCreate("kotlin")
-                it.plugins {
+            all().forEach { task ->
+                task.builtins.maybeCreate("kotlin")
+                val sourceSet = task.sourceSet
+                task.plugins {
                     id(PROTOC_PLUGIN) {
-                        val requestFile = extension.requestFile(it.sourceSet)
+                        val requestFile = extension.requestFile(sourceSet)
                         val path = requestFile.get().asFile.absolutePath
                         option(path.base64Encoded())
                     }
                 }
-                val launchTask = LaunchTask.get(project, it.sourceSet)
-                launchTask.dependsOn(it /* GenerateProtoTask */)
+                val launchTask = LaunchTask.get(project, sourceSet)
+                launchTask.dependsOn(task)
             }
         }
         generatedFilesBaseDir = "$buildDir/generated-proto/"
