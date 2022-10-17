@@ -105,7 +105,8 @@ class `Plugin extension should` {
         extension.srcBaseDir = basePath
         extension.subDirs = listOf(subDir)
 
-        val sourceDir = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
+        val sourceSet = project.sourceSets.getByName(MAIN_SOURCE_SET_NAME)
+        val sourceDir = extension.sourceDir(sourceSet)
         assertThat(sourceDir.get().first().asFile.toPath())
             .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
     }
@@ -118,7 +119,8 @@ class `Plugin extension should` {
         extension.targetBaseDir = basePath
         extension.subDirs = listOf(subDir)
 
-        val targetDirs = extension.targetDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
+        val sourceSet = project.sourceSets.getByName(MAIN_SOURCE_SET_NAME)
+        val targetDirs = extension.targetDir(sourceSet)
         assertThat(targetDirs.get().first().asFile.toPath())
             .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
     }
