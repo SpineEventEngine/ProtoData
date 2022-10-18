@@ -122,6 +122,16 @@ internal constructor(
     }
 
     /**
+     * Returns `true` if this source set does not contain any files, `false` otherwise.
+     */
+    public val isEmpty: Boolean = files.isEmpty()
+
+    /**
+     * Obtains the number of files in this set.
+     */
+    public val size: Int = files.size
+
+    /**
      * Looks up a file by its path and throws an `IllegalArgumentException` if not found.
      *
      * The [path] may be absolute or relative to the source root.
