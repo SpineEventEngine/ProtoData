@@ -71,8 +71,8 @@ class `ProtoData Gradle plugin should` {
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
         this.projectDir = projectDir
-        this.generatedJavaDir = projectDir.resolve("generated/java")
-        this.generatedKotlinDir  = projectDir.resolve("generated/kotlin")
+        this.generatedJavaDir = projectDir.resolve("generated/main/java")
+        this.generatedKotlinDir  = projectDir.resolve("generated/main/kotlin")
     }
 
     @Test
