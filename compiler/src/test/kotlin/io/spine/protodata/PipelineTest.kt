@@ -29,6 +29,7 @@ package io.spine.protodata
 import com.google.common.truth.Truth.assertThat
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import com.google.protobuf.compiler.codeGeneratorRequest
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.renderer.SourceFileSet
@@ -84,11 +85,11 @@ class `'Pipeline' should` {
             ${Journey::class.simpleName} worth taking
         """.trimIndent())
 
-        val protoFile = DoctorProto.getDescriptor()
-        request = CodeGeneratorRequest.newBuilder()
-            .addProtoFile(protoFile.toProto())
-            .addFileToGenerate(protoFile.name)
-            .build()
+        val descriptor = DoctorProto.getDescriptor()
+        request = codeGeneratorRequest {
+            protoFile += descriptor.toProto()
+            fileToGenerate += descriptor.name
+        }
         codegenRequestFile.writeBytes(request.toByteArray())
         renderer = TestRenderer()
     }
