@@ -45,9 +45,12 @@ public final class AnnotationRenderer extends JavaRenderer {
 
     @Override
     protected void render(SourceFileSet sources) {
-//        if (!sources.sourceRoot.endsWith("java")) {
-//            return;
-//        }
+        //TODO:2022-10-18:alexander.yevsyukov: Use `sourceRoot` when it's public and
+        // remove `findFile()` check in the `renderFor()` method below.
+        //
+        // if (!sources.sourceRoot.endsWith("java")) {
+        //     return;
+        // }
         Set<Annotated> annotatedFields = select(Annotated.class).all();
         annotatedFields.forEach(
                 field -> renderFor(field, sources)

@@ -70,6 +70,8 @@ public final class UuidJavaRenderer extends JavaRenderer {
      */
     @Override
     protected void render(SourceFileSet sources) {
+//TODO:2022-10-18:alexander.yevsyukov: Use `sourceRoot` when it's public and
+// remove `findFile()` check inside `for()` below.
 //        if (!sources.sourceRoot.endsWith("java")) {
 //            return;
 //        }
