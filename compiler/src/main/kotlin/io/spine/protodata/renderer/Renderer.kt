@@ -51,8 +51,10 @@ protected constructor(
      */
     internal fun renderSources(sources: SourceFileSet) {
         val relevantFiles = sources.subsetWhere { supportedLanguage.matches(it.relativePath) }
-        render(relevantFiles)
-        sources.mergeBack(relevantFiles)
+        if (!relevantFiles.isEmpty) {
+            render(relevantFiles)
+            sources.mergeBack(relevantFiles)
+        }
     }
 
     /**
