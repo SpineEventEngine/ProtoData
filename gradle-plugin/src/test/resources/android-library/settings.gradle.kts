@@ -27,5 +27,7 @@
 pluginManagement {
     repositories {
         mavenLocal()
+        // For finding `com.android.library` plugin.
+        google()
     }
 }

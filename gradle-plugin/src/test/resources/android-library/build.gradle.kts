@@ -35,6 +35,7 @@ buildscript {
 }
 
 plugins {
+    id("com.android.library") version "7.3.0" // Protobuf needs it to run.
     id("com.google.protobuf")
     id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
 }
@@ -65,4 +66,8 @@ protobuf {
     protoc {
         artifact = io.spine.internal.dependency.Protobuf.compiler
     }
+}
+
+android {
+    compileSdkVersion = "android-31"
 }
