@@ -38,6 +38,7 @@ import org.gradle.testkit.runner.TaskOutcome.SKIPPED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -48,10 +49,14 @@ class `ProtoData Gradle plugin should` {
 
     private lateinit var projectDir: File
     private lateinit var project: GradleProject
+    private lateinit var generatedJavaDir: File
+    private lateinit var generatedKotlinDir: File
 
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
         this.projectDir = projectDir
+        this.generatedJavaDir = projectDir.resolve("generated/java")
+        this.generatedKotlinDir  = projectDir.resolve("generated/kotlin")
     }
 
     @Test
@@ -74,11 +79,12 @@ class `ProtoData Gradle plugin should` {
     }
 
     @Test
-    fun `not add 'kotlin' built-in of 'protoc' if 'java' plugin is NOT added to the project`() {
-        createProject("non-java")
+    @Disabled("https://github.com/SpineEventEngine/ProtoData/issues/88")
+    fun `add 'kotlin' built-in only' if 'java' plugin or Kotlin compile tasks are present`() {
+        createProject("android-library")  // could be in native code
         launchAndExpectResult(SUCCESS)
-        val kotlinDir = projectDir.resolve("generated/kotlin")
-        assertThat(kotlinDir.exists()).isFalse()
+        assertThat(generatedJavaDir.exists()).isFalse()
+        assertThat(generatedKotlinDir.exists()).isFalse()
     }
 
     private fun createEmptyProject() {
