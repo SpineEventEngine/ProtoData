@@ -95,7 +95,7 @@ class `ProtoData Gradle plugin should` {
     }
 
     @Test
-    fun `produce generated java and kotlin directories`() {
+    fun `produce 'java' and 'kotlin' directories under 'generated'`() {
         createProject("java-kotlin-test")
         val build = BaseTaskName.build
         val result = project.executeTask(build)
