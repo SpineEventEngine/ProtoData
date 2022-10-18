@@ -174,6 +174,14 @@ private fun Project.configureWithProtobufPlugin(extension: Extension, version: S
     }
 }
 
+/**
+ * Verifies if the project has `java` plugin or `compileKotlin` or `compileTestKotlin` tasks.
+ *
+ * Even though current Protobuf support of Kotlin is based on Java codegen (and therefore
+ * it's likely that Java would be enabled in the project in the near future for Kotlin proto
+ * code to be generated), it may change someday. This method assumes such case when it checks
+ * for Kotlin compilation tasks.
+ */
 private fun Project.hasJavaOrKotlin(): Boolean {
     if (pluginManager.hasPlugin("java")) {
         return true
