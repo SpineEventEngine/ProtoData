@@ -100,3 +100,9 @@ val publishPlugins: Task by tasks.getting {
 val publish: Task by tasks.getting {
     dependsOn(publishPlugins)
 }
+
+/**
+ * Do it here because the call in `subprojects` does not have effect on the dependency
+ * of the `publishPluginJar` on `createVersionFile`.
+ */
+configureTaskDependencies()
