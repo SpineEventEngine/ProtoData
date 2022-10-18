@@ -70,11 +70,6 @@ public final class UuidJavaRenderer extends JavaRenderer {
      */
     @Override
     protected void render(SourceFileSet sources) {
-//TODO:2022-10-18:alexander.yevsyukov: Use `sourceRoot` when it's public and
-// remove `findFile()` check inside `for()` below.
-//        if (!sources.sourceRoot.endsWith("java")) {
-//            return;
-//        }
         Set<UuidType> uuidTypes = select(UuidType.class).all();
         for (UuidType type : uuidTypes) {
             TypeName typeName = type.getName();
@@ -87,7 +82,7 @@ public final class UuidJavaRenderer extends JavaRenderer {
             // If there are no Java files, we deal with another language.
             // Have this workaround until we get access to the `sourceRoot` property.
             if (sources.findFile(javaFilePath).isEmpty()) {
-                return;
+                continue;
             }
 
             sources.file(javaFilePath)
