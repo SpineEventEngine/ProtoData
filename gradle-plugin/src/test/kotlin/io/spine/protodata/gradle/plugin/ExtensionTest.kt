@@ -138,20 +138,22 @@ class `Plugin extension should` {
 
         val absolutePath = transforming<Directory, Path>({ it.asFile.toPath() }, "absolute path")
 
+        val sourceMain = project.projectDir.toPath() / srcBasePath / MAIN_SOURCE_SET_NAME
         val sourceDirs = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
         assertThat(sourceDirs.get())
             .comparingElementsUsing(absolutePath)
             .containsExactly(
-                project.projectDir.toPath() / srcBasePath / MAIN_SOURCE_SET_NAME / firstSubDir,
-                project.projectDir.toPath() / srcBasePath / MAIN_SOURCE_SET_NAME / secondSubDir,
+                sourceMain / firstSubDir,
+                sourceMain / secondSubDir,
             )
 
+        val targetMain = project.projectDir.toPath() / targetBasePath / MAIN_SOURCE_SET_NAME
         val targetDirs = extension.targetDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
         assertThat(targetDirs.get())
             .comparingElementsUsing(absolutePath)
             .containsExactly(
-                project.projectDir.toPath() / targetBasePath / MAIN_SOURCE_SET_NAME / firstSubDir,
-                project.projectDir.toPath() / targetBasePath / MAIN_SOURCE_SET_NAME / secondSubDir,
+                targetMain / firstSubDir,
+                targetMain / secondSubDir,
             )
     }
 }
