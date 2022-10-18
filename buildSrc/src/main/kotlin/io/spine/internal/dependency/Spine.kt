@@ -53,8 +53,8 @@ class Spine(p: ExtensionAware) {
 
         /**
          * The default version of `core-java` to use.
-         * @see [Spine.core.client]
-         * @see [Spine.core.server]
+         * @see [Spine.coreJava.client]
+         * @see [Spine.coreJava.server]
          */
         const val core = "2.0.0-SNAPSHOT.114"
 
@@ -129,9 +129,9 @@ class Spine(p: ExtensionAware) {
 
     val validation = Validation(p)
 
-    val core = Core(p)
-    val client = core.client // Added for brevity.
-    val server = core.server // Added for brefity.
+    val coreJava = CoreJava(p)
+    val client = coreJava.client // Added for brevity.
+    val server = coreJava.server // Added for brefity.
 
     private val ExtensionAware.baseVersion: String
         get() = "baseVersion".asExtra(this, DefaultVersion.base)
@@ -189,7 +189,7 @@ class Spine(p: ExtensionAware) {
      *
      * See [`SpineEventEngine/core-java`](https://github.com/SpineEventEngine/core-java/).
      */
-    class Core(p: ExtensionAware) {
+    class CoreJava(p: ExtensionAware) {
         val core = "$group:spine-core:${p.coreVersion}"
         val client = "$group:spine-client:${p.coreVersion}"
         val server = "$group:spine-server:${p.coreVersion}"

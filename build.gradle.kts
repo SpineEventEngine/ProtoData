@@ -138,7 +138,7 @@ subprojects {
         ErrorProne.apply {
             errorprone(core)
         }
-        testImplementation(spine.core.testUtilServer)
+        testImplementation(spine.coreJava.testUtilServer)
         testImplementation(kotlin("test-junit5"))
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
