@@ -49,12 +49,12 @@ class Spine(p: ExtensionAware) {
          * The default version  of `base` to use.
          * @see [Spine.base]
          */
-        const val base = "2.0.0-SNAPSHOT.112"
+        const val base = "2.0.0-SNAPSHOT.114"
 
         /**
          * The default version of `core-java` to use.
-         * @see [Spine.coreJava.client]
-         * @see [Spine.coreJava.server]
+         * @see [Spine.CoreJava.client]
+         * @see [Spine.CoreJava.server]
          */
         const val core = "2.0.0-SNAPSHOT.114"
 
@@ -73,19 +73,19 @@ class Spine(p: ExtensionAware) {
          * The version of `base-types` to use.
          * @see [Spine.baseTypes]
          */
-        const val baseTypes = "2.0.0-SNAPSHOT.108"
+        const val baseTypes = "2.0.0-SNAPSHOT.110"
 
         /**
          * The version of `time` to use.
          * @see [Spine.time]
          */
-        const val time = "2.0.0-SNAPSHOT.108"
+        const val time = "2.0.0-SNAPSHOT.109"
 
         /**
          * The version of `tool-base` to use.
          * @see [Spine.toolBase]
          */
-        const val toolBase = "2.0.0-SNAPSHOT.109"
+        const val toolBase = "2.0.0-SNAPSHOT.111"
 
         /**
          * The version of `validation` to use.
@@ -131,7 +131,7 @@ class Spine(p: ExtensionAware) {
 
     val coreJava = CoreJava(p)
     val client = coreJava.client // Added for brevity.
-    val server = coreJava.server // Added for brefity.
+    val server = coreJava.server // Added for brevity.
 
     private val ExtensionAware.baseVersion: String
         get() = "baseVersion".asExtra(this, DefaultVersion.base)
