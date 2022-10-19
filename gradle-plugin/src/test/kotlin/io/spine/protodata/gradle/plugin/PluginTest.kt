@@ -29,15 +29,18 @@ package io.spine.protodata.gradle.plugin
 import com.google.common.truth.Truth.assertThat
 import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
+import io.spine.tools.gradle.task.BaseTaskName
 import io.spine.tools.gradle.task.TaskName
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
+import kotlin.test.assertTrue
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.TaskOutcome.SKIPPED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -48,10 +51,28 @@ class `ProtoData Gradle plugin should` {
 
     private lateinit var projectDir: File
     private lateinit var project: GradleProject
+    private lateinit var generatedJavaDir: File
+    private lateinit var generatedKotlinDir: File
+
+    private fun assertExists(dir: File) {
+        assertTrue("`$dir` expected to exist, but it does not.") { dir.exists() }
+    }
+
+    private fun assertDoesNotExist(dir: File) {
+        assertTrue("`$dir` should not exist, but it does.") { dir.exists() }
+    }
+
+    operator fun BuildResult.get(task: TaskName): TaskOutcome {
+        val buildTask = task(task.path())
+        val outcome = buildTask!!.outcome
+        return outcome
+    }
 
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
         this.projectDir = projectDir
+        this.generatedJavaDir = projectDir.resolve("generated/main/java")
+        this.generatedKotlinDir  = projectDir.resolve("generated/main/kotlin")
     }
 
     @Test
@@ -73,6 +94,25 @@ class `ProtoData Gradle plugin should` {
         launchAndExpectResult(UP_TO_DATE)
     }
 
+    @Test
+    fun `produce 'java' and 'kotlin' directories under 'generated'`() {
+        createProject("java-kotlin-test")
+        val build = BaseTaskName.build
+        val result = project.executeTask(build)
+        assertThat(result[build]).isEqualTo(SUCCESS)
+        assertExists(generatedJavaDir)
+        assertExists(generatedKotlinDir)
+    }
+    
+    @Test
+    @Disabled("https://github.com/SpineEventEngine/ProtoData/issues/88")
+    fun `add 'kotlin' built-in only' if 'java' plugin or Kotlin compile tasks are present`() {
+        createProject("android-library")  // could be in native code
+        launchAndExpectResult(SUCCESS)
+        assertDoesNotExist(generatedJavaDir)
+        assertDoesNotExist(generatedKotlinDir)
+    }
+
     private fun createEmptyProject() {
         createProject("empty-test")
     }
@@ -83,8 +123,7 @@ class `ProtoData Gradle plugin should` {
 
     private fun launchAndExpectResult(outcome: TaskOutcome) {
         val result = launch()
-        assertThat(result.task(taskName.path())!!.outcome)
-            .isEqualTo(outcome)
+        assertThat(result[taskName]).isEqualTo(outcome)
     }
 
     private fun launch(): BuildResult =

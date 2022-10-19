@@ -54,11 +54,20 @@ subprojects {
     repositories.applyStandard()
     repositories.applyGitHubPackages("base-types", rootProject)
 
-    configurations.all {
-        resolutionStrategy {
-            force(
-                io.spine.internal.dependency.Grpc.protobufPlugin
-            )
+    val protoDataVersion: String by extra
+    val spine = io.spine.internal.dependency.Spine(project)
+    configurations {
+        forceVersions()
+        all {
+            resolutionStrategy {
+                force(
+                    io.spine.internal.dependency.Grpc.protobufPlugin,
+                    spine.base,
+                    spine.validation.runtime,
+                    "io.spine.protodata:compiler:$protoDataVersion",
+                    "io.spine.protodata:codegen-java:$protoDataVersion"
+                )
+            }
         }
     }
 

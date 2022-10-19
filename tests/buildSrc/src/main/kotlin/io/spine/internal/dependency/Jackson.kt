@@ -29,8 +29,7 @@ package io.spine.internal.dependency
 @Suppress("unused")
 object Jackson {
     const val version = "2.13.2"
-    // Use rc-1 to address https://github.com/SpineEventEngine/ProtoData/security/dependabot/6
-    const val databindVersion = "2.14.0-rc1"
+    const val databindVersion = "2.13.2.2"
     // https://github.com/FasterXML/jackson-core
     const val core = "com.fasterxml.jackson.core:jackson-core:${version}"
     // https://github.com/FasterXML/jackson-databind

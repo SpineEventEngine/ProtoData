@@ -51,7 +51,7 @@ internal constructor(
      *
      * Paths of the files must be either absolute or relative to this directory.
      */
-    private val sourceRoot: Path,
+    public val sourceRoot: Path,
 
     /**
      * A directory where the source set should be placed after code generation.
@@ -60,7 +60,7 @@ internal constructor(
      *
      * If different from the `sourceRoot`, the files in `sourceRoot` will not be changed.
      */
-    private val targetRoot: Path
+    public val targetRoot: Path
 ) : Iterable<SourceFile> by files {
 
     private val files: MutableMap<Path, SourceFile>
@@ -122,12 +122,25 @@ internal constructor(
     }
 
     /**
+     * Returns `true` if this source set does not contain any files, `false` otherwise.
+     */
+    public val isEmpty: Boolean = files.isEmpty()
+
+    /**
+     * Obtains the number of files in this set.
+     */
+    public val size: Int = files.size
+
+    /**
      * Looks up a file by its path and throws an `IllegalArgumentException` if not found.
      *
      * The [path] may be absolute or relative to the source root.
      */
     public fun file(path: Path): SourceFile =
-        findFile(path).orElseThrow { IllegalArgumentException("File not found: `$path`.") }
+        findFile(path).orElseThrow {
+            IllegalArgumentException("File not found: `$path`." +
+                    " Source root: `$sourceRoot`. Target root: `$targetRoot`.")
+        }
 
     /**
      * Looks up a file by its path.

@@ -174,6 +174,24 @@ private fun Project.configureWithProtobufPlugin(extension: Extension, version: S
     }
 }
 
+/**
+ * Verifies if the project has `java` plugin or `compileKotlin` or `compileTestKotlin` tasks.
+ *
+ * The current Protobuf support of Kotlin is based on Java codegen. Therefore,
+ * it's likely that Java would be enabled in the project for Kotlin proto
+ * code to be generated. Though, it may change someday and Kotlin support of Protobuf would be
+ * self-sufficient. This method assumes such case when it checks the presence of
+ * Kotlin compilation tasks.
+ */
+private fun Project.hasJavaOrKotlin(): Boolean {
+    if (pluginManager.hasPlugin("java")) {
+        return true
+    }
+    val compileKotlin = tasks.findByName("compileKotlin")
+    val compileTestKotlin = tasks.findByName("compileTestKotlin")
+    return compileKotlin != null || compileTestKotlin != null
+}
+
 private fun Project.configureProtobufPlugin(extension: Extension, version: String) =
     protobuf {
         plugins {
@@ -182,16 +200,20 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
             }
         }
         generateProtoTasks {
-            all().forEach {
-                it.plugins {
+            all().forEach { task ->
+                if (hasJavaOrKotlin()) {
+                    task.builtins.maybeCreate("kotlin")
+                }
+                val sourceSet = task.sourceSet
+                task.plugins {
                     id(PROTOC_PLUGIN) {
-                        val requestFile = extension.requestFile(it.sourceSet)
+                        val requestFile = extension.requestFile(sourceSet)
                         val path = requestFile.get().asFile.absolutePath
                         option(path.base64Encoded())
                     }
                 }
-                val launchTask = LaunchTask.get(project, it.sourceSet)
-                launchTask.dependsOn(it /* GenerateProtoTask */)
+                val launchTask = LaunchTask.get(project, sourceSet)
+                launchTask.dependsOn(task)
             }
         }
         generatedFilesBaseDir = "$buildDir/generated-proto/"

@@ -45,6 +45,16 @@ public final class AnnotationRenderer extends JavaRenderer {
 
     @Override
     protected void render(SourceFileSet sources) {
+        //TODO:2022-10-18:alexander.yevsyukov: Use `sourceRoot` when it's public and
+        // remove `findFile()` check in the `renderFor()` method below.
+        //
+        // if (!sources.sourceRoot.endsWith("java")) {
+        //     return;
+        // }
+        //
+        // For the root cause of this please see this issue:
+        // https://github.com/SpineEventEngine/ProtoData/issues/90
+        //
         Set<Annotated> annotatedFields = select(Annotated.class).all();
         annotatedFields.forEach(
                 field -> renderFor(field, sources)
@@ -55,6 +65,13 @@ public final class AnnotationRenderer extends JavaRenderer {
         FieldId id = field.getId();
         FieldGetter getter = new FieldGetter(id);
         Path path = javaFileOf(id.getType(), id.getFile());
+
+        // If there are no Java files, we deal with another language.
+        // Have this workaround until we get access to the `sourceRoot` property.
+        if (sourceSet.findFile(path).isEmpty()) {
+            return;
+        }
+
         sourceSet.file(path)
                  .at(getter)
                  .withExtraIndentation(INDENT_LEVEL)

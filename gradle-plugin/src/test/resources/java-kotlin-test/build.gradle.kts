@@ -24,24 +24,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
+import io.spine.internal.dependency.Protobuf
 
-@Suppress("unused")
-object Jackson {
-    const val version = "2.13.2"
-    const val databindVersion = "2.13.2.2"
-    // https://github.com/FasterXML/jackson-core
-    const val core = "com.fasterxml.jackson.core:jackson-core:${version}"
-    // https://github.com/FasterXML/jackson-databind
-    const val databind = "com.fasterxml.jackson.core:jackson-databind:${databindVersion}"
-    // https://github.com/FasterXML/jackson-dataformat-xml/releases
-    const val dataformatXml = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${version}"
-    // https://github.com/FasterXML/jackson-dataformats-text/releases
-    const val dataformatYaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${version}"
-    // https://github.com/FasterXML/jackson-module-kotlin/releases
-    const val moduleKotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:${version}"
-    // https://github.com/FasterXML/jackson-bom
-    const val bom = "com.fasterxml.jackson:jackson-bom:${version}"
-    // https://github.com/FasterXML/jackson-annotations
-    const val annotations = "com.fasterxml.jackson.core:jackson-annotations:${version}"
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+
+buildscript {
+    io.spine.internal.gradle.doApplyStandard(repositories)
+}
+
+plugins {
+    java
+    id("com.google.protobuf")
+    id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
+}
+
+fun RepositoryHandler.addCouple(baseUrl: String) {
+    maven { url = uri("$baseUrl/releases") }
+    maven { url = uri("$baseUrl/snapshots") }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+
+    addCouple("https://spine.mycloudrepo.io/public/repositories")
+    addCouple("https://europe-maven.pkg.dev/spine-event-engine")
+}
+
+protoData {
+    renderers("io.spine.protodata.test.NoOpRenderer")
+    plugins("io.spine.protodata.test.TestPlugin")
+}
+
+dependencies {
+    protoData("io.spine.protodata:protodata-test-env:+")
+    Protobuf.libs.forEach { implementation(it) }
+}
+
+protobuf {
+    protoc {
+        artifact = io.spine.internal.dependency.Protobuf.compiler
+    }
 }

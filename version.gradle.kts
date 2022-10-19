@@ -24,14 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.112")
-val coreVersion: String by extra("2.0.0-SNAPSHOT.113")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.109")
+val baseVersion: String by extra("2.0.0-SNAPSHOT.114")
+val coreVersion: String by extra("2.0.0-SNAPSHOT.116")
+val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.111")
 val mcVersion: String by extra("2.0.0-SNAPSHOT.90")
-val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.101")
-
-/** The version of ProtoData used for developing [protoDataVersion]. */
-val devProtoDataVersion: String by extra("0.2.16")
+val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.102")
 
 // The version of ProtoData being developed.
-val protoDataVersion: String by extra("0.2.18")
+val protoDataVersion: String by extra("0.2.19")
