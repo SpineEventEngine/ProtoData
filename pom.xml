@@ -49,12 +49,6 @@ all modules and does not describe the project structure per-subproject.
   </dependency>
   <dependency>
     <groupId>com.google.protobuf</groupId>
-    <artifactId>protobuf-gradle-plugin</artifactId>
-    <version>0.8.19</version>
-    <scope>compile</scope>
-  </dependency>
-  <dependency>
-    <groupId>com.google.protobuf</groupId>
     <artifactId>protobuf-java</artifactId>
     <version>3.19.6</version>
     <scope>compile</scope>
@@ -151,18 +145,6 @@ all modules and does not describe the project structure per-subproject.
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
-    <artifactId>spine-plugin-base</artifactId>
-    <version>2.0.0-SNAPSHOT.111</version>
-    <scope>test</scope>
-  </dependency>
-  <dependency>
-    <groupId>io.spine.tools</groupId>
-    <artifactId>spine-plugin-testlib</artifactId>
-    <version>2.0.0-SNAPSHOT.111</version>
-    <scope>test</scope>
-  </dependency>
-  <dependency>
-    <groupId>io.spine.tools</groupId>
     <artifactId>spine-testutil-server</artifactId>
     <version>2.0.0-SNAPSHOT.116</version>
     <scope>test</scope>
@@ -198,6 +180,12 @@ all modules and does not describe the project structure per-subproject.
   </dependency>
   <dependency>
     <groupId>com.google.protobuf</groupId>
+    <artifactId>protobuf-gradle-plugin</artifactId>
+    <version>0.8.19</version>
+    <scope>provided</scope>
+  </dependency>
+  <dependency>
+    <groupId>com.google.protobuf</groupId>
     <artifactId>protoc</artifactId>
     <version>3.21.7</version>
   </dependency>
@@ -226,6 +214,21 @@ all modules and does not describe the project structure per-subproject.
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-mc-java-plugins</artifactId>
     <version>2.0.0-SNAPSHOT.102</version>
+  </dependency>
+  <dependency>
+    <groupId>io.spine.tools</groupId>
+    <artifactId>spine-plugin-base</artifactId>
+    <version>2.0.0-SNAPSHOT.111</version>
+  </dependency>
+  <dependency>
+    <groupId>io.spine.tools</groupId>
+    <artifactId>spine-plugin-testlib</artifactId>
+    <version>2.0.0-SNAPSHOT.111</version>
+  </dependency>
+  <dependency>
+    <groupId>io.spine.tools</groupId>
+    <artifactId>spine-testlib</artifactId>
+    <version>2.0.0-SNAPSHOT.114</version>
   </dependency>
   <dependency>
     <groupId>io.spine.validation</groupId>
@@ -284,6 +287,11 @@ all modules and does not describe the project structure per-subproject.
   </dependency>
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-gradle-plugin</artifactId>
+    <version>1.7.20</version>
+  </dependency>
+  <dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-klib-commonizer-embeddable</artifactId>
     <version>1.7.20</version>
   </dependency>
@@ -291,6 +299,11 @@ all modules and does not describe the project structure per-subproject.
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-scripting-compiler-embeddable</artifactId>
     <version>1.7.20</version>
+  </dependency>
+  <dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <version>5.9.1</version>
   </dependency>
 </dependencies>
 
