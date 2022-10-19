@@ -137,9 +137,9 @@ val publish: Task by tasks.getting {
 }
 
 tasks {
-//    check {
-//        dependsOn(testing.suites.named("functionalTest"))
-//    }
+    check {
+        dependsOn(testing.suites.named("functionalTest"))
+    }
 
     ideaModule {
         notCompatibleWithConfigurationCache("https://github.com/gradle/gradle/issues/13480")
