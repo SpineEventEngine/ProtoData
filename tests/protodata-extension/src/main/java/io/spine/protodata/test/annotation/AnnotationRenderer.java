@@ -51,6 +51,10 @@ public final class AnnotationRenderer extends JavaRenderer {
         // if (!sources.sourceRoot.endsWith("java")) {
         //     return;
         // }
+        //
+        // For the root cause of this please see this issue:
+        // https://github.com/SpineEventEngine/ProtoData/issues/90
+        //
         Set<Annotated> annotatedFields = select(Annotated.class).all();
         annotatedFields.forEach(
                 field -> renderFor(field, sources)
