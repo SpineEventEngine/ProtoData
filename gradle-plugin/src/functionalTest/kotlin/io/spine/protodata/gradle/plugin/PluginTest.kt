@@ -29,7 +29,7 @@ package io.spine.protodata.gradle.plugin
 import com.google.common.truth.Truth.assertThat
 import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
-import io.spine.tools.gradle.task.BaseTaskName
+import io.spine.tools.gradle.task.BaseTaskName.build
 import io.spine.tools.gradle.task.TaskName
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
@@ -97,10 +97,17 @@ class `ProtoData Gradle plugin should` {
     @Test
     fun `produce 'java' and 'kotlin' directories under 'generated'`() {
         createProject("java-kotlin-test")
-        val build = BaseTaskName.build
         val result = project.executeTask(build)
         assertThat(result[build]).isEqualTo(SUCCESS)
         assertExists(generatedJavaDir)
+        assertExists(generatedKotlinDir)
+    }
+
+    @Test
+    fun `configure Kotlin compilation`() {
+        createProject("kotlin-test")
+        val result = project.executeTask(build)
+        assertThat(result[build]).isEqualTo(SUCCESS)
         assertExists(generatedKotlinDir)
     }
     

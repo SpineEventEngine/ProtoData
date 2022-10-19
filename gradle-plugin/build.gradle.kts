@@ -78,6 +78,7 @@ dependencies {
     api(project(":gradle-api"))
 
     implementation(spine.toolBase)
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api:${Kotlin.version}")
 }
 
 val testsDependOnProjects = listOf(

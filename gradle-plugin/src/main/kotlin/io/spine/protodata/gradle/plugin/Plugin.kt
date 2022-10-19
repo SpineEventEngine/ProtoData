@@ -42,13 +42,17 @@ import io.spine.tools.code.manifest.Version
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -233,13 +237,46 @@ private fun Extension.configureSourceSet(sourceSet: SourceSet) {
     if (sourceDirs.isEmpty()) {
         return
     }
-    val task = project.javaCompileFor(sourceSet)!!
+    val javaCompile = project.javaCompileFor(sourceSet)!!
+    val kotlinCompile: KotlinCompile<*>? = project.kotlinCompileFor(sourceSet)
     sourceDirs.asSequence()
         .zip(targetDirs.asSequence())
         .filter { it.first != it.second }
         .forEach { (sourceDir, _) ->
-            task.source = task.source.filter { file -> !file.residesIn(sourceDir) }.asFileTree
+            configureCompileTasks(sourceDir, javaCompile, kotlinCompile)
         }
+}
+
+/**
+ * Configures given compilation tasks NOT to take source files from
+ * the given [sourceDir].
+ *
+ * @param sourceDir
+ *          the directory (by default it's `build/generated-proto`) which must be excluded
+ *          from compilation to avoid double class errors
+ * @param javaCompile
+ *          compilation task for Java in the configured project
+ * @param kotlinCompile
+ *          is non-null if Kotlin is enabled in the configured project
+ */
+private fun configureCompileTasks(
+    sourceDir: Directory,
+    javaCompile: JavaCompile,
+    kotlinCompile: KotlinCompile<*>?
+) {
+    // The predicate to filter out files from `build/generated-proto` directory.
+    val notInSourceDir: (File) -> Boolean = { file -> !file.residesIn(sourceDir) }
+
+    // Re-set sources for `JavaCompile` assuming filtering.
+    javaCompile.source = javaCompile.source.filter(notInSourceDir).asFileTree
+
+    // Do the same for `KotlinCompile`, if it's present in the project.
+    if (kotlinCompile is KotlinCompileTool) {
+        val filteredKotlin = kotlinCompile.sources.filter(notInSourceDir).toSet()
+        with(kotlinCompile.sources as ConfigurableFileCollection) {
+            setFrom(filteredKotlin)
+        }
+    }
 }
 
 private fun File.residesIn(directory: Directory): Boolean =
