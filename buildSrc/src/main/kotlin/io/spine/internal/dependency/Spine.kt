@@ -106,7 +106,7 @@ class Spine(p: ExtensionAware) {
          *
          * @see [ProtoData]
          */
-        const val protoDataVersion = "0.2.18"
+        const val protoDataVersion = "0.2.19"
     }
 
     val base = "$group:spine-base:${p.baseVersion}"

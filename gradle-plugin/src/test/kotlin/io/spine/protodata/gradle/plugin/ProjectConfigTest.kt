@@ -50,18 +50,19 @@ class `ProtoData plugin should` {
         @BeforeAll
         @JvmStatic
         fun prepareProject(@TempDir projectDir: File) {
-            project = ProjectBuilder
-                .builder()
+            project = ProjectBuilder.builder()
                 .withProjectDir(projectDir)
                 .build()
-            project.apply(plugin = "java")
-            project.apply<ProtobufPlugin>()
-            project.apply<Plugin>()
-
-            project.repositories.mavenLocal()
-
-            project.sourceSets.maybeCreate(MAIN_SOURCE_SET_NAME)
-            project.sourceSets.maybeCreate(TEST_SOURCE_SET_NAME)
+            with(project) {
+                apply(plugin = "java")
+                apply<ProtobufPlugin>()
+                apply<Plugin>()
+                repositories.mavenLocal()
+            }
+            with(project.sourceSets) {
+                maybeCreate(MAIN_SOURCE_SET_NAME)
+                maybeCreate(TEST_SOURCE_SET_NAME)
+            }
         }
     }
 

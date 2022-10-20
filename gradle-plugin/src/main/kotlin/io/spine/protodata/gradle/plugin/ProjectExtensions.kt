@@ -33,6 +33,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 /**
  * The [sourceSets][SourceSetContainer] of this project.
@@ -59,7 +60,7 @@ internal fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
  * `compileKotlin` if the source set name is `"main"`. If the task does not fit this described
  * pattern, this method will not find it.
  */
-internal fun Project.kotlinCompileFor(sourceSet: SourceSet): Task? {
+internal fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompile<*>? {
     val taskName = sourceSet.getCompileTaskName("Kotlin")
-    return tasks.findByName(taskName)
+    return tasks.findByName(taskName) as KotlinCompile<*>?
 }

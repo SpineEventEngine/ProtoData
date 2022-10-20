@@ -24,8 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Spine
 import io.spine.internal.gradle.isSnapshot
+import org.gradle.kotlin.dsl.kotlin
 
 plugins {
     `java-gradle-plugin`
@@ -36,27 +40,55 @@ plugins {
     jacoco
 }
 
+val spine = Spine(project)
+
+@Suppress("UNUSED_VARIABLE") // `test` and `functionalTest`
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter(JUnit.version)
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}")
+                implementation(gradleKotlinDsl())
+                implementation(spine.pluginBase)
+                implementation(spine.pluginTestlib)
+            }
+        }
+
+        val functionalTest by registering(JvmTestSuite::class) {
+            useJUnitJupiter(JUnit.version)
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}")
+                implementation(spine.testlib)
+                implementation(spine.pluginBase)
+                implementation(spine.pluginTestlib)
+                implementation("org.jetbrains.kotlin:kotlin-test-junit5:${Kotlin.version}")
+                implementation(project(":gradle-plugin"))
+            }
+        }
+    }
+}
+
 val toolBaseVersion: String by extra
 
 dependencies {
-    implementation(gradleApi())
-    implementation(gradleKotlinDsl())
-    implementation(Protobuf.GradlePlugin.lib)
+    compileOnly(gradleApi())
+    compileOnly(gradleKotlinDsl())
+    compileOnly(Protobuf.GradlePlugin.lib)
     api(project(":gradle-api"))
 
-    implementation("io.spine.tools:spine-tool-base:$toolBaseVersion")
-
-    testImplementation("io.spine.tools:spine-plugin-base:$toolBaseVersion")
-    testImplementation("io.spine.tools:spine-plugin-testlib:$toolBaseVersion")
+    implementation(spine.toolBase)
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api:${Kotlin.version}")
 }
 
 val testsDependOnProjects = listOf(
     "cli", "compiler", "protoc", "test-env", "gradle-plugin"
 )
 
-tasks.withType<Test> {
-    testsDependOnProjects.forEach {
-        this@withType.dependsOn(":$it:publishToMavenLocal")
+tasks.withType<Test>().configureEach {
+    val task = this
+    testsDependOnProjects.forEach { project ->
+        task.dependsOn(":$project:publishToMavenLocal")
     }
 }
 
@@ -71,6 +103,10 @@ gradlePlugin {
             description = "Sets up the ProtoData tool to be used in your project."
         }
     }
+    val functionalTest by sourceSets.getting
+    testSourceSets(
+        functionalTest
+    )
 }
 
 pluginBundle {
@@ -99,6 +135,20 @@ val publishPlugins: Task by tasks.getting {
 
 val publish: Task by tasks.getting {
     dependsOn(publishPlugins)
+}
+
+tasks {
+    check {
+        dependsOn(testing.suites.named("functionalTest"))
+    }
+
+    ideaModule {
+        notCompatibleWithConfigurationCache("https://github.com/gradle/gradle/issues/13480")
+    }
+
+    publishPlugins {
+        notCompatibleWithConfigurationCache("https://github.com/gradle/gradle/issues/21283")
+    }
 }
 
 /**
