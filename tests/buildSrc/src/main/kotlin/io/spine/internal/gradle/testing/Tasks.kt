@@ -28,6 +28,7 @@ package io.spine.internal.gradle.testing
 
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 
 /**
@@ -45,6 +46,11 @@ import org.gradle.kotlin.dsl.register
  */
 @Suppress("unused")
 fun TaskContainer.registerTestTasks() {
+    withType(Test::class.java).configureEach {
+        filter {
+            includeTestsMatching("*Spec")
+        }
+    }
     register<FastTest>("fastTest").let {
         register<SlowTest>("slowTest") {
             shouldRunAfter(it)
