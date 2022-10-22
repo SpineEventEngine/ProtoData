@@ -245,6 +245,14 @@ val integrationTest by tasks.creating(RunBuild::class) {
 tasks["check"].finalizedBy(integrationTest)
 
 typealias Subproject = Project
+
+/**
+ * Adds directories with the generated source code to source sets of the project and
+ * to IntelliJ IDEA module settings.
+ *
+ * @param generatedDir
+ *          the name of the root directory with the generated code
+ */
 fun Subproject.applyGeneratedDirectories(generatedDir: String) {
     val generatedMain = "$generatedDir/main"
     val generatedJava = "$generatedMain/java"
