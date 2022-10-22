@@ -207,6 +207,8 @@ subprojects {
         }
     }
 
+    val generatedDir = "$projectDir/generated"
+    project.applyGeneratedDirectories(generatedDir)
     project.configureTaskDependencies()
 }
 
@@ -241,3 +243,60 @@ val integrationTest by tasks.creating(RunBuild::class) {
 }
 
 tasks["check"].finalizedBy(integrationTest)
+
+typealias Subproject = Project
+fun Subproject.applyGeneratedDirectories(generatedDir: String) {
+    val generatedMain = "$generatedDir/main"
+    val generatedJava = "$generatedMain/java"
+    val generatedKotlin = "$generatedMain/kotlin"
+    val generatedGrpc = "$generatedMain/grpc"
+    val generatedSpine = "$generatedMain/spine"
+
+    val generatedTest = "$generatedDir/test"
+    val generatedTestJava = "$generatedTest/java"
+    val generatedTestKotlin = "$generatedTest/kotlin"
+    val generatedTestGrpc = "$generatedTest/grpc"
+    val generatedTestSpine = "$generatedTest/spine"
+
+    sourceSets {
+        main {
+            java.srcDirs(
+                generatedJava,
+                generatedGrpc,
+                generatedSpine,
+            )
+            kotlin.srcDirs(
+                generatedKotlin,
+            )
+        }
+        test {
+            java.srcDirs(
+                generatedTestJava,
+                generatedTestGrpc,
+                generatedTestSpine,
+            )
+            kotlin.srcDirs(
+                generatedTestKotlin,
+            )
+        }
+    }
+
+    idea {
+        module {
+            generatedSourceDirs.addAll(files(
+                generatedJava,
+                generatedKotlin,
+                generatedGrpc,
+                generatedSpine,
+            ))
+            testSources.from(
+                generatedTestJava,
+                generatedTestKotlin,
+                generatedTestGrpc,
+                generatedTestSpine,
+            )
+            isDownloadJavadoc = true
+            isDownloadSources = true
+        }
+    }
+}
