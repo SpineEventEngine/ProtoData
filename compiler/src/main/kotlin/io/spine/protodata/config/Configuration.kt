@@ -63,13 +63,13 @@ public sealed class Configuration {
 
 private class File(private val file: Path) : Configuration() {
 
-    override fun produceEvent() = FileConfigDiscovered.newBuilder()
-        .setFile(file.toConfigFile())
-        .build()
+    override fun produceEvent() = fileConfigDiscovered {
+        file = this@File.file.toConfigFile()
+    }
 
-    private fun Path.toConfigFile() = ConfigFile.newBuilder()
-        .setPath(absolutePathString())
-        .build()
+    private fun Path.toConfigFile() = configFile {
+        path = absolutePathString()
+    }
 }
 
 private class Raw(
@@ -77,12 +77,10 @@ private class Raw(
     private val format: ConfigurationFormat
 ) : Configuration() {
 
-    override fun produceEvent() = RawConfigDiscovered.newBuilder()
-        .setConfig(config())
-        .build()
-
-    private fun config() = RawConfig.newBuilder()
-        .setFormat(format)
-        .setValue(value)
-        .build()
+    override fun produceEvent() = rawConfigDiscovered {
+        config = rawConfig {
+            format = this@Raw.format
+            value = this@Raw.value
+        }
+    }
 }
