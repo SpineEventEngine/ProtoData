@@ -63,15 +63,10 @@ public class Pipeline(
 ) {
 
     init {
-        /* Once `spine-server` is updated,
-               `io.spine.server.under` extension should be used here, for brevity. */
-        ServerEnvironment.`when`(DefaultMode::class.java)
-            .use(InMemoryStorageFactory.newInstance())
-            .use(InMemoryTransportFactory.newInstance())
-//        under<DefaultMode> {
-//            use(InMemoryStorageFactory.newInstance())
-//            use(InMemoryTransportFactory.newInstance())
-//        }
+        under<DefaultMode> {
+            use(InMemoryStorageFactory.newInstance())
+            use(InMemoryTransportFactory.newInstance())
+        }
     }
 
     /**
@@ -83,12 +78,9 @@ public class Pipeline(
      * should be single-threaded.
      */
     public operator fun invoke() {
-        ServerEnvironment
-            .`when`(DefaultMode::class.java)
-            .use(Delivery.direct())
-//        under<DefaultMode> {
-//            use(Delivery.direct())
-//        }
+        under<DefaultMode> {
+            use(Delivery.direct())
+        }
         val contextBuilder = CodeGenerationContext.builder()
         plugins.forEach { contextBuilder.apply(it) }
         val codeGenContext = contextBuilder.build()
