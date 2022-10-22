@@ -25,10 +25,10 @@
  */
 
 val baseVersion: String by extra("2.0.0-SNAPSHOT.114")
-val coreVersion: String by extra("2.0.0-SNAPSHOT.116")
+val coreVersion: String by extra("2.0.0-SNAPSHOT.117")
 val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.111")
 val mcVersion: String by extra("2.0.0-SNAPSHOT.90")
-val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.102")
+val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.103")
 
 // The version of ProtoData being developed.
 val protoDataVersion: String by extra("0.2.21")
