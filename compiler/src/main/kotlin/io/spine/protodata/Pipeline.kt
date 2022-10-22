@@ -35,10 +35,10 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.server.ServerEnvironment
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
+import io.spine.server.under
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -62,26 +62,24 @@ public class Pipeline(
 ) {
 
     init {
-        /* Once `spine-server` is updated,
-        `io.spine.server.under` extension should be used here, for brevity. */
-        ServerEnvironment.`when`(DefaultMode::class.java)
-            .use(InMemoryStorageFactory.newInstance())
-            .use(InMemoryTransportFactory.newInstance())
+        under<DefaultMode> {
+            use(InMemoryStorageFactory.newInstance())
+            use(InMemoryTransportFactory.newInstance())
+        }
     }
 
     /**
      * Executes the processing pipeline.
      *
-     * The execution is performed in `Delivery.direct()` mode, meaning
+     * The execution is performed in [Delivery.direct] mode, meaning
      * that no concurrent modification of entity states is allowed.
      * Therefore, the execution of the code related to the signal processing
      * should be single-threaded.
      */
     public operator fun invoke() {
-        ServerEnvironment
-            .`when`(DefaultMode::class.java)
-            .use(Delivery.direct())
-
+        under<DefaultMode> {
+            use(Delivery.direct())
+        }
         val contextBuilder = CodeGenerationContext.builder()
         plugins.forEach { contextBuilder.apply(it) }
         val codeGenContext = contextBuilder.build()
