@@ -35,6 +35,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.server.ServerEnvironment
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
@@ -62,10 +63,15 @@ public class Pipeline(
 ) {
 
     init {
-        under<DefaultMode> {
-            use(InMemoryStorageFactory.newInstance())
-            use(InMemoryTransportFactory.newInstance())
-        }
+        /* Once `spine-server` is updated,
+               `io.spine.server.under` extension should be used here, for brevity. */
+        ServerEnvironment.`when`(DefaultMode::class.java)
+            .use(InMemoryStorageFactory.newInstance())
+            .use(InMemoryTransportFactory.newInstance())
+//        under<DefaultMode> {
+//            use(InMemoryStorageFactory.newInstance())
+//            use(InMemoryTransportFactory.newInstance())
+//        }
     }
 
     /**
@@ -77,9 +83,12 @@ public class Pipeline(
      * should be single-threaded.
      */
     public operator fun invoke() {
-        under<DefaultMode> {
-            use(Delivery.direct())
-        }
+        ServerEnvironment
+            .`when`(DefaultMode::class.java)
+            .use(Delivery.direct())
+//        under<DefaultMode> {
+//            use(Delivery.direct())
+//        }
         val contextBuilder = CodeGenerationContext.builder()
         plugins.forEach { contextBuilder.apply(it) }
         val codeGenContext = contextBuilder.build()
