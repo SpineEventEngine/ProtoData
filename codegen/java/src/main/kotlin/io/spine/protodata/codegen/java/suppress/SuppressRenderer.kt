@@ -79,15 +79,15 @@ public class SuppressRenderer : JavaRenderer() {
      * this class is added to a ProtoData configuration but no specific warnings are specified.
      */
     private fun warningList(): String {
-        val warnings = if (configIsPresent()) {
+        val warnings = if (!configIsPresent()) {
+            ALL_WARNINGS
+        } else {
             val configured = configAs<SuppressConfig>().warnings.valueList
             if (configured.isEmpty()) {
                 ALL_WARNINGS
             } else {
                 configured
             }
-        } else {
-            ALL_WARNINGS
         }
         val warningsList = warnings.joinToString { '"' + it + '"' }
         return warningsList
