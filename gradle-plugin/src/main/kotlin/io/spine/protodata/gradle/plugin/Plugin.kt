@@ -41,6 +41,7 @@ import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
 import io.spine.tools.code.manifest.Version
 import java.io.File
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
@@ -112,17 +113,21 @@ private fun Project.createLaunchTasks(extension: Extension, version: String) {
     }
     val cliDependency = Artifacts.fatCli(version)
     dependencies.add(artifactConfig.name, cliDependency)
-    val userCpConfig = userClasspathConfiguration()
+    val userCpConfig = createUserClasspathConfiguration()
     sourceSets.forEach { sourceSet ->
         createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
         createCleanTask(extension, sourceSet)
     }
 }
 
-private fun Project.userClasspathConfiguration() =
+private fun Project.createUserClasspathConfiguration() =
     configurations.create(USER_CLASSPATH_CONFIGURATION_NAME) {
         it.exclude(group = Artifacts.group, module = Artifacts.compiler)
     }
+
+private fun Project.getUserClasspathConfiguration(): Configuration {
+    return configurations.findByName(USER_CLASSPATH_CONFIGURATION_NAME)!!
+}
 
 private fun Project.createExtension(): Extension {
     val extension = Extension(this)
@@ -132,9 +137,9 @@ private fun Project.createExtension(): Extension {
 
 private fun Project.createLaunchTask(
     ext: Extension, sourceSet: SourceSet, artifactConfig: Configuration, userCpConfig: Configuration
-) {
+): LaunchProtoData {
     val taskName = LaunchTask.nameFor(sourceSet)
-    tasks.create<LaunchProtoData>(taskName) {
+    val result = tasks.create<LaunchProtoData>(taskName) {
         renderers = ext.renderers
         plugins = ext.plugins
         optionProviders = ext.optionProviders
@@ -152,6 +157,7 @@ private fun Project.createLaunchTask(
         javaCompileFor(sourceSet)?.dependsOn(this)
         kotlinCompileFor(sourceSet)?.dependsOn(this)
     }
+    return result
 }
 
 private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
@@ -209,6 +215,13 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                     task.builtins.maybeCreate("kotlin")
                 }
                 val sourceSet = task.sourceSet
+
+                val launchTask: Task =
+                    LaunchTask.find(project, sourceSet) ?: project.createLaunchTaskNow(
+                        extension,
+                        sourceSet
+                    )
+
                 task.plugins {
                     id(PROTOC_PLUGIN) {
                         val requestFile = extension.requestFile(sourceSet)
@@ -216,12 +229,18 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                         option(path.base64Encoded())
                     }
                 }
-                val launchTask = LaunchTask.get(project, sourceSet)
                 launchTask.dependsOn(task)
             }
         }
         generatedFilesBaseDir = "$buildDir/generated-proto/"
     }
+
+private fun Project.createLaunchTaskNow(extension: Extension, sourceSet: SourceSet): Task {
+    val protoDataRawArtifact = configurations.getByName("protoDataRawArtifact")
+    val userCpConfig: Configuration = getUserClasspathConfiguration()
+    val launchTask = createLaunchTask(extension, sourceSet, protoDataRawArtifact, userCpConfig)
+    return launchTask
+}
 
 private fun Project.configureSourceSets(extension: Extension) {
     afterEvaluate {

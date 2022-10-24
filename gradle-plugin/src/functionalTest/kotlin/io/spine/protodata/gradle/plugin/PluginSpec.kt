@@ -41,11 +41,13 @@ import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 @SlowTest
-class `ProtoData Gradle plugin should` {
+@DisplayName("ProtoData Gradle plugin should")
+class PluginSpec {
 
     private val taskName: TaskName = TaskName { "launchProtoDataMain" }
 
@@ -120,6 +122,14 @@ class `ProtoData Gradle plugin should` {
         assertDoesNotExist(generatedKotlinDir)
     }
 
+    @Test
+    fun `support custom source sets`() {
+        createProject("with-functional-test")
+        val result = project.executeTask(build)
+        assertThat(result[build]).isEqualTo(SUCCESS)
+        assertExists(generatedKotlinDir)
+    }
+
     private fun createEmptyProject() {
         createProject("empty-test")
     }
@@ -148,7 +158,7 @@ class `ProtoData Gradle plugin should` {
                  2) Under Windows it may cause this issue to occur:
                     https://github.com/gradle/native-platform/issues/274
                After finishing the debug, please comment out this call again. */    
-            //.enableRunnerDebug()
+            .enableRunnerDebug()
             .copyBuildSrc()
         project = builder.create()
     }

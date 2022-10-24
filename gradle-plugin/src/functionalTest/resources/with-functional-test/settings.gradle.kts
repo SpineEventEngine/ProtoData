@@ -24,39 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
-
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.SourceSet
-
-/**
- * Launches the ProtoData command-line utility from a Gradle project.
- */
-public object LaunchTask {
-
-    private const val prefix: String = "launchProtoData"
-
-    /**
-     * Obtains a name of the task for the given source set.
-     */
-    public fun nameFor(sourceSet: SourceSet): String = "$prefix${sourceSet.capitalizedName}"
-
-    /**
-     * Obtains an instance of the task in the given project for the specified source set.
-     */
-    public fun get(project: Project, sourceSet: SourceSet): Task {
-        val name = nameFor(sourceSet)
-        return project.tasks.getByName(name)
-    }
-
-    /**
-     * Obtains an instance of the task in the given project for the specified source set.
-     *
-     * @return the task or `null` if there is no task created for this source set
-     */
-    public fun find(project: Project, sourceSet: SourceSet): Task? {
-        val name = nameFor(sourceSet)
-        return project.tasks.findByName(name)
+pluginManagement {
+    repositories {
+        mavenLocal()
     }
 }
