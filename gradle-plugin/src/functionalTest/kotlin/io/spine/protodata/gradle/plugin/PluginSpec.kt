@@ -130,6 +130,14 @@ class PluginSpec {
         assertDoesNotExist(generatedKotlinDir)
     }
 
+    @Test
+    fun `support custom source sets`() {
+        createProject("with-functional-test")
+        val result = project.executeTask(build)
+        assertThat(result[build]).isEqualTo(SUCCESS)
+        assertExists(generatedKotlinDir)
+    }
+
     private fun createEmptyProject() {
         createProject("empty-test")
     }
