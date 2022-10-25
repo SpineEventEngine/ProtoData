@@ -49,14 +49,14 @@ class Spine(p: ExtensionAware) {
          * The default version  of `base` to use.
          * @see [Spine.base]
          */
-        const val base = "2.0.0-SNAPSHOT.114"
+        const val base = "2.0.0-SNAPSHOT.115"
 
         /**
          * The default version of `core-java` to use.
          * @see [Spine.CoreJava.client]
          * @see [Spine.CoreJava.server]
          */
-        const val core = "2.0.0-SNAPSHOT.114"
+        const val core = "2.0.0-SNAPSHOT.117"
 
         /**
          * The version of `model-compiler` to use.
