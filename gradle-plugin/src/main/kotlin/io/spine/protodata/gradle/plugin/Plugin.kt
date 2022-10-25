@@ -27,6 +27,8 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.annotations.VisibleForTesting
+import com.google.errorprone.annotations.CanIgnoreReturnValue
+import com.google.protobuf.gradle.GenerateProtoTask
 import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.plugins
@@ -38,11 +40,11 @@ import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
+import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.tasks.Delete
@@ -86,8 +88,9 @@ public class Plugin : GradlePlugin<Project> {
         val version = readVersion()
         with(target) {
             val extension = createExtension()
+            createConfigurations(version)
+            createTasks(extension)
             configureWithProtobufPlugin(extension, version)
-            createLaunchTasks(extension, version)
             configureSourceSets(extension)
             configureIdea(extension)
         }
@@ -107,26 +110,22 @@ public class Plugin : GradlePlugin<Project> {
     }
 }
 
-private fun Project.createLaunchTasks(extension: Extension, version: String) {
-    val artifactConfig = configurations.create("protoDataRawArtifact") {
+private const val PROTO_DATA_RAW_ARTIFACT = "protoDataRawArtifact"
+
+/**
+ * Creates configurations for `protoDataRawArtifact` and user-defined classpath,
+ * and adds dependency on [Artifacts.fatCli].
+ */
+private fun Project.createConfigurations(protoDataVersion: String) {
+    val artifactConfig = configurations.create(PROTO_DATA_RAW_ARTIFACT) {
         it.isVisible = false
     }
-    val cliDependency = Artifacts.fatCli(version)
+    val cliDependency = Artifacts.fatCli(protoDataVersion)
     dependencies.add(artifactConfig.name, cliDependency)
-    val userCpConfig = createUserClasspathConfiguration()
-    sourceSets.forEach { sourceSet ->
-        createLaunchTask(extension, sourceSet, artifactConfig, userCpConfig)
-        createCleanTask(extension, sourceSet)
-    }
-}
 
-private fun Project.createUserClasspathConfiguration() =
     configurations.create(USER_CLASSPATH_CONFIGURATION_NAME) {
         it.exclude(group = Artifacts.group, module = Artifacts.compiler)
     }
-
-private fun Project.getUserClasspathConfiguration(): Configuration {
-    return configurations.findByName(USER_CLASSPATH_CONFIGURATION_NAME)!!
 }
 
 private fun Project.createExtension(): Extension {
@@ -135,9 +134,32 @@ private fun Project.createExtension(): Extension {
     return extension
 }
 
-private fun Project.createLaunchTask(
-    ext: Extension, sourceSet: SourceSet, artifactConfig: Configuration, userCpConfig: Configuration
-): LaunchProtoData {
+/**
+ * Creates [LaunchProtoData] and `clean` task for all source sets of this project
+ * available by the time of the call.
+ *
+ * There may be cases of source sets added by other plugins after this method is invoked.
+ * Such situations are handled by [Project.handleLaunchTaskDependency] invoked by
+ * [Project.configureProtobufPlugin].
+ *
+ * @see [Project.handleLaunchTaskDependency]
+ * @see [Project.configureProtobufPlugin]
+ */
+private fun Project.createTasks(extension: Extension) {
+    sourceSets.forEach { sourceSet ->
+        createLaunchTask(extension, sourceSet)
+        createCleanTask(extension, sourceSet)
+    }
+}
+
+/**
+ * Creates [LaunchProtoData] to serve the given [sourceSet].
+ */
+@CanIgnoreReturnValue
+private fun Project.createLaunchTask(ext: Extension, sourceSet: SourceSet): LaunchProtoData {
+    val artifactConfig = configurations.getByName(PROTO_DATA_RAW_ARTIFACT)
+    val userCpConfig = configurations.getByName(USER_CLASSPATH_CONFIGURATION_NAME)
+
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
         renderers = ext.renderers
@@ -175,11 +197,12 @@ private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
 private const val PROTOBUF_PLUGIN = "com.google.protobuf"
 
 private fun Project.configureWithProtobufPlugin(extension: Extension, version: String) {
+    val protocArtifact = ProtocPluginArtifact(version)
     if (pluginManager.hasPlugin(PROTOBUF_PLUGIN)) {
-        configureProtobufPlugin(extension, version)
+        configureProtobufPlugin(extension, protocArtifact)
     } else {
         pluginManager.withPlugin(PROTOBUF_PLUGIN) {
-            configureProtobufPlugin(extension, version)
+            configureProtobufPlugin(extension, protocArtifact)
         }
     }
 }
@@ -202,11 +225,14 @@ private fun Project.hasJavaOrKotlin(): Boolean {
     return compileKotlin != null || compileTestKotlin != null
 }
 
-private fun Project.configureProtobufPlugin(extension: Extension, version: String) =
+private fun Project.configureProtobufPlugin(
+    extension: Extension,
+    protocPlugin: ProtocPluginArtifact
+) {
     protobuf {
         plugins {
             id(PROTOC_PLUGIN) {
-                artifact = Artifacts.protocPlugin(version)
+                artifact = protocPlugin.coordinates
             }
         }
         generateProtoTasks {
@@ -215,13 +241,6 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                     task.builtins.maybeCreate("kotlin")
                 }
                 val sourceSet = task.sourceSet
-
-                val launchTask: Task =
-                    LaunchTask.find(project, sourceSet) ?: project.createLaunchTaskNow(
-                        extension,
-                        sourceSet
-                    )
-
                 task.plugins {
                     id(PROTOC_PLUGIN) {
                         val requestFile = extension.requestFile(sourceSet)
@@ -229,17 +248,36 @@ private fun Project.configureProtobufPlugin(extension: Extension, version: Strin
                         option(path.base64Encoded())
                     }
                 }
-                launchTask.dependsOn(task)
+                handleLaunchTaskDependency(extension, sourceSet, task)
             }
         }
         generatedFilesBaseDir = "$buildDir/generated-proto/"
     }
+}
 
-private fun Project.createLaunchTaskNow(extension: Extension, sourceSet: SourceSet): Task {
-    val protoDataRawArtifact = configurations.getByName("protoDataRawArtifact")
-    val userCpConfig: Configuration = getUserClasspathConfiguration()
-    val launchTask = createLaunchTask(extension, sourceSet, protoDataRawArtifact, userCpConfig)
-    return launchTask
+/**
+ * Makes a [LaunchProtoData], if it exists for the given [sourceSet]
+ * depend on the given [GenerateProtoTask].
+ *
+ * If the [LaunchProtoData] task does not exist (which may be the case for custom source sets
+ * created by other plugins), arranges the task creation on [Project.afterEvaluate].
+ * In this case the [CleanTask] is also created with appropriate dependencies.
+ */
+private fun Project.handleLaunchTaskDependency(
+    extension: Extension,
+    sourceSet: SourceSet,
+    task: GenerateProtoTask
+) {
+    var launchTask: Task? = LaunchTask.find(project, sourceSet)
+    if (launchTask != null) {
+        launchTask.dependsOn(task)
+    } else {
+        project.afterEvaluate {
+            launchTask = createLaunchTask(extension, sourceSet)
+            launchTask!!.dependsOn(task)
+            createCleanTask(extension, sourceSet)
+        }
+    }
 }
 
 private fun Project.configureSourceSets(extension: Extension) {
