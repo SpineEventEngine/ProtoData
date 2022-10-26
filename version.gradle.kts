@@ -24,11 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.115")
-val coreVersion: String by extra("2.0.0-SNAPSHOT.117")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.111")
-val mcVersion: String by extra("2.0.0-SNAPSHOT.90")
-val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.103")
-
-// The version of ProtoData being developed.
+/**
+ * The version of the ProtoData to publish.
+ *
+ * This version also used by integration test projects.
+ * E.g. see `test/consumer/build.gradle.kts`.
+ *
+ * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ */
 val protoDataVersion: String by extra("0.2.21")
