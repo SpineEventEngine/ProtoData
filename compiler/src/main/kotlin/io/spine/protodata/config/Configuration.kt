@@ -87,7 +87,6 @@ private class Raw(
     private val format: ConfigurationFormat
 ) : Configuration() {
 
-
     override fun produceEvent() = RawConfigDiscovered.newBuilder()
         .setConfig(config())
         .build()
