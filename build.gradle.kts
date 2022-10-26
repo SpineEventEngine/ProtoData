@@ -207,9 +207,9 @@ subprojects {
         }
     }
 
-    val generatedDir = "$projectDir/generated"
-    project.applyGeneratedDirectories(generatedDir)
-    project.configureTaskDependencies()
+    val generated = "$projectDir/generated"
+    applyGeneratedDirectories(generated)
+    configureTaskDependencies()
 }
 
 PomGenerator.applyTo(project)
@@ -244,6 +244,9 @@ val integrationTest by tasks.creating(RunBuild::class) {
 
 tasks["check"].finalizedBy(integrationTest)
 
+/**
+ * The alias for typed extensions functions related to subprojects.
+ */
 typealias Subproject = Project
 
 /**
