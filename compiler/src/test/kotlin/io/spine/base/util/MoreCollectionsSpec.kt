@@ -24,10 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.base.util
 
 import com.google.common.truth.Truth.assertThat
 import java.util.stream.Stream
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -35,7 +36,8 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-class `Collection extensions should` {
+@DisplayName("Extensions for collections should")
+class MoreCollectionsSpec {
 
     @Test
     fun `obtain the only element of a collection`() {

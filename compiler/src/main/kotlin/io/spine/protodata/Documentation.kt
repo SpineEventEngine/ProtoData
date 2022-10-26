@@ -39,6 +39,7 @@ import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.base.string.trimWhitespace
+import io.spine.base.util.interlaced
 
 /**
  * Documentation contained in a Protobuf file.

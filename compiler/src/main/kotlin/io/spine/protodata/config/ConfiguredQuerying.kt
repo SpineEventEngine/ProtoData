@@ -36,7 +36,7 @@ import io.spine.protodata.config.Config.KindCase.FILE
 import io.spine.protodata.config.Config.KindCase.KIND_NOT_SET
 import io.spine.protodata.config.Config.KindCase.RAW
 import io.spine.protodata.select
-import io.spine.protodata.theOnly
+import io.spine.base.util.theOnly
 import java.nio.charset.Charset.defaultCharset
 import kotlin.io.path.Path
 

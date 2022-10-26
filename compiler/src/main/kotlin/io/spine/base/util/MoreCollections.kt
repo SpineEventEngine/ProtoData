@@ -24,21 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.base.util
 
 import com.google.common.collect.Iterables
 
 /**
  * Obtains the only element in the receiver `Iterable`.
  *
- * @throws NoSuchElementException if the iterable is empty.
- * @throws IllegalArgumentException if the iterable contains multiple elements.
+ * @throws NoSuchElementException
+ *          if the iterable is empty.
+ * @throws IllegalArgumentException
+ *          if the iterable contains multiple elements.
  */
 public fun <E> Iterable<E>.theOnly(): E = Iterables.getOnlyElement(this)
 
 /**
- * Builds a `Sequence` which consists of the elements of this `Iterable` and the given [infix]
- * between them.
+ * Builds a `Sequence` which consists of the elements of this `Iterable` and
+ * the given [infix] between them.
  *
  * Example:
  *  - `listOf(0, 1, 2).interlaced(42)` -> `[0, 42, 1, 42, 2]`;
