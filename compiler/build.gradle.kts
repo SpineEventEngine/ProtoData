@@ -65,8 +65,12 @@ tasks.withType<CheckVersionIncrement> {
 }
 
 val nl: String = System.lineSeparator()
-val launchProtoDataMain: Task by tasks.getting
-launchProtoDataMain.apply {
+
+/**
+ * Prints output directories produced by `launchProtoData` tasks with
+ * corresponding number of files in those directories.
+ */
+val launchProtoDataMain: Task by tasks.getting {
     doLast {
         println("***** `launchProtoDataMain.output`:")
         outputs.files.forEach { dir ->
@@ -77,19 +81,10 @@ launchProtoDataMain.apply {
     }
 }
 
+/**
+ * Prints input of `compileKotlin` tasks of this module.
+ */
 val compileKotlin: Task by tasks.getting {
-//    println(">>>> `compileKotlin` inputs on configuration:")
-//    println(inputs.files.joinToString(separator = nl))
-//
-//    val protodataOutputDirs = launchProtoDataMain.outputs.files
-//    protodataOutputDirs.forEach { generated ->
-//        println(">>>>> Adding $generated as input...")
-//        inputs.dir(generated)
-//    }
-//
-//    println(">>>> Updated `compileKotlin` inputs:")
-//    println(inputs.files.joinToString(separator = nl))
-//
     doFirst {
         println()
         println(">>>> Kotlin source set dirs:")
