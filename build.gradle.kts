@@ -209,8 +209,7 @@ subprojects {
 
     val generated = "$projectDir/generated"
     applyGeneratedDirectories(generated)
-
-    project.configureTaskDependencies()
+    configureTaskDependencies()
 }
 
 PomGenerator.applyTo(project)
