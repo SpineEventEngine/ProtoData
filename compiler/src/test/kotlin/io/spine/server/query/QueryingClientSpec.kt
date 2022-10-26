@@ -45,14 +45,14 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @DisplayName("`QueryingClient` should")
-class QueringClientSpec {
+class QueryingClientSpec {
 
     private val fileNames: Correspondence<ProtobufSourceFile, String> = Correspondence.from(
         { file, path -> file!!.file.path.value == path },
         "file name"
     )
 
-    private val actor = QueringClientSpec::class.simpleName!!
+    private val actor = QueryingClientSpec::class.simpleName!!
     private lateinit var context: BoundedContext
 
     private val files = listOf(DoctorProto.getDescriptor(), ProjectProto.getDescriptor())
