@@ -41,11 +41,13 @@ import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 @SlowTest
-class `ProtoData Gradle plugin should` {
+@DisplayName("ProtoData Gradle plugin should")
+class PluginSpec {
 
     private val taskName: TaskName = TaskName { "launchProtoDataMain" }
 
@@ -118,6 +120,14 @@ class `ProtoData Gradle plugin should` {
         launchAndExpectResult(SUCCESS)
         assertDoesNotExist(generatedJavaDir)
         assertDoesNotExist(generatedKotlinDir)
+    }
+
+    @Test
+    fun `support custom source sets`() {
+        createProject("with-functional-test")
+        val result = project.executeTask(build)
+        assertThat(result[build]).isEqualTo(SUCCESS)
+        assertExists(generatedKotlinDir)
     }
 
     private fun createEmptyProject() {

@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
-
-object Pmd {
-    const val version = "6.50.0"
+pluginManagement {
+    repositories {
+        mavenLocal()
+    }
 }

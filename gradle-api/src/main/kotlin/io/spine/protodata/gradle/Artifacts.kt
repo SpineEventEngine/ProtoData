@@ -44,7 +44,7 @@ public object Artifacts {
     /**
      * The infix to be used in an artifact name before a submodule name.
      */
-    private const val infix: String = "protodata"
+    internal const val infix: String = "protodata"
 
     /**
      * Obtains Maven coordinates of the `fat-cli` variant of command-line application.
@@ -63,5 +63,22 @@ public object Artifacts {
     /**
      * Obtains Maven coordinates for the ProtoData plugin to Google Protobuf Compiler (`protoc`).
      */
-    public fun protocPlugin(version: String): String = "$group:$infix-protoc:$version:exe@jar"
+    public fun protocPlugin(version: String): ProtocPluginArtifact = ProtocPluginArtifact(version)
+}
+
+/**
+ * Holds Maven references to `protoc` plugin artifact of ProtoData.
+ *
+ * Provided to treat this important dependency in type-safe way.
+ */
+public data class ProtocPluginArtifact(val version: String) {
+
+    public val coordinates: String = "${Artifacts.group}:${Artifacts.infix}-protoc:$version:exe@jar"
+
+    /**
+     * Obtains Maven artifact coordinates.
+     */
+    override fun toString(): String {
+        return coordinates
+    }
 }
