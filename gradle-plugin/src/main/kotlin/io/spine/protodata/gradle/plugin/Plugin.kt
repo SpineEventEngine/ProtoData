@@ -256,8 +256,8 @@ private fun Project.configureProtobufPlugin(
 }
 
 /**
- * Makes a [LaunchProtoData], if it exists for the given [sourceSet]
- * depend on the given [GenerateProtoTask].
+ * Makes a [LaunchProtoData], if it exists for the given [sourceSet], depend on
+ * the given [GenerateProtoTask].
  *
  * If the [LaunchProtoData] task does not exist (which may be the case for custom source sets
  * created by other plugins), arranges the task creation on [Project.afterEvaluate].

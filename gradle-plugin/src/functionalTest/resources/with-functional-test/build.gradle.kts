@@ -70,7 +70,8 @@ protobuf {
     }
 }
 
-@Suppress("UNUSED_VARIABLE") // `test` and `functionalTest`
+@Suppress("UNUSED_VARIABLE") /* `test` and `functionalTest` variables are really used by their
+  names and types for obtaining or creating corresponding suite instances via `by` calls. */
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
