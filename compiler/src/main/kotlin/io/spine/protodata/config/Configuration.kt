@@ -61,28 +61,38 @@ public sealed class Configuration {
     }
 }
 
+/**
+ * A [Configuration] consisting of one [ConfigFile].
+ *
+ * Produces [FileConfigDiscovered] event upon discovery.
+ */
 private class File(private val file: Path) : Configuration() {
 
-    override fun produceEvent() = FileConfigDiscovered.newBuilder()
-        .setFile(file.toConfigFile())
-        .build()
+    override fun produceEvent() = fileConfigDiscovered {
+        file = this@File.file.toConfigFile()
+    }
 
-    private fun Path.toConfigFile() = ConfigFile.newBuilder()
-        .setPath(absolutePathString())
-        .build()
+    private fun Path.toConfigFile() = configFile {
+        path = absolutePathString()
+    }
 }
 
+/**
+ * A [Configuration] produced from a [value] in the specified [format].
+ *
+ * Produces [RawConfigDiscovered] event upon discovery.
+ */
 private class Raw(
     private val value: String,
     private val format: ConfigurationFormat
 ) : Configuration() {
 
-    override fun produceEvent() = RawConfigDiscovered.newBuilder()
-        .setConfig(config())
-        .build()
+    override fun produceEvent() = rawConfigDiscovered {
+        config = config()
+    }
 
-    private fun config() = RawConfig.newBuilder()
-        .setFormat(format)
-        .setValue(value)
-        .build()
+    private fun config() = rawConfig {
+        format = this@Raw.format
+        value = this@Raw.value
+    }
 }
