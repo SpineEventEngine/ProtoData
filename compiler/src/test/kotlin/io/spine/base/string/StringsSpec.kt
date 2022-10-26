@@ -24,14 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.base.string
 
 import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-class `Strings should` {
+@DisplayName("Extensions for `String` should")
+class StringsSpec {
 
     @ParameterizedTest
     @CsvSource("aaa,Aaa", "field_name,Field_name", "TypeName,TypeName", "_uri,_uri")
@@ -54,10 +56,10 @@ class `Strings should` {
              line two 
         """
         assertThat(value.trimIndent().lines()[0].last())
-            .isEqualTo(' ');
+            .isEqualTo(' ')
         val trimmed = value.trimWhitespace()
         assertThat(trimmed.lines()[0].last())
-            .isEqualTo('e');
+            .isEqualTo('e')
         assertThat(trimmed).isEqualTo(
             "line one" + System.lineSeparator() + " line two"
         )

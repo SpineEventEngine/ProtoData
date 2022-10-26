@@ -26,7 +26,7 @@
 
 @file:JvmName("Strings")
 
-package io.spine.protodata
+package io.spine.base.string
 
 /**
  * Obtains the same string but with the first capital letter.
