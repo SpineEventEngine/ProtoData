@@ -24,9 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.base.string
+package io.spine.string
 
 import com.google.common.truth.Truth.assertThat
+import io.spine.string.camelCase
+import io.spine.string.titleCase
+import io.spine.string.trimWhitespace
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

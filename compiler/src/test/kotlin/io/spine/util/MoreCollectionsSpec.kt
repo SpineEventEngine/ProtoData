@@ -24,9 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.base.util
+package io.spine.util
 
 import com.google.common.truth.Truth.assertThat
+import io.spine.util.interlaced
+import io.spine.util.theOnly
 import java.util.stream.Stream
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

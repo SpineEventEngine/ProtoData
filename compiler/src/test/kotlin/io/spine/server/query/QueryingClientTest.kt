@@ -24,28 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.server.query
 
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth8.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.protodata.CodeGenerationContext
+import io.spine.protodata.FilePath
+import io.spine.protodata.ProtobufCompilerContext
+import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.events.CompilerEvents
+import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.ProjectProto
 import io.spine.server.BoundedContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-class `'QueryingClient' should` {
+@DisplayName("`QueryingClient` should")
+class QueringClientSpec {
 
     private val fileNames: Correspondence<ProtobufSourceFile, String> = Correspondence.from(
         { file, path -> file!!.file.path.value == path },
         "file name"
     )
 
-    private val ACTOR = `'QueryingClient' should`::class.simpleName!!
+    private val actor = QueringClientSpec::class.simpleName!!
     private lateinit var context: BoundedContext
 
     private val files = listOf(DoctorProto.getDescriptor(), ProjectProto.getDescriptor())
@@ -70,7 +77,7 @@ class `'QueryingClient' should` {
 
     @Test
     fun `fetch multiple results`() {
-        val client = QueryingClient(context, ProtobufSourceFile::class.java, ACTOR)
+        val client = QueryingClient(context, ProtobufSourceFile::class.java, actor)
         val sources = client.all()
         val assertSources = assertThat(sources)
         assertSources
@@ -82,7 +89,7 @@ class `'QueryingClient' should` {
 
     @Test
     fun `fetch the only one`() {
-        val client = QueryingClient(context, ProtobufSourceFile::class.java, ACTOR)
+        val client = QueryingClient(context, ProtobufSourceFile::class.java, actor)
         val path = files.first().path()
         val source = client.withId(path)
         assertThat(source)
@@ -93,9 +100,8 @@ class `'QueryingClient' should` {
 
     @Test
     fun `fetch none`() {
-        val client = QueryingClient(context, ProtobufSourceFile::class.java, ACTOR)
-        val path = FilePath
-            .newBuilder()
+        val client = QueryingClient(context, ProtobufSourceFile::class.java, actor)
+        val path = FilePath.newBuilder()
             .setValue("non/existent/path.proto")
             .build()
         val source = client.withId(path)

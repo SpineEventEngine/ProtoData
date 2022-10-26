@@ -24,12 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.server.query
 
 import io.grpc.stub.StreamObserver
 import io.spine.base.EntityState
-import io.spine.base.Identifier.checkSupported
-import io.spine.base.util.theOnly
+import io.spine.base.Identifier
+import io.spine.util.theOnly
 import io.spine.client.ActorRequestFactory
 import io.spine.client.Query
 import io.spine.client.QueryResponse
@@ -39,7 +39,9 @@ import io.spine.server.BoundedContext
 import java.util.*
 
 /**
- * A builder for queries to the entities defined on top of the Protobuf compiler events.
+ * A builder for queries to the states of entities.
+ *
+ * @param <T> the type of entity states to query.
  */
 public class QueryingClient<T : EntityState<*>>
 internal constructor(
@@ -59,7 +61,7 @@ internal constructor(
      * Selects an entity by its ID.
      */
     public fun withId(id: Any): Optional<T> {
-        checkSupported(id.javaClass)
+        Identifier.checkSupported(id.javaClass)
         val query = buildQuery(id)
         val results = execute(query)
         return if (results.isEmpty()) {
@@ -108,22 +110,21 @@ private class Observer<T : EntityState<*>>(
 
     private var result: List<T>? = null
 
-    override fun onNext(response: QueryResponse?) {
-        response!!
+    override fun onNext(response: QueryResponse) {
         result = response.messageList.map {
             AnyPacker.unpack(it.state, type)
         }
     }
 
-    override fun onError(e: Throwable?) {
-        throw e!!
+    override fun onError(e: Throwable) {
+        throw e
     }
 
     override fun onCompleted() {}
 
     /**
-     * Obtains the found result or throws an `IllegalStateException` if the result has not been
-     * received.
+     * Obtains the found result or throws an `IllegalStateException` if
+     * the result has not been received.
      */
     fun foundResult(): List<T> {
         return result ?: throw IllegalStateException("Query has not yielded any result yet.")

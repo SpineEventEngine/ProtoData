@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.server.query
 
 import io.spine.base.EntityState
 
@@ -34,9 +34,7 @@ import io.spine.base.EntityState
 public interface Querying {
 
     /**
-     * Creates a [QueryingClient] to find views of the given class.
-     *
-     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
+     * Creates a [QueryingClient] to find views of the given entity state class.
      *
      * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
      * prettier code.
@@ -45,9 +43,7 @@ public interface Querying {
 }
 
 /**
- * Creates a [QueryingClient] to find views of the given type.
- *
- * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
+ * Creates a [QueryingClient] to find views of the given entity state type.
  *
  * This overload is for Kotlin API users. Java users cannot access `inline` methods. As the method
  * is `inline`, it cannot be declared inside the interface. Thus, we use an extension method for

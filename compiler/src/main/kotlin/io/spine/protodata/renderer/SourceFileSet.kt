@@ -30,7 +30,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.common.base.Preconditions.checkArgument
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
-import io.spine.base.util.theOnly
+import io.spine.util.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path

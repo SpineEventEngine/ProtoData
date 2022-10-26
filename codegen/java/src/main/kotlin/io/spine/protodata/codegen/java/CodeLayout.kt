@@ -34,7 +34,7 @@ import io.spine.protodata.EnumType
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.TypeName
-import io.spine.base.string.camelCase
+import io.spine.string.camelCase
 import io.spine.protodata.find
 import java.nio.file.Path
 import kotlin.io.path.Path

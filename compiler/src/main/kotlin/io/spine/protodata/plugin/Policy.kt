@@ -33,7 +33,7 @@ import io.spine.base.EventMessage
 import io.spine.core.ContractFor
 import io.spine.logging.Logging
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.QueryingClient
+import io.spine.server.query.QueryingClient
 import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.server.BoundedContext
 import io.spine.server.event.AbstractEventReactor
