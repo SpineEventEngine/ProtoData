@@ -24,28 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.plugin
+package io.spine.server.event
 
-import io.spine.base.EventMessage
-import io.spine.server.tuple.Tuple
+import com.google.common.truth.Truth.assertThat
+import io.spine.base.Identifier.newUuid
+import io.spine.protodata.test.ProjectCreated
+import org.junit.jupiter.api.Test
 
-/**
- * A tuple of one event.
- *
- * Used when returning an iterable from a handler method for better readability over `List<E>`.
- */
-public class Just<E : EventMessage>(event: E) : Tuple(event) {
+class `Just should` {
 
-    public companion object {
+    @Test
+    fun `store one value`() {
+        val just = Just(validEvent)
+        assertThat(just)
+            .containsExactly(validEvent)
+    }
 
-        /**
-         * A factory method for Java.
-         *
-         * Prefer the primary constructor in Kotlin.
-         *
-         * This method is intended to be imported statically.
-         */
-        @JvmStatic
-        public fun <E : EventMessage> just(event: E): Just<E> = Just(event)
+    @Test
+    fun `initialize via static method`() {
+        val just = Just.just(validEvent)
+        assertThat(just)
+            .containsExactly(validEvent)
     }
 }
+
+private val validEvent = ProjectCreated.newBuilder()
+    .setId(newUuid())
+    .build()
