@@ -58,10 +58,7 @@ internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
     internal class Repo : ViewRepository<ConfigId, ConfigView, Config>() {
 
         private val theId = setOf(
-            ConfigId
-                .newBuilder()
-                .setValue("configuration_instance")
-                .build()
+            configId { value = "configuration_instance" }
         )
 
         override fun setupEventRouting(routing: EventRouting<ConfigId>) {
