@@ -69,7 +69,7 @@ val nl: String = System.lineSeparator()
 /**
  * Prints output directories produced by `launchProtoData` tasks with
  * corresponding number of files in those directories.
- */
+
 val launchProtoDataMain: Task by tasks.getting {
     doLast {
         println("***** `launchProtoDataMain.output`:")
@@ -80,10 +80,11 @@ val launchProtoDataMain: Task by tasks.getting {
         println("*************************")
     }
 }
+ */
 
 /**
  * Prints input of `compileKotlin` tasks of this module.
- */
+
 val compileKotlin: Task by tasks.getting {
     doFirst {
         println()
@@ -93,3 +94,4 @@ val compileKotlin: Task by tasks.getting {
         println(inputs.files.joinToString(separator = nl))
     }
 }
+ */
