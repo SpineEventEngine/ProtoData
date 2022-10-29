@@ -74,7 +74,7 @@ class Spine(p: ExtensionAware) {
          * @see [Spine.CoreJava.client]
          * @see [Spine.CoreJava.server]
          */
-        const val core = "2.0.0-SNAPSHOT.120"
+        const val core = "2.0.0-SNAPSHOT.119"
 
         /**
          * The version of `model-compiler` to use.
