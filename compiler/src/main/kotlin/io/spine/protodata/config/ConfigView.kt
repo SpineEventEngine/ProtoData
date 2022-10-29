@@ -58,10 +58,10 @@ internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
     internal class Repo : ViewRepository<ConfigId, ConfigView, Config>() {
 
         private val theId = setOf(
-            ConfigId
-                .newBuilder()
-                .setValue("configuration_instance")
-                .build()
+            /* Use the below code instead of Java API, when the mystery with KotlinCompile
+               not being able to see the generated Kotlin proto code as its input is solved. */
+//             configId { value = "configuration_instance" }
+            ConfigId.newBuilder().setValue("configuration_instance").build()
         )
 
         override fun setupEventRouting(routing: EventRouting<ConfigId>) {

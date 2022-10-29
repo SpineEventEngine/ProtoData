@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package spine.protodata.test;
+
+option java_package = "io.spine.protodata.test";
+option java_outer_classname = "TestProto";
+option java_multiple_files = true;
+
+// We need there to be at least some definitions. We don't care which ones for this test.
+
+message Test {
+}

@@ -24,36 +24,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
+import io.spine.internal.dependency.Protobuf
 
-import io.spine.base.EntityState
+import org.gradle.api.artifacts.dsl.RepositoryHandler
 
-/**
- * A component capable of querying states of views.
- */
-public interface Querying {
-
-    /**
-     * Creates a [QueryingClient] to find views of the given class.
-     *
-     * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
-     *
-     * This method is targeted for Java API users. If you use Kotlin, see the no-param overload for
-     * prettier code.
-     */
-    public fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P>
+buildscript {
+    io.spine.internal.gradle.doApplyStandard(repositories)
 }
 
-/**
- * Creates a [QueryingClient] to find views of the given type.
- *
- * Users may create their own views and submit them via a [io.spine.protodata.plugin.Plugin].
- *
- * This overload is for Kotlin API users. Java users cannot access `inline` methods. As the method
- * is `inline`, it cannot be declared inside the interface. Thus, we use an extension method for
- * this overload.
- */
-public inline fun <reified P : EntityState<*>> Querying.select(): QueryingClient<P> {
-    val cls = P::class.java
-    return select(cls)
+plugins {
+    `java-library`
+    kotlin("jvm")
+    id("com.google.protobuf")
+    id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
+}
+
+fun RepositoryHandler.addCouple(baseUrl: String) {
+    maven { url = uri("$baseUrl/releases") }
+    maven { url = uri("$baseUrl/snapshots") }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+
+    addCouple("https://spine.mycloudrepo.io/public/repositories")
+    addCouple("https://europe-maven.pkg.dev/spine-event-engine")
+}
+
+protoData {
+    renderers("io.spine.protodata.test.NoOpRenderer")
+    plugins("io.spine.protodata.test.TestPlugin")
+}
+
+dependencies {
+    protoData("io.spine.protodata:protodata-test-env:+")
+    Protobuf.libs.forEach { implementation(it) }
+}
+
+protobuf {
+    protoc {
+        artifact = io.spine.internal.dependency.Protobuf.compiler
+    }
 }

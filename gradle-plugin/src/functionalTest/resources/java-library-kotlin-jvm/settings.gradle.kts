@@ -24,33 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
-
-import com.google.common.collect.Iterables
-
-/**
- * Obtains the only element in the receiver `Iterable`.
- *
- * @throws NoSuchElementException if the iterable is empty.
- * @throws IllegalArgumentException if the iterable contains multiple elements.
- */
-public fun <E> Iterable<E>.theOnly(): E = Iterables.getOnlyElement(this)
-
-/**
- * Builds a `Sequence` which consists of the elements of this `Iterable` and the given [infix]
- * between them.
- *
- * Example:
- *  - `listOf(0, 1, 2).interlaced(42)` -> `[0, 42, 1, 42, 2]`;
- *  - `listOf("sea", "Moon", "Earth", "Sun").interlaced("of")` ->
- *    `["sea", "of", "Moon", "of", "Earth", "of", "Sun"]`;
- *  - `listOf<String>().interlaced("")` -> `[]`.
- */
-internal fun <T> Iterable<T>.interlaced(infix: T): Sequence<T> = sequence {
-    forEachIndexed { index, element ->
-        if (index != 0) {
-            yield(infix)
-        }
-        yield(element)
+pluginManagement {
+    repositories {
+        mavenLocal()
     }
 }

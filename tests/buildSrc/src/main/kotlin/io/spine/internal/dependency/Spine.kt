@@ -61,20 +61,20 @@ class Spine(p: ExtensionAware) {
          *
          * @see [ProtoData]
          */
-        const val protoData = "0.2.20"
+        const val protoData = "0.2.21"
 
         /**
          * The default version  of `base` to use.
          * @see [Spine.base]
          */
-        const val base = "2.0.0-SNAPSHOT.115"
+        const val base = "2.0.0-SNAPSHOT.120"
 
         /**
          * The default version of `core-java` to use.
          * @see [Spine.CoreJava.client]
          * @see [Spine.CoreJava.server]
          */
-        const val core = "2.0.0-SNAPSHOT.117"
+        const val core = "2.0.0-SNAPSHOT.119"
 
         /**
          * The version of `model-compiler` to use.
@@ -85,25 +85,25 @@ class Spine(p: ExtensionAware) {
         /**
          * The version of `mc-java` to use.
          */
-        const val mcJava = "2.0.0-SNAPSHOT.103"
+        const val mcJava = "2.0.0-SNAPSHOT.104"
 
         /**
          * The version of `base-types` to use.
          * @see [Spine.baseTypes]
          */
-        const val baseTypes = "2.0.0-SNAPSHOT.110"
+        const val baseTypes = "2.0.0-SNAPSHOT.112"
 
         /**
          * The version of `time` to use.
          * @see [Spine.time]
          */
-        const val time = "2.0.0-SNAPSHOT.109"
+        const val time = "2.0.0-SNAPSHOT.111"
 
         /**
          * The version of `change` to use.
          * @see [Spine.change]
          */
-        const val change = "2.0.0-SNAPSHOT.116"
+        const val change = "2.0.0-SNAPSHOT.117"
 
         /**
          * The version of `tool-base` to use.
@@ -115,7 +115,7 @@ class Spine(p: ExtensionAware) {
          * The version of `validation` to use.
          * @see [Spine.validation]
          */
-        const val validation = "2.0.0-SNAPSHOT.32"
+        const val validation = "2.0.0-SNAPSHOT.33"
     }
 
     companion object {

@@ -28,7 +28,7 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.theOnly
+import io.spine.util.theOnly
 import io.spine.tools.code.CommonLanguages.Java
 import kotlin.io.path.name
 

@@ -53,16 +53,43 @@ import io.spine.protodata.renderer.SourceFileSet
  */
 public class SuppressRenderer : JavaRenderer() {
 
+    public companion object {
+        public val ALL_WARNINGS: List<String> = listOf("ALL")
+    }
+
     override fun render(sources: SourceFileSet) {
-        val warnings = if (configIsPresent()) {
-            configAs<SuppressConfig>().warnings.valueList
-        } else {
-            listOf("ALL")
-        }
-        val warningsList = warnings.joinToString { '"' + it + '"' }
+        val warningsList = warningList()
         val suppression = "@${SuppressWarnings::class.java.simpleName}({$warningsList})"
         sources.forEach {
             it.at(BeforePrimaryDeclaration).add(suppression)
         }
+    }
+
+    /**
+     * Obtains the code for suppressing configured warnings.
+     *
+     * If [SuppressConfig] is not available, also assumes [ALL_WARNINGS].
+     *
+     * If the configuration is given, takes the list of warnings from the configuration.
+     *
+     * But if the list of warnings obtained from the configuration is empty, this method
+     * also assumes [ALL_WARNINGS]. It allows to avoid the case of working with a default instance
+     * of [SuppressConfig] (e.g. obtained when configuration was loaded from a file).
+     * Obviously, the user does not indent to suppress an empty list of warnings, if
+     * this class is added to a ProtoData configuration but no specific warnings are specified.
+     */
+    private fun warningList(): String {
+        val warnings = if (!configIsPresent()) {
+            ALL_WARNINGS
+        } else {
+            val configured = configAs<SuppressConfig>().warnings.valueList
+            if (configured.isEmpty()) {
+                ALL_WARNINGS
+            } else {
+                configured
+            }
+        }
+        val warningsList = warnings.joinToString { '"' + it + '"' }
+        return warningsList
     }
 }

@@ -38,7 +38,7 @@ import io.spine.protodata.Field.CardinalityCase.LIST
 import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
-import io.spine.protodata.camelCase
+import io.spine.string.camelCase
 import kotlin.reflect.KClass
 
 private const val COPY_OF = "copyOf"

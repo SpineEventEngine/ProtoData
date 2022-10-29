@@ -112,7 +112,15 @@ class PluginSpec {
         assertThat(result[build]).isEqualTo(SUCCESS)
         assertExists(generatedKotlinDir)
     }
-    
+
+    @Test
+    fun `produce Kotlin code for 'java-library' with 'kotlin(jvm)'`() {
+        createProject("java-library-kotlin-jvm")
+        val result = project.executeTask(build)
+        assertThat(result[build]).isEqualTo(SUCCESS)
+        assertExists(generatedKotlinDir)
+    }
+
     @Test
     @Disabled("https://github.com/SpineEventEngine/ProtoData/issues/88")
     fun `add 'kotlin' built-in only' if 'java' plugin or Kotlin compile tasks are present`() {

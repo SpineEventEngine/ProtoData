@@ -30,13 +30,13 @@ import com.google.common.io.CharSource
 import com.google.common.io.Files.asByteSource
 import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.Querying
+import io.spine.server.query.Querying
 import io.spine.protodata.config.Config.KindCase.EMPTY
 import io.spine.protodata.config.Config.KindCase.FILE
 import io.spine.protodata.config.Config.KindCase.KIND_NOT_SET
 import io.spine.protodata.config.Config.KindCase.RAW
-import io.spine.protodata.select
-import io.spine.protodata.theOnly
+import io.spine.server.query.select
+import io.spine.util.theOnly
 import java.nio.charset.Charset.defaultCharset
 import kotlin.io.path.Path
 

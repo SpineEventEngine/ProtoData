@@ -30,7 +30,7 @@ import io.spine.protodata.cli.test.CustomField
 import io.spine.tools.code.CommonLanguages
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.select
+import io.spine.server.query.select
 import kotlin.io.path.Path
 
 class CustomOptionRenderer : Renderer(CommonLanguages.any) {

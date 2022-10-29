@@ -257,7 +257,7 @@ class `'Pipeline' should` {
     /**
      * Creates a new unique temp directory.
      *
-     * JUnit reuses @TempDir from @BeforeEach and we need a fresh temp directory.
+     * JUnit reuses @TempDir from @BeforeEach, and we need a fresh temp directory.
      * See [the JUnit issue](https://github.com/junit-team/junit5/issues/1967).
      */
     private fun tempDir() = Files.createTempDirectory("destination")
@@ -374,7 +374,7 @@ class `'Pipeline' should` {
                 listOf(SourceFileSet.from(srcRoot)),
                 request
             )
-            val error = assertThrows<ConfigurationError> { pipeline() }
+            val error = assertThrows<IllegalStateException> { pipeline() }
             assertThat(error)
                 .hasMessageThat()
                 .contains(policy.javaClass.name)

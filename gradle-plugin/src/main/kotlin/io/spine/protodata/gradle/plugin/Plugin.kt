@@ -47,6 +47,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
@@ -291,6 +292,12 @@ private fun Extension.configureSourceSet(sourceSet: SourceSet) {
     val targetDirs = targetDir(sourceSet).get()
 
     sourceSet.java.srcDir(targetDirs)
+
+    val kotlin = sourceSet.extensions.findByName("kotlin") as SourceDirectorySet?
+    kotlin?.apply {
+        srcDir(targetDirs)
+    }
+
     if (sourceDirs.isEmpty()) {
         return
     }
