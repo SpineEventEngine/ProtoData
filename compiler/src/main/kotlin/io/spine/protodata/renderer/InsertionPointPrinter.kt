@@ -27,6 +27,10 @@
 package io.spine.protodata.renderer
 
 import com.google.common.base.Preconditions.checkPositionIndex
+import io.spine.protodata.FileCoordinates
+import io.spine.protodata.FileCoordinates.SpecCase.END_OF_FILE
+import io.spine.protodata.FileCoordinates.SpecCase.INLINE
+import io.spine.protodata.FileCoordinates.SpecCase.WHOLE_LINE
 import io.spine.tools.code.Language
 
 /**
@@ -54,22 +58,46 @@ public abstract class InsertionPointPrinter(
 
     final override fun render(sources: SourceFileSet) {
         sources.prepareCode { file ->
-            val lines = file.lines().toMutableList()
             supportedInsertionPoints().forEach { point ->
-                val lineNumber = point.locate(lines)
-                val comment = target.comment(point.codeLine)
-                when (lineNumber) {
-                    is LineIndex -> {
-                        val index = lineNumber.value
-                        checkPositionIndex(index, lines.size, "Line number")
-                        lines.add(index, comment)
+                val text = file.text()
+                val coordinates = point.locate(text)
+                val lines = text.lines().toMutableList()
+                when (coordinates.specCase) {
+                    INLINE -> {
+                        renderInlinePoint(coordinates, lines, point)
                     }
-                    is EndOfFile -> lines.add(comment)
-                    is Nowhere -> {} // No need to add anything.
-                                     // Insertion point should not appear in the file.
+                    WHOLE_LINE -> {
+                        val comment = target.comment(point.codeLine)
+                        lines.checkLineNumber(coordinates.wholeLine)
+                        lines.add(coordinates.wholeLine, comment)
+                    }
+                    END_OF_FILE -> {
+                        val comment = target.comment(point.codeLine)
+                        lines.add(comment)
+                    }
+                    else -> {} // No need to add anything.
+                               // Insertion point should not appear in the file.
                 }
+                file.updateLines(lines)
             }
-            file.updateLines(lines)
         }
     }
+
+    private fun renderInlinePoint(
+        coordinates: FileCoordinates,
+        lines: MutableList<String>,
+        point: InsertionPoint,
+    ) {
+        val position = coordinates.inline
+        lines.checkLineNumber(position.line)
+        val originalLine = lines[position.line]
+        val lineStart = originalLine.substring(0, position.column)
+        val lineEnd = originalLine.substring(position.column)
+        val comment = target.comment(point.codeLine)
+        val annotatedLine = lineStart + comment + lineEnd
+        lines[position.line] = annotatedLine
+    }
 }
+
+private fun List<String>.checkLineNumber(index: Int) =
+    checkPositionIndex(index, size, "Line number")

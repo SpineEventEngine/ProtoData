@@ -47,7 +47,8 @@ class `'GenerateGenerated' renderer should` : WithSourceFileSet() {
         )()
         val code = sources.first()
             .file(Path(JAVA_FILE))
-            .code()
+            .text()
+            .value
         assertThat(code)
             .contains("""
                 @javax.annotation.Generated("${GenerateGenerated.GENERATORS}")

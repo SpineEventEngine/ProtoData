@@ -49,7 +49,8 @@ class `'SuppressRenderer' should` : WithSourceFileSet() {
         )()
         val code = sources.first()
             .file(Path(JAVA_FILE))
-            .code()
+            .text()
+            .value
         assertThat(code)
             .contains("@SuppressWarnings({\"ALL\"})")
     }
@@ -69,7 +70,8 @@ class `'SuppressRenderer' should` : WithSourceFileSet() {
         )()
         val code = sources.first()
             .file(Path(JAVA_FILE))
-            .code()
+            .text()
+            .value
         assertThat(code)
             .contains("""@SuppressWarnings({"deprecation", "StringEqualsEmptyString"})""")
     }

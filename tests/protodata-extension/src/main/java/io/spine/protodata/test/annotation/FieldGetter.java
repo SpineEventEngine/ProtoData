@@ -26,9 +26,11 @@
 
 package io.spine.protodata.test.annotation;
 
+import io.spine.protodata.FileCoordinates;
 import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.LineNumber;
 import io.spine.protodata.test.FieldId;
+import io.spine.text.Position;
+import io.spine.text.Text;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
@@ -38,6 +40,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.protodata.Ast.typeUrl;
 import static io.spine.protodata.Strings.camelCase;
 import static io.spine.protodata.renderer.LineNumber.notInFile;
+import static io.spine.text.TextFactory.positionNotFound;
 import static java.lang.String.format;
 
 /**
@@ -62,16 +65,17 @@ final class FieldGetter implements InsertionPoint {
 
     @NonNull
     @Override
-    public LineNumber locate(List<String> lines) {
+    public FileCoordinates locate(Text text) {
         String fieldName = camelCase(field.getField().getValue());
         String getterName = "get" + fieldName;
         Pattern pattern = Pattern.compile("public .+ " + getterName);
+        List<String> lines = text.lines();
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             if (pattern.matcher(line).find()) {
-                return LineNumber.at(i);
+                return atLine(i);
             }
         }
-        return notInFile();
+        return nowhere();
     }
 }

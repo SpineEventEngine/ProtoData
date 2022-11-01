@@ -39,7 +39,9 @@ plugins {
 val spine = Spine(project)
 dependencies {
     api(spine.server)
+    api(spine.text)
     api(spine.toolBase)
+
     with(Jackson) {
         api(databind)
         implementation(dataformatYaml)

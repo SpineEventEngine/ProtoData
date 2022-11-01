@@ -26,15 +26,15 @@
 
 package io.spine.protodata.test
 
-import io.spine.tools.code.CommonLanguages.Kotlin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.tools.code.CommonLanguages.Kotlin
 
 public class KtRenderer : Renderer(Kotlin) {
 
     override fun render(sources: SourceFileSet) {
         sources.forEach {
-            it.overwrite(it.code().replace("Hello", "Hello Kotlin"))
+            it.overwrite(it.text().value.replace("Hello", "Hello Kotlin"))
         }
     }
 }

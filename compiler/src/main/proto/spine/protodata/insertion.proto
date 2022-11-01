@@ -24,17 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+syntax = "proto3";
 
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.tools.code.CommonLanguages.JavaScript
+package spine.protodata;
 
-public class JsRenderer : Renderer(JavaScript) {
+import "spine/options.proto";
 
-    override fun render(sources: SourceFileSet) {
-        sources.forEach {
-            it.overwrite(it.text().value.replace("Hello", "Hello JavaScript"))
-        }
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata";
+option java_outer_classname = "InsertionProto";
+option java_multiple_files = true;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "spine/text/text.proto";
+
+message FileCoordinates {
+
+    oneof spec {
+        option (is_required) = true;
+
+        spine.text.Position inline = 1 [(validate) = true];
+
+        uint32 whole_line = 2;
+
+        google.protobuf.Empty end_of_file = 3;
+
+        google.protobuf.Empty not_in_file = 4;
     }
 }

@@ -26,10 +26,11 @@
 
 package io.spine.protodata.test
 
-import io.spine.tools.code.CommonLanguages.Java
+import io.spine.protodata.FileCoordinates
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.renderer.LineNumber
+import io.spine.text.Text
+import io.spine.tools.code.CommonLanguages.Java
 
 public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(Java) {
 
@@ -40,16 +41,28 @@ public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(Java) {
 public enum class GenericInsertionPoint : InsertionPoint {
 
     FILE_START {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.startOfFile()
+        override fun locate(text: Text): FileCoordinates {
+            System.err.println(name + "  " + text.lines().size)
+            return startOfFile()
+        }
     },
     FILE_MIDDLE {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.at(lines.size / 2)
+        override fun locate(text: Text): FileCoordinates {
+            System.err.println(name + "  " + text.lines().size)
+            return atLine(text.lines().size / 2)
+        }
     },
     FILE_END {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.endOfFile()
+        override fun locate(text: Text): FileCoordinates {
+            System.err.println(name + "  " + text.lines().size)
+            return endOfFile()
+        }
     },
     OUTSIDE_FILE {
-        override fun locate(lines: List<String>): LineNumber = LineNumber.notInFile()
+        override fun locate(text: Text): FileCoordinates {
+            System.err.println(name + "  " + text.lines().size)
+            return nowhere()
+        }
     };
 
     override val label: String

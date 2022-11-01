@@ -28,6 +28,11 @@ package io.spine.protodata.renderer
 
 import com.google.common.base.Preconditions.checkArgument
 import com.google.common.base.Splitter
+import io.spine.protodata.interlaced
+import io.spine.protodata.renderer.InsertionPoint.Companion.COMMENT_PADDING_LENGTH
+import io.spine.text.Text
+import io.spine.text.TextFactory.checkNoSeparator
+import io.spine.text.TextFactory.text
 import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
@@ -87,7 +92,6 @@ private constructor(
             return SourceFile(absolute.readText(charset), relativePath)
         }
 
-
         /**
          * Constructs a file from source code.
          *
@@ -111,6 +115,9 @@ private constructor(
      */
     public fun at(insertionPoint: InsertionPoint): SourceAtPoint =
         SourceAtPoint(this, insertionPoint)
+
+    public fun atInline(insertionPoint: InsertionPoint): SourceAtPointInline =
+        SourceAtPointInline(this, insertionPoint)
 
     /**
      * Deletes this file from the source set.
@@ -200,16 +207,21 @@ private constructor(
     /**
      * Obtains the entire content of this file.
      */
+    @Deprecated("Use `text()` instead.", ReplaceWith("text()"))
     public fun code(): String {
-        initializeCode()
-        return code
+        return text().value
     }
 
     /**
      * Obtains the entire content of this file as a list of lines.
      */
     public fun lines(): List<String> {
-        return lineSplitter.splitToList(code())
+        return text().lines()
+    }
+
+    public fun text(): Text {
+        initializeCode()
+        return text(code)
     }
 
     internal fun whenRead(action: (SourceFile) -> Unit) {
@@ -278,6 +290,65 @@ internal constructor(
                    .map { it.first + 1 }
                    .forEach { index -> updatedLines.add(index, newCode) }
         file.updateLines(updatedLines)
+    }
+}
+
+public class SourceAtPointInline
+internal constructor(
+    private val file: SourceFile,
+    private val point: InsertionPoint
+) {
+
+    public fun add(codeFragment: String) {
+        checkNoSeparator(codeFragment)
+        val sourceLines = file.lines()
+        val updatedLines = ArrayList(sourceLines)
+        val pointMarker = point.codeLine
+        sourceLines.asSequence()
+            .mapIndexed { index, line -> CodeLine(index, line) }
+            .map { line -> line.insertInline(point, pointMarker) }
+            .forEach { (index, line) -> updatedLines[index] = line }
+        file.updateLines(updatedLines)
+    }
+}
+
+private data class CodeLine(val lineIndex: Int, val content: String) {
+
+    fun insertInline(insertionPoint: InsertionPoint, newCode: String): CodeLine {
+        val indexes = content.findInsertionIndexes(insertionPoint)
+        if (indexes.isEmpty()) {
+            return this
+        }
+        val parts = content.splitByIndexes(indexes)
+        val newLine = parts.interlaced(newCode).joinToString(separator = "")
+        return CodeLine(lineIndex, newLine)
+    }
+}
+
+private fun String.splitByIndexes(indexes: List<Int>): Sequence<String> = sequence {
+    val idxs = buildList(indexes.size + 2) {
+        add(0)
+        addAll(indexes)
+        add(indexes.size)
+    }
+    idxs.forEachIndexed { listIndex, stringIndex ->
+        if (listIndex != idxs.size) {
+            val nextIndex = idxs[listIndex + 1]
+            yield(this@splitByIndexes.substring(stringIndex, nextIndex))
+        }
+    }
+}
+
+private fun String.findInsertionIndexes(insertionPoint: InsertionPoint): List<Int> = buildList {
+    val substring = insertionPoint.label
+    var index = 0
+    var startIndex = 0
+    while (index >= 0) {
+        index = this@findInsertionIndexes.indexOf(substring, startIndex = startIndex) +
+                substring.length +
+                COMMENT_PADDING_LENGTH
+        startIndex = index
+        this@buildList.add(index)
     }
 }
 

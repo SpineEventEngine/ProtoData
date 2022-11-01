@@ -27,15 +27,17 @@
 package io.spine.protodata.test.uuid;
 
 import com.google.common.base.Objects;
+import io.spine.protodata.FileCoordinates;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.LineNumber;
+import io.spine.text.Text;
 
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.protodata.Ast.qualifiedName;
 import static io.spine.protodata.Ast.typeUrl;
+import static io.spine.text.TextFactory.positionNotFound;
 import static java.lang.String.format;
 
 /**
@@ -68,15 +70,16 @@ final class ClassScope implements InsertionPoint {
      * is not added either.
      */
     @Override
-    public LineNumber locate(List<String> lines) {
+    public FileCoordinates locate(Text text) {
         String pattern = format(NATIVE_INSERTION_POINT_FMT, qualifiedName(typeName));
+        List<String> lines = text.lines();
         for (int lineNumber = 0; lineNumber < lines.size(); lineNumber++) {
             String line = lines.get(lineNumber);
             if (line.contains(pattern)) {
-                return LineNumber.at(lineNumber);
+                return atLine(lineNumber);
             }
         }
-        return LineNumber.notInFile();
+        return nowhere();
     }
 
     @Override

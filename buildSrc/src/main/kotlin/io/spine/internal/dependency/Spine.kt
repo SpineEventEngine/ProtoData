@@ -117,11 +117,13 @@ class Spine(p: ExtensionAware) {
 
     val baseTypes = "$group:spine-base-types:${p.baseTypesVersion}"
 
-    val time = "$toolsGroup:spine-testlib:${p.timeVersion}"
+    val time = "$group:spine-time:${p.timeVersion}"
+    val text = "$group:spine-text:${p.textVersion}"
 
     val toolBase = "$toolsGroup:spine-tool-base:${p.toolBaseVersion}"
     val pluginBase = "$toolsGroup:spine-plugin-base:${p.toolBaseVersion}"
     val pluginTestlib = "$toolsGroup:spine-plugin-testlib:${p.toolBaseVersion}"
+    val testLib = "$toolsGroup:spine-testlib:${p.toolBaseVersion}"
 
     val modelCompiler = "$toolsGroup:spine-model-compiler:${p.mcVersion}"
 
@@ -141,6 +143,9 @@ class Spine(p: ExtensionAware) {
 
     private val ExtensionAware.timeVersion: String
         get() = "timeVersion".asExtra(this, DefaultVersion.time)
+
+    private val ExtensionAware.textVersion: String
+        get() = "textVersion".asExtra(this)
 
     private val ExtensionAware.mcVersion: String
         get() = "mcVersion".asExtra(this, DefaultVersion.mc)

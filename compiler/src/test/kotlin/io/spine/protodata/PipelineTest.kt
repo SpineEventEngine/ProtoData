@@ -41,7 +41,9 @@ import io.spine.protodata.test.DeletingRenderer
 import io.spine.protodata.test.DocilePlugin
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.ECHO_FILE
-import io.spine.protodata.test.GenericInsertionPoint
+import io.spine.protodata.test.GenericInsertionPoint.FILE_END
+import io.spine.protodata.test.GenericInsertionPoint.FILE_START
+import io.spine.protodata.test.GenericInsertionPoint.OUTSIDE_FILE
 import io.spine.protodata.test.GreedyPolicy
 import io.spine.protodata.test.InternalAccessRenderer
 import io.spine.protodata.test.JavaGenericInsertionPointPrinter
@@ -155,15 +157,15 @@ class `'Pipeline' should` {
         )()
         val assertFileContent = assertThat(sourceFile.readText())
         assertFileContent
-            .contains("// INSERT:'file_start'")
+            .contains("/* INSERT:'file_start' */")
         assertFileContent
             .contains("Hello from ${renderer.javaClass.name}")
         assertFileContent
-            .contains("// INSERT:'file_middle'")
+            .contains("/* INSERT:'file_middle' */")
         assertFileContent
             .contains(initialContent)
         assertFileContent
-            .contains("// INSERT:'file_end'")
+            .contains("/* INSERT:'file_end' */")
 
     }
 
@@ -193,11 +195,11 @@ class `'Pipeline' should` {
         )()
         val assertCode = assertThat(sourceFile.readText())
         assertCode
-            .startsWith("// ${GenericInsertionPoint.FILE_START.codeLine}")
+            .startsWith("/* ${FILE_START.codeLine} */")
         assertCode
-            .endsWith("// ${GenericInsertionPoint.FILE_END.codeLine}")
+            .endsWith("/* ${FILE_END.codeLine} */")
         assertCode
-            .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
+            .doesNotContain(OUTSIDE_FILE.codeLine)
     }
 
     @Test
@@ -210,11 +212,11 @@ class `'Pipeline' should` {
         )()
         val assertCode = assertThat(sourceFile.readText())
         assertCode
-            .doesNotContain(GenericInsertionPoint.FILE_START.codeLine)
+            .doesNotContain(FILE_START.codeLine)
         assertCode
-            .doesNotContain(GenericInsertionPoint.FILE_END.codeLine)
+            .doesNotContain(FILE_END.codeLine)
         assertCode
-            .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
+            .doesNotContain(OUTSIDE_FILE.codeLine)
     }
 
     @Test

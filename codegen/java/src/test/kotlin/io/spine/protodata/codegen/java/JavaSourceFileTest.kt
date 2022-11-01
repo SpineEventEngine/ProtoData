@@ -91,7 +91,7 @@ class `'SourceFile' with Java should` : WithSourceFileSet() {
             val comment = "// This is Protoc standard insertion point."
             file.at(point)
                 .add(comment)
-            val code = file.code()
+            val code = file.text().value
             assertThat(code)
                 .contains(comment)
 

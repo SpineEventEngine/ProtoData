@@ -26,13 +26,28 @@
 
 package io.spine.protodata.renderer
 
+import com.google.common.flogger.StackSize.FULL
+import com.google.protobuf.Empty
+import io.spine.logging.Logging.loggerFor
+import io.spine.protodata.FileCoordinates
+import io.spine.protodata.FileCoordinates.SpecCase.END_OF_FILE
+import io.spine.protodata.FileCoordinates.SpecCase.INLINE
+import io.spine.protodata.FileCoordinates.SpecCase.NOT_IN_FILE
+import io.spine.protodata.FileCoordinates.SpecCase.WHOLE_LINE
 import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
+import io.spine.text.Position
+import io.spine.text.Text
+import io.spine.text.TextFactory.text
 
 /**
  * A point is a source file, where more code may be inserted.
  */
-public interface InsertionPoint {
+public interface InsertionPoint : CoordinatesFactory {
+
+    public companion object {
+        public const val COMMENT_PADDING_LENGTH: Int = 4
+    }
 
     /**
      * The name of this insertion point.
@@ -49,7 +64,56 @@ public interface InsertionPoint {
      * @return the line number at which the insertion point should be added.
      * @see LineNumber
      */
-    public fun locate(lines: List<String>): LineNumber
+    @Deprecated("Use locate(Text) instead.")
+    public fun locate(lines: List<String>): LineNumber {
+        val coords = locate(text(lines))
+        return when (coords.specCase) {
+            WHOLE_LINE -> LineNumber.at(coords.wholeLine)
+            INLINE -> {
+                loggerFor(InsertionPoint::class.java)
+                    .atWarning()
+                    .withStackTrace(FULL)
+                    .log("`locate(List<String>)` does not support inline insertion. " +
+                            "A whole line insertion will be generated.")
+                LineNumber.at(coords.inline.line)
+            }
+            END_OF_FILE -> LineNumber.endOfFile()
+            NOT_IN_FILE -> LineNumber.notInFile()
+            else -> throw IllegalStateException("Unexpected file coordinates `$coords`.")
+        }
+    }
+
+    public fun locate(text: Text): FileCoordinates
+}
+
+public interface CoordinatesFactory {
+
+    public fun at(line: Int, column: Int): FileCoordinates =
+        FileCoordinates.newBuilder()
+            .setInline(
+                Position.newBuilder()
+                    .setLine(line)
+                    .setColumn(column)
+            )
+            .build()
+
+    public fun atLine(line: Int): FileCoordinates =
+        FileCoordinates.newBuilder()
+            .setWholeLine(line)
+            .build()
+
+    public fun startOfFile(): FileCoordinates =
+        atLine(0)
+
+    public fun endOfFile(): FileCoordinates =
+        FileCoordinates.newBuilder()
+            .setEndOfFile(Empty.getDefaultInstance())
+            .build()
+
+    public fun nowhere(): FileCoordinates =
+        FileCoordinates.newBuilder()
+            .setNotInFile(Empty.getDefaultInstance())
+            .build()
 }
 
 /**
@@ -81,7 +145,7 @@ public val InsertionPoint.codeLine: String
  * ```
  */
 public class ProtocInsertionPoint(
-    public override val label: String
+    public override val label: String,
 ) : InsertionPoint {
 
     /**
@@ -90,10 +154,10 @@ public class ProtocInsertionPoint(
      * <scope>:<qualified type name>
      * ```
      */
-    public constructor(scope: String, type: TypeName): this("$scope:${type.qualifiedName()}")
+    public constructor(scope: String, type: TypeName) : this("$scope:${type.qualifiedName()}")
 
-    override fun locate(lines: List<String>): LineNumber =
-        LineNumber.notInFile()
+    override fun locate(text: Text): FileCoordinates =
+        nowhere()
 
     /**
      * The code line in the Protobuf compiler style.
@@ -145,6 +209,7 @@ public sealed class LineNumber {
  * designed to only provide the whole bit range, not to insure invariants.
  * See [this thread](https://youtrack.jetbrains.com/issue/KT-46144) for more details.
  */
+@Deprecated("Use Protobuf-based `FileCoordinates.whole_line` instead.")
 internal data class LineIndex constructor(val value: Int) : LineNumber() {
     init {
         if (value < 0) {
@@ -153,12 +218,12 @@ internal data class LineIndex constructor(val value: Int) : LineNumber() {
     }
 }
 
-/**
- * A [LineNumber] which always lies at the end of the file.
- */
+
+@Deprecated("Use Protobuf-based `FileCoordinates.end_of_file` instead.")
 internal object EndOfFile : LineNumber()
 
 /**
  * A [LineNumber] representing that the looked up line is nowhere to be found in the file.
  */
+@Deprecated("Use Protobuf-based `FileCoordinates.not_in_file` instead.")
 internal object Nowhere : LineNumber()

@@ -25,8 +25,9 @@
  */
 
 val baseVersion: String by extra("2.0.0-SNAPSHOT.114")
+val textVersion: String by extra("2.0.0-SNAPSHOT.1")
 val coreVersion: String by extra("2.0.0-SNAPSHOT.116")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.111")
+val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.112")
 val mcVersion: String by extra("2.0.0-SNAPSHOT.90")
 val mcJavaVersion: String by extra("2.0.0-SNAPSHOT.102")
 

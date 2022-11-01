@@ -26,8 +26,7 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
+import com.google.protobuf.gradle.*
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.JUnit
@@ -67,9 +66,8 @@ buildscript {
 
 plugins {
     kotlin("jvm")
-    val dokkaPlugin = io.spine.internal.dependency.Dokka.GradlePlugin
-    id(dokkaPlugin.id)
-    id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
+    org.jetbrains.dokka
+    net.ltgt.errorprone
     idea
     jacoco
     `force-jacoco`
@@ -204,6 +202,12 @@ subprojects {
             // Also, this fixes the explicit API more for the generated Kotlin code.
             //
             artifact = protocArtifact
+        }
+
+        generateProtoTasks {
+            all().forEach {
+                it.builtins { id("kotlin") {} }
+            }
         }
     }
 
