@@ -91,6 +91,11 @@ public abstract class InsertionPointPrinter(
         val position = coordinates.inline
         lines.checkLineNumber(position.line)
         val originalLine = lines[position.line]
+        checkPositionIndex(
+            position.column,
+            originalLine.length,
+            "Line does not have column ${position.column}: `$originalLine`."
+        )
         val lineStart = originalLine.substring(0, position.column)
         val lineEnd = originalLine.substring(position.column)
         val comment = target.comment(point.codeLine)
