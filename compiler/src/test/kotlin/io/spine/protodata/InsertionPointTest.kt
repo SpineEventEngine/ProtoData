@@ -111,7 +111,7 @@ class `Insertion points should` {
             assertThat(contents)
                 .isNotEmpty()
             assertThat(contents[3])
-                .contains("I_AM_CONSTANT:/* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */ String")
+                .contains("I_AM_CONSTANT:/* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */      String")
         }
     }
 }

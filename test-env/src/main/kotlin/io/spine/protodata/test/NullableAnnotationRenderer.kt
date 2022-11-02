@@ -26,33 +26,21 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.FileCoordinates
-import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.text.Text
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.test.AnnotationInsertionPoint.BEFORE_RETURN_TYPE_METHOD_FOO
+import io.spine.protodata.test.AnnotationInsertionPoint.IMPORT
 import io.spine.tools.code.CommonLanguages.Java
+import kotlin.io.path.Path
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(Java) {
 
-    override fun supportedInsertionPoints(): Set<InsertionPoint> =
-        GenericInsertionPoint.values().toSet()
-}
+public class NullableAnnotationRenderer : Renderer(Java) {
 
-public enum class GenericInsertionPoint : InsertionPoint {
-
-    FILE_START {
-        override fun locate(text: Text): FileCoordinates = startOfFile()
-    },
-    FILE_MIDDLE {
-        override fun locate(text: Text): FileCoordinates = atLine(text.lines().size / 2)
-    },
-    FILE_END {
-        override fun locate(text: Text): FileCoordinates = endOfFile()
-    },
-    OUTSIDE_FILE {
-        override fun locate(text: Text): FileCoordinates = nowhere()
-    };
-
-    override val label: String
-        get() = name.lowercase()
+    override fun render(sources: SourceFileSet) {
+        val file = sources.file(Path("ClassWithMethod.java"))
+        file.at(IMPORT)
+            .add("import javax.annotation.Nullable;")
+        file.atInline(BEFORE_RETURN_TYPE_METHOD_FOO)
+            .add("@Nullable")
+    }
 }

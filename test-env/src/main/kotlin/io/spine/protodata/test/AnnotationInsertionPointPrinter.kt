@@ -31,28 +31,44 @@ import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.text.Text
 import io.spine.tools.code.CommonLanguages.Java
+import kotlin.text.RegexOption.DOT_MATCHES_ALL
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(Java) {
+
+public class AnnotationInsertionPointPrinter: InsertionPointPrinter(Java) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> =
-        GenericInsertionPoint.values().toSet()
+        AnnotationInsertionPoint.values().toSet()
 }
 
-public enum class GenericInsertionPoint : InsertionPoint {
+public enum class AnnotationInsertionPoint : InsertionPoint {
 
-    FILE_START {
-        override fun locate(text: Text): FileCoordinates = startOfFile()
+    IMPORT {
+        override fun locate(text: Text): FileCoordinates {
+            val lines = text.lines()
+            val packageLineIndex = lines.asSequence()
+                .mapIndexed { index, line -> index to line }
+                .find { (_, line) -> line.startsWith("package") }
+                ?.first
+            val targetLine = if (packageLineIndex == null) 0 else packageLineIndex + 1
+            return atLine(targetLine)
+        }
     },
-    FILE_MIDDLE {
-        override fun locate(text: Text): FileCoordinates = atLine(text.lines().size / 2)
-    },
-    FILE_END {
-        override fun locate(text: Text): FileCoordinates = endOfFile()
-    },
-    OUTSIDE_FILE {
-        override fun locate(text: Text): FileCoordinates = nowhere()
+    BEFORE_RETURN_TYPE_METHOD_FOO {
+        override fun locate(text: Text): FileCoordinates {
+            val lines = text.lines()
+            val (lineIndex, line) = lines.asSequence()
+                .mapIndexed { index, line -> index to line }
+                .find { (_, line) ->
+                    line.matches(Regex(".*\\sfoo\\(\\)\\s\\{.*", DOT_MATCHES_ALL))
+                }
+                ?: return nowhere()
+            val matching = Regex("\\s([\\w.]*\\.)?(\\w+)\\sfoo\\(\\)\\s\\{").find(line)!!
+            val matchedClass = matching.groupValues[2]
+            val columnIndex = line.lastIndexOf(matchedClass)
+            return at(lineIndex, columnIndex)
+        }
     };
 
     override val label: String
-        get() = name.lowercase()
+        get() = name
 }

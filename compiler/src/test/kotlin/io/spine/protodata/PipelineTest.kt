@@ -34,6 +34,7 @@ import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
+import io.spine.protodata.test.AnnotationInsertionPointPrinter
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.DeletedTypeRepository
 import io.spine.protodata.test.DeletedTypeView
@@ -51,6 +52,7 @@ import io.spine.protodata.test.Journey
 import io.spine.protodata.test.JsRenderer
 import io.spine.protodata.test.KtRenderer
 import io.spine.protodata.test.NoOpRenderer
+import io.spine.protodata.test.NullableAnnotationRenderer
 import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
@@ -145,7 +147,7 @@ class `'Pipeline' should` {
     }
 
     @Test
-    fun `write into insertion points`() {
+    fun `write into whole-line insertion points`() {
         val initialContent = "foo bar"
         val sourceFile = write("io/spine/protodata/test/DeleteMe_.java", initialContent)
         val renderer = PrependingRenderer()
@@ -166,7 +168,25 @@ class `'Pipeline' should` {
             .contains(initialContent)
         assertFileContent
             .contains("/* INSERT:'file_end' */")
+    }
 
+    @Test
+    fun `write into inline insertion points`() {
+        val sourceFile = write("ClassWithMethod.java", """
+            class ClassWithMethod {
+                public java.lang.String foo() {
+                    return "happy halloween";
+                }
+            }
+        """.trimIndent())
+        Pipeline(
+            listOf(),
+            listOf(AnnotationInsertionPointPrinter(), NullableAnnotationRenderer()),
+            listOf(SourceFileSet.from(srcRoot)),
+            CodeGeneratorRequest.getDefaultInstance()
+        )()
+        assertThat(sourceFile.readText())
+            .contains("@Nullable String")
     }
 
     @Test
