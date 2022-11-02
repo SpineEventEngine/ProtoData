@@ -303,10 +303,9 @@ internal constructor(
         checkNoSeparator(codeFragment)
         val sourceLines = file.lines()
         val updatedLines = ArrayList(sourceLines)
-        val pointMarker = point.codeLine
         sourceLines.asSequence()
             .mapIndexed { index, line -> CodeLine(index, line) }
-            .map { line -> line.insertInline(point, pointMarker) }
+            .map { line -> line.insertInline(point, codeFragment) }
             .forEach { (index, line) -> updatedLines[index] = line }
         file.updateLines(updatedLines)
     }
@@ -315,7 +314,7 @@ internal constructor(
 private data class CodeLine(val lineIndex: Int, val content: String) {
 
     fun insertInline(insertionPoint: InsertionPoint, newCode: String): CodeLine {
-        val indexes = content.findInsertionIndexes(insertionPoint)
+        val indexes = content.findInsertionIndexes(insertionPoint).toList()
         if (indexes.isEmpty()) {
             return this
         }
@@ -329,26 +328,30 @@ private fun String.splitByIndexes(indexes: List<Int>): Sequence<String> = sequen
     val idxs = buildList(indexes.size + 2) {
         add(0)
         addAll(indexes)
-        add(indexes.size)
+        add(length)
     }
+    System.err.println(idxs)
     idxs.forEachIndexed { listIndex, stringIndex ->
-        if (listIndex != idxs.size) {
+        if (listIndex < idxs.size - 1) {
             val nextIndex = idxs[listIndex + 1]
-            yield(this@splitByIndexes.substring(stringIndex, nextIndex))
+            yield(substring(stringIndex, nextIndex))
         }
     }
 }
 
-private fun String.findInsertionIndexes(insertionPoint: InsertionPoint): List<Int> = buildList {
+private fun String.findInsertionIndexes(insertionPoint: InsertionPoint): List<Int> {
     val substring = insertionPoint.label
     var index = 0
-    var startIndex = 0
-    while (index >= 0) {
-        index = this@findInsertionIndexes.indexOf(substring, startIndex = startIndex) +
-                substring.length +
-                COMMENT_PADDING_LENGTH
-        startIndex = index
-        this@buildList.add(index)
+    return buildList {
+        while (true) {
+            val rawIndex = indexOf(substring, startIndex = index)
+            if (rawIndex >= 0) {
+                index = rawIndex + substring.length + COMMENT_PADDING_LENGTH
+                add(index)
+            } else {
+                break
+            }
+        }
     }
 }
 
