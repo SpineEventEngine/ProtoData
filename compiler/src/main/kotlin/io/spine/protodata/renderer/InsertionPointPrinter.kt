@@ -31,6 +31,7 @@ import io.spine.protodata.FileCoordinates
 import io.spine.protodata.FileCoordinates.SpecCase.END_OF_FILE
 import io.spine.protodata.FileCoordinates.SpecCase.INLINE
 import io.spine.protodata.FileCoordinates.SpecCase.WHOLE_LINE
+import io.spine.protodata.renderer.InsertionPoint.Companion.COMMENT_PADDING_LENGTH
 import io.spine.tools.code.Language
 
 /**
@@ -98,7 +99,19 @@ public abstract class InsertionPointPrinter(
         )
         val lineStart = originalLine.substring(0, position.column)
         val lineEnd = originalLine.substring(position.column)
-        val comment = target.comment(point.codeLine)
+        val label = point.codeLine
+        var comment = target.comment(label)
+        val labelEndIndex = comment.indexOf(label) + label.length
+        val paddingAfterLabel = comment.length - labelEndIndex
+        if (paddingAfterLabel > COMMENT_PADDING_LENGTH) {
+            throw IllegalStateException(
+                "Comment padding after insertion point ${point.label} is loo long." +
+                        " Expected $COMMENT_PADDING_LENGTH symbols but found $paddingAfterLabel."
+            )
+        }
+        if (paddingAfterLabel < COMMENT_PADDING_LENGTH) {
+            comment += " ".repeat(COMMENT_PADDING_LENGTH - paddingAfterLabel)
+        }
         val annotatedLine = lineStart + comment + lineEnd
         lines[position.line] = annotatedLine
     }

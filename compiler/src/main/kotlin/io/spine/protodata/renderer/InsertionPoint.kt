@@ -46,7 +46,7 @@ import io.spine.text.TextFactory.text
 public interface InsertionPoint : CoordinatesFactory {
 
     public companion object {
-        public const val COMMENT_PADDING_LENGTH: Int = 4
+        public const val COMMENT_PADDING_LENGTH: Int = 8
     }
 
     /**
@@ -169,6 +169,7 @@ public class ProtocInsertionPoint(
 /**
  * A pointer to a line in a source file.
  */
+@Deprecated("User Protobuf-based `FileCoordinates` instead.")
 public sealed class LineNumber {
 
     public companion object {
