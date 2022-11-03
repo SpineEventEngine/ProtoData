@@ -28,11 +28,11 @@ package io.spine.protodata.renderer
 
 import com.google.common.base.Preconditions.checkArgument
 import com.google.common.base.Splitter
-import io.spine.protodata.interlaced
 import io.spine.protodata.renderer.InsertionPoint.Companion.COMMENT_PADDING_LENGTH
 import io.spine.text.Text
 import io.spine.text.TextFactory.checkNoSeparator
 import io.spine.text.TextFactory.text
+import io.spine.util.interlaced
 import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
@@ -212,6 +212,8 @@ private constructor(
         return text().value
     }
 
+
+
     /**
      * Obtains the entire content of this file as a list of lines.
      */
@@ -324,7 +326,7 @@ private data class CodeLine(val lineIndex: Int, val content: String) {
     }
 }
 
-private fun String.splitByIndexes(indexes: List<Int>): Sequence<String> = sequence {
+private fun String.splitByIndexes(indexes: List<Int>): List<String> = buildList {
     val idxs = buildList(indexes.size + 2) {
         add(0)
         addAll(indexes)
@@ -334,7 +336,7 @@ private fun String.splitByIndexes(indexes: List<Int>): Sequence<String> = sequen
     idxs.forEachIndexed { listIndex, stringIndex ->
         if (listIndex < idxs.size - 1) {
             val nextIndex = idxs[listIndex + 1]
-            yield(substring(stringIndex, nextIndex))
+            add(substring(stringIndex, nextIndex))
         }
     }
 }

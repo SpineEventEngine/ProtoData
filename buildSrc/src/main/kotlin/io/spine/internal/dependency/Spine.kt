@@ -106,6 +106,13 @@ class Spine(p: ExtensionAware) {
         const val change = "2.0.0-SNAPSHOT.117"
 
         /**
+         * The version of `text` to use.
+         *
+         * @see Spine.text
+         */
+        const val text = "2.0.0-SNAPSHOT.1"
+
+        /**
          * The version of `tool-base` to use.
          * @see [Spine.toolBase]
          */
@@ -198,7 +205,7 @@ class Spine(p: ExtensionAware) {
         get() = "changeVersion".asExtra(this, DefaultVersion.change)
 
     private val ExtensionAware.textVersion: String
-        get() = "textVersion".asExtra(this)
+        get() = "textVersion".asExtra(this, DefaultVersion.text)
 
     private val ExtensionAware.mcVersion: String
         get() = "mcVersion".asExtra(this, DefaultVersion.mc)

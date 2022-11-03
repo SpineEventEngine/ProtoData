@@ -26,6 +26,7 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
+import Build_gradle.Subproject
 import com.google.protobuf.gradle.*
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
@@ -57,9 +58,8 @@ buildscript {
 
     apply(from = "$rootDir/version.gradle.kts")
 
-    val spine = io.spine.internal.dependency.Spine(project)
     dependencies {
-        classpath(spine.mcJavaPlugin)
+        classpath(io.spine.internal.dependency.Spine.McJava.pluginLib)
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
     }
 }
