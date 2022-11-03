@@ -24,30 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.plugin
-
-import com.google.common.truth.Truth.assertThat
-import io.spine.base.Identifier.newUuid
-import io.spine.protodata.test.ProjectCreated
-import org.junit.jupiter.api.Test
-
-class `Just should` {
-
-    @Test
-    fun `store one value`() {
-        val just = Just(validEvent)
-        assertThat(just)
-            .containsExactly(validEvent)
-    }
-
-    @Test
-    fun `initialize via static method`() {
-        val just = Just.just(validEvent)
-        assertThat(just)
-            .containsExactly(validEvent)
+pluginManagement {
+    repositories {
+        mavenLocal()
     }
 }
-
-private val validEvent = ProjectCreated.newBuilder()
-    .setId(newUuid())
-    .build()

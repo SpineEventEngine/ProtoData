@@ -27,7 +27,7 @@
 package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
-import io.spine.protodata.QueryingClient
+import io.spine.server.query.QueryingClient
 import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.server.BoundedContext
 import io.spine.tools.code.Language

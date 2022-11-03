@@ -27,11 +27,11 @@
 package io.spine.protodata
 
 import io.spine.base.EventMessage
-import io.spine.core.UserId
+import io.spine.core.userId
 import io.spine.protodata.config.ConfigView
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
-import io.spine.server.BoundedContext
+import io.spine.server.BoundedContext.singleTenant
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.integration.ThirdPartyContext
 
@@ -44,11 +44,10 @@ public object CodeGenerationContext {
      * Creates a builder of the bounded context.
      */
     @JvmStatic
-    public fun builder(): BoundedContextBuilder =
-        BoundedContext.singleTenant("Code Generation").apply {
-            add(ViewRepository.default(builtinView()))
-            add(ConfigView.Repo())
-        }
+    public fun builder(): BoundedContextBuilder = singleTenant("Code Generation").apply {
+        add(ViewRepository.default(builtinView()))
+        add(ConfigView.Repo())
+    }
 
     @Suppress("UNCHECKED_CAST")
     private fun builtinView(): Class<View<*, *, *>> =
@@ -63,10 +62,7 @@ public object CodeGenerationContext {
 internal sealed class ExternalContext(name: String) : AutoCloseable {
 
     private val context = ThirdPartyContext.singleTenant(name)
-    private val actor = UserId
-        .newBuilder()
-        .setValue(name)
-        .build()
+    private val actor = userId { value = name }
 
     /**
      * Produces and emits events from given event messages.

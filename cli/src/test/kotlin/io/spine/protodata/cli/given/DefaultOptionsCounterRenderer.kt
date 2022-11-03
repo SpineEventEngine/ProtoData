@@ -29,7 +29,7 @@ package io.spine.protodata.cli.given
 import io.spine.protodata.cli.test.DefaultOptionsCounter
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.select
+import io.spine.server.query.select
 import io.spine.tools.code.CommonLanguages
 import kotlin.io.path.Path
 

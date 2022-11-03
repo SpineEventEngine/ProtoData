@@ -24,28 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.plugin
-
-import io.spine.base.EventMessage
-import io.spine.server.tuple.Tuple
-
-/**
- * A tuple of one event.
- *
- * Used when returning an iterable from a handler method for better readability over `List<E>`.
- */
-public class Just<E : EventMessage>(event: E) : Tuple(event) {
-
-    public companion object {
-
-        /**
-         * A factory method for Java.
-         *
-         * Prefer the primary constructor in Kotlin.
-         *
-         * This method is intended to be imported statically.
-         */
-        @JvmStatic
-        public fun <E : EventMessage> just(event: E): Just<E> = Just(event)
+pluginManagement {
+    repositories {
+        mavenLocal()
     }
 }

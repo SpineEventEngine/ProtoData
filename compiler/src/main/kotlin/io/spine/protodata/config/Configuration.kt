@@ -61,6 +61,11 @@ public sealed class Configuration {
     }
 }
 
+/**
+ * A [Configuration] consisting of one [ConfigFile].
+ *
+ * Produces [FileConfigDiscovered] event upon discovery.
+ */
 private class File(private val file: Path) : Configuration() {
 
     override fun produceEvent() = FileConfigDiscovered.newBuilder()
@@ -72,6 +77,11 @@ private class File(private val file: Path) : Configuration() {
         .build()
 }
 
+/**
+ * A [Configuration] produced from a [value] in the specified [format].
+ *
+ * Produces [RawConfigDiscovered] event upon discovery.
+ */
 private class Raw(
     private val value: String,
     private val format: ConfigurationFormat

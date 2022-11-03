@@ -210,7 +210,9 @@ subprojects {
         }
     }
 
-    project.configureTaskDependencies()
+    val generated = "$projectDir/generated"
+    applyGeneratedDirectories(generated)
+    configureTaskDependencies()
 }
 
 PomGenerator.applyTo(project)
@@ -244,3 +246,71 @@ val integrationTest by tasks.creating(RunBuild::class) {
 }
 
 tasks["check"].finalizedBy(integrationTest)
+
+/**
+ * The alias for typed extensions functions related to subprojects.
+ */
+typealias Subproject = Project
+
+/**
+ * Adds directories with the generated source code to source sets of the project and
+ * to IntelliJ IDEA module settings.
+ *
+ * @param generatedDir
+ *          the name of the root directory with the generated code
+ */
+fun Subproject.applyGeneratedDirectories(generatedDir: String) {
+    val generatedMain = "$generatedDir/main"
+    val generatedJava = "$generatedMain/java"
+    val generatedKotlin = "$generatedMain/kotlin"
+    val generatedGrpc = "$generatedMain/grpc"
+    val generatedSpine = "$generatedMain/spine"
+
+    val generatedTest = "$generatedDir/test"
+    val generatedTestJava = "$generatedTest/java"
+    val generatedTestKotlin = "$generatedTest/kotlin"
+    val generatedTestGrpc = "$generatedTest/grpc"
+    val generatedTestSpine = "$generatedTest/spine"
+
+    sourceSets {
+        main {
+            java.srcDirs(
+                generatedJava,
+                generatedGrpc,
+                generatedSpine,
+            )
+            kotlin.srcDirs(
+                generatedKotlin,
+            )
+        }
+        test {
+            java.srcDirs(
+                generatedTestJava,
+                generatedTestGrpc,
+                generatedTestSpine,
+            )
+            kotlin.srcDirs(
+                generatedTestKotlin,
+            )
+        }
+    }
+
+    idea {
+        module {
+            generatedSourceDirs.addAll(files(
+                generatedJava,
+                generatedKotlin,
+                generatedGrpc,
+                generatedSpine,
+            ))
+            testSources.from(
+                generatedTestJava,
+                generatedTestKotlin,
+                generatedTestGrpc,
+                generatedTestSpine,
+            )
+            isDownloadJavadoc = true
+            isDownloadSources = true
+        }
+    }
+}

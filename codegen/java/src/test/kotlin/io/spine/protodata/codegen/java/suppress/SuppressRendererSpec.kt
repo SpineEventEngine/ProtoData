@@ -35,24 +35,56 @@ import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import kotlin.io.path.Path
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class `'SuppressRenderer' should` : WithSourceFileSet() {
+@DisplayName("`SuppressRenderer` should")
+class SuppressRendererSpec : WithSourceFileSet() {
 
-    @Test
-    fun `suppress ALL warnings`() {
-        Pipeline(
-            plugins = listOf(),
-            renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer()),
-            sources = this.sources,
-            request = CodeGeneratorRequest.getDefaultInstance()
-        )()
-        val code = sources.first()
-            .file(Path(JAVA_FILE))
-            .text()
-            .value
-        assertThat(code)
-            .contains("@SuppressWarnings({\"ALL\"})")
+    companion object {
+        val emptyRequest: CodeGeneratorRequest = CodeGeneratorRequest.getDefaultInstance()
+        fun suppressionRenderers() = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer())
+    }
+
+    private fun loadCode() = sources.first()
+        .file(Path(JAVA_FILE))
+        .code()
+
+    @Nested
+    inner class `suppress ALL warnings ` {
+
+        @Test
+        fun `if no 'Configuration' is given`() {
+            Pipeline(
+                plugins = listOf(),
+                renderers = suppressionRenderers(),
+                sources = this@SuppressRendererSpec.sources,
+                request = emptyRequest
+            )()
+            val code = loadCode()
+            assertContainsSuppressionAll(code)
+        }
+
+        @Test
+        fun `if 'Configuration' contains empty list of suppressions`() {
+            Pipeline(
+                plugins = listOf(),
+                renderers = suppressionRenderers(),
+                sources = this@SuppressRendererSpec.sources,
+                request = emptyRequest,
+                Configuration.rawValue("""
+                    {"warnings": {"value": []}} 
+                """.trimIndent(), PROTO_JSON)
+            )()
+            val code = loadCode()
+            assertContainsSuppressionAll(code)
+        }
+
+        private fun assertContainsSuppressionAll(code: String) {
+            assertThat(code)
+                .contains("@SuppressWarnings({\"ALL\"})")
+        }
     }
 
     @Test
@@ -61,17 +93,14 @@ class `'SuppressRenderer' should` : WithSourceFileSet() {
         val stringEqualsEmptyString = "StringEqualsEmptyString"
         Pipeline(
             plugins = listOf(),
-            renderers = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer()),
+            renderers = suppressionRenderers(),
             sources = sources,
-            request = CodeGeneratorRequest.getDefaultInstance(),
+            request = emptyRequest,
             config = Configuration.rawValue("""
                 {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
             """.trimIndent(), PROTO_JSON)
         )()
-        val code = sources.first()
-            .file(Path(JAVA_FILE))
-            .text()
-            .value
+        val code = loadCode()
         assertThat(code)
             .contains("""@SuppressWarnings({"deprecation", "StringEqualsEmptyString"})""")
     }

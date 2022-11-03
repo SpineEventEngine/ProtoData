@@ -27,12 +27,9 @@
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
-
-    apply(from = "$rootDir/../version.gradle.kts")
-
-    val mcJavaVersion: String by extra
+    val spine = io.spine.internal.dependency.Spine(project)
     dependencies {
-        classpath("io.spine.tools:spine-mc-java-plugins:${mcJavaVersion}:all")
+        classpath(spine.mcJavaPlugin)
     }
 }
 

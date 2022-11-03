@@ -26,19 +26,11 @@
 
 package io.spine.protodata.plugin
 
-import com.google.common.collect.ImmutableSet
-import com.google.protobuf.Message
 import io.spine.base.EntityState
 import io.spine.base.EventMessage
-import io.spine.core.ContractFor
-import io.spine.logging.Logging
-import io.spine.protodata.ConfigurationError
-import io.spine.protodata.QueryingClient
+import io.spine.server.query.QueryingClient
 import io.spine.protodata.config.ConfiguredQuerying
-import io.spine.server.BoundedContext
-import io.spine.server.event.AbstractEventReactor
-import io.spine.server.event.React
-import io.spine.server.type.EventClass
+import io.spine.server.event.Policy
 
 /**
  * A policy converts one event into zero to many other events.
@@ -79,44 +71,11 @@ import io.spine.server.type.EventClass
  * *Note.* Often when talking about policies, people imply converting an event into a command, not
  * an event. This approach seems too complicated to us at this stage, as not many commands will do
  * anything but produce events with the same information, thus we directly convert between events.
- *
- * @param E the type of the event handled by this policy
  */
-public abstract class Policy<E : EventMessage> :
-    AbstractEventReactor(),
-    ConfiguredQuerying,
-    Logging {
-
-    private lateinit var context: BoundedContext
-
-    /**
-     * Handles an event and produces some number of events in responce.
-     */
-    @ContractFor(handler = React::class)
-    protected abstract fun whenever(event: E): Iterable<Message>
-
-    final override fun registerWith(context: BoundedContext) {
-        super.registerWith(context)
-        this.context = context
-    }
+public abstract class Policy<E : EventMessage> : Policy<E>(), ConfiguredQuerying {
 
     final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(context, type, javaClass.name)
-    }
-
-    final override fun messageClasses(): ImmutableSet<EventClass> {
-        val classes = super.messageClasses()
-        checkHandlers(classes)
-        return classes
-    }
-
-    private fun checkHandlers(events: Iterable<EventClass>) {
-        val classes = events.toList()
-        if (classes.size > 1) {
-            throw ConfigurationError(
-                "Policy `${javaClass.name}` handles too many events: [${classes.joinToString()}]."
-            )
-        }
     }
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)

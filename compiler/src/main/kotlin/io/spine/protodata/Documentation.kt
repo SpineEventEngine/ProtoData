@@ -38,6 +38,8 @@ import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
+import io.spine.string.trimWhitespace
+import io.spine.util.interlaced
 
 /**
  * Documentation contained in a Protobuf file.

@@ -49,4 +49,14 @@ public object LaunchTask {
         val name = nameFor(sourceSet)
         return project.tasks.getByName(name)
     }
+
+    /**
+     * Obtains an instance of the task in the given project for the specified source set.
+     *
+     * @return the task or `null` if there is no task created for this source set
+     */
+    public fun find(project: Project, sourceSet: SourceSet): Task? {
+        val name = nameFor(sourceSet)
+        return project.tasks.findByName(name)
+    }
 }
