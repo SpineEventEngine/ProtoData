@@ -177,7 +177,7 @@ class UpdateGitHubPages : Plugin<Project> {
         val inputs = composeJavadocInputs(allowInternalJavadoc)
 
         register(copyJavadoc, Copy::class.java) {
-            from(*inputs.toTypedArray())
+            inputs.forEach { from(it) }
             into(javadocOutputFolder)
         }
     }
@@ -197,7 +197,7 @@ class UpdateGitHubPages : Plugin<Project> {
         val inputs = composeDokkaInputs()
 
         register(copyDokka, Copy::class.java) {
-            from(*inputs.toTypedArray())
+            inputs.forEach { from(it) }
             into(dokkaOutputFolder)
         }
     }

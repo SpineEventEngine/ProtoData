@@ -29,18 +29,16 @@ import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
-import io.spine.internal.dependency.Flogger
-import io.spine.internal.dependency.Grpc
-import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.testing.configureLogging
 
 @Suppress("RemoveRedundantQualifierName")
 plugins {
     java
     idea
-    id(io.spine.internal.dependency.Protobuf.GradlePlugin.id)
+    com.google.protobuf
 }
 
 subprojects {

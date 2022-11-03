@@ -50,7 +50,7 @@ repositories {
  * Please keep this value in sync. with `io.spine.internal.dependency.Jackson.version`.
  * It's not a requirement, but would be good in terms of consistency.
  */
-val jacksonVersion = "2.13.0"
+val jacksonVersion = "2.13.4"
 
 val googleAuthToolVersion = "2.1.2"
 val licenseReportVersion = "2.1"
@@ -80,7 +80,7 @@ val guavaVersion = "31.1-jre"
  * @see <a href="https://github.com/tbroyer/gradle-errorprone-plugin/releases">
  *     Error Prone Gradle Plugin Releases</a>
  */
-val errorProneVersion = "2.0.2"
+val errorProneVersion = "3.0.1"
 
 /**
  * The version of Protobuf Gradle Plugin.
@@ -100,7 +100,14 @@ val protobufPluginVersion = "0.8.19"
  * @see <a href="https://github.com/Kotlin/dokka/releases">
  *     Dokka Releases</a>
  */
-val dokkaVersion = "1.7.10"
+val dokkaVersion = "1.7.20"
+
+/**
+ * The version of Detekt Gradle Plugin.
+ *
+ * @see <a href="https://github.com/detekt/detekt/releases">Detekt Releases</a>
+ */
+val detektVersion = "1.21.0"
 
 configurations.all {
     resolutionStrategy {
@@ -142,6 +149,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
 
+    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektVersion")
     implementation("com.google.protobuf:protobuf-gradle-plugin:$protobufPluginVersion")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}")
     implementation("org.jetbrains.dokka:dokka-base:${dokkaVersion}")

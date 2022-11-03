@@ -70,7 +70,6 @@ plugins {
     net.ltgt.errorprone
     idea
     jacoco
-    `force-jacoco`
 }
 
 spinePublishing {
