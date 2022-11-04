@@ -112,10 +112,26 @@ private constructor(
      *
      * Insertion points should be marked with comments of special format. The added code is always
      * inserted after the line with the comment, and the line with the comment is preserved.
+     *
+     * @see atInline
      */
     public fun at(insertionPoint: InsertionPoint): SourceAtPoint =
         SourceAtPoint(this, insertionPoint)
 
+    /**
+     * Creates a new fluent builder for adding code at the given inline [insertionPoint].
+     *
+     * If the [insertionPoint] is not found in the code, no action will be performed as the result.
+     * If there are more than one instances of the same insertion point, the code will be added to
+     * all of them.
+     *
+     * Code inserted via the resulting fluent builder, unlike code inserted via [SourceFile.at],
+     * will be placed right into the line that contains the insertion point. Authors of [Renderer]s
+     * may choose to either use insertion points in the whole-line mode or in the inline mode. Also,
+     * the same insertion point may be used in both modes.
+     *
+     * @see at
+     */
     public fun atInline(insertionPoint: InsertionPoint): SourceAtPointInline =
         SourceAtPointInline(this, insertionPoint)
 
@@ -246,7 +262,7 @@ private constructor(
 /**
  * A fluent builder for inserting code into pre-prepared insertion points.
  *
- * @see SourceFile.at for the start of the fluent API and the detailed description of its behaviour.
+ * @see SourceFile.at
  */
 public class SourceAtPoint
 internal constructor(
@@ -295,12 +311,24 @@ internal constructor(
     }
 }
 
+/**
+ * A fluent builder for inserting code into pre-prepared inline insertion points.
+ *
+ * @see SourceFile.atInline
+ */
 public class SourceAtPointInline
 internal constructor(
     private val file: SourceFile,
     private val point: InsertionPoint
 ) {
 
+    /**
+     * Adds the specified code fragment into the insertion point.
+     *
+     * When called multiple times for the same insertion point, the code that is added last
+     * will appear first in the file, since new code fragments are always added right after
+     * the insertion point regardless of if it's been used before.
+     */
     public fun add(codeFragment: String) {
         checkNoSeparator(codeFragment)
         val sourceLines = file.lines()
@@ -313,8 +341,17 @@ internal constructor(
     }
 }
 
+/**
+ * A numbered line of code in a file.
+ */
 private data class CodeLine(val lineIndex: Int, val content: String) {
 
+    /**
+     * Inserts the `newCode` at the given `insertionPoint` into this line and obtains the resulting
+     * line of code.
+     *
+     * The index of the new line is always the same as the index of the old line.
+     */
     fun insertInline(insertionPoint: InsertionPoint, newCode: String): CodeLine {
         val indexes = content.findInsertionIndexes(insertionPoint).toList()
         if (indexes.isEmpty()) {

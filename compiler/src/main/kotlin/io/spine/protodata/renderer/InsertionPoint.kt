@@ -83,11 +83,27 @@ public interface InsertionPoint : CoordinatesFactory {
         }
     }
 
+    /**
+     * Locates the site where the insertion point should be added.
+     *
+     * An insertion point should only appear once in a file.
+     *
+     * @param text the existing code
+     * @return the coordinates in the file where the insertion point should be added
+     * @see SourceFile.at
+     * @see SourceFile.atInline
+     */
     public fun locate(text: Text): FileCoordinates
 }
 
+/**
+ * A factory of [FileCoordinates] instances.
+ */
 public interface CoordinatesFactory {
 
+    /**
+     * Creates coordinates pointing at a specific line and column in the file.
+     */
     public fun at(line: Int, column: Int): FileCoordinates =
         FileCoordinates.newBuilder()
             .setInline(
@@ -97,19 +113,31 @@ public interface CoordinatesFactory {
             )
             .build()
 
+    /**
+     * Creates coordinates pointing at a specific line in the file.
+     */
     public fun atLine(line: Int): FileCoordinates =
         FileCoordinates.newBuilder()
             .setWholeLine(line)
             .build()
 
+    /**
+     * Creates coordinates pointing at the first line in the file.
+     */
     public fun startOfFile(): FileCoordinates =
         atLine(0)
 
+    /**
+     * Creates coordinates pointing at the last line in the file.
+     */
     public fun endOfFile(): FileCoordinates =
         FileCoordinates.newBuilder()
             .setEndOfFile(Empty.getDefaultInstance())
             .build()
 
+    /**
+     * Creates coordinates that do not point at anywhere in the file.
+     */
     public fun nowhere(): FileCoordinates =
         FileCoordinates.newBuilder()
             .setNotInFile(Empty.getDefaultInstance())
