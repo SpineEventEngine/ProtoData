@@ -97,7 +97,7 @@ class Spine(p: ExtensionAware) {
          * The version of `time` to use.
          * @see [Spine.time]
          */
-        const val time = "2.0.0-SNAPSHOT.111"
+        const val time = "2.0.0-SNAPSHOT.120"
 
         /**
          * The version of `change` to use.
@@ -122,7 +122,7 @@ class Spine(p: ExtensionAware) {
          * The version of `validation` to use.
          * @see [Spine.validation]
          */
-        const val validation = "2.0.0-SNAPSHOT.33"
+        const val validation = "2.0.0-SNAPSHOT.61"
 
         /**
          * The version of Javadoc Tools to use.
@@ -153,7 +153,7 @@ class Spine(p: ExtensionAware) {
     val text = "$group:spine-text:${p.textVersion}"
 
     val testlib = "$toolsGroup:spine-testlib:${p.baseVersion}"
-    val testUtilTime = "io.spine.tools:spine-testutil-time:${p.timeVersion}"
+    val testUtilTime = "$toolsGroup:spine-testutil-time:${p.timeVersion}"
     val toolBase = "$toolsGroup:spine-tool-base:${p.toolBaseVersion}"
     val pluginBase = "$toolsGroup:spine-plugin-base:${p.toolBaseVersion}"
     val pluginTestlib = "$toolsGroup:spine-plugin-testlib:${p.toolBaseVersion}"

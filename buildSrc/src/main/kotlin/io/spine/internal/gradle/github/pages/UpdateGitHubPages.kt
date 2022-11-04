@@ -182,7 +182,7 @@ class UpdateGitHubPages : Plugin<Project> {
         }
     }
 
-    private fun TaskContainer.composeJavadocInputs(allowInternalJavadoc: Boolean): MutableList<Any> {
+    private fun TaskContainer.composeJavadocInputs(allowInternalJavadoc: Boolean): List<Any> {
         val inputs = mutableListOf<Any>()
         if (allowInternalJavadoc) {
             inputs.add(javadocTask())
@@ -202,7 +202,7 @@ class UpdateGitHubPages : Plugin<Project> {
         }
     }
 
-    private fun TaskContainer.composeDokkaInputs(): MutableList<Any> {
+    private fun TaskContainer.composeDokkaInputs(): List<Any> {
         val inputs = mutableListOf<Any>()
 
         inputs.add(dokkaHtmlTask())

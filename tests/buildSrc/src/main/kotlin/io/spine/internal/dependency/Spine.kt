@@ -97,13 +97,20 @@ class Spine(p: ExtensionAware) {
          * The version of `time` to use.
          * @see [Spine.time]
          */
-        const val time = "2.0.0-SNAPSHOT.111"
+        const val time = "2.0.0-SNAPSHOT.120"
 
         /**
          * The version of `change` to use.
          * @see [Spine.change]
          */
         const val change = "2.0.0-SNAPSHOT.117"
+
+        /**
+         * The version of `text` to use.
+         *
+         * @see Spine.text
+         */
+        const val text = "2.0.0-SNAPSHOT.1"
 
         /**
          * The version of `tool-base` to use.
@@ -115,7 +122,7 @@ class Spine(p: ExtensionAware) {
          * The version of `validation` to use.
          * @see [Spine.validation]
          */
-        const val validation = "2.0.0-SNAPSHOT.33"
+        const val validation = "2.0.0-SNAPSHOT.61"
 
         /**
          * The version of Javadoc Tools to use.
@@ -143,9 +150,10 @@ class Spine(p: ExtensionAware) {
     val baseTypes = "$group:spine-base-types:${p.baseTypesVersion}"
     val time = "$group:spine-time:${p.timeVersion}"
     val change = "$group:spine-change:${p.changeVersion}"
+    val text = "$group:spine-text:${p.textVersion}"
 
     val testlib = "$toolsGroup:spine-testlib:${p.baseVersion}"
-    val testUtilTime = "io.spine.tools:spine-testutil-time:${p.timeVersion}"
+    val testUtilTime = "$toolsGroup:spine-testutil-time:${p.timeVersion}"
     val toolBase = "$toolsGroup:spine-tool-base:${p.toolBaseVersion}"
     val pluginBase = "$toolsGroup:spine-plugin-base:${p.toolBaseVersion}"
     val pluginTestlib = "$toolsGroup:spine-plugin-testlib:${p.toolBaseVersion}"
@@ -195,6 +203,9 @@ class Spine(p: ExtensionAware) {
 
     private val ExtensionAware.changeVersion: String
         get() = "changeVersion".asExtra(this, DefaultVersion.change)
+
+    private val ExtensionAware.textVersion: String
+        get() = "textVersion".asExtra(this, DefaultVersion.text)
 
     private val ExtensionAware.mcVersion: String
         get() = "mcVersion".asExtra(this, DefaultVersion.mc)
