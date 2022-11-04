@@ -39,17 +39,22 @@ import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "spine/text/text.proto";
 
+// A pointer to a place in a text file.
 message FileCoordinates {
 
     oneof spec {
         option (is_required) = true;
 
+        // Points at specific line and column.
         spine.text.Position inline = 1 [(validate) = true];
 
+        // Points at a whole line.
         uint32 whole_line = 2;
 
+        // Points at the last line of the file.
         google.protobuf.Empty end_of_file = 3;
 
+        // Specifies that there is no such place in a given file.
         google.protobuf.Empty not_in_file = 4;
     }
 }
