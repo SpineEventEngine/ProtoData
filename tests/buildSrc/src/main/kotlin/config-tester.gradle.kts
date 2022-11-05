@@ -24,33 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.github.pages
+import io.spine.internal.gradle.ConfigTester
+import io.spine.internal.gradle.SpineRepos
+import io.spine.internal.gradle.cleanFolder
+import java.nio.file.Path
+import java.nio.file.Paths
 
-/**
- * An author of updates to GitHub pages.
- */
-class AuthorEmail(val value: String) {
+// A reference to `config` to use along with the `ConfigTester`.
+val config: Path = Paths.get("./")
 
-    companion object {
+// A temp folder to use to check out the sources of other repositories with the `ConfigTester`.
+val tempFolder = File("./tmp")
 
-        /**
-         * The name of the environment variable that contains the email to use for authoring
-         * the commits to the GitHub Pages branch.
-         */
-        @Suppress("MemberVisibilityCanBePrivate") // for documentation purposes.
-        const val environmentVariable = "FORMAL_GIT_HUB_PAGES_AUTHOR"
+// Creates a Gradle task which checks out and builds the selected Spine repositories
+// with the local version of `config` and `config/buildSrc`.
+ConfigTester(config, tasks, tempFolder)
+    .addRepo(SpineRepos.baseTypes)  // Builds `base-types` at `master`.
+    .addRepo(SpineRepos.base)       // Builds `base` at `master`.
+    .addRepo(SpineRepos.coreJava)   // Builds `core-java` at `master`.
 
-        /**
-         * Obtains the author from the system [environment variable][environmentVariable].
-         */
-        fun fromVar() : AuthorEmail {
-            val envValue = System.getenv(environmentVariable)
-            check(envValue != null && envValue.isNotBlank()) {
-                "Unable to obtain an author from `${environmentVariable}`."
-            }
-            return AuthorEmail(envValue)
-        }
+    // This is how one builds a specific branch of some repository:
+    // .addRepo(SpineRepos.coreJava, Branch("grpc-concurrency-fixes"))
+
+    // Register the produced task under the selected name to invoke manually upon need.
+    .registerUnder("buildDependants")
+
+// Cleans the temp folder used to check out the sources from Git.
+tasks.register("clean") {
+    doLast {
+        cleanFolder(tempFolder)
     }
-
-    override fun toString(): String = value
 }

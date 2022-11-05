@@ -67,12 +67,11 @@ buildscript {
 
 plugins {
     kotlin("jvm")
-    val dokkaPlugin = io.spine.internal.dependency.Dokka.GradlePlugin
-    id(dokkaPlugin.id)
-    id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
+    errorprone
     idea
     jacoco
-    `force-jacoco`
+    "org.jetbrains.dokka"
+    `gradle-doctor`
 }
 
 spinePublishing {

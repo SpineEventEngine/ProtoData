@@ -24,33 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.github.pages
+package io.spine.internal.dependency
 
 /**
- * An author of updates to GitHub pages.
+ * Helps optimize Gradle Builds by ensuring recommendations at build time.
+ *
+ * See [plugin site](https://runningcode.github.io/gradle-doctor) for features and usage.
  */
-class AuthorEmail(val value: String) {
-
-    companion object {
-
-        /**
-         * The name of the environment variable that contains the email to use for authoring
-         * the commits to the GitHub Pages branch.
-         */
-        @Suppress("MemberVisibilityCanBePrivate") // for documentation purposes.
-        const val environmentVariable = "FORMAL_GIT_HUB_PAGES_AUTHOR"
-
-        /**
-         * Obtains the author from the system [environment variable][environmentVariable].
-         */
-        fun fromVar() : AuthorEmail {
-            val envValue = System.getenv(environmentVariable)
-            check(envValue != null && envValue.isNotBlank()) {
-                "Unable to obtain an author from `${environmentVariable}`."
-            }
-            return AuthorEmail(envValue)
-        }
-    }
-
-    override fun toString(): String = value
+object GradleDoctor {
+    const val version = "0.8.1"
+    const val pluginId = "com.osacky.doctor"
 }
