@@ -92,7 +92,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-tool-base</artifactId>
-    <version>2.0.0-SNAPSHOT.122</version>
+    <version>2.0.0-SNAPSHOT.121</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -218,23 +218,23 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-mc-java-checks</artifactId>
-    <version>2.0.0-SNAPSHOT.107</version>
+    <version>2.0.0-SNAPSHOT.106</version>
     <scope>provided</scope>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-mc-java-plugins</artifactId>
-    <version>2.0.0-SNAPSHOT.107</version>
+    <version>2.0.0-SNAPSHOT.106</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-base</artifactId>
-    <version>2.0.0-SNAPSHOT.122</version>
+    <version>2.0.0-SNAPSHOT.121</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-testlib</artifactId>
-    <version>2.0.0-SNAPSHOT.122</version>
+    <version>2.0.0-SNAPSHOT.121</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>

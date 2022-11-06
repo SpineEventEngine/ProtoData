@@ -55,13 +55,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
-
-    apply(from = "$rootDir/version.gradle.kts")
-
-    val spine = io.spine.internal.dependency.Spine(project)
     dependencies {
-        classpath(spine.mcJavaPlugin)
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
+        classpath(io.spine.internal.dependency.Spine.McJava.pluginLib)
     }
 }
 
@@ -70,7 +66,6 @@ plugins {
     errorprone
     idea
     jacoco
-    "org.jetbrains.dokka"
     `gradle-doctor`
 }
 
