@@ -54,6 +54,7 @@ class PluginSpec {
     private lateinit var project: GradleProject
     private lateinit var projectDir: File
     private lateinit var generatedDir: File
+    private lateinit var generatedProtoDir: File
     private lateinit var generatedMainDir: File
     private lateinit var generatedJavaDir: File
     private lateinit var generatedKotlinDir: File
@@ -75,6 +76,7 @@ class PluginSpec {
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
         this.projectDir = projectDir
+        this.generatedProtoDir = projectDir.resolve("build/generated-proto")
         this.generatedDir = projectDir.resolve("generated")
         this.generatedMainDir = generatedDir.resolve("main")
         this.generatedJavaDir = generatedMainDir.resolve("java")
@@ -143,16 +145,24 @@ class PluginSpec {
     }
 
     @Test
+    @Disabled("Until access to repositories is simplified")
     fun `copy 'grpc' directory from 'generated-proto' to 'generated'`() {
         createProject("copy-grpc")
         val result = project.executeTask(build)
         assertThat(result[build]).isEqualTo(SUCCESS)
 
+        val parameterClass = "io/spine/protodata/test/Buz.java"
+        assertExists(generatedProtoDir.resolve("main/java/$parameterClass"))
+
+        val serviceClass = "io/spine/protodata/test/FizServiceGrpc.java"
+        assertExists(generatedProtoDir.resolve("main/grpc/$serviceClass"))
+
         assertExists(generatedJavaDir)
-        assertExists(generatedJavaDir.resolve("io/spine/protodata/test/Buz.java"))
+        assertExists(generatedJavaDir.resolve(parameterClass))
 
         val generatedGrpcDir = generatedMainDir.resolve("grpc")
         assertExists(generatedGrpcDir)
+        assertExists(generatedGrpcDir.resolve(serviceClass))
     }
 
     private fun createEmptyProject() {
