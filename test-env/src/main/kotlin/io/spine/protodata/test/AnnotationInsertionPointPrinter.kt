@@ -26,7 +26,7 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.FileCoordinates
+import io.spine.protodata.TextCoordinates
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.text.Text
@@ -43,7 +43,7 @@ public class AnnotationInsertionPointPrinter: InsertionPointPrinter(Java) {
 public enum class AnnotationInsertionPoint : InsertionPoint {
 
     IMPORT {
-        override fun locate(text: Text): FileCoordinates {
+        override fun locate(text: Text): TextCoordinates {
             val lines = text.lines()
             val packageLineIndex = lines.asSequence()
                 .mapIndexed { index, line -> index to line }
@@ -54,7 +54,7 @@ public enum class AnnotationInsertionPoint : InsertionPoint {
         }
     },
     BEFORE_RETURN_TYPE_METHOD_FOO {
-        override fun locate(text: Text): FileCoordinates {
+        override fun locate(text: Text): TextCoordinates {
             val lines = text.lines()
             val (lineIndex, line) = lines.asSequence()
                 .mapIndexed { index, line -> index to line }

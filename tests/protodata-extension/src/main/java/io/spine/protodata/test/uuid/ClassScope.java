@@ -27,7 +27,7 @@
 package io.spine.protodata.test.uuid;
 
 import com.google.common.base.Objects;
-import io.spine.protodata.FileCoordinates;
+import io.spine.protodata.TextCoordinates;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.text.Text;
@@ -70,7 +70,7 @@ final class ClassScope implements InsertionPoint {
      * is not added either.
      */
     @Override
-    public FileCoordinates locate(Text text) {
+    public TextCoordinates locate(Text text) {
         String pattern = format(NATIVE_INSERTION_POINT_FMT, qualifiedName(typeName));
         List<String> lines = text.lines();
         for (int lineNumber = 0; lineNumber < lines.size(); lineNumber++) {

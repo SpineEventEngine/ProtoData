@@ -27,10 +27,10 @@
 package io.spine.protodata.renderer
 
 import com.google.common.base.Preconditions.checkPositionIndex
-import io.spine.protodata.FileCoordinates
-import io.spine.protodata.FileCoordinates.SpecCase.END_OF_FILE
-import io.spine.protodata.FileCoordinates.SpecCase.INLINE
-import io.spine.protodata.FileCoordinates.SpecCase.WHOLE_LINE
+import io.spine.protodata.TextCoordinates
+import io.spine.protodata.TextCoordinates.KindCase.END_OF_FILE
+import io.spine.protodata.TextCoordinates.KindCase.INLINE
+import io.spine.protodata.TextCoordinates.KindCase.WHOLE_LINE
 import io.spine.protodata.renderer.InsertionPoint.Companion.COMMENT_PADDING_LENGTH
 import io.spine.tools.code.Language
 
@@ -63,7 +63,7 @@ public abstract class InsertionPointPrinter(
                 val text = file.text()
                 val coordinates = point.locate(text)
                 val lines = text.lines().toMutableList()
-                when (coordinates.specCase) {
+                when (coordinates.kindCase) {
                     INLINE -> {
                         renderInlinePoint(coordinates, lines, point)
                     }
@@ -85,7 +85,7 @@ public abstract class InsertionPointPrinter(
     }
 
     private fun renderInlinePoint(
-        coordinates: FileCoordinates,
+        coordinates: TextCoordinates,
         lines: MutableList<String>,
         point: InsertionPoint,
     ) {

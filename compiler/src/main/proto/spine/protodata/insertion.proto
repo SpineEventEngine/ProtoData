@@ -40,9 +40,9 @@ import "google/protobuf/empty.proto";
 import "spine/text/text.proto";
 
 // A pointer to a place in a text file.
-message FileCoordinates {
+message TextCoordinates {
 
-    oneof spec {
+    oneof kind {
         option (is_required) = true;
 
         // Points at specific line and column.
