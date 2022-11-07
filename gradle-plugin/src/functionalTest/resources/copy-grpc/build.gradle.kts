@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 
@@ -47,7 +49,7 @@ fun RepositoryHandler.addCouple(baseUrl: String) {
 repositories {
     mavenLocal()
     mavenCentral()
-    addCouple("https://europe-maven.pkg.dev/spine-event-engine")
+    addCouple("https://spine.mycloudrepo.io/public/repositories")
 }
 
 dependencies {
@@ -62,5 +64,13 @@ dependencies {
 protobuf {
     protoc {
         artifact = io.spine.internal.dependency.Protobuf.compiler
+    }
+
+    generateProtoTasks {
+        all().configureEach {
+            plugins {
+                maybeCreate("grpc")
+            }
+        }
     }
 }

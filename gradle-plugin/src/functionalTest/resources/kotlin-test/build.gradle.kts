@@ -48,7 +48,7 @@ fun RepositoryHandler.addCouple(baseUrl: String) {
 repositories {
     mavenLocal()
     mavenCentral()
-    addCouple("https://europe-maven.pkg.dev/spine-event-engine")
+   addCouple("https://spine.mycloudrepo.io/public/repositories")
 }
 
 protoData {
