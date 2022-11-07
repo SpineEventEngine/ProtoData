@@ -133,14 +133,14 @@ public sealed interface CoordinatesFactory {
     }
 
     /**
-     * Creates coordinates pointing at a specific line in the file.
+     * Creates coordinates pointing at the beginning of a specific line in the text.
      */
     public fun atLine(line: Int): FileCoordinates = fileCoordinates {
         wholeLine = line
     }
 
     /**
-     * Creates coordinates pointing at the first line in the file.
+     * Creates coordinates pointing at the beginning of the first line in the text.
      */
     public fun startOfFile(): FileCoordinates =
         atLine(0)
@@ -153,7 +153,7 @@ public sealed interface CoordinatesFactory {
     }
 
     /**
-     * Creates coordinates that do not point at anywhere in the file.
+     * Creates coordinates that do not point at anywhere in the text.
      */
     public fun nowhere(): FileCoordinates = fileCoordinates {
         notInFile = Empty.getDefaultInstance()
