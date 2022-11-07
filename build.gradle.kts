@@ -47,6 +47,7 @@ import io.spine.internal.gradle.publish.spinePublishing
 import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
+import io.spine.internal.gradle.standardToSpineSdk
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
@@ -54,7 +55,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
+    standardSdkRepositories()
     dependencies {
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
         classpath(io.spine.internal.dependency.Spine.McJava.pluginLib)
@@ -97,9 +98,7 @@ allprojects {
     group = "io.spine.protodata"
     version = extra["protoDataVersion"]!!
 
-    repositories.applyStandard()
-    repositories.applyGitHubPackages("base-types", rootProject)
-    repositories.applyGitHubPackages("core-java", rootProject)
+    repositories.standardToSpineSdk()
 
     configurations.all {
         resolutionStrategy {

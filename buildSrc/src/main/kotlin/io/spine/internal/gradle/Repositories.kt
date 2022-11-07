@@ -38,6 +38,16 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.kotlin.dsl.ScriptHandlerScope
 
 /**
+ * Applies [standard][standardToSpineSdk] repositories to the given
+ * repository handler.
+ */
+fun addStandardToSpineSdk(repositories: RepositoryHandler) {
+    repositories.apply {
+        standardToSpineSdk()
+    }
+}
+
+/**
  * Applies [standard][doApplyStandard] repositories to this [ScriptHandlerScope]
  * optionally adding [gitHub] repositories for Spine-only components, if
  * names of such repositories are given.
@@ -51,6 +61,10 @@ import org.gradle.kotlin.dsl.ScriptHandlerScope
  *         [standard repositories][doApplyStandard] are required.
  */
 @Suppress("unused")
+@Deprecated(
+    message = "Please use `standardToSpineSdk(repositories)`.",
+    replaceWith = ReplaceWith("standardToSpineSdk(repositories)")
+)
 fun applyWithStandard(
     buildscript: ScriptHandlerScope,
     rootProject: Project,
@@ -60,7 +74,7 @@ fun applyWithStandard(
     gitHubRepo.iterator().forEachRemaining { repo ->
         repositories.applyGitHubPackages(repo, rootProject)
     }
-    repositories.applyStandard()
+    repositories.standardToSpineSdk()
 }
 
 /**
@@ -77,6 +91,10 @@ fun applyWithStandard(
  * @see applyGitHubPackages
  */
 @Suppress("unused")
+@Deprecated(
+    message = "Please use `standardToSpineSdk(repositories)`.",
+    replaceWith = ReplaceWith("standardToSpineSdk(repositories)")
+)
 fun doApplyGitHubPackages(
     repositories: RepositoryHandler,
     shortRepositoryName: String,
@@ -89,7 +107,11 @@ fun doApplyGitHubPackages(
  * To be used in `buildscript` clauses when a fully-qualified call must be made.
  */
 @Suppress("unused")
-fun doApplyStandard(repositories: RepositoryHandler) = repositories.applyStandard()
+@Deprecated(
+    message = "Please use `standardToSpineSdk(repositories)`.",
+    replaceWith = ReplaceWith("standardToSpineSdk(repositories)")
+)
+fun doApplyStandard(repositories: RepositoryHandler) = repositories.standardToSpineSdk()
 
 /**
  * Applies the repository hosted at GitHub Packages, to which Spine artifacts were published.
@@ -142,21 +164,41 @@ fun RepositoryHandler.applyGitHubPackages(project: Project, vararg shortReposito
  *         [standard repositories][applyStandard] are required.
  */
 @Suppress("unused")
+@Deprecated(
+    message = "Please use `standardToSpineSdk()`.",
+    replaceWith = ReplaceWith("standardToSpineSdk()")
+)
 fun RepositoryHandler.applyStandardWithGitHub(project: Project, vararg gitHubRepo: String) {
     gitHubRepo.iterator().forEachRemaining { repo ->
         applyGitHubPackages(repo, project)
     }
-    applyStandard()
+    standardToSpineSdk()
+}
+
+/**
+ * Adds a read-only view to all artifacts of the SpineEventEngine
+ * GitHub organization.
+ */
+fun RepositoryHandler.spineArtifacts() {
+    maven {
+        url = URI("https://maven.pkg.github.com/SpineEventEngine/*")
+        includeSpineOnly()
+        credentials {
+            username = "public"
+            /**
+             * The PAT generated with the `read:packages` scope.
+             * See: https://github.com/orgs/community/discussions/25629
+             */
+            password = "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"
+        }
+    }
 }
 
 /**
  * Applies repositories commonly used by Spine Event Engine projects.
- *
- * Does not include the repositories hosted at GitHub Packages.
- *
- * @see applyGitHubPackages
  */
-fun RepositoryHandler.applyStandard() {
+fun RepositoryHandler.standardToSpineSdk() {
+    spineArtifacts()
 
     val spineRepos = listOf(
         Repos.spine,
@@ -182,6 +224,12 @@ fun RepositoryHandler.applyStandard() {
     gradlePluginPortal()
     mavenLocal().includeSpineOnly()
 }
+
+@Deprecated(
+    message = "Please use `standardToSpineSdk() instead.",
+    replaceWith = ReplaceWith("standardToSpineSdk()")
+)
+fun RepositoryHandler.applyStandard() = this.standardToSpineSdk()
 
 /**
  * A Maven repository.

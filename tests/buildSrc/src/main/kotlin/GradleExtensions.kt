@@ -1,4 +1,4 @@
-import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.kotlin.dsl.ScriptHandlerScope
 
 /*
  * Copyright 2022, TeamDev. All rights reserved.
@@ -26,25 +26,11 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.gradle.api.Project
+import io.spine.internal.gradle.standardToSpineSdk
 
 /**
- * Adds a GitHub Packages repository accessing artifacts from all repositories
- * of the SpineEventEngine organization.
+ * Applies [standard][standardToSpineSdk] repositories to this `buildscript`.
  */
-fun RepositoryHandler.spineGitHubPackages(project: Project) {
-    maven {
-        url = project.uri("https://maven.pkg.github.com/SpineEventEngine/*")
-        content {
-            includeGroupByRegex("io\\.spine.*")
-        }
-        credentials {
-            username = "public"
-            /**
-             * The PAT generated with the `read:packages` scope.
-             * See: https://github.com/orgs/community/discussions/25629
-             */
-            password = "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"
-        }
-    }
+fun ScriptHandlerScope.standardSdkRepositories() {
+    repositories.standardToSpineSdk()
 }

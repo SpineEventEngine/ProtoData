@@ -27,15 +27,10 @@
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.Protobuf
-
-import org.gradle.api.artifacts.dsl.RepositoryHandler
+import io.spine.internal.gradle.standardToSpineSdk
 
 buildscript {
-    repositories {
-        spineGitHubPackages(project)
-        mavenCentral()
-        mavenLocal()
-    }
+    io.spine.internal.gradle.addStandardToSpineSdk(repositories)
 }
 
 plugins {
@@ -45,9 +40,8 @@ plugins {
 }
 
 repositories {
-    spineGitHubPackages(project)
-    mavenCentral()
-    mavenLocal()
+    mavenLocal() // Must come first for `protodata-test-env`.
+    standardToSpineSdk()
 }
 
 protoData {

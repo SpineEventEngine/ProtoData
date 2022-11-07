@@ -170,6 +170,6 @@ object DependencyResolution {
         replaceWith = ReplaceWith("applyStandard(repositories)")
     )
     fun defaultRepositories(repositories: RepositoryHandler) {
-        repositories.applyStandard()
+        repositories.standardToSpineSdk()
     }
 }

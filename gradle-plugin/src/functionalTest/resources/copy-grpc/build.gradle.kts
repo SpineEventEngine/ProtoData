@@ -28,11 +28,10 @@ import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
-
-import org.gradle.api.artifacts.dsl.RepositoryHandler
+import io.spine.internal.gradle.standardToSpineSdk
 
 buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
+    io.spine.internal.gradle.addStandardToSpineSdk(repositories)
 }
 
 plugins {
@@ -41,15 +40,8 @@ plugins {
     id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
 }
 
-fun RepositoryHandler.addCouple(baseUrl: String) {
-    maven { url = uri("$baseUrl/releases") }
-    maven { url = uri("$baseUrl/snapshots") }
-}
-
 repositories {
-    mavenLocal()
-    mavenCentral()
-    addCouple("https://spine.mycloudrepo.io/public/repositories")
+    standardToSpineSdk()
 }
 
 dependencies {

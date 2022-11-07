@@ -28,11 +28,10 @@ import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
-
-import org.gradle.api.artifacts.dsl.RepositoryHandler
+import io.spine.internal.gradle.standardToSpineSdk
 
 buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
+    io.spine.internal.gradle.addStandardToSpineSdk(repositories)
 }
 
 plugins {
@@ -41,18 +40,8 @@ plugins {
     id("io.spine.protodata") version "0.3.1"
 }
 
-private const val spineArtifacts =
-    "https://public:&#103;hp_zvJTfVFBWeggHputBAbeagykxoL7kH0GcxfU@maven.pkg.github.com/SpineEventEngine/*"
-
 repositories {
-    maven {
-        url = spineArtifacts
-        content {
-            includeGroupByRegex("io\\.spine.*")
-        }
-    }
-    mavenCentral()
-    mavenLocal()
+    standardToSpineSdk()
 }
 
 dependencies {

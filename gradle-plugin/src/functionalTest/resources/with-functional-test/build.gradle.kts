@@ -27,12 +27,11 @@
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.Protobuf
-
-import org.gradle.api.artifacts.dsl.RepositoryHandler
+import io.spine.internal.gradle.standardToSpineSdk
 import org.gradle.api.plugins.jvm.JvmTestSuite
 
 buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
+    io.spine.internal.gradle.addStandardToSpineSdk(repositories)
 }
 
 plugins {
@@ -41,15 +40,9 @@ plugins {
     id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
 }
 
-fun RepositoryHandler.addCouple(baseUrl: String) {
-    maven { url = uri("$baseUrl/releases") }
-    maven { url = uri("$baseUrl/snapshots") }
-}
-
 repositories {
-    mavenLocal()
-    mavenCentral()
-    addCouple("https://europe-maven.pkg.dev/spine-event-engine")
+    mavenLocal() // Must come first for `protodata-test-env`.
+    standardToSpineSdk()
 }
 
 protoData {
