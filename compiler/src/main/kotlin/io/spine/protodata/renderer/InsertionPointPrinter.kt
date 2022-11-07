@@ -104,10 +104,8 @@ public abstract class InsertionPointPrinter(
         val labelEndIndex = comment.indexOf(label) + label.length
         val paddingAfterLabel = comment.length - labelEndIndex
         if (paddingAfterLabel > COMMENT_PADDING_LENGTH) {
-            throw IllegalStateException(
-                "Comment padding after insertion point ${point.label} is loo long." +
-                        " Expected $COMMENT_PADDING_LENGTH symbols but found $paddingAfterLabel."
-            )
+            error("Comment padding after insertion point ${point.label} is loo long." +
+                    " Expected $COMMENT_PADDING_LENGTH symbols but found $paddingAfterLabel.")
         }
         if (paddingAfterLabel < COMMENT_PADDING_LENGTH) {
             comment += " ".repeat(COMMENT_PADDING_LENGTH - paddingAfterLabel)

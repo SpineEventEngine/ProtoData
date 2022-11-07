@@ -46,7 +46,22 @@ import io.spine.text.TextFactory.text
 public interface InsertionPoint : CoordinatesFactory {
 
     public companion object {
-        public const val COMMENT_PADDING_LENGTH: Int = 8
+
+        /**
+         * The number of characters which right-pad an insertion point [codeLine] when it is added
+         * to an existing line of code.
+         *
+         * Since insertion points are added as comments, the comments must be closed in order for
+         * the code after the insertion point to be compilable. This number of characters includes
+         * any comment-closing syntax (e.g. the asterisk and slash in Kotlin, Java, and
+         * some other languages). After the comment-closing syntax follow while-space characters.
+         *
+         * If the comment-closing characters are too many, an error occurs.
+         *
+         * This padding is constant for all languages and all renderers. When inserting code into
+         * an exiting line, a renderer will always respect this padding.
+         */
+        internal const val COMMENT_PADDING_LENGTH: Int = 8
     }
 
     /**
