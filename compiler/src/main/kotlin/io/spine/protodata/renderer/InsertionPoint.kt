@@ -79,7 +79,7 @@ public interface InsertionPoint : CoordinatesFactory {
             }
             END_OF_FILE -> LineNumber.endOfFile()
             NOT_IN_FILE -> LineNumber.notInFile()
-            else -> throw IllegalStateException("Unexpected file coordinates `$coords`.")
+            else -> error("Unexpected file coordinates `$coords`.")
         }
     }
 
