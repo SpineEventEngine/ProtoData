@@ -1,3 +1,5 @@
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+
 /*
  * Copyright 2022, TeamDev. All rights reserved.
  *
@@ -24,44 +26,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
-import io.spine.internal.dependency.Protobuf
+import org.gradle.api.Project
 
-import org.gradle.api.artifacts.dsl.RepositoryHandler
-
-buildscript {
-    repositories {
-        spineGitHubPackages(project)
-        mavenCentral()
-        mavenLocal()
-    }
-}
-
-plugins {
-    java
-    id("com.google.protobuf")
-    id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
-}
-
-repositories {
-    spineGitHubPackages(project)
-    mavenCentral()
-    mavenLocal()
-}
-
-protoData {
-    renderers("io.spine.protodata.test.NoOpRenderer")
-    plugins("io.spine.protodata.test.TestPlugin")
-}
-
-dependencies {
-    protoData("io.spine.protodata:protodata-test-env:+")
-    Protobuf.libs.forEach { implementation(it) }
-}
-
-protobuf {
-    protoc {
-        artifact = io.spine.internal.dependency.Protobuf.compiler
+/**
+ * Adds a GitHub Packages repository accessing artifacts from all repositories
+ * of the SpineEventEngine organization.
+ */
+fun RepositoryHandler.spineGitHubPackages(project: Project) {
+    maven {
+        url = project.uri("https://maven.pkg.github.com/SpineEventEngine/*")
+        content {
+            includeGroupByRegex("io\\.spine.*")
+        }
+        credentials {
+            username = "public"
+            /**
+             * The PAT generated with the `read:packages` scope.
+             * See: https://github.com/orgs/community/discussions/25629
+             */
+            password = "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"
+        }
     }
 }
