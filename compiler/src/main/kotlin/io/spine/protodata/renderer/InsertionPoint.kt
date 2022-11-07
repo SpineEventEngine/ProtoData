@@ -35,6 +35,7 @@ import io.spine.protodata.FileCoordinates.SpecCase.INLINE
 import io.spine.protodata.FileCoordinates.SpecCase.NOT_IN_FILE
 import io.spine.protodata.FileCoordinates.SpecCase.WHOLE_LINE
 import io.spine.protodata.TypeName
+import io.spine.protodata.fileCoordinates
 import io.spine.protodata.qualifiedName
 import io.spine.text.Position
 import io.spine.text.Text
@@ -119,22 +120,19 @@ public interface CoordinatesFactory {
     /**
      * Creates coordinates pointing at a specific line and column in the file.
      */
-    public fun at(line: Int, column: Int): FileCoordinates =
-        FileCoordinates.newBuilder()
-            .setInline(
-                Position.newBuilder()
-                    .setLine(line)
-                    .setColumn(column)
-            )
+    public fun at(line: Int, column: Int): FileCoordinates = fileCoordinates {
+        inline = Position.newBuilder()
+            .setLine(line)
+            .setColumn(column)
             .build()
+    }
 
     /**
      * Creates coordinates pointing at a specific line in the file.
      */
-    public fun atLine(line: Int): FileCoordinates =
-        FileCoordinates.newBuilder()
-            .setWholeLine(line)
-            .build()
+    public fun atLine(line: Int): FileCoordinates = fileCoordinates {
+        wholeLine = line
+    }
 
     /**
      * Creates coordinates pointing at the first line in the file.
@@ -143,20 +141,18 @@ public interface CoordinatesFactory {
         atLine(0)
 
     /**
-     * Creates coordinates pointing at the last line in the file.
+     * Creates coordinates pointing at the point after the last line in the text.
      */
-    public fun endOfFile(): FileCoordinates =
-        FileCoordinates.newBuilder()
-            .setEndOfFile(Empty.getDefaultInstance())
-            .build()
+    public fun endOfFile(): FileCoordinates = fileCoordinates {
+        endOfFile = Empty.getDefaultInstance()
+    }
 
     /**
      * Creates coordinates that do not point at anywhere in the file.
      */
-    public fun nowhere(): FileCoordinates =
-        FileCoordinates.newBuilder()
-            .setNotInFile(Empty.getDefaultInstance())
-            .build()
+    public fun nowhere(): FileCoordinates = fileCoordinates {
+        notInFile = Empty.getDefaultInstance()
+    }
 }
 
 /**
