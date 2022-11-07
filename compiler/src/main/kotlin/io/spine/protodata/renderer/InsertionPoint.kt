@@ -87,11 +87,7 @@ public interface InsertionPoint : CoordinatesFactory {
         return when (coords.kindCase) {
             WHOLE_LINE -> LineNumber.at(coords.wholeLine)
             INLINE -> {
-                loggerFor(InsertionPoint::class.java)
-                    .atWarning()
-                    .withStackTrace(FULL)
-                    .log("`locate(List<String>)` does not support inline insertion. " +
-                            "A whole line insertion will be generated.")
+                logUnsupportedKind()
                 LineNumber.at(coords.inline.line)
             }
             END_OF_FILE -> LineNumber.endOfFile()
@@ -99,6 +95,15 @@ public interface InsertionPoint : CoordinatesFactory {
             else -> error("Unexpected text coordinates `$coords`.")
         }
     }
+
+    private fun logUnsupportedKind() =
+        loggerFor(InsertionPoint::class.java)
+            .atWarning()
+            .withStackTrace(FULL)
+            .log(
+                "`locate(List<String>)` does not support inline insertion. " +
+                        "A whole line insertion will be generated."
+            )
 
     /**
      * Locates the site where the insertion point should be added.
