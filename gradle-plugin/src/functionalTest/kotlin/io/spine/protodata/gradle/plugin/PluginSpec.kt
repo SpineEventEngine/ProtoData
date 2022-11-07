@@ -51,8 +51,10 @@ class PluginSpec {
 
     private val taskName: TaskName = TaskName { "launchProtoDataMain" }
 
-    private lateinit var projectDir: File
     private lateinit var project: GradleProject
+    private lateinit var projectDir: File
+    private lateinit var generatedDir: File
+    private lateinit var generatedMainDir: File
     private lateinit var generatedJavaDir: File
     private lateinit var generatedKotlinDir: File
 
@@ -73,8 +75,10 @@ class PluginSpec {
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
         this.projectDir = projectDir
-        this.generatedJavaDir = projectDir.resolve("generated/main/java")
-        this.generatedKotlinDir  = projectDir.resolve("generated/main/kotlin")
+        this.generatedDir = projectDir.resolve("generated")
+        this.generatedMainDir = generatedDir.resolve("main")
+        this.generatedJavaDir = generatedMainDir.resolve("java")
+        this.generatedKotlinDir  = generatedMainDir.resolve("kotlin")
     }
 
     @Test
@@ -136,6 +140,19 @@ class PluginSpec {
         val result = project.executeTask(build)
         assertThat(result[build]).isEqualTo(SUCCESS)
         assertExists(generatedKotlinDir)
+    }
+
+    @Test
+    fun `copy 'grpc' directory from 'generated-proto' to 'generated'`() {
+        createProject("copy-grpc")
+        val result = project.executeTask(build)
+        assertThat(result[build]).isEqualTo(SUCCESS)
+
+        assertExists(generatedJavaDir)
+        assertExists(generatedJavaDir.resolve("io/spine/protodata/test/Buz.java"))
+
+        val generatedGrpcDir = generatedMainDir.resolve("grpc")
+        assertExists(generatedGrpcDir)
     }
 
     private fun createEmptyProject() {
