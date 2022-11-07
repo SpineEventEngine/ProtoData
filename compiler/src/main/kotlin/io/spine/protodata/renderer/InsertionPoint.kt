@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import com.google.common.flogger.StackSize.FULL
 import com.google.protobuf.Empty
+import io.spine.annotation.Internal
 import io.spine.logging.Logging.loggerFor
 import io.spine.protodata.FileCoordinates
 import io.spine.protodata.FileCoordinates.SpecCase.END_OF_FILE
@@ -114,8 +115,12 @@ public interface InsertionPoint : CoordinatesFactory {
 
 /**
  * A factory of [FileCoordinates] instances.
+ *
+ * This interface serves as a trait for the [InsertionPoint] type. The methods it provides are meant
+ * to be used by the authors of custom insertion points.
  */
-public interface CoordinatesFactory {
+@Internal
+public sealed interface CoordinatesFactory {
 
     /**
      * Creates coordinates pointing at a specific line and column in the file.
