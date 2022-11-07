@@ -37,7 +37,6 @@ import io.spine.protodata.TextCoordinates.KindCase.NOT_IN_FILE
 import io.spine.protodata.TextCoordinates.KindCase.WHOLE_LINE
 import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
-import io.spine.protodata.textCoordinates
 import io.spine.text.Position
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
@@ -130,19 +129,20 @@ public sealed interface CoordinatesFactory {
     /**
      * Creates coordinates pointing at a specific line and column in the file.
      */
-    public fun at(line: Int, column: Int): TextCoordinates = textCoordinates {
-        inline = Position.newBuilder()
-            .setLine(line)
-            .setColumn(column)
+    public fun at(line: Int, column: Int): TextCoordinates =
+        TextCoordinates.newBuilder()
+            .setInline(Position.newBuilder()
+                .setLine(line)
+                .setColumn(column))
             .build()
-    }
 
     /**
      * Creates coordinates pointing at the beginning of a specific line in the text.
      */
-    public fun atLine(line: Int): TextCoordinates = textCoordinates {
-        wholeLine = line
-    }
+    public fun atLine(line: Int): TextCoordinates =
+        TextCoordinates.newBuilder()
+            .setWholeLine(line)
+            .build()
 
     /**
      * Creates coordinates pointing at the beginning of the first line in the text.
@@ -153,16 +153,18 @@ public sealed interface CoordinatesFactory {
     /**
      * Creates coordinates pointing at the point after the last line in the text.
      */
-    public fun endOfFile(): TextCoordinates = textCoordinates {
-        endOfFile = Empty.getDefaultInstance()
-    }
+    public fun endOfFile(): TextCoordinates =
+        TextCoordinates.newBuilder()
+            .setEndOfFile(Empty.getDefaultInstance())
+            .build()
 
     /**
      * Creates coordinates that do not point at anywhere in the text.
      */
-    public fun nowhere(): TextCoordinates = textCoordinates {
-        notInFile = Empty.getDefaultInstance()
-    }
+    public fun nowhere(): TextCoordinates =
+        TextCoordinates.newBuilder()
+            .setNotInFile(Empty.getDefaultInstance())
+            .build()
 }
 
 /**

@@ -27,9 +27,6 @@
 @file:Suppress("RemoveRedundantQualifierName")
 
 import Build_gradle.Subproject
-import com.google.protobuf.gradle.builtins
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.Dokka
@@ -205,12 +202,6 @@ subprojects {
             // Also, this fixes the explicit API more for the generated Kotlin code.
             //
             artifact = protocArtifact
-        }
-
-        generateProtoTasks {
-            all().forEach {
-                it.builtins { id("kotlin") {} }
-            }
         }
     }
 
