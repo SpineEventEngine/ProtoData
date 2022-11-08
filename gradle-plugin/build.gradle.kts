@@ -48,7 +48,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter(JUnit.version)
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}")
+                implementation(Kotlin.gradlePluginLib)
                 implementation(gradleKotlinDsl())
                 implementation(spine.pluginBase)
                 implementation(spine.pluginTestlib)
@@ -58,11 +58,11 @@ testing {
         val functionalTest by registering(JvmTestSuite::class) {
             useJUnitJupiter(JUnit.version)
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}")
-                implementation(spine.testlib)
+                implementation(Kotlin.gradlePluginLib)
+                implementation(Kotlin.testJUnit5)
                 implementation(spine.pluginBase)
+                implementation(spine.testlib)
                 implementation(spine.pluginTestlib)
-                implementation("org.jetbrains.kotlin:kotlin-test-junit5:${Kotlin.version}")
                 implementation(project(":gradle-plugin"))
             }
         }
