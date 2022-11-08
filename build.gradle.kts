@@ -26,6 +26,7 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
+import Build_gradle.Subproject
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.Dokka
@@ -35,8 +36,6 @@ import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
-import io.spine.internal.gradle.applyGitHubPackages
-import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.javac.configureErrorProne
 import io.spine.internal.gradle.javac.configureJavac
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
