@@ -29,7 +29,7 @@ import com.google.protobuf.gradle.protoc
 import io.spine.internal.gradle.standardToSpineSdk
 
 buildscript {
-    io.spine.internal.gradle.addStandardToSpineSdk(repositories)
+    standardSdkDirectories()
 }
 
 plugins {

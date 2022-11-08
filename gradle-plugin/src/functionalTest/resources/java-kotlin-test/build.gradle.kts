@@ -30,7 +30,7 @@ import io.spine.internal.dependency.Protobuf
 import io.spine.internal.gradle.standardToSpineSdk
 
 buildscript {
-    io.spine.internal.gradle.addStandardToSpineSdk(repositories)
+    standardSdkRepositories()
 }
 
 plugins {

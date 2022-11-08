@@ -31,7 +31,7 @@ import io.spine.internal.gradle.standardToSpineSdk
 import org.gradle.api.plugins.jvm.JvmTestSuite
 
 buildscript {
-    io.spine.internal.gradle.addStandardToSpineSdk(repositories)
+    standardSdkDirectories()
 }
 
 plugins {

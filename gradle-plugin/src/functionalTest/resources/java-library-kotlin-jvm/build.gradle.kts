@@ -32,7 +32,7 @@ import io.spine.internal.gradle.standardToSpineSdk
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 
 buildscript {
-    io.spine.internal.gradle.addStandardToSpineSdk(repositories)
+    standardSdkRepositories()
 }
 
 plugins {
