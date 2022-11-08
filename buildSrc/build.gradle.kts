@@ -135,6 +135,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 dependencies {
+    // Fix `grgit` v3.1.1 dependency not available from Maven Central.
     implementation("org.ajoberstar.grgit:grgit-core:4.1.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
