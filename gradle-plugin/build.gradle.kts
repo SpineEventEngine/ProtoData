@@ -42,7 +42,10 @@ plugins {
 
 val spine = Spine(project)
 
-@Suppress("UNUSED_VARIABLE") // `test` and `functionalTest`
+@Suppress(
+    "UNUSED_VARIABLE" /* `test` and `functionalTest`*/,
+    "UnstableApiUsage" /* testing suites feature */
+)
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
@@ -78,7 +81,7 @@ dependencies {
     api(project(":gradle-api"))
 
     implementation(spine.toolBase)
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api:${Kotlin.version}")
+    implementation(Kotlin.gradlePluginApi)
 }
 
 val testsDependOnProjects = listOf(
