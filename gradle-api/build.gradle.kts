@@ -29,5 +29,5 @@ plugins {
 }
 
 dependencies {
-    implementation(gradleApi())
+    compileOnly(gradleApi())
 }
