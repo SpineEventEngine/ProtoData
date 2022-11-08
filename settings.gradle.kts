@@ -34,12 +34,9 @@ include(
     "codegen-java",
     "gradle-api",
     "gradle-plugin",
-    "test-grpc"
 )
 
 project(":codegen-java").projectDir = file("$rootDir/codegen/java")
-
-project(":test-grpc").projectDir = file("$rootDir/gradle-plugin/functionalTest/testProjects/grpc")
 
 dependencyResolutionManagement {
     repositories {
