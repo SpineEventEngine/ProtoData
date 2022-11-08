@@ -44,7 +44,7 @@ import org.gradle.api.Task
 /**
  * Applies [standard][standardToSpineSdk] repositories to this `buildscript`.
  */
-fun ScriptHandlerScope.standardSdkRepositories() {
+fun ScriptHandlerScope.standardSpineSdkRepositories() {
     repositories.standardToSpineSdk()
 }
 

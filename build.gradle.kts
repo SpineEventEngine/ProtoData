@@ -54,7 +54,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    standardSdkRepositories()
+    standardSpineSdkRepositories()
     dependencies {
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
         classpath(io.spine.internal.dependency.Spine.McJava.pluginLib)
