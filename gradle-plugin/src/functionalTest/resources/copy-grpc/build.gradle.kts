@@ -28,6 +28,7 @@ import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.plugins
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
+import com.google.protobuf.gradle.id
 import io.spine.internal.gradle.standardToSpineSdk
 
 buildscript {
@@ -44,10 +45,10 @@ repositories {
     standardToSpineSdk()
 }
 
+val grpcVersion = "1.50.2"
+
 dependencies {
     compileOnly("org.apache.tomcat:annotations-api:6.0.53") // necessary for Java 9+
-
-    val grpcVersion = "1.50.2"
     runtimeOnly("io.grpc:grpc-netty-shaded:$grpcVersion")
     implementation("io.grpc:grpc-protobuf:$grpcVersion")
     implementation("io.grpc:grpc-stub:$grpcVersion")
@@ -57,7 +58,11 @@ protobuf {
     protoc {
         artifact = io.spine.internal.dependency.Protobuf.compiler
     }
-
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
     generateProtoTasks {
         all().configureEach {
             plugins {
