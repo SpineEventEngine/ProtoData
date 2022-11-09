@@ -35,25 +35,35 @@ import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.Option
 import io.spine.protodata.TypeName
+import io.spine.protodata.messageType
+import io.spine.protodata.typeName
 import java.io.File.separatorChar
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class `Java-related AST extensions should` {
+@DisplayName("Java-related AST extensions should")
+class JavaCodegenSpec {
 
     @Nested
     inner class `Obtain Java class name from` {
 
         @Test
         fun `top-level message`() {
-            val simpleName = "Anvil"
-            val type = MessageType
-                .newBuilder()
-                .setName(
-                    TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName))
-                .build()
+            val typeName = "Anvil"
+            val type = messageType {
+                name = typeName {
+                    packageName = "ecme.example"
+                    simpleName = typeName
+                }
+            }
+//            val type = MessageType
+//                .newBuilder()
+//                .setName(
+//                    TypeName.newBuilder()
+//                    .setPackageName("ecme.example")
+//                    .setSimpleName(simpleName))
+//                .build()
             val file = File
                 .newBuilder()
                 .addOption(javaPackage)
@@ -61,7 +71,7 @@ class `Java-related AST extensions should` {
                 .build()
             val className = type.javaClassName(declaredIn = file)
             assertThat(className.binary)
-                .isEqualTo("$packageName.$simpleName")
+                .isEqualTo("$packageName.$typeName")
         }
 
         @Test
