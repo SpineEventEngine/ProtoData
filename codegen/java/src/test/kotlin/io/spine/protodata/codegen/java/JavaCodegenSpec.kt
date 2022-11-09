@@ -24,17 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:Suppress("ConstPropertyName")
+
 package io.spine.protodata.codegen.java
 
 import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.BoolValue
-import com.google.protobuf.StringValue
-import io.spine.protobuf.AnyPacker
-import io.spine.protodata.EnumType
-import io.spine.protodata.File
-import io.spine.protodata.MessageType
 import io.spine.protodata.Option
-import io.spine.protodata.TypeName
+import io.spine.protodata.codegen.java.file.javaMultipleFiles
+import io.spine.protodata.codegen.java.file.javaOuterClassName
+import io.spine.protodata.codegen.java.file.javaPackage
+import io.spine.protodata.enumType
+import io.spine.protodata.file
 import io.spine.protodata.messageType
 import io.spine.protodata.typeName
 import java.io.File.separatorChar
@@ -51,89 +51,50 @@ class JavaCodegenSpec {
         @Test
         fun `top-level message`() {
             val typeName = "Anvil"
-            val type = messageType {
-                name = typeName {
-                    packageName = "ecme.example"
-                    simpleName = typeName
-                }
-            }
-//            val type = MessageType
-//                .newBuilder()
-//                .setName(
-//                    TypeName.newBuilder()
-//                    .setPackageName("ecme.example")
-//                    .setSimpleName(simpleName))
-//                .build()
-            val file = File
-                .newBuilder()
-                .addOption(javaPackage)
-                .addOption(javaMultipleFiles)
-                .build()
+            val type = messageType(typeName)
+            val file = protoMultipleFiles()
+
             val className = type.javaClassName(declaredIn = file)
+
             assertThat(className.binary)
-                .isEqualTo("$packageName.$typeName")
+                .isEqualTo("$javaPackageName.$typeName")
         }
 
         @Test
         fun `nested message`() {
-            val nestingTypeName = "RedDynamite"
-            val simpleName = "Fuse"
-            val type = MessageType
-                .newBuilder()
-                .setName(
-                    TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName)
-                    .addNestingTypeName(nestingTypeName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(javaPackage)
-                .addOption(javaMultipleFiles)
-                .build()
+            val nestingType = "RedDynamite"
+            val typeName = "Fuse"
+            val type = nestedMessageType(typeName, nestingType)
+            val file = protoMultipleFiles()
+
             val className = type.javaClassName(declaredIn = file)
+
             assertThat(className.binary)
-                .isEqualTo("$packageName.$nestingTypeName$$simpleName")
+                .isEqualTo("$javaPackageName.$nestingType$$typeName")
         }
 
         @Test
         fun `message with Java outer class name`() {
-            val simpleName = "Fuse"
-            val type = MessageType
-                .newBuilder()
-                .setName(
-                    TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(javaPackage)
-                .addOption(javaOuterClassName)
-                .build()
+            val typeName = "Fuse"
+            val type = messageType(typeName)
+            val file = protoSingleFile(outerClassName = javaOuterClassName)
+
             val className = type.javaClassName(declaredIn = file)
+
             assertThat(className.binary)
-                .isEqualTo("${packageName}.${outerClassName}$${simpleName}")
+                .isEqualTo("${javaPackageName}.${outerClassName}$${typeName}")
         }
 
         @Test
         fun enum() {
-            val simpleName = "ExplosiveType"
-            val type = EnumType
-                .newBuilder()
-                .setName(
-                    TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(javaPackage)
-                .addOption(javaMultipleFiles)
-                .build()
+            val typeName = "ExplosiveType"
+            val type = enumTypeNamed(typeName)
+            val file = protoMultipleFiles()
+
             val className = type.javaClassName(declaredIn = file)
+
             assertThat(className.binary)
-                .isEqualTo("$packageName.$simpleName")
+                .isEqualTo("$javaPackageName.$typeName")
         }
     }
 
@@ -142,89 +103,96 @@ class JavaCodegenSpec {
 
         @Test
         fun `top-level message`() {
-            val simpleName = "Anvil"
-            val type = MessageType
-                .newBuilder()
-                .setName(
-                    TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(javaPackage)
-                .addOption(javaMultipleFiles)
-                .build()
+            val typeName = "Anvil"
+            val type = messageType(typeName)
+            val file = protoMultipleFiles()
+
             val className = type.javaFile(declaredIn = file)
+
             assertThat(className.toString())
-                .isEqualTo("$packageNameAsPath$simpleName.java")
+                .isEqualTo("$packageNameAsPath$typeName.java")
         }
 
         @Test
         fun `nested message`() {
             val firstNesting = "RedDynamite"
-            val simpleName = "Fuse"
-            val type = MessageType
-                .newBuilder()
-                .setName(
-                    TypeName.newBuilder()
-                    .setPackageName("ecme.example")
-                    .setSimpleName(simpleName)
-                    .addNestingTypeName(firstNesting)
-                    .addNestingTypeName("Component"))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(javaPackage)
-                .addOption(javaMultipleFiles)
-                .build()
+            val typeName = "Fuse"
+            val type = withDeeperNesting(typeName, firstNesting)
+            val file = protoMultipleFiles()
+
             val className = type.javaFile(declaredIn = file)
+
             assertThat(className.toString())
                 .isEqualTo("$packageNameAsPath$firstNesting.java")
         }
 
         @Test
         fun `message with Java outer class name`() {
-            val simpleName = "Fuse"
-            val type = MessageType
-                .newBuilder()
-                .setName(
-                    TypeName.newBuilder()
-                    .setPackageName("acme.example")
-                    .setSimpleName(simpleName))
-                .build()
-            val file = File
-                .newBuilder()
-                .addOption(javaPackage)
-                .addOption(javaOuterClassName)
-                .build()
+            val type = messageType("Fuse")
+            val file = protoSingleFile(outerClassName = javaOuterClassName)
+
             val className = type.javaFile(declaredIn = file)
+
             assertThat(className.toString())
                 .isEqualTo("$packageNameAsPath$outerClassName.java")
         }
     }
 }
 
-private const val packageName = "corp.acme.example"
+private fun protoSingleFile(outerClassName: Option? = null) = file {
+    option.apply {
+        add(javaPackage)
+        outerClassName?.let { add(it) }
+    }
+}
 
-private val packageNameAsPath = packageName.replace('.', separatorChar) + separatorChar
+private fun protoMultipleFiles(outerClassName: Option? = null) = file {
+    option.apply {
+        add(javaPackage)
+        add(javaMultipleFiles)
+        outerClassName?.let { add(it) }
+    }
+}
+
+private fun messageType(typeName: String) = messageType {
+    name = typeName {
+        packageName = protoPackageName
+        simpleName = typeName
+    }
+}
+
+private fun nestedMessageType(typeName: String, nestingType: String) = messageType {
+    name = typeName {
+        packageName = "ecme.example"
+        simpleName = typeName
+        nestingTypeName.add(nestingType)
+    }
+}
+
+private fun withDeeperNesting(typeName: String, firstNesting: String) = messageType {
+    name = typeName {
+        packageName = protoPackageName
+        simpleName = typeName
+        nestingTypeName.apply {
+            add(firstNesting)
+            add("Component")
+        }
+    }
+}
+
+private fun enumTypeNamed(typeName: String) = enumType {
+    name = typeName {
+        packageName = protoPackageName
+        simpleName = typeName
+    }
+}
+
+private const val protoPackageName = "ecme.example"
+private const val javaPackageName = "corp.acme.example"
+
+private val packageNameAsPath = javaPackageName.replace('.', separatorChar) + separatorChar
 
 private const val outerClassName = "CartoonExplosives"
 
-private val javaPackage: Option = Option
-    .newBuilder()
-    .setName("java_package")
-    .setValue(AnyPacker.pack(StringValue.of(packageName)))
-    .build()
-
-private val javaMultipleFiles: Option = Option
-    .newBuilder()
-    .setName("java_multiple_files")
-    .setValue(AnyPacker.pack(BoolValue.of(true)))
-    .build()
-
-private val javaOuterClassName: Option = Option
-    .newBuilder()
-    .setName("java_outer_classname")
-    .setValue(AnyPacker.pack(StringValue.of(outerClassName)))
-    .build()
+private val javaPackage = javaPackage(javaPackageName)
+private val javaOuterClassName = javaOuterClassName(outerClassName)
