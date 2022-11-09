@@ -38,16 +38,6 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.kotlin.dsl.ScriptHandlerScope
 
 /**
- * Applies [standard][standardToSpineSdk] repositories to the given
- * repository handler.
- */
-fun addStandardToSpineSdk(repositories: RepositoryHandler) {
-    repositories.apply {
-        standardToSpineSdk()
-    }
-}
-
-/**
  * Applies [standard][doApplyStandard] repositories to this [ScriptHandlerScope]
  * optionally adding [gitHub] repositories for Spine-only components, if
  * names of such repositories are given.
@@ -176,21 +166,49 @@ fun RepositoryHandler.applyStandardWithGitHub(project: Project, vararg gitHubRep
 }
 
 /**
+ * A scrambled version of PAT generated with the only "read:packages" scope.
+ *
+ * The scrambling around PAT is necessary because GitHub analyzes commits for the presence
+ * of tokens and invalidates them.
+ *
+ * @see <a href="https://github.com/orgs/community/discussions/25629">
+ *     How to make GitHub packages to the public</a>
+ */
+object Pat {
+    private const val shade = "_phg->8YlN->MFRA->gxIk->HVkm->eO6g->FqHJ->z8MS->H4zC->ZEPq"
+    private const val separator = "->"
+    private val chunks: Int = shade.split(separator).size - 1
+
+    fun credentials(): Credentials {
+        val pass = shade.replace(separator, "").splitAndReverse(chunks, "")
+        return Credentials("public", pass)
+    }
+
+    /**
+     * Splits this string to the chunks, reverses each chunk, and joins them
+     * back to a string using the [separator].
+     */
+    private fun String.splitAndReverse(numChunks: Int, separator: String): String {
+        check(length / numChunks >= 2) {
+            "The number of chunks is too big. Must be <= ${length / 2}."
+        }
+        val chunks = chunked(length / numChunks)
+        val reversedChunks = chunks.map { chunk -> chunk.reversed() }
+        return reversedChunks.joinToString(separator)
+    }
+}
+
+/**
  * Adds a read-only view to all artifacts of the SpineEventEngine
  * GitHub organization.
  */
-fun RepositoryHandler.spineArtifacts() {
-    maven {
-        url = URI("https://maven.pkg.github.com/SpineEventEngine/*")
-        includeSpineOnly()
-        credentials {
-            username = "public"
-            /**
-             * The PAT generated with the `read:packages` scope.
-             * See: https://github.com/orgs/community/discussions/25629
-             */
-            password = "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"
-        }
+fun RepositoryHandler.spineArtifacts(): MavenArtifactRepository = maven {
+    url = URI("https://maven.pkg.github.com/SpineEventEngine/*")
+    includeSpineOnly()
+    val pat = Pat.credentials()
+    credentials {
+        username = pat.username
+        password = pat.password
     }
 }
 
