@@ -24,15 +24,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// TODO:2021-07-05:dmytro.dashenkov: https://github.com/SpineEventEngine/config/issues/214.
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.plugins
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
+import com.google.protobuf.gradle.id
+import io.spine.internal.gradle.standardToSpineSdk
 
-allprojects {
-    configurations.all {
-        resolutionStrategy {
-            eachDependency {
-                if (requested.group == "org.jacoco") {
-                    useVersion("0.8.7")
-                }
+buildscript {
+    standardSpineSdkRepositories()
+}
+
+plugins {
+    java
+    id("com.google.protobuf")
+    id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
+}
+
+repositories {
+    standardToSpineSdk()
+}
+
+val grpcVersion = "1.50.2"
+
+dependencies {
+    compileOnly("org.apache.tomcat:annotations-api:6.0.53") // necessary for Java 9+
+    runtimeOnly("io.grpc:grpc-netty-shaded:$grpcVersion")
+    implementation("io.grpc:grpc-protobuf:$grpcVersion")
+    implementation("io.grpc:grpc-stub:$grpcVersion")
+}
+
+protobuf {
+    protoc {
+        artifact = io.spine.internal.dependency.Protobuf.compiler
+    }
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all().configureEach {
+            plugins {
+                maybeCreate("grpc")
             }
         }
     }

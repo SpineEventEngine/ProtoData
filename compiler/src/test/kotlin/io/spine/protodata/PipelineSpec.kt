@@ -41,7 +41,9 @@ import io.spine.protodata.test.DeletingRenderer
 import io.spine.protodata.test.DocilePlugin
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.ECHO_FILE
-import io.spine.protodata.test.GenericInsertionPoint
+import io.spine.protodata.test.GenericInsertionPoint.FILE_END
+import io.spine.protodata.test.GenericInsertionPoint.FILE_START
+import io.spine.protodata.test.GenericInsertionPoint.OUTSIDE_FILE
 import io.spine.protodata.test.GreedyPolicy
 import io.spine.protodata.test.InternalAccessRenderer
 import io.spine.protodata.test.JavaGenericInsertionPointPrinter
@@ -62,12 +64,14 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
-class `'Pipeline' should` {
+@DisplayName("`Pipeline` should")
+class PipelineSpec {
 
     private lateinit var srcRoot : Path
     private lateinit var codegenRequestFile: Path
@@ -153,18 +157,14 @@ class `'Pipeline' should` {
             listOf(SourceFileSet.from(srcRoot)),
             request
         )()
-        val assertFileContent = assertThat(sourceFile.readText())
-        assertFileContent
-            .contains("// INSERT:'file_start'")
-        assertFileContent
-            .contains("Hello from ${renderer.javaClass.name}")
-        assertFileContent
-            .contains("// INSERT:'file_middle'")
-        assertFileContent
-            .contains(initialContent)
-        assertFileContent
-            .contains("// INSERT:'file_end'")
 
+        assertThat(sourceFile.readText()).run {
+            contains("/* INSERT:'file_start' */")
+            contains("Hello from ${renderer.javaClass.name}")
+            contains("/* INSERT:'file_middle' */")
+            contains(initialContent)
+            contains("/* INSERT:'file_end' */")
+        }
     }
 
     @Test
@@ -177,10 +177,8 @@ class `'Pipeline' should` {
             listOf(SourceFileSet.from(srcRoot)),
             request
         )()
-        assertThat(jsSource.readText())
-            .contains("Hello JavaScript")
-        assertThat(ktSource.readText())
-            .contains("Hello Kotlin")
+        assertThat(jsSource.readText()).contains("Hello JavaScript")
+        assertThat(ktSource.readText()).contains("Hello Kotlin")
     }
 
     @Test
@@ -191,13 +189,11 @@ class `'Pipeline' should` {
             listOf(SourceFileSet.from(srcRoot)),
             request
         )()
-        val assertCode = assertThat(sourceFile.readText())
-        assertCode
-            .startsWith("// ${GenericInsertionPoint.FILE_START.codeLine}")
-        assertCode
-            .endsWith("// ${GenericInsertionPoint.FILE_END.codeLine}")
-        assertCode
-            .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
+        assertThat(sourceFile.readText()).run {
+            startsWith("/* ${FILE_START.codeLine} */")
+            endsWith("/* ${FILE_END.codeLine} */")
+            doesNotContain(OUTSIDE_FILE.codeLine)
+        }
     }
 
     @Test
@@ -208,13 +204,11 @@ class `'Pipeline' should` {
             listOf(SourceFileSet.from(srcRoot)),
             request
         )()
-        val assertCode = assertThat(sourceFile.readText())
-        assertCode
-            .doesNotContain(GenericInsertionPoint.FILE_START.codeLine)
-        assertCode
-            .doesNotContain(GenericInsertionPoint.FILE_END.codeLine)
-        assertCode
-            .doesNotContain(GenericInsertionPoint.OUTSIDE_FILE.codeLine)
+        assertThat(sourceFile.readText()).run {
+            doesNotContain(FILE_START.codeLine)
+            doesNotContain(FILE_END.codeLine)
+            doesNotContain(OUTSIDE_FILE.codeLine)
+        }
     }
 
     @Test

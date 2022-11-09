@@ -26,6 +26,7 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
+import Build_gradle.Subproject
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.Dokka
@@ -35,8 +36,6 @@ import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
-import io.spine.internal.gradle.applyGitHubPackages
-import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.javac.configureErrorProne
 import io.spine.internal.gradle.javac.configureJavac
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
@@ -47,6 +46,7 @@ import io.spine.internal.gradle.publish.spinePublishing
 import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
+import io.spine.internal.gradle.standardToSpineSdk
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
@@ -54,25 +54,19 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
-
-    apply(from = "$rootDir/version.gradle.kts")
-
-    val spine = io.spine.internal.dependency.Spine(project)
+    standardSpineSdkRepositories()
     dependencies {
-        classpath(spine.mcJavaPlugin)
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
+        classpath(io.spine.internal.dependency.Spine.McJava.pluginLib)
     }
 }
 
 plugins {
     kotlin("jvm")
-    val dokkaPlugin = io.spine.internal.dependency.Dokka.GradlePlugin
-    id(dokkaPlugin.id)
-    id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
+    errorprone
     idea
     jacoco
-    `force-jacoco`
+    `gradle-doctor`
 }
 
 spinePublishing {
@@ -103,9 +97,7 @@ allprojects {
     group = "io.spine.protodata"
     version = extra["protoDataVersion"]!!
 
-    repositories.applyStandard()
-    repositories.applyGitHubPackages("base-types", rootProject)
-    repositories.applyGitHubPackages("core-java", rootProject)
+    repositories.standardToSpineSdk()
 
     configurations.all {
         resolutionStrategy {

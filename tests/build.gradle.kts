@@ -40,7 +40,7 @@ import io.spine.internal.gradle.testing.configureLogging
 plugins {
     java
     idea
-    id(io.spine.internal.dependency.Protobuf.GradlePlugin.id)
+    protobuf
 }
 
 subprojects {

@@ -38,4 +38,7 @@ object Kotlin {
     const val stdLib       = "org.jetbrains.kotlin:kotlin-stdlib:${version}"
     const val stdLibCommon = "org.jetbrains.kotlin:kotlin-stdlib-common:${version}"
     const val stdLibJdk8   = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${version}"
+    const val gradlePluginApi = "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$version"
+    const val gradlePluginLib = "org.jetbrains.kotlin:kotlin-gradle-plugin:${version}"
+    const val testJUnit5     = "org.jetbrains.kotlin:kotlin-test-junit5:$version"
 }
