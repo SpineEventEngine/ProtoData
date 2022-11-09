@@ -52,8 +52,8 @@ import org.gradle.kotlin.dsl.ScriptHandlerScope
  */
 @Suppress("unused")
 @Deprecated(
-    message = "Please use `standardToSpineSdk(repositories)`.",
-    replaceWith = ReplaceWith("standardToSpineSdk(repositories)")
+    message = "Please use `standardSpineSdkRepositories()`.",
+    replaceWith = ReplaceWith("standardSpineSdkRepositories()")
 )
 fun applyWithStandard(
     buildscript: ScriptHandlerScope,
@@ -82,8 +82,8 @@ fun applyWithStandard(
  */
 @Suppress("unused")
 @Deprecated(
-    message = "Please use `standardToSpineSdk(repositories)`.",
-    replaceWith = ReplaceWith("standardToSpineSdk(repositories)")
+    message = "Please use `standardSpineSdkRepositories()`.",
+    replaceWith = ReplaceWith("standardSpineSdkRepositories()")
 )
 fun doApplyGitHubPackages(
     repositories: RepositoryHandler,
@@ -98,8 +98,8 @@ fun doApplyGitHubPackages(
  */
 @Suppress("unused")
 @Deprecated(
-    message = "Please use `standardToSpineSdk(repositories)`.",
-    replaceWith = ReplaceWith("standardToSpineSdk(repositories)")
+    message = "Please use `standardSpineSdkRepositories()`.",
+    replaceWith = ReplaceWith("standardSpineSdkRepositories()")
 )
 fun doApplyStandard(repositories: RepositoryHandler) = repositories.standardToSpineSdk()
 
