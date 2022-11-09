@@ -54,8 +54,7 @@ open class RunGradle : DefaultTask() {
          */
         private const val BUILD_TIMEOUT_MINUTES: Long = 10
     }
-
-
+    
     /**
      * Path to the directory which contains a Gradle wrapper script.
      */
