@@ -106,19 +106,6 @@ internal constructor(
         @VisibleForTesting
         internal fun from(sourceAndTarget: Path): SourceFileSet =
             from(sourceAndTarget, sourceAndTarget)
-
-        private fun checkTarget(targetRoot: Path) {
-            if (targetRoot.exists()) {
-                val target = targetRoot.toFile()
-                checkArgument(
-                    target.isDirectory, "Target root `%s` must be a directory.", targetRoot
-                )
-                val children = target.list()!!
-                checkArgument(children.isEmpty(),
-                    "Target directory `%s` must be empty. Found children: %s.",
-                    targetRoot, children.joinToString())
-            }
-        }
     }
 
     /**
@@ -138,8 +125,9 @@ internal constructor(
      */
     public fun file(path: Path): SourceFile =
         findFile(path).orElseThrow {
-            IllegalArgumentException("File not found: `$path`." +
-                    " Source root: `$sourceRoot`. Target root: `$targetRoot`.")
+            error(
+                "File not found: `$path`. Source root: `$sourceRoot`. Target root: `$targetRoot`."
+            )
         }
 
     /**
@@ -236,4 +224,17 @@ internal constructor(
 
 private fun Path.canonical(): Path {
     return toAbsolutePath().normalize()
+}
+
+private fun checkTarget(targetRoot: Path) {
+    if (targetRoot.exists()) {
+        val target = targetRoot.toFile()
+        checkArgument(
+            target.isDirectory, "Target root `%s` must be a directory.", targetRoot
+        )
+        val children = target.list()!!
+        checkArgument(children.isEmpty(),
+            "Target directory `%s` must be empty. Found children: %s.",
+            targetRoot, children.joinToString())
+    }
 }
