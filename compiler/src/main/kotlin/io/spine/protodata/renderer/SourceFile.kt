@@ -69,13 +69,6 @@ private constructor(
     public companion object {
 
         /**
-         * A splitter to divide code fragments into lines.
-         *
-         * Uses a regular expression to match line breaks, with or without carriage returns.
-         */
-        public val lineSplitter: Splitter = Splitter.on(Pattern.compile("\r?\n"))
-
-        /**
          * Reads the file from the given FS location.
          */
         internal fun read(
@@ -98,19 +91,6 @@ private constructor(
         internal fun fromCode(relativePath: Path, code: String): SourceFile =
             SourceFile(code, relativePath, changed = true)
     }
-
-    /**
-     * Creates a new fluent builder for adding code at the given [insertionPoint].
-     *
-     * If the [insertionPoint] is not found in the code, no action will be performed as the result.
-     * If there are more than one instances of the same insertion point, the code will be added to
-     * all of them.
-     *
-     * Insertion points should be marked with comments of special format. The added code is always
-     * inserted after the line with the comment, and the line with the comment is preserved.
-     */
-    public fun at(insertionPoint: InsertionPoint): SourceAtPoint =
-        SourceAtPoint(this, insertionPoint)
 
     /**
      * Deletes this file from the source set.
@@ -137,13 +117,6 @@ private constructor(
     public fun overwrite(newCode: String) {
         this.code = newCode
         this.changed = true
-    }
-
-    /**
-     * Overwrites the code in this file line by line.
-     */
-    internal fun updateLines(newCode: List<String>) {
-        overwrite(newCode.joinToString(lineSeparator()))
     }
 
     /**
@@ -198,18 +171,11 @@ private constructor(
     }
 
     /**
-     * Obtains the entire content of this file.
+     * Returns the entire content of this file.
      */
     public fun code(): String {
         initializeCode()
         return code
-    }
-
-    /**
-     * Obtains the entire content of this file as a list of lines.
-     */
-    public fun lines(): List<String> {
-        return lineSplitter.splitToList(code())
     }
 
     internal fun whenRead(action: (SourceFile) -> Unit) {
@@ -279,6 +245,38 @@ internal constructor(
                    .forEach { index -> updatedLines.add(index, newCode) }
         file.updateLines(updatedLines)
     }
+}
+
+/**
+ * A splitter to divide code fragments into lines.
+ *
+ * Uses a regular expression to match line breaks, with or without carriage returns.
+ */
+public val lineSplitter: Splitter = Splitter.on(Pattern.compile("\r?\n"))
+
+/**
+ * Creates a new fluent builder for adding code at the given [insertionPoint].
+ *
+ * If the [insertionPoint] is not found in the code, no action will be performed as the result.
+ * If there are more than one instances of the same insertion point, the code will be added to
+ * all of them.
+ *
+ * Insertion points should be marked with comments of special format. The added code is always
+ * inserted after the line with the comment, and the line with the comment is preserved.
+ */
+public fun SourceFile.at(insertionPoint: InsertionPoint): SourceAtPoint =
+    SourceAtPoint(this, insertionPoint)
+
+/**
+ * Returns the entire content of this [SourceFile] as a list of lines.
+ */
+public fun SourceFile.lines(): List<String> = lineSplitter.splitToList(code())
+
+/**
+ * Overwrites the code in this [SourceFile] line-by-line.
+ */
+internal fun SourceFile.updateLines(newCode: List<String>) {
+    overwrite(newCode.joinToString(lineSeparator()))
 }
 
 private fun Iterable<String>.linesToCode(indentLevel: Int): String =
