@@ -256,11 +256,11 @@ private fun List<EventMessage>.findMultipleFilesOptionEvent() : FileOptionDiscov
     it is FileOptionDiscovered && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
 } as FileOptionDiscovered?
 
-private fun List<EventMessage>.findRequiredFieldOptionEvent(): FieldOptionDiscovered? = find {
-    it is FieldOptionDiscovered && it.option.number == REQUIRED_FIELD_NUMBER
-} as FieldOptionDiscovered?
-
 private fun List<EventMessage>.findTypeUrlPrefixEvent(): FileOptionDiscovered? = find {
     it is FileOptionDiscovered && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
 } as FileOptionDiscovered?
+
+private fun List<EventMessage>.findRequiredFieldOptionEvent(): FieldOptionDiscovered? = find {
+    it is FieldOptionDiscovered && it.option.number == REQUIRED_FIELD_NUMBER
+} as FieldOptionDiscovered?
 
