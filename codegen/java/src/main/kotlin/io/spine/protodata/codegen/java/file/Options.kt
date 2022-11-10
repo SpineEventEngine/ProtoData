@@ -35,11 +35,10 @@ import io.spine.protodata.option
 /**
  * The option to instruct `protoc` to generate multiple Java files.
  */
-public val javaMultipleFiles: Option
-    get() = option {
-        name = "java_multiple_files"
-        value = BoolValue.of(true).pack()
-    }
+public val javaMultipleFiles: Option = option {
+    name = "java_multiple_files"
+    value = BoolValue.of(true).pack()
+}
 
 /**
  * Obtains an option to set the Java package with the given [name]

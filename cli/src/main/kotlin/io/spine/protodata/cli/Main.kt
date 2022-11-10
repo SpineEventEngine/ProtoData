@@ -40,6 +40,7 @@ import com.github.ajalt.clikt.parameters.types.path
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
+import io.spine.option.OptionsProvider
 import io.spine.protodata.Pipeline
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
@@ -47,7 +48,6 @@ import io.spine.protodata.config.ConfigurationFormat.JSON
 import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.config.ConfigurationFormat.YAML
-import io.spine.protodata.option.OptionsProvider
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
