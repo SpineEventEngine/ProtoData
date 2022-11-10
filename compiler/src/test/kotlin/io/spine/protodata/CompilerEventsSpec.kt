@@ -220,24 +220,6 @@ class CompilerEventsSpec {
         TypeExited::class,
     )
 
-    /**
-     * Obtains the option of the given type [T] from this [FileOptionDiscovered] event.
-     *
-     * The receiver type is nullable for brevity of the calls after `isNotNull()`.
-     */
-    private inline fun <reified T : Message> FileOptionDiscovered?.option() : T {
-        return this!!.option.value.unpack(T::class.java)
-    }
-
-    /**
-     * Obtains the option of the given type [T] from this [FieldOptionDiscovered] event.
-     *
-     * The receiver type is nullable for brevity of the calls after `isNotNull()`.
-     */
-    private inline fun <reified T : Message> FieldOptionDiscovered?.option() : T {
-        return this!!.option.value.unpack(T::class.java)
-    }
-
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
         assertThat(events)
@@ -250,6 +232,24 @@ class CompilerEventsSpec {
         val javaClass = E::class.java
         return events.find { it.javaClass == javaClass }!! as E
     }
+}
+
+/**
+ * Obtains the option of the given type [T] from this [FileOptionDiscovered] event.
+ *
+ * The receiver type is nullable for brevity of the calls after `isNotNull()`.
+ */
+private inline fun <reified T : Message> FileOptionDiscovered?.option() : T {
+    return this!!.option.value.unpack(T::class.java)
+}
+
+/**
+ * Obtains the option of the given type [T] from this [FieldOptionDiscovered] event.
+ *
+ * The receiver type is nullable for brevity of the calls after `isNotNull()`.
+ */
+private inline fun <reified T : Message> FieldOptionDiscovered?.option() : T {
+    return this!!.option.value.unpack(T::class.java)
 }
 
 private fun List<EventMessage>.findMultipleFilesOptionEvent() : FileOptionDiscovered? = find {
