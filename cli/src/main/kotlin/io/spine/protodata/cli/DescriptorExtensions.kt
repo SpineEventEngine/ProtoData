@@ -62,10 +62,8 @@ internal val FileDescriptor.outerClass: Class<*>?
  * @throws IllegalStateException if the outer class for this proto file does not exist
  */
 internal fun FileDescriptor.registerAllExtensions(registry: ExtensionRegistry) {
-    if (outerClass == null) {
-        throw IllegalStateException(
-            "The outer class `$outerClassName` for the file `$name` does not exist."
-        )
+    check(outerClass != null) {
+        "The outer class `$outerClassName` for the file `$name` does not exist."
     }
     val method = outerClass!!.getDeclaredMethod(
         "registerAllExtensions", ExtensionRegistry::class.java
