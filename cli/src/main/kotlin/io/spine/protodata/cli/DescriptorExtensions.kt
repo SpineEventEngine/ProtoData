@@ -45,14 +45,13 @@ internal val FileDescriptor.outerClassName: String
  */
 internal val FileDescriptor.outerClass: Class<*>?
     get() {
-        val outerClass: Class<*>?
-        try {
+        return try {
             val classLoader = javaClass.classLoader
-            outerClass = classLoader.loadClass(outerClassName)
-        } catch (e: ClassNotFoundException) {
-            return null
+            val outerClass = classLoader.loadClass(outerClassName)
+            outerClass
+        } catch (ignored: ClassNotFoundException) {
+            null
         }
-        return outerClass
     }
 
 /**
