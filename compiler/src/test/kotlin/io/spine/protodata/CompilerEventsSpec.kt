@@ -50,8 +50,12 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
+
+
 @DisplayName("`CompilerEvents` should")
 class CompilerEventsSpec {
+
+    private val nl: String = System.lineSeparator()
 
     private lateinit var events: List<EventMessage>
 
@@ -178,8 +182,7 @@ class CompilerEventsSpec {
         assertThat(event.option.name)
             .isEqualTo("idempotency_level")
         assertThat(unpack(event.option.value))
-            .isEqualTo(EnumValue
-                .newBuilder()
+            .isEqualTo(EnumValue.newBuilder()
                 .setName(NO_SIDE_EFFECTS.name)
                 .setNumber(NO_SIDE_EFFECTS_VALUE)
                 .build())
@@ -190,17 +193,16 @@ class CompilerEventsSpec {
         val typeEntered = emitted<TypeEntered>()
         assertThat(typeEntered.type)
             .comparingExpectedFieldsOnly()
-            .isEqualTo(MessageType
-                .newBuilder()
+            .isEqualTo(MessageType.newBuilder()
                 .setName(TypeName.newBuilder().setSimpleName("Journey"))
                 .build())
-        assertThat(typeEntered.type.doc.leadingComment.split(System.lineSeparator()))
+        assertThat(typeEntered.type.doc.leadingComment.split(nl))
             .containsExactly("A Doctor's journey.", "", "A test type", "")
         assertThat(typeEntered.type.doc.trailingComment)
             .isEqualTo("Impl note: test type.")
         assertThat(typeEntered.type.doc.detachedCommentList[0])
             .isEqualTo("Detached 1.")
-        assertThat(typeEntered.type.doc.detachedCommentList[1].split(System.lineSeparator()))
+        assertThat(typeEntered.type.doc.detachedCommentList[1].split(nl))
             .containsExactly(
                 "Detached 2.",
                 "Indentation is not preserved in Protobuf.",
