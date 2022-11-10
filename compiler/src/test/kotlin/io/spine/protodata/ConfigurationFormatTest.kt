@@ -34,9 +34,11 @@ import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
 import io.spine.protodata.config.ConfigurationFormat.YAML
 import io.spine.protodata.config.extensions
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-class `ConfigurationFormat should` {
+@DisplayName("`ConfigurationFormat` should")
+class ConfigurationFormatSpec {
 
     @Test
     fun `provide allowed extensions`() {
