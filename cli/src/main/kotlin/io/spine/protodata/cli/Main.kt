@@ -30,6 +30,7 @@ import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
@@ -346,19 +347,20 @@ internal class Run(version: String) : CliktCommand(
         try {
             return createByName(className, classLoader)
         } catch (e: ClassNotFoundException) {
-            error(e.message)
-            error("Please add the required class `$className` to the user classpath.")
+            printError(e.message)
+            printError("Please add the required class `$className` to the user classpath.")
             if (classPath != null) {
-                error("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
+                printError("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
             }
             exitProcess(1)
         }
     }
-
-    private fun error(msg: String?) {
-        echo(msg, err = true)
-    }
 }
+
+/**
+ * Print the error [message] to the screen.
+ */
+private fun printError(message: String?) = TermUi.echo(message, err = true)
 
 /**
  * Creates a list that contain a single, empty source set.
