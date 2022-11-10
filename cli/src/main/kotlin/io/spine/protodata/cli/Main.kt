@@ -253,10 +253,8 @@ internal class Run(version: String) : CliktCommand(
                 listOf(ConfigOpt.FILE, ConfigOpt.VALUE)
             )
         }
-        if (hasValue != hasFormat) {
-            throw UsageError(
-                "Options `${ConfigOpt.VALUE}` and `${ConfigOpt.FORMAT}` must be used together."
-            )
+        checkUsage(hasValue == hasFormat) {
+            "Options `${ConfigOpt.VALUE}` and `${ConfigOpt.FORMAT}` must be used together."
         }
         return when {
             hasFile -> Configuration.file(configurationFile!!)
@@ -295,22 +293,20 @@ internal class Run(version: String) : CliktCommand(
         listOf(SourceFileSet.empty(first()))
 
     private fun checkPaths() {
-        if (sourceRoots == null && targetRoots == null) {
-            throw UsageError("Either source root or target root or both must be set.")
+        checkUsage(sourceRoots != null || targetRoots != null) {
+            "Either source root or target root or both must be set."
         }
-        if (sourceRoots == null && targetRoots!!.size != 1) {
-            throw UsageError(
+        if (sourceRoots == null) {
+            checkUsage(targetRoots!!.size == 1) {
                 "When not providing a source directory, only one target directory must be present."
-            )
-        }
-        sourceRoots?.let { sources -> targetRoots?.let { targets ->
-            if (sources.size != targets.size) {
-                throw UsageError(
-                    "Mismatched amount of directories. Given ${sourceRoots!!.size} sources " +
-                            "and ${targetRoots!!.size} targets."
-                )
             }
-        }}
+        }
+        if (sourceRoots != null && targetRoots != null) {
+            checkUsage(sourceRoots!!.size == targetRoots!!.size) {
+                "Mismatched amount of directories. Given ${sourceRoots!!.size} sources " +
+                        "and ${targetRoots!!.size} targets."
+            }
+        }
     }
 
     private fun loadPlugins() =
@@ -367,5 +363,15 @@ internal class Run(version: String) : CliktCommand(
 
     private fun error(msg: String?) {
         echo(msg, err = true)
+    }
+}
+
+/**
+ * Throws an [UsageError] with the result of calling [lazyMessage] if the [condition] isn't met.
+ */
+private inline fun checkUsage(condition: Boolean, lazyMessage: () -> Any) {
+    if (condition.not()) {
+        val message = lazyMessage()
+        throw UsageError(message.toString())
     }
 }
