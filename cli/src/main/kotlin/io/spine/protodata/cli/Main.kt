@@ -31,7 +31,6 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.output.TermUi
-import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -221,15 +220,6 @@ internal class Run(version: String) : CliktCommand(
         completionCandidates = CompletionCandidates.Fixed(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }.toSet()
     ))
-
-    private val allowMissingDirs: Boolean by option("--ignore-missing", "-i",
-        help = """
-        If set, allows some source directories to be non-existent.
-        
-        Even with this flag set, at least one existing source directory must exist.
-        Otherwise, the process ends with an error. 
-        """.ti()
-    ).flag(default = false)
 //@formatter:on
 
     override fun run() {
