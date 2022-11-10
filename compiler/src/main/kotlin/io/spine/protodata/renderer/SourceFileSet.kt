@@ -31,8 +31,10 @@ import com.google.common.base.Preconditions.checkArgument
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
 import io.spine.util.theOnly
+import java.lang.IllegalArgumentException
 import java.nio.charset.Charset
 import java.nio.file.Files
+import java.nio.file.Files.walk
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.exists
@@ -85,8 +87,7 @@ internal constructor(
             if (source != target) {
                 checkTarget(target)
             }
-            val files = Files
-                .walk(source)
+            val files = walk(source)
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read(source.relativize(it), source) }
                 .collect(toImmutableSet())
@@ -125,7 +126,7 @@ internal constructor(
      */
     public fun file(path: Path): SourceFile =
         findFile(path).orElseThrow {
-            error(
+            IllegalArgumentException(
                 "File not found: `$path`. Source root: `$sourceRoot`. Target root: `$targetRoot`."
             )
         }
@@ -229,12 +230,18 @@ private fun Path.canonical(): Path {
 private fun checkTarget(targetRoot: Path) {
     if (targetRoot.exists()) {
         val target = targetRoot.toFile()
-        checkArgument(
-            target.isDirectory, "Target root `%s` must be a directory.", targetRoot
-        )
+        require(target.isDirectory) {
+            "Target root `$targetRoot` must be a directory."
+        }
         val children = target.list()!!
-        checkArgument(children.isEmpty(),
-            "Target directory `%s` must be empty. Found children: %s.",
-            targetRoot, children.joinToString())
+        require(children.isEmpty()) {
+            val nl = System.lineSeparator()
+            val ls = children.joinToString(
+                separator = nl,
+                transform = { f -> "    $f" }
+            )
+            "Target directory `$targetRoot` must be empty. Found inside:$nl" +
+            "${ls}."
+        }
     }
 }

@@ -45,9 +45,12 @@ import io.spine.testing.Correspondences.type
 import io.spine.type.KnownTypes
 import kotlin.reflect.KClass
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class `'CompilerEvents' should` {
+@DisplayName("`CompilerEvents` should")
+class CompilerEventsSpec {
 
     private lateinit var events: List<EventMessage>
 
@@ -64,41 +67,42 @@ class `'CompilerEvents' should` {
         events = CompilerEvents.parse(request).toList()
     }
 
-    @Test
-    fun `produce file events`() {
-        assertEmits(
+    @Nested
+    @DisplayName("produce")
+    inner class Produce {
+
+        @Test
+        fun `file events`() = assertEmits(
             FileEntered::class,
             FileOptionDiscovered::class,
             FileOptionDiscovered::class,
             FileExited::class
         )
-    }
 
-    @Test
-    fun `produce standard file option events`() {
-        val event = events.find {
-            it is FileOptionDiscovered && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
-        } as FileOptionDiscovered?
-        assertThat(event)
-            .isNotNull()
-        assertThat(event!!.option.value.unpack(BoolValue::class.java))
-            .isEqualTo(BoolValue.of(true))
-    }
+        @Test
+        fun `standard file option events`() {
+            val event = events.find {
+                it is FileOptionDiscovered && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
+            } as FileOptionDiscovered?
+            assertThat(event)
+                .isNotNull()
+            assertThat(event!!.option.value.unpack(BoolValue::class.java))
+                .isEqualTo(BoolValue.of(true))
+        }
 
-    @Test
-    fun `produce custom file option events`() {
-        val event = events.find {
-            it is FileOptionDiscovered && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
-        } as FileOptionDiscovered?
-        assertThat(event)
-            .isNotNull()
-        assertThat(event!!.option.value.unpack(StringValue::class.java))
-            .isEqualTo(StringValue.of("type.spine.io"))
-    }
+        @Test
+        fun `custom file option events`() {
+            val event = events.find {
+                it is FileOptionDiscovered && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
+            } as FileOptionDiscovered?
+            assertThat(event)
+                .isNotNull()
+            assertThat(event!!.option.value.unpack(StringValue::class.java))
+                .isEqualTo(StringValue.of("type.spine.io"))
+        }
 
-    @Test
-    fun `produce type events`() {
-        assertEmits(
+        @Test
+        fun `type events`() = assertEmits(
             FileEntered::class,
 
             TypeEntered::class,
@@ -106,11 +110,9 @@ class `'CompilerEvents' should` {
 
             FileExited::class
         )
-    }
 
-    @Test
-    fun `produce field events`() {
-        assertEmits(
+        @Test
+        fun `field events`() = assertEmits(
             FileEntered::class,
             TypeEntered::class,
 
@@ -121,22 +123,20 @@ class `'CompilerEvents' should` {
             TypeExited::class,
             FileExited::class
         )
-    }
 
-    @Test
-    fun `produce custom field option events`() {
-        val event = events.find {
-            it is FieldOptionDiscovered && it.option.number == REQUIRED_FIELD_NUMBER
-        } as FieldOptionDiscovered?
-        assertThat(event)
-            .isNotNull()
-        assertThat(event!!.option.value.unpack(BoolValue::class.java))
-            .isEqualTo(BoolValue.of(true))
-    }
+        @Test
+        fun `custom field option events`() {
+            val event = events.find {
+                it is FieldOptionDiscovered && it.option.number == REQUIRED_FIELD_NUMBER
+            } as FieldOptionDiscovered?
+            assertThat(event)
+                .isNotNull()
+            assertThat(event!!.option.value.unpack(BoolValue::class.java))
+                .isEqualTo(BoolValue.of(true))
+        }
 
-    @Test
-    fun `produce 'oneof' events`() {
-        assertEmits(
+        @Test
+        fun `'oneof' events`() = assertEmits(
             FileEntered::class,
             TypeEntered::class,
 
@@ -149,11 +149,9 @@ class `'CompilerEvents' should` {
             TypeExited::class,
             FileExited::class
         )
-    }
-    
-    @Test
-    fun `produce enum events`() {
-        assertEmits(
+
+        @Test
+        fun `enum events`() = assertEmits(
             FileEntered::class,
             EnumEntered::class,
             EnumConstantEntered::class,
@@ -164,21 +162,17 @@ class `'CompilerEvents' should` {
             EnumConstantExited::class,
             EnumExited::class
         )
-    }
 
-    @Test
-    fun `produce nested type events`() {
-        assertEmits(
+        @Test
+        fun `nested type events`() = assertEmits(
             TypeEntered::class,
             TypeEntered::class,
             TypeExited::class,
             TypeExited::class
         )
-    }
 
-    @Test
-    fun `produce service events`() {
-        assertEmits(
+        @Test
+        fun `service events`() = assertEmits(
             ServiceEntered::class,
             RpcEntered::class,
             RpcOptionDiscovered::class,
@@ -225,17 +219,15 @@ class `'CompilerEvents' should` {
     }
 
     @Test
-    fun `parse repeated values of custom options`() {
-        assertEmits(
-            TypeEntered::class,
-            FieldEntered::class,
-            FieldOptionDiscovered::class,
-            FieldOptionDiscovered::class,
-            FieldOptionDiscovered::class,
-            FieldExited::class,
-            TypeExited::class,
-        )
-    }
+    fun `parse repeated values of custom options`() = assertEmits(
+        TypeEntered::class,
+        FieldEntered::class,
+        FieldOptionDiscovered::class,
+        FieldOptionDiscovered::class,
+        FieldOptionDiscovered::class,
+        FieldExited::class,
+        TypeExited::class,
+    )
 
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }

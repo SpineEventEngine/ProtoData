@@ -41,9 +41,11 @@ import io.spine.server.type.EventClass
 import io.spine.server.type.EventEnvelope
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-class `'ConfigurationContext' should` {
+@DisplayName("`ConfigurationContext` should")
+class ConfigurationContextSpec {
 
     private lateinit var context: BoundedContext
     private lateinit var subscriber: TestSubscriber

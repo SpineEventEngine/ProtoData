@@ -33,10 +33,12 @@ import kotlin.io.path.Path
 import kotlin.io.path.div
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class `'SourceFile' should` {
+@DisplayName("`SourceFileSet` should")
+class SourceFileSetSpec {
 
     private lateinit var set: SourceFileSet
     private lateinit var existingSourceFile: Path
