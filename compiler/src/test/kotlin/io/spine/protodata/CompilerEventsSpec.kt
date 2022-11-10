@@ -36,6 +36,7 @@ import com.google.protobuf.EnumValue
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import com.google.protobuf.compiler.codeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto.REQUIRED_FIELD_NUMBER
 import io.spine.option.OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
@@ -65,10 +66,15 @@ class CompilerEventsSpec {
             .asTypeSet()
             .messageTypes()
             .map { it.descriptor().file.toProto() }
-        val request = CodeGeneratorRequest.newBuilder()
-            .addFileToGenerate(DoctorProto.getDescriptor().fullName)
-            .addAllProtoFile(allTheTypes)
-            .build()
+
+        val request = codeGeneratorRequest {
+            fileToGenerate += DoctorProto.getDescriptor().fullName
+            protoFile.addAll(allTheTypes)
+        }
+//            CodeGeneratorRequest.newBuilder()
+//            .addFileToGenerate(DoctorProto.getDescriptor().fullName)
+//            .addAllProtoFile(allTheTypes)
+//            .build()
         events = CompilerEvents.parse(request).toList()
     }
 
