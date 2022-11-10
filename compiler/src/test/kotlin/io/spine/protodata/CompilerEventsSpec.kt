@@ -35,7 +35,6 @@ import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SI
 import com.google.protobuf.EnumValue
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto.REQUIRED_FIELD_NUMBER
@@ -50,7 +49,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-
 
 
 @DisplayName("`CompilerEvents` should")
@@ -71,10 +69,6 @@ class CompilerEventsSpec {
             fileToGenerate += DoctorProto.getDescriptor().fullName
             protoFile.addAll(allTheTypes)
         }
-//            CodeGeneratorRequest.newBuilder()
-//            .addFileToGenerate(DoctorProto.getDescriptor().fullName)
-//            .addAllProtoFile(allTheTypes)
-//            .build()
         events = CompilerEvents.parse(request).toList()
     }
 
@@ -202,13 +196,14 @@ class CompilerEventsSpec {
             .isEqualTo(MessageType.newBuilder()
                 .setName(TypeName.newBuilder().setSimpleName("Journey"))
                 .build())
-        assertThat(typeEntered.type.doc.leadingComment.split(nl))
+        val doc = typeEntered.type.doc
+        assertThat(doc.leadingComment.split(nl))
             .containsExactly("A Doctor's journey.", "", "A test type", "")
-        assertThat(typeEntered.type.doc.trailingComment)
+        assertThat(doc.trailingComment)
             .isEqualTo("Impl note: test type.")
-        assertThat(typeEntered.type.doc.detachedCommentList[0])
+        assertThat(doc.detachedCommentList[0])
             .isEqualTo("Detached 1.")
-        assertThat(typeEntered.type.doc.detachedCommentList[1].split(nl))
+        assertThat(doc.detachedCommentList[1].split(nl))
             .containsExactly(
                 "Detached 2.",
                 "Indentation is not preserved in Protobuf.",
