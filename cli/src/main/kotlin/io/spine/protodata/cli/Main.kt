@@ -105,9 +105,6 @@ internal class Run(version: String) : CliktCommand(
         const val FORMAT = "--configuration-format"
     }
 
-    /** Abbreviation extension. */
-    private fun String.ti() = trimIndent()
-
     /*
      * The section guarded by `formatter:off/on` below contains definitions of CLI options.
      *
@@ -289,9 +286,6 @@ internal class Run(version: String) : CliktCommand(
             ?: targets.oneSetWithNoFiles()
     }
 
-    private fun List<Path>.oneSetWithNoFiles() =
-        listOf(SourceFileSet.empty(first()))
-
     private fun checkPaths() {
         checkUsage(sourceRoots != null || targetRoots != null) {
             "Either source root or target root or both must be set."
@@ -365,6 +359,17 @@ internal class Run(version: String) : CliktCommand(
         echo(msg, err = true)
     }
 }
+
+/**
+ * Creates a list that contain a single, empty source set.
+ */
+private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet> =
+    listOf(SourceFileSet.empty(first()))
+
+/**
+ * Abbreviation extension.
+ */
+private fun String.ti() = trimIndent()
 
 /**
  * Throws an [UsageError] with the result of calling [lazyMessage] if the [condition] isn't met.
