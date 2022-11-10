@@ -28,6 +28,7 @@ import io.spine.internal.dependency.Protobuf
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 plugins {
+    `detekt-code-analysis`
     jacoco
 }
 
