@@ -50,7 +50,7 @@ import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.ProtoEchoRenderer
 import io.spine.protodata.test.TestPlugin
-import io.spine.protodata.test.TestRenderer
+import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.time.LocalDates
 import io.spine.time.Month.SEPTEMBER
 import io.spine.time.toInstant
@@ -103,7 +103,7 @@ class `Command line application should` {
     fun `render enhanced code`() {
         launchApp(
             "-p", TestPlugin::class.jvmName,
-            "-r", TestRenderer::class.jvmName,
+            "-r", UnderscorePrefixRenderer::class.jvmName,
             "--src", srcRoot.toString(),
             "-t", codegenRequestFile.toString()
         )
@@ -304,7 +304,7 @@ class `Command line application should` {
             assertThrows<UsageError> {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
-                    "-r", TestRenderer::class.jvmName,
+                    "-r", UnderscorePrefixRenderer::class.jvmName,
                     "-t", codegenRequestFile.toString()
                 )
             }
@@ -315,7 +315,7 @@ class `Command line application should` {
             assertMissingOption {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
-                    "-r", TestRenderer::class.jvmName,
+                    "-r", UnderscorePrefixRenderer::class.jvmName,
                     "--src", srcRoot.toString()
                 )
             }

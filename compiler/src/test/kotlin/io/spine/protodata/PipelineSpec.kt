@@ -55,10 +55,9 @@ import io.spine.protodata.test.NoOpRenderer
 import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
-import io.spine.protodata.test.TestRenderer
+import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.testing.assertExists
 import io.spine.testing.assertDoesNotExist
-import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
@@ -79,7 +78,7 @@ class PipelineSpec {
     private lateinit var codegenRequestFile: Path
     private lateinit var sourceFile: Path
     private lateinit var request: CodeGeneratorRequest
-    private lateinit var renderer: TestRenderer
+    private lateinit var renderer: UnderscorePrefixRenderer
     private lateinit var overwritingSourceSet: SourceFileSet
 
     @BeforeEach
@@ -99,7 +98,7 @@ class PipelineSpec {
             fileToGenerate += descriptor.name
         }
         codegenRequestFile.writeBytes(request.toByteArray())
-        renderer = TestRenderer()
+        renderer = UnderscorePrefixRenderer()
 
         overwritingSourceSet = SourceFileSet.from(srcRoot)
     }
