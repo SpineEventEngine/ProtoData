@@ -84,6 +84,7 @@ private fun readVersion(): String = Version.fromManifestOf(Run::class.java).valu
  * Finally, the renderers apply required changes to the source set with the root path, supplied in
  * the `--source-root` parameter.
  */
+@Suppress("TooManyFunctions") // It is OK for the main command.
 internal class Run(version: String) : CliktCommand(
     name = "protodata",
     help = "ProtoData tool helps build better multi-platform code generation." +
@@ -294,11 +295,9 @@ internal class Run(version: String) : CliktCommand(
         }
     }
 
-    private fun loadPlugins() =
-        load(PluginBuilder(), plugins)
+    private fun loadPlugins() = load(PluginBuilder(), plugins)
 
-    private fun loadRenderers() =
-        load(RendererBuilder(), renderers)
+    private fun loadRenderers() = load(RendererBuilder(), renderers)
 
     private fun loadOptions(): List<OptionsProvider> {
         val providers = load(OptionsProviderBuilder(), optionProviders)
