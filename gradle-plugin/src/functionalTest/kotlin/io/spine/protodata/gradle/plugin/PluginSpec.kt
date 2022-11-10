@@ -29,10 +29,13 @@ package io.spine.protodata.gradle.plugin
 import com.google.common.truth.Truth.assertThat
 import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
+import io.spine.testing.assertDoesNotExist
+import io.spine.testing.assertExists
 import io.spine.tools.gradle.task.BaseTaskName.build
 import io.spine.tools.gradle.task.TaskName
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
@@ -58,14 +61,6 @@ class PluginSpec {
     private lateinit var generatedMainDir: File
     private lateinit var generatedJavaDir: File
     private lateinit var generatedKotlinDir: File
-
-    private fun assertExists(dir: File) {
-        assertTrue("`$dir` expected to exist, but it does not.") { dir.exists() }
-    }
-
-    private fun assertDoesNotExist(dir: File) {
-        assertTrue("`$dir` should not exist, but it does.") { dir.exists() }
-    }
 
     operator fun BuildResult.get(task: TaskName): TaskOutcome {
         val buildTask = task(task.path())
