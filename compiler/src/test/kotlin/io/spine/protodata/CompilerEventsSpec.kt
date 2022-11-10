@@ -33,6 +33,7 @@ import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIEL
 import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS
 import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
 import com.google.protobuf.EnumValue
+import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
@@ -57,9 +58,9 @@ class CompilerEventsSpec {
     @BeforeEach
     fun parseEvents() {
         val allTheTypes = KnownTypes.instance()
-                                    .asTypeSet()
-                                    .messageTypes()
-                                    .map { it.descriptor().file.toProto() }
+            .asTypeSet()
+            .messageTypes()
+            .map { it.descriptor().file.toProto() }
         val request = CodeGeneratorRequest.newBuilder()
             .addFileToGenerate(DoctorProto.getDescriptor().fullName)
             .addAllProtoFile(allTheTypes)
@@ -81,24 +82,18 @@ class CompilerEventsSpec {
 
         @Test
         fun `standard file option events`() {
-            val event = events.find {
-                it is FileOptionDiscovered && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
-            } as FileOptionDiscovered?
-            assertThat(event)
-                .isNotNull()
-            assertThat(event!!.option.value.unpack(BoolValue::class.java))
-                .isEqualTo(BoolValue.of(true))
+            val event = events.findMultipleFilesOptionEvent()
+            assertThat(event).isNotNull()
+            assertThat(event.option<BoolValue>().value)
+                .isTrue()
         }
 
         @Test
         fun `custom file option events`() {
-            val event = events.find {
-                it is FileOptionDiscovered && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
-            } as FileOptionDiscovered?
-            assertThat(event)
-                .isNotNull()
-            assertThat(event!!.option.value.unpack(StringValue::class.java))
-                .isEqualTo(StringValue.of("type.spine.io"))
+            val event = events.findTypeUrlPrefixEvent()
+            assertThat(event).isNotNull()
+            assertThat(event.option<StringValue>().value)
+                .isEqualTo("type.spine.io")
         }
 
         @Test
@@ -126,13 +121,9 @@ class CompilerEventsSpec {
 
         @Test
         fun `custom field option events`() {
-            val event = events.find {
-                it is FieldOptionDiscovered && it.option.number == REQUIRED_FIELD_NUMBER
-            } as FieldOptionDiscovered?
-            assertThat(event)
-                .isNotNull()
-            assertThat(event!!.option.value.unpack(BoolValue::class.java))
-                .isEqualTo(BoolValue.of(true))
+            val event = events.findRequiredFieldOptionEvent()
+            assertThat(event).isNotNull()
+            assertThat(event.option<BoolValue>().value).isTrue()
         }
 
         @Test
@@ -229,6 +220,24 @@ class CompilerEventsSpec {
         TypeExited::class,
     )
 
+    /**
+     * Obtains the option of the given type [T] from this [FileOptionDiscovered] event.
+     *
+     * The receiver type is nullable for brevity of the calls after `isNotNull()`.
+     */
+    private inline fun <reified T : Message> FileOptionDiscovered?.option() : T {
+        return this!!.option.value.unpack(T::class.java)
+    }
+
+    /**
+     * Obtains the option of the given type [T] from this [FieldOptionDiscovered] event.
+     *
+     * The receiver type is nullable for brevity of the calls after `isNotNull()`.
+     */
+    private inline fun <reified T : Message> FieldOptionDiscovered?.option() : T {
+        return this!!.option.value.unpack(T::class.java)
+    }
+
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
         assertThat(events)
@@ -242,3 +251,16 @@ class CompilerEventsSpec {
         return events.find { it.javaClass == javaClass }!! as E
     }
 }
+
+private fun List<EventMessage>.findMultipleFilesOptionEvent() : FileOptionDiscovered? = find {
+    it is FileOptionDiscovered && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
+} as FileOptionDiscovered?
+
+private fun List<EventMessage>.findRequiredFieldOptionEvent(): FieldOptionDiscovered? = find {
+    it is FieldOptionDiscovered && it.option.number == REQUIRED_FIELD_NUMBER
+} as FieldOptionDiscovered?
+
+private fun List<EventMessage>.findTypeUrlPrefixEvent(): FileOptionDiscovered? = find {
+    it is FileOptionDiscovered && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
+} as FileOptionDiscovered?
+
