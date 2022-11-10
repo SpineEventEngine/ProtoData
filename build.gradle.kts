@@ -104,6 +104,7 @@ allprojects {
             force(
                 io.spine.internal.dependency.Grpc.protobufPlugin,
                 spine.base,
+                spine.testlib,
                 spine.server
             )
         }
