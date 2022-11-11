@@ -112,7 +112,9 @@ allprojects {
 }
 
 object BuildSettings {
-    const val javaVersion = 11
+    private const val JAVA_VERSION = 11
+
+    val javaVersion = JavaLanguageVersion.of(JAVA_VERSION)
 
     /**
      * Temporarily use this version, since 3.21.x is known to provide
@@ -129,10 +131,10 @@ subprojects {
     setDependencies()
     forceConfigurations()
 
-    val javaVersion = JavaLanguageVersion.of(BuildSettings.javaVersion)
-
+    val javaVersion = BuildSettings.javaVersion
     configureJava(javaVersion)
     configureKotlin(javaVersion)
+    
     setupTests()
     configureJavadoc()
 
@@ -188,11 +190,11 @@ fun Subproject.applyPlugins() {
         plugin(Dokka.GradlePlugin.id)
         plugin(Protobuf.GradlePlugin.id)
     }
-    LicenseReporter.generateReportIn(project)
+    LicenseReporter.generateReportIn(this)
 }
 
 fun Subproject.setDependencies() {
-    val spine = Spine(project)
+    val spine = Spine(this)
     dependencies {
         ErrorProne.apply {
             errorprone(core)
@@ -289,7 +291,7 @@ fun Subproject.applyGeneratedDirectories(generatedDir: String) {
     }
 }
 
-fun Project.configureJava(javaVersion: JavaLanguageVersion) {
+fun Subproject.configureJava(javaVersion: JavaLanguageVersion) {
     java {
         toolchain.languageVersion.set(javaVersion)
     }
@@ -306,7 +308,7 @@ fun Project.configureJava(javaVersion: JavaLanguageVersion) {
     }
 }
 
-fun Project.configureKotlin(javaVersion: JavaLanguageVersion) {
+fun Subproject.configureKotlin(javaVersion: JavaLanguageVersion) {
     kotlin {
         explicitApi()
         applyJvmToolchain(javaVersion.asInt())
@@ -319,7 +321,7 @@ fun Project.configureKotlin(javaVersion: JavaLanguageVersion) {
     }
 }
 
-fun Project.configureJavadoc() {
+fun Subproject.configureJavadoc() {
     val dokkaJavadoc by tasks.getting(DokkaTask::class)
     tasks.register("javadocJar", Jar::class) {
         from(dokkaJavadoc.outputDirectory)
@@ -329,7 +331,7 @@ fun Project.configureJavadoc() {
 }
 
 fun Subproject.configureProtoc(protocArtifact: String) {
-    project.protobuf {
+    protobuf {
         protoc {
             // Temporarily use this version, since 3.21.x is known to provide
             // a broken `protoc-gen-js` artifact.
