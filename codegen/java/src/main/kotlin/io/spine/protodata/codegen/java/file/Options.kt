@@ -30,29 +30,28 @@ import com.google.protobuf.BoolValue
 import com.google.protobuf.StringValue
 import io.spine.protobuf.pack
 import io.spine.protodata.Option
-import io.spine.protodata.option
 
 /**
  * The option to instruct `protoc` to generate multiple Java files.
  */
-public val javaMultipleFiles: Option = option {
+public val javaMultipleFiles: Option = Option.newBuilder().apply {
     name = "java_multiple_files"
     value = BoolValue.of(true).pack()
-}
+}.build()
 
 /**
  * Obtains an option to set the Java package with the given [name]
  * for the generated code.
  */
-public fun javaPackage(name: String): Option = option {
+public fun javaPackage(name: String): Option = Option.newBuilder().apply {
     this.name = "java_package"
     value = StringValue.of(name).pack()
-}
+}.build()
 
 /**
  * Obtains the option to set the [name] of the outer Java class.
  */
-public fun javaOuterClassName(name: String): Option = option {
+public fun javaOuterClassName(name: String): Option = Option.newBuilder().apply {
     this.name = "java_outer_classname"
     value = StringValue.of(name).pack()
-}
+}.build()
