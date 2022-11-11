@@ -30,6 +30,7 @@ import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.config.configAs
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.renderer.at
 
 /**
  * Suppresses warnings in the generated code.

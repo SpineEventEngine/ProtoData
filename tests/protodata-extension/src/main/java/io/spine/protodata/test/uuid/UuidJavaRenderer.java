@@ -33,6 +33,7 @@ import io.spine.protodata.codegen.java.ClassName;
 import io.spine.protodata.codegen.java.JavaRenderer;
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.protodata.renderer.SourceFileSet;
+import io.spine.protodata.renderer.at;
 import io.spine.protodata.test.UuidType;
 
 import java.nio.file.Path;

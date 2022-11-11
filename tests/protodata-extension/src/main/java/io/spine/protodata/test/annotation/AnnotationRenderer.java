@@ -28,6 +28,7 @@ package io.spine.protodata.test.annotation;
 
 import io.spine.protodata.codegen.java.JavaRenderer;
 import io.spine.protodata.renderer.SourceFileSet;
+import io.spine.protodata.renderer.at;
 import io.spine.protodata.test.Annotated;
 import io.spine.protodata.test.FieldId;
 
