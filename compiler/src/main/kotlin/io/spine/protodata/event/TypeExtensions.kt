@@ -74,9 +74,7 @@ internal fun FieldDescriptor.type(): Type {
     return when (type) {
         FieldDescriptor.Type.ENUM -> enum(this)
         FieldDescriptor.Type.MESSAGE -> message(this)
-        FieldDescriptor.Type.GROUP -> throw IllegalStateException(
-            "Cannot process field $fullName of type $type."
-        )
+        FieldDescriptor.Type.GROUP -> error("Cannot process field $fullName of type $type.")
         else -> primitiveType().asType()
     }
 }
