@@ -297,6 +297,8 @@ fun Project.configureJava(javaVersion: JavaLanguageVersion) {
         withType<JavaCompile>().configureEach {
             configureJavac()
             configureErrorProne()
+            // https://stackoverflow.com/questions/38298695/gradle-disable-all-incremental-compilation-and-parallel-builds
+            options.isIncremental = false
         }
         withType<org.gradle.jvm.tasks.Jar>().configureEach {
             duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -312,6 +314,8 @@ fun Project.configureKotlin(javaVersion: JavaLanguageVersion) {
 
     tasks.withType<KotlinCompile> {
         setFreeCompilerArgs()
+        // https://stackoverflow.com/questions/38298695/gradle-disable-all-incremental-compilation-and-parallel-builds
+        incremental = false
     }
 }
 
