@@ -47,20 +47,14 @@ import org.junit.jupiter.api.io.TempDir
 
 class `Insertion points should` {
 
-    companion object {
-        private const val FILE_NAME = "sources.kt"
-    }
-
     @Nested
     inner class `appear at` {
 
-        private lateinit var pipeline: Pipeline
-        private lateinit var path: Path
+        private lateinit var file: Path
 
         @BeforeEach
         fun preparePipeline(@TempDir path: Path) {
-            this.path = path
-            val file = path / FILE_NAME
+            file = path / "sources.kt"
             file.createFile()
             file.writeText("""
              class LabMouse {
@@ -73,18 +67,16 @@ class `Insertion points should` {
                  }
             }
             """.trimIndent())
-            pipeline = Pipeline(
+            Pipeline(
                 plugins = listOf(),
                 renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
                 sources = listOf(SourceFileSet.from(path)),
                 request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
-            )
+            )()
         }
 
         @Test
         fun `the start of a file`() {
-            pipeline()
-            val file = path / FILE_NAME
             val contents = file.readLines()
             assertThat(contents)
                 .isNotEmpty()
@@ -94,8 +86,6 @@ class `Insertion points should` {
 
         @Test
         fun `the end of a file`() {
-            pipeline()
-            val file = path / FILE_NAME
             val contents = file.readLines()
             assertThat(contents)
                 .isNotEmpty()
@@ -105,8 +95,6 @@ class `Insertion points should` {
 
         @Test
         fun `a specific line and column`() {
-            pipeline()
-            val file = path / FILE_NAME
             val contents = file.readLines()
             assertThat(contents)
                 .isNotEmpty()
