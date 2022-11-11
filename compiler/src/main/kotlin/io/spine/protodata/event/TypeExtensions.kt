@@ -85,6 +85,7 @@ internal fun FieldDescriptor.type(): Type {
  * Obtains the type of this field as a [PrimitiveType] or throws an exception if the type is not
  * a primitive type.
  */
+@Suppress("ComplexMethod") // ... not really, performing plain conversion.
 internal fun FieldDescriptor.primitiveType(): PrimitiveType =
     when (type) {
         BOOL -> TYPE_BOOL
@@ -102,7 +103,7 @@ internal fun FieldDescriptor.primitiveType(): PrimitiveType =
         STRING -> TYPE_STRING
         UINT32 -> TYPE_UINT32
         UINT64 -> TYPE_UINT64
-        else -> throw IllegalArgumentException("`$type` is not a primitive type.")
+        else -> error("`$type` is not a primitive type.")
     }
 
 /**

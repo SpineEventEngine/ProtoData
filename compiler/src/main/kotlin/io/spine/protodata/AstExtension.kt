@@ -26,6 +26,8 @@
 
 @file:JvmName("Ast")
 
+@file:Suppress("TooManyFunctions")
+
 package io.spine.protodata
 
 import com.google.protobuf.Descriptors.Descriptor
@@ -112,7 +114,7 @@ public fun Service.typeUrl(): String = name.typeUrl()
  * Shows if this field is a `map`.
  *
  * If the field is a `map`, the `Field.type` contains the type of the value, and
- * the `Field.map.key_type` contains the type the the map key.
+ * the `Field.map.key_type` contains the type the map key.
  */
 public fun Field.isMap(): Boolean = hasMap()
 
