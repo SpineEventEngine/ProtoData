@@ -74,10 +74,10 @@ class `Insertion points should` {
             }
             """.trimIndent())
             pipeline = Pipeline(
-                listOf(),
-                listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
-                listOf(SourceFileSet.from(path)),
-                PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
+                plugins = listOf(),
+                renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
+                sources = listOf(SourceFileSet.from(path)),
+                request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
             )
         }
 
