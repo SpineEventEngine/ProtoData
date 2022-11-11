@@ -156,7 +156,7 @@ private fun protoMultipleFiles(outerClassName: Option? = null) = file {
 
 private fun messageType(typeName: String) = messageType {
     name = typeName {
-        packageName = protoPackageName
+        packageName = PROTO_PACKAGE_NAME
         simpleName = typeName
     }
 }
@@ -194,5 +194,5 @@ private val packageNameAsPath = JAVA_PACKAGE_NAME.replace('.', separatorChar) + 
 
 private const val OUTER_CLASS_NAME = "CartoonExplosives"
 
-private val javaPackage = javaPackage(javaPackageName)
-private val javaOuterClassName = javaOuterClassName(outerClassName)
+private val javaPackage = javaPackage(JAVA_PACKAGE_NAME)
+private val javaOuterClassName = javaOuterClassName(OUTER_CLASS_NAME)
