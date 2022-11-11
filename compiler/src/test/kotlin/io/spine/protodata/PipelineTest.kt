@@ -109,10 +109,10 @@ class `'Pipeline' should` {
     @Test
     fun `render enhanced code`() {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(renderer),
-            listOf(SourceFileSet.from(srcRoot)),
-            request
+            plugins = listOf(TestPlugin()),
+            renderers = listOf(renderer),
+            sources = listOf(SourceFileSet.from(srcRoot)),
+            request = request
         )()
         assertThat(sourceFile.readText())
             .isEqualTo("_Journey worth taking")
@@ -121,10 +121,10 @@ class `'Pipeline' should` {
     @Test
     fun `generate new files`() {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(InternalAccessRenderer()),
-            listOf(SourceFileSet.from(srcRoot)),
-            request
+            plugins = listOf(TestPlugin()),
+            renderers = listOf(InternalAccessRenderer()),
+            sources = listOf(SourceFileSet.from(srcRoot)),
+            request = request
         )()
         val newClass = srcRoot.resolve("spine/protodata/test/JourneyInternal.java")
         assertThat(newClass.exists())
@@ -137,10 +137,10 @@ class `'Pipeline' should` {
     fun `delete files`() {
         val sourceFile = write("io/spine/protodata/test/DeleteMe_.java", "foo bar")
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(DeletingRenderer()),
-            listOf(SourceFileSet.from(srcRoot)),
-            request
+            plugins = listOf(TestPlugin()),
+            renderers = listOf(DeletingRenderer()),
+            sources = listOf(SourceFileSet.from(srcRoot)),
+            request = request
         )()
         assertThat(sourceFile.exists())
             .isFalse()
@@ -152,10 +152,10 @@ class `'Pipeline' should` {
         val sourceFile = write("io/spine/protodata/test/DeleteMe_.java", initialContent)
         val renderer = PrependingRenderer()
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(JavaGenericInsertionPointPrinter(), renderer),
-            listOf(SourceFileSet.from(srcRoot)),
-            request
+            plugins = listOf(TestPlugin()),
+            renderers = listOf(JavaGenericInsertionPointPrinter(), renderer),
+            sources = listOf(SourceFileSet.from(srcRoot)),
+            request = request
         )()
         val assertFileContent = assertThat(sourceFile.readText())
         assertFileContent
@@ -180,10 +180,10 @@ class `'Pipeline' should` {
             }
         """.trimIndent())
         Pipeline(
-            listOf(),
-            listOf(AnnotationInsertionPointPrinter(), NullableAnnotationRenderer()),
-            listOf(SourceFileSet.from(srcRoot)),
-            CodeGeneratorRequest.getDefaultInstance()
+            plugins = listOf(),
+            renderers = listOf(AnnotationInsertionPointPrinter(), NullableAnnotationRenderer()),
+            sources = listOf(SourceFileSet.from(srcRoot)),
+            request = CodeGeneratorRequest.getDefaultInstance()
         )()
         assertThat(sourceFile.readText())
             .contains("@Nullable String")
@@ -194,10 +194,10 @@ class `'Pipeline' should` {
         val jsSource = write("test/source.js", "alert('Hello')")
         val ktSource = write("corp/acme/test/Source.kt", "println(\"Hello\")")
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(JsRenderer(), KtRenderer()),
-            listOf(SourceFileSet.from(srcRoot)),
-            request
+            plugins = listOf(TestPlugin()),
+            renderers = listOf(JsRenderer(), KtRenderer()),
+            sources = listOf(SourceFileSet.from(srcRoot)),
+            request = request
         )()
         assertThat(jsSource.readText())
             .contains("Hello JavaScript")
@@ -208,10 +208,10 @@ class `'Pipeline' should` {
     @Test
     fun `add insertion points`() {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxEmancipator()),
-            listOf(SourceFileSet.from(srcRoot)),
-            request
+            plugins = listOf(TestPlugin()),
+            renderers = listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxEmancipator()),
+            sources = listOf(SourceFileSet.from(srcRoot)),
+            request = request
         )()
         val assertCode = assertThat(sourceFile.readText())
         assertCode
@@ -225,10 +225,10 @@ class `'Pipeline' should` {
     @Test
     fun `not add insertion points if nobody touches the file contents`() {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(JavaGenericInsertionPointPrinter(), JsRenderer()),
-            listOf(SourceFileSet.from(srcRoot)),
-            request
+            plugins = listOf(TestPlugin()),
+            renderers = listOf(JavaGenericInsertionPointPrinter(), JsRenderer()),
+            sources = listOf(SourceFileSet.from(srcRoot)),
+            request = request
         )()
         val assertCode = assertThat(sourceFile.readText())
         assertCode
@@ -243,10 +243,10 @@ class `'Pipeline' should` {
     fun `write code into different destination`() {
         val destination = tempDir()
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(InternalAccessRenderer()),
-            listOf(SourceFileSet.from(srcRoot, destination)),
-            request
+            plugins = listOf(TestPlugin()),
+            renderers = listOf(InternalAccessRenderer()),
+            sources = listOf(SourceFileSet.from(srcRoot, destination)),
+            request = request
         )()
 
         val path = "spine/protodata/test/JourneyInternal.java"
@@ -264,10 +264,10 @@ class `'Pipeline' should` {
     fun `copy all sources into the new destination`() {
         val destination = tempDir()
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(NoOpRenderer()),
-            listOf(SourceFileSet.from(srcRoot, destination)),
-            request
+            plugins = listOf(TestPlugin()),
+            renderers = listOf(NoOpRenderer()),
+            sources = listOf(SourceFileSet.from(srcRoot, destination)),
+            request = request
         )()
 
         assertThat(sourceFile.exists())
@@ -296,13 +296,13 @@ class `'Pipeline' should` {
             secondSourceFile.createFile().writeText("foo bar")
 
             Pipeline(
-                listOf(TestPlugin()),
-                listOf(NoOpRenderer()),
-                listOf(
+                plugins = listOf(TestPlugin()),
+                renderers = listOf(NoOpRenderer()),
+                sources = listOf(
                     SourceFileSet.from(srcRoot, destination1),
                     SourceFileSet.from(source2, destination2)
                 ),
-                request
+                request = request
             )()
 
             assertThat(sourceFile.exists())
@@ -328,14 +328,14 @@ class `'Pipeline' should` {
 
             val expectedContent = "123456789"
             Pipeline(
-                listOf(TestPlugin()),
-                listOf(PlainStringRenderer()),
-                listOf(
+                plugins = listOf(TestPlugin()),
+                renderers = listOf(PlainStringRenderer()),
+                sources = listOf(
                     SourceFileSet.from(srcRoot, destination1),
                     SourceFileSet.from(source2, destination2)
                 ),
-                request,
-                Configuration.rawValue(expectedContent, PLAIN)
+                request = request,
+                config = Configuration.rawValue(expectedContent, PLAIN)
             )()
 
             val firstFile = destination1.resolve(ECHO_FILE)
@@ -360,16 +360,16 @@ class `'Pipeline' should` {
             write(existingFilePath, expectedContent)
 
             Pipeline(
-                listOf(TestPlugin()),
-                listOf(
+                plugins = listOf(TestPlugin()),
+                renderers = listOf(
                     JavaGenericInsertionPointPrinter(),
                     PrependingRenderer()
                 ),
-                listOf(
+                sources = listOf(
                     SourceFileSet.from(srcRoot, destination1),
                     SourceFileSet.from(source2, destination2)
                 ),
-                request
+                request = request
             )()
 
             destination2.toFile().walkTopDown().forEach { println(it.name) }
@@ -391,10 +391,10 @@ class `'Pipeline' should` {
         fun `a policy handles too many events at once`() {
             val policy = GreedyPolicy()
             val pipeline = Pipeline(
-                listOf(DocilePlugin(policies = setOf(policy))),
-                listOf(renderer),
-                listOf(SourceFileSet.from(srcRoot)),
-                request
+                plugins = listOf(DocilePlugin(policies = setOf(policy))),
+                renderers = listOf(renderer),
+                sources = listOf(SourceFileSet.from(srcRoot)),
+                request = request
             )
             val error = assertThrows<IllegalStateException> { pipeline() }
             assertThat(error)
@@ -406,13 +406,13 @@ class `'Pipeline' should` {
         fun `view is already registered`() {
             val viewClass = DeletedTypeView::class.java
             val pipeline = Pipeline(
-                listOf(DocilePlugin(
+                plugins = listOf(DocilePlugin(
                     views = setOf(viewClass),
                     viewRepositories = setOf(DeletedTypeRepository())
                 )),
-                listOf(renderer),
-                listOf(SourceFileSet.from(srcRoot)),
-                request
+                renderers = listOf(renderer),
+                sources = listOf(SourceFileSet.from(srcRoot)),
+                request = request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
             assertThat(error)
