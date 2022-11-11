@@ -29,16 +29,16 @@ import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
-import io.spine.internal.dependency.Flogger
-import io.spine.internal.dependency.Grpc
 import io.spine.internal.gradle.forceVersions
-import io.spine.internal.gradle.applyGitHubPackages
-import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 
 @Suppress("RemoveRedundantQualifierName")
 plugins {
     java
+    kotlin("jvm") apply false
     idea
     protobuf
 }
@@ -46,13 +46,13 @@ plugins {
 subprojects {
     apply {
         plugin("java")
+        plugin("kotlin")
         plugin("idea")
         plugin("com.google.protobuf")
         from("$rootDir/../version.gradle.kts")
     }
 
-    repositories.applyStandard()
-    repositories.applyGitHubPackages("base-types", rootProject)
+    repositories.standardToSpineSdk()
 
     val protoDataVersion: String by extra
     val spine = io.spine.internal.dependency.Spine(project)
@@ -75,6 +75,10 @@ subprojects {
         protoc {
             artifact = Protobuf.compiler
         }
+    }
+
+    tasks.withType<KotlinCompile> {
+        setFreeCompilerArgs()
     }
 
     val generatedFiles = "$projectDir/generated"

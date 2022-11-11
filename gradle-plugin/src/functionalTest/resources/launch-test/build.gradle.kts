@@ -44,7 +44,7 @@ repositories {
 }
 
 protoData {
-    renderers("io.spine.protodata.test.TestRenderer")
+    renderers("io.spine.protodata.test.UnderscorePrefixRenderer")
     plugins("io.spine.protodata.test.TestPlugin")
 }
 

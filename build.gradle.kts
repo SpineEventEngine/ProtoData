@@ -104,100 +104,41 @@ allprojects {
             force(
                 io.spine.internal.dependency.Grpc.protobufPlugin,
                 spine.base,
+                spine.testlib,
                 spine.server
             )
         }
     }
 }
 
-// Temporarily use this version, since 3.21.x is known to provide
-// a broken `protoc-gen-js` artifact and Kotlin code without access modifiers.
-// See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
-//     https://github.com/protocolbuffers/protobuf/issues/10593
-val protocArtifact = "com.google.protobuf:protoc:3.19.6"
+object BuildSettings {
+    private const val JAVA_VERSION = 11
+
+    val javaVersion = JavaLanguageVersion.of(JAVA_VERSION)
+
+    /**
+     * Temporarily use this version, since 3.21.x is known to provide
+     * a broken `protoc-gen-js` artifact and Kotlin code without access modifiers.
+     *
+     * See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
+     *     https://github.com/protocolbuffers/protobuf/issues/10593
+     */
+    const val protocArtifact = "com.google.protobuf:protoc:3.19.6"
+}
 
 subprojects {
-    apply {
-        plugin("kotlin")
-        plugin("net.ltgt.errorprone")
-        plugin(Dokka.GradlePlugin.id)
-        plugin(Protobuf.GradlePlugin.id)
-    }
+    applyPlugins()
+    setDependencies()
+    forceConfigurations()
 
-    LicenseReporter.generateReportIn(project)
+    val javaVersion = BuildSettings.javaVersion
+    configureJava(javaVersion)
+    configureKotlin(javaVersion)
+    
+    setupTests()
+    configureJavadoc()
 
-    dependencies {
-        ErrorProne.apply {
-            errorprone(core)
-        }
-        testImplementation(spine.coreJava.testUtilServer)
-        testImplementation(kotlin("test-junit5"))
-        Truth.libs.forEach { testImplementation(it) }
-        testRuntimeOnly(JUnit.runner)
-    }
-
-    configurations.all {
-        resolutionStrategy {
-            force(
-                io.spine.internal.dependency.Protobuf.compiler,
-            )
-        }
-    }
-
-    tasks.test {
-        useJUnitPlatform()
-
-        testLogging {
-            events = setOf(PASSED, FAILED, SKIPPED)
-            showExceptions = true
-            showCauses = true
-        }
-    }
-
-    val javaVersion = JavaVersion.VERSION_11.toString()
-
-    java {
-        tasks {
-            withType<JavaCompile>().configureEach {
-                configureJavac()
-                configureErrorProne()
-            }
-            withType<org.gradle.jvm.tasks.Jar>().configureEach {
-                duplicatesStrategy = DuplicatesStrategy.INCLUDE
-            }
-        }
-    }
-
-    kotlin {
-        explicitApi()
-        applyJvmToolchain(javaVersion)
-    }
-
-    tasks.withType<KotlinCompile> {
-        setFreeCompilerArgs()
-    }
-
-    val dokkaJavadoc by tasks.getting(DokkaTask::class)
-
-    tasks.register("javadocJar", Jar::class) {
-        from(dokkaJavadoc.outputDirectory)
-        archiveClassifier.set("javadoc")
-        dependsOn(dokkaJavadoc)
-    }
-
-    protobuf {
-        protoc {
-            // Temporarily use this version, since 3.21.x is known to provide
-            // a broken `protoc-gen-js` artifact.
-            // See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
-            //
-            // Once it is addressed, this artifact should be `Protobuf.compiler`.
-            //
-            // Also, this fixes the explicit API more for the generated Kotlin code.
-            //
-            artifact = protocArtifact
-        }
-    }
+    configureProtoc(BuildSettings.protocArtifact)
 
     val generated = "$projectDir/generated"
     applyGeneratedDirectories(generated)
@@ -240,6 +181,52 @@ tasks["check"].finalizedBy(integrationTest)
  * The alias for typed extensions functions related to subprojects.
  */
 typealias Subproject = Project
+
+fun Subproject.applyPlugins() {
+    apply {
+        plugin("java")
+        plugin("kotlin")
+        plugin("net.ltgt.errorprone")
+        plugin(Dokka.GradlePlugin.id)
+        plugin(Protobuf.GradlePlugin.id)
+    }
+    LicenseReporter.generateReportIn(this)
+}
+
+fun Subproject.setDependencies() {
+    val spine = Spine(this)
+    dependencies {
+        ErrorProne.apply {
+            errorprone(core)
+        }
+        testImplementation(spine.coreJava.testUtilServer)
+        testImplementation(kotlin("test-junit5"))
+        Truth.libs.forEach { testImplementation(it) }
+        testRuntimeOnly(JUnit.runner)
+    }
+}
+
+fun Subproject.forceConfigurations() {
+    configurations.all {
+        resolutionStrategy {
+            force(
+                Protobuf.compiler,
+            )
+        }
+    }
+}
+
+fun Subproject.setupTests() {
+    tasks.test {
+        useJUnitPlatform()
+
+        testLogging {
+            events = setOf(PASSED, FAILED, SKIPPED)
+            showExceptions = true
+            showCauses = true
+        }
+    }
+}
 
 /**
  * Adds directories with the generated source code to source sets of the project and
@@ -300,6 +287,61 @@ fun Subproject.applyGeneratedDirectories(generatedDir: String) {
             )
             isDownloadJavadoc = true
             isDownloadSources = true
+        }
+    }
+}
+
+fun Subproject.configureJava(javaVersion: JavaLanguageVersion) {
+    java {
+        toolchain.languageVersion.set(javaVersion)
+    }
+    tasks {
+        withType<JavaCompile>().configureEach {
+            configureJavac()
+            configureErrorProne()
+            // https://stackoverflow.com/questions/38298695/gradle-disable-all-incremental-compilation-and-parallel-builds
+            options.isIncremental = false
+        }
+        withType<org.gradle.jvm.tasks.Jar>().configureEach {
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
+    }
+}
+
+fun Subproject.configureKotlin(javaVersion: JavaLanguageVersion) {
+    kotlin {
+        explicitApi()
+        applyJvmToolchain(javaVersion.asInt())
+    }
+
+    tasks.withType<KotlinCompile> {
+        setFreeCompilerArgs()
+        // https://stackoverflow.com/questions/38298695/gradle-disable-all-incremental-compilation-and-parallel-builds
+        incremental = false
+    }
+}
+
+fun Subproject.configureJavadoc() {
+    val dokkaJavadoc by tasks.getting(DokkaTask::class)
+    tasks.register("javadocJar", Jar::class) {
+        from(dokkaJavadoc.outputDirectory)
+        archiveClassifier.set("javadoc")
+        dependsOn(dokkaJavadoc)
+    }
+}
+
+fun Subproject.configureProtoc(protocArtifact: String) {
+    protobuf {
+        protoc {
+            // Temporarily use this version, since 3.21.x is known to provide
+            // a broken `protoc-gen-js` artifact.
+            // See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
+            //
+            // Once it is addressed, this artifact should be `Protobuf.compiler`.
+            //
+            // Also, this fixes the explicit API more for the generated Kotlin code.
+            //
+            artifact = protocArtifact
         }
     }
 }

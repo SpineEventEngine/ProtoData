@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.events
+package io.spine.protodata.event
 
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
@@ -32,9 +32,6 @@ import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
 import io.spine.protodata.Documentation
 import io.spine.protodata.File
-import io.spine.protodata.FileEntered
-import io.spine.protodata.FileExited
-import io.spine.protodata.FileOptionDiscovered
 import io.spine.protodata.path
 
 /**

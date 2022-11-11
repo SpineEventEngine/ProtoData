@@ -26,13 +26,15 @@
 
 @file:JvmName("Ast")
 
+@file:Suppress("TooManyFunctions")
+
 package io.spine.protodata
 
-import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import com.google.protobuf.Message
@@ -112,7 +114,7 @@ public fun Service.typeUrl(): String = name.typeUrl()
  * Shows if this field is a `map`.
  *
  * If the field is a `map`, the `Field.type` contains the type of the value, and
- * the `Field.map.key_type` contains the type the the map key.
+ * the `Field.map.key_type` contains the type the map key.
  */
 public fun Field.isMap(): Boolean = hasMap()
 
@@ -229,7 +231,7 @@ internal fun ServiceDescriptor.name(): ServiceName =
 /**
  * Obtains the name of this RPC method as an [RpcName].
  */
-internal fun Descriptors.MethodDescriptor.name(): RpcName =
+internal fun MethodDescriptor.name(): RpcName =
     RpcName.newBuilder()
            .setValue(name)
            .build()
@@ -247,13 +249,11 @@ internal fun PrimitiveType.asType(): Type =
  *
  * The cardinality determines how many messages may flow from the client to the server and back.
  */
-internal fun Descriptors.MethodDescriptor.cardinality(): CallCardinality =
+internal fun MethodDescriptor.cardinality(): CallCardinality =
     when {
         !isClientStreaming && !isServerStreaming -> UNARY
         !isClientStreaming && isServerStreaming -> SERVER_STREAMING
         isClientStreaming && !isServerStreaming -> CLIENT_STREAMING
         isClientStreaming && isServerStreaming -> BIDIRECTIONAL_STREAMING
-        else -> throw IllegalStateException(
-            "Unable to determine cardinality of method: `$fullName`."
-        )
+        else -> error("Unable to determine cardinality of method: `$fullName`.")
     }

@@ -24,19 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.renderer
 
 import com.google.common.truth.Truth8.assertThat
-import io.spine.protodata.renderer.SourceFileSet
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class `'SourceFile' should` {
+@DisplayName("`SourceFileSet` should")
+class SourceFileSetSpec {
 
     private lateinit var set: SourceFileSet
     private lateinit var existingSourceFile: Path

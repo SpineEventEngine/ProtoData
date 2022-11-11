@@ -112,8 +112,8 @@ public object This : Expression("this") {
 /**
  * A string literal.
  *
- * Represented as the same value as the given string, wrapped in quotation marks. No extra character
- * escaping is perfomed.
+ * Represented as the same value as the given string, wrapped in quotation marks.
+ * No extra character escaping is performed.
  */
 public class LiteralString(value: String) : Expression("\"$value\"")
 
@@ -150,7 +150,7 @@ internal constructor(
      *
      * This is the name by which the class is referred to in Java code.
      *
-     * For regular Java classes, This is similar to `binary`, except that in a binary name nested
+     * For regular Java classes, This is similar to [binary], except that in a binary name nested
      * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
      */
     @get:JvmName("canonical")
@@ -161,7 +161,7 @@ internal constructor(
      *
      * This is the name by which the class is referred to in Bytecode.
      *
-     * For regular Java classes, This is similar to `canonical`, except that in a binary name nested
+     * For regular Java classes, This is similar to [canonical], except that in a binary name nested
      * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
      */
     @get:JvmName("binary")

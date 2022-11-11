@@ -24,34 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.codegen.java.file
 
-import com.google.common.truth.Truth.assertThat
-import io.spine.protodata.config.ConfigurationFormat.JSON
-import io.spine.protodata.config.ConfigurationFormat.PLAIN
-import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
-import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
-import io.spine.protodata.config.ConfigurationFormat.YAML
-import io.spine.protodata.config.extensions
-import org.junit.jupiter.api.Test
+import com.google.protobuf.BoolValue
+import com.google.protobuf.StringValue
+import io.spine.protobuf.pack
+import io.spine.protodata.Option
 
-class `ConfigurationFormat should` {
+/**
+ * The option to instruct `protoc` to generate multiple Java files.
+ */
+public val javaMultipleFiles: Option = Option.newBuilder().apply {
+    name = "java_multiple_files"
+    value = BoolValue.of(true).pack()
+}.build()
 
-    @Test
-    fun `provide allowed extensions`() {
-        assertThat(RCF_UNKNOWN.extensions)
-            .isEmpty()
+/**
+ * Obtains an option to set the Java package with the given [name]
+ * for the generated code.
+ */
+public fun javaPackage(name: String): Option = Option.newBuilder().apply {
+    this.name = "java_package"
+    value = StringValue.of(name).pack()
+}.build()
 
-        assertThat(JSON.extensions)
-            .containsExactly("json")
-        assertThat(PROTO_JSON.extensions)
-            .containsExactly("pb.json")
-        assertThat(PROTO_BINARY.extensions)
-            .containsExactly("pb", "bin")
-        assertThat(YAML.extensions)
-            .containsExactly("yml", "yaml")
-        assertThat(PLAIN.extensions)
-            .isEmpty()
-    }
-}
+/**
+ * Obtains the option to set the [name] of the outer Java class.
+ */
+public fun javaOuterClassName(name: String): Option = Option.newBuilder().apply {
+    this.name = "java_outer_classname"
+    value = StringValue.of(name).pack()
+}.build()

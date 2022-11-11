@@ -26,11 +26,12 @@
 
 package io.spine.protodata
 
+import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.environment.DefaultMode
 import io.spine.protodata.config.Configuration
-import io.spine.protodata.events.CompilerEvents
+import io.spine.protodata.event.CompilerEvents
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer
@@ -60,6 +61,41 @@ public class Pipeline(
     private val request: CodeGeneratorRequest,
     private val config: Configuration? = null
 ) {
+    /**
+     * Creates a new `Pipeline` with only one plugin and one source set.
+     */
+    @VisibleForTesting
+    public constructor(
+        plugin: Plugin,
+        renderers: List<Renderer>,
+        sources: SourceFileSet,
+        request: CodeGeneratorRequest,
+        config: Configuration? = null
+    ): this(listOf(plugin), renderers, listOf(sources), request, config)
+
+    /**
+     * Creates a new `Pipeline` with only one plugin, one renderer, and one source set.
+     */
+    @VisibleForTesting
+    public constructor(
+        plugin: Plugin,
+        renderer: Renderer,
+        sources: SourceFileSet,
+        request: CodeGeneratorRequest,
+        config: Configuration? = null
+    ): this(listOf(plugin), listOf(renderer), listOf(sources), request, config)
+
+    /**
+     * Creates a new `Pipeline` with only one plugin, one renderer, and several source set.
+     */
+    @VisibleForTesting
+    public constructor(
+        plugin: Plugin,
+        renderer: Renderer,
+        sources: List<SourceFileSet>,
+        request: CodeGeneratorRequest,
+        config: Configuration? = null
+    ): this(listOf(plugin), listOf(renderer), sources, request, config)
 
     init {
         under<DefaultMode> {

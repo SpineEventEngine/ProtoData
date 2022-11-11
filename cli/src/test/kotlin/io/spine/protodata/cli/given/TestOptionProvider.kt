@@ -28,8 +28,8 @@ package io.spine.protodata.cli.given
 
 import com.google.protobuf.ExtensionRegistry
 import io.spine.option.OptionsProto
+import io.spine.option.OptionsProvider
 import io.spine.protodata.cli.test.TestOptionsProto
-import io.spine.protodata.option.OptionsProvider
 
 class TestOptionProvider : OptionsProvider {
 

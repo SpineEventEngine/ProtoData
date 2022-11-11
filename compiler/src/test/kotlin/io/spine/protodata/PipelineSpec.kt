@@ -26,6 +26,7 @@
 
 package io.spine.protodata
 
+import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
@@ -54,12 +55,12 @@ import io.spine.protodata.test.NoOpRenderer
 import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
-import io.spine.protodata.test.TestRenderer
-import java.nio.file.Files
+import io.spine.protodata.test.UnderscorePrefixRenderer
+import io.spine.testing.assertExists
+import io.spine.testing.assertDoesNotExist
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
-import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
@@ -77,7 +78,8 @@ class PipelineSpec {
     private lateinit var codegenRequestFile: Path
     private lateinit var sourceFile: Path
     private lateinit var request: CodeGeneratorRequest
-    private lateinit var renderer: TestRenderer
+    private lateinit var renderer: UnderscorePrefixRenderer
+    private lateinit var overwritingSourceSet: SourceFileSet
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
@@ -85,6 +87,7 @@ class PipelineSpec {
         srcRoot.toFile().mkdirs()
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
+        // Correctness of the Java source code is of no importance for this test suite.
         sourceFile = write("SourceCode.java", """
             ${Journey::class.simpleName} worth taking
         """.trimIndent())
@@ -95,7 +98,9 @@ class PipelineSpec {
             fileToGenerate += descriptor.name
         }
         codegenRequestFile.writeBytes(request.toByteArray())
-        renderer = TestRenderer()
+        renderer = UnderscorePrefixRenderer()
+
+        overwritingSourceSet = SourceFileSet.from(srcRoot)
     }
 
     @CanIgnoreReturnValue
@@ -109,41 +114,37 @@ class PipelineSpec {
     @Test
     fun `render enhanced code`() {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(renderer),
-            listOf(SourceFileSet.from(srcRoot)),
+            plugin = TestPlugin(),
+            renderer = renderer,
+            sources = overwritingSourceSet,
             request
         )()
-        assertThat(sourceFile.readText())
-            .isEqualTo("_Journey worth taking")
+        assertTextIn(sourceFile).isEqualTo("_Journey worth taking")
     }
 
     @Test
     fun `generate new files`() {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(InternalAccessRenderer()),
-            listOf(SourceFileSet.from(srcRoot)),
+            plugin = TestPlugin(),
+            renderer = InternalAccessRenderer(),
+            sources = overwritingSourceSet,
             request
         )()
         val newClass = srcRoot.resolve("spine/protodata/test/JourneyInternal.java")
-        assertThat(newClass.exists())
-            .isTrue()
-        assertThat(newClass.readText())
-            .contains("class JourneyInternal")
+        assertExists(newClass)
+        assertTextIn(newClass).contains("class JourneyInternal")
     }
 
     @Test
     fun `delete files`() {
         val sourceFile = write("io/spine/protodata/test/DeleteMe_.java", "foo bar")
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(DeletingRenderer()),
-            listOf(SourceFileSet.from(srcRoot)),
+            plugin = TestPlugin(),
+            renderer = DeletingRenderer(),
+            sources = SourceFileSet.from(srcRoot),
             request
         )()
-        assertThat(sourceFile.exists())
-            .isFalse()
+        assertDoesNotExist(sourceFile)
     }
 
     @Test
@@ -152,13 +153,16 @@ class PipelineSpec {
         val sourceFile = write("io/spine/protodata/test/DeleteMe_.java", initialContent)
         val renderer = PrependingRenderer()
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(JavaGenericInsertionPointPrinter(), renderer),
-            listOf(SourceFileSet.from(srcRoot)),
+            plugin = TestPlugin(),
+            renderers = listOf(
+                JavaGenericInsertionPointPrinter(),
+                renderer
+            ),
+            sources = SourceFileSet.from(srcRoot),
             request
         )()
 
-        assertThat(sourceFile.readText()).run {
+        assertTextIn(sourceFile).run {
             contains("/* INSERT:'file_start' */")
             contains("Hello from ${renderer.javaClass.name}")
             contains("/* INSERT:'file_middle' */")
@@ -172,24 +176,30 @@ class PipelineSpec {
         val jsSource = write("test/source.js", "alert('Hello')")
         val ktSource = write("corp/acme/test/Source.kt", "println(\"Hello\")")
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(JsRenderer(), KtRenderer()),
-            listOf(SourceFileSet.from(srcRoot)),
+            plugin = TestPlugin(),
+            renderers = listOf(
+                JsRenderer(),
+                KtRenderer()
+            ),
+            sources = SourceFileSet.from(srcRoot),
             request
         )()
-        assertThat(jsSource.readText()).contains("Hello JavaScript")
-        assertThat(ktSource.readText()).contains("Hello Kotlin")
+        assertTextIn(jsSource).contains("Hello JavaScript")
+        assertTextIn(ktSource).contains("Hello Kotlin")
     }
 
     @Test
     fun `add insertion points`() {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(JavaGenericInsertionPointPrinter(), CatOutOfTheBoxEmancipator()),
-            listOf(SourceFileSet.from(srcRoot)),
+            plugin = TestPlugin(),
+            renderers = listOf(
+                JavaGenericInsertionPointPrinter(),
+                CatOutOfTheBoxEmancipator()
+            ),
+            sources = overwritingSourceSet,
             request
         )()
-        assertThat(sourceFile.readText()).run {
+        assertTextIn(sourceFile).run {
             startsWith("/* ${FILE_START.codeLine} */")
             endsWith("/* ${FILE_END.codeLine} */")
             doesNotContain(OUTSIDE_FILE.codeLine)
@@ -199,12 +209,15 @@ class PipelineSpec {
     @Test
     fun `not add insertion points if nobody touches the file contents`() {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(JavaGenericInsertionPointPrinter(), JsRenderer()),
-            listOf(SourceFileSet.from(srcRoot)),
+            plugin = TestPlugin(),
+            renderers = listOf(
+                JavaGenericInsertionPointPrinter(),
+                JsRenderer()
+            ),
+            sources = overwritingSourceSet,
             request
         )()
-        assertThat(sourceFile.readText()).run {
+        assertTextIn(sourceFile).run {
             doesNotContain(FILE_START.codeLine)
             doesNotContain(FILE_END.codeLine)
             doesNotContain(OUTSIDE_FILE.codeLine)
@@ -212,64 +225,54 @@ class PipelineSpec {
     }
 
     @Test
-    fun `write code into different destination`() {
-        val destination = tempDir()
+    fun `write code into different destination`(@TempDir destination: Path) {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(InternalAccessRenderer()),
-            listOf(SourceFileSet.from(srcRoot, destination)),
+            plugin = TestPlugin(),
+            renderer = InternalAccessRenderer(),
+            sources = SourceFileSet.from(srcRoot, destination),
             request
         )()
 
         val path = "spine/protodata/test/JourneyInternal.java"
         val newClass = destination.resolve(path)
-        assertThat(newClass.exists())
-            .isTrue()
-        assertThat(newClass.readText())
-            .contains("class JourneyInternal")
+
+        assertExists(newClass)
+        assertTextIn(newClass).contains("class JourneyInternal")
+
         val newClassInSourceRoot = srcRoot.resolve(path)
-        assertThat(newClassInSourceRoot.exists())
-            .isFalse()
+        assertDoesNotExist(newClassInSourceRoot)
     }
 
     @Test
-    fun `copy all sources into the new destination`() {
-        val destination = tempDir()
+    fun `copy all sources into the new destination`(@TempDir destination: Path) {
         Pipeline(
-            listOf(TestPlugin()),
-            listOf(NoOpRenderer()),
-            listOf(SourceFileSet.from(srcRoot, destination)),
+            TestPlugin(),
+            NoOpRenderer(),
+            SourceFileSet.from(srcRoot, destination),
             request
         )()
 
-        assertThat(sourceFile.exists())
-            .isTrue()
-        assertThat(destination.resolve(sourceFile.fileName).exists())
-            .isTrue()
+        assertExists(sourceFile)
+        assertExists(destination.resolve(sourceFile.fileName))
     }
-
-    /**
-     * Creates a new unique temp directory.
-     *
-     * JUnit reuses @TempDir from @BeforeEach, and we need a fresh temp directory.
-     * See [the JUnit issue](https://github.com/junit-team/junit5/issues/1967).
-     */
-    private fun tempDir() = Files.createTempDirectory("destination")
 
     @Nested
     inner class `When given multiple source file sets` {
 
         @Test
-        fun `preserve source set when copying files`() {
-            val destination1 = tempDir()
-            val destination2 = tempDir()
-            val source2 = tempDir()
+        fun `preserve source set when copying files`(
+            @TempDir source2: Path,
+            @TempDir destination1: Path,
+            @TempDir destination2: Path
+        ) {
+            checkTemps(source2, destination1, destination2)
+
             val secondSourceFile = source2 / "second.txt"
             secondSourceFile.createFile().writeText("foo bar")
 
             Pipeline(
-                listOf(TestPlugin()),
-                listOf(NoOpRenderer()),
+                TestPlugin(),
+                NoOpRenderer(),
                 listOf(
                     SourceFileSet.from(srcRoot, destination1),
                     SourceFileSet.from(source2, destination2)
@@ -277,31 +280,29 @@ class PipelineSpec {
                 request
             )()
 
-            assertThat(sourceFile.exists())
-                .isTrue()
-            assertThat(destination1.resolve(sourceFile.fileName).exists())
-                .isTrue()
-            assertThat(destination2.resolve(secondSourceFile.fileName).exists())
-                .isTrue()
-            assertThat(destination2.resolve(secondSourceFile.fileName).readText())
+            assertExists(sourceFile)
+            assertExists(destination1.resolve(sourceFile.fileName))
+            assertExists(destination2.resolve(secondSourceFile.fileName))
+
+            assertTextIn(destination2.resolve(secondSourceFile.fileName))
                 .isEqualTo(secondSourceFile.readText())
 
-            assertThat(destination1.resolve(secondSourceFile.fileName).exists())
-                .isFalse()
-            assertThat(destination2.resolve(sourceFile.fileName).exists())
-                .isFalse()
+            assertDoesNotExist(destination1.resolve(secondSourceFile.fileName))
+            assertDoesNotExist(destination2.resolve(sourceFile.fileName))
         }
 
         @Test
-        fun `generate new files by relative path`() {
-            val destination1 = tempDir()
-            val destination2 = tempDir()
-            val source2 = tempDir()
+        fun `generate new files by relative path`(
+            @TempDir source2: Path,
+            @TempDir destination1: Path,
+            @TempDir destination2: Path
+        ) {
+            checkTemps(source2, destination1, destination2)
 
             val expectedContent = "123456789"
             Pipeline(
-                listOf(TestPlugin()),
-                listOf(PlainStringRenderer()),
+                plugin = TestPlugin(),
+                renderer = PlainStringRenderer(),
                 listOf(
                     SourceFileSet.from(srcRoot, destination1),
                     SourceFileSet.from(source2, destination2)
@@ -312,47 +313,44 @@ class PipelineSpec {
 
             val firstFile = destination1.resolve(ECHO_FILE)
             val secondFile = destination2.resolve(ECHO_FILE)
-            assertThat(firstFile.exists())
-                .isTrue()
-            assertThat(secondFile.exists())
-                .isTrue()
-            assertThat(firstFile.readText())
-                .isEqualTo(expectedContent)
-            assertThat(secondFile.readText())
-                .isEqualTo(expectedContent)
-        }
-        @Test
-        fun `change files using insertion points`() {
-            val destination1 = tempDir()
-            val destination2 = tempDir()
-            val source2 = tempDir()
+            assertExists(firstFile)
+            assertExists(secondFile)
 
+            assertTextIn(firstFile).isEqualTo(expectedContent)
+            assertTextIn(secondFile).isEqualTo(expectedContent)
+        }
+
+        @Test
+        fun `change files using insertion points`(
+            @TempDir source2: Path,
+            @TempDir destination1: Path,
+            @TempDir destination2: Path
+        ) {
             val expectedContent = "0987654321"
             val existingFilePath = "io/spine/protodata/test/OnlyInFirstDir_.java"
             write(existingFilePath, expectedContent)
 
             Pipeline(
-                listOf(TestPlugin()),
-                listOf(
+                plugins = listOf(TestPlugin()),
+                renderers = listOf(
                     JavaGenericInsertionPointPrinter(),
                     PrependingRenderer()
                 ),
-                listOf(
+                sources = listOf(
                     SourceFileSet.from(srcRoot, destination1),
                     SourceFileSet.from(source2, destination2)
                 ),
                 request
             )()
 
-            destination2.toFile().walkTopDown().forEach { println(it.name) }
-            println(destination2.resolve(existingFilePath))
-            assertThat(destination2.resolve(existingFilePath).exists())
-                .isFalse()
+            //destination2.toFile().walkTopDown().forEach { println(it.name) }
+            //println(destination2.resolve(existingFilePath))
+
+            assertDoesNotExist(destination2.resolve(existingFilePath))
+
             val writtenFile = destination1.resolve(existingFilePath)
-            assertThat(writtenFile.exists())
-                .isTrue()
-            assertThat(writtenFile.readText())
-                .contains(expectedContent)
+            assertExists(writtenFile)
+            assertTextIn(writtenFile).contains(expectedContent)
         }
     }
 
@@ -363,9 +361,9 @@ class PipelineSpec {
         fun `a policy handles too many events at once`() {
             val policy = GreedyPolicy()
             val pipeline = Pipeline(
-                listOf(DocilePlugin(policies = setOf(policy))),
-                listOf(renderer),
-                listOf(SourceFileSet.from(srcRoot)),
+                plugin = DocilePlugin(policies = setOf(policy)),
+                renderer = renderer,
+                sources = overwritingSourceSet,
                 request
             )
             val error = assertThrows<IllegalStateException> { pipeline() }
@@ -378,12 +376,12 @@ class PipelineSpec {
         fun `view is already registered`() {
             val viewClass = DeletedTypeView::class.java
             val pipeline = Pipeline(
-                listOf(DocilePlugin(
+                plugin = DocilePlugin(
                     views = setOf(viewClass),
                     viewRepositories = setOf(DeletedTypeRepository())
-                )),
-                listOf(renderer),
-                listOf(SourceFileSet.from(srcRoot)),
+                ),
+                renderer = renderer,
+                sources = overwritingSourceSet,
                 request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
@@ -391,5 +389,20 @@ class PipelineSpec {
                 .hasMessageThat()
                 .contains(viewClass.name)
         }
+    }
+}
+
+private fun assertTextIn(file: Path): StringSubject =
+    assertThat(file.readText())
+
+/**
+ * Ensures that paths generated by `@TempDir` parameter annotation are not
+ * the same, as it used to be prior to JUnit 5.8.
+ *
+ * @see <a href="https://github.com/junit-team/junit5/issues/1967">Resolved JUnit issue</a>
+ */
+private fun checkTemps(vararg path: Path) {
+    path.toList().zipWithNext().forEach {
+        assertThat(it.first).isNotEqualTo(it.second)
     }
 }
