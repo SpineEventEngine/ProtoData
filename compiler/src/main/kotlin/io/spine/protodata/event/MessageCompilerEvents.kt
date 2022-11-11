@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.events
+package io.spine.protodata.event
 
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Empty

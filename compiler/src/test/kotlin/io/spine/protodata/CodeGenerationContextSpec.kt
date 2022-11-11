@@ -32,7 +32,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
-import io.spine.protodata.events.CompilerEvents
+import io.spine.protodata.event.CompilerEvents
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.server.blackbox.BlackBox
 import org.junit.jupiter.api.Assertions.assertTrue
