@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.4.0</version>
+<version>0.4.1</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -199,6 +199,11 @@ all modules and does not describe the project structure per-subproject.
     <groupId>com.google.protobuf</groupId>
     <artifactId>protoc</artifactId>
     <version>3.19.6</version>
+  </dependency>
+  <dependency>
+    <groupId>io.gitlab.arturbosch.detekt</groupId>
+    <artifactId>detekt-cli</artifactId>
+    <version>1.21.0</version>
   </dependency>
   <dependency>
     <groupId>io.grpc</groupId>
