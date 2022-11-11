@@ -29,11 +29,12 @@ package io.spine.protodata.gradle.plugin
 import com.google.common.truth.Truth.assertThat
 import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
+import io.spine.testing.assertDoesNotExist
+import io.spine.testing.assertExists
 import io.spine.tools.gradle.task.BaseTaskName.build
 import io.spine.tools.gradle.task.TaskName
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
-import kotlin.test.assertTrue
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.TaskOutcome.SKIPPED
@@ -51,18 +52,13 @@ class PluginSpec {
 
     private val taskName: TaskName = TaskName { "launchProtoDataMain" }
 
-    private lateinit var projectDir: File
     private lateinit var project: GradleProject
+    private lateinit var projectDir: File
+    private lateinit var generatedDir: File
+    private lateinit var generatedProtoDir: File
+    private lateinit var generatedMainDir: File
     private lateinit var generatedJavaDir: File
     private lateinit var generatedKotlinDir: File
-
-    private fun assertExists(dir: File) {
-        assertTrue("`$dir` expected to exist, but it does not.") { dir.exists() }
-    }
-
-    private fun assertDoesNotExist(dir: File) {
-        assertTrue("`$dir` should not exist, but it does.") { dir.exists() }
-    }
 
     operator fun BuildResult.get(task: TaskName): TaskOutcome {
         val buildTask = task(task.path())
@@ -73,8 +69,11 @@ class PluginSpec {
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
         this.projectDir = projectDir
-        this.generatedJavaDir = projectDir.resolve("generated/main/java")
-        this.generatedKotlinDir  = projectDir.resolve("generated/main/kotlin")
+        this.generatedProtoDir = projectDir.resolve("build/generated-proto")
+        this.generatedDir = projectDir.resolve("generated")
+        this.generatedMainDir = generatedDir.resolve("main")
+        this.generatedJavaDir = generatedMainDir.resolve("java")
+        this.generatedKotlinDir  = generatedMainDir.resolve("kotlin")
     }
 
     @Test
@@ -136,6 +135,27 @@ class PluginSpec {
         val result = project.executeTask(build)
         assertThat(result[build]).isEqualTo(SUCCESS)
         assertExists(generatedKotlinDir)
+    }
+
+    @Test
+    @Disabled("Until access to repositories is simplified")
+    fun `copy 'grpc' directory from 'generated-proto' to 'generated'`() {
+        createProject("copy-grpc")
+        val result = project.executeTask(build)
+        assertThat(result[build]).isEqualTo(SUCCESS)
+
+        val parameterClass = "io/spine/protodata/test/Buz.java"
+        assertExists(generatedProtoDir.resolve("main/java/$parameterClass"))
+
+        val serviceClass = "io/spine/protodata/test/FizServiceGrpc.java"
+        assertExists(generatedProtoDir.resolve("main/grpc/$serviceClass"))
+
+        assertExists(generatedJavaDir)
+        assertExists(generatedJavaDir.resolve(parameterClass))
+
+        val generatedGrpcDir = generatedMainDir.resolve("grpc")
+        assertExists(generatedGrpcDir)
+        assertExists(generatedGrpcDir.resolve(serviceClass))
     }
 
     private fun createEmptyProject() {

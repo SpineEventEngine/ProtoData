@@ -26,7 +26,7 @@
 
 package io.spine.protodata.cli
 
-import io.spine.protodata.option.OptionsProvider
+import io.spine.option.OptionsProvider
 
 /**
  * A reflective builder for [OptionsProvider]s.

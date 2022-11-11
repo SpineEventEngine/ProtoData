@@ -26,37 +26,23 @@
 
 package io.spine.protodata.test
 
-import io.spine.core.External
-import io.spine.core.Subscribe
-import io.spine.protodata.TypeName
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.plugin.View
-import io.spine.protodata.plugin.ViewRepository
-import io.spine.server.entity.update
-import io.spine.server.route.EventRouting
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFileSet
+import io.spine.server.query.select
+import io.spine.tools.code.CommonLanguages.Java
 
-public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>() {
+/**
+ * A test [Renderer] which prepends underscore before an [InternalType] in all source files.
+ */
+public class UnderscorePrefixRenderer : Renderer(Java) {
 
-    @Subscribe
-    internal fun to(@External event: TypeEntered) {
-        update {
-            name = event.type.name
-            type = event.type
-        }
-    }
-}
-
-public class DeletedTypeRepository
-    : ViewRepository<TypeName, DeletedTypeView, DeletedType>() {
-
-    override fun setupEventRouting(routing: EventRouting<TypeName>) {
-        super.setupEventRouting(routing)
-        routing.route(TypeEntered::class.java) { e, _ ->
-            val name = e.type.name
-            return@route if (name.simpleName.endsWith("_")) {
-                setOf(name)
-            } else {
-                setOf()
+    override fun render(sources: SourceFileSet) {
+        val internalTypes = select<InternalType>().all()
+        internalTypes.forEach { internalType ->
+            val oldName = internalType.name.simpleName
+            val newName = "_$oldName"
+            sources.forEach {
+                it.overwrite(it.text().value.replace(oldName, newName))
             }
         }
     }

@@ -24,27 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.option
+package io.spine.protodata.config
 
-import com.google.protobuf.ExtensionRegistry
+import com.google.common.truth.Truth.assertThat
+import io.spine.protodata.config.ConfigurationFormat.JSON
+import io.spine.protodata.config.ConfigurationFormat.PLAIN
+import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
+import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
+import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
+import io.spine.protodata.config.ConfigurationFormat.YAML
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A service provider interface for custom Protobuf options.
- */
-public interface OptionsProvider {
+@DisplayName("`ConfigurationFormat` should")
+class ConfigurationFormatSpec {
 
-    /**
-     * Registers custom options in the given [registry].
-     *
-     * See the `registerAllExtensions(..)` method in the outer Java class generated from
-     * the file with the extensions.
-     *
-     * Example:
-     * ```kotlin
-     * override fun registerIn(registry: ExtensionRegistry) {
-     *     MyOptionsProto.registerAllExtensions(registry)
-     * }
-     * ```
-     */
-    public fun registerIn(registry: ExtensionRegistry)
+    @Test
+    fun `provide allowed extensions`() {
+        assertThat(RCF_UNKNOWN.extensions)
+            .isEmpty()
+
+        assertThat(JSON.extensions)
+            .containsExactly("json")
+        assertThat(PROTO_JSON.extensions)
+            .containsExactly("pb.json")
+        assertThat(PROTO_BINARY.extensions)
+            .containsExactly("pb", "bin")
+        assertThat(YAML.extensions)
+            .containsExactly("yml", "yaml")
+        assertThat(PLAIN.extensions)
+            .isEmpty()
+    }
 }

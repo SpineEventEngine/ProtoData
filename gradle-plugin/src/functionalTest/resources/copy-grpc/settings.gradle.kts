@@ -24,40 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
-
-import io.spine.core.External
-import io.spine.core.Subscribe
-import io.spine.protodata.TypeName
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.plugin.View
-import io.spine.protodata.plugin.ViewRepository
-import io.spine.server.entity.update
-import io.spine.server.route.EventRouting
-
-public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>() {
-
-    @Subscribe
-    internal fun to(@External event: TypeEntered) {
-        update {
-            name = event.type.name
-            type = event.type
-        }
-    }
-}
-
-public class DeletedTypeRepository
-    : ViewRepository<TypeName, DeletedTypeView, DeletedType>() {
-
-    override fun setupEventRouting(routing: EventRouting<TypeName>) {
-        super.setupEventRouting(routing)
-        routing.route(TypeEntered::class.java) { e, _ ->
-            val name = e.type.name
-            return@route if (name.simpleName.endsWith("_")) {
-                setOf(name)
-            } else {
-                setOf()
-            }
-        }
+pluginManagement {
+    repositories {
+        mavenLocal()
     }
 }

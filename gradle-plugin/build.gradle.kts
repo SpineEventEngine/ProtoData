@@ -29,7 +29,6 @@ import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.gradle.isSnapshot
-import org.gradle.kotlin.dsl.kotlin
 
 plugins {
     `java-gradle-plugin`
@@ -42,13 +41,16 @@ plugins {
 
 val spine = Spine(project)
 
-@Suppress("UNUSED_VARIABLE") // `test` and `functionalTest`
+@Suppress(
+    "UNUSED_VARIABLE" /* `test` and `functionalTest`*/,
+    "UnstableApiUsage" /* testing suites feature */
+)
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter(JUnit.version)
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}")
+                implementation(Kotlin.gradlePluginLib)
                 implementation(gradleKotlinDsl())
                 implementation(spine.pluginBase)
                 implementation(spine.pluginTestlib)
@@ -58,11 +60,11 @@ testing {
         val functionalTest by registering(JvmTestSuite::class) {
             useJUnitJupiter(JUnit.version)
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}")
-                implementation(spine.testlib)
+                implementation(Kotlin.gradlePluginLib)
+                implementation(Kotlin.testJUnit5)
                 implementation(spine.pluginBase)
+                implementation(spine.testlib)
                 implementation(spine.pluginTestlib)
-                implementation("org.jetbrains.kotlin:kotlin-test-junit5:${Kotlin.version}")
                 implementation(project(":gradle-plugin"))
             }
         }
@@ -78,7 +80,7 @@ dependencies {
     api(project(":gradle-api"))
 
     implementation(spine.toolBase)
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api:${Kotlin.version}")
+    implementation(Kotlin.gradlePluginApi)
 }
 
 val testsDependOnProjects = listOf(

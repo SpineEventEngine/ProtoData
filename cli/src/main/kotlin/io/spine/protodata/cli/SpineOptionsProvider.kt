@@ -28,7 +28,7 @@ package io.spine.protodata.cli
 
 import com.google.protobuf.ExtensionRegistry
 import io.spine.option.OptionsProto
-import io.spine.protodata.option.OptionsProvider
+import io.spine.option.OptionsProvider
 import io.spine.time.validation.TimeOptionsProto
 
 /**

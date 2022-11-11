@@ -30,7 +30,7 @@ import com.google.protobuf.StringValue;
 import io.spine.core.External;
 import io.spine.core.Subscribe;
 import io.spine.core.Where;
-import io.spine.protodata.FieldOptionDiscovered;
+import io.spine.protodata.event.FieldOptionDiscovered;
 import io.spine.protodata.plugin.View;
 import io.spine.protodata.plugin.ViewRepository;
 import io.spine.protodata.test.Annotated;

@@ -24,23 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.codegen.java.file
 
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.server.query.select
-import io.spine.tools.code.CommonLanguages.Java
+import com.google.protobuf.BoolValue
+import com.google.protobuf.StringValue
+import io.spine.protobuf.pack
+import io.spine.protodata.Option
 
-public class TestRenderer : Renderer(Java) {
+/**
+ * The option to instruct `protoc` to generate multiple Java files.
+ */
+public val javaMultipleFiles: Option = Option.newBuilder().apply {
+    name = "java_multiple_files"
+    value = BoolValue.of(true).pack()
+}.build()
 
-    override fun render(sources: SourceFileSet) {
-        val internalTypes = select<InternalType>().all()
-        internalTypes.forEach { internalType ->
-            val oldName = internalType.name.simpleName
-            val newName = "_$oldName"
-            sources.forEach {
-                it.overwrite(it.text().value.replace(oldName, newName))
-            }
-        }
-    }
-}
+/**
+ * Obtains an option to set the Java package with the given [name]
+ * for the generated code.
+ */
+public fun javaPackage(name: String): Option = Option.newBuilder().apply {
+    this.name = "java_package"
+    value = StringValue.of(name).pack()
+}.build()
+
+/**
+ * Obtains the option to set the [name] of the outer Java class.
+ */
+public fun javaOuterClassName(name: String): Option = Option.newBuilder().apply {
+    this.name = "java_outer_classname"
+    value = StringValue.of(name).pack()
+}.build()

@@ -24,19 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.events
+package io.spine.protodata.event
 
 import com.google.protobuf.Descriptors
 import io.spine.base.EventMessage
 import io.spine.protodata.ConstantName
 import io.spine.protodata.Documentation
 import io.spine.protodata.EnumConstant
-import io.spine.protodata.EnumConstantEntered
-import io.spine.protodata.EnumConstantExited
-import io.spine.protodata.EnumConstantOptionDiscovered
-import io.spine.protodata.EnumEntered
-import io.spine.protodata.EnumExited
-import io.spine.protodata.EnumOptionDiscovered
 import io.spine.protodata.EnumType
 import io.spine.protodata.File
 import io.spine.protodata.TypeName

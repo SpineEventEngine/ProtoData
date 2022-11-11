@@ -27,12 +27,11 @@
 package io.spine.protodata.renderer
 
 import com.google.common.annotations.VisibleForTesting
-import com.google.common.base.Preconditions.checkArgument
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
 import io.spine.util.theOnly
 import java.nio.charset.Charset
-import java.nio.file.Files
+import java.nio.file.Files.walk
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.exists
@@ -85,8 +84,7 @@ internal constructor(
             if (source != target) {
                 checkTarget(target)
             }
-            val files = Files
-                .walk(source)
+            val files = walk(source)
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read(source.relativize(it), source) }
                 .collect(toImmutableSet())
@@ -106,19 +104,6 @@ internal constructor(
         @VisibleForTesting
         internal fun from(sourceAndTarget: Path): SourceFileSet =
             from(sourceAndTarget, sourceAndTarget)
-
-        private fun checkTarget(targetRoot: Path) {
-            if (targetRoot.exists()) {
-                val target = targetRoot.toFile()
-                checkArgument(
-                    target.isDirectory, "Target root `%s` must be a directory.", targetRoot
-                )
-                val children = target.list()!!
-                checkArgument(children.isEmpty(),
-                    "Target directory `%s` must be empty. Found children: %s.",
-                    targetRoot, children.joinToString())
-            }
-        }
     }
 
     /**
@@ -138,8 +123,9 @@ internal constructor(
      */
     public fun file(path: Path): SourceFile =
         findFile(path).orElseThrow {
-            IllegalArgumentException("File not found: `$path`." +
-                    " Source root: `$sourceRoot`. Target root: `$targetRoot`.")
+            IllegalArgumentException(
+                "File not found: `$path`. Source root: `$sourceRoot`. Target root: `$targetRoot`."
+            )
         }
 
     /**
@@ -236,4 +222,23 @@ internal constructor(
 
 private fun Path.canonical(): Path {
     return toAbsolutePath().normalize()
+}
+
+private fun checkTarget(targetRoot: Path) {
+    if (targetRoot.exists()) {
+        val target = targetRoot.toFile()
+        require(target.isDirectory) {
+            "Target root `$targetRoot` must be a directory."
+        }
+        val children = target.list()!!
+        require(children.isEmpty()) {
+            val nl = System.lineSeparator()
+            val ls = children.joinToString(
+                separator = nl,
+                transform = { f -> "    $f" }
+            )
+            "Target directory `$targetRoot` must be empty. Found inside:$nl" +
+            "${ls}."
+        }
+    }
 }

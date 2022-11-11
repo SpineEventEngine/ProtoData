@@ -32,14 +32,16 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
-import io.spine.protodata.events.CompilerEvents
+import io.spine.protodata.event.CompilerEvents
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.server.blackbox.BlackBox
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat as assertMessage
 
-class `'Code Generation' context should` {
+@DisplayName("`Code Generation` context should")
+class CodeGenerationContextSpec {
 
     @Test
     fun `contain 'ProtobufSource' file view`() {

@@ -24,16 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.config
 
 import com.google.common.collect.ImmutableSet
 import com.google.common.truth.Truth.assertThat
 import io.spine.base.EventMessage
-import io.spine.protodata.config.ConfigFile
-import io.spine.protodata.config.ConfigurationFormat
-import io.spine.protodata.config.FileConfigDiscovered
-import io.spine.protodata.config.RawConfig
-import io.spine.protodata.config.RawConfigDiscovered
+import io.spine.protodata.ConfigurationContext
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.event.EventDispatcher
@@ -41,9 +37,11 @@ import io.spine.server.type.EventClass
 import io.spine.server.type.EventEnvelope
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-class `'ConfigurationContext' should` {
+@DisplayName("`ConfigurationContext` should")
+class ConfigurationContextSpec {
 
     private lateinit var context: BoundedContext
     private lateinit var subscriber: TestSubscriber

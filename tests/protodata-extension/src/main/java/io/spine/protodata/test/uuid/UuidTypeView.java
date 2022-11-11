@@ -29,7 +29,7 @@ package io.spine.protodata.test.uuid;
 import io.spine.core.External;
 import io.spine.core.Subscribe;
 import io.spine.core.Where;
-import io.spine.protodata.FieldEntered;
+import io.spine.protodata.event.FieldEntered;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.plugin.View;
 import io.spine.protodata.test.UuidType;

@@ -41,10 +41,12 @@ import io.spine.protodata.test.TopLevelMessage.NestedEnum
 import io.spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage
 import io.spine.protodata.test.packageless.GlobalMessage
 import io.spine.protodata.test.packageless.GlobalMessage.LocalMessage
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class `AST extensions should` {
+@DisplayName("AST extensions should")
+class AstExtensionsSpec {
 
     @Nested
     inner class `Check if a field is` {

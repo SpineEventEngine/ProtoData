@@ -26,7 +26,7 @@
 
 package io.spine.protodata.test.uuid;
 
-import io.spine.protodata.FieldEntered;
+import io.spine.protodata.event.FieldEntered;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.plugin.ViewRepository;
 import io.spine.protodata.test.UuidType;
