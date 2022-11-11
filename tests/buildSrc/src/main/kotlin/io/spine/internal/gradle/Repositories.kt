@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:Suppress("TooManyFunctions") // Deprecated functions will be kept for a while.
+
 package io.spine.internal.gradle
 
 import io.spine.internal.gradle.publish.CloudRepo
