@@ -27,8 +27,8 @@
 package io.spine.protodata.test.annotation;
 
 import io.spine.protodata.codegen.java.JavaRenderer;
+import io.spine.protodata.renderer.SourceFileKt;
 import io.spine.protodata.renderer.SourceFileSet;
-import io.spine.protodata.renderer.at;
 import io.spine.protodata.test.Annotated;
 import io.spine.protodata.test.FieldId;
 
@@ -73,9 +73,9 @@ public final class AnnotationRenderer extends JavaRenderer {
             return;
         }
 
-        sourceSet.file(path)
-                 .at(getter)
-                 .withExtraIndentation(INDENT_LEVEL)
-                 .add('@' + field.getJavaAnnotation());
+
+        SourceFileKt.at(sourceSet.file(path), getter)
+                    .withExtraIndentation(INDENT_LEVEL)
+                    .add('@' + field.getJavaAnnotation());
     }
 }

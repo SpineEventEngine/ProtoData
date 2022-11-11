@@ -32,13 +32,15 @@ import io.spine.protodata.TypeName;
 import io.spine.protodata.codegen.java.ClassName;
 import io.spine.protodata.codegen.java.JavaRenderer;
 import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.protodata.renderer.SourceFileKt;
 import io.spine.protodata.renderer.SourceFileSet;
-import io.spine.protodata.renderer.at;
 import io.spine.protodata.test.UuidType;
 
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.UUID;
+
+import static io.spine.protodata.renderer.SourceFileKt.at;
 
 /**
  * A renderer which adds the {@code randomId()} factory methods to the UUID types.
@@ -86,10 +88,9 @@ public final class UuidJavaRenderer extends JavaRenderer {
                 continue;
             }
 
-            sources.file(javaFilePath)
-                   .at(classScope)
-                   .withExtraIndentation(INDENT_LEVEL)
-                   .add(lines);
+            SourceFileKt.at(sources.file(javaFilePath), classScope)
+                        .withExtraIndentation(INDENT_LEVEL)
+                        .add(lines);
         }
     }
 }
