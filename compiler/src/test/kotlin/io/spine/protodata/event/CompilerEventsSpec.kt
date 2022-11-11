@@ -24,51 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.event
 
-import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
+import com.google.common.truth.Truth
+import com.google.common.truth.extensions.proto.ProtoTruth
 import com.google.protobuf.BoolValue
-import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
-import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS
-import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
+import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.EnumValue
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.spine.base.EventMessage
-import io.spine.option.OptionsProto.REQUIRED_FIELD_NUMBER
-import io.spine.option.OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
-import io.spine.protobuf.AnyPacker.unpack
-import io.spine.protodata.event.CompilerEvents
-import io.spine.protodata.event.EnumConstantEntered
-import io.spine.protodata.event.EnumConstantExited
-import io.spine.protodata.event.EnumEntered
-import io.spine.protodata.event.EnumExited
-import io.spine.protodata.event.FieldEntered
-import io.spine.protodata.event.FieldExited
-import io.spine.protodata.event.FieldOptionDiscovered
-import io.spine.protodata.event.FileEntered
-import io.spine.protodata.event.FileExited
-import io.spine.protodata.event.FileOptionDiscovered
-import io.spine.protodata.event.OneofGroupEntered
-import io.spine.protodata.event.OneofGroupExited
-import io.spine.protodata.event.RpcEntered
-import io.spine.protodata.event.RpcExited
-import io.spine.protodata.event.RpcOptionDiscovered
-import io.spine.protodata.event.ServiceEntered
-import io.spine.protodata.event.ServiceExited
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.event.TypeExited
+import io.spine.option.OptionsProto
+import io.spine.protobuf.AnyPacker
+import io.spine.protodata.MessageType
+import io.spine.protodata.TypeName
 import io.spine.protodata.test.DoctorProto
-import io.spine.testing.Correspondences.type
+import io.spine.testing.Correspondences
 import io.spine.type.KnownTypes
 import kotlin.reflect.KClass
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-
 
 @DisplayName("`CompilerEvents` should")
 class CompilerEventsSpec {
@@ -106,16 +84,16 @@ class CompilerEventsSpec {
         @Test
         fun `standard file option events`() {
             val event = events.findMultipleFilesOptionEvent()
-            assertThat(event).isNotNull()
-            assertThat(event.option<BoolValue>().value)
+            ProtoTruth.assertThat(event).isNotNull()
+            Truth.assertThat(event.option<BoolValue>().value)
                 .isTrue()
         }
 
         @Test
         fun `custom file option events`() {
             val event = events.findTypeUrlPrefixEvent()
-            assertThat(event).isNotNull()
-            assertThat(event.option<StringValue>().value)
+            ProtoTruth.assertThat(event).isNotNull()
+            Truth.assertThat(event.option<StringValue>().value)
                 .isEqualTo("type.spine.io")
         }
 
@@ -145,8 +123,8 @@ class CompilerEventsSpec {
         @Test
         fun `custom field option events`() {
             val event = events.findRequiredFieldOptionEvent()
-            assertThat(event).isNotNull()
-            assertThat(event.option<BoolValue>().value).isTrue()
+            ProtoTruth.assertThat(event).isNotNull()
+            Truth.assertThat(event.option<BoolValue>().value).isTrue()
         }
 
         @Test
@@ -198,31 +176,33 @@ class CompilerEventsSpec {
     @Test
     fun `include 'rpc' options`() {
         val event = emitted<RpcOptionDiscovered>()
-        assertThat(event.option.name)
+        Truth.assertThat(event.option.name)
             .isEqualTo("idempotency_level")
-        assertThat(unpack(event.option.value))
-            .isEqualTo(EnumValue.newBuilder()
-                .setName(NO_SIDE_EFFECTS.name)
-                .setNumber(NO_SIDE_EFFECTS_VALUE)
+        ProtoTruth.assertThat(AnyPacker.unpack(event.option.value))
+            .isEqualTo(
+                EnumValue.newBuilder()
+                .setName(DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS.name)
+                .setNumber(DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE)
                 .build())
     }
 
     @Test
     fun `include message doc info`() {
         val typeEntered = emitted<TypeEntered>()
-        assertThat(typeEntered.type)
+        ProtoTruth.assertThat(typeEntered.type)
             .comparingExpectedFieldsOnly()
-            .isEqualTo(MessageType.newBuilder()
+            .isEqualTo(
+                MessageType.newBuilder()
                 .setName(TypeName.newBuilder().setSimpleName("Journey"))
                 .build())
         val doc = typeEntered.type.doc
-        assertThat(doc.leadingComment.split(nl))
+        Truth.assertThat(doc.leadingComment.split(nl))
             .containsExactly("A Doctor's journey.", "", "A test type", "")
-        assertThat(doc.trailingComment)
+        Truth.assertThat(doc.trailingComment)
             .isEqualTo("Impl note: test type.")
-        assertThat(doc.detachedCommentList[0])
+        Truth.assertThat(doc.detachedCommentList[0])
             .isEqualTo("Detached 1.")
-        assertThat(doc.detachedCommentList[1].split(nl))
+        Truth.assertThat(doc.detachedCommentList[1].split(nl))
             .containsExactly(
                 "Detached 2.",
                 "Indentation is not preserved in Protobuf.",
@@ -244,8 +224,8 @@ class CompilerEventsSpec {
 
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
-        assertThat(events)
-            .comparingElementsUsing(type<EventMessage>())
+        ProtoTruth.assertThat(events)
+            .comparingElementsUsing(Correspondences.type<EventMessage>())
             .containsAtLeastElementsIn(javaClasses)
             .inOrder()
     }
@@ -275,14 +255,14 @@ private inline fun <reified T : Message> FieldOptionDiscovered?.option() : T {
 }
 
 private fun List<EventMessage>.findMultipleFilesOptionEvent() : FileOptionDiscovered? = find {
-    it is FileOptionDiscovered && it.option.number == JAVA_MULTIPLE_FILES_FIELD_NUMBER
+    it is FileOptionDiscovered && it.option.number == DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
 } as FileOptionDiscovered?
 
 private fun List<EventMessage>.findTypeUrlPrefixEvent(): FileOptionDiscovered? = find {
-    it is FileOptionDiscovered && it.option.number == TYPE_URL_PREFIX_FIELD_NUMBER
+    it is FileOptionDiscovered && it.option.number == OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
 } as FileOptionDiscovered?
 
 private fun List<EventMessage>.findRequiredFieldOptionEvent(): FieldOptionDiscovered? = find {
-    it is FieldOptionDiscovered && it.option.number == REQUIRED_FIELD_NUMBER
+    it is FieldOptionDiscovered && it.option.number == OptionsProto.REQUIRED_FIELD_NUMBER
 } as FieldOptionDiscovered?
 

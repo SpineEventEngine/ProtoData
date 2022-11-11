@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.config
 
 import com.google.common.truth.Truth.assertThat
 import io.spine.protodata.config.ConfigurationFormat.JSON
@@ -33,7 +33,6 @@ import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
 import io.spine.protodata.config.ConfigurationFormat.YAML
-import io.spine.protodata.config.extensions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 

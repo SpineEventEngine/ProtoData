@@ -24,15 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.config
 
 import com.google.common.collect.ImmutableSet
 import com.google.common.truth.Truth.assertThat
 import io.spine.base.EventMessage
-import io.spine.protodata.config.ConfigFile
-import io.spine.protodata.config.ConfigurationFormat
+import io.spine.protodata.ConfigurationContext
 import io.spine.protodata.config.event.FileConfigDiscovered
-import io.spine.protodata.config.RawConfig
 import io.spine.protodata.config.event.RawConfigDiscovered
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder

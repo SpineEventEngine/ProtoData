@@ -24,10 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.renderer
 
 import com.google.common.truth.Truth8.assertThat
-import io.spine.protodata.renderer.SourceFileSet
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.div
