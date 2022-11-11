@@ -149,7 +149,10 @@ public class Extension(internal val project: Project): CodegenSettings {
     internal fun targetDir(sourceSet: SourceSet): Provider<List<Directory>> =
         compileDir(sourceSet, targetBaseDirProperty)
 
-    private fun compileDir(sourceSet: SourceSet, base: DirectoryProperty): Provider<List<Directory>> {
+    private fun compileDir(
+        sourceSet: SourceSet,
+        base: DirectoryProperty
+    ): Provider<List<Directory>> {
         val sourceSetDir = base.dir(sourceSet.name)
         return sourceSetDir.map { root -> subDirs.map { root.dir(it) } }
     }
