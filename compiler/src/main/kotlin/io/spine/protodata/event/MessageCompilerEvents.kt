@@ -31,19 +31,10 @@ import com.google.protobuf.Empty
 import io.spine.base.EventMessage
 import io.spine.protodata.Documentation
 import io.spine.protodata.Field
-import io.spine.protodata.FieldEntered
-import io.spine.protodata.FieldExited
-import io.spine.protodata.FieldOptionDiscovered
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.OneofGroup
-import io.spine.protodata.OneofGroupEntered
-import io.spine.protodata.OneofGroupExited
-import io.spine.protodata.OneofOptionDiscovered
-import io.spine.protodata.TypeEntered
-import io.spine.protodata.TypeExited
 import io.spine.protodata.TypeName
-import io.spine.protodata.TypeOptionDiscovered
 import io.spine.protodata.name
 
 /**

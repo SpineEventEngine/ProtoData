@@ -31,14 +31,8 @@ import io.spine.base.EventMessage
 import io.spine.protodata.Documentation
 import io.spine.protodata.File
 import io.spine.protodata.Rpc
-import io.spine.protodata.RpcEntered
-import io.spine.protodata.RpcExited
-import io.spine.protodata.RpcOptionDiscovered
 import io.spine.protodata.Service
-import io.spine.protodata.ServiceEntered
-import io.spine.protodata.ServiceExited
 import io.spine.protodata.ServiceName
-import io.spine.protodata.ServiceOptionDiscovered
 import io.spine.protodata.cardinality
 import io.spine.protodata.name
 

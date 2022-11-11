@@ -28,6 +28,22 @@ package io.spine.protodata
 
 import io.spine.core.External
 import io.spine.core.Subscribe
+import io.spine.protodata.event.EnumConstantEntered
+import io.spine.protodata.event.EnumConstantOptionDiscovered
+import io.spine.protodata.event.EnumEntered
+import io.spine.protodata.event.EnumOptionDiscovered
+import io.spine.protodata.event.FieldEntered
+import io.spine.protodata.event.FieldOptionDiscovered
+import io.spine.protodata.event.FileEntered
+import io.spine.protodata.event.FileOptionDiscovered
+import io.spine.protodata.event.OneofGroupEntered
+import io.spine.protodata.event.OneofOptionDiscovered
+import io.spine.protodata.event.RpcEntered
+import io.spine.protodata.event.RpcOptionDiscovered
+import io.spine.protodata.event.ServiceEntered
+import io.spine.protodata.event.ServiceOptionDiscovered
+import io.spine.protodata.event.TypeEntered
+import io.spine.protodata.event.TypeOptionDiscovered
 import io.spine.protodata.plugin.View
 import io.spine.server.entity.update
 

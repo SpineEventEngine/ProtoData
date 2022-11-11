@@ -121,7 +121,7 @@ object BuildSettings {
      * See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
      *     https://github.com/protocolbuffers/protobuf/issues/10593
      */
-    val protocArtifact = "com.google.protobuf:protoc:3.19.6"
+    const val protocArtifact = "com.google.protobuf:protoc:3.19.6"
 }
 
 subprojects {

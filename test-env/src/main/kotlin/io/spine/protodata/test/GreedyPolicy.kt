@@ -27,7 +27,7 @@
 package io.spine.protodata.test
 
 import io.spine.core.External
-import io.spine.protodata.TypeEntered
+import io.spine.protodata.event.TypeEntered
 import io.spine.server.event.Just
 import io.spine.protodata.plugin.Policy
 import io.spine.server.event.React

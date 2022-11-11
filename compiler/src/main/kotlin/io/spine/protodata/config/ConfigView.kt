@@ -28,6 +28,8 @@ package io.spine.protodata.config
 
 import io.spine.core.External
 import io.spine.core.Subscribe
+import io.spine.protodata.config.event.FileConfigDiscovered
+import io.spine.protodata.config.event.RawConfigDiscovered
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.entity.alter
