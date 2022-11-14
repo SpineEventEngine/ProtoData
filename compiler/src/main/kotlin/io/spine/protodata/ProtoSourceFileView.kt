@@ -48,7 +48,7 @@ import io.spine.protodata.plugin.View
 import io.spine.server.entity.update
 
 /**
- * A view, which collects information about a Protobuf source file.
+ * A view which collects information about a Protobuf source file.
  */
 internal class ProtoSourceFileView
     : View<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
