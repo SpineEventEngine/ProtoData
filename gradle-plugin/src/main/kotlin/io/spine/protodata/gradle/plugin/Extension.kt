@@ -43,7 +43,15 @@ import org.gradle.kotlin.dsl.listProperty
 /**
  * Default subdirectories under a generated source set.
  */
-private val defaultSubdirectories = listOf("java", "kotlin")
+private val defaultSubdirectories = listOf(
+    "java",
+    "kotlin",
+    "grpc",
+    "js",
+    "dart",
+    "spine",
+    "protodata"
+)
 
 /**
  * The default name of the output directory of ProtoData placed under the project root.
@@ -134,23 +142,28 @@ public class Extension(internal val project: Project): CodegenSettings {
     }
 
     /**
-     * Obtains the source directory for the given source set.
+     * Obtains the source directories for the given source set.
      *
      * @see srcBaseDir for the rules for the source dir construction
      */
-    internal fun sourceDir(sourceSet: SourceSet): Provider<List<Directory>> =
+    internal fun sourceDirs(sourceSet: SourceSet): Provider<List<Directory>> =
         compileDir(sourceSet, srcBaseDirProperty)
 
     /**
-     * Obtains the target directory for code generation.
+     * Obtains the target directories for code generation.
      *
      * @see targetBaseDir for the rules for the target dir construction
      */
-    internal fun targetDir(sourceSet: SourceSet): Provider<List<Directory>> =
+    internal fun targetDirs(sourceSet: SourceSet): Provider<List<Directory>> =
         compileDir(sourceSet, targetBaseDirProperty)
 
-    private fun compileDir(sourceSet: SourceSet, base: DirectoryProperty): Provider<List<Directory>> {
+    private fun compileDir(
+        sourceSet: SourceSet,
+        base: DirectoryProperty
+    ): Provider<List<Directory>> {
         val sourceSetDir = base.dir(sourceSet.name)
-        return sourceSetDir.map { root -> subDirs.map { root.dir(it) } }
+        return sourceSetDir.map { root: Directory ->
+            subDirs.map { root.dir(it) }
+        }
     }
 }
