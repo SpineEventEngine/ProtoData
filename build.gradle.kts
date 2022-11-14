@@ -345,9 +345,3 @@ fun Subproject.configureProtoc(protocArtifact: String) {
         }
     }
 }
-
-doctor {
-    javaHome {
-        failOnError.set(false)
-    }
-}
