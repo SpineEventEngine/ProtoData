@@ -69,42 +69,6 @@ public abstract class LaunchProtoData : JavaExec() {
     internal lateinit var requestFile: Provider<RegularFile>
 
     /**
-     * The path to the directory with the generated source code.
-     *
-     * May not be available, if `protoc` built-ins were turned off, resulting in no source code
-     * being generated. In such a mode `protoc` worked only generating descriptor set files.
-     *
-     * This property is deprecated. [sources] should be used instead of it. Accessing this property
-     * delegates to [sources].
-     */
-    @get:InputDirectory
-    @get:Optional
-    @Deprecated("Use `sources` instead.")
-    internal var source: Provider<Directory>
-        set(value) {
-            sources = value.map { listOf(it) }
-        }
-        get() {
-            return sources.map { it.first() }
-        }
-
-    /**
-     * The path to the directory with the processed source code.
-     *
-     * This property is deprecated. [targets] should be used instead of it. Accessing this property
-     * delegates to [targets].
-     */
-    @get:OutputDirectory
-    @Deprecated("Use `targets` instead.")
-    internal var target: Provider<Directory>
-        set(value) {
-            targets = value.map { listOf(it) }
-        }
-        get() {
-            return targets.map { it.first() }
-        }
-
-    /**
      * The paths to the directories with the generated source code.
      *
      * May not be available, if `protoc` built-ins were turned off, resulting in no source code
@@ -172,8 +136,8 @@ public abstract class LaunchProtoData : JavaExec() {
 
             yield("--ignore-missing")
         }.asIterable()
-        if (logger.isDebugEnabled) {
-            logger.debug("ProtoData command for ${path}: ${command.joinToString(separator = " ")}")
+        if (logger.isInfoEnabled) {
+            logger.info("ProtoData command for `${path}`: ${command.joinToString(separator = " ")}")
         }
         classpath(protoDataConfig)
         classpath(userClasspathConfig)

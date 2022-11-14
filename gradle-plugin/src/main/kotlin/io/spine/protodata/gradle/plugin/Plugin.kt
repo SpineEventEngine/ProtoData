@@ -167,8 +167,8 @@ private fun Project.createLaunchTask(ext: Extension, sourceSet: SourceSet): Laun
         plugins = ext.plugins
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)
-        sources = ext.sourceDir(sourceSet)
-        targets = ext.targetDir(sourceSet)
+        sources = ext.sourceDirs(sourceSet)
+        targets = ext.targetDirs(sourceSet)
         protoDataConfig = artifactConfig
         userClasspathConfig = userCpConfig
         project.afterEvaluate {
@@ -187,7 +187,7 @@ private fun Project.createCleanTask(ext: Extension, sourceSet: SourceSet) {
     val project = this
     val taskName = CleanTask.nameFor(sourceSet)
     tasks.create<Delete>(taskName) {
-        delete(ext.targetDir(sourceSet))
+        delete(ext.targetDirs(sourceSet))
 
         tasks.getByName("clean").dependsOn(this)
         val launchTask = LaunchTask.get(project, sourceSet)
@@ -288,8 +288,8 @@ private fun Project.configureSourceSets(extension: Extension) {
 }
 
 private fun Extension.configureSourceSet(sourceSet: SourceSet) {
-    val sourceDirs = sourceDir(sourceSet).getOrElse(listOf())
-    val targetDirs = targetDir(sourceSet).get()
+    val sourceDirs = sourceDirs(sourceSet).getOrElse(listOf())
+    val targetDirs = targetDirs(sourceSet).get()
 
     sourceSet.java.srcDir(targetDirs)
 
