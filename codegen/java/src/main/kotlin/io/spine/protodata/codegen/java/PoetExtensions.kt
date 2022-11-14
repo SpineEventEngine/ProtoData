@@ -30,7 +30,7 @@ package io.spine.protodata.codegen.java
 
 import com.google.common.collect.ImmutableList
 import com.squareup.javapoet.CodeBlock
-import io.spine.protodata.renderer.lineSplitter
+import io.spine.protodata.renderer.SourceFile
 
 /**
  * Splits this `CodeBlock` into lines.
@@ -40,6 +40,6 @@ public fun CodeBlock.lines(): ImmutableList<String> {
     if (code.isEmpty()) {
         return ImmutableList.of()
     }
-    val lines = lineSplitter.split(code)
+    val lines = SourceFile.lineSplitter.split(code)
     return ImmutableList.copyOf(lines)
 }

@@ -30,7 +30,6 @@ import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.renderer.at
 import javax.annotation.Generated
 
 /**
