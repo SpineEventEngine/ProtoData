@@ -61,7 +61,7 @@ import kotlin.system.exitProcess
 /**
  * Launches the CLI application.
  *
- * When the application completes, or an unhandled error occurs, exits the process.
+ * When the application is done, or an unhandled error occurs, exits the process.
  */
 public fun main(args: Array<String>): Unit =
     Run(readVersion()).main(args)
@@ -69,7 +69,7 @@ public fun main(args: Array<String>): Unit =
 private fun readVersion(): String = Version.fromManifestOf(Run::class.java).value
 
 /**
- * The main CLI command, which performs the ProtoData code generation tasks.
+ * The main CLI command which performs the ProtoData code generation tasks.
  *
  * The command accepts class names for the service provider interface implementations via the CLI
  * parameters, such as `--plugin`, `--renderer`, and `--option-provider`, all of which
@@ -347,7 +347,7 @@ internal class Run(version: String) : CliktCommand(
 }
 
 /**
- * Print the error [message] to the screen.
+ * Prints the given error [message] to the screen.
  */
 private fun printError(message: String?) = TermUi.echo(message, err = true)
 
