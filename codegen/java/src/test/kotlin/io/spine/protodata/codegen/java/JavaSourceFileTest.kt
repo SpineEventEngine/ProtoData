@@ -35,9 +35,7 @@ import io.spine.protodata.codegen.java.TypedInsertionPoint.ENUM_SCOPE
 import io.spine.protodata.codegen.java.TypedInsertionPoint.MESSAGE_IMPLEMENTS
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.renderer.at
 import io.spine.protodata.renderer.codeLine
-import io.spine.protodata.renderer.lines
 import kotlin.io.path.Path
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested

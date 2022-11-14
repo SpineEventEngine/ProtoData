@@ -157,6 +157,10 @@ internal class Run(version: String) : CliktCommand(
         the number of directories must match the number of `--target-root` directories; source and
         target directories are paired up according to the order they are provided in, so that
         the files from first source are written to the first target and so on.
+        
+        When specifying multiple directories, some of them are allowed to be non-existent. They will
+        just be ignored along with their paired targets. But at least one directory must exist. 
+        Otherwise, the process will end up with an error.
         """.ti()
     ).path(
         canBeFile = false,
