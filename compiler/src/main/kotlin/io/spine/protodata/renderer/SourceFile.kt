@@ -171,7 +171,7 @@ private constructor(
     }
 
     /**
-     * Returns the entire content of this file.
+     * Obtains the entire content of this file.
      */
     public fun code(): String {
         initializeCode()
