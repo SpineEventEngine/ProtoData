@@ -64,7 +64,7 @@ class Spine(p: ExtensionAware) {
         const val protoData = "0.3.0"
 
         /**
-         * The default version  of `base` to use.
+         * The default version of `base` to use.
          * @see [Spine.base]
          */
         const val base = "2.0.0-SNAPSHOT.130"
@@ -179,7 +179,7 @@ class Spine(p: ExtensionAware) {
 
     /**
      *  Does not allow re-definition via a project property.
-     *  Please change [DefaultVersion.javadocTools].                     ˚
+     *  Please change [DefaultVersion.javadocTools].
      */
     val javadocTools = "$toolsGroup::${DefaultVersion.javadocTools}"
 
