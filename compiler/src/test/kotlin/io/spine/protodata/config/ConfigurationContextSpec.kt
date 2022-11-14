@@ -30,6 +30,8 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.truth.Truth.assertThat
 import io.spine.base.EventMessage
 import io.spine.protodata.ConfigurationContext
+import io.spine.protodata.config.event.FileConfigDiscovered
+import io.spine.protodata.config.event.RawConfigDiscovered
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.event.EventDispatcher

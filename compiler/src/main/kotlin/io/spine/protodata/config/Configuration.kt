@@ -28,6 +28,8 @@ package io.spine.protodata.config
 
 import io.spine.annotation.Internal
 import io.spine.base.EventMessage
+import io.spine.protodata.config.event.FileConfigDiscovered
+import io.spine.protodata.config.event.RawConfigDiscovered
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
