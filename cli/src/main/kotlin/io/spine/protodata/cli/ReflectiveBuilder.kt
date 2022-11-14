@@ -58,7 +58,7 @@ internal open class ReflectiveBuilder<T: Any> {
     private fun create(cls: KClass<T>): T {
         val ctor = cls.constructors.find { it.visibility.isPublic() && it.parameters.isEmpty() }
         check(ctor != null) {
-            "Class `${cls.qualifiedName} should have a public zero-parameter constructor.`"
+            "Class `${cls.qualifiedName}` should have a public zero-parameter constructor."
         }
         return ctor.call()
     }
