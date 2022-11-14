@@ -340,6 +340,7 @@ internal class Run(version: String) : CliktCommand(
         try {
             return createByName(className, classLoader)
         } catch (e: ClassNotFoundException) {
+            printError(e.stackTraceToString())
             printError(e.message)
             printError("Please add the required class `$className` to the user classpath.")
             if (classPath != null) {
