@@ -37,6 +37,7 @@ import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.TaskOutcome.SKIPPED
@@ -140,11 +141,13 @@ class PluginSpec {
     }
 
     @Test
-    @Disabled("Until access to repositories is simplified")
     fun `copy 'grpc' directory from 'generated-proto' to 'generated'`() {
         createProject("copy-grpc")
+
         val result = project.executeTask(build)
         assertThat(result[build]).isEqualTo(SUCCESS)
+
+        printFilteredBuildOutput(projectDir, result)
 
         val parameterClass = "io/spine/protodata/test/Buz.java"
         assertExists(generatedProtoDir.resolve("main/java/$parameterClass"))
@@ -159,6 +162,7 @@ class PluginSpec {
         assertExists(generatedGrpcDir)
         assertExists(generatedGrpcDir.resolve(serviceClass))
     }
+
 
     private fun createEmptyProject() {
         createProject("empty-test")
@@ -182,6 +186,7 @@ class PluginSpec {
             .fromResources(resourceDir)
             .replace("@PROTODATA_PLUGIN_ID@", GRADLE_PLUGIN_ID)
             .replace("@PROTODATA_VERSION@", version)
+            .withLoggingLevel(LogLevel.INFO)
             /* Uncomment the following if you need to debug the build process.
                Please note that:
                  1) Test will run much slower.
@@ -192,4 +197,20 @@ class PluginSpec {
             .copyBuildSrc()
         project = builder.create()
     }
+}
+
+/**
+ * Prints console output produced by the build represented by the given [result].
+ *
+ * The output replaces `projectDir` name with ellipses.
+ */
+private fun printFilteredBuildOutput(projectDir: File, result: BuildResult) {
+    println("ProtoData-related build output:")
+    println(
+        result.output.split(System.lineSeparator())
+            .filter { line -> line.contains("ProtoData") }
+            .joinToString(System.lineSeparator()) { line ->
+                line.replace(projectDir.toString(), "/...")
+            }
+    )
 }
