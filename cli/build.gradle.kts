@@ -35,6 +35,7 @@ plugins {
     `build-proto-model`
     `maven-publish`
     id("com.github.johnrengelman.shadow").version("7.1.2")
+    `detekt-code-analysis`
     jacoco
 }
 

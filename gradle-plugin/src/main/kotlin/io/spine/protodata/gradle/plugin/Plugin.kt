@@ -24,6 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Performs many Gradle configuration routines via extension functions.
+@file:Suppress("TooManyFunctions")
+
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.annotations.VisibleForTesting

@@ -45,14 +45,13 @@ internal val FileDescriptor.outerClassName: String
  */
 internal val FileDescriptor.outerClass: Class<*>?
     get() {
-        val outerClass: Class<*>?
-        try {
+        return try {
             val classLoader = javaClass.classLoader
-            outerClass = classLoader.loadClass(outerClassName)
-        } catch (e: ClassNotFoundException) {
-            return null
+            val outerClass = classLoader.loadClass(outerClassName)
+            outerClass
+        } catch (ignored: ClassNotFoundException) {
+            null
         }
-        return outerClass
     }
 
 /**
@@ -63,10 +62,8 @@ internal val FileDescriptor.outerClass: Class<*>?
  * @throws IllegalStateException if the outer class for this proto file does not exist
  */
 internal fun FileDescriptor.registerAllExtensions(registry: ExtensionRegistry) {
-    if (outerClass == null) {
-        throw IllegalStateException(
-            "The outer class `$outerClassName` for the file `$name` does not exist."
-        )
+    check(outerClass != null) {
+        "The outer class `$outerClassName` for the file `$name` does not exist."
     }
     val method = outerClass!!.getDeclaredMethod(
         "registerAllExtensions", ExtensionRegistry::class.java

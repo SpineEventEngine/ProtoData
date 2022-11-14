@@ -41,7 +41,6 @@ import io.spine.protodata.FieldName
 import io.spine.string.camelCase
 import kotlin.reflect.KClass
 
-private const val COPY_OF = "copyOf"
 private const val OF = "of"
 
 private val immutableListClass = ClassName(ImmutableList::class)

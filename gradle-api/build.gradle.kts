@@ -25,6 +25,7 @@
  */
 
 plugins {
+    `detekt-code-analysis`
     jacoco
 }
 

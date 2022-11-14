@@ -33,6 +33,7 @@ import io.spine.internal.gradle.publish.PublishingRepos
 
 plugins {
     `build-proto-model`
+    `detekt-code-analysis`
     jacoco
 }
 
