@@ -223,16 +223,7 @@ internal class Run(version: String) : CliktCommand(
         completionCandidates = CompletionCandidates.Fixed(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }.toSet()
     ))
-
-    private val allowMissingDirs: Boolean by option("--ignore-missing", "-i",
-        help = """
-        If set, allows some source directories to be non-existent.
-        
-        Even with this flag set, at least one existing source directory must exist.
-        Otherwise, the process ends with an error. 
-        """.ti()
-    ).flag(default = false)
-//@formatter:on
+    //@formatter:on
 
     override fun run() {
         val sources = createSourceFileSets()
