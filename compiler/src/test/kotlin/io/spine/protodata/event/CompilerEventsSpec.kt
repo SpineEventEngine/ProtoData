@@ -255,8 +255,11 @@ private inline fun <reified T : Message> FieldOptionDiscovered?.option() : T {
 }
 
 private fun List<EventMessage>.findMultipleFilesOptionEvent() : FileOptionDiscovered? = find {
-    it is FileOptionDiscovered && it.option.number == DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
+    it is FileOptionDiscovered && it.isJavaMultipleFilesField()
 } as FileOptionDiscovered?
+
+private fun FileOptionDiscovered.isJavaMultipleFilesField() =
+    option.number == DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
 
 private fun List<EventMessage>.findTypeUrlPrefixEvent(): FileOptionDiscovered? = find {
     it is FileOptionDiscovered && it.option.number == OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER

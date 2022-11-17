@@ -201,6 +201,11 @@ all modules and does not describe the project structure per-subproject.
     <version>3.19.6</version>
   </dependency>
   <dependency>
+    <groupId>io.gitlab.arturbosch.detekt</groupId>
+    <artifactId>detekt-cli</artifactId>
+    <version>1.21.0</version>
+  </dependency>
+  <dependency>
     <groupId>io.grpc</groupId>
     <artifactId>protoc-gen-grpc-java</artifactId>
     <version>1.46.0</version>

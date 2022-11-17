@@ -29,7 +29,6 @@ import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.gradle.isSnapshot
-import org.gradle.kotlin.dsl.kotlin
 
 plugins {
     `java-gradle-plugin`
@@ -37,6 +36,7 @@ plugins {
     id("com.gradle.plugin-publish").version("0.18.0")
     `version-to-resources`
     `write-manifest`
+    `detekt-code-analysis`
     jacoco
 }
 
