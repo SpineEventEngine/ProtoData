@@ -177,7 +177,7 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
             targets = ext.targetDirs(sourceSet)
             compileCommandLine()
         }
-
+        setPreLaunchCleanup()
         onlyIf { requestFile.get().asFile.exists() }
         dependsOn(
             artifactConfig.buildDependencies,
