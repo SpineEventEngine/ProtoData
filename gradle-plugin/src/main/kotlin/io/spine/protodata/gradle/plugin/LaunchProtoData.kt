@@ -133,8 +133,6 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield("--configuration-file")
                 yield(project.file(configuration).absolutePath)
             }
-
-            yield("--ignore-missing")
         }.asIterable()
         if (logger.isInfoEnabled) {
             logger.info("ProtoData command for `${path}`: ${command.joinToString(separator = " ")}")
