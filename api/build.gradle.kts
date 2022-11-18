@@ -24,33 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
-
-include(
-    "api",
-    "compiler",
-    "cli",
-    "protoc",
-    "test-env",
-    "codegen-java",
-    "gradle-api",
-    "gradle-plugin"
-)
-
-project(":codegen-java").projectDir = file("$rootDir/codegen/java")
-
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
+plugins {
+    `build-proto-model`
+    `detekt-code-analysis`
+    jacoco
 }

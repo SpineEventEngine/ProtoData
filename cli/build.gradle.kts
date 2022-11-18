@@ -40,6 +40,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":api"))
     implementation(project(":compiler"))
     implementation(project(":codegen-java"))
     implementation(kotlin("reflect"))
