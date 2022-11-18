@@ -121,7 +121,6 @@ internal class Documentation(
     }
 }
 
-
 private fun Iterable<String>.trimWhitespace(): List<String> =
     map { it.trimWhitespace() }
 
