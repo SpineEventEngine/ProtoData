@@ -35,8 +35,6 @@ import io.spine.tools.gradle.task.BaseTaskName.build
 import io.spine.tools.gradle.task.TaskName
 import io.spine.tools.gradle.testing.GradleProject
 import java.io.File
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome

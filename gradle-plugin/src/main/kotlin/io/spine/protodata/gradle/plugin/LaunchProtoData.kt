@@ -35,14 +35,12 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectories
-import org.gradle.api.tasks.OutputDirectory
 
 /**
  * A task which executes a single ProtoData command.
@@ -141,7 +139,9 @@ public abstract class LaunchProtoData : JavaExec() {
         classpath(userClasspathConfig)
         mainClass.set("io.spine.protodata.cli.MainKt")
         args(command)
+    }
 
+    internal fun setPreLaunchCleanup() {
         doFirst(CleanAction())
     }
 
