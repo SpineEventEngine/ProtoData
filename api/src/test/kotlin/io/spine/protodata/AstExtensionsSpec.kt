@@ -26,9 +26,10 @@
 
 package io.spine.protodata
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Empty
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.TopLevelEnum
 import io.spine.protodata.test.TopLevelMessage
@@ -52,7 +53,7 @@ class AstExtensionsSpec {
             val field = Field.newBuilder()
                 .setList(Empty.getDefaultInstance())
                 .buildPartial()
-            Truth.assertThat(field.isRepeated())
+            assertThat(field.isRepeated())
                 .isTrue()
         }
 
@@ -64,8 +65,8 @@ class AstExtensionsSpec {
                     .setKeyType(PrimitiveType.TYPE_STRING)
                     .build())
                 .buildPartial()
-            Truth.assertThat(field.isRepeated())
-                .isTrue()
+
+            field.isRepeated() shouldBe true
         }
 
         @Test
@@ -73,8 +74,8 @@ class AstExtensionsSpec {
             val field = Field.newBuilder()
                 .setSingle(Empty.getDefaultInstance())
                 .buildPartial()
-            Truth.assertThat(field.isRepeated())
-                .isFalse()
+
+            field.isRepeated() shouldBe false
         }
     }
 
@@ -84,28 +85,26 @@ class AstExtensionsSpec {
         @Test
         fun unary() {
             val method = method("who")
-            Truth.assertThat(method.cardinality())
-                .isEqualTo(CallCardinality.UNARY)
+            method.cardinality() shouldBe CallCardinality.UNARY
         }
 
         @Test
         fun `server streaming`() {
             val method = method("where_are_you")
-            Truth.assertThat(method.cardinality())
-                .isEqualTo(CallCardinality.SERVER_STREAMING)
+            method.cardinality() shouldBe CallCardinality.SERVER_STREAMING
         }
 
         @Test
         fun `client streaming`() {
             val method = method("rescue_call")
-            Truth.assertThat(method.cardinality())
+            assertThat(method.cardinality())
                 .isEqualTo(CallCardinality.CLIENT_STREAMING)
         }
 
         @Test
         fun `bidirectional streaming`() {
             val method = method("which_actor")
-            Truth.assertThat(method.cardinality())
+            assertThat(method.cardinality())
                 .isEqualTo(CallCardinality.BIDIRECTIONAL_STREAMING)
         }
 
@@ -121,43 +120,40 @@ class AstExtensionsSpec {
         @Test
         fun `for a top-level message`() {
             val name = TopLevelMessage.getDescriptor().name()
-            Truth.assertThat(name.qualifiedName())
-                .isEqualTo("spine.protodata.test.TopLevelMessage")
+
+            name.qualifiedName() shoudlBe "spine.protodata.test.TopLevelMessage"
         }
 
         @Test
         fun `for a top-level enum`() {
             val name = TopLevelEnum.getDescriptor().name()
-            Truth.assertThat(name.qualifiedName())
-                .isEqualTo("spine.protodata.test.TopLevelEnum")
+
+            name.qualifiedName() shoudlBe "spine.protodata.test.TopLevelEnum"
         }
 
         @Test
         fun `for a nested message`() {
             val name = NestedMessage.VeryNestedMessage.getDescriptor().name()
-            Truth.assertThat(name.qualifiedName())
-                .isEqualTo("spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage")
+            name.qualifiedName() shouldBe
+                    "spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage"
         }
 
         @Test
         fun `for a nested enum`() {
             val name = NestedEnum.getDescriptor().name()
-            Truth.assertThat(name.qualifiedName())
-                .isEqualTo("spine.protodata.test.TopLevelMessage.NestedEnum")
+            name.qualifiedName() shouldBe "spine.protodata.test.TopLevelMessage.NestedEnum"
         }
 
         @Test
         fun `for a top-level message without a package`() {
             val name = GlobalMessage.getDescriptor().name()
-            Truth.assertThat(name.typeUrl())
-                .isEqualTo("type.googleapis.com/GlobalMessage")
+            name.typeUrl() shouldBe "type.googleapis.com/GlobalMessage"
         }
 
         @Test
         fun `for a nested message without a package`() {
             val name = LocalMessage.getDescriptor().name()
-            Truth.assertThat(name.qualifiedName())
-                .isEqualTo("GlobalMessage.LocalMessage")
+            name.qualifiedName() shouldBe "GlobalMessage.LocalMessage"
         }
     }
 }
