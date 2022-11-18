@@ -41,12 +41,12 @@ dependencies {
         spine.base,
         spine.coreJava.server,
         spine.toolBase,
-        Jackson.databind
     ).forEach {
         api(it)
     }
 
     with(Jackson) {
+        implementation(databind)
         implementation(dataformatYaml)
         runtimeOnly(moduleKotlin)
     }
