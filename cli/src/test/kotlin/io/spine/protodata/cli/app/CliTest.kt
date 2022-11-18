@@ -30,12 +30,11 @@ import com.github.ajalt.clikt.core.MissingOption
 import com.github.ajalt.clikt.core.UsageError
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.StringValue
-import com.google.protobuf.compiler.PluginProtos
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.Time
 import io.spine.json.Json
 import io.spine.option.OptionsProto
 import io.spine.protobuf.AnyPacker
-import io.spine.protodata.cli.app.Run
 import io.spine.protodata.cli.given.CustomOptionPlugin
 import io.spine.protodata.cli.given.CustomOptionRenderer
 import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
@@ -88,8 +87,7 @@ class `Command line application should` {
 
         val project = ProjectProto.getDescriptor()
         val testProto = TestProto.getDescriptor()
-        val request = PluginProtos.CodeGeneratorRequest
-            .newBuilder()
+        val request = CodeGeneratorRequest.newBuilder()
             .addProtoFile(project.toProto())
             .addProtoFile(testProto.toProto())
             .addProtoFile(TestOptionsProto.getDescriptor().toProto())
