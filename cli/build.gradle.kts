@@ -103,7 +103,7 @@ tasks.distTar {
 }
 
 application {
-    mainClass.set("io.spine.protodata.cli.MainKt")
+    mainClass.set("io.spine.protodata.cli.app.MainKt")
     applicationName = appName
 }
 

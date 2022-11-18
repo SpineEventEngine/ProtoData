@@ -26,6 +26,15 @@
 
 package io.spine.protodata.gradle.plugin
 
+import io.spine.protodata.cli.CLI_APP_CLASS
+import io.spine.protodata.cli.ConfigFormatParam
+import io.spine.protodata.cli.OptionProviderParam
+import io.spine.protodata.cli.PluginParam
+import io.spine.protodata.cli.RendererParam
+import io.spine.protodata.cli.RequestParam
+import io.spine.protodata.cli.SourceRootParam
+import io.spine.protodata.cli.TargetRootParam
+import io.spine.protodata.cli.UserClasspathParam
 import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Task
@@ -41,6 +50,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectories
+
 
 /**
  * A task which executes a single ProtoData command.
@@ -99,36 +109,36 @@ public abstract class LaunchProtoData : JavaExec() {
     internal fun compileCommandLine() {
         val command = sequence {
             plugins.get().forEach {
-                yield("--plugin")
+                yield(PluginParam.name)
                 yield(it)
             }
             renderers.get().forEach {
-                yield("--renderer")
+                yield(RendererParam.name)
                 yield(it)
             }
             optionProviders.get().forEach {
-                yield("--option-provider")
+                yield(OptionProviderParam.name)
                 yield(it)
             }
-            yield("--request")
+            yield(RequestParam.name)
             yield(project.file(requestFile).absolutePath)
 
             if (sources.isPresent) {
-                yield("--source-root")
+                yield(SourceRootParam.name)
                 yield(sources.absolutePaths())
             }
 
-            yield("--target-root")
+            yield(TargetRootParam.name)
             yield(targets.absolutePaths())
 
             val userCp = userClasspathConfig.asPath
             if (userCp.isNotEmpty()) {
-                yield("--user-classpath")
+                yield(UserClasspathParam.name)
                 yield(userCp)
             }
 
             if (configuration.isPresent) {
-                yield("--configuration-file")
+                yield(ConfigFormatParam.name)
                 yield(project.file(configuration).absolutePath)
             }
         }.asIterable()
@@ -137,7 +147,7 @@ public abstract class LaunchProtoData : JavaExec() {
         }
         classpath(protoDataConfig)
         classpath(userClasspathConfig)
-        mainClass.set("io.spine.protodata.cli.MainKt")
+        mainClass.set(CLI_APP_CLASS)
         args(command)
     }
 

@@ -24,11 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata.cli.app
 
-import io.spine.protodata.plugin.Plugin
+import io.spine.option.OptionsProvider
 
 /**
- * A reflective builder for [Plugin]s.
+ * A reflective builder for [OptionsProvider]s.
  */
-internal class PluginBuilder: ReflectiveBuilder<Plugin>()
+internal class OptionsProviderBuilder: ReflectiveBuilder<OptionsProvider>()

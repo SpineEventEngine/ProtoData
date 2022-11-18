@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.param
+package io.spine.protodata.cli.app
 
 import io.spine.protodata.cli.given.CtorWithArgsSpiImpl
 import io.spine.protodata.cli.given.PrivateCtorSpiImpl

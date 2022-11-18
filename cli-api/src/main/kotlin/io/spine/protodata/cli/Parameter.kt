@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.param
+package io.spine.protodata.cli
 
 /**
  * A parameter passed to the ProtoData command-line application.

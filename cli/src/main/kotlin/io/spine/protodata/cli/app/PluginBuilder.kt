@@ -24,21 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata.cli.app
 
-import com.google.protobuf.ExtensionRegistry
-import io.spine.option.OptionsProto
-import io.spine.option.OptionsProvider
-import io.spine.time.validation.TimeOptionsProto
+import io.spine.protodata.plugin.Plugin
 
 /**
- * Registers the definitions from {@code spine/options.proto} and {@code spine/time_options.proto}
- * in the {@code ExtensionRegistry}.
+ * A reflective builder for [Plugin]s.
  */
-internal class SpineOptionsProvider : OptionsProvider {
-
-    override fun registerIn(registry: ExtensionRegistry) {
-        OptionsProto.registerAllExtensions(registry)
-        TimeOptionsProto.registerAllExtensions(registry)
-    }
-}
+internal class PluginBuilder: ReflectiveBuilder<Plugin>()

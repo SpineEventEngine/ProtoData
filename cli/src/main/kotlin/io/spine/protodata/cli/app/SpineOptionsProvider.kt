@@ -24,25 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata.cli.app
 
-import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.ExtensionRegistry
+import io.spine.option.OptionsProto
 import io.spine.option.OptionsProvider
-import io.spine.protobuf.registerAllExtensions
+import io.spine.time.validation.TimeOptionsProto
 
 /**
- * An [OptionsProvider] which provides all the options defined in a single Protobuf file.
+ * Registers the definitions from {@code spine/options.proto} and {@code spine/time_options.proto}
+ * in the {@code ExtensionRegistry}.
  */
-internal class FileOptionsProvider(private val descriptor: FileDescriptor) : OptionsProvider {
+internal class SpineOptionsProvider : OptionsProvider {
 
-    /**
-     * Supplies the given [registry] with the options from the associated descriptor
-     * of the proto file. The outer class for the file must exist.
-     *
-     * @throws IllegalStateException if the outer class for the proto file does not exist.
-     */
     override fun registerIn(registry: ExtensionRegistry) {
-        descriptor.registerAllExtensions(registry)
+        OptionsProto.registerAllExtensions(registry)
+        TimeOptionsProto.registerAllExtensions(registry)
     }
 }

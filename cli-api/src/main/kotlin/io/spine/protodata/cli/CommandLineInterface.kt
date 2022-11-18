@@ -26,7 +26,7 @@
 
 @file:Suppress("MaxLineLength")
 
-package io.spine.protodata.cli.param
+package io.spine.protodata.cli
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProvider
@@ -37,6 +37,11 @@ import io.spine.protodata.config.ConfigurationFormat.YAML
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import java.io.File.pathSeparator
+
+/**
+ * The name of the main class of the ProtoData command-line application.
+ */
+public const val CLI_APP_CLASS: String = "io.spine.protodata.cli.app.MainKt"
 
 public object PluginParam : Parameter(
     name = "--plugin",

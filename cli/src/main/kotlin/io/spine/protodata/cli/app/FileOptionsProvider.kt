@@ -24,11 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata.cli.app
 
-import io.spine.protodata.renderer.Renderer
+import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.ExtensionRegistry
+import io.spine.option.OptionsProvider
+import io.spine.protobuf.registerAllExtensions
 
 /**
- * A reflective builder for renderers.
+ * An [OptionsProvider] which provides all the options defined in a single Protobuf file.
  */
-internal class RendererBuilder : ReflectiveBuilder<Renderer>()
+internal class FileOptionsProvider(private val descriptor: FileDescriptor) : OptionsProvider {
+
+    /**
+     * Supplies the given [registry] with the options from the associated descriptor
+     * of the proto file. The outer class for the file must exist.
+     *
+     * @throws IllegalStateException if the outer class for the proto file does not exist.
+     */
+    override fun registerIn(registry: ExtensionRegistry) {
+        descriptor.registerAllExtensions(registry)
+    }
+}
