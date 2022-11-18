@@ -24,13 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.given
+package io.spine.protodata.param.given
 
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.ViewRepository
 
-class CustomOptionPlugin : Plugin {
+class DefaultOptionsCounterPlugin : Plugin {
 
     override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
-        setOf(CustomFieldView.Repository())
+        setOf(DefaultOptionsCounterView.Repository())
 }

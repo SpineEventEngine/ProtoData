@@ -24,13 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata.param.given
 
-/**
- * Configuration option names that are used in the help texts of other options.
- */
-public object ConfigOpt {
-    public const val FILE: String = "--configuration-file"
-    public const val VALUE: String = "--configuration-value"
-    public const val FORMAT: String = "--configuration-format"
-}
+import io.spine.protodata.cli.ReflectiveBuilder
+
+internal class TestReflectiveBuilder : ReflectiveBuilder<TestSpi>()

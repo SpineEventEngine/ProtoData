@@ -46,6 +46,17 @@ import io.spine.protobuf.outerClass
 import io.spine.protodata.context.Pipeline
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
+import io.spine.protodata.cli.param.ConfigFileParam
+import io.spine.protodata.cli.param.ConfigFormatParam
+import io.spine.protodata.cli.param.ConfigValueParam
+import io.spine.protodata.cli.param.OptionProviderParam
+import io.spine.protodata.cli.param.Parameter
+import io.spine.protodata.cli.param.PluginParam
+import io.spine.protodata.cli.param.RendererParam
+import io.spine.protodata.cli.param.RequestParam
+import io.spine.protodata.cli.param.SourceRootParam
+import io.spine.protodata.cli.param.TargetRootParam
+import io.spine.protodata.cli.param.UserClasspathParam
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.manifest.Version
 import java.io.File
@@ -165,11 +176,12 @@ internal class Run(version: String) : CliktCommand(
         val hasFormat = configurationFormat != null
         if (hasFile && hasValue) {
             throw MutuallyExclusiveGroupException(
-                listOf(ConfigOpt.FILE, ConfigOpt.VALUE)
+                listOf(ConfigFileParam.name, ConfigValueParam.name)
             )
         }
         checkUsage(hasValue == hasFormat) {
-            "Options `${ConfigOpt.VALUE}` and `${ConfigOpt.FORMAT}` must be used together."
+            "Options `${ConfigValueParam.name}` and `${ConfigFileParam.name}`" +
+                    " must be used together."
         }
         return when {
             hasFile -> Configuration.file(configurationFile!!)

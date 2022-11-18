@@ -24,29 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.given
+package io.spine.protodata.param.given
 
-import io.spine.protodata.cli.test.DefaultOptionsCounter
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.server.query.select
-import io.spine.tools.code.CommonLanguages
-import kotlin.io.path.Path
+interface TestSpi
 
-class DefaultOptionsCounterRenderer : Renderer(CommonLanguages.any) {
+class TestSpiImpl : TestSpi
 
-    companion object {
-        const val FILE_NAME = "default_opts_counted.txt"
-    }
+class PrivateCtorSpiImpl
+private constructor() : TestSpi
 
-    override fun render(sources: SourceFileSet) {
-        val counters = select<DefaultOptionsCounter>().all()
-        sources.createFile(
-            Path(FILE_NAME),
-            counters.joinToString(separator = ",") {
-                it.timestampInFutureEncountered.toString() + ", " +
-                        it.requiredFieldForTestEncountered.toString()
-            }
-        )
-    }
-}
+class CtorWithArgsSpiImpl(@Suppress("UNUSED_PARAMETER") ignored: String) : TestSpi

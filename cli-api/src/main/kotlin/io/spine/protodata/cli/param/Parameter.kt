@@ -24,12 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli
+package io.spine.protodata.cli.param
 
 /**
- * A command line parameter.
- *
- * Parameters are _required_ for a command line application to run.
+ * A parameter passed to the ProtoData command-line application.
  */
 public sealed class Parameter(
 
@@ -50,7 +48,8 @@ public sealed class Parameter(
     public val shortName: String,
 
     /**
-     * Description of the parameter with the usage instructions.
+     * Description of the parameter with the usage instructions which
+     * could be passed as a raw string.
      */
     help: String
 ) {
@@ -61,14 +60,14 @@ public sealed class Parameter(
     public val help: String
 
     init {
-        this.help = help.ti()
+        this.help = help.trimIndent()
     }
 
-    override fun hashCode(): Int = name.hashCode()
+    final override fun hashCode(): Int = name.hashCode()
 
-    override fun toString(): String = name
+    final override fun toString(): String = name
 
-    override fun equals(other: Any?): Boolean {
+    final override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Parameter) return false
         if (!super.equals(other)) return false
@@ -80,9 +79,3 @@ public sealed class Parameter(
         return true
     }
 }
-
-/**
- * Abbreviation for [String.trimIndent].
- */
-internal fun String.ti(): String = trimIndent()
-

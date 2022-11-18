@@ -24,8 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.given
+package io.spine.protodata.param.given
 
-import io.spine.protodata.cli.ReflectiveBuilder
+import com.google.protobuf.ExtensionRegistry
+import io.spine.option.OptionsProto
+import io.spine.option.OptionsProvider
+import io.spine.protodata.cli.test.TestOptionsProto
 
-internal class TestReflectiveBuilder : ReflectiveBuilder<TestSpi>()
+class TestOptionProvider : OptionsProvider {
+
+    override fun registerIn(registry: ExtensionRegistry) {
+        OptionsProto.registerAllExtensions(registry)
+        TestOptionsProto.registerAllExtensions(registry)
+    }
+}

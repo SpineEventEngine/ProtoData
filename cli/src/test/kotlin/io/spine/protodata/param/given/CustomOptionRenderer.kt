@@ -24,13 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.given
+package io.spine.protodata.param.given
 
-interface TestSpi
+import io.spine.protodata.cli.test.CustomField
+import io.spine.tools.code.CommonLanguages
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFileSet
+import io.spine.server.query.select
+import kotlin.io.path.Path
 
-class TestSpiImpl : TestSpi
+class CustomOptionRenderer : Renderer(CommonLanguages.any) {
 
-class PrivateCtorSpiImpl
-private constructor() : TestSpi
+    companion object {
+        const val FILE_NAME = "custom_fields.csv"
+    }
 
-class CtorWithArgsSpiImpl(@Suppress("UNUSED_PARAMETER") ignored: String) : TestSpi
+    override fun render(sources: SourceFileSet) {
+        val customFields = select<CustomField>().all()
+        sources.createFile(
+            Path(FILE_NAME),
+            customFields.joinToString(separator = ",") { it.field.value }
+        )
+    }
+}

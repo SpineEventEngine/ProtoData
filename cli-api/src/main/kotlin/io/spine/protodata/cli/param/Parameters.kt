@@ -26,45 +26,23 @@
 
 @file:Suppress("MaxLineLength")
 
-package io.spine.protodata.cli
+package io.spine.protodata.cli.param
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProvider
-import java.io.File.pathSeparator
 import io.spine.protodata.config.ConfigurationFormat.JSON
 import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.config.ConfigurationFormat.YAML
-
-/**
- * Abbreviations for short parameter names to be used inside `help` texts.
- */
-@Suppress("ClassName") // for better readability
-private object dash {
-    val p = lazy { PluginParam.shortName }
-    val r = lazy { RendererParam.shortName }
-    val op = lazy { OptionProviderParam.shortName }
-    val src = lazy { SourceRootParam.shortName }
-}
-
-/**
- * Abbreviations for long plugin names to be used in `help` texts.
- */
-@Suppress("ClassName") // for better readability
-private object ddash {
-    val tr = lazy { TargetRootParam.name }
-}
-
-/**
- * Abbreviation for using inside strings.
- */
-private val ps = pathSeparator
+import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.renderer.Renderer
+import java.io.File.pathSeparator
 
 public object PluginParam : Parameter(
     name = "--plugin",
     shortName = "-p",
     help = """
-        The name of a Java class, a subtype of `io.spine.protodata.plugin.Plugin`.
+        The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
         There can be multiple providers. To pass more than one value, type:
            `<...> ${dash.p} com.foo.MyEntitiesPlugin ${dash.p} com.foo.OtherEntitiesPlugin`.
         """
@@ -74,7 +52,7 @@ public object RendererParam : Parameter(
     name = "--renderer",
     shortName = "-r",
     help = """
-        The name of a Java class, a subtype of `io.spine.protodata.renderer.Renderer`.
+        The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
         There can only be multiple renderers. To pass more than one value, type:
            `<...> ${dash.r} com.foo.MyJavaRenderer ${dash.r} com.foo.MyKotlinRenderer`.
         """
@@ -137,7 +115,7 @@ public object ClasspathParam : Parameter(
     name = "--user-classpath",
     shortName = "--ucp",
     help = """
-        The user classpath which contains all `${Op.RENDERER}` classes, user-defined policies,
+        The user classpath which contains all `${ddash.renderer}` classes, user-defined policies,
         views, events, etc., as well as all their dependencies, which are not included as a part of
         the ProtoData library. This option may be omitted if the classes are already present in
         the ProtoData classpath. May be one path to a JAR, a ZIP, or a directory. Or, may be many
@@ -145,11 +123,11 @@ public object ClasspathParam : Parameter(
         """
 )
 
-public object UserClasspathParam : Parameter (
-    name = "--user-classpath" ,
+public object UserClasspathParam : Parameter(
+    name = "--user-classpath",
     shortName = "--ucp",
     help = """
-        The user classpath which contains all `${Op.RENDERER}` classes, user-defined policies,
+        The user classpath which contains all `${ddash.renderer}` classes, user-defined policies,
         views, events, etc., as well as all their dependencies, which are not included as a part of
         the ProtoData library. This option may be omitted if the classes are already present in
         the ProtoData classpath. May be one path to a JAR, a ZIP, or a directory. Or, may be many
@@ -158,7 +136,7 @@ public object UserClasspathParam : Parameter (
 )
 
 public object ConfigFileParam : Parameter(
-    name = ConfigOpt.FILE,
+    name = "--configuration-file",
     shortName = "-c",
     help = """
         File which contains the custom configuration for ProtoData.
@@ -173,24 +151,52 @@ public object ConfigFileParam : Parameter(
 )
 
 public object ConfigValueParam : Parameter(
-    name = ConfigOpt.VALUE,
+    name = "--configuration-value",
     shortName = "--cv",
     help = """
         Custom configuration for ProtoData.
         May be a JSON or a YAML.
-        Must be used alongside with `${ConfigOpt.FORMAT}`.
+        Must be used alongside with `${ddash.confFmt}`.
         """
 )
 
 public object ConfigFormatParam : Parameter(
-    name = ConfigOpt.FORMAT,
+    name = "--configuration-format",
     shortName = "--cf",
     help = """
         The format of the custom configuration.
         Must be one of: `yaml`, `json`, `proto_json`, `plain`.
-        Must be used alongside with `${ConfigOpt.VALUE}`.
+        Must be used alongside with `${ddash.confVal}`.
         """
 ) {
     public fun options(): List<String> =
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }
 }
+
+
+/**
+ * Abbreviations for short parameter names to be used inside `help` texts.
+ */
+@Suppress("ClassName") // for better readability
+private object dash {
+    val p = lazy { PluginParam.shortName }
+    val r = lazy { RendererParam.shortName }
+    val op = lazy { OptionProviderParam.shortName }
+    val src = lazy { SourceRootParam.shortName }
+}
+
+/**
+ * Abbreviations for long plugin names to be used in `help` texts.
+ */
+@Suppress("ClassName") // for better readability
+private object ddash {
+    val tr = lazy { TargetRootParam.name }
+    val confVal = lazy { ConfigValueParam.name }
+    val confFmt = lazy { ConfigFormatParam.name }
+    val renderer = lazy { RendererParam.name }
+}
+
+/**
+ * Abbreviation for using inside strings.
+ */
+private val ps = pathSeparator
