@@ -121,14 +121,14 @@ class AstExtensionsSpec {
         fun `for a top-level message`() {
             val name = TopLevelMessage.getDescriptor().name()
 
-            name.qualifiedName() shoudlBe "spine.protodata.test.TopLevelMessage"
+            name.qualifiedName() shouldBe "spine.protodata.test.TopLevelMessage"
         }
 
         @Test
         fun `for a top-level enum`() {
             val name = TopLevelEnum.getDescriptor().name()
 
-            name.qualifiedName() shoudlBe "spine.protodata.test.TopLevelEnum"
+            name.qualifiedName() shouldBe "spine.protodata.test.TopLevelEnum"
         }
 
         @Test
