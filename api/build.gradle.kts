@@ -1,5 +1,3 @@
-import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.Spine
 
 /*
  * Copyright 2022, TeamDev. All rights reserved.
@@ -26,6 +24,9 @@ import io.spine.internal.dependency.Spine
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+import io.spine.internal.dependency.Jackson
+import io.spine.internal.dependency.Spine
 
 plugins {
     `build-proto-model`
