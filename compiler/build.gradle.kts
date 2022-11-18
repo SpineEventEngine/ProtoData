@@ -41,6 +41,7 @@ val spine = Spine(project)
 dependencies {
     api(spine.server)
     api(spine.toolBase)
+    api(project(":api"))
     with(Jackson) {
         api(databind)
         implementation(dataformatYaml)

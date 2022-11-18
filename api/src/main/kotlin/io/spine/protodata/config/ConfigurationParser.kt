@@ -42,8 +42,6 @@ import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
 import io.spine.protodata.config.ConfigurationFormat.UNRECOGNIZED
 import io.spine.protodata.config.ConfigurationFormat.YAML
 import java.nio.charset.Charset.defaultCharset
-import java.nio.file.Path
-import kotlin.io.path.name
 
 /**
  * A parser for the ProtoData user-provided configuration.
@@ -152,15 +150,6 @@ private object PlainParser : ConfigurationParser {
         return value as T
     }
 }
-
-/**
- * Obtains a [ConfigurationFormat] from the file extension of the given configuration file.
- *
- * @throws ConfigurationError if the format is not recognized
- */
-internal fun formatOf(file: Path): ConfigurationFormat =
-    ConfigurationFormat.values().find { it.matches(file) }
-        ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")
 
 /**
  * Obtains a [ConfigurationParser] for this format.

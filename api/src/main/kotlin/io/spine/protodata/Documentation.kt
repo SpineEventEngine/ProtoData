@@ -48,9 +48,8 @@ internal class Documentation(
     locations: List<Location>
 ) {
 
-    private val docs: Map<LocationPath, Location> = locations.associateBy(
-        LocationPath::from
-    )
+    private val docs: Map<LocationPath, Location> =
+        locations.associateBy(LocationPath::from)
 
     /**
      * Obtains documentation for the given message.
@@ -121,6 +120,7 @@ internal class Documentation(
                   .build()
     }
 }
+
 
 private fun Iterable<String>.trimWhitespace(): List<String> =
     map { it.trimWhitespace() }

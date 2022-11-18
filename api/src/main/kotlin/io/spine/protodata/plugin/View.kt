@@ -115,10 +115,10 @@ public open class View<I, M : EntityState<I>, B : ValidatingBuilder<M>> : Projec
 public open class ViewRepository<I, V : View<I, S, *>, S : EntityState<I>>
     : ProjectionRepository<I, V, S>() {
 
-    internal companion object {
+    public companion object {
 
         @Suppress("UNCHECKED_CAST")
-        fun default(cls: Class<out View<*, *, *>>): ViewRepository<*, *, *> {
+        public fun default(cls: Class<out View<*, *, *>>): ViewRepository<*, *, *> {
             val cast = cls as Class<View<Any, EntityState<Any>, *>>
             return DefaultViewRepository(cast)
         }

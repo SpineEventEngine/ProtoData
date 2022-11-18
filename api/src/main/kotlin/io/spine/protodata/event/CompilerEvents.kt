@@ -37,7 +37,7 @@ import io.spine.protodata.path
 /**
  * A factory for Protobuf compiler events.
  */
-internal object CompilerEvents {
+public object CompilerEvents {
 
     /**
      * Produces a sequence of events based on the given descriptor set.
@@ -46,7 +46,7 @@ internal object CompilerEvents {
      *
      * The resulting sequence is always finite, it's limited by the type set.
      */
-    fun parse(request: CodeGeneratorRequest): Sequence<EventMessage> {
+    public fun parse(request: CodeGeneratorRequest): Sequence<EventMessage> {
         val filesToGenerate = request.fileToGenerateList.toSet()
         val files = FileSet.of(request.protoFileList)
         return sequence {

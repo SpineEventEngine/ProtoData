@@ -173,8 +173,7 @@ private fun buildTypeName(simpleName: String,
         nestingNames.add(0, parent.name)
         parent = parent.containingType
     }
-    val typeName = TypeName
-        .newBuilder()
+    val typeName = TypeName.newBuilder()
         .setSimpleName(simpleName)
         .setPackageName(file.`package`)
         .setTypeUrlPrefix(file.typeUrlPrefix)
@@ -213,7 +212,7 @@ internal fun FieldDescriptor.name(): FieldName =
 /**
  * Obtains the relative path to this file as a [FilePath].
  */
-internal fun FileDescriptor.path(): FilePath =
+public fun FileDescriptor.path(): FilePath =
     FilePath.newBuilder()
             .setValue(name)
             .build()
@@ -221,7 +220,7 @@ internal fun FileDescriptor.path(): FilePath =
 /**
  * Obtains the name of this service as a [ServiceName].
  */
-internal fun ServiceDescriptor.name(): ServiceName =
+public fun ServiceDescriptor.name(): ServiceName =
     ServiceName.newBuilder()
                .setTypeUrlPrefix(file.typeUrlPrefix)
                .setPackageName(file.`package`)
@@ -239,7 +238,7 @@ internal fun MethodDescriptor.name(): RpcName =
 /**
  * Obtains a [Type] wrapping this `PrimitiveType`.
  */
-internal fun PrimitiveType.asType(): Type =
+public fun PrimitiveType.asType(): Type =
     Type.newBuilder()
         .setPrimitive(this)
         .build()
@@ -249,7 +248,7 @@ internal fun PrimitiveType.asType(): Type =
  *
  * The cardinality determines how many messages may flow from the client to the server and back.
  */
-internal fun MethodDescriptor.cardinality(): CallCardinality =
+public fun MethodDescriptor.cardinality(): CallCardinality =
     when {
         !isClientStreaming && !isServerStreaming -> UNARY
         !isClientStreaming && isServerStreaming -> SERVER_STREAMING

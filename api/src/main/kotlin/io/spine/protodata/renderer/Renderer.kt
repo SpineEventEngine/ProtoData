@@ -44,12 +44,12 @@ protected constructor(
     private val supportedLanguage: Language
 ) : ConfiguredQuerying {
 
-    internal lateinit var protoDataContext: BoundedContext
+    public lateinit var protoDataContext: BoundedContext
 
     /**
      * Performs required changes to the given source set.
      */
-    internal fun renderSources(sources: SourceFileSet) {
+    public fun renderSources(sources: SourceFileSet) {
         val relevantFiles = sources.subsetWhere { supportedLanguage.matches(it.relativePath) }
         render(relevantFiles)
         sources.mergeBack(relevantFiles)

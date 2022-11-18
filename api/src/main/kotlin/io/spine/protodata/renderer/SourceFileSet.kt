@@ -105,7 +105,7 @@ internal constructor(
         }
 
         @VisibleForTesting
-        internal fun from(sourceAndTarget: Path): SourceFileSet =
+        public fun from(sourceAndTarget: Path): SourceFileSet =
             from(sourceAndTarget, sourceAndTarget)
     }
 
@@ -182,7 +182,7 @@ internal constructor(
      * The sources existing on the file system at the moment are deleted, along with the whole
      * directory structure and the new files are written.
      */
-    internal fun write(charset: Charset = UTF_8) {
+    public fun write(charset: Charset = UTF_8) {
         deletedFiles.forEach {
             it.rm(rootDir = targetRoot)
         }

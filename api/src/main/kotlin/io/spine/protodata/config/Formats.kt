@@ -1,6 +1,3 @@
-import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.Spine
-
 /*
  * Copyright 2022, TeamDev. All rights reserved.
  *
@@ -27,26 +24,31 @@ import io.spine.internal.dependency.Spine
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    `build-proto-model`
-    `detekt-code-analysis`
-    jacoco
-}
+package io.spine.protodata.config
 
-dependencies {
-    val spine = Spine(project)
+import com.google.common.annotations.VisibleForTesting
+import io.spine.io.Glob
+import io.spine.protodata.ConfigurationError
+import java.nio.file.Path
+import kotlin.io.path.name
 
-    listOf(
-        spine.base,
-        spine.coreJava.server,
-        spine.toolBase,
-        Jackson.databind
-    ).forEach {
-        api(it)
-    }
+/**
+ * Checks if the given file matches this configuration format.
+ */
+public fun ConfigurationFormat.matches(file: Path): Boolean =
+    extensions
+            .map { Glob.extension(it) }
+            .any { it.matches(file) }
 
-    with(Jackson) {
-        implementation(dataformatYaml)
-        runtimeOnly(moduleKotlin)
-    }
-}
+@VisibleForTesting
+public val ConfigurationFormat.extensions: Set<String>
+    get() = valueDescriptor.options.getExtension(ConfigurationProto.extension).toSet()
+
+/**
+ * Obtains a [ConfigurationFormat] from the file extension of the given configuration file.
+ *
+ * @throws ConfigurationError if the format is not recognized
+ */
+public fun formatOf(file: Path): ConfigurationFormat =
+    ConfigurationFormat.values().find { it.matches(file) }
+        ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")

@@ -24,20 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
-
-import com.google.common.annotations.VisibleForTesting
-import io.spine.io.Glob
-import java.nio.file.Path
+package io.spine.protodata.cli
 
 /**
- * Checks if the given file matches this configuration format.
+ * Configuration option names that are used in the help texts of other options.
  */
-internal fun ConfigurationFormat.matches(file: Path): Boolean =
-    extensions
-            .map { Glob.extension(it) }
-            .any { it.matches(file) }
-
-@VisibleForTesting
-internal val ConfigurationFormat.extensions: Set<String>
-    get() = valueDescriptor.options.getExtension(ConfigurationProto.extension).toSet()
+public object ConfigOpt {
+    public const val FILE: String = "--configuration-file"
+    public const val VALUE: String = "--configuration-value"
+    public const val FORMAT: String = "--configuration-format"
+}

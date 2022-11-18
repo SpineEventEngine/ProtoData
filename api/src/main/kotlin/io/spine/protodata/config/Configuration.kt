@@ -46,7 +46,7 @@ public sealed class Configuration {
      *
      * The event belongs to the [io.spine.protodata.ConfigurationContext].
      */
-    internal abstract fun produceEvent(): EventMessage
+    public abstract fun produceEvent(): EventMessage
 
     public companion object {
 

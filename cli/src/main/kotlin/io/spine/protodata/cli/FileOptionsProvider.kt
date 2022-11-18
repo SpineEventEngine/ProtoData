@@ -29,6 +29,7 @@ package io.spine.protodata.cli
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.ExtensionRegistry
 import io.spine.option.OptionsProvider
+import io.spine.protobuf.registerAllExtensions
 
 /**
  * An [OptionsProvider] which provides all the options defined in a single Protobuf file.

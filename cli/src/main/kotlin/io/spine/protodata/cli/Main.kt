@@ -31,6 +31,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.output.TermUi
+import com.github.ajalt.clikt.parameters.options.NullableOption
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -41,15 +42,10 @@ import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
 import io.spine.option.OptionsProvider
-import io.spine.protodata.Pipeline
+import io.spine.protobuf.outerClass
+import io.spine.protodata.context.Pipeline
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
-import io.spine.protodata.config.ConfigurationFormat.JSON
-import io.spine.protodata.config.ConfigurationFormat.PLAIN
-import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.config.ConfigurationFormat.YAML
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.manifest.Version
 import java.io.File
@@ -93,139 +89,65 @@ internal class Run(version: String) : CliktCommand(
     epilog = "https://github.com/SpineEventEngine/ProtoData/",
     printHelpOnEmptyArgs = true
 ) {
-    /** Option names that are used in the help texts of other options. */
-    private object Op {
-        const val RENDERER = "--renderer"
-        const val SOURCE_ROOT = "--source-root"
-    }
-
-    /** Configuration option names that are used in the help texts of other options. */
-    private object ConfigOpt {
-        const val FILE = "--configuration-file"
-        const val VALUE = "--configuration-value"
-        const val FORMAT = "--configuration-format"
-    }
-
-    /*
-     * The section guarded by `formatter:off/on` below contains definitions of CLI options.
-     *
-     * The names of the options usually have one or two long names and a short version.
-     * A one-letter option name is prefixed with one dash.
-     * For names with more than one letter, two dashes are used.
-     */
-
-//@formatter:off
-    private val plugins: List<String> by option("--plugin", "-p",
-        help = """
-        The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
-        There can be multiple providers. To pass more than one value, type:
-           `<...> -p com.foo.MyEntitiesPlugin -p com.foo.OtherEntitiesPlugin`.""".ti())
-        .multiple()
-
-    private val renderers: List<String> by option(Op.RENDERER, "-r",
-        help = """
-        The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
-        There can only be multiple renderers. To pass more than one value, type:
-           `<...> -r com.foo.MyJavaRenderer -r com.foo.MyKotlinRenderer`.""".ti())
-        .multiple(default = listOf())
-
-    private val optionProviders: List<String> by option("--option-provider", "--op",
-        help = """
-        The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
-        There can be multiple providers.
-        Spine's `options.proto` and `time_options.proto` are provided by default.
-        To pass more than one value, type:
-           `<...> --op com.foo.TypeOptionsProvider --op com.foo.FieldOptionsProvider`.""".ti())
-        .multiple()
-
-    private val codegenRequestFile: File by option("--request", "-t", // "-r" is taken.
-        help = "The path to the binary file containing a serialized instance of " +
-            "`${CodeGeneratorRequest.getDescriptor().name}`."
-    ).file(
-        mustExist = true,
-        canBeDir = false,
-        canBeSymlink = false,
-        mustBeReadable = true
-    ).required()
-
-    private val sourceRoots: List<Path>? by option(Op.SOURCE_ROOT, "--src",
-        help = """
-        The path to a directory which contains the source files to be processed.
-        Skip this argument if there is no initial source to modify.
-        
-        Multiple directories can be listed separated by the `$pathSeparator` symbol. In such a case,
-        the number of directories must match the number of `--target-root` directories; source and
-        target directories are paired up according to the order they are provided in, so that
-        the files from first source are written to the first target and so on.
-        
-        When specifying multiple directories, some of them are allowed to be non-existent. They will
-        just be ignored along with their paired targets. But at least one directory must exist. 
-        Otherwise, the process will end up with an error.
-        """.ti()
-    ).path(
-        canBeFile = false,
-        canBeSymlink = false
-    ).split(pathSeparator)
-
-    private val targetRoots: List<Path>? by option("--target-root", "--destination", "-d",
-        help = """
-        The path where the processed files should be placed.
-        May be the same as `${Op.SOURCE_ROOT}`. For editing files in-place, skip this option.
-        
-        Multiple directories can be listed separated by the `$pathSeparator` symbol. In such a case,
-        the number of directories must match the number of `--src` directories; source and
-        target directories are paired up according to the order they are provided in, so that
-        the files from first source are written to the first target and so on.
-        """.ti()
-    ).path(
-        canBeFile = false,
-        canBeSymlink = false
-    ).split(pathSeparator)
-
-    private val classPath: List<Path>? by option("--user-classpath" ,"--ucp",
-        help = """
-        The user classpath which contains all `${Op.RENDERER}` classes, user-defined policies,
-        views, events, etc., as well as all their dependencies, which are not included as a part of
-        the ProtoData library. This option may be omitted if the classes are already present in
-        the ProtoData classpath. May be one path to a JAR, a ZIP, or a directory. Or, may be many
-        paths separated by the `$pathSeparator` separator char (system-dependent).""".ti()
-    ).path(
-        mustExist = true,
-        mustBeReadable = true
-    ).split(pathSeparator)
-
-    private val configurationFile: Path? by option(ConfigOpt.FILE, "-c",
-        help = """
-        File which contains the custom configuration for ProtoData.
-
-        May be a JSON, a YAML, or a binary Protobuf file.
-        JSON files must have `.json` extension.
-        JSON files with Protobuf JSON format must have `.pb.json` extension.
-        YAML files must have `.yml` or `.yaml` extension.
-        Protobuf binary files must have `.pb` or `.bin` extension.
-        Messages must not be delimited.""".ti()
-    ).path(
-        mustExist = true,
-        mustBeReadable = true,
-        canBeDir = false,
-        canBeSymlink = false
+    private fun Parameter.toOption(completionCandidates: CompletionCandidates? = null) = option(
+        name, shortName,
+        help = help,
+        completionCandidates = completionCandidates
     )
 
-    private val configurationValue: String? by option(ConfigOpt.VALUE, "--cv",
-        help = """
-        Custom configuration for ProtoData.
-        May be a JSON or a YAML.
-        Must be used alongside with `${ConfigOpt.FORMAT}`.""".ti())
+    private fun NullableOption<Path, Path>.splitPaths() = split(pathSeparator)
 
-    private val configurationFormat: String? by option(ConfigOpt.FORMAT, "--cf",
-        help = """
-        The format of the custom configuration.
-        Must be one of: `yaml`, `json`, `proto_json`, `plain`.
-        Must be used alongside with `${ConfigOpt.VALUE}`.""".ti(),
+    private val plugins: List<String>
+            by PluginParam.toOption().multiple()
+
+    private val renderers: List<String>
+            by RendererParam.toOption().multiple(default = listOf())
+
+    private val optionProviders: List<String>
+            by OptionProviderParam.toOption().multiple()
+
+    private val codegenRequestFile: File
+            by RequestParam.toOption().file(
+                mustExist = true,
+                canBeDir = false,
+                canBeSymlink = false,
+                mustBeReadable = true
+            ).required()
+
+    private val sourceRoots: List<Path>?
+            by SourceRootParam.toOption().path(
+                canBeFile = false,
+                canBeSymlink = false
+            ).splitPaths()
+
+    private val targetRoots: List<Path>?
+            by TargetRootParam.toOption().path(
+                canBeFile = false,
+                canBeSymlink = false
+            ).splitPaths()
+
+    private val classPath: List<Path>?
+            by UserClasspathParam.toOption().path(
+                mustExist = true,
+                mustBeReadable = true
+            ).splitPaths()
+
+    private val configurationFile: Path?
+            by ConfigFileParam.toOption().path(
+                mustExist = true,
+                mustBeReadable = true,
+                canBeDir = false,
+                canBeSymlink = false
+            )
+
+    private val configurationValue: String?
+            by ConfigValueParam.toOption()
+
+    private val configurationFormat: String? by ConfigFormatParam.toOption(
         completionCandidates = CompletionCandidates.Fixed(
-        setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }.toSet()
-    ))
-//@formatter:on
+            ConfigFormatParam.options().toSet()
+        )
+    )
 
     override fun run() {
         val sources = createSourceFileSets()
@@ -361,11 +283,6 @@ private fun printError(message: String?) = TermUi.echo(message, err = true)
  */
 private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet> =
     listOf(SourceFileSet.empty(first()))
-
-/**
- * Abbreviation extension.
- */
-private fun String.ti() = trimIndent()
 
 /**
  * Throws an [UsageError] with the result of calling [lazyMessage] if the [condition] isn't met.

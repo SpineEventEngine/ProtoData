@@ -66,9 +66,9 @@ public interface Plugin {
 /**
  * Applies the given plugin to the receiver bounded context.
  */
-internal fun BoundedContextBuilder.apply(plugin: Plugin) {
+public fun BoundedContextBuilder.apply(plugin: Plugin) {
     val repos = plugin.viewRepositories().toMutableList()
-    val defaultRepos = plugin.views().map { ViewRepository.default(it) }
+    val defaultRepos = plugin.views().map { io.spine.protodata.plugin.ViewRepository.default(it) }
     repos.addAll(defaultRepos)
     val repeatedView = repos.map { it.entityClass() }
                             .groupingBy { it }

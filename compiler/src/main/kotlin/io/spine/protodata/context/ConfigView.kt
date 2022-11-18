@@ -24,10 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+package io.spine.protodata.context
 
 import io.spine.core.External
 import io.spine.core.Subscribe
+import io.spine.protodata.config.Config
+import io.spine.protodata.config.ConfigId
 import io.spine.protodata.config.event.FileConfigDiscovered
 import io.spine.protodata.config.event.RawConfigDiscovered
 import io.spine.protodata.plugin.View

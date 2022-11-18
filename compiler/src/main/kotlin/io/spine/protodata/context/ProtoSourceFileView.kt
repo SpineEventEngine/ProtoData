@@ -24,10 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.context
 
 import io.spine.core.External
 import io.spine.core.Subscribe
+import io.spine.protodata.EnumType
+import io.spine.protodata.Field
+import io.spine.protodata.FieldName
+import io.spine.protodata.FilePath
+import io.spine.protodata.MessageType
+import io.spine.protodata.OneofGroup
+import io.spine.protodata.OneofName
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.Service
+import io.spine.protodata.ServiceName
+import io.spine.protodata.TypeName
 import io.spine.protodata.event.EnumConstantEntered
 import io.spine.protodata.event.EnumConstantOptionDiscovered
 import io.spine.protodata.event.EnumEntered
@@ -44,7 +55,9 @@ import io.spine.protodata.event.ServiceEntered
 import io.spine.protodata.event.ServiceOptionDiscovered
 import io.spine.protodata.event.TypeEntered
 import io.spine.protodata.event.TypeOptionDiscovered
+import io.spine.protodata.isPartOfOneof
 import io.spine.protodata.plugin.View
+import io.spine.protodata.typeUrl
 import io.spine.server.entity.update
 
 /**
@@ -182,7 +195,7 @@ internal class ProtoSourceFileView
     }
 }
 
-private fun MessageType.Builder.findOneof(name: OneofName): OneofGroup.Builder =
+public fun MessageType.Builder.findOneof(name: OneofName): OneofGroup.Builder =
     oneofGroupBuilderList.find { it.name == name }!!
 
 /**
@@ -190,7 +203,7 @@ private fun MessageType.Builder.findOneof(name: OneofName): OneofGroup.Builder =
  *
  * The field may be found either in the message directly or in one of the `oneof` groups.
  */
-private fun MessageType.Builder.findField(name: FieldName): Field.Builder {
+public fun MessageType.Builder.findField(name: FieldName): Field.Builder {
     var fieldBuilder = fieldBuilderList.find { it.name == name }
     if (fieldBuilder == null) {
         fieldBuilder = oneofGroupBuilderList

@@ -1,6 +1,3 @@
-import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.Spine
-
 /*
  * Copyright 2022, TeamDev. All rights reserved.
  *
@@ -27,26 +24,12 @@ import io.spine.internal.dependency.Spine
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    `build-proto-model`
-    `detekt-code-analysis`
-    jacoco
-}
+package io.spine.protodata.cli
 
-dependencies {
-    val spine = Spine(project)
-
-    listOf(
-        spine.base,
-        spine.coreJava.server,
-        spine.toolBase,
-        Jackson.databind
-    ).forEach {
-        api(it)
-    }
-
-    with(Jackson) {
-        implementation(dataformatYaml)
-        runtimeOnly(moduleKotlin)
-    }
+/**
+ * Option names that are used in the help texts of other options.
+ */
+public object Op {
+    public const val RENDERER: String = "--renderer"
+    public const val SOURCE_ROOT: String = "--source-root"
 }
