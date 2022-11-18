@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.param.given
+package io.spine.protodata.cli.given
 
 import io.spine.protodata.cli.test.CustomField
 import io.spine.tools.code.CommonLanguages

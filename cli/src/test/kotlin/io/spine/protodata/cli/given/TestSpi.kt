@@ -24,17 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.param.given
+package io.spine.protodata.cli.given
 
-import com.google.protobuf.ExtensionRegistry
-import io.spine.option.OptionsProto
-import io.spine.option.OptionsProvider
-import io.spine.protodata.cli.test.TestOptionsProto
+interface TestSpi
 
-class TestOptionProvider : OptionsProvider {
+class TestSpiImpl : TestSpi
 
-    override fun registerIn(registry: ExtensionRegistry) {
-        OptionsProto.registerAllExtensions(registry)
-        TestOptionsProto.registerAllExtensions(registry)
-    }
-}
+class PrivateCtorSpiImpl
+private constructor() : TestSpi
+
+class CtorWithArgsSpiImpl(@Suppress("UNUSED_PARAMETER") ignored: String) : TestSpi

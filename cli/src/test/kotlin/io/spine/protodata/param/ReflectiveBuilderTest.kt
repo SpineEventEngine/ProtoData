@@ -26,10 +26,10 @@
 
 package io.spine.protodata.param
 
-import io.spine.protodata.param.given.CtorWithArgsSpiImpl
-import io.spine.protodata.param.given.PrivateCtorSpiImpl
-import io.spine.protodata.param.given.TestReflectiveBuilder
-import io.spine.protodata.param.given.TestSpiImpl
+import io.spine.protodata.cli.given.CtorWithArgsSpiImpl
+import io.spine.protodata.cli.given.PrivateCtorSpiImpl
+import io.spine.protodata.cli.given.TestReflectiveBuilder
+import io.spine.protodata.cli.given.TestSpiImpl
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 

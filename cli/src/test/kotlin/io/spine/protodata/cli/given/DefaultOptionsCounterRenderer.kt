@@ -24,8 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.param.given
+package io.spine.protodata.cli.given
 
-import io.spine.protodata.cli.ReflectiveBuilder
+import io.spine.protodata.cli.test.DefaultOptionsCounter
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFileSet
+import io.spine.server.query.select
+import io.spine.tools.code.CommonLanguages
+import kotlin.io.path.Path
 
-internal class TestReflectiveBuilder : ReflectiveBuilder<TestSpi>()
+class DefaultOptionsCounterRenderer : Renderer(CommonLanguages.any) {
+
+    companion object {
+        const val FILE_NAME = "default_opts_counted.txt"
+    }
+
+    override fun render(sources: SourceFileSet) {
+        val counters = select<DefaultOptionsCounter>().all()
+        sources.createFile(
+            Path(FILE_NAME),
+            counters.joinToString(separator = ",") {
+                it.timestampInFutureEncountered.toString() + ", " +
+                        it.requiredFieldForTestEncountered.toString()
+            }
+        )
+    }
+}

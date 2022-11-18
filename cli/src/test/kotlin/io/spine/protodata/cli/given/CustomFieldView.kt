@@ -24,13 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.param.given
+package io.spine.protodata.cli.given
 
-interface TestSpi
+import io.spine.core.External
+import io.spine.core.Subscribe
+import io.spine.core.Where
+import io.spine.protodata.FieldName
+import io.spine.protodata.event.FieldOptionDiscovered
+import io.spine.protodata.cli.test.CustomField
+import io.spine.protodata.plugin.View
+import io.spine.protodata.plugin.ViewRepository
+import io.spine.server.entity.alter
+import io.spine.server.route.EventRoute.withId
+import io.spine.server.route.EventRouting
 
-class TestSpiImpl : TestSpi
+class CustomFieldView : View<FieldName, CustomField, CustomField.Builder>() {
 
-class PrivateCtorSpiImpl
-private constructor() : TestSpi
+    @Subscribe
+    internal fun on(@External @Where(field = "option.name", equals = "custom")
+                        event: FieldOptionDiscovered
+    ) = alter {
+        field = event.field
+    }
 
-class CtorWithArgsSpiImpl(@Suppress("UNUSED_PARAMETER") ignored: String) : TestSpi
+    class Repository : ViewRepository<FieldName, CustomFieldView, CustomField>() {
+
+        override fun setupEventRouting(routing: EventRouting<FieldName>) {
+            super.setupEventRouting(routing)
+            routing.route(FieldOptionDiscovered::class.java) { event, _ ->
+                withId(event.field)
+            }
+        }
+    }
+}

@@ -24,13 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.param.given
+package io.spine.protodata.cli.given
 
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.plugin.ViewRepository
+import com.google.protobuf.ExtensionRegistry
+import io.spine.option.OptionsProto
+import io.spine.option.OptionsProvider
+import io.spine.protodata.cli.test.TestOptionsProto
 
-class DefaultOptionsCounterPlugin : Plugin {
+class TestOptionProvider : OptionsProvider {
 
-    override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
-        setOf(DefaultOptionsCounterView.Repository())
+    override fun registerIn(registry: ExtensionRegistry) {
+        OptionsProto.registerAllExtensions(registry)
+        TestOptionsProto.registerAllExtensions(registry)
+    }
 }
