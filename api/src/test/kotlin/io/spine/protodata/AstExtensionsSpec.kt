@@ -41,7 +41,10 @@ import io.spine.protodata.test.packageless.GlobalMessage.LocalMessage
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 
+@TestInstance(PER_CLASS)
 @DisplayName("AST extensions should")
 class AstExtensionsSpec {
 
