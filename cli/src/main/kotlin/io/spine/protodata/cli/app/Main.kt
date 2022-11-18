@@ -43,7 +43,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
 import io.spine.option.OptionsProvider
 import io.spine.protobuf.outerClass
-import io.spine.protodata.context.Pipeline
+import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.cli.ConfigFileParam

@@ -50,4 +50,6 @@ dependencies {
         implementation(dataformatYaml)
         runtimeOnly(moduleKotlin)
     }
+
+    testImplementation(project(":test-env"))
 }

@@ -24,19 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.backend
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
+import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
-import io.spine.protodata.context.CodeGenerationContext
-import io.spine.protodata.context.ProtoSourceFileView
-import io.spine.protodata.context.ProtobufCompilerContext
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.asType
 import io.spine.protodata.event.CompilerEvents
+import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.typeUrl
 import io.spine.testing.server.blackbox.BlackBox
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
@@ -79,8 +81,7 @@ class CodeGenerationContextSpec {
             .isEqualTo(typeName)
         assertMessage(journeyType.optionList)
             .containsExactly(
-                Option
-                    .newBuilder()
+                Option.newBuilder()
                     .setName("beta_type")
                     .setNumber(BETA_TYPE_FIELD_NUMBER)
                     .setType(TYPE_BOOL.asType())

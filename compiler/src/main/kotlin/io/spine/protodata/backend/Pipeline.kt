@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.context
+package io.spine.protodata.backend
 
 import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest

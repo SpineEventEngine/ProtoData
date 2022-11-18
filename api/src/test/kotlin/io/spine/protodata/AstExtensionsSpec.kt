@@ -26,21 +26,17 @@
 
 package io.spine.protodata
 
-import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.Descriptors.MethodDescriptor
+import com.google.common.truth.Truth
+import com.google.protobuf.Descriptors
 import com.google.protobuf.Empty
-import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
-import io.spine.protodata.CallCardinality.CLIENT_STREAMING
-import io.spine.protodata.CallCardinality.SERVER_STREAMING
-import io.spine.protodata.CallCardinality.UNARY
-import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.TopLevelEnum
 import io.spine.protodata.test.TopLevelMessage
 import io.spine.protodata.test.TopLevelMessage.NestedEnum
-import io.spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage
+import io.spine.protodata.test.TopLevelMessage.NestedMessage
 import io.spine.protodata.test.packageless.GlobalMessage
 import io.spine.protodata.test.packageless.GlobalMessage.LocalMessage
+
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -56,18 +52,19 @@ class AstExtensionsSpec {
             val field = Field.newBuilder()
                 .setList(Empty.getDefaultInstance())
                 .buildPartial()
-            assertThat(field.isRepeated())
+            Truth.assertThat(field.isRepeated())
                 .isTrue()
         }
 
         @Test
         fun `repeated if map`() {
             val field = Field.newBuilder()
-                .setMap(Field.OfMap.newBuilder()
-                    .setKeyType(TYPE_STRING)
+                .setMap(
+                    Field.OfMap.newBuilder()
+                    .setKeyType(PrimitiveType.TYPE_STRING)
                     .build())
                 .buildPartial()
-            assertThat(field.isRepeated())
+            Truth.assertThat(field.isRepeated())
                 .isTrue()
         }
 
@@ -76,7 +73,7 @@ class AstExtensionsSpec {
             val field = Field.newBuilder()
                 .setSingle(Empty.getDefaultInstance())
                 .buildPartial()
-            assertThat(field.isRepeated())
+            Truth.assertThat(field.isRepeated())
                 .isFalse()
         }
     }
@@ -87,32 +84,32 @@ class AstExtensionsSpec {
         @Test
         fun unary() {
             val method = method("who")
-            assertThat(method.cardinality())
-                .isEqualTo(UNARY)
+            Truth.assertThat(method.cardinality())
+                .isEqualTo(CallCardinality.UNARY)
         }
 
         @Test
         fun `server streaming`() {
             val method = method("where_are_you")
-            assertThat(method.cardinality())
-                .isEqualTo(SERVER_STREAMING)
+            Truth.assertThat(method.cardinality())
+                .isEqualTo(CallCardinality.SERVER_STREAMING)
         }
 
         @Test
         fun `client streaming`() {
             val method = method("rescue_call")
-            assertThat(method.cardinality())
-                .isEqualTo(CLIENT_STREAMING)
+            Truth.assertThat(method.cardinality())
+                .isEqualTo(CallCardinality.CLIENT_STREAMING)
         }
 
         @Test
         fun `bidirectional streaming`() {
             val method = method("which_actor")
-            assertThat(method.cardinality())
-                .isEqualTo(BIDIRECTIONAL_STREAMING)
+            Truth.assertThat(method.cardinality())
+                .isEqualTo(CallCardinality.BIDIRECTIONAL_STREAMING)
         }
 
-        private fun method(name: String): MethodDescriptor {
+        private fun method(name: String): Descriptors.MethodDescriptor {
             val service = DoctorProto.getDescriptor().services[0]
             return service.methods.find { it.name == name }!!
         }
@@ -124,42 +121,42 @@ class AstExtensionsSpec {
         @Test
         fun `for a top-level message`() {
             val name = TopLevelMessage.getDescriptor().name()
-            assertThat(name.qualifiedName())
+            Truth.assertThat(name.qualifiedName())
                 .isEqualTo("spine.protodata.test.TopLevelMessage")
         }
 
         @Test
         fun `for a top-level enum`() {
             val name = TopLevelEnum.getDescriptor().name()
-            assertThat(name.qualifiedName())
+            Truth.assertThat(name.qualifiedName())
                 .isEqualTo("spine.protodata.test.TopLevelEnum")
         }
 
         @Test
         fun `for a nested message`() {
-            val name = VeryNestedMessage.getDescriptor().name()
-            assertThat(name.qualifiedName())
+            val name = NestedMessage.VeryNestedMessage.getDescriptor().name()
+            Truth.assertThat(name.qualifiedName())
                 .isEqualTo("spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage")
         }
 
         @Test
         fun `for a nested enum`() {
             val name = NestedEnum.getDescriptor().name()
-            assertThat(name.qualifiedName())
+            Truth.assertThat(name.qualifiedName())
                 .isEqualTo("spine.protodata.test.TopLevelMessage.NestedEnum")
         }
 
         @Test
         fun `for a top-level message without a package`() {
             val name = GlobalMessage.getDescriptor().name()
-            assertThat(name.typeUrl())
+            Truth.assertThat(name.typeUrl())
                 .isEqualTo("type.googleapis.com/GlobalMessage")
         }
 
         @Test
         fun `for a nested message without a package`() {
             val name = LocalMessage.getDescriptor().name()
-            assertThat(name.qualifiedName())
+            Truth.assertThat(name.qualifiedName())
                 .isEqualTo("GlobalMessage.LocalMessage")
         }
     }
