@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2022, TeamDev. All rights reserved.
  *
@@ -25,11 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.Jackson
 import io.spine.internal.dependency.Spine
 
 plugins {
     `build-proto-model`
+    protobuf
     `detekt-code-analysis`
     jacoco
 }
@@ -52,4 +54,16 @@ dependencies {
     }
 
     testImplementation(project(":test-env"))
+}
+
+/**
+ * Force `generated` directory and Kotlin code generation.
+ */
+protobuf {
+    generatedFilesBaseDir = "$projectDir/generated"
+    generateProtoTasks {
+        for (task in all()) {
+            task.builtins.maybeCreate("kotlin")
+        }
+    }
 }
