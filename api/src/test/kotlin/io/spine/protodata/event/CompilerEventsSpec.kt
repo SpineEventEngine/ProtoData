@@ -26,39 +26,22 @@
 
 package io.spine.protodata.event
 
-import com.google.common.truth.Truth
-import com.google.common.truth.extensions.proto.ProtoTruth
+import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel
 import com.google.protobuf.EnumValue
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto
-import io.spine.protobuf.AnyPacker
+import io.spine.protobuf.unpackGuessingType
 import io.spine.protodata.MessageType
 import io.spine.protodata.TypeName
-import io.spine.protodata.event.CompilerEvents
-import io.spine.protodata.event.EnumConstantEntered
-import io.spine.protodata.event.EnumConstantExited
-import io.spine.protodata.event.EnumEntered
-import io.spine.protodata.event.EnumExited
-import io.spine.protodata.event.FieldEntered
-import io.spine.protodata.event.FieldExited
-import io.spine.protodata.event.FieldOptionDiscovered
-import io.spine.protodata.event.FileEntered
-import io.spine.protodata.event.FileExited
-import io.spine.protodata.event.FileOptionDiscovered
-import io.spine.protodata.event.OneofGroupEntered
-import io.spine.protodata.event.OneofGroupExited
-import io.spine.protodata.event.RpcEntered
-import io.spine.protodata.event.RpcExited
-import io.spine.protodata.event.RpcOptionDiscovered
-import io.spine.protodata.event.ServiceEntered
-import io.spine.protodata.event.ServiceExited
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.event.TypeExited
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.Correspondences
 import io.spine.type.KnownTypes
@@ -104,17 +87,17 @@ class CompilerEventsSpec {
         @Test
         fun `standard file option events`() {
             val event = events.findMultipleFilesOptionEvent()
-            ProtoTruth.assertThat(event).isNotNull()
-            Truth.assertThat(event.option<BoolValue>().value)
-                .isTrue()
+
+            event shouldNotBe null
+            event.option<BoolValue>().value shouldBe true
         }
 
         @Test
         fun `custom file option events`() {
             val event = events.findTypeUrlPrefixEvent()
-            ProtoTruth.assertThat(event).isNotNull()
-            Truth.assertThat(event.option<StringValue>().value)
-                .isEqualTo("type.spine.io")
+
+            event shouldNotBe null
+            event.option<StringValue>().value shouldBe "type.spine.io"
         }
 
         @Test
@@ -143,8 +126,9 @@ class CompilerEventsSpec {
         @Test
         fun `custom field option events`() {
             val event = events.findRequiredFieldOptionEvent()
-            ProtoTruth.assertThat(event).isNotNull()
-            Truth.assertThat(event.option<BoolValue>().value).isTrue()
+
+            event shouldNotBe null
+            event.option<BoolValue>().value shouldBe true
         }
 
         @Test
@@ -196,33 +180,32 @@ class CompilerEventsSpec {
     @Test
     fun `include 'rpc' options`() {
         val event = emitted<RpcOptionDiscovered>()
-        Truth.assertThat(event.option.name)
-            .isEqualTo("idempotency_level")
-        ProtoTruth.assertThat(AnyPacker.unpack(event.option.value))
-            .isEqualTo(
+
+        event.option.name shouldBe  "idempotency_level"
+        event.option.value.unpackGuessingType() shouldBe
                 EnumValue.newBuilder()
-                .setName(DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS.name)
-                .setNumber(DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE)
-                .build())
+                .setName(IdempotencyLevel.NO_SIDE_EFFECTS.name)
+                .setNumber(IdempotencyLevel.NO_SIDE_EFFECTS_VALUE)
+                .build()
     }
 
     @Test
     fun `include message doc info`() {
         val typeEntered = emitted<TypeEntered>()
-        ProtoTruth.assertThat(typeEntered.type)
+        assertThat(typeEntered.type)
             .comparingExpectedFieldsOnly()
             .isEqualTo(
                 MessageType.newBuilder()
                 .setName(TypeName.newBuilder().setSimpleName("Journey"))
                 .build())
         val doc = typeEntered.type.doc
-        Truth.assertThat(doc.leadingComment.split(nl))
+        assertThat(doc.leadingComment.split(nl))
             .containsExactly("A Doctor's journey.", "", "A test type", "")
-        Truth.assertThat(doc.trailingComment)
+        assertThat(doc.trailingComment)
             .isEqualTo("Impl note: test type.")
-        Truth.assertThat(doc.detachedCommentList[0])
+        assertThat(doc.detachedCommentList[0])
             .isEqualTo("Detached 1.")
-        Truth.assertThat(doc.detachedCommentList[1].split(nl))
+        assertThat(doc.detachedCommentList[1].split(nl))
             .containsExactly(
                 "Detached 2.",
                 "Indentation is not preserved in Protobuf.",
@@ -244,7 +227,7 @@ class CompilerEventsSpec {
 
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
-        ProtoTruth.assertThat(events)
+        assertThat(events)
             .comparingElementsUsing(Correspondences.type<EventMessage>())
             .containsAtLeastElementsIn(javaClasses)
             .inOrder()
