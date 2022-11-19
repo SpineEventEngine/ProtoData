@@ -67,3 +67,15 @@ protobuf {
         }
     }
 }
+
+idea {
+    module {
+        generatedSourceDirs.apply {
+            add(file("$projectDir/generated/main/kotlin"))
+            add(file("$projectDir/generated/test/kotlin"))
+        }
+        testSources.from(
+            project.file("$projectDir/generated/test/kotlin"),
+        )
+    }
+}
