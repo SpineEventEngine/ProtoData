@@ -26,10 +26,10 @@
 
 package io.spine.protodata
 
-import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
+import io.spine.protodata.CallCardinality.*
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.TopLevelEnum
 import io.spine.protodata.test.TopLevelMessage
@@ -37,7 +37,6 @@ import io.spine.protodata.test.TopLevelMessage.NestedEnum
 import io.spine.protodata.test.TopLevelMessage.NestedMessage
 import io.spine.protodata.test.packageless.GlobalMessage
 import io.spine.protodata.test.packageless.GlobalMessage.LocalMessage
-
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -56,8 +55,8 @@ class AstExtensionsSpec {
             val field = Field.newBuilder()
                 .setList(Empty.getDefaultInstance())
                 .buildPartial()
-            assertThat(field.isRepeated())
-                .isTrue()
+
+            field.isRepeated() shouldBe true
         }
 
         @Test
@@ -88,27 +87,29 @@ class AstExtensionsSpec {
         @Test
         fun unary() {
             val method = method("who")
-            method.cardinality() shouldBe CallCardinality.UNARY
+
+            method.cardinality() shouldBe UNARY
         }
 
         @Test
         fun `server streaming`() {
             val method = method("where_are_you")
-            method.cardinality() shouldBe CallCardinality.SERVER_STREAMING
+
+            method.cardinality() shouldBe SERVER_STREAMING
         }
 
         @Test
         fun `client streaming`() {
             val method = method("rescue_call")
-            assertThat(method.cardinality())
-                .isEqualTo(CallCardinality.CLIENT_STREAMING)
+
+            method.cardinality() shouldBe CLIENT_STREAMING
         }
 
         @Test
         fun `bidirectional streaming`() {
             val method = method("which_actor")
-            assertThat(method.cardinality())
-                .isEqualTo(CallCardinality.BIDIRECTIONAL_STREAMING)
+
+            method.cardinality() shouldBe BIDIRECTIONAL_STREAMING
         }
 
         private fun method(name: String): Descriptors.MethodDescriptor {
@@ -137,6 +138,7 @@ class AstExtensionsSpec {
         @Test
         fun `for a nested message`() {
             val name = NestedMessage.VeryNestedMessage.getDescriptor().name()
+
             name.qualifiedName() shouldBe
                     "spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage"
         }
@@ -144,18 +146,21 @@ class AstExtensionsSpec {
         @Test
         fun `for a nested enum`() {
             val name = NestedEnum.getDescriptor().name()
+
             name.qualifiedName() shouldBe "spine.protodata.test.TopLevelMessage.NestedEnum"
         }
 
         @Test
         fun `for a top-level message without a package`() {
             val name = GlobalMessage.getDescriptor().name()
+
             name.typeUrl() shouldBe "type.googleapis.com/GlobalMessage"
         }
 
         @Test
         fun `for a nested message without a package`() {
             val name = LocalMessage.getDescriptor().name()
+
             name.qualifiedName() shouldBe "GlobalMessage.LocalMessage"
         }
     }
