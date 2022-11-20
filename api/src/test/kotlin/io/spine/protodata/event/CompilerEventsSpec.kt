@@ -40,9 +40,9 @@ import io.kotest.matchers.shouldNotBe
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto
 import io.spine.protobuf.unpackGuessingType
-import io.spine.protodata.MessageType
-import io.spine.protodata.TypeName
+import io.spine.protodata.messageType
 import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.typeName
 import io.spine.testing.Correspondences
 import io.spine.type.KnownTypes
 import kotlin.reflect.KClass
@@ -193,13 +193,18 @@ class CompilerEventsSpec {
         val typeEntered = emitted<TypeEntered>()
         assertThat(typeEntered.type)
             .comparingExpectedFieldsOnly()
-            .isEqualTo(
-                MessageType.newBuilder()
-                .setName(TypeName.newBuilder().setSimpleName("Journey"))
-                .build())
+            .isEqualTo(messageType {
+                name = typeName { simpleName = "Journey" }
+            })
+
         val doc = typeEntered.type.doc
         assertThat(doc.leadingComment.split(nl))
-            .containsExactly("A Doctor's journey.", "", "A test type", "")
+            .containsExactly(
+                "A Doctor's journey.",
+                "",
+                "A test type",
+                ""
+            )
 
         doc.trailingComment shouldBe "Impl note: test type."
         doc.detachedCommentList[0] shouldBe "Detached 1."
