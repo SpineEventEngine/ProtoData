@@ -31,10 +31,10 @@ import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel
-import com.google.protobuf.EnumValue
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
+import com.google.protobuf.enumValue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.base.EventMessage
@@ -182,11 +182,10 @@ class CompilerEventsSpec {
         val event = emitted<RpcOptionDiscovered>()
 
         event.option.name shouldBe  "idempotency_level"
-        event.option.value.unpackGuessingType() shouldBe
-                EnumValue.newBuilder()
-                .setName(IdempotencyLevel.NO_SIDE_EFFECTS.name)
-                .setNumber(IdempotencyLevel.NO_SIDE_EFFECTS_VALUE)
-                .build()
+        event.option.value.unpackGuessingType() shouldBe enumValue {
+            name = IdempotencyLevel.NO_SIDE_EFFECTS.name
+            number = IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
+        }
     }
 
     @Test
@@ -201,10 +200,10 @@ class CompilerEventsSpec {
         val doc = typeEntered.type.doc
         assertThat(doc.leadingComment.split(nl))
             .containsExactly("A Doctor's journey.", "", "A test type", "")
-        assertThat(doc.trailingComment)
-            .isEqualTo("Impl note: test type.")
-        assertThat(doc.detachedCommentList[0])
-            .isEqualTo("Detached 1.")
+
+        doc.trailingComment shouldBe "Impl note: test type."
+        doc.detachedCommentList[0] shouldBe "Detached 1."
+
         assertThat(doc.detachedCommentList[1].split(nl))
             .containsExactly(
                 "Detached 2.",
