@@ -344,9 +344,6 @@ class PipelineSpec {
                 request
             )()
 
-            //destination2.toFile().walkTopDown().forEach { println(it.name) }
-            //println(destination2.resolve(existingFilePath))
-
             assertDoesNotExist(destination2.resolve(existingFilePath))
 
             val writtenFile = destination1.resolve(existingFilePath)
