@@ -51,7 +51,13 @@ message TextCoordinates {
         // Points at the start of a specific line.
         uint32 whole_line = 2;
 
-        // Points at the start of the last line of the file.
+        // Points at the point after the last line of the text.
+        //
+        // In other terms, this point is the place where the text can be appended.
+        //
+        // The associated column number is always zero, since there can be no existing chars in
+        // the line yet.
+        //
         google.protobuf.Empty end_of_file = 3;
 
         // Specifies that there is no such place in a given file.
