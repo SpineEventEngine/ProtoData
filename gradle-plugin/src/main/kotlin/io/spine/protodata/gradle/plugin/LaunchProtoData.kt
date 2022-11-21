@@ -27,7 +27,7 @@
 package io.spine.protodata.gradle.plugin
 
 import io.spine.protodata.cli.CLI_APP_CLASS
-import io.spine.protodata.cli.ConfigFormatParam
+import io.spine.protodata.cli.ConfigFileParam
 import io.spine.protodata.cli.OptionProviderParam
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RendererParam
@@ -138,7 +138,7 @@ public abstract class LaunchProtoData : JavaExec() {
             }
 
             if (configuration.isPresent) {
-                yield(ConfigFormatParam.name)
+                yield(ConfigFileParam.name)
                 yield(project.file(configuration).absolutePath)
             }
         }.asIterable()
