@@ -28,7 +28,7 @@ package io.spine.protodata.codegen.java.generado
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.protodata.Pipeline
+import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
 import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration

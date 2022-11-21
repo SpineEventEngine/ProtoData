@@ -24,12 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.cli.app
+
+import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.ExtensionRegistry
+import io.spine.option.OptionsProvider
+import io.spine.protobuf.registerAllExtensions
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * An [OptionsProvider] which provides all the options defined in a single Protobuf file.
  */
-val protoDataVersion: String by extra("0.5.0")
+internal class FileOptionsProvider(private val descriptor: FileDescriptor) : OptionsProvider {
+
+    /**
+     * Supplies the given [registry] with the options from the associated descriptor
+     * of the proto file. The outer class for the file must exist.
+     *
+     * @throws IllegalStateException if the outer class for the proto file does not exist.
+     */
+    override fun registerIn(registry: ExtensionRegistry) {
+        descriptor.registerAllExtensions(registry)
+    }
+}

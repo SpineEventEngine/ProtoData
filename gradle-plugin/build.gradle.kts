@@ -80,6 +80,7 @@ dependencies {
     compileOnly(Protobuf.GradlePlugin.lib)
     api(project(":gradle-api"))
 
+    implementation(project(":cli-api"))
     implementation(spine.toolBase)
     implementation(Kotlin.gradlePluginApi)
 }

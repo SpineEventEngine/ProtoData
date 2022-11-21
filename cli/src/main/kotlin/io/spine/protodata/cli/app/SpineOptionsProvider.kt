@@ -24,12 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.cli.app
+
+import com.google.protobuf.ExtensionRegistry
+import io.spine.option.OptionsProto
+import io.spine.option.OptionsProvider
+import io.spine.time.validation.TimeOptionsProto
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Registers the definitions from {@code spine/options.proto} and {@code spine/time_options.proto}
+ * in the {@code ExtensionRegistry}.
  */
-val protoDataVersion: String by extra("0.5.0")
+internal class SpineOptionsProvider : OptionsProvider {
+
+    override fun registerIn(registry: ExtensionRegistry) {
+        OptionsProto.registerAllExtensions(registry)
+        TimeOptionsProto.registerAllExtensions(registry)
+    }
+}

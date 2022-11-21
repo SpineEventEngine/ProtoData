@@ -71,7 +71,9 @@ plugins {
 
 spinePublishing {
     modules = setOf(
+        "api",
         "cli",
+        "cli-api",
         "compiler",
         "protoc",
         "codegen-java",

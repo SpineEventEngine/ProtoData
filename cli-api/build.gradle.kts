@@ -24,12 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.5.0")
+plugins {
+    `detekt-code-analysis`
+    jacoco
+}
+
+dependencies {
+    implementation(project(":api"))
+}

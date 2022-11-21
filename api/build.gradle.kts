@@ -24,12 +24,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.protobuf
+import io.spine.internal.dependency.Jackson
+import io.spine.internal.dependency.Spine
+
+plugins {
+    `build-proto-model`
+    protobuf
+    `detekt-code-analysis`
+    jacoco
+}
+
+dependencies {
+    val spine = Spine(project)
+
+    listOf(
+        spine.base,
+        spine.coreJava.server,
+        spine.toolBase,
+    ).forEach {
+        api(it)
+    }
+
+    with(Jackson) {
+        implementation(databind)
+        implementation(dataformatYaml)
+        runtimeOnly(moduleKotlin)
+    }
+
+    testImplementation(project(":test-env"))
+}
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Force `generated` directory and Kotlin code generation.
  */
-val protoDataVersion: String by extra("0.5.0")
+protobuf {
+    generatedFilesBaseDir = "$projectDir/generated"
+    generateProtoTasks {
+        for (task in all()) {
+            task.builtins.maybeCreate("kotlin")
+        }
+    }
+}
+
+idea {
+    module {
+        generatedSourceDirs.apply {
+            add(file("$projectDir/generated/main/kotlin"))
+            add(file("$projectDir/generated/test/kotlin"))
+        }
+        testSources.from(
+            project.file("$projectDir/generated/test/kotlin"),
+        )
+    }
+}
