@@ -36,6 +36,7 @@ plugins {
     id("com.gradle.plugin-publish").version("0.18.0")
     `version-to-resources`
     `write-manifest`
+    `detekt-code-analysis`
     jacoco
 }
 

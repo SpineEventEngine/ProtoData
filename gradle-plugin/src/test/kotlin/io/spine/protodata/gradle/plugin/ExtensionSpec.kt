@@ -40,10 +40,12 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class `Plugin extension should` {
+@DisplayName("Plugin extension should")
+class ExtensionSpec {
 
     private lateinit var project: Project
     private lateinit var extension: Extension
@@ -106,7 +108,7 @@ class `Plugin extension should` {
         extension.subDirs = listOf(subDir)
 
         val sourceSet = project.sourceSets.getByName(MAIN_SOURCE_SET_NAME)
-        val sourceDir = extension.sourceDir(sourceSet)
+        val sourceDir = extension.sourceDirs(sourceSet)
         assertThat(sourceDir.get().first().asFile.toPath())
             .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
     }
@@ -120,7 +122,7 @@ class `Plugin extension should` {
         extension.subDirs = listOf(subDir)
 
         val sourceSet = project.sourceSets.getByName(MAIN_SOURCE_SET_NAME)
-        val targetDirs = extension.targetDir(sourceSet)
+        val targetDirs = extension.targetDirs(sourceSet)
         assertThat(targetDirs.get().first().asFile.toPath())
             .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
     }
@@ -139,7 +141,7 @@ class `Plugin extension should` {
         val absolutePath = transforming<Directory, Path>({ it.asFile.toPath() }, "absolute path")
 
         val sourceMain = project.projectDir.toPath() / srcBasePath / MAIN_SOURCE_SET_NAME
-        val sourceDirs = extension.sourceDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
+        val sourceDirs = extension.sourceDirs(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
         assertThat(sourceDirs.get())
             .comparingElementsUsing(absolutePath)
             .containsExactly(
@@ -148,7 +150,7 @@ class `Plugin extension should` {
             )
 
         val targetMain = project.projectDir.toPath() / targetBasePath / MAIN_SOURCE_SET_NAME
-        val targetDirs = extension.targetDir(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
+        val targetDirs = extension.targetDirs(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
         assertThat(targetDirs.get())
             .comparingElementsUsing(absolutePath)
             .containsExactly(

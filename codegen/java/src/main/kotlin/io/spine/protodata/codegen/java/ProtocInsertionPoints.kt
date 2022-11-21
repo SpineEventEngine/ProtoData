@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:Suppress("MatchingDeclarationName")
 @file:JvmName("ProtocInsertionPoints")
 
 package io.spine.protodata.codegen.java
@@ -33,7 +34,7 @@ import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.ProtocInsertionPoint
 
 /**
- * Standard [InsertionPoint]s generated for a message or an enum type by the Protobuf compiler.
+ * Standard [InsertionPoint]s generated for a message, or an enum type by the Protobuf compiler.
  */
 public enum class TypedInsertionPoint {
 

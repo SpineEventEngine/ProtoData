@@ -51,6 +51,8 @@ import kotlin.io.path.writeText
  * than a file system object. One `SourceFile` may reflect multiple actual FS files. For example,
  * a `SourceFile` may be read from one location on the FS and written into another location.
  */
+@Suppress("TooManyFunctions") /* Those functions constitute the primary API and
+                                         should not be represented as extensions. */
 public class SourceFile
 private constructor(
 

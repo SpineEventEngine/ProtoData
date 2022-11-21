@@ -30,7 +30,7 @@ import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
-import com.github.ajalt.clikt.parameters.options.flag
+import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -61,7 +61,7 @@ import kotlin.system.exitProcess
 /**
  * Launches the CLI application.
  *
- * When the application is done or an unhandled error occurs, exits the process.
+ * When the application is done, or an unhandled error occurs, exits the process.
  */
 public fun main(args: Array<String>): Unit =
     Run(readVersion()).main(args)
@@ -84,6 +84,7 @@ private fun readVersion(): String = Version.fromManifestOf(Run::class.java).valu
  * Finally, the renderers apply required changes to the source set with the root path, supplied in
  * the `--source-root` parameter.
  */
+@Suppress("TooManyFunctions") // It is OK for `main` entry point.
 internal class Run(version: String) : CliktCommand(
     name = "protodata",
     help = "ProtoData tool helps build better multi-platform code generation." +
@@ -104,9 +105,6 @@ internal class Run(version: String) : CliktCommand(
         const val VALUE = "--configuration-value"
         const val FORMAT = "--configuration-format"
     }
-
-    /** Abbreviation extension. */
-    private fun String.ti() = trimIndent()
 
     /*
      * The section guarded by `formatter:off/on` below contains definitions of CLI options.
@@ -159,6 +157,10 @@ internal class Run(version: String) : CliktCommand(
         the number of directories must match the number of `--target-root` directories; source and
         target directories are paired up according to the order they are provided in, so that
         the files from first source are written to the first target and so on.
+        
+        When specifying multiple directories, some of them are allowed to be non-existent. They will
+        just be ignored along with their paired targets. But at least one directory must exist. 
+        Otherwise, the process will end up with an error.
         """.ti()
     ).path(
         canBeFile = false,
@@ -223,15 +225,6 @@ internal class Run(version: String) : CliktCommand(
         completionCandidates = CompletionCandidates.Fixed(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }.toSet()
     ))
-
-    private val allowMissingDirs: Boolean by option("--ignore-missing", "-i",
-        help = """
-        If set, allows some source directories to be non-existent.
-        
-        Even with this flag set, at least one existing source directory must exist.
-        Otherwise, the process ends with an error. 
-        """.ti()
-    ).flag(default = false)
 //@formatter:on
 
     override fun run() {
@@ -253,10 +246,8 @@ internal class Run(version: String) : CliktCommand(
                 listOf(ConfigOpt.FILE, ConfigOpt.VALUE)
             )
         }
-        if (hasValue != hasFormat) {
-            throw UsageError(
-                "Options `${ConfigOpt.VALUE}` and `${ConfigOpt.FORMAT}` must be used together."
-            )
+        checkUsage(hasValue == hasFormat) {
+            "Options `${ConfigOpt.VALUE}` and `${ConfigOpt.FORMAT}` must be used together."
         }
         return when {
             hasFile -> Configuration.file(configurationFile!!)
@@ -291,33 +282,26 @@ internal class Run(version: String) : CliktCommand(
             ?: targets.oneSetWithNoFiles()
     }
 
-    private fun List<Path>.oneSetWithNoFiles() =
-        listOf(SourceFileSet.empty(first()))
-
     private fun checkPaths() {
-        if (sourceRoots == null && targetRoots == null) {
-            throw UsageError("Either source root or target root or both must be set.")
+        checkUsage(sourceRoots != null || targetRoots != null) {
+            "Either source root or target root or both must be set."
         }
-        if (sourceRoots == null && targetRoots!!.size != 1) {
-            throw UsageError(
+        if (sourceRoots == null) {
+            checkUsage(targetRoots!!.size == 1) {
                 "When not providing a source directory, only one target directory must be present."
-            )
-        }
-        sourceRoots?.let { sources -> targetRoots?.let { targets ->
-            if (sources.size != targets.size) {
-                throw UsageError(
-                    "Mismatched amount of directories. Given ${sourceRoots!!.size} sources " +
-                            "and ${targetRoots!!.size} targets."
-                )
             }
-        }}
+        }
+        if (sourceRoots != null && targetRoots != null) {
+            checkUsage(sourceRoots!!.size == targetRoots!!.size) {
+                "Mismatched amount of directories. Given ${sourceRoots!!.size} sources " +
+                        "and ${targetRoots!!.size} targets."
+            }
+        }
     }
 
-    private fun loadPlugins() =
-        load(PluginBuilder(), plugins)
+    private fun loadPlugins() = load(PluginBuilder(), plugins)
 
-    private fun loadRenderers() =
-        load(RendererBuilder(), renderers)
+    private fun loadRenderers() = load(RendererBuilder(), renderers)
 
     private fun loadOptions(): List<OptionsProvider> {
         val providers = load(OptionsProviderBuilder(), optionProviders)
@@ -356,16 +340,39 @@ internal class Run(version: String) : CliktCommand(
         try {
             return createByName(className, classLoader)
         } catch (e: ClassNotFoundException) {
-            error(e.message)
-            error("Please add the required class `$className` to the user classpath.")
+            printError(e.stackTraceToString())
+            printError(e.message)
+            printError("Please add the required class `$className` to the user classpath.")
             if (classPath != null) {
-                error("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
+                printError("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
             }
             exitProcess(1)
         }
     }
+}
 
-    private fun error(msg: String?) {
-        echo(msg, err = true)
+/**
+ * Prints the given error [message] to the screen.
+ */
+private fun printError(message: String?) = TermUi.echo(message, err = true)
+
+/**
+ * Creates a list that contain a single, empty source set.
+ */
+private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet> =
+    listOf(SourceFileSet.empty(first()))
+
+/**
+ * Abbreviation extension.
+ */
+private fun String.ti() = trimIndent()
+
+/**
+ * Throws an [UsageError] with the result of calling [lazyMessage] if the [condition] isn't met.
+ */
+private inline fun checkUsage(condition: Boolean, lazyMessage: () -> Any) {
+    if (condition.not()) {
+        val message = lazyMessage()
+        throw UsageError(message.toString())
     }
 }

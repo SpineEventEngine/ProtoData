@@ -57,7 +57,7 @@ class JavaCodegenSpec {
             val className = type.javaClassName(declaredIn = file)
 
             assertThat(className.binary)
-                .isEqualTo("$javaPackageName.$typeName")
+                .isEqualTo("$JAVA_PACKAGE_NAME.$typeName")
         }
 
         @Test
@@ -70,7 +70,7 @@ class JavaCodegenSpec {
             val className = type.javaClassName(declaredIn = file)
 
             assertThat(className.binary)
-                .isEqualTo("$javaPackageName.$nestingType$$typeName")
+                .isEqualTo("$JAVA_PACKAGE_NAME.$nestingType$$typeName")
         }
 
         @Test
@@ -82,7 +82,7 @@ class JavaCodegenSpec {
             val className = type.javaClassName(declaredIn = file)
 
             assertThat(className.binary)
-                .isEqualTo("${javaPackageName}.${outerClassName}$${typeName}")
+                .isEqualTo("${JAVA_PACKAGE_NAME}.${OUTER_CLASS_NAME}$${typeName}")
         }
 
         @Test
@@ -94,7 +94,7 @@ class JavaCodegenSpec {
             val className = type.javaClassName(declaredIn = file)
 
             assertThat(className.binary)
-                .isEqualTo("$javaPackageName.$typeName")
+                .isEqualTo("$JAVA_PACKAGE_NAME.$typeName")
         }
     }
 
@@ -134,7 +134,7 @@ class JavaCodegenSpec {
             val className = type.javaFile(declaredIn = file)
 
             assertThat(className.toString())
-                .isEqualTo("$packageNameAsPath$outerClassName.java")
+                .isEqualTo("$packageNameAsPath$OUTER_CLASS_NAME.java")
         }
     }
 }
@@ -156,7 +156,7 @@ private fun protoMultipleFiles(outerClassName: Option? = null) = file {
 
 private fun messageType(typeName: String) = messageType {
     name = typeName {
-        packageName = protoPackageName
+        packageName = PROTO_PACKAGE_NAME
         simpleName = typeName
     }
 }
@@ -171,7 +171,7 @@ private fun nestedMessageType(typeName: String, nestingType: String) = messageTy
 
 private fun withDeeperNesting(typeName: String, firstNesting: String) = messageType {
     name = typeName {
-        packageName = protoPackageName
+        packageName = PROTO_PACKAGE_NAME
         simpleName = typeName
         nestingTypeName.apply {
             add(firstNesting)
@@ -182,17 +182,17 @@ private fun withDeeperNesting(typeName: String, firstNesting: String) = messageT
 
 private fun enumTypeNamed(typeName: String) = enumType {
     name = typeName {
-        packageName = protoPackageName
+        packageName = PROTO_PACKAGE_NAME
         simpleName = typeName
     }
 }
 
-private const val protoPackageName = "ecme.example"
-private const val javaPackageName = "corp.acme.example"
+private const val PROTO_PACKAGE_NAME = "ecme.example"
+private const val JAVA_PACKAGE_NAME = "corp.acme.example"
 
-private val packageNameAsPath = javaPackageName.replace('.', separatorChar) + separatorChar
+private val packageNameAsPath = JAVA_PACKAGE_NAME.replace('.', separatorChar) + separatorChar
 
-private const val outerClassName = "CartoonExplosives"
+private const val OUTER_CLASS_NAME = "CartoonExplosives"
 
-private val javaPackage = javaPackage(javaPackageName)
-private val javaOuterClassName = javaOuterClassName(outerClassName)
+private val javaPackage = javaPackage(JAVA_PACKAGE_NAME)
+private val javaOuterClassName = javaOuterClassName(OUTER_CLASS_NAME)

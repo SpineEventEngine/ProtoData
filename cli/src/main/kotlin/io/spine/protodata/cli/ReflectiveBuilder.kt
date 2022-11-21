@@ -56,11 +56,15 @@ internal open class ReflectiveBuilder<T: Any> {
     }
 
     private fun create(cls: KClass<T>): T {
-        val ctor = cls.constructors.find {
-            it.visibility == KVisibility.PUBLIC && it.parameters.isEmpty()
-        } ?: error(
-            "Class `${cls.qualifiedName} should have a public zero-parameter constructor.`"
-        )
+        val ctor = cls.constructors.find { it.visibility.isPublic() && it.parameters.isEmpty() }
+        check(ctor != null) {
+            "Class `${cls.qualifiedName}` should have a public zero-parameter constructor."
+        }
         return ctor.call()
     }
 }
+
+/**
+ * Checks if this [KVisibility] is [public][KVisibility.PUBLIC].
+ */
+private fun KVisibility?.isPublic() = this == KVisibility.PUBLIC
