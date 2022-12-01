@@ -151,7 +151,7 @@ class PipelineSpec {
     }
 
     @Test
-    fun `write into whole line insertion points`() {
+    fun `write into insertion points`() {
         val initialContent = "foo bar"
         val sourceFile = write("io/spine/protodata/test/DeleteMe_.java", initialContent)
         val renderer = PrependingRenderer()
