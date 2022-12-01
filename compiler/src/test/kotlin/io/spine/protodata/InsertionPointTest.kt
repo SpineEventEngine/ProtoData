@@ -41,10 +41,12 @@ import kotlin.io.path.div
 import kotlin.io.path.readLines
 import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
+@DisplayName("Insertion points should")
 class `Insertion points should` {
 
     @Nested
