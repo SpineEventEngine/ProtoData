@@ -235,8 +235,8 @@ private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact, 
     protobuf.run {
         generatedFilesBaseDir = "$buildDir/generated-proto/"
         plugins {
-            it.id(PROTODATA_PROTOC_PLUGIN) {
-                artifact = protocPlugin.coordinates
+            it.create(PROTODATA_PROTOC_PLUGIN) {
+                it.artifact = protocPlugin.coordinates
             }
         }
         generateProtoTasksAll.forEach { task ->
