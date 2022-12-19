@@ -70,11 +70,11 @@ class PluginSpec {
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
         this.projectDir = projectDir
-        this.generatedProtoDir = projectDir.resolve("build/generated-proto")
-        this.generatedDir = projectDir.resolve("generated")
-        this.generatedMainDir = generatedDir.resolve("main")
-        this.generatedJavaDir = generatedMainDir.resolve("java")
-        this.generatedKotlinDir  = generatedMainDir.resolve("kotlin")
+        generatedProtoDir = projectDir.resolve("build/generated-proto")
+        generatedDir = projectDir.resolve("generated")
+        generatedMainDir = generatedDir.resolve("main")
+        generatedJavaDir = generatedMainDir.resolve("java")
+        generatedKotlinDir  = generatedMainDir.resolve("kotlin")
     }
 
     @Test
