@@ -82,6 +82,7 @@ dependencies {
 
     implementation(project(":cli-api"))
     implementation(spine.toolBase)
+    implementation(spine.pluginBase)
     implementation(Kotlin.gradlePluginApi)
 }
 
