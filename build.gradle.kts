@@ -175,9 +175,8 @@ val localPublish by tasks.registering {
 val integrationTest by tasks.creating(RunBuild::class) {
     directory = "$rootDir/tests"
     dependsOn(localPublish)
+    shouldRunAfter(tasks.test)
 }
-
-tasks["check"].finalizedBy(integrationTest)
 
 /**
  * The alias for typed extensions functions related to subprojects.
