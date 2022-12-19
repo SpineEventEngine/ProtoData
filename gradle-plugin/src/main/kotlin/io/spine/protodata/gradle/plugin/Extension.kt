@@ -26,7 +26,7 @@
 
 package io.spine.protodata.gradle.plugin
 
-import com.google.protobuf.gradle.ProtobufConvention
+import io.spine.tools.gradle.protobuf.generatedFilesBaseDir
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodeGeneratorRequestFile.DEFAULT_DIRECTORY
 import io.spine.protodata.gradle.CodegenSettings
@@ -37,7 +37,6 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
-import org.gradle.kotlin.dsl.getPlugin
 import org.gradle.kotlin.dsl.listProperty
 
 /**
@@ -105,9 +104,7 @@ public class Extension(internal val project: Project): CodegenSettings {
 
     private val srcBaseDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(provider {
-            @Suppress("DEPRECATION") // Protobuf Gradle plugin must migrate to extensions.
-            val protobuf = convention.getPlugin<ProtobufConvention>().protobuf
-            layout.projectDirectory.dir(protobuf.generatedFilesBaseDir)
+            layout.projectDirectory.dir(project.generatedFilesBaseDir)
         })
     }
 
