@@ -32,10 +32,7 @@ package io.spine.protodata.gradle.plugin
 import com.google.common.annotations.VisibleForTesting
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.gradle.GenerateProtoTask
-import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
-import com.google.protobuf.gradle.plugins
-import com.google.protobuf.gradle.protobuf
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.CleanTask
 import io.spine.protodata.gradle.CodegenSettings
@@ -45,6 +42,7 @@ import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
+import io.spine.tools.gradle.protobuf.protobufPluginFacade
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -233,19 +231,16 @@ private fun Project.hasJavaOrKotlin(): Boolean {
 }
 
 private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact, ext: Extension) {
-    protobuf {
+    val protobuf = this.protobufPluginFacade
+    protobuf.run {
         generatedFilesBaseDir = "$buildDir/generated-proto/"
-
         plugins {
-            id(PROTODATA_PROTOC_PLUGIN) {
+            it.id(PROTODATA_PROTOC_PLUGIN) {
                 artifact = protocPlugin.coordinates
             }
         }
-
-        generateProtoTasks {
-            all().forEach { task ->
-                configureProtoTask(task, ext)
-            }
+        generateProtoTasksAll.forEach { task ->
+            configureProtoTask(task, ext)
         }
     }
 }
@@ -256,7 +251,7 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
     }
     val sourceSet = task.sourceSet
     task.plugins {
-        id(PROTODATA_PROTOC_PLUGIN) {
+        it.id(PROTODATA_PROTOC_PLUGIN) {
             val requestFile = ext.requestFile(sourceSet)
             val path = requestFile.get().asFile.absolutePath
             option(path.base64Encoded())
