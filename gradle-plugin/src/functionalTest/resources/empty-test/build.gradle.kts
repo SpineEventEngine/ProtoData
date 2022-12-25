@@ -43,11 +43,6 @@ repositories {
     standardToSpineSdk()
 }
 
-protoData {
-    renderers("io.spine.protodata.test.UnderscorePrefixRenderer")
-    plugins("io.spine.protodata.test.TestPlugin")
-}
-
 dependencies {
     protoData("io.spine.protodata:protodata-test-env:+")
 }
@@ -56,4 +51,9 @@ protobuf {
     protoc {
         artifact = io.spine.internal.dependency.Protobuf.compiler
     }
+}
+
+protoData {
+    renderers("io.spine.protodata.test.UnderscorePrefixRenderer")
+    plugins("io.spine.protodata.test.TestPlugin")
 }
