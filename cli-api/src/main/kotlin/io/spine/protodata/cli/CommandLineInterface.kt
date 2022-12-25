@@ -116,18 +116,6 @@ public object TargetRootParam : Parameter(
         """
 )
 
-public object ClasspathParam : Parameter(
-    name = "--user-classpath",
-    shortName = "--ucp",
-    help = """
-        The user classpath which contains all `${ddash.renderer}` classes, user-defined policies,
-        views, events, etc., as well as all their dependencies, which are not included as a part of
-        the ProtoData library. This option may be omitted if the classes are already present in
-        the ProtoData classpath. May be one path to a JAR, a ZIP, or a directory. Or, may be many
-        paths separated by the system-dependent path separator (`$ps`).
-        """
-)
-
 public object UserClasspathParam : Parameter(
     name = "--user-classpath",
     shortName = "--ucp",
