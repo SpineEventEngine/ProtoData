@@ -85,13 +85,13 @@ class PluginSpec {
 
     @Test
     fun `launch ProtoData`() {
-        createProjectWithProto()
+        createLaunchTestProject()
         launchAndExpectResult(SUCCESS)
     }
 
     @Test
     fun `configure incremental compilation for launch task`() {
-        createProjectWithProto()
+        createLaunchTestProject()
         launchAndExpectResult(SUCCESS)
         launchAndExpectResult(UP_TO_DATE)
     }
@@ -166,7 +166,7 @@ class PluginSpec {
         createProject("empty-test")
     }
 
-    private fun createProjectWithProto() {
+    private fun createLaunchTestProject() {
         createProject("launch-test")
     }
 
@@ -191,7 +191,7 @@ class PluginSpec {
                  2) Under Windows it may cause this issue to occur:
                     https://github.com/gradle/native-platform/issues/274
                After finishing the debug, please comment out this call again. */    
-            //.enableRunnerDebug()
+            .enableRunnerDebug()
             .copyBuildSrc()
         project = builder.create()
     }
