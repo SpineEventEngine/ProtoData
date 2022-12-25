@@ -176,7 +176,14 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
             compileCommandLine()
         }
         setPreLaunchCleanup()
-        onlyIf { requestFile.get().asFile.exists() }
+        onlyIf {
+            val requestFile = requestFile.get().asFile
+            val requestFileExists = requestFile.exists()
+            if (!requestFileExists) {
+                project.logger.warn("Request file $requestFile does not exist.")
+            }
+            requestFileExists
+        }
         dependsOn(
             artifactConfig.buildDependencies,
             userCpConfig.buildDependencies
