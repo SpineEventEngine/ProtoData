@@ -27,6 +27,7 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.truth.Truth.assertThat
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
 import io.spine.testing.assertDoesNotExist
@@ -34,6 +35,7 @@ import io.spine.testing.assertExists
 import io.spine.tools.gradle.task.BaseTaskName.build
 import io.spine.tools.gradle.task.TaskName
 import io.spine.tools.gradle.testing.GradleProject
+import io.spine.tools.gradle.testing.get
 import java.io.File
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
@@ -51,7 +53,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("ProtoData Gradle plugin should")
 class PluginSpec {
 
-    private val taskName: TaskName = TaskName { "launchProtoDataMain" }
+    private val launchProtoData: TaskName = TaskName.of("launchProtoDataMain")
 
     private lateinit var project: GradleProject
     private lateinit var projectDir: File
@@ -60,12 +62,6 @@ class PluginSpec {
     private lateinit var generatedMainDir: File
     private lateinit var generatedJavaDir: File
     private lateinit var generatedKotlinDir: File
-
-    operator fun BuildResult.get(task: TaskName): TaskOutcome {
-        val buildTask = task(task.path())
-        val outcome = buildTask!!.outcome
-        return outcome
-    }
 
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
@@ -77,8 +73,12 @@ class PluginSpec {
         generatedKotlinDir  = generatedMainDir.resolve("kotlin")
     }
 
+    /**
+     * Since there are no `proto` files in this project, the request file is
+     * not created, resulting in the [SKIPPED] status of the [launchProtoData] task.
+     */
     @Test
-    fun `skip launch task if request file does not exist`() {
+    fun `skip launch task if there are no proto files in the project`() {
         createEmptyProject()
         launchAndExpectResult(SKIPPED)
     }
@@ -161,7 +161,6 @@ class PluginSpec {
         assertExists(generatedGrpcDir.resolve(serviceClass))
     }
 
-
     private fun createEmptyProject() {
         createProject("empty-test")
     }
@@ -170,13 +169,14 @@ class PluginSpec {
         createProject("launch-test")
     }
 
-    private fun launchAndExpectResult(outcome: TaskOutcome) {
+    private fun launchAndExpectResult(expected: TaskOutcome) {
         val result = launch()
-        assertThat(result[taskName]).isEqualTo(outcome)
+        val outcome = result[launchProtoData]
+         outcome shouldBe expected
     }
 
     private fun launch(): BuildResult =
-        project.executeTask(taskName)
+        project.executeTask(launchProtoData)
 
     private fun createProject(resourceDir: String) {
         val version = Plugin.readVersion()
