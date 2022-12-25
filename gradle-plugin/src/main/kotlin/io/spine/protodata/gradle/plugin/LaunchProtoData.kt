@@ -64,6 +64,12 @@ import org.gradle.api.tasks.OutputDirectories
  */
 public abstract class LaunchProtoData : JavaExec() {
 
+    @get:InputFile
+    internal lateinit var requestFile: Provider<RegularFile>
+
+    @get:Internal
+    public abstract val configurationFile: RegularFileProperty
+
     @get:Input
     internal lateinit var renderers: Provider<List<String>>
 
@@ -72,9 +78,6 @@ public abstract class LaunchProtoData : JavaExec() {
 
     @get:Input
     internal lateinit var optionProviders: Provider<List<String>>
-
-    @get:InputFile
-    internal lateinit var requestFile: Provider<RegularFile>
 
     /**
      * The paths to the directories with the generated source code.
@@ -86,20 +89,20 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:Optional
     internal lateinit var sources: Provider<List<Directory>>
 
+    @get:InputFiles
+    internal lateinit var userClasspathConfig: Configuration
+
+    /**
+     * A Gradle [Configuration] which is used to run ProtoData.
+     */
+    @get:InputFiles
+    internal lateinit var protoDataConfig: Configuration
+
     /**
      * The paths to the directories where the source code processed by ProtoData should go.
      */
     @get:OutputDirectories
     internal lateinit var targets: Provider<List<Directory>>
-
-    @get:InputFiles
-    internal lateinit var userClasspathConfig: Configuration
-
-    @get:InputFiles
-    internal lateinit var protoDataConfig: Configuration
-
-    @get:Internal
-    public abstract val configuration: RegularFileProperty
 
     /**
      * Configures the CLI command for this task.
@@ -137,9 +140,9 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield(userCp)
             }
 
-            if (configuration.isPresent) {
+            if (configurationFile.isPresent) {
                 yield(ConfigFileParam.name)
-                yield(project.file(configuration).absolutePath)
+                yield(project.file(configurationFile).absolutePath)
             }
         }.asIterable()
         if (logger.isInfoEnabled) {
