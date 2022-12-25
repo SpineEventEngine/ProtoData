@@ -29,15 +29,18 @@ package io.spine.protodata.protoc
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.TimestampProto
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import com.google.protobuf.compiler.PluginProtos.Version
+import com.google.protobuf.compiler.codeGeneratorRequest
+import com.google.protobuf.compiler.version
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.util.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class `Protobuf compiler plugin should` {
+@DisplayName("Protobuf compiler plugin")
+class PluginSpec {
 
     private lateinit var requestFile: File
 
@@ -77,18 +80,15 @@ class `Protobuf compiler plugin should` {
             .isEqualTo(request)
     }
 
-    private fun constructRequest(): CodeGeneratorRequest {
-        val version = Version.newBuilder()
-            .setMajor(42)
-            .setMinor(314)
-            .setPatch(271)
-            .build()
-        return CodeGeneratorRequest.newBuilder()
-            .addProtoFile(TimestampProto.getDescriptor().toProto())
-            .addFileToGenerate("google/protobuf/timestamp.proto")
-            .setCompilerVersion(version)
-            .setParameter(requestFileEncoded)
-            .build()
+    private fun constructRequest(): CodeGeneratorRequest = codeGeneratorRequest {
+        protoFile += TimestampProto.getDescriptor().toProto()
+        fileToGenerate += "google/protobuf/timestamp.proto"
+        compilerVersion = version {
+            major = 42
+            minor = 314
+            patch = 271
+        }
+        parameter = requestFileEncoded
     }
 
     private fun launchMain(request: CodeGeneratorRequest) {
