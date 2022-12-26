@@ -32,7 +32,6 @@ package io.spine.protodata.gradle.plugin
 import com.google.common.annotations.VisibleForTesting
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.gradle.GenerateProtoTask
-import com.google.protobuf.gradle.id
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.CleanTask
 import io.spine.protodata.gradle.CodegenSettings
@@ -246,7 +245,7 @@ private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact, 
                 it.artifact = protocPlugin.coordinates
             }
         }
-        generateProtoTasksAll.forEach { task ->
+        configureProtoTasks { task ->
             configureProtoTask(task, ext)
         }
     }
@@ -258,11 +257,11 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
     }
     val sourceSet = task.sourceSet
     task.getPlugins().run {
-        id(PROTODATA_PROTOC_PLUGIN) {
+        create(PROTODATA_PROTOC_PLUGIN) {
             val requestFile = ext.requestFile(sourceSet)
             val path = requestFile.get().asFile.absolutePath
             val nameEncoded = path.base64Encoded()
-            option(nameEncoded)
+            it.option(nameEncoded)
             logger.info("The task `${task.name}` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
                     " with the option `$nameEncoded`.")
         }
