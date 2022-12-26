@@ -262,7 +262,7 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
             val path = requestFile.get().asFile.absolutePath
             val nameEncoded = path.base64Encoded()
             it.option(nameEncoded)
-            logger.info("The task `${task.name}` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
+            logger.debug("The task `${task.name}` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
                     " with the option `$nameEncoded`.")
         }
     }
