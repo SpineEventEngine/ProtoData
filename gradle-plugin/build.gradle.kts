@@ -53,6 +53,7 @@ testing {
             dependencies {
                 implementation(Kotlin.gradlePluginLib)
                 implementation(gradleKotlinDsl())
+                implementation(Protobuf.GradlePlugin.lib)
                 implementation(spine.pluginBase)
                 implementation(spine.pluginTestlib)
             }
