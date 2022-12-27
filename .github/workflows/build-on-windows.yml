@@ -27,5 +27,5 @@ jobs:
         uses: mikepenz/action-junit-report@v3.5.2
         if: always() # always run even if the previous step fails
         with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+          report_paths: ['**/build/test-results/test/TEST-*.xml', '**/build/reports/tests/functionalTest/index.html']
           require_tests: true # will fail workflow if test reports not found
