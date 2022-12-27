@@ -39,7 +39,6 @@ jobs:
           report_paths: '**/gradle-plugin/test-results/functionalTest/TEST-*.xml'
           require_tests: true # will fail workflow if test reports not found
 
-
       - name: Upload code coverage report
         uses: codecov/codecov-action@v3
         with:
