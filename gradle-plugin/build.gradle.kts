@@ -87,14 +87,14 @@ dependencies {
     implementation(Kotlin.gradlePluginApi)
 }
 
-val testsDependOnProjects = listOf(
-    "api", "cli", "cli-api", "compiler", "protoc", "test-env",  "gradle-api", "gradle-plugin"
-)
-
-tasks.withType<Test>().configureEach {
+/**
+ * Make functional tests depend on publishing all the submodules to Maven Local so that
+ * the gradle plugin can get all the dependencies when it's applied to the test projects.
+ */
+val functionalTest: Task by tasks.getting {
     val task = this
-    testsDependOnProjects.forEach { project ->
-        task.dependsOn(":$project:publishToMavenLocal")
+    rootProject.subprojects.forEach { subproject ->
+        task.dependsOn(":${subproject.name}:publishToMavenLocal")
     }
 }
 
