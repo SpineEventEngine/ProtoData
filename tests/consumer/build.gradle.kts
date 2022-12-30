@@ -24,12 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:Suppress("RemoveRedundantQualifierName")
+
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.internal.dependency.JavaX
 
-@Suppress("RemoveRedundantQualifierName")
 buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
+    standardSpineSdkRepositories()
     apply(from = "$rootDir/../version.gradle.kts")
     val protoDataVersion: String by extra
     dependencies {

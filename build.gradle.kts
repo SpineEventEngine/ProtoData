@@ -69,17 +69,15 @@ plugins {
     `gradle-doctor`
 }
 
+/**
+ * Publish all the modules, but `gradle-plugin`, which is published separately by its own.
+ */
 spinePublishing {
-    modules = setOf(
-        "api",
-        "cli",
-        "cli-api",
-        "compiler",
-        "protoc",
-        "codegen-java",
-        "gradle-api",
-        "test-env"
-    )
+    modules = rootProject.subprojects
+        .map { project -> project.name }
+        .toSet()
+        .minus("gradle-plugin")
+
     destinations = setOf(
         PublishingRepos.gitHub("ProtoData"),
         PublishingRepos.cloudArtifactRegistry
@@ -175,9 +173,8 @@ val localPublish by tasks.registering {
 val integrationTest by tasks.creating(RunBuild::class) {
     directory = "$rootDir/tests"
     dependsOn(localPublish)
+    shouldRunAfter(tasks.test)
 }
-
-tasks["check"].finalizedBy(integrationTest)
 
 /**
  * The alias for typed extensions functions related to subprojects.

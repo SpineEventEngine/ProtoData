@@ -44,7 +44,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-@DisplayName("Plugin extension should")
+@DisplayName("`Extension` should")
 class ExtensionSpec {
 
     private lateinit var project: Project

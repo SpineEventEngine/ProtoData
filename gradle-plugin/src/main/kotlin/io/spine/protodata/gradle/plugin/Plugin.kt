@@ -32,10 +32,6 @@ package io.spine.protodata.gradle.plugin
 import com.google.common.annotations.VisibleForTesting
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.gradle.GenerateProtoTask
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.id
-import com.google.protobuf.gradle.plugins
-import com.google.protobuf.gradle.protobuf
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.CleanTask
 import io.spine.protodata.gradle.CodegenSettings
@@ -45,6 +41,7 @@ import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
+import io.spine.tools.gradle.protobuf.protobufGradlePluginAdapter
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -178,7 +175,14 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
             compileCommandLine()
         }
         setPreLaunchCleanup()
-        onlyIf { requestFile.get().asFile.exists() }
+        onlyIf {
+            val requestFile = requestFile.get().asFile
+            val requestFileExists = requestFile.exists()
+            if (!requestFileExists) {
+                project.logger.warn("Request file `$requestFile` does not exist.")
+            }
+            requestFileExists
+        }
         dependsOn(
             artifactConfig.buildDependencies,
             userCpConfig.buildDependencies
@@ -233,19 +237,16 @@ private fun Project.hasJavaOrKotlin(): Boolean {
 }
 
 private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact, ext: Extension) {
-    protobuf {
+    val protobuf = this.protobufGradlePluginAdapter
+    protobuf.run {
         generatedFilesBaseDir = "$buildDir/generated-proto/"
-
         plugins {
-            id(PROTODATA_PROTOC_PLUGIN) {
-                artifact = protocPlugin.coordinates
+            it.create(PROTODATA_PROTOC_PLUGIN) {
+                it.artifact = protocPlugin.coordinates
             }
         }
-
-        generateProtoTasks {
-            all().forEach { task ->
-                configureProtoTask(task, ext)
-            }
+        configureProtoTasks { task ->
+            configureProtoTask(task, ext)
         }
     }
 }
@@ -255,11 +256,14 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
         task.builtins.maybeCreate("kotlin")
     }
     val sourceSet = task.sourceSet
-    task.plugins {
-        id(PROTODATA_PROTOC_PLUGIN) {
+    task.getPlugins().run {
+        create(PROTODATA_PROTOC_PLUGIN) {
             val requestFile = ext.requestFile(sourceSet)
             val path = requestFile.get().asFile.absolutePath
-            option(path.base64Encoded())
+            val nameEncoded = path.base64Encoded()
+            it.option(nameEncoded)
+            logger.debug("The task `${task.name}` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
+                    " with the option `$nameEncoded`.")
         }
     }
     handleLaunchTaskDependency(task, sourceSet, ext)
