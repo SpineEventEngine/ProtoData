@@ -116,7 +116,7 @@ class Spine(p: ExtensionAware) {
          * The version of `tool-base` to use.
          * @see [Spine.toolBase]
          */
-        const val toolBase = "2.0.0-SNAPSHOT.150"
+        const val toolBase = "2.0.0-SNAPSHOT.151"
 
         /**
          * The version of `validation` to use.
