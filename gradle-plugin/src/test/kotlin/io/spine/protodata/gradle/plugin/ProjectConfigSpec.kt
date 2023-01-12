@@ -29,6 +29,7 @@ package io.spine.protodata.gradle.plugin
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.gradle.ProtobufPlugin
+import io.spine.tools.gradle.project.sourceSets
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
