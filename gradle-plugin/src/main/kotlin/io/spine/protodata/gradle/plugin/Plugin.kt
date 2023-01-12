@@ -41,6 +41,7 @@ import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
+import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.protobufGradlePluginAdapter
 import java.io.File
 import org.gradle.api.Project
