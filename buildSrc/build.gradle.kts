@@ -90,7 +90,7 @@ val errorPronePluginVersion = "3.0.1"
  * @see <a href="https://github.com/google/protobuf-gradle-plugin/releases">
  *     Protobuf Gradle Plugins Releases</a>
  */
-val protobufPluginVersion = "0.8.19"
+val protobufPluginVersion = "0.9.1"
 
 /**
  * The version of Dokka Gradle Plugins.
