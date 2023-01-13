@@ -74,7 +74,7 @@ class ProjectConfigSpec {
         println(project.tasks.map { it.name })
         assertThat(project.tasks)
             .comparingElementsUsing(taskNames)
-            .containsAtLeast("launchProtoDataMain", "launchProtoDataTest")
+            .containsAtLeast("launchProtoData", "launchTestProtoData")
     }
 
     @Test
@@ -91,7 +91,7 @@ class ProjectConfigSpec {
         val task = project.tasks.getByName("compileJava")
         assertThat(task.dependsOn)
             .comparingElementsUsing(taskNames)
-            .contains("launchProtoDataMain")
+            .contains("launchProtoData")
     }
 }
 

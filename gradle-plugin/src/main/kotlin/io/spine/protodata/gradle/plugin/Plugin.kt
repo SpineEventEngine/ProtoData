@@ -180,7 +180,10 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
             val requestFile = requestFile.get().asFile
             val requestFileExists = requestFile.exists()
             if (!requestFileExists) {
-                project.logger.warn("Request file `$requestFile` does not exist.")
+                project.logger.warn(
+                    "The task ${it.name} was skipped because" +
+                            " the request file `$requestFile` was not created by ProtoData."
+                )
             }
             requestFileExists
         }

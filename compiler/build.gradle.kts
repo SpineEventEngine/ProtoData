@@ -72,9 +72,9 @@ val nl: String = System.lineSeparator()
  * Prints output directories produced by `launchProtoData` tasks with
  * corresponding number of files in those directories.
 
-val launchProtoDataMain: Task by tasks.getting {
+val launchProtoData: Task by tasks.getting {
     doLast {
-        println("***** `launchProtoDataMain.output`:")
+        println("***** `launchProtoData.output`:")
         outputs.files.forEach { dir ->
             val fileCount = project.fileTree(dir).count()
             println("$dir $fileCount files.")

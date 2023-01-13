@@ -53,7 +53,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("ProtoData Gradle plugin should")
 class PluginSpec {
 
-    private val launchProtoData: TaskName = TaskName.of("launchProtoDataMain")
+    private val launchProtoData: TaskName = TaskName.of("launchProtoData")
 
     private lateinit var project: GradleProject
     private lateinit var projectDir: File

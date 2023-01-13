@@ -26,6 +26,7 @@
 
 package io.spine.protodata.gradle
 
+import io.spine.tools.code.SourceSetName
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.SourceSet
@@ -35,12 +36,13 @@ import org.gradle.api.tasks.SourceSet
  */
 public object LaunchTask {
 
-    private const val prefix: String = "launchProtoData"
-
     /**
      * Obtains a name of the task for the given source set.
      */
-    public fun nameFor(sourceSet: SourceSet): String = "$prefix${sourceSet.capitalizedName}"
+    public fun nameFor(sourceSet: SourceSet): String {
+        val sourceSetName = SourceSetName(sourceSet.name)
+        return "launch${sourceSetName.toInfix()}ProtoData"
+    }
 
     /**
      * Obtains an instance of the task in the given project for the specified source set.

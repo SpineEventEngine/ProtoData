@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.internal.dependency.Spine
+
 plugins {
     `detekt-code-analysis`
     jacoco
@@ -31,4 +33,8 @@ plugins {
 
 dependencies {
     compileOnly(gradleApi())
+    val spine = Spine(project)
+    implementation(spine.toolBase)
+    testImplementation(gradleApi())
+    testImplementation(spine.pluginTestlib)
 }
