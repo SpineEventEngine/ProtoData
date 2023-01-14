@@ -204,10 +204,9 @@ internal fun LaunchProtoData.checkRequestFile(sourceSet: SourceSet): Boolean {
     val requestFile = requestFile.get().asFile
     if (!requestFile.exists() && sourceSet.containsProtoFiles()) {
         project.logger.error(
-            "The task `${name}` was skipped because" +
-                    " the request file `$requestFile` was not created by ProtoData" +
-                    " even though the source set `${sourceSet.name}` contains" +
-                    " `.proto` files."
+            "Unable to locate the request file `$requestFile` which should have been created" +
+                    " because the source set `${sourceSet.name}` contains `.proto` files." +
+                    " The task `${name}` was skipped because the absence of the request file."
         )
     }
     return requestFile.exists()
