@@ -89,8 +89,8 @@ For each source set in the project, the plugin generates a distinct task launchi
 Each task only processes the sources of the associated source set. This allows users to apply
 ProtoData to production and test code alike.
 
-To reference a specific task by name, use the following format: `launchProtoData<source set name>`,
-for example, `launchProtoDataMain`, `launchProtoDataTest`, `launchProtoDataIntegrationTest`, etc.
+To reference a specific task by name, use the following format: `launch<source set name>ProtoData`,
+for example, `launchProtoData`, `launchTestProtoData`, `launchIntegrationTestProtoData`, etc.
 
 To find all the tasks in a Gradle script, use the `LaunchProtoData` task type. For example:
 ```kotlin

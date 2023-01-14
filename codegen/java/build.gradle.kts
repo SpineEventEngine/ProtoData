@@ -24,9 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.ofSourceSet
-import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.JavaPoet
 import io.spine.internal.dependency.JavaX
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE

@@ -53,7 +53,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("ProtoData Gradle plugin should")
 class PluginSpec {
 
-    private val launchProtoData: TaskName = TaskName.of("launchProtoDataMain")
+    private val launchProtoData: TaskName = TaskName.of("launchProtoData")
 
     private lateinit var project: GradleProject
     private lateinit var projectDir: File
@@ -100,7 +100,8 @@ class PluginSpec {
     fun `produce 'java' and 'kotlin' directories under 'generated'`() {
         createProject("java-kotlin-test")
         val result = project.executeTask(build)
-        assertThat(result[build]).isEqualTo(SUCCESS)
+
+        result[build] shouldBe SUCCESS
         assertExists(generatedJavaDir)
         assertExists(generatedKotlinDir)
     }
@@ -109,7 +110,8 @@ class PluginSpec {
     fun `configure Kotlin compilation`() {
         createProject("kotlin-test")
         val result = project.executeTask(build)
-        assertThat(result[build]).isEqualTo(SUCCESS)
+
+        result[build] shouldBe SUCCESS
         assertExists(generatedKotlinDir)
     }
 
@@ -117,7 +119,8 @@ class PluginSpec {
     fun `produce Kotlin code for 'java-library' with 'kotlin(jvm)'`() {
         createProject("java-library-kotlin-jvm")
         val result = project.executeTask(build)
-        assertThat(result[build]).isEqualTo(SUCCESS)
+
+        result[build] shouldBe SUCCESS
         assertExists(generatedKotlinDir)
     }
 
@@ -126,6 +129,7 @@ class PluginSpec {
     fun `add 'kotlin' built-in only' if 'java' plugin or Kotlin compile tasks are present`() {
         createProject("android-library")  // could be in native code
         launchAndExpectResult(SUCCESS)
+
         assertDoesNotExist(generatedJavaDir)
         assertDoesNotExist(generatedKotlinDir)
     }
@@ -134,7 +138,8 @@ class PluginSpec {
     fun `support custom source sets`() {
         createProject("with-functional-test")
         val result = project.executeTask(build)
-        assertThat(result[build]).isEqualTo(SUCCESS)
+
+        result[build] shouldBe SUCCESS
         assertExists(generatedKotlinDir)
     }
 
@@ -143,7 +148,7 @@ class PluginSpec {
         createProject("copy-grpc")
 
         val result = project.executeTask(build)
-        assertThat(result[build]).isEqualTo(SUCCESS)
+        result[build] shouldBe SUCCESS
 
         printFilteredBuildOutput(projectDir, result)
 
@@ -171,8 +176,9 @@ class PluginSpec {
 
     private fun launchAndExpectResult(expected: TaskOutcome) {
         val result = launch()
+
         val outcome = result[launchProtoData]
-         outcome shouldBe expected
+        outcome shouldBe expected
     }
 
     private fun launch(): BuildResult =

@@ -24,8 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.Jackson
 import io.spine.internal.dependency.Spine
 
@@ -61,10 +59,8 @@ dependencies {
  */
 protobuf {
     generatedFilesBaseDir = "$projectDir/generated"
-    generateProtoTasks {
-        for (task in all()) {
-            task.builtins.maybeCreate("kotlin")
-        }
+    generateProtoTasks.all().configureEach {
+        builtins.maybeCreate("kotlin")
     }
 }
 

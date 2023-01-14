@@ -127,7 +127,7 @@ val PluginDependenciesSpec.`gradle-doctor`: PluginDependencySpec
  *
  * It is required in order to avoid warnings in build logs, detecting the undeclared
  * usage of Spine-specific task output by other tasks,
- * e.g. the output of `launchProtoDataMain` is used by `compileKotlin`.
+ * e.g. the output of `launchProtoData` is used by `compileKotlin`.
  */
 @Suppress("unused")
 fun Project.configureTaskDependencies() {

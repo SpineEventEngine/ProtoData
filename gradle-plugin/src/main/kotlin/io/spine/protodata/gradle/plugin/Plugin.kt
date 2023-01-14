@@ -41,6 +41,7 @@ import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
+import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.protobufGradlePluginAdapter
 import java.io.File
 import org.gradle.api.Project
@@ -176,19 +177,15 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
         }
         setPreLaunchCleanup()
         onlyIf {
-            val requestFile = requestFile.get().asFile
-            val requestFileExists = requestFile.exists()
-            if (!requestFileExists) {
-                project.logger.warn("Request file `$requestFile` does not exist.")
-            }
-            requestFileExists
+            checkRequestFile(sourceSet)
         }
         dependsOn(
             artifactConfig.buildDependencies,
             userCpConfig.buildDependencies
         )
-        javaCompileFor(sourceSet)?.dependsOn(this)
-        kotlinCompileFor(sourceSet)?.dependsOn(this)
+        val launchTask = this
+        javaCompileFor(sourceSet)?.dependsOn(launchTask)
+        kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
     }
     return result
 }
@@ -256,7 +253,7 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
         task.builtins.maybeCreate("kotlin")
     }
     val sourceSet = task.sourceSet
-    task.getPlugins().run {
+    task.plugins.run {
         create(PROTODATA_PROTOC_PLUGIN) {
             val requestFile = ext.requestFile(sourceSet)
             val path = requestFile.get().asFile.absolutePath
