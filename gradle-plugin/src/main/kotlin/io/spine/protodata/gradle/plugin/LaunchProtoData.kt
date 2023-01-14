@@ -35,7 +35,7 @@ import io.spine.protodata.cli.RequestParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
-import io.spine.tools.gradle.protobuf.ProtobufDependencies.sourceSetExtensionName
+import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Task
@@ -43,7 +43,6 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -53,7 +52,6 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.SourceSet
-
 
 /**
  * A task which executes a single ProtoData command.
@@ -210,16 +208,4 @@ internal fun LaunchProtoData.checkRequestFile(sourceSet: SourceSet): Boolean {
         )
     }
     return requestFile.exists()
-}
-
-private fun SourceSet.containsProtoFiles(): Boolean {
-    val protoDirectorySet = protoDirectorySet()
-        ?: return false // no `proto` extension at all.
-    val isEmpty = protoDirectorySet.files.isEmpty()
-    return !isEmpty
-}
-
-private fun SourceSet.protoDirectorySet(): SourceDirectorySet? {
-    return extensions.getByName(sourceSetExtensionName)
-        .let { ext -> ext as? SourceDirectorySet }
 }
