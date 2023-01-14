@@ -99,7 +99,7 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             force(
-                io.spine.internal.dependency.Grpc.protobufPlugin,
+                io.spine.internal.dependency.Grpc.ProtocPlugin.artifact,
                 spine.base,
                 spine.testlib,
                 spine.server
