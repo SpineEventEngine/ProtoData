@@ -151,15 +151,15 @@ fun Project.configureTaskDependencies() {
     }
 
     afterEvaluate {
-        "compileKotlin".dependOn("launchProtoData")
-        "compileTestKotlin".dependOn("launchTestProtoData")
+        "compileKotlin".dependOn("launchProtoDataMain")
+        "compileTestKotlin".dependOn("launchProtoDataTest")
         "sourcesJar".dependOn("generateProto")
-        "sourcesJar".dependOn("launchProtoData")
+        "sourcesJar".dependOn("launchProtoDataMain")
         "sourcesJar".dependOn("createVersionFile")
         "sourcesJar".dependOn("prepareProtocConfigVersions")
         "dokkaHtml".dependOn("generateProto")
-        "dokkaHtml".dependOn("launchProtoData")
-        "dokkaJavadoc".dependOn("launchProtoData")
+        "dokkaHtml".dependOn("launchProtoDataMain")
+        "dokkaJavadoc".dependOn("launchProtoDataMain")
         "publishPluginJar".dependOn("createVersionFile")
     }
 }
