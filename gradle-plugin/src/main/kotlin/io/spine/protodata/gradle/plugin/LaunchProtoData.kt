@@ -214,10 +214,13 @@ internal fun LaunchProtoData.checkRequestFile(sourceSet: SourceSet): Boolean {
 }
 
 private fun SourceSet.containsProtoFiles(): Boolean {
-    val protoDirectorySet = extensions.getByName(sourceSetExtensionName)
-        .let { ext -> ext as? SourceDirectorySet }
+    val protoDirectorySet = protoDirectorySet()
         ?: return false // no `proto` extension at all.
-
     val isEmpty = protoDirectorySet.files.isEmpty()
     return !isEmpty
+}
+
+private fun SourceSet.protoDirectorySet(): SourceDirectorySet? {
+    return extensions.getByName(sourceSetExtensionName)
+        .let { ext -> ext as? SourceDirectorySet }
 }
