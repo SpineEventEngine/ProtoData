@@ -61,7 +61,7 @@ class Spine(p: ExtensionAware) {
          *
          * @see [ProtoData]
          */
-        const val protoData = "0.5.4"
+        const val protoData = "0.6.0"
 
         /**
          * The default version of `base` to use.
@@ -85,7 +85,7 @@ class Spine(p: ExtensionAware) {
         /**
          * The version of `mc-java` to use.
          */
-        const val mcJava = "2.0.0-SNAPSHOT.123"
+        const val mcJava = "2.0.0-SNAPSHOT.130"
 
         /**
          * The version of `base-types` to use.
@@ -116,7 +116,7 @@ class Spine(p: ExtensionAware) {
          * The version of `tool-base` to use.
          * @see [Spine.toolBase]
          */
-        const val toolBase = "2.0.0-SNAPSHOT.154"
+        const val toolBase = "2.0.0-SNAPSHOT.155"
 
         /**
          * The version of `validation` to use.

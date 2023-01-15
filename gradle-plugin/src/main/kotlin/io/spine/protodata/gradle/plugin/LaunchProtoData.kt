@@ -35,7 +35,7 @@ import io.spine.protodata.cli.RequestParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
-import io.spine.tools.gradle.protobuf.ProtobufDependencies.sourceSetExtensionName
+import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Task
@@ -43,7 +43,6 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -53,7 +52,6 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.SourceSet
-
 
 /**
  * A task which executes a single ProtoData command.
@@ -204,20 +202,10 @@ internal fun LaunchProtoData.checkRequestFile(sourceSet: SourceSet): Boolean {
     val requestFile = requestFile.get().asFile
     if (!requestFile.exists() && sourceSet.containsProtoFiles()) {
         project.logger.error(
-            "The task `${name}` was skipped because" +
-                    " the request file `$requestFile` was not created by ProtoData" +
-                    " even though the source set `${sourceSet.name}` contains" +
-                    " `.proto` files."
+            "Unable to locate the request file `$requestFile` which should have been created" +
+                    " because the source set `${sourceSet.name}` contains `.proto` files." +
+                    " The task `${name}` was skipped because the absence of the request file."
         )
     }
     return requestFile.exists()
-}
-
-private fun SourceSet.containsProtoFiles(): Boolean {
-    val protoDirectorySet = extensions.getByName(sourceSetExtensionName)
-        .let { ext -> ext as? SourceDirectorySet }
-        ?: return false // no `proto` extension at all.
-
-    val isEmpty = protoDirectorySet.files.isEmpty()
-    return !isEmpty
 }
