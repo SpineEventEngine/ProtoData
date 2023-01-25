@@ -75,13 +75,12 @@ public fun EnumType.typeUrl(): String = name.typeUrl()
  * Obtains the fully qualified name from this `TypeName`.
  */
 public fun TypeName.qualifiedName(): String {
-    val names = mutableListOf<String>()
-    names.add(packageName)
-    names.addAll(nestingTypeNameList)
-    names.add(simpleName)
-    return names
-        .filter { it.isNotEmpty() }
-        .joinToString(separator = ".")
+    val names = buildList<String> {
+        add(packageName)
+        addAll(nestingTypeNameList)
+        add(simpleName)
+    }
+    return names.filter { it.isNotEmpty() }.joinToString(separator = ".")
 }
 
 /**
@@ -196,52 +195,36 @@ private val FileDescriptor.typeUrlPrefix: String
 /**
  * Obtains the name of this `oneof` as a [OneofName].
  */
-internal fun OneofDescriptor.name(): OneofName =
-    OneofName.newBuilder()
-             .setValue(name)
-             .build()
+internal fun OneofDescriptor.name(): OneofName = oneofName { value = name }
 
 /**
  * Obtains the name of this field as a [FieldName].
  */
-internal fun FieldDescriptor.name(): FieldName =
-    FieldName.newBuilder()
-             .setValue(name)
-             .build()
+internal fun FieldDescriptor.name(): FieldName = fieldName { value = name }
 
 /**
  * Obtains the relative path to this file as a [FilePath].
  */
-public fun FileDescriptor.path(): FilePath =
-    FilePath.newBuilder()
-            .setValue(name)
-            .build()
+public fun FileDescriptor.path(): FilePath = filePath { value = name }
 
 /**
  * Obtains the name of this service as a [ServiceName].
  */
-public fun ServiceDescriptor.name(): ServiceName =
-    ServiceName.newBuilder()
-               .setTypeUrlPrefix(file.typeUrlPrefix)
-               .setPackageName(file.`package`)
-               .setSimpleName(name)
-               .build()
+public fun ServiceDescriptor.name(): ServiceName = serviceName {
+    typeUrlPrefix = file.typeUrlPrefix
+    packageName = file.`package`
+    simpleName = name
+}
 
 /**
  * Obtains the name of this RPC method as an [RpcName].
  */
-internal fun MethodDescriptor.name(): RpcName =
-    RpcName.newBuilder()
-           .setValue(name)
-           .build()
+internal fun MethodDescriptor.name(): RpcName = rpcName { value = name }
 
 /**
  * Obtains a [Type] wrapping this `PrimitiveType`.
  */
-public fun PrimitiveType.asType(): Type =
-    Type.newBuilder()
-        .setPrimitive(this)
-        .build()
+public fun PrimitiveType.asType(): Type = type { primitive = this@asType }
 
 /**
  * Obtains the [CallCardinality] of this RPC method.
