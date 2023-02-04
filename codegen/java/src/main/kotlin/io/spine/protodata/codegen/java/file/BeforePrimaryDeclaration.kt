@@ -76,7 +76,7 @@ internal object BeforePrimaryDeclaration : InsertionPoint, Logging {
                 return LineNumber.at(index)
             }
         }
-        _warn().log("Could not find the primary declaration in code:" + lineSeparator() +
+        _warn().log("Could not find the primary declaration in the code:" + lineSeparator() +
                 lines.joinToString(separator = lineSeparator()))
         return notInFile()
     }
