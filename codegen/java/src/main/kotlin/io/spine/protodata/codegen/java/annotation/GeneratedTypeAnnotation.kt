@@ -26,33 +26,23 @@
 
 package io.spine.protodata.codegen.java.annotation
 
-import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.codegen.java.JAVA_FILE
-import io.spine.protodata.codegen.java.WithSourceFileSet
-import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
-import kotlin.io.path.Path
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import javax.annotation.processing.Generated
 
-@DisplayName("`GenerateGenerated` renderer should")
-class GeneratedAnnotationSpec : WithSourceFileSet() {
+/**
+ * Adds the [javax.annotation.Generated] annotation to the top-level declaration of each Java file
+ * in the source set.
+ *
+ * @see io.spine.protodata.codegen.java.annotation.TypeAnnotation
+ */
+public class GeneratedTypeAnnotation : TypeAnnotation<Generated>(Generated::class.java) {
 
-    @Test
-    fun `add the annotation`() {
-        Pipeline(
-            plugins = listOf(),
-            renderers = listOf(PrintBeforePrimaryDeclaration(), GeneratedAnnotation()),
-            sources = this.sources,
-            request = CodeGeneratorRequest.getDefaultInstance()
-        )()
-        val code = sources.first()
-            .file(Path(JAVA_FILE))
-            .code()
-        assertThat(code)
-            .contains("""
-                @javax.annotation.Generated("${GeneratedAnnotation.GENERATORS}")
-            """.trimIndent())
+    public companion object {
+
+        /**
+         * The fully qualified name of the ProtoData command-line application main class.
+         */
+        public const val PROTODATA_CLI: String = "io.spine.protodata.cli.app.Main"
     }
+
+    override fun renderAnnotationArguments(): String = "\"$PROTODATA_CLI\""
 }

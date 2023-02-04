@@ -26,24 +26,34 @@
 
 package io.spine.protodata.codegen.java.annotation
 
-import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
-import javax.annotation.Generated
+import com.google.common.truth.Truth.assertThat
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.codegen.java.JAVA_FILE
+import io.spine.protodata.codegen.java.WithSourceFileSet
+import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
+import javax.annotation.processing.Generated
+import kotlin.io.path.Path
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * Adds the [javax.annotation.Generated] annotation to the top-level declaration of each Java file
- * in the source set.
- *
- * @see io.spine.protodata.codegen.java.annotation.TypeAnnotation
- */
-public class GeneratedAnnotation : TypeAnnotation<Generated>(Generated::class.java) {
+@DisplayName("`GeneratedTypeAnnotation` renderer should")
+class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
-    internal companion object {
-
-        @VisibleForTesting
-        internal const val GENERATORS =
-            "by the Google Protobuf Compiler and modified by Spine ProtoData"
+    @Test
+    fun `add the annotation`() {
+        Pipeline(
+            plugins = listOf(),
+            renderers = listOf(PrintBeforePrimaryDeclaration(), GeneratedTypeAnnotation()),
+            sources = this.sources,
+            request = CodeGeneratorRequest.getDefaultInstance()
+        )()
+        val code = sources.first()
+            .file(Path(JAVA_FILE))
+            .code()
+        assertThat(code)
+            .contains("""
+                @javax.annotation.processing.Generated("${GeneratedTypeAnnotation.PROTODATA_CLI}")
+            """.trimIndent())
     }
-
-    override fun renderAnnotationArguments(): String = "\"$GENERATORS\""
 }
