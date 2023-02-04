@@ -145,7 +145,7 @@ public sealed class LineNumber {
  * designed to only provide the whole bit range, not to insure invariants.
  * See [this thread](https://youtrack.jetbrains.com/issue/KT-46144) for more details.
  */
-internal data class LineIndex constructor(val value: Int) : LineNumber() {
+internal data class LineIndex(val value: Int) : LineNumber() {
     init {
         if (value < 0) {
             throw IndexOutOfBoundsException("Invalid line number: `$value`.")
