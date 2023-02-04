@@ -52,7 +52,8 @@ public class GenerateGenerated : JavaRenderer() {
     internal companion object {
 
         @VisibleForTesting
-        internal const val GENERATORS = "by the Protobuf Compiler and modified by ProtoData"
+        internal const val GENERATORS =
+            "by the Google Protobuf Compiler and modified by Spine ProtoData"
     }
 
     override fun render(sources: SourceFileSet) {
