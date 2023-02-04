@@ -28,6 +28,7 @@ package io.spine.protodata.codegen.java.annotation
 
 import given.annotation.NoTargetsAnnotation
 import given.annotation.NoTypeTargetAnnotation
+import io.spine.protodata.renderer.SourceFile
 import java.lang.IllegalArgumentException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -62,7 +63,7 @@ class TypeAnnotationSpec {
 private class StubAnnotation<T : Annotation>(annotationClass: Class<T>) :
     TypeAnnotation<T>(annotationClass) {
 
-    override fun renderAnnotationArguments(): String {
+    override fun renderAnnotationArguments(file: SourceFile): String {
         TODO("Not yet implemented")
     }
 }

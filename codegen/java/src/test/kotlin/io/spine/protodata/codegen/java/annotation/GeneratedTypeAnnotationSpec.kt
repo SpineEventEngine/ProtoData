@@ -32,7 +32,6 @@ import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
 import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
-import javax.annotation.processing.Generated
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -41,7 +40,7 @@ import org.junit.jupiter.api.Test
 class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
     @Test
-    fun `add the annotation`() {
+    fun `add the annotation, assuming 'PROTODATA_CLI' as the default generator`() {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(PrintBeforePrimaryDeclaration(), GeneratedTypeAnnotation()),

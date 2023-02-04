@@ -26,15 +26,35 @@
 
 package io.spine.protodata.codegen.java.annotation
 
+import io.spine.protodata.renderer.SourceFile
 import javax.annotation.processing.Generated
 
 /**
  * Adds the [javax.annotation.Generated] annotation to the top-level declaration of each Java file
  * in the source set.
  *
+ * Deriving classes are likely to inherit the class to pass values to the properties, providing
+ * a no-argument constructor, as required for a [Renderer][io.spine.protodata.renderer.Renderer].
+ *
  * @see io.spine.protodata.codegen.java.annotation.TypeAnnotation
  */
-public class GeneratedTypeAnnotation : TypeAnnotation<Generated>(Generated::class.java) {
+public open class GeneratedTypeAnnotation(
+
+    /**
+     * The name of the code generator as required in [Generated.value].
+     *
+     * The default value for this parameter is [PROTODATA_CLI].
+     */
+    protected val generator: String = PROTODATA_CLI,
+
+    /**
+     * Tells if the annotated code should have [Generated.date] parameter.
+     * If `true`, the value will be set to the instant at local time when
+     * the annotation was generated.
+     */
+    protected val addTimestamp: Boolean = false,
+
+) : TypeAnnotation<Generated>(Generated::class.java) {
 
     public companion object {
 
@@ -44,5 +64,5 @@ public class GeneratedTypeAnnotation : TypeAnnotation<Generated>(Generated::clas
         public const val PROTODATA_CLI: String = "io.spine.protodata.cli.app.Main"
     }
 
-    override fun renderAnnotationArguments(): String = "\"$PROTODATA_CLI\""
+    override fun renderAnnotationArguments(file: SourceFile): String = "\"$PROTODATA_CLI\""
 }

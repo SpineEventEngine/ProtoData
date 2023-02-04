@@ -27,6 +27,7 @@ package io.spine.protodata.codegen.java.annotation
 
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
+import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
 import java.lang.annotation.ElementType.TYPE
 import java.lang.annotation.Target
@@ -48,13 +49,13 @@ public abstract class TypeAnnotation<T : Annotation>(
     final override fun render(sources: SourceFileSet) {
         sources.forEach { file ->
             file.at(BeforePrimaryDeclaration).add(
-                annotationText()
+                annotationText(file)
             )
         }
     }
 
-    private fun annotationText(): String {
-        return "@${annotationClassReference()}${annotationArguments()}"
+    private fun annotationText(file: SourceFile): String {
+        return "@${annotationClassReference()}${annotationArguments(file)}"
     }
 
     private fun annotationClassReference(): String {
@@ -66,8 +67,8 @@ public abstract class TypeAnnotation<T : Annotation>(
         }
     }
 
-    private fun annotationArguments(): String {
-        val args = renderAnnotationArguments()
+    private fun annotationArguments(file: SourceFile): String {
+        val args = renderAnnotationArguments(file)
         return if (args.isEmpty()) {
             return ""
         } else {
@@ -80,7 +81,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      *
      * If there are no arguments to pass, the overriding method must return an empty string.
      */
-    protected abstract fun renderAnnotationArguments(): String
+    protected abstract fun renderAnnotationArguments(file: SourceFile): String
 
     /**
      * Ensures that the [annotationClass] passed to the constructor:
