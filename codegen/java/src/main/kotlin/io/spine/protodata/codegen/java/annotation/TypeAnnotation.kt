@@ -26,20 +26,53 @@
 package io.spine.protodata.codegen.java.annotation
 
 import io.spine.protodata.codegen.java.JavaRenderer
+import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.renderer.SourceFileSet
 import java.lang.annotation.ElementType.TYPE
 import java.lang.annotation.Target
 
+/**
+ * A [JavaRenderer] which adds annotates a Java type using the given [annotation][annotationClass].
+ *
+ * The implementation assumes that [PrintBeforePrimaryDeclaration][io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration]
+ * renderer is inserted before a reference to a renderer derived from this class.
+ */
 public abstract class TypeAnnotation<T : Annotation>(
-    public val annotationClass: Class<T>
+    protected val annotationClass: Class<T>
 ) : JavaRenderer() {
 
     init {
         checkAnnotationTargetsType()
     }
 
-    override fun render(sources: SourceFileSet) {
-        TODO("Not yet implemented")
+    final override fun render(sources: SourceFileSet) {
+        sources.forEach { file ->
+            file.at(BeforePrimaryDeclaration).add(
+                annotationText()
+            )
+        }
+    }
+
+    private fun annotationText(): String {
+        return "@${annotationClassReference()}${annotationArguments()}"
+    }
+
+    private fun annotationClassReference(): String {
+        val qualifiedName = annotationClass.name
+        return if (qualifiedName.contains("java.lang")) {
+            annotationClass.simpleName
+        } else {
+            qualifiedName
+        }
+    }
+
+    private fun annotationArguments(): String {
+        val args = renderAnnotationArguments()
+        return if (args.isEmpty()) {
+            return ""
+        } else {
+            "($args)"
+        }
     }
 
     /**
@@ -47,7 +80,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      *
      * If there are no arguments to pass, the overriding method must return an empty string.
      */
-    protected abstract fun renderAnnotationParameters(): String
+    protected abstract fun renderAnnotationArguments(): String
 
     /**
      * Ensures that the [annotationClass] passed to the constructor:

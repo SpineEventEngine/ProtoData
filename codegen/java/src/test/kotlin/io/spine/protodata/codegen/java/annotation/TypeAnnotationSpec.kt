@@ -62,7 +62,7 @@ class TypeAnnotationSpec {
 private class StubAnnotation<T : Annotation>(annotationClass: Class<T>) :
     TypeAnnotation<T>(annotationClass) {
 
-    override fun renderAnnotationParameters(): String {
+    override fun renderAnnotationArguments(): String {
         TODO("Not yet implemented")
     }
 }

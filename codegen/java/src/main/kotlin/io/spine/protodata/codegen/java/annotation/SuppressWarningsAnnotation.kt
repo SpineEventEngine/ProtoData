@@ -26,10 +26,8 @@
 
 package io.spine.protodata.codegen.java.annotation
 
-import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.config.configAs
-import io.spine.protodata.renderer.SourceFileSet
 
 /**
  * Suppresses warnings in the generated code.
@@ -40,30 +38,16 @@ import io.spine.protodata.renderer.SourceFileSet
  * Warnings in the generated code do no good for the user, as they cannot be fixed without changing
  * the code generation logic. We recommend suppressing them.
  *
- * In order to work, this renderer needs the [BeforePrimaryDeclaration] insertion point. Add
- * the [io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration] before this renderer
- * to make sure the insertion point are present in the source files.
- *
- * *Tradeoff.* The negative side of using this renderer is in that the contents of all the files
- * are altered. Typically, ProtoData performs file loading and insertion point lookup lazily, as
- * those might be costly operations. This renderer undoes this effort by "touching" each file
- * in the source set.
- *
- * @see io.spine.protodata.codegen.java.annotation.GeneratedAnnotation
+ * @see io.spine.protodata.codegen.java.annotation.TypeAnnotation
  */
-public class SuppressWarningsAnnotation : JavaRenderer() {
+public class SuppressWarningsAnnotation :
+    TypeAnnotation<SuppressWarnings>(SuppressWarnings::class.java) {
 
     public companion object {
         public val ALL_WARNINGS: List<String> = listOf("ALL")
     }
 
-    override fun render(sources: SourceFileSet) {
-        val warningsList = warningList()
-        val suppression = "@${SuppressWarnings::class.java.simpleName}({$warningsList})"
-        sources.forEach {
-            it.at(BeforePrimaryDeclaration).add(suppression)
-        }
-    }
+    override fun renderAnnotationArguments(): String = "{${warningList()}}"
 
     /**
      * Obtains the code for suppressing configured warnings.

@@ -44,7 +44,8 @@ class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
     companion object {
         val emptyRequest: CodeGeneratorRequest = CodeGeneratorRequest.getDefaultInstance()
-        fun suppressionRenderers() = listOf(PrintBeforePrimaryDeclaration(),
+        fun suppressionRenderers() = listOf(
+            PrintBeforePrimaryDeclaration(),
             SuppressWarningsAnnotation()
         )
     }
@@ -57,7 +58,7 @@ class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
     inner class `suppress ALL warnings ` {
 
         @Test
-        fun `if no 'Configuration' is given`() {
+        fun `if no settings are passed`() {
             Pipeline(
                 plugins = listOf(),
                 renderers = suppressionRenderers(),
@@ -69,7 +70,7 @@ class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
         }
 
         @Test
-        fun `if 'Configuration' contains empty list of suppressions`() {
+        fun `if settings contain an empty list of suppressions`() {
             Pipeline(
                 plugins = listOf(),
                 renderers = suppressionRenderers(),

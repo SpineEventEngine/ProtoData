@@ -27,27 +27,16 @@
 package io.spine.protodata.codegen.java.annotation
 
 import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
-import io.spine.protodata.renderer.SourceFileSet
 import javax.annotation.Generated
 
 /**
- * Adds the `javax.annotation.Generated` annotation to the top-level declaration of each Java file
+ * Adds the [javax.annotation.Generated] annotation to the top-level declaration of each Java file
  * in the source set.
  *
- * In order to work, this renderer needs the [BeforePrimaryDeclaration] insertion point. Add
- * the [io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration] before this renderer
- * to make sure the insertion point are present in the source files.
- *
- * *Tradeoff.* The negative side of using this renderer is in that the contents of all the files
- * are altered. Typically, ProtoData performs file loading and insertion point lookup lazily, as
- * those might be costly operations. This renderer undoes this effort by "touching" each file
- * in the source set.
- *
- * @see io.spine.protodata.codegen.java.annotation.SuppressWarningsAnnotation
+ * @see io.spine.protodata.codegen.java.annotation.TypeAnnotation
  */
-public class GeneratedAnnotation : JavaRenderer() {
+public class GeneratedAnnotation : TypeAnnotation<Generated>(Generated::class.java) {
 
     internal companion object {
 
@@ -56,11 +45,5 @@ public class GeneratedAnnotation : JavaRenderer() {
             "by the Google Protobuf Compiler and modified by Spine ProtoData"
     }
 
-    override fun render(sources: SourceFileSet) {
-        sources.forEach { file ->
-            file.at(BeforePrimaryDeclaration).add(
-                "@${Generated::class.qualifiedName}(\"$GENERATORS\")"
-            )
-        }
-    }
+    override fun renderAnnotationArguments(): String = "\"$GENERATORS\""
 }
