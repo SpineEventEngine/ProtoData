@@ -26,8 +26,8 @@
 
 package io.spine.protodata.codegen.java.annotation
 
-import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.config.configAs
+import io.spine.protodata.renderer.SourceFile
 
 /**
  * Suppresses warnings in the generated code.
@@ -47,7 +47,7 @@ public class SuppressWarningsAnnotation :
         public val ALL_WARNINGS: List<String> = listOf("ALL")
     }
 
-    override fun renderAnnotationArguments(): String = "{${warningList()}}"
+    override fun renderAnnotationArguments(file: SourceFile): String = "{${warningList()}}"
 
     /**
      * Obtains the code for suppressing configured warnings.
