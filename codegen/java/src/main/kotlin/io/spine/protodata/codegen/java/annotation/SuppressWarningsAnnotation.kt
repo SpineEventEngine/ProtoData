@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java.suppress
+package io.spine.protodata.codegen.java.annotation
 
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
@@ -35,7 +35,7 @@ import io.spine.protodata.renderer.SourceFileSet
  * Suppresses warnings in the generated code.
  *
  * If no configuration is provided to ProtoData, suppresses all the warnings with `"ALL"`.
- * Otherwise, parses the config as a [SuppressConfig] and suppresses only the specified warnings.
+ * Otherwise, parses the config as a [SuppressionSettings] and suppresses only the specified warnings.
  *
  * Warnings in the generated code do no good for the user, as they cannot be fixed without changing
  * the code generation logic. We recommend suppressing them.
@@ -49,9 +49,9 @@ import io.spine.protodata.renderer.SourceFileSet
  * those might be costly operations. This renderer undoes this effort by "touching" each file
  * in the source set.
  *
- * @see io.spine.protodata.codegen.java.generado.GenerateGenerated
+ * @see io.spine.protodata.codegen.java.annotation.GeneratedAnnotation
  */
-public class SuppressRenderer : JavaRenderer() {
+public class SuppressWarningsAnnotation : JavaRenderer() {
 
     public companion object {
         public val ALL_WARNINGS: List<String> = listOf("ALL")
@@ -68,25 +68,29 @@ public class SuppressRenderer : JavaRenderer() {
     /**
      * Obtains the code for suppressing configured warnings.
      *
-     * If [SuppressConfig] is not available, also assumes [ALL_WARNINGS].
+     * If [SuppressionSettings] are not available, or the list of warnings is empty,
+     * the method assumes [ALL_WARNINGS] are to be suppressed.
      *
-     * If the configuration is given, takes the list of warnings from the configuration.
+     * If settings are given, takes the list of warnings from the instance, removing single-
+     * or double quotes that could be in the values
      *
-     * But if the list of warnings obtained from the configuration is empty, this method
-     * also assumes [ALL_WARNINGS]. It allows to avoid the case of working with a default instance
-     * of [SuppressConfig] (e.g. obtained when configuration was loaded from a file).
-     * Obviously, the user does not indent to suppress an empty list of warnings, if
-     * this class is added to a ProtoData configuration but no specific warnings are specified.
+     * **NOTE:** [ALL_WARNINGS] are assumed to avoid the case of working with a default instance
+     * of [SuppressionSettings] (e.g. when it was loaded from a file). Obviously, the user did
+     * not indent to suppress an empty list of warnings, if [SuppressionSettings] instance was added
+     * to ProtoData settings but no specific warnings were specified.
      */
     private fun warningList(): String {
         val warnings = if (!configIsPresent()) {
             ALL_WARNINGS
         } else {
-            val configured = configAs<SuppressConfig>().warnings.valueList
+            val configured = configAs<SuppressionSettings>().warnings.valueList
             if (configured.isEmpty()) {
                 ALL_WARNINGS
             } else {
-                configured
+                val withQuotesStripped = configured.map {
+                    it.replace("\"", "").replace("\'", "")
+                }
+                withQuotesStripped
             }
         }
         val warningsList = warnings.joinToString { '"' + it + '"' }

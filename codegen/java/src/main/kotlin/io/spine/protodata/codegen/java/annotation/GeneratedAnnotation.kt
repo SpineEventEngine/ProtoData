@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java.generado
+package io.spine.protodata.codegen.java.annotation
 
 import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.codegen.java.JavaRenderer
@@ -45,9 +45,9 @@ import javax.annotation.Generated
  * those might be costly operations. This renderer undoes this effort by "touching" each file
  * in the source set.
  *
- * @see io.spine.protodata.codegen.java.suppress.SuppressRenderer
+ * @see io.spine.protodata.codegen.java.annotation.SuppressWarningsAnnotation
  */
-public class GenerateGenerated : JavaRenderer() {
+public class GeneratedAnnotation : JavaRenderer() {
 
     internal companion object {
 
@@ -57,8 +57,8 @@ public class GenerateGenerated : JavaRenderer() {
     }
 
     override fun render(sources: SourceFileSet) {
-        sources.forEach {
-            it.at(BeforePrimaryDeclaration).add(
+        sources.forEach { file ->
+            file.at(BeforePrimaryDeclaration).add(
                 "@${Generated::class.qualifiedName}(\"$GENERATORS\")"
             )
         }

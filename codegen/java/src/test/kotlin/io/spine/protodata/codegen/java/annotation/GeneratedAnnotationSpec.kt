@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java.generado
+package io.spine.protodata.codegen.java.annotation
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
@@ -33,15 +33,17 @@ import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
 import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
 import kotlin.io.path.Path
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-class `'GenerateGenerated' renderer should` : WithSourceFileSet() {
+@DisplayName("`GenerateGenerated` renderer should")
+class GeneratedAnnotationSpec : WithSourceFileSet() {
 
     @Test
     fun `add the annotation`() {
         Pipeline(
             plugins = listOf(),
-            renderers = listOf(PrintBeforePrimaryDeclaration(), GenerateGenerated()),
+            renderers = listOf(PrintBeforePrimaryDeclaration(), GeneratedAnnotation()),
             sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
@@ -50,7 +52,7 @@ class `'GenerateGenerated' renderer should` : WithSourceFileSet() {
             .code()
         assertThat(code)
             .contains("""
-                @javax.annotation.Generated("${GenerateGenerated.GENERATORS}")
+                @javax.annotation.Generated("${GeneratedAnnotation.GENERATORS}")
             """.trimIndent())
     }
 }

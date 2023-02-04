@@ -1,21 +1,21 @@
 syntax = "proto3";
 
-package spine.protodata.codegen.java.suppress;
+package spine.protodata.codegen.java.annotation;
 
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.codegen.java.suppress";
+option java_package = "io.spine.protodata.codegen.java.annotation";
 option java_outer_classname = "SuppressProto";
 option java_multiple_files = true;
 
-// The configuration expected by the `SuppressRenderer`.
+// The configuration expected by the `SuppressWarnings` renderer.
 //
-// To combine the config for `SuppressRenderer` with config for other renderers, declare a message
+// To combine the config for `SuppressWarnings` with config for other renderers, declare a message
 // with the same fields and field numbers as this one. More fields may be added. This way,
-// `SuppressRenderer` will still be able to parse config as `SuppressConfig`.
+// `SuppressWarnings` will still be able to parse config as `SuppressConfig`.
 //
-message SuppressConfig {
+message SuppressionSettings {
 
     // The Java warnings to suppress.
     //

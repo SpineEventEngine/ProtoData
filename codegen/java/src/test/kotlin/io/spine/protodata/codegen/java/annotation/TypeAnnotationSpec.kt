@@ -23,36 +23,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package io.spine.protodata.codegen.java.annotation
 
-import io.spine.protodata.codegen.java.JavaRenderer
-import io.spine.protodata.renderer.SourceFileSet
-import java.lang.annotation.ElementType.TYPE
-import java.lang.annotation.Target
+import given.annotation.NoTargetsAnnotation
+import given.annotation.NoTypeTargetAnnotation
+import java.lang.IllegalArgumentException
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 
-public abstract class ClassAnnotationRenderer<T : Annotation>(
-    public val annotationClass: Class<T>
-) : JavaRenderer() {
+@DisplayName("`ClassAnnotationRenderer` should")
+class TypeAnnotationSpec {
 
-    init {
-        checkTargetHasType()
-    }
-
-    private fun checkTargetHasType() {
-        val targetClass = Target::class.java
-        require(annotationClass.isAnnotationPresent(targetClass)) {
-            "The annotation class `${annotationClass.name}`" +
-                    " should have `${targetClass.name}`."
-        }
-        val targets = annotationClass.getAnnotation(targetClass)
-        require(targets.value.contains(TYPE)) {
-            "Targets of `${annotationClass.name}` do not include ${TYPE.name}."
+    @Test
+    fun `reject annotation class without targets`() {
+        assertThrows<IllegalArgumentException> {
+            StubAnnotation(NoTargetsAnnotation::class.java)
         }
     }
 
-    override fun render(sources: SourceFileSet) {
+    @Test
+    fun `reject annotation class without 'TYPE' target`() {
+        assertThrows<IllegalArgumentException> {
+            StubAnnotation(NoTypeTargetAnnotation::class.java)
+        }
+    }
+
+    @Test
+    fun `accept annotation class with 'TYPE' target`() {
+        assertDoesNotThrow {
+            StubAnnotation(SuppressWarnings::class.java)
+        }
+    }
+}
+
+private class StubAnnotation<T : Annotation>(annotationClass: Class<T>) :
+    TypeAnnotation<T>(annotationClass) {
+
+    override fun renderAnnotationParameters(): String {
         TODO("Not yet implemented")
     }
-
-    protected abstract fun renderAnnotationParameters(): String
 }
