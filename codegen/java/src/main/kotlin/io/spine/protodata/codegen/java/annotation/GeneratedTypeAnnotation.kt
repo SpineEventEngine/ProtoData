@@ -26,7 +26,14 @@
 
 package io.spine.protodata.codegen.java.annotation
 
+import com.google.common.annotations.VisibleForTesting
+import io.spine.base.Time
+import io.spine.base.Time.currentTime
+import io.spine.base.Time.currentTimeZone
+import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.PROTODATA_CLI
 import io.spine.protodata.renderer.SourceFile
+import io.spine.time.toInstant
+import java.time.OffsetDateTime
 import javax.annotation.processing.Generated
 
 /**
@@ -49,22 +56,87 @@ public open class GeneratedTypeAnnotation(
 
     /**
      * Tells if the annotated code should have [Generated.date] parameter.
-     * If `true`, the value will be set to the instant at local time when
+     * If `true`, the value will be set to the moment at local time when
      * the annotation was generated.
      */
     protected val addTimestamp: Boolean = false,
 
+    /**
+     * A callback for obtaining an argument for the [Generated.comments] parameter
+     * by the given [SourceFile]. The default value is `null`.
+     * If not specified, the [comments][Generated.comments] parameter will non be used.
+     */
+    protected val commenter: ((SourceFile) -> String)? = null
+
 ) : TypeAnnotation<Generated>(Generated::class.java) {
 
+    override fun renderAnnotationArguments(file: SourceFile): String {
+        if (!addTimestamp && commenter == null) {
+            return "\"$generator\""
+        }
+        return multiLineArguments(file)
+    }
+
+    private fun multiLineArguments(file: SourceFile): String {
+        val date = date()
+        val comments = renderComments(file)
+        val nl = System.lineSeparator()
+        val params = buildList {
+            fun String.enter() {
+                if (isNotBlank()) this@buildList.add(this@enter)
+            }
+            "value = \"$generator\"".enter()
+            date.enter()
+            comments.enter()
+        }.joinToString(separator = ",$nl")
+        return nl + params.prependIndent(INDENT) + nl
+    }
+
+    /**
+     * Generates the value of the [Generated.date] parameter using
+     * the current time with offset, as defined in the documentation for
+     * the [Generated.date] parameter.
+     */
+    private fun date(): String {
+        return if (addTimestamp) {
+            "date = \"${currentDateTime()}\""
+        } else {
+            ""
+        }
+    }
+
+    private fun renderComments(file: SourceFile): String {
+        return if (commenter != null) {
+            val value = commenter.invoke(file)
+            "comments = \"$value\""
+        } else {
+            ""
+        }
+    }
+
     public companion object {
+
+        private const val INDENT_SIZE = 4
+
+        internal val INDENT = " ".repeat(INDENT_SIZE)
 
         /**
          * The fully qualified name of the ProtoData command-line application main class.
          */
         public const val PROTODATA_CLI: String = "io.spine.protodata.cli.app.Main"
-    }
 
-    override fun renderAnnotationArguments(file: SourceFile): String {
-        return "\"$generator\""
+        /**
+         * Obtains the representation of the current time with the offset,
+         * as defined in the documentation of [Generated.date] parameter.
+         *
+         * The curren time is obtained via [Time.currentTime] so that tests can supply
+         * custom [io.spine.base.Time.Provider].
+         */
+        @VisibleForTesting
+        public fun currentDateTime(): String {
+            val now = currentTime().toInstant()
+            val dateTime = OffsetDateTime.ofInstant(now, currentTimeZone())
+            return dateTime.toString()
+        }
     }
 }

@@ -29,17 +29,27 @@ package io.spine.protodata.codegen.java.annotation
 import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.base.Time
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
 import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.PROTODATA_CLI
+import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.currentDateTime
 import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
+import io.spine.protodata.renderer.SourceFile
+import io.spine.time.testing.FrozenMadHatterParty
+import io.spine.time.toTimestamp
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import kotlin.io.path.Path
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("`GeneratedTypeAnnotation` renderer should")
-class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
+internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
     @Test
     fun `add the annotation, assuming 'PROTODATA_CLI' as the default generator`() {
@@ -55,6 +65,60 @@ class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
         assertGenerated(
             "@javax.annotation.processing.Generated(\"${javaClass.name}\")"
         )
+    }
+
+    @Nested
+    inner class TimestampTests {
+
+        private var frozenTime: ZonedDateTime? = null
+
+        @BeforeEach
+        fun freezeTime() {
+            // Have time shifted, event when testing at UTC.
+            frozenTime = ZonedDateTime.now(ZoneId.of("Europe/Istanbul"))
+            val timeProvider = FrozenPartyAtTimezone(frozenTime!!)
+            Time.setProvider(timeProvider)
+        }
+
+        @AfterEach
+        fun unfreezeTime() {
+            Time.resetProvider()
+            frozenTime = null
+        }
+
+        @Test
+        fun `produce timestamp of code generation`() {
+            createPipelineWith(GeneratedTypeAnnotation(
+                generator = javaClass.name,
+                addTimestamp = true
+            ))
+
+            val expectedDate = currentDateTime()
+            val assertCode = assertCode()
+            assertCode.contains("""
+                 @javax.annotation.processing.Generated(
+                     value = "${javaClass.name}",
+                     date = "$expectedDate"
+                 )
+                 """.trimIndent()
+            )
+            assertCode.contains("+03:00\"") // Istanbul zone offset
+        }
+    }
+
+    @Test
+    fun `adds comments for the given file`() {
+        val addFileName : (SourceFile) -> String = {
+            "file://${it.relativePath}"
+        }
+        createPipelineWith(GeneratedTypeAnnotation(
+            generator = javaClass.name,
+            commenter = addFileName
+        ))
+        val assertCode = assertCode()
+        assertCode.contains(
+            "    comments = \"file://"
+        );
     }
 
     private fun assertGenerated(expectedCode: String) {
@@ -76,5 +140,13 @@ class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
             sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
+    }
+}
+
+private class FrozenPartyAtTimezone(private val dateTime: ZonedDateTime) :
+    FrozenMadHatterParty(dateTime.toInstant().toTimestamp()) {
+
+    override fun currentZone(): ZoneId {
+        return dateTime.zone
     }
 }
