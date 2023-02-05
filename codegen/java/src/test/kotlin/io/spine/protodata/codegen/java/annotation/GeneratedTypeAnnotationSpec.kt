@@ -26,11 +26,13 @@
 
 package io.spine.protodata.codegen.java.annotation
 
+import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
+import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.PROTODATA_CLI
 import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
@@ -41,18 +43,38 @@ class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
     @Test
     fun `add the annotation, assuming 'PROTODATA_CLI' as the default generator`() {
-        Pipeline(
-            plugins = listOf(),
-            renderers = listOf(PrintBeforePrimaryDeclaration(), GeneratedTypeAnnotation()),
-            sources = this.sources,
-            request = CodeGeneratorRequest.getDefaultInstance()
-        )()
+        createPipelineWith(GeneratedTypeAnnotation())
+        assertGenerated(
+            "@javax.annotation.processing.Generated(\"$PROTODATA_CLI\")"
+        )
+    }
+
+    @Test
+    fun `use given generator value`() {
+        createPipelineWith(GeneratedTypeAnnotation(javaClass.name))
+        assertGenerated(
+            "@javax.annotation.processing.Generated(\"${javaClass.name}\")"
+        )
+    }
+
+    private fun assertGenerated(expectedCode: String) {
+        val assertThat = assertCode()
+        assertThat.contains(expectedCode)
+    }
+
+    private fun assertCode(): StringSubject {
         val code = sources.first()
             .file(Path(JAVA_FILE))
             .code()
-        assertThat(code)
-            .contains("""
-                @javax.annotation.processing.Generated("${GeneratedTypeAnnotation.PROTODATA_CLI}")
-            """.trimIndent())
+        return assertThat(code)
+    }
+
+    private fun createPipelineWith(generatedTypeAnnotation: GeneratedTypeAnnotation) {
+        Pipeline(
+            plugins = listOf(),
+            renderers = listOf(PrintBeforePrimaryDeclaration(), generatedTypeAnnotation),
+            sources = this.sources,
+            request = CodeGeneratorRequest.getDefaultInstance()
+        )()
     }
 }

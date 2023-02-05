@@ -64,5 +64,7 @@ public open class GeneratedTypeAnnotation(
         public const val PROTODATA_CLI: String = "io.spine.protodata.cli.app.Main"
     }
 
-    override fun renderAnnotationArguments(file: SourceFile): String = "\"$PROTODATA_CLI\""
+    override fun renderAnnotationArguments(file: SourceFile): String {
+        return "\"$generator\""
+    }
 }
