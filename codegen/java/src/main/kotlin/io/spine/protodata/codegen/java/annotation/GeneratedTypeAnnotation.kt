@@ -30,7 +30,7 @@ import com.google.common.annotations.VisibleForTesting
 import io.spine.base.Time
 import io.spine.base.Time.currentTime
 import io.spine.base.Time.currentTimeZone
-import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.PROTODATA_CLI
+import io.spine.protodata.CLI_APP_CLASS
 import io.spine.protodata.renderer.SourceFile
 import io.spine.time.toInstant
 import java.time.OffsetDateTime
@@ -50,9 +50,9 @@ public open class GeneratedTypeAnnotation(
     /**
      * The name of the code generator as required in [Generated.value].
      *
-     * The default value for this parameter is [PROTODATA_CLI].
+     * The default value for this parameter is [CLI_APP_CLASS].
      */
-    protected val generator: String = PROTODATA_CLI,
+    protected val generator: String = CLI_APP_CLASS,
 
     /**
      * Tells if the annotated code should have [Generated.date] parameter.
@@ -119,11 +119,6 @@ public open class GeneratedTypeAnnotation(
         private const val INDENT_SIZE = 4
 
         internal val INDENT = " ".repeat(INDENT_SIZE)
-
-        /**
-         * The fully qualified name of the ProtoData command-line application main class.
-         */
-        public const val PROTODATA_CLI: String = "io.spine.protodata.cli.app.Main"
 
         /**
          * Obtains the representation of the current time with the offset,

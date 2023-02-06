@@ -38,11 +38,6 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import java.io.File.pathSeparator
 
-/**
- * The name of the main class of the ProtoData command-line application.
- */
-public const val CLI_APP_CLASS: String = "io.spine.protodata.cli.app.MainKt"
-
 public object PluginParam : Parameter(
     name = "--plugin",
     shortName = "-p",

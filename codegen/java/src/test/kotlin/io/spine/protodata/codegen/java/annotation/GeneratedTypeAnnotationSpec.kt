@@ -30,10 +30,10 @@ import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.Time
+import io.spine.protodata.CLI_APP_CLASS
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
-import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.PROTODATA_CLI
 import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.currentDateTime
 import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
 import io.spine.protodata.renderer.SourceFile
@@ -55,7 +55,7 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
     fun `add the annotation, assuming 'PROTODATA_CLI' as the default generator`() {
         createPipelineWith(GeneratedTypeAnnotation())
         assertGenerated(
-            "@javax.annotation.processing.Generated(\"$PROTODATA_CLI\")"
+            "@javax.annotation.processing.Generated(\"$CLI_APP_CLASS\")"
         )
     }
 
