@@ -64,7 +64,7 @@ public open class GeneratedTypeAnnotation(
     /**
      * A callback for obtaining an argument for the [Generated.comments] parameter
      * by the given [SourceFile]. The default value is `null`.
-     * If not specified, the [comments][Generated.comments] parameter will non be used.
+     * If not specified, the [comments][Generated.comments] parameter will not be used.
      */
     protected val commenter: ((SourceFile) -> String)? = null
 
