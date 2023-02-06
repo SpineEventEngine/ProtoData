@@ -43,7 +43,7 @@ public abstract class TypeAnnotation<T : Annotation>(
 ) : JavaRenderer() {
 
     init {
-        checkAnnotationTargetsType()
+        checkAnnotationClass()
     }
 
     final override fun render(sources: SourceFileSet) {
@@ -84,11 +84,13 @@ public abstract class TypeAnnotation<T : Annotation>(
     protected abstract fun renderAnnotationArguments(file: SourceFile): String
 
     /**
-     * Ensures that the [annotationClass] passed to the constructor:
-     *   1. Is annotated with [@Target][Target].
+     * Ensures that the [annotationClass] passed to the constructor satisfy the following criteria:
+     *   1. The class is annotated with [@Target][Target].
      *   2. The annotation has [TYPE] as one of the targets.
+     *
+     * If one of these criteria is not met, [IllegalArgumentException] will be thrown.
      */
-    private fun checkAnnotationTargetsType() {
+    private fun checkAnnotationClass() {
         val targetClass = Target::class.java
         require(annotationClass.isAnnotationPresent(targetClass)) {
             "The annotation class `${annotationClass.name}`" +
