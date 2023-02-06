@@ -29,4 +29,5 @@ package io.spine.protodata
 /**
  * An error in configuring ProtoData.
  */
+@Suppress("serial") // This error is not meant to be serializable.
 public class ConfigurationError(msg: String) : Error(msg)
