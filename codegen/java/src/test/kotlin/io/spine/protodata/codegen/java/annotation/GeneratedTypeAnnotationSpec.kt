@@ -94,14 +94,16 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
             ))
 
             val expectedDate = currentDateTime()
-            val assertCode = assertCode()
-            assertCode.contains("""
+
+            val expectedCode = """
                  @javax.annotation.processing.Generated(
                      value = "${javaClass.name}",
                      date = "$expectedDate"
                  )
-                 """.trimIndent()
-            )
+                 """.trimIndent().replace("\n", System.lineSeparator())
+
+            val assertCode = assertCode()
+            assertCode.contains(expectedCode)
             assertCode.contains("+03:00\"") // Istanbul zone offset
         }
     }
@@ -118,7 +120,7 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
         val assertCode = assertCode()
         assertCode.contains(
             "    comments = \"file://"
-        );
+        )
     }
 
     private fun assertGenerated(expectedCode: String) {
@@ -127,11 +129,13 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
     }
 
     private fun assertCode(): StringSubject {
-        val code = sources.first()
-            .file(Path(JAVA_FILE))
-            .code()
+        val code = generatedCode()
         return assertThat(code)
     }
+
+    private fun generatedCode() = sources.first()
+        .file(Path(JAVA_FILE))
+        .code()
 
     private fun createPipelineWith(generatedTypeAnnotation: GeneratedTypeAnnotation) {
         Pipeline(

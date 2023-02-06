@@ -89,7 +89,7 @@ public open class GeneratedTypeAnnotation(
             date.enter()
             comments.enter()
         }.joinToString(separator = ",$nl")
-        return nl + params.prependIndent(INDENT) + nl
+        return nl + params.prependIndent(INDENT).replace("\n", nl) + nl
     }
 
     /**
