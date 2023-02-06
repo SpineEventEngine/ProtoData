@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,44 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JavaPoet
-import io.spine.internal.dependency.JavaX
-import io.spine.internal.dependency.Spine
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package io.spine.protodata
 
-plugins {
-    `build-proto-model`
-    `detekt-code-analysis`
-    jacoco
-}
-
-dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
-
-    testImplementation(JavaX.annotations)
-    testImplementation(Spine(project).testUtilTime)
-    testImplementation(project(":test-env"))
-}
-
-// Allows test suites to fetch generated Java files as resources.
-protobuf {
-    generateProtoTasks {
-        ofSourceSet("test").forEach { task ->
-            tasks.processTestResources {
-                from(task.outputs)
-                duplicatesStrategy = INCLUDE
-            }
-        }
-    }
-}
-
-// For some reason, `validation-runtime` dependency appears on both compile and runtime classpaths.
-// This expression explicitly excludes this dependency from the list.
-modelCompiler {
-    java {
-        codegen {
-            validation { skipValidation() }
-        }
-    }
-}
+/**
+ * The name of the main class of the ProtoData command-line application.
+ */
+public const val CLI_APP_CLASS: String = "io.spine.protodata.cli.app.MainKt"

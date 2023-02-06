@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,33 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java.generado
+package given.annotation;
 
-import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.codegen.java.JAVA_FILE
-import io.spine.protodata.codegen.java.WithSourceFileSet
-import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
-import kotlin.io.path.Path
-import org.junit.jupiter.api.Test
-
-class `'GenerateGenerated' renderer should` : WithSourceFileSet() {
-
-    @Test
-    fun `add the annotation`() {
-        Pipeline(
-            plugins = listOf(),
-            renderers = listOf(PrintBeforePrimaryDeclaration(), GenerateGenerated()),
-            sources = this.sources,
-            request = CodeGeneratorRequest.getDefaultInstance()
-        )()
-        val code = sources.first()
-            .file(Path(JAVA_FILE))
-            .code()
-        assertThat(code)
-            .contains("""
-                @javax.annotation.Generated("${GenerateGenerated.GENERATORS}")
-            """.trimIndent())
-    }
+/**
+ * An annotation class which does not have {@link java.lang.Target}.
+ */
+public @interface NoTargetsAnnotation {
 }

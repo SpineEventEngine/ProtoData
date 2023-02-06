@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,44 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JavaPoet
-import io.spine.internal.dependency.JavaX
-import io.spine.internal.dependency.Spine
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package given.annotation;
 
-plugins {
-    `build-proto-model`
-    `detekt-code-analysis`
-    jacoco
-}
+import java.lang.annotation.Target;
 
-dependencies {
-    api(project(":compiler"))
-    api(JavaPoet.lib)
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.MODULE;
+import static java.lang.annotation.ElementType.PARAMETER;
 
-    testImplementation(JavaX.annotations)
-    testImplementation(Spine(project).testUtilTime)
-    testImplementation(project(":test-env"))
-}
+/**
+ * The annotation which does not contain {@link java.lang.annotation.ElementType.TYPE} target.
+ */
+@Target({FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE, MODULE})
+public @interface NoTypeTargetAnnotation {
 
-// Allows test suites to fetch generated Java files as resources.
-protobuf {
-    generateProtoTasks {
-        ofSourceSet("test").forEach { task ->
-            tasks.processTestResources {
-                from(task.outputs)
-                duplicatesStrategy = INCLUDE
-            }
-        }
-    }
-}
-
-// For some reason, `validation-runtime` dependency appears on both compile and runtime classpaths.
-// This expression explicitly excludes this dependency from the list.
-modelCompiler {
-    java {
-        codegen {
-            validation { skipValidation() }
-        }
-    }
 }

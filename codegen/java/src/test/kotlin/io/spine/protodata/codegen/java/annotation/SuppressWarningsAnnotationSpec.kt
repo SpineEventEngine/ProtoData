@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java.suppress
+package io.spine.protodata.codegen.java.annotation
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
@@ -40,11 +40,14 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("`SuppressRenderer` should")
-class SuppressRendererSpec : WithSourceFileSet() {
+class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
     companion object {
         val emptyRequest: CodeGeneratorRequest = CodeGeneratorRequest.getDefaultInstance()
-        fun suppressionRenderers() = listOf(PrintBeforePrimaryDeclaration(), SuppressRenderer())
+        fun suppressionRenderers() = listOf(
+            PrintBeforePrimaryDeclaration(),
+            SuppressWarningsAnnotation()
+        )
     }
 
     private fun loadCode() = sources.first()
@@ -55,11 +58,11 @@ class SuppressRendererSpec : WithSourceFileSet() {
     inner class `suppress ALL warnings ` {
 
         @Test
-        fun `if no 'Configuration' is given`() {
+        fun `if no settings are passed`() {
             Pipeline(
                 plugins = listOf(),
                 renderers = suppressionRenderers(),
-                sources = this@SuppressRendererSpec.sources,
+                sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest
             )()
             val code = loadCode()
@@ -67,11 +70,11 @@ class SuppressRendererSpec : WithSourceFileSet() {
         }
 
         @Test
-        fun `if 'Configuration' contains empty list of suppressions`() {
+        fun `if settings contain an empty list of suppressions`() {
             Pipeline(
                 plugins = listOf(),
                 renderers = suppressionRenderers(),
-                sources = this@SuppressRendererSpec.sources,
+                sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
                 Configuration.rawValue("""
                     {"warnings": {"value": []}} 
