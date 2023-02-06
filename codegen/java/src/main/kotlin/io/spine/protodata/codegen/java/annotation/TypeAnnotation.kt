@@ -33,7 +33,7 @@ import java.lang.annotation.ElementType.TYPE
 import java.lang.annotation.Target
 
 /**
- * A [JavaRenderer] which adds annotates a Java type using the given [annotation][annotationClass].
+ * A [JavaRenderer] which annotates a Java type using the given [annotation][annotationClass].
  *
  * The implementation assumes that [PrintBeforePrimaryDeclaration][io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration]
  * renderer is inserted before a reference to a renderer derived from this class.
