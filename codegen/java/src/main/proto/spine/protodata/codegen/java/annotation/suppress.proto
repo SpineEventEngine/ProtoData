@@ -9,18 +9,19 @@ option java_package = "io.spine.protodata.codegen.java.annotation";
 option java_outer_classname = "SuppressProto";
 option java_multiple_files = true;
 
-// The configuration expected by the `SuppressWarnings` renderer.
+// The configuration expected by the `SuppressWarningsAnnotation` renderer.
 //
-// To combine the config for `SuppressWarnings` with config for other renderers, declare a message
-// with the same fields and field numbers as this one. More fields may be added. This way,
-// `SuppressWarnings` will still be able to parse config as `SuppressConfig`.
+// To combine the config for `SuppressWarningsAnnotation` with config for other renderers,
+// declare a message with the same fields and field numbers as this one. More fields may be added.
+// This way, `SuppressWarningsAnnotation` will still be able to parse config
+// as `SuppressionSettings`.
 //
 message SuppressionSettings {
 
     // The Java warnings to suppress.
     //
     // We use a novelty field number instead of `1` in order to avoid a clash when users combine
-    // `SuppressConfig` with other types of configuration.
+    // `SuppressionSettings` with other types of configuration.
     //
     Warnings warnings = 42;
 }
