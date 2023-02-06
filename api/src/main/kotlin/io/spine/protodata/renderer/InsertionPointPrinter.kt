@@ -75,8 +75,8 @@ public abstract class InsertionPointPrinter(
             }
 
             is EndOfFile -> lines.add(comment)
-            is Nowhere -> {} // No need to add anything.
-            // Insertion point should not appear in the file.
+            is Nowhere -> {} /* No need to add anything.
+                                Insertion point should not appear in the file. */
         }
     }
 }
