@@ -84,7 +84,8 @@ public abstract class TypeAnnotation<T : Annotation>(
     protected abstract fun renderAnnotationArguments(file: SourceFile): String
 
     /**
-     * Ensures that the [annotationClass] passed to the constructor satisfy the following criteria:
+     * Ensures that the [annotationClass] passed to the constructor satisfies
+     * the following criteria:
      *   1. The class is annotated with [@Target][Target].
      *   2. The annotation has [TYPE] as one of the targets.
      *
