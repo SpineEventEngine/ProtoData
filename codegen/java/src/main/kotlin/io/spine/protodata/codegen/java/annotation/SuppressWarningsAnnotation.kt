@@ -60,7 +60,7 @@ public class SuppressWarningsAnnotation :
      *
      * **NOTE:** [ALL_WARNINGS] are assumed to avoid the case of working with a default instance
      * of [SuppressionSettings] (e.g. when it was loaded from a file). Obviously, the user did
-     * not indent to suppress an empty list of warnings, if [SuppressionSettings] instance was added
+     * not intend to suppress an empty list of warnings, if [SuppressionSettings] instance was added
      * to ProtoData settings but no specific warnings were specified.
      */
     private fun warningList(): String {
