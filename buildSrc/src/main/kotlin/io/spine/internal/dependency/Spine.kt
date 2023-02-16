@@ -110,7 +110,7 @@ class Spine(p: ExtensionAware) {
          *
          * @see Spine.text
          */
-        const val text = "2.0.0-SNAPSHOT.2"
+        const val text = "2.0.0-SNAPSHOT.3"
 
         /**
          * The version of `tool-base` to use.
