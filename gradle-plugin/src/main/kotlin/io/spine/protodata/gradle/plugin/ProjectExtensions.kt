@@ -27,19 +27,9 @@
 package io.spine.protodata.gradle.plugin
 
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-
-/**
- * The [sourceSets][SourceSetContainer] of this project.
- */
-internal val Project.sourceSets: SourceSetContainer
-    get() = extensions.getByType<JavaPluginExtension>().sourceSets
 
 /**
  * Attempts to obtain the Java compilation Gradle task for the given source set.

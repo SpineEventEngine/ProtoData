@@ -26,6 +26,6 @@
 
 package io.spine.protodata.cli.given
 
-import io.spine.protodata.cli.ReflectiveBuilder
+import io.spine.protodata.cli.app.ReflectiveBuilder
 
 internal class TestReflectiveBuilder : ReflectiveBuilder<TestSpi>()

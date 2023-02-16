@@ -27,7 +27,7 @@
 import com.google.protobuf.gradle.protobuf
 
 buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
+    standardSpineSdkRepositories()
     apply(from = "$rootDir/../version.gradle.kts")
     val protoDataVersion: String by extra
     dependencies {

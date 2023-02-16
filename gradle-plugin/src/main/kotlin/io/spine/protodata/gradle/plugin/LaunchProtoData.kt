@@ -26,6 +26,16 @@
 
 package io.spine.protodata.gradle.plugin
 
+import io.spine.protodata.CLI_APP_CLASS
+import io.spine.protodata.cli.ConfigFileParam
+import io.spine.protodata.cli.OptionProviderParam
+import io.spine.protodata.cli.PluginParam
+import io.spine.protodata.cli.RendererParam
+import io.spine.protodata.cli.RequestParam
+import io.spine.protodata.cli.SourceRootParam
+import io.spine.protodata.cli.TargetRootParam
+import io.spine.protodata.cli.UserClasspathParam
+import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Task
@@ -41,6 +51,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectories
+import org.gradle.api.tasks.SourceSet
 
 /**
  * A task which executes a single ProtoData command.
@@ -54,6 +65,12 @@ import org.gradle.api.tasks.OutputDirectories
  */
 public abstract class LaunchProtoData : JavaExec() {
 
+    @get:InputFile
+    internal lateinit var requestFile: Provider<RegularFile>
+
+    @get:Internal
+    public abstract val configurationFile: RegularFileProperty
+
     @get:Input
     internal lateinit var renderers: Provider<List<String>>
 
@@ -62,9 +79,6 @@ public abstract class LaunchProtoData : JavaExec() {
 
     @get:Input
     internal lateinit var optionProviders: Provider<List<String>>
-
-    @get:InputFile
-    internal lateinit var requestFile: Provider<RegularFile>
 
     /**
      * The paths to the directories with the generated source code.
@@ -76,20 +90,20 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:Optional
     internal lateinit var sources: Provider<List<Directory>>
 
+    @get:InputFiles
+    internal lateinit var userClasspathConfig: Configuration
+
+    /**
+     * A Gradle [Configuration] which is used to run ProtoData.
+     */
+    @get:InputFiles
+    internal lateinit var protoDataConfig: Configuration
+
     /**
      * The paths to the directories where the source code processed by ProtoData should go.
      */
     @get:OutputDirectories
     internal lateinit var targets: Provider<List<Directory>>
-
-    @get:InputFiles
-    internal lateinit var userClasspathConfig: Configuration
-
-    @get:InputFiles
-    internal lateinit var protoDataConfig: Configuration
-
-    @get:Internal
-    public abstract val configuration: RegularFileProperty
 
     /**
      * Configures the CLI command for this task.
@@ -99,37 +113,37 @@ public abstract class LaunchProtoData : JavaExec() {
     internal fun compileCommandLine() {
         val command = sequence {
             plugins.get().forEach {
-                yield("--plugin")
+                yield(PluginParam.name)
                 yield(it)
             }
             renderers.get().forEach {
-                yield("--renderer")
+                yield(RendererParam.name)
                 yield(it)
             }
             optionProviders.get().forEach {
-                yield("--option-provider")
+                yield(OptionProviderParam.name)
                 yield(it)
             }
-            yield("--request")
+            yield(RequestParam.name)
             yield(project.file(requestFile).absolutePath)
 
             if (sources.isPresent) {
-                yield("--source-root")
+                yield(SourceRootParam.name)
                 yield(sources.absolutePaths())
             }
 
-            yield("--target-root")
+            yield(TargetRootParam.name)
             yield(targets.absolutePaths())
 
             val userCp = userClasspathConfig.asPath
             if (userCp.isNotEmpty()) {
-                yield("--user-classpath")
+                yield(UserClasspathParam.name)
                 yield(userCp)
             }
 
-            if (configuration.isPresent) {
-                yield("--configuration-file")
-                yield(project.file(configuration).absolutePath)
+            if (configurationFile.isPresent) {
+                yield(ConfigFileParam.name)
+                yield(project.file(configurationFile).absolutePath)
             }
         }.asIterable()
         if (logger.isInfoEnabled) {
@@ -137,7 +151,7 @@ public abstract class LaunchProtoData : JavaExec() {
         }
         classpath(protoDataConfig)
         classpath(userClasspathConfig)
-        mainClass.set("io.spine.protodata.cli.MainKt")
+        mainClass.set(CLI_APP_CLASS)
         args(command)
     }
 
@@ -177,3 +191,21 @@ private fun Provider<List<Directory>>.absoluteDirs() = takeIf { it.isPresent }
 
 private fun Provider<List<Directory>>.absolutePaths(): String =
     absoluteDirs().joinToString(pathSeparator)
+
+/**
+ * Tells if the request file for this task exists.
+ *
+ * Logs error if the given source set contains `proto` directory which contains files,
+ * which assumes that the request file should have been created.
+ */
+internal fun LaunchProtoData.checkRequestFile(sourceSet: SourceSet): Boolean {
+    val requestFile = requestFile.get().asFile
+    if (!requestFile.exists() && sourceSet.containsProtoFiles()) {
+        project.logger.error(
+            "Unable to locate the request file `$requestFile` which should have been created" +
+                    " because the source set `${sourceSet.name}` contains `.proto` files." +
+                    " The task `${name}` was skipped because the absence of the request file."
+        )
+    }
+    return requestFile.exists()
+}

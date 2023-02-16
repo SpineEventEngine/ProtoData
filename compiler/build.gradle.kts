@@ -42,7 +42,7 @@ dependencies {
     api(spine.server)
     api(spine.text)
     api(spine.toolBase)
-
+    api(project(":api"))
     with(Jackson) {
         api(databind)
         implementation(dataformatYaml)
@@ -66,3 +66,35 @@ apply<IncrementGuard>()
 tasks.withType<CheckVersionIncrement> {
     repository = PublishingRepos.cloudArtifactRegistry
 }
+
+val nl: String = System.lineSeparator()
+
+/**
+ * Prints output directories produced by `launchProtoData` tasks with
+ * corresponding number of files in those directories.
+
+val launchProtoData: Task by tasks.getting {
+    doLast {
+        println("***** `launchProtoData.output`:")
+        outputs.files.forEach { dir ->
+            val fileCount = project.fileTree(dir).count()
+            println("$dir $fileCount files.")
+        }
+        println("*************************")
+    }
+}
+ */
+
+/**
+ * Prints input of `compileKotlin` tasks of this module.
+
+val compileKotlin: Task by tasks.getting {
+    doFirst {
+        println()
+        println(">>>> Kotlin source set dirs:")
+        sourceSets.main { kotlin.srcDirs.forEach { dir -> println("$dir")} }
+        println(">>>>> `compileKotlin` task inputs in `doFirst` :")
+        println(inputs.files.joinToString(separator = nl))
+    }
+}
+ */

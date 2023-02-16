@@ -26,9 +26,6 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
-import Build_gradle.Subproject
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.JUnit
@@ -69,15 +66,15 @@ plugins {
     `gradle-doctor`
 }
 
+/**
+ * Publish all the modules, but `gradle-plugin`, which is published separately by its own.
+ */
 spinePublishing {
-    modules = setOf(
-        "cli",
-        "compiler",
-        "protoc",
-        "codegen-java",
-        "gradle-api",
-        "test-env"
-    )
+    modules = rootProject.subprojects
+        .map { project -> project.name }
+        .toSet()
+        .minus("gradle-plugin")
+
     destinations = setOf(
         PublishingRepos.gitHub("ProtoData"),
         PublishingRepos.cloudArtifactRegistry
@@ -102,7 +99,7 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             force(
-                io.spine.internal.dependency.Grpc.protobufPlugin,
+                io.spine.internal.dependency.Grpc.ProtocPlugin.artifact,
                 spine.base,
                 spine.testlib,
                 spine.server
@@ -115,15 +112,6 @@ object BuildSettings {
     private const val JAVA_VERSION = 11
 
     val javaVersion = JavaLanguageVersion.of(JAVA_VERSION)
-
-    /**
-     * Temporarily use this version, since 3.21.x is known to provide
-     * a broken `protoc-gen-js` artifact and Kotlin code without access modifiers.
-     *
-     * See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
-     *     https://github.com/protocolbuffers/protobuf/issues/10593
-     */
-    const val protocArtifact = "com.google.protobuf:protoc:3.19.6"
 }
 
 subprojects {
@@ -137,8 +125,6 @@ subprojects {
 
     setupTests()
     configureJavadoc()
-
-    configureProtoc(BuildSettings.protocArtifact)
 
     val generated = "$projectDir/generated"
     applyGeneratedDirectories(generated)
@@ -173,9 +159,8 @@ val localPublish by tasks.registering {
 val integrationTest by tasks.creating(RunBuild::class) {
     directory = "$rootDir/tests"
     dependsOn(localPublish)
+    shouldRunAfter(tasks.test)
 }
-
-tasks["check"].finalizedBy(integrationTest)
 
 /**
  * The alias for typed extensions functions related to subprojects.
@@ -327,21 +312,5 @@ fun Subproject.configureJavadoc() {
         from(dokkaJavadoc.outputDirectory)
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
-    }
-}
-
-fun Subproject.configureProtoc(protocArtifact: String) {
-    protobuf {
-        protoc {
-            // Temporarily use this version, since 3.21.x is known to provide
-            // a broken `protoc-gen-js` artifact.
-            // See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
-            //
-            // Once it is addressed, this artifact should be `Protobuf.compiler`.
-            //
-            // Also, this fixes the explicit API more for the generated Kotlin code.
-            //
-            artifact = protocArtifact
-        }
     }
 }

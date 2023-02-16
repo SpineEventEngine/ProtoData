@@ -40,11 +40,15 @@ plugins {
 }
 
 dependencies {
+    implementation(Clikt.lib)
+    implementation(Flogger.lib)
+
+    implementation(project(":cli-api"))
+    implementation(project(":api"))
     implementation(project(":compiler"))
     implementation(project(":codegen-java"))
     implementation(kotlin("reflect"))
-    implementation(Clikt.lib)
-    implementation(Flogger.lib)
+
     runtimeOnly(Flogger.Runtime.systemBackend)
 
     testImplementation(project(":test-env"))
@@ -99,7 +103,7 @@ tasks.distTar {
 }
 
 application {
-    mainClass.set("io.spine.protodata.cli.MainKt")
+    mainClass.set("io.spine.protodata.cli.app.MainKt")
     applicationName = appName
 }
 

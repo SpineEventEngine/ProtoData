@@ -30,6 +30,7 @@ import com.google.common.truth.Correspondence.transforming
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.gradle.ProtobufPlugin
 import io.spine.protodata.gradle.CodegenSettings
+import io.spine.tools.gradle.project.sourceSets
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.div
@@ -44,7 +45,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-@DisplayName("Plugin extension should")
+@DisplayName("`Extension` should")
 class ExtensionSpec {
 
     private lateinit var project: Project
@@ -61,7 +62,7 @@ class ExtensionSpec {
             sourceSets.maybeCreate(MAIN_SOURCE_SET_NAME)
             apply<ProtobufPlugin>()
             apply<Plugin>()
-            
+
             extension = extensions.getByType<CodegenSettings>() as Extension
         }
     }

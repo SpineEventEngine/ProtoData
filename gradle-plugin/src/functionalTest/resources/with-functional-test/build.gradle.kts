@@ -25,7 +25,6 @@
  */
 
 import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.gradle.standardToSpineSdk
 import org.gradle.api.plugins.jvm.JvmTestSuite
