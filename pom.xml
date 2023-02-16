@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.7.0</version>
+<version>0.8.0</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -93,6 +93,12 @@ all modules and does not describe the project structure per-subproject.
     <groupId>io.spine</groupId>
     <artifactId>spine-server</artifactId>
     <version>2.0.0-SNAPSHOT.122</version>
+    <scope>compile</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.spine</groupId>
+    <artifactId>spine-text</artifactId>
+    <version>2.0.0-SNAPSHOT.3</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
