@@ -40,7 +40,6 @@ plugins {
 val spine = Spine(project)
 dependencies {
     api(spine.server)
-    api(spine.text)
     api(spine.toolBase)
     api(project(":api"))
     with(Jackson) {

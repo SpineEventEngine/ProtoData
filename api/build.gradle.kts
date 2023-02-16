@@ -39,6 +39,7 @@ dependencies {
 
     listOf(
         spine.base,
+        spine.text,
         spine.coreJava.server,
         spine.toolBase,
     ).forEach {
