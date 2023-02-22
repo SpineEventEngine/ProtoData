@@ -35,12 +35,11 @@ import kotlin.io.path.name
 public class PrependingRenderer : Renderer(Java) {
 
     override fun render(sources: SourceFileSet) {
-        val files = sources
-            .filter { it.relativePath.name.endsWith("_.java") }
-        if (files.size > 1) {
-            throw IllegalArgumentException(
-                "Only expected one fitting file for test. Got: ${files.joinToString()}"
-            )
+        val files = sources.filter {
+            it.relativePath.name.endsWith("_.java")
+        }
+        require(files.size <= 1) {
+            "Only expected one fitting file for test. Got: ${files.joinToString()}."
         }
         if (files.isNotEmpty()) {
             val file = files.theOnly()

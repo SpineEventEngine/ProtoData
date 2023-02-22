@@ -29,7 +29,10 @@ package io.spine.protodata
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.CallCardinality.*
+import io.spine.protodata.CallCardinality.UNARY
+import io.spine.protodata.CallCardinality.SERVER_STREAMING
+import io.spine.protodata.CallCardinality.CLIENT_STREAMING
+import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.TopLevelEnum
 import io.spine.protodata.test.TopLevelMessage

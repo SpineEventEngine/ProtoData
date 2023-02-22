@@ -32,7 +32,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.google.common.io.ByteSource
 import com.google.protobuf.Message
 import io.spine.json.Json.fromJson
-import io.spine.protobuf.Messages
+import io.spine.protobuf.defaultInstance
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.config.ConfigurationFormat.JSON
 import io.spine.protodata.config.ConfigurationFormat.PLAIN
@@ -79,7 +79,7 @@ private sealed class ProtobufParser : ConfigurationParser {
 private object ProtoBinaryParser : ProtobufParser() {
 
     override fun doParse(source: ByteSource, cls: Class<out Message>): Message {
-        val builder = Messages.builderFor(cls)
+        val builder = cls.defaultInstance.toBuilder()
         builder.mergeFrom(source.read())
         return builder.build()
     }
