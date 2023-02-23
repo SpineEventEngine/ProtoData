@@ -25,7 +25,6 @@
  */
 
 import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
@@ -61,8 +60,8 @@ subprojects {
         all {
             resolutionStrategy {
                 force(
-                    io.spine.internal.dependency.Grpc.protobufPlugin,
                     spine.base,
+                    spine.toolBase,
                     spine.validation.runtime,
                     "io.spine.protodata:compiler:$protoDataVersion",
                     "io.spine.protodata:codegen-java:$protoDataVersion"
