@@ -70,6 +70,13 @@ public open class GeneratedTypeAnnotation(
 
 ) : TypeAnnotation<Generated>(Generated::class.java) {
 
+    /**
+     * No-arg constructor as required by ProtoData.
+     *
+     * Does the same as the primary constructor if called with all default arguments.
+     */
+    public constructor() : this(CLI_APP_CLASS)
+
     override fun renderAnnotationArguments(file: SourceFile): String {
         if (!addTimestamp && commenter == null) {
             return "\"$generator\""

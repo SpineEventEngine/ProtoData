@@ -1,24 +1,74 @@
 # ProtoData integration tests
 
-This Gradle project contains tests for the ProtoData tool and Gradle plugin.
+This subdirectory —`tests`— contains a separate Gradle product which runs integration
+tests of the ProtoData command-line application and the ProtoData Gradle plugin.
 
-Despite being part of `ProtoData` Git repository, it is a separate Gradle project.
-In order to fetch artifacts from the primary Gradle project, `tests` includes it
-via a Gradle [composite build](https://docs.gradle.org/current/userguide/composite_builds.html).
+This directory is a separate Gradle project, which fetches the artifacts from
+the primary Gradle project, via a Gradle [composite build][composite-build].
 
-## Running tests
+Please see [`settings.gradle.kts`](settings.gradle.kts) for details.
 
-To run integration tests from within this working directory, simply execute `./gradlew build` from
-the `./tests` directory.
+## Execution
+These tests are executed as the `integrationTest` task of 
+the [main build script](../build.gradle.kts). 
 
-Also, tests run as a part of the build of the primary Gradle project. Just run `./gradlew build`
-from the repo's root directory.
+ > **NOTE:** The `check` task of the root project depends on `integrationTest`,<br/>
+ > so the integration tests are performed automatically during the root build.<br/>
+ > There is no need to do anything extra about it.
 
-## Maintenance
+If you need to run only integration tests, while the root project directory is your current,
+please run the following command:
 
-`tests` project uses its own Gradle wrapper and a copy of `buildSrc`.
+```bash
+./gradlew integrationTest
+```
 
-In order to update `buildSrc`, run `./pull` from the root directory of the repo.
+If your current directory is `tests`, just run the Gradle build as usualy:
 
-In order to update the Gradle wrapper, run `./gradlew wrapper --gradle-version <version>` from
-the `./tests` directory, just like with any other Gradle Project.
+```bash
+./gradlew clean build
+```
+
+## Symlinks
+
+The `test` directory contains _soft_ symlinks to directories and files from the root project which 
+this Gradle project needs for execution:
+
+| Symlink       | Target           |
+|---------------|------------------|
+| `buildSrc/`   | `../buildSrc/`   | 
+| `gradle/`     | `../gradle/`     | 
+| `.gitignore`  | `../.gitignore`  |
+| `gradlew`     | `../gradlew`     |
+| `gradlew.bat` | `../gradlew.bat` |
+
+This arrangement ensures that integration tests use the same versions of dependencies as
+the production code in the root project.  
+
+### Symlinks support in Git
+
+Git handles symlinks according to the [`core.symlinks` option][git-symlinks-option].
+
+Under Unix-like systems symlink support for Git is likely to be turned on. 
+It is more complicated under Windows. 
+
+### Symlink support in Windows
+
+Symlink creation under Windows requires either Administrator privileges or
+the [Developer Mode on][developer-mode] turned on. If you develop under Windows you may want
+to turn the [Developer Mode on][developer-mode] for your workstation.  
+
+The recommended configuration under Windows is:
+
+| Item                                                | Configuration                                                  |
+|-----------------------------------------------------|----------------------------------------------------------------| 
+| OS                                                  | Windows 10 Creator Update or newer                             |
+| File System                                         | NTFS                                                           |
+| Ability to handle symlinks<br/>for the Windows user | Developer Mode enabled                                         |
+| Git                                                 | Native Client version 2.10.2 or newer                          |
+| Git configuration                                   | **Config file path:**<br/>`C:\Program Files\Git\etc\gitconfig` |
+|                                                     | **Git global config:**<pre>[core]<br/>symlinks = true</pre>    |
+
+[composite-build]: https://docs.gradle.org/current/userguide/composite_builds.html
+[developer-mode]: https://learn.microsoft.com/en-us/windows/apps/get-started/developer-mode-features-and-debugging
+[git-symlinks-option]: https://git-scm.com/docs/git-config#Documentation/git-config.txt-coresymlinks

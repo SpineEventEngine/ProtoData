@@ -59,8 +59,6 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm")
-    errorprone
     idea
     jacoco
     `gradle-doctor`
@@ -108,27 +106,10 @@ allprojects {
     }
 }
 
-object BuildSettings {
-    private const val JAVA_VERSION = 11
-
-    val javaVersion = JavaLanguageVersion.of(JAVA_VERSION)
-}
-
 subprojects {
-    applyPlugins()
-    setDependencies()
-    forceConfigurations()
-
-    val javaVersion = BuildSettings.javaVersion
-    configureJava(javaVersion)
-    configureKotlin(javaVersion)
-    
-    setupTests()
-    configureJavadoc()
-
-    val generated = "$projectDir/generated"
-    applyGeneratedDirectories(generated)
-    configureTaskDependencies()
+    apply {
+        plugin("module")
+    }
 }
 
 PomGenerator.applyTo(project)
@@ -156,161 +137,24 @@ val localPublish by tasks.registering {
     dependsOn(pubTasks)
 }
 
+/**
+ * The `integrationTest` task runs a Gradle build in the project located
+ * under the `tests` subdirectory.
+ *
+ * This build should run _only_ if all tests of all modules passed.
+ * Otherwise, integration tests make little sense.
+ */
 val integrationTest by tasks.creating(RunBuild::class) {
     directory = "$rootDir/tests"
     dependsOn(localPublish)
-    shouldRunAfter(tasks.test)
-}
-
-/**
- * The alias for typed extensions functions related to subprojects.
- */
-typealias Subproject = Project
-
-fun Subproject.applyPlugins() {
-    apply {
-        plugin("java")
-        plugin("kotlin")
-        plugin("net.ltgt.errorprone")
-        plugin(Dokka.GradlePlugin.id)
-        plugin(Protobuf.GradlePlugin.id)
-    }
-    LicenseReporter.generateReportIn(this)
-}
-
-fun Subproject.setDependencies() {
-    val spine = Spine(this)
-    dependencies {
-        ErrorProne.apply {
-            errorprone(core)
-        }
-        testImplementation(spine.coreJava.testUtilServer)
-        testImplementation(kotlin("test-junit5"))
-        Truth.libs.forEach { testImplementation(it) }
-        testRuntimeOnly(JUnit.runner)
-    }
-}
-
-fun Subproject.forceConfigurations() {
-    configurations.all {
-        resolutionStrategy {
-            force(
-                Protobuf.compiler,
-            )
-        }
-    }
-}
-
-fun Subproject.setupTests() {
-    tasks.test {
-        useJUnitPlatform()
-
-        testLogging {
-            events = setOf(PASSED, FAILED, SKIPPED)
-            showExceptions = true
-            showCauses = true
+    subprojects.forEach {
+        it.tasks.findByName("test")?.let { testTask ->
+            this@creating.dependsOn(testTask)
         }
     }
 }
 
 /**
- * Adds directories with the generated source code to source sets of the project and
- * to IntelliJ IDEA module settings.
- *
- * @param generatedDir
- *          the name of the root directory with the generated code
+ * The `check` task is done if `integrationTest` passes.
  */
-fun Subproject.applyGeneratedDirectories(generatedDir: String) {
-    val generatedMain = "$generatedDir/main"
-    val generatedJava = "$generatedMain/java"
-    val generatedKotlin = "$generatedMain/kotlin"
-    val generatedGrpc = "$generatedMain/grpc"
-    val generatedSpine = "$generatedMain/spine"
-
-    val generatedTest = "$generatedDir/test"
-    val generatedTestJava = "$generatedTest/java"
-    val generatedTestKotlin = "$generatedTest/kotlin"
-    val generatedTestGrpc = "$generatedTest/grpc"
-    val generatedTestSpine = "$generatedTest/spine"
-
-    sourceSets {
-        main {
-            java.srcDirs(
-                generatedJava,
-                generatedGrpc,
-                generatedSpine,
-            )
-            kotlin.srcDirs(
-                generatedKotlin,
-            )
-        }
-        test {
-            java.srcDirs(
-                generatedTestJava,
-                generatedTestGrpc,
-                generatedTestSpine,
-            )
-            kotlin.srcDirs(
-                generatedTestKotlin,
-            )
-        }
-    }
-
-    idea {
-        module {
-            generatedSourceDirs.addAll(files(
-                generatedJava,
-                generatedKotlin,
-                generatedGrpc,
-                generatedSpine,
-            ))
-            testSources.from(
-                generatedTestJava,
-                generatedTestKotlin,
-                generatedTestGrpc,
-                generatedTestSpine,
-            )
-            isDownloadJavadoc = true
-            isDownloadSources = true
-        }
-    }
-}
-
-fun Subproject.configureJava(javaVersion: JavaLanguageVersion) {
-    java {
-        toolchain.languageVersion.set(javaVersion)
-    }
-    tasks {
-        withType<JavaCompile>().configureEach {
-            configureJavac()
-            configureErrorProne()
-            // https://stackoverflow.com/questions/38298695/gradle-disable-all-incremental-compilation-and-parallel-builds
-            options.isIncremental = false
-        }
-        withType<org.gradle.jvm.tasks.Jar>().configureEach {
-            duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        }
-    }
-}
-
-fun Subproject.configureKotlin(javaVersion: JavaLanguageVersion) {
-    kotlin {
-        explicitApi()
-        applyJvmToolchain(javaVersion.asInt())
-    }
-
-    tasks.withType<KotlinCompile> {
-        setFreeCompilerArgs()
-        // https://stackoverflow.com/questions/38298695/gradle-disable-all-incremental-compilation-and-parallel-builds
-        incremental = false
-    }
-}
-
-fun Subproject.configureJavadoc() {
-    val dokkaJavadoc by tasks.getting(DokkaTask::class)
-    tasks.register("javadocJar", Jar::class) {
-        from(dokkaJavadoc.outputDirectory)
-        archiveClassifier.set("javadoc")
-        dependsOn(dokkaJavadoc)
-    }
-}
+tasks["check"].dependsOn(integrationTest)

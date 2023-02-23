@@ -55,7 +55,7 @@ extensions.getByType<CodegenSettings>().apply {
 
         "io.spine.protodata.test.annotation.PrintFieldGetter",
         "io.spine.protodata.test.annotation.AnnotationRenderer",
-        "io.spine.protodata.codegen.java.generado.GenerateGenerated"
+        "io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation"
     )
     plugins(
         "io.spine.protodata.test.uuid.UuidPlugin",
