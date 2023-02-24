@@ -35,7 +35,6 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 

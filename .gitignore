@@ -39,6 +39,11 @@ hs_err_pid*
 !.idea/inspectionProfiles
 !.idea/copyright
 
+# Ingore IDEA configuration files in the sub-directories too.
+**/.idea/*.xml
+**/.idea/**/*.xml
+**/.idea/**/*.iml
+
 **/generated
 
 tests/in-place-consumer/proto-gen/**
