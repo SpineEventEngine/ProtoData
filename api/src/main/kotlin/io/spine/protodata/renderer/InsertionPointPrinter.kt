@@ -82,7 +82,6 @@ public abstract class InsertionPointPrinter(
                 file.updateLines(lines)
             }
         }
-    }
         sources.prepareCode { file -> file.prepare() }
     }
 
@@ -109,7 +108,6 @@ public abstract class InsertionPointPrinter(
                                 Insertion point should not appear in the file. */
         }
     }
-}
 
     private fun renderInlinePoint(
         coordinates: TextCoordinates,
@@ -117,15 +115,15 @@ public abstract class InsertionPointPrinter(
         point: InsertionPoint,
     ) {
         val position = coordinates.inline
-        lines.checkLineNumber(position.line)
-        val originalLine = lines[position.line]
+        lines.checkLineNumber(position.cursor.line)
+        val originalLine = lines[position.cursor.line]
         checkPositionIndex(
-            position.column,
+            position.cursor.column,
             originalLine.length,
-            "Line does not have column ${position.column}: `$originalLine`."
+            "Line does not have column ${position.cursor.column}: `$originalLine`."
         )
-        val lineStart = originalLine.substring(0, position.column)
-        val lineEnd = originalLine.substring(position.column)
+        val lineStart = originalLine.substring(0, position.cursor.column)
+        val lineEnd = originalLine.substring(position.cursor.column)
         val label = point.codeLine
         var comment = target.comment(label)
         val labelEndIndex = comment.indexOf(label) + label.length
@@ -138,7 +136,7 @@ public abstract class InsertionPointPrinter(
             comment += " ".repeat(COMMENT_PADDING_LENGTH - paddingAfterLabel)
         }
         val annotatedLine = lineStart + comment + lineEnd
-        lines[position.line] = annotatedLine
+        lines[position.cursor.line] = annotatedLine
     }
 }
 
