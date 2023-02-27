@@ -28,6 +28,7 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos
+import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator

@@ -29,7 +29,7 @@ package io.spine.protodata.backend
 import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
 import com.google.errorprone.annotations.CanIgnoreReturnValue
-import com.google.protobuf.compiler.PluginProtos
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ConfigurationError
@@ -80,7 +80,7 @@ class PipelineSpec {
     private lateinit var srcRoot : Path
     private lateinit var codegenRequestFile: Path
     private lateinit var sourceFile: Path
-    private lateinit var request: PluginProtos.CodeGeneratorRequest
+    private lateinit var request: CodeGeneratorRequest
     private lateinit var renderer: UnderscorePrefixRenderer
     private lateinit var overwritingSourceSet: SourceFileSet
 
