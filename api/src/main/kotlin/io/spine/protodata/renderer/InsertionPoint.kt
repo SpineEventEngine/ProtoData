@@ -37,6 +37,7 @@ import io.spine.protodata.TextCoordinates.KindCase.NOT_IN_FILE
 import io.spine.protodata.TextCoordinates.KindCase.WHOLE_LINE
 import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
+import io.spine.text.Cursor
 import io.spine.text.Position
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
@@ -87,7 +88,7 @@ public interface InsertionPoint : CoordinatesFactory {
             WHOLE_LINE -> LineNumber.at(coords.wholeLine)
             INLINE -> {
                 logUnsupportedKind()
-                LineNumber.at(coords.inline.line)
+                LineNumber.at(coords.inline.cursor.line)
             }
             END_OF_FILE -> LineNumber.endOfFile()
             NOT_IN_FILE -> LineNumber.notInFile()
@@ -129,12 +130,14 @@ public sealed interface CoordinatesFactory {
     /**
      * Creates coordinates pointing at a specific line and column in the file.
      */
-    public fun at(line: Int, column: Int): TextCoordinates =
-        TextCoordinates.newBuilder()
-            .setInline(Position.newBuilder()
-                .setLine(line)
-                .setColumn(column))
+    public fun at(line: Int, column: Int): TextCoordinates {
+        val cursor = Cursor.newBuilder()
+            .setLine(line)
+            .setColumn(column)
+        return TextCoordinates.newBuilder()
+            .setInline(Position.newBuilder().setCursor(cursor))
             .build()
+    }
 
     /**
      * Creates coordinates pointing at the beginning of a specific line in the text.
