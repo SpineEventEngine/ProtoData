@@ -24,7 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:Suppress("RemoveRedundantQualifierName")
+
 import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Spine.McJava
 
 /**
  * The dependency onto Spine Validation causes the circular dependency in this Gradle project.
@@ -34,7 +37,7 @@ System.setProperty("spine.internal.validation.disabled", "true")
 
 apply {
     plugin(Protobuf.GradlePlugin.id)
-    plugin("io.spine.mc-java")
+    plugin(McJava.pluginId)
 }
 
 dependencies {

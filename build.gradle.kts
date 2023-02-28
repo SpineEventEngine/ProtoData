@@ -48,6 +48,7 @@ plugins {
     idea
     jacoco
     `gradle-doctor`
+    `project-report`
 }
 
 /**
@@ -69,12 +70,7 @@ spinePublishing {
 val spine = Spine(project)
 
 allprojects {
-    apply {
-        from("$rootDir/version.gradle.kts")
-        plugin("idea")
-        plugin("project-report")
-    }
-
+    apply(from = "$rootDir/version.gradle.kts")
     group = "io.spine.protodata"
     version = extra["protoDataVersion"]!!
 

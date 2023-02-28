@@ -26,11 +26,6 @@
 
 import io.spine.internal.dependency.Spine
 
-plugins {
-    `detekt-code-analysis`
-    jacoco
-}
-
 dependencies {
     compileOnly(gradleApi())
     val spine = Spine(project)
