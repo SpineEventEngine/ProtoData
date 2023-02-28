@@ -52,9 +52,11 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    java
+    `java-library`
     kotlin("jvm")
     id("net.ltgt.errorprone")
+    id("detekt-code-analysis")
+    jacoco
     idea
 }
 
