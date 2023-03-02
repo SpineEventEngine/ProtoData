@@ -53,8 +53,6 @@ dependencies {
     }
 
     testImplementation(project(":test-env"))
-    implementation("io.spine:spine-text:2.0.0-SNAPSHOT.4")
-    protoData("io.spine:spine-text:2.0.0-SNAPSHOT.4")
 }
 
 /**
