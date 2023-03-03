@@ -70,8 +70,11 @@ import kotlin.system.exitProcess
  *
  * When the application is done, or an unhandled error occurs, exits the process.
  */
-public fun main(args: Array<String>): Unit =
-    Run(readVersion()).main(args)
+public fun main(args: Array<String>) {
+    val version = readVersion()
+    val run = Run(version)
+    run.main(args)
+}
 
 private fun readVersion(): String = Version.fromManifestOf(Run::class.java).value
 
@@ -165,44 +168,19 @@ internal class Run(version: String) : CliktCommand(
         val plugins = loadPlugins()
         val renderer = loadRenderers()
         val registry = createRegistry()
-        val codegenRequest = loadRequest(registry)
+        val request = loadRequest(registry)
         val config = resolveConfig()
-        Pipeline(plugins, renderer, sources, codegenRequest, config)()
+        // TODO: Print out command line with parameters, if command-line parameter
+        // (e.g. --debug or --info) is passed.
+        Pipeline(plugins, renderer, sources, request, config)()
     }
 
-    private fun resolveConfig(): Configuration? {
-        val hasFile = configurationFile != null
-        val hasValue = configurationValue != null
-        val hasFormat = configurationFormat != null
-        if (hasFile && hasValue) {
-            throw MutuallyExclusiveGroupException(
-                listOf(ConfigFileParam.name, ConfigValueParam.name)
-            )
-        }
-        checkUsage(hasValue == hasFormat) {
-            "Options `${ConfigValueParam.name}` and `${ConfigFileParam.name}`" +
-                    " must be used together."
-        }
-        return when {
-            hasFile -> Configuration.file(configurationFile!!)
-            hasValue -> {
-                val format = ConfigurationFormat.valueOf(configurationFormat!!.uppercase())
-                Configuration.rawValue(configurationValue!!, format)
-            }
-            else -> null
-        }
-    }
-
-    private fun loadRequest(extensions: ExtensionRegistry = ExtensionRegistry.getEmptyRegistry()) =
-        codegenRequestFile.inputStream().use {
+    private fun loadRequest(
+        extensions: ExtensionRegistry = ExtensionRegistry.getEmptyRegistry()
+    ): CodeGeneratorRequest {
+        return codegenRequestFile.inputStream().use {
             CodeGeneratorRequest.parseFrom(it, extensions)
         }
-
-    private fun createRegistry(): ExtensionRegistry {
-        val optionsProviders = loadOptions()
-        val registry = ExtensionRegistry.newInstance()
-        optionsProviders.forEach { it.registerIn(registry) }
-        return registry
     }
 
     private fun createSourceFileSets(): List<SourceFileSet> {
@@ -237,6 +215,13 @@ internal class Run(version: String) : CliktCommand(
 
     private fun loadRenderers() = load(RendererBuilder(), renderers)
 
+    private fun createRegistry(): ExtensionRegistry {
+        val optionsProviders = loadOptions()
+        val registry = ExtensionRegistry.newInstance()
+        optionsProviders.forEach { it.registerIn(registry) }
+        return registry
+    }
+
     private fun loadOptions(): List<OptionsProvider> {
         val providers = load(OptionsProviderBuilder(), optionProviders)
         val request = loadRequest()
@@ -248,14 +233,40 @@ internal class Run(version: String) : CliktCommand(
         return allProviders
     }
 
+    private fun resolveConfig(): Configuration? {
+        val hasFile = configurationFile != null
+        val hasValue = configurationValue != null
+        val hasFormat = configurationFormat != null
+        if (hasFile && hasValue) {
+            throw MutuallyExclusiveGroupException(
+                listOf(ConfigFileParam.name, ConfigValueParam.name)
+            )
+        }
+        checkUsage(hasValue == hasFormat) {
+            "Options `${ConfigValueParam.name}` and `${ConfigFileParam.name}`" +
+                    " must be used together."
+        }
+        return when {
+            hasFile -> Configuration.file(configurationFile!!)
+            hasValue -> {
+                val format = ConfigurationFormat.valueOf(configurationFormat!!.uppercase())
+                Configuration.rawValue(configurationValue!!, format)
+            }
+            else -> null
+        }
+    }
+
+    /**
+     * Filter out files that do not have outer classes yet.
+     *
+     * These are `.proto` files being processed by ProtoData that contain
+     * option definitions. We cannot use these files because there is no binary Java
+     * code generated for them at this stage. Because of this they cannot be added to
+     * an `ExtensionRegistry` later.
+     */
     private fun filterOptionFiles(files: FileSet): Sequence<FileOptionsProvider> {
         val fileProviders = files.files()
             .filter { it.extensions.isNotEmpty() }
-            // Filter out files that do not have outer classes yet.
-            // These are `.proto` files being processed by ProtoData that contain
-            // option definitions. We cannot use these files because there is no binary Java
-            // code generated for them at this stage. Because of this they cannot be added to
-            // an `ExtensionRegistry` later.
             .filter { it.outerClass != null }
             .map(::FileOptionsProvider)
             .asSequence()
@@ -278,6 +289,7 @@ internal class Run(version: String) : CliktCommand(
             printError(e.message)
             printError("Please add the required class `$className` to the user classpath.")
             if (classPath != null) {
+                // TODO: Split classpath having each part on a separate line.
                 printError("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
             }
             exitProcess(1)
