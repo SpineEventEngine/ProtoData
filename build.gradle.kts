@@ -26,17 +26,8 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
-import io.spine.internal.dependency.Dokka
-import io.spine.internal.dependency.ErrorProne
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
-import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.RunBuild
-import io.spine.internal.gradle.javac.configureErrorProne
-import io.spine.internal.gradle.javac.configureJavac
-import io.spine.internal.gradle.kotlin.applyJvmToolchain
-import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.SpinePublishing
 import io.spine.internal.gradle.publish.spinePublishing
@@ -44,11 +35,6 @@ import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
 import io.spine.internal.gradle.standardToSpineSdk
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     standardSpineSdkRepositories()
@@ -62,6 +48,7 @@ plugins {
     idea
     jacoco
     `gradle-doctor`
+    `project-report`
 }
 
 /**
@@ -83,12 +70,7 @@ spinePublishing {
 val spine = Spine(project)
 
 allprojects {
-    apply {
-        from("$rootDir/version.gradle.kts")
-        plugin("idea")
-        plugin("project-report")
-    }
-
+    apply(from = "$rootDir/version.gradle.kts")
     group = "io.spine.protodata"
     version = extra["protoDataVersion"]!!
 

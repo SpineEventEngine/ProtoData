@@ -29,9 +29,6 @@ import io.spine.internal.dependency.Spine
 
 plugins {
     `build-proto-model`
-    protobuf
-    `detekt-code-analysis`
-    jacoco
 }
 
 dependencies {

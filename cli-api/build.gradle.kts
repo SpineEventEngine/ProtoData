@@ -24,11 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    `detekt-code-analysis`
-    jacoco
-}
-
 dependencies {
     implementation(project(":api"))
 }

@@ -36,8 +36,6 @@ plugins {
     id("com.gradle.plugin-publish").version("0.18.0")
     `version-to-resources`
     `write-manifest`
-    `detekt-code-analysis`
-    jacoco
 }
 
 val spine = Spine(project)
@@ -121,15 +119,16 @@ pluginBundle {
     vcsUrl = "https://github.com/SpineEventEngine/ProtoData.git"
     tags = listOf("spine", "protobuf", "protodata", "code generation", "codegen")
 
+    val pubVersion = project.version.toString()
     mavenCoordinates {
         groupId = "io.spine"
         artifactId = "protodata"
-        version = project.version.toString()
+        version = pubVersion
     }
 
     plugins {
         named(pluginName) {
-            version = project.version.toString()
+            version = pubVersion
         }
     }
 }

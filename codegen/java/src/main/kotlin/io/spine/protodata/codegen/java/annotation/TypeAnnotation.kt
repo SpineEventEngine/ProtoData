@@ -43,6 +43,9 @@ public abstract class TypeAnnotation<T : Annotation>(
 ) : JavaRenderer() {
 
     init {
+        @Suppress("LeakingThis")
+            // In a controlled environment, we're disabling this check for one child class.
+            // Should be fine while the method is internal and not protected/public.
         checkAnnotationClass()
     }
 
@@ -91,7 +94,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      *
      * If one of these criteria is not met, [IllegalArgumentException] will be thrown.
      */
-    private fun checkAnnotationClass() {
+    internal open fun checkAnnotationClass() {
         val targetClass = Target::class.java
         require(annotationClass.isAnnotationPresent(targetClass)) {
             "The annotation class `${annotationClass.name}`" +
