@@ -67,7 +67,7 @@ class Spine(p: ExtensionAware) {
          * The default version of `base` to use.
          * @see [Spine.base]
          */
-        const val base = "2.0.0-SNAPSHOT.162"
+        const val base = "2.0.0-SNAPSHOT.165"
 
         /**
          * The default version of `core-java` to use.
@@ -116,7 +116,7 @@ class Spine(p: ExtensionAware) {
          * The version of `tool-base` to use.
          * @see [Spine.toolBase]
          */
-        const val toolBase = "2.0.0-SNAPSHOT.161"
+        const val toolBase = "2.0.0-SNAPSHOT.162"
 
         /**
          * The version of `validation` to use.
