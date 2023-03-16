@@ -31,7 +31,6 @@ import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
 import com.google.protobuf.EnumValue
 import com.google.protobuf.GeneratedMessageV3
-import io.spine.base.EventMessage
 import io.spine.protobuf.AnyPacker
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.Option
@@ -44,9 +43,9 @@ import io.spine.protodata.Option
  * @param ctor
  *     a function which given an option, constructs a fitting event
  */
-internal suspend fun SequenceScope<EventMessage>.produceOptionEvents(
+internal suspend fun SequenceScope<CompilerEvent>.produceOptionEvents(
     options: GeneratedMessageV3.ExtendableMessage<*>,
-    ctor: (Option) -> EventMessage
+    ctor: (Option) -> CompilerEvent
 ) {
     options.allFields.forEach { (optionDescriptor, value) ->
         if(value is Collection<*>) {

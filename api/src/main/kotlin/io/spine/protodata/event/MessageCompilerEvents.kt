@@ -28,7 +28,6 @@ package io.spine.protodata.event
 
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Empty
-import io.spine.base.EventMessage
 import io.spine.protodata.Documentation
 import io.spine.protodata.Field
 import io.spine.protodata.File
@@ -42,7 +41,8 @@ import io.spine.protodata.name
  */
 internal class MessageCompilerEvents(
     private val file: File,
-    private val documentation: Documentation
+    private val documentation: Documentation,
+    private val shouldGenerate: Boolean
 ) {
 
     /**
@@ -51,7 +51,7 @@ internal class MessageCompilerEvents(
      * Opens with an [TypeEntered] event. Then go the events regarding the type metadata. Then go
      * the events regarding the fields. At last, closes with an [TypeExited] event.
      */
-    internal suspend fun SequenceScope<EventMessage>.produceMessageEvents(
+    internal suspend fun SequenceScope<CompilerEvent>.produceMessageEvents(
         descriptor: Descriptors.Descriptor,
         nestedIn: TypeName? = null
     ) {
@@ -69,6 +69,7 @@ internal class MessageCompilerEvents(
             TypeEntered.newBuilder()
                 .setFile(path)
                 .setType(type)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
         produceOptionEvents(descriptor.options) {
@@ -76,6 +77,7 @@ internal class MessageCompilerEvents(
                 .setFile(path)
                 .setType(typeName)
                 .setOption(it)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         }
 
@@ -89,7 +91,7 @@ internal class MessageCompilerEvents(
             produceMessageEvents(nestedIn = typeName, descriptor = it)
         }
 
-        val enums = EnumCompilerEvents(file, documentation)
+        val enums = EnumCompilerEvents(file, documentation, shouldGenerate)
         descriptor.enumTypes.forEach {
             enums.apply {
                 produceEnumEvents(nestedIn = typeName, descriptor = it)
@@ -100,6 +102,7 @@ internal class MessageCompilerEvents(
             TypeExited.newBuilder()
                 .setFile(path)
                 .setType(typeName)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
     }
@@ -110,7 +113,7 @@ internal class MessageCompilerEvents(
      * Opens with an [OneofGroupEntered] event. Then go the events regarding the group metadata.
      * Then go the events regarding the fields. At last, closes with an [OneofGroupExited] event.
      */
-    private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
+    private suspend fun SequenceScope<CompilerEvent>.produceOneofEvents(
         type: TypeName,
         descriptor: Descriptors.OneofDescriptor
     ) {
@@ -125,6 +128,7 @@ internal class MessageCompilerEvents(
                 .setFile(path)
                 .setType(type)
                 .setGroup(oneofGroup)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
         produceOptionEvents(descriptor.options) {
@@ -133,6 +137,7 @@ internal class MessageCompilerEvents(
                 .setType(type)
                 .setGroup(oneofName)
                 .setOption(it)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         }
         descriptor.fields.forEach { produceFieldEvents(type, it) }
@@ -141,6 +146,7 @@ internal class MessageCompilerEvents(
                 .setFile(path)
                 .setType(type)
                 .setGroup(oneofName)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
     }
@@ -151,7 +157,7 @@ internal class MessageCompilerEvents(
      * Opens with an [FieldEntered] event. Then go the events regarding the field options. At last,
      * closes with an [FieldExited] event.
      */
-    private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
+    private suspend fun SequenceScope<CompilerEvent>.produceFieldEvents(
         type: TypeName,
         descriptor: Descriptors.FieldDescriptor
     ) {
@@ -170,6 +176,7 @@ internal class MessageCompilerEvents(
                 .setFile(path)
                 .setType(type)
                 .setField(field)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
         produceOptionEvents(descriptor.options) {
@@ -178,6 +185,7 @@ internal class MessageCompilerEvents(
                 .setType(type)
                 .setField(fieldName)
                 .setOption(it)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         }
         yield(
@@ -185,6 +193,7 @@ internal class MessageCompilerEvents(
                 .setFile(path)
                 .setType(type)
                 .setField(fieldName)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
     }

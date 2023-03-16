@@ -34,6 +34,7 @@ option (type_url_prefix) = "type.spine.io";
 option java_package = "io.spine.protodata.event";
 option java_outer_classname = "EventsProto";
 option java_multiple_files = true;
+option (every_is).java_type = "CompilerEvent";
 
 import "spine/protodata/ast.proto";
 
@@ -43,6 +44,8 @@ message FileEntered {
     FilePath path = 1;
 
     File file = 2;
+
+    bool generation_requested = 3;
 }
 
 // Emitted when a file-level option is found.
@@ -51,12 +54,16 @@ message FileOptionDiscovered {
     FilePath file = 1;
 
     Option option = 2;
+
+    bool generation_requested = 3;
 }
 
 // Emitted when a file is completely discovered, including all the types, etc.
 message FileExited {
 
     FilePath file = 1;
+
+    bool generation_requested = 2;
 }
 
 // Emitted when processing reaches a message type.
@@ -65,6 +72,8 @@ message TypeEntered {
     FilePath file = 1;
 
     MessageType type = 2;
+
+    bool generation_requested = 3;
 }
 
 // Emitted when a message-level option is found.
@@ -75,6 +84,8 @@ message TypeOptionDiscovered {
     TypeName type = 2;
 
     Option option = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when a message type is completely discovered, including all the fields, etc.
@@ -83,6 +94,8 @@ message TypeExited {
     FilePath file = 1;
 
     TypeName type = 2;
+
+    bool generation_requested = 3;
 }
 
 // Emitted when processing reaches a `oneof` group.
@@ -93,6 +106,8 @@ message OneofGroupEntered {
     TypeName type = 2;
 
     OneofGroup group = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when a `oneof`-level option is found.
@@ -105,6 +120,8 @@ message OneofOptionDiscovered {
     OneofName group = 3;
 
     Option option = 4;
+
+    bool generation_requested = 5;
 }
 
 // Emitted when a `oneof`-group is completely discovered, including all the options and fields.
@@ -115,6 +132,8 @@ message OneofGroupExited {
     TypeName type = 2;
 
     OneofName group = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when processing reaches a field.
@@ -125,6 +144,8 @@ message FieldEntered {
     TypeName type = 2;
 
     Field field = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when a field-level option is found.
@@ -137,6 +158,8 @@ message FieldOptionDiscovered {
     FieldName field = 3;
 
     Option option = 4;
+
+    bool generation_requested = 5;
 }
 
 // Emitted when a field is completely discovered including the options.
@@ -147,6 +170,8 @@ message FieldExited {
     TypeName type = 2;
 
     FieldName field = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when processing reaches an enum type.
@@ -155,6 +180,8 @@ message EnumEntered {
     FilePath file = 1;
 
     EnumType type = 2;
+
+    bool generation_requested = 3;
 }
 
 // Emitted when an enum-level option is found.
@@ -165,6 +192,8 @@ message EnumOptionDiscovered {
     TypeName type = 2;
 
     Option option = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when processing reaches an enum constant a.k.a. enum value.
@@ -175,6 +204,8 @@ message EnumConstantEntered {
     TypeName type = 2;
 
     EnumConstant constant = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when an enum constant-level option is found.
@@ -187,6 +218,8 @@ message EnumConstantOptionDiscovered {
     ConstantName constant = 3;
 
     Option option = 4;
+
+    bool generation_requested = 5;
 }
 
 // Emitted when an enum constant is completely discovered.
@@ -197,6 +230,8 @@ message EnumConstantExited {
     TypeName type = 2;
 
     ConstantName constant = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when an enum type is completely discovered, including all the constants, etc.
@@ -205,6 +240,8 @@ message EnumExited {
     FilePath file = 1;
 
     TypeName type = 2;
+
+    bool generation_requested = 3;
 }
 
 // Emitted when the processing reaches a service.
@@ -213,6 +250,8 @@ message ServiceEntered {
     FilePath file = 1;
 
     Service service = 2;
+
+    bool generation_requested = 3;
 }
 
 // Emitted when an service-level option is found.
@@ -223,6 +262,8 @@ message ServiceOptionDiscovered {
     ServiceName service = 2;
 
     Option option = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when a service is completely discovered, including all the option and RPCs.
@@ -231,6 +272,8 @@ message ServiceExited {
     FilePath file = 1;
 
     ServiceName service = 2;
+
+    bool generation_requested = 3;
 }
 
 // Emitted when the processing reaches a remote procedure call.
@@ -241,6 +284,8 @@ message RpcEntered {
     ServiceName service = 2;
 
     Rpc rpc = 3;
+
+    bool generation_requested = 4;
 }
 
 // Emitted when an RPC-level option is found.
@@ -253,6 +298,8 @@ message RpcOptionDiscovered {
     RpcName rpc = 3;
 
     Option option = 4;
+
+    bool generation_requested = 5;
 }
 
 // Emitted when an RPC is completely discovered.
@@ -263,4 +310,6 @@ message RpcExited {
     ServiceName service = 2;
 
     RpcName rpc = 3;
+
+    bool generation_requested = 4;
 }

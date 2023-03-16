@@ -28,7 +28,6 @@ package io.spine.protodata.event
 
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
 import io.spine.protodata.Documentation
 import io.spine.protodata.File
@@ -46,13 +45,12 @@ public object CompilerEvents {
      *
      * The resulting sequence is always finite, it's limited by the type set.
      */
-    public fun parse(request: CodeGeneratorRequest): Sequence<EventMessage> {
+    public fun parse(request: CodeGeneratorRequest): Sequence<CompilerEvent> {
         val filesToGenerate = request.fileToGenerateList.toSet()
         val files = FileSet.of(request.protoFileList)
         return sequence {
             files.files()
-                .filter { it.name in filesToGenerate }
-                .map(::ProtoFileEvents)
+                .map { ProtoFileEvents(it, it.name in filesToGenerate) }
                 .forEach { it.apply { produceFileEvents() } }
         }
     }
@@ -62,7 +60,8 @@ public object CompilerEvents {
  * Produces events from the associated file.
  */
 private class ProtoFileEvents(
-    private val fileDescriptor: FileDescriptor
+    private val fileDescriptor: FileDescriptor,
+    private val shouldGenerate: Boolean
 ) {
 
     private val file = File.newBuilder()
@@ -81,34 +80,37 @@ private class ProtoFileEvents(
      * Opens with an [FileEntered] event. Then go the events regarding the file metadata. Then go
      * the events regarding the file contents. At last, closes with an [FileExited] event.
      */
-    suspend fun SequenceScope<EventMessage>.produceFileEvents() {
+    suspend fun SequenceScope<CompilerEvent>.produceFileEvents() {
         yield(
             FileEntered.newBuilder()
                 .setPath(file.path)
                 .setFile(file)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
         produceOptionEvents(fileDescriptor.options) {
             FileOptionDiscovered.newBuilder()
                 .setFile(file.path)
                 .setOption(it)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         }
-        val messageEvents = MessageCompilerEvents(file, documentation)
+        val messageEvents = MessageCompilerEvents(file, documentation, shouldGenerate)
         fileDescriptor.messageTypes.forEach {
             messageEvents.apply { produceMessageEvents(it) }
         }
-        val enumEvents = EnumCompilerEvents(file, documentation)
+        val enumEvents = EnumCompilerEvents(file, documentation, shouldGenerate)
         fileDescriptor.enumTypes.forEach {
             enumEvents.apply { produceEnumEvents(it) }
         }
-        val serviceEvents = ServiceCompilerEvents(file, documentation)
+        val serviceEvents = ServiceCompilerEvents(file, documentation, shouldGenerate)
         fileDescriptor.services.forEach {
             serviceEvents.apply { produceServiceEvents(it) }
         }
         yield(
             FileExited.newBuilder()
                 .setFile(file.path)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
     }

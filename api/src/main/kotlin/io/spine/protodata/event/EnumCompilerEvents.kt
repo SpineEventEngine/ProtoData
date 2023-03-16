@@ -27,7 +27,6 @@
 package io.spine.protodata.event
 
 import com.google.protobuf.Descriptors
-import io.spine.base.EventMessage
 import io.spine.protodata.ConstantName
 import io.spine.protodata.Documentation
 import io.spine.protodata.EnumConstant
@@ -41,7 +40,8 @@ import io.spine.protodata.name
  */
 internal class EnumCompilerEvents(
     private val file: File,
-    private val documentation: Documentation
+    private val documentation: Documentation,
+    private val shouldGenerate: Boolean
 ) {
 
     /**
@@ -50,7 +50,7 @@ internal class EnumCompilerEvents(
      * Opens with an [EnumEntered] event. Then go the events regarding the type metadata. Then go
      * the events regarding the enum constants. At last, closes with an [EnumExited] event.
      */
-    internal suspend fun SequenceScope<EventMessage>.produceEnumEvents(
+    internal suspend fun SequenceScope<CompilerEvent>.produceEnumEvents(
         descriptor: Descriptors.EnumDescriptor,
         nestedIn: TypeName? = null
     ) {
@@ -68,6 +68,7 @@ internal class EnumCompilerEvents(
             EnumEntered.newBuilder()
                 .setFile(path)
                 .setType(type)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
         produceOptionEvents(descriptor.options) {
@@ -75,6 +76,7 @@ internal class EnumCompilerEvents(
                 .setFile(path)
                 .setType(typeName)
                 .setOption(it)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         }
         descriptor.values.forEach {
@@ -84,6 +86,7 @@ internal class EnumCompilerEvents(
             EnumExited.newBuilder()
                 .setFile(path)
                 .setType(typeName)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
     }
@@ -94,7 +97,7 @@ internal class EnumCompilerEvents(
      * Opens with an [EnumConstantEntered] event. Then go the events regarding the constant options.
      * At last, closes with an [EnumConstantExited] event.
      */
-    private suspend fun SequenceScope<EventMessage>.produceConstantEvents(
+    private suspend fun SequenceScope<CompilerEvent>.produceConstantEvents(
         type: TypeName,
         descriptor: Descriptors.EnumValueDescriptor
     ) {
@@ -114,6 +117,7 @@ internal class EnumCompilerEvents(
                 .setFile(path)
                 .setType(type)
                 .setConstant(constant)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
         produceOptionEvents(descriptor.options) {
@@ -121,6 +125,7 @@ internal class EnumCompilerEvents(
                 .setFile(path)
                 .setType(type)
                 .setConstant(name)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         }
         yield(
@@ -128,6 +133,7 @@ internal class EnumCompilerEvents(
                 .setFile(path)
                 .setType(type)
                 .setConstant(name)
+                .setGenerationRequested(shouldGenerate)
                 .build()
         )
     }

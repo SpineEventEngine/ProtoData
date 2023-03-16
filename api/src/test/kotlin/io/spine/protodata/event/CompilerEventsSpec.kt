@@ -56,7 +56,7 @@ class CompilerEventsSpec {
 
     private val nl: String = System.lineSeparator()
 
-    private lateinit var events: List<EventMessage>
+    private lateinit var events: List<CompilerEvent>
 
     @BeforeEach
     fun parseEvents() {
@@ -69,7 +69,7 @@ class CompilerEventsSpec {
             fileToGenerate += DoctorProto.getDescriptor().fullName
             protoFile.addAll(allTheTypes)
         }
-        events = CompilerEvents.parse(request).toList()
+        events = CompilerEvents.parse(request).filter { it.getGenerationRequested() }.toList()
     }
 
     @Nested
