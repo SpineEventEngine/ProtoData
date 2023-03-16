@@ -27,6 +27,7 @@
 package io.spine.protodata.backend
 
 import com.google.common.truth.Truth.assertThat
+import com.google.protobuf.AnyProto
 import com.google.protobuf.BoolValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
@@ -41,7 +42,9 @@ import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.typeUrl
 import io.spine.testing.server.blackbox.BlackBox
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat as assertMessage
 
@@ -54,45 +57,66 @@ class CodeGenerationContextSpec {
         assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileView::class.java))
     }
 
-    @Test
-    fun `construct 'ProtobufSource' based on a descriptor set`() {
-        val ctx = BlackBox.from(CodeGenerationContext.builder())
-        val protoDescriptor = DoctorProto.getDescriptor().toProto()
-        val set = CodeGeneratorRequest.newBuilder()
-            .addProtoFile(protoDescriptor)
-            .addFileToGenerate(protoDescriptor.name)
-            .build()
-        ProtobufCompilerContext().use {
-            it.emitted(CompilerEvents.parse(set))
+    @Nested
+    inner class `construct 'ProtobufSource' based on a descriptor set with` {
+
+        private lateinit var ctx: BlackBox
+
+        @BeforeEach
+        fun buildViews() {
+            ctx = BlackBox.from(CodeGenerationContext.builder())
+            val protoDescriptor = DoctorProto.getDescriptor().toProto()
+            val set = CodeGeneratorRequest.newBuilder()
+                .addProtoFile(protoDescriptor)
+                .addProtoFile(AnyProto.getDescriptor().toProto())
+                .addFileToGenerate(protoDescriptor.name)
+                .build()
+            ProtobufCompilerContext().use {
+                it.emitted(CompilerEvents.parse(set))
+            }
         }
 
-        val path = DoctorProto.getDescriptor().path()
-        val assertSourceFile = ctx.assertEntity(path, ProtoSourceFileView::class.java)
-        assertSourceFile
-            .exists()
-        val actual = assertSourceFile.actual()!!.state() as ProtobufSourceFile
-
-        val types = actual.typeMap
-        val typeName = "type.spine.io/spine.protodata.test.Journey"
-        assertThat(types)
-            .containsKey(typeName)
-        val journeyType = types[typeName]!!
-        assertThat(journeyType.name.typeUrl())
-            .isEqualTo(typeName)
-        assertMessage(journeyType.optionList)
-            .containsExactly(
-                Option.newBuilder()
-                    .setName("beta_type")
-                    .setNumber(BETA_TYPE_FIELD_NUMBER)
-                    .setType(TYPE_BOOL.asType())
-                    .setValue(AnyPacker.pack(BoolValue.of(true)))
-                    .build()
+        @Test
+        fun `files marked for generation`() {
+            val assertSourceFile = ctx.assertEntity(
+                DoctorProto.getDescriptor().path(), ProtoSourceFileView::class.java
             )
-        assertThat(journeyType.fieldList)
-            .hasSize(4)
-        assertThat(journeyType.oneofGroupList)
-            .hasSize(1)
-        assertThat(journeyType.oneofGroupList[0].fieldList)
-            .hasSize(2)
+            assertSourceFile
+                .exists()
+            val actual = assertSourceFile.actual()!!.state() as ProtobufSourceFile
+
+            val types = actual.typeMap
+            val typeName = "type.spine.io/spine.protodata.test.Journey"
+            assertThat(types)
+                .containsKey(typeName)
+            val journeyType = types[typeName]!!
+            assertThat(journeyType.name.typeUrl())
+                .isEqualTo(typeName)
+            assertMessage(journeyType.optionList)
+                .containsExactly(
+                    Option.newBuilder()
+                        .setName("beta_type")
+                        .setNumber(BETA_TYPE_FIELD_NUMBER)
+                        .setType(TYPE_BOOL.asType())
+                        .setValue(AnyPacker.pack(BoolValue.of(true)))
+                        .build()
+                )
+            assertThat(journeyType.fieldList)
+                .hasSize(4)
+            assertThat(journeyType.oneofGroupList)
+                .hasSize(1)
+            assertThat(journeyType.oneofGroupList[0].fieldList)
+                .hasSize(2)
+        }
+
+        @Test
+        fun dependencies() {
+            val assertSourceFile = ctx.assertEntity(
+                AnyProto.getDescriptor().path(),
+                ProtoSourceFileView::class.java
+            )
+            assertSourceFile
+                .exists()
+        }
     }
 }

@@ -69,4 +69,7 @@ message ProtobufSourceFile {
     // The keys are the type URLs of the services.
     //
     map<string, Service> service = 5;
+
+    // Shows if ProtoData renderers should generate code for this Protobuf definition.
+    bool generation_requested = 6;
 }

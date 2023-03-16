@@ -71,6 +71,7 @@ internal class ProtoSourceFileView
         update {
             filePath = e.file.path
             file = e.file
+            generationRequested = e.generationRequested
         }
     }
 
