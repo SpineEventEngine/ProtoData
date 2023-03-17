@@ -37,6 +37,7 @@ option java_multiple_files = true;
 option (every_is).java_type = "CompilerEvent";
 
 import "spine/protodata/ast.proto";
+import "spine/protodata/source.proto";
 
 // Emitted when processing of a file begins.
 message FileEntered {
@@ -312,4 +313,12 @@ message RpcExited {
     RpcName rpc = 3;
 
     bool generation_requested = 4;
+}
+
+message DependencyDiscovered {
+
+    FilePath file = 1;
+
+    ProtobufSourceFile content = 2;
+    bool generation_requested = 3; // TODO:2023-03-17:dmytro.dashenkov: REMOVE.
 }

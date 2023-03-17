@@ -42,7 +42,7 @@ import "spine/protodata/ast.proto";
 // Includes all the message types declared in the file, along with their fields.
 //
 message ProtobufSourceFile {
-    option (entity).kind = PROJECTION;
+    option (entity).kind = VIEW;
 
     FilePath file_path = 1;
 
@@ -72,4 +72,17 @@ message ProtobufSourceFile {
 
     // Shows if ProtoData renderers should generate code for this Protobuf definition.
     bool generation_requested = 6;
+}
+
+// A Protobuf definitions file which is included into the module as a dependency.
+//
+// Unlike `ProtobufSourceFile`, `ProtobufDependencyFile` should not result in any code generation.
+// Rather, it serves an informative purpose.
+//
+message ProtobufDependencyFile {
+    option (entity).kind = VIEW;
+
+    FilePath file_path = 1;
+
+    ProtobufSourceFile content = 2;
 }
