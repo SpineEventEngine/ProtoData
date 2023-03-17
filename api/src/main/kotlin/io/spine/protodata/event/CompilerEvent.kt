@@ -28,7 +28,19 @@ package io.spine.protodata.event
 
 import io.spine.base.EventMessage
 
+/**
+ * A message of a Protobuf compiler event.
+ */
 public interface CompilerEvent : EventMessage {
 
+    /**
+     * Shows if this event should result in code generation.
+     *
+     * If `false`, the event is purely informative and should not add any code generation tasks.
+     * Such events are emitted for the Proto definitions that come from a module's dependency.
+     *
+     * If `true`, the event describes a Proto definition that belongs to the currently analyzed
+     * module and thus may result in code generation.
+     */
     public fun getGenerationRequested(): Boolean
 }
