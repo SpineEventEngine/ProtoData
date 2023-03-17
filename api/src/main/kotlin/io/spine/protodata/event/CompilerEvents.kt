@@ -31,6 +31,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
 import io.spine.protodata.Documentation
 import io.spine.protodata.File
+import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.path
 
 /**
@@ -49,11 +50,34 @@ public object CompilerEvents {
         val filesToGenerate = request.fileToGenerateList.toSet()
         val files = FileSet.of(request.protoFileList)
         return sequence {
-            files.files()
+            val (ownFiles, dependencies) = files.files()
+                .partition { it.name in filesToGenerate }
+            dependencies
+                .map(::toDependencyEvent)
+                .forEach { yield(it) }
+            ownFiles
                 .map { ProtoFileEvents(it, it.name in filesToGenerate) }
                 .forEach { it.apply { produceFileEvents() } }
         }
     }
+
+    private fun toDependencyEvent(fileDescriptor: FileDescriptor) = dependencyDiscovered {
+        val id = fileDescriptor.path()
+        file = id
+        content = fileDescriptor.toPbSourceFile()
+    }
+}
+
+private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
+    val b = ProtobufSourceFile.newBuilder()
+    val id = path()
+    b.filePath = id
+    b.fileBuilder.path = id
+    b.fileBuilder.packageName = `package`
+    b.fileBuilder.syntax = syntax.toSyntaxVersion()
+    b.fileBuilder.addAllOption(listOptions(this.options))
+
+    return b.build()
 }
 
 /**
@@ -61,7 +85,7 @@ public object CompilerEvents {
  */
 private class ProtoFileEvents(
     private val fileDescriptor: FileDescriptor,
-    private val shouldGenerate: Boolean
+    private val shouldGenerate: Boolean = true
 ) {
 
     private val file = File.newBuilder()
