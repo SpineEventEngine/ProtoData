@@ -26,14 +26,15 @@
 
 package io.spine.protodata.event
 
-import com.google.protobuf.Descriptors
+import com.google.protobuf.Descriptors.EnumDescriptor
+import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.ConstantName
 import io.spine.protodata.Documentation
-import io.spine.protodata.EnumConstant
-import io.spine.protodata.EnumType
 import io.spine.protodata.File
 import io.spine.protodata.TypeName
+import io.spine.protodata.constantName
+import io.spine.protodata.enumConstant
+import io.spine.protodata.enumType
 import io.spine.protodata.name
 
 /**
@@ -51,40 +52,40 @@ internal class EnumCompilerEvents(
      * the events regarding the enum constants. At last, closes with an [EnumExited] event.
      */
     internal suspend fun SequenceScope<EventMessage>.produceEnumEvents(
-        descriptor: Descriptors.EnumDescriptor,
+        descriptor: EnumDescriptor,
         nestedIn: TypeName? = null
     ) {
         val typeName = descriptor.name()
         val path = file.path
-        val type = EnumType.newBuilder().apply {
-                name = typeName
-                file = path
-                if (nestedIn != null) {
-                    declaredIn = nestedIn
-                }
-                doc = documentation.forEnum(descriptor)
-            }.build()
+        val type = enumType {
+            name = typeName
+            file = path
+            if (nestedIn != null) {
+                declaredIn = nestedIn
+            }
+            doc = documentation.forEnum(descriptor)
+        }
         yield(
-            EnumEntered.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .build()
+            enumEntered {
+                file = path
+                this.type = type
+            }
         )
         produceOptionEvents(descriptor.options) {
-            EnumOptionDiscovered.newBuilder()
-                .setFile(path)
-                .setType(typeName)
-                .setOption(it)
-                .build()
+            enumOptionDiscovered {
+                file = path
+                this.type = typeName
+                option = it
+            }
         }
         descriptor.values.forEach {
             produceConstantEvents(typeName, it)
         }
         yield(
-            EnumExited.newBuilder()
-                .setFile(path)
-                .setType(typeName)
-                .build()
+            enumExited {
+                file = path
+                this.type = typeName
+            }
         )
     }
 
@@ -96,39 +97,39 @@ internal class EnumCompilerEvents(
      */
     private suspend fun SequenceScope<EventMessage>.produceConstantEvents(
         type: TypeName,
-        descriptor: Descriptors.EnumValueDescriptor
+        descriptor: EnumValueDescriptor
     ) {
-        val name = ConstantName.newBuilder()
-            .setValue(descriptor.name)
-            .build()
-        val constant = EnumConstant.newBuilder()
-            .setName(name)
-            .setDeclaredIn(type)
-            .setNumber(descriptor.number)
-            .setOrderOfDeclaration(descriptor.index)
-            .setDoc(documentation.forEnumConstant(descriptor))
-            .build()
+        val name = constantName {
+            value = descriptor.name
+        }
+        val constant = enumConstant {
+            this.name = name
+            declaredIn = type
+            number = descriptor.number
+            orderOfDeclaration = descriptor.index
+            doc = documentation.forEnumConstant(descriptor)
+        }
         val path = file.path
         yield(
-            EnumConstantEntered.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .setConstant(constant)
-                .build()
+            enumConstantEntered {
+                file = path
+                this.type = type
+                this.constant = constant
+            }
         )
         produceOptionEvents(descriptor.options) {
-            EnumConstantOptionDiscovered.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .setConstant(name)
-                .build()
+            enumConstantOptionDiscovered {
+                file = path
+                this.type = type
+                this.constant = name
+            }
         }
         yield(
-            EnumConstantExited.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .setConstant(name)
-                .build()
+            enumConstantExited {
+                file = path
+                this.type = type
+                this.constant = name
+            }
         )
     }
 }
