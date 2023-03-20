@@ -31,7 +31,6 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.environment.DefaultMode
 import io.spine.protodata.config.Configuration
-import io.spine.protodata.event.CompilerEvents
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer

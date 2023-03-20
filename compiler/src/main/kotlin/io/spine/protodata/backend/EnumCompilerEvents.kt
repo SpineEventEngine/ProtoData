@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors
 import io.spine.protodata.ConstantName
-import io.spine.protodata.Documentation
 import io.spine.protodata.EnumConstant
 import io.spine.protodata.EnumType
 import io.spine.protodata.File
 import io.spine.protodata.TypeName
+import io.spine.protodata.event.CompilerEvent
+import io.spine.protodata.event.EnumConstantEntered
+import io.spine.protodata.event.EnumConstantExited
+import io.spine.protodata.event.EnumConstantOptionDiscovered
+import io.spine.protodata.event.EnumEntered
+import io.spine.protodata.event.EnumExited
+import io.spine.protodata.event.EnumOptionDiscovered
 import io.spine.protodata.name
 
 /**

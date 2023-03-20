@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors
-import io.spine.protodata.Documentation
 import io.spine.protodata.File
 import io.spine.protodata.Rpc
 import io.spine.protodata.Service
 import io.spine.protodata.ServiceName
 import io.spine.protodata.cardinality
+import io.spine.protodata.event.CompilerEvent
+import io.spine.protodata.event.RpcEntered
+import io.spine.protodata.event.RpcExited
+import io.spine.protodata.event.RpcOptionDiscovered
+import io.spine.protodata.event.ServiceEntered
+import io.spine.protodata.event.ServiceExited
+import io.spine.protodata.event.ServiceOptionDiscovered
 import io.spine.protodata.name
 
 /**

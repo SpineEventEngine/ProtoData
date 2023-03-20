@@ -195,12 +195,12 @@ private val FileDescriptor.typeUrlPrefix: String
 /**
  * Obtains the name of this `oneof` as a [OneofName].
  */
-internal fun OneofDescriptor.name(): OneofName = oneofName { value = name }
+public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
 
 /**
  * Obtains the name of this field as a [FieldName].
  */
-internal fun FieldDescriptor.name(): FieldName = fieldName { value = name }
+public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
 
 /**
  * Obtains the relative path to this file as a [FilePath].
@@ -219,7 +219,7 @@ public fun ServiceDescriptor.name(): ServiceName = serviceName {
 /**
  * Obtains the name of this RPC method as an [RpcName].
  */
-internal fun MethodDescriptor.name(): RpcName = rpcName { value = name }
+public fun MethodDescriptor.name(): RpcName = rpcName { value = name }
 
 /**
  * Obtains a [Type] wrapping this `PrimitiveType`.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend
 
-import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
+import com.google.common.truth.Truth
+import com.google.common.truth.extensions.proto.ProtoTruth
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
-import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
@@ -40,6 +39,26 @@ import io.kotest.matchers.shouldNotBe
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto
 import io.spine.protobuf.unpackGuessingType
+import io.spine.protodata.event.CompilerEvent
+import io.spine.protodata.event.EnumConstantEntered
+import io.spine.protodata.event.EnumConstantExited
+import io.spine.protodata.event.EnumEntered
+import io.spine.protodata.event.EnumExited
+import io.spine.protodata.event.FieldEntered
+import io.spine.protodata.event.FieldExited
+import io.spine.protodata.event.FieldOptionDiscovered
+import io.spine.protodata.event.FileEntered
+import io.spine.protodata.event.FileExited
+import io.spine.protodata.event.FileOptionDiscovered
+import io.spine.protodata.event.OneofGroupEntered
+import io.spine.protodata.event.OneofGroupExited
+import io.spine.protodata.event.RpcEntered
+import io.spine.protodata.event.RpcExited
+import io.spine.protodata.event.RpcOptionDiscovered
+import io.spine.protodata.event.ServiceEntered
+import io.spine.protodata.event.ServiceExited
+import io.spine.protodata.event.TypeEntered
+import io.spine.protodata.event.TypeExited
 import io.spine.protodata.messageType
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.typeName
@@ -183,22 +202,22 @@ class CompilerEventsSpec {
 
         event.option.name shouldBe  "idempotency_level"
         event.option.value.unpackGuessingType() shouldBe enumValue {
-            name = IdempotencyLevel.NO_SIDE_EFFECTS.name
-            number = IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
+            name = DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS.name
+            number = DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
         }
     }
 
     @Test
     fun `include message doc info`() {
         val typeEntered = emitted<TypeEntered>()
-        assertThat(typeEntered.type)
+        ProtoTruth.assertThat(typeEntered.type)
             .comparingExpectedFieldsOnly()
             .isEqualTo(messageType {
                 name = typeName { simpleName = "Journey" }
             })
 
         val doc = typeEntered.type.doc
-        assertThat(doc.leadingComment.split(nl))
+        Truth.assertThat(doc.leadingComment.split(nl))
             .containsExactly(
                 "A Doctor's journey.",
                 "",
@@ -209,7 +228,7 @@ class CompilerEventsSpec {
         doc.trailingComment shouldBe "Impl note: test type."
         doc.detachedCommentList[0] shouldBe "Detached 1."
 
-        assertThat(doc.detachedCommentList[1].split(nl))
+        Truth.assertThat(doc.detachedCommentList[1].split(nl))
             .containsExactly(
                 "Detached 2.",
                 "Indentation is not preserved in Protobuf.",
@@ -231,7 +250,7 @@ class CompilerEventsSpec {
 
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
-        assertThat(events)
+        ProtoTruth.assertThat(events)
             .comparingElementsUsing(Correspondences.type<EventMessage>())
             .containsAtLeastElementsIn(javaClasses)
             .inOrder()
@@ -242,6 +261,7 @@ class CompilerEventsSpec {
         return events.find { it.javaClass == javaClass }!! as E
     }
 }
+
 
 /**
  * Obtains the option of the given type [T] from this [FileOptionDiscovered] event.

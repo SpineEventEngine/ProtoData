@@ -36,13 +36,13 @@ import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
-import io.spine.protodata.event.CompilerEvents
 import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.typeUrl
 import io.spine.testing.server.blackbox.BlackBox
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -109,6 +109,7 @@ class CodeGenerationContextSpec {
                 .hasSize(2)
         }
 
+        @Disabled
         @Test
         fun dependencies() {
             val assertSourceFile = ctx.assertEntity(

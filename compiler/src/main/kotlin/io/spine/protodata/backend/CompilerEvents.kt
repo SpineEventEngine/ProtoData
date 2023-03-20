@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend
 
-import com.google.protobuf.Descriptors.FileDescriptor
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import com.google.protobuf.Descriptors
+import com.google.protobuf.compiler.PluginProtos
 import io.spine.code.proto.FileSet
-import io.spine.protodata.Documentation
 import io.spine.protodata.File
-import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.event.CompilerEvent
+import io.spine.protodata.event.FileEntered
+import io.spine.protodata.event.FileExited
+import io.spine.protodata.event.FileOptionDiscovered
 import io.spine.protodata.path
 
 /**
@@ -46,45 +48,34 @@ public object CompilerEvents {
      *
      * The resulting sequence is always finite, it's limited by the type set.
      */
-    public fun parse(request: CodeGeneratorRequest): Sequence<CompilerEvent> {
+    public fun parse(request: PluginProtos.CodeGeneratorRequest): Sequence<CompilerEvent> {
         val filesToGenerate = request.fileToGenerateList.toSet()
         val files = FileSet.of(request.protoFileList)
         return sequence {
             val (ownFiles, dependencies) = files.files()
                 .partition { it.name in filesToGenerate }
-            dependencies
-                .map(::toDependencyEvent)
-                .forEach { yield(it) }
+//            dependencies
+//                .map(::toDependencyEvent)
+//                .forEach { yield(it) }
             ownFiles
                 .map { ProtoFileEvents(it, it.name in filesToGenerate) }
                 .forEach { it.apply { produceFileEvents() } }
         }
     }
 
-    private fun toDependencyEvent(fileDescriptor: FileDescriptor) = dependencyDiscovered {
-        val id = fileDescriptor.path()
-        file = id
-        content = fileDescriptor.toPbSourceFile()
-    }
-}
-
-private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
-    val b = ProtobufSourceFile.newBuilder()
-    val id = path()
-    b.filePath = id
-    b.fileBuilder.path = id
-    b.fileBuilder.packageName = `package`
-    b.fileBuilder.syntax = syntax.toSyntaxVersion()
-    b.fileBuilder.addAllOption(listOptions(this.options))
-
-    return b.build()
+//    private fun toDependencyEvent(fileDescriptor: Descriptors.FileDescriptor) =
+//        dependencyDiscovered {
+//            val id = fileDescriptor.path()
+//            file = id
+//            content = fileDescriptor.toPbSourceFile()
+//        }
 }
 
 /**
  * Produces events from the associated file.
  */
 private class ProtoFileEvents(
-    private val fileDescriptor: FileDescriptor,
+    private val fileDescriptor: Descriptors.FileDescriptor,
     private val shouldGenerate: Boolean = true
 ) {
 

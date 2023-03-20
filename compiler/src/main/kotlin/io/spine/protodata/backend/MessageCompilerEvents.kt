@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,16 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Empty
-import io.spine.protodata.Documentation
 import io.spine.protodata.Field
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.OneofGroup
 import io.spine.protodata.TypeName
+import io.spine.protodata.event.CompilerEvent
+import io.spine.protodata.event.FieldEntered
+import io.spine.protodata.event.FieldExited
+import io.spine.protodata.event.FieldOptionDiscovered
+import io.spine.protodata.event.OneofGroupEntered
+import io.spine.protodata.event.OneofGroupExited
+import io.spine.protodata.event.OneofOptionDiscovered
+import io.spine.protodata.event.TypeEntered
+import io.spine.protodata.event.TypeExited
+import io.spine.protodata.event.TypeOptionDiscovered
 import io.spine.protodata.name
 
 /**
