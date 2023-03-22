@@ -28,6 +28,7 @@ package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors
 import com.google.protobuf.compiler.PluginProtos
+import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
 import io.spine.protodata.EnumType
 import io.spine.protodata.FilePath
@@ -35,7 +36,6 @@ import io.spine.protodata.MessageType
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.Service
 import io.spine.protodata.enumType
-import io.spine.protodata.event.CompilerEvent
 import io.spine.protodata.event.FileEntered
 import io.spine.protodata.event.FileExited
 import io.spine.protodata.event.FileOptionDiscovered
@@ -60,7 +60,7 @@ public object CompilerEvents {
      *
      * The resulting sequence is always finite, it's limited by the type set.
      */
-    public fun parse(request: PluginProtos.CodeGeneratorRequest): Sequence<CompilerEvent> {
+    public fun parse(request: PluginProtos.CodeGeneratorRequest): Sequence<EventMessage> {
         val filesToGenerate = request.fileToGenerateList.toSet()
         val files = FileSet.of(request.protoFileList)
         return sequence {
@@ -68,7 +68,7 @@ public object CompilerEvents {
                 .partition { it.name in filesToGenerate }
             yieldAll(dependencies.map(::toDependencyEvent))
             ownFiles
-                .map { ProtoFileEvents(it, it.name in filesToGenerate) }
+                .map(::ProtoFileEvents)
                 .forEach { it.apply { produceFileEvents() } }
         }
     }
@@ -175,10 +175,10 @@ private fun Descriptors.ServiceDescriptor.asService(
 ) = service {
     val serviceName = name()
     name = serviceName
+    file = path
     rpc.addAll(methods.map { it.buildRpcWithOptions(serviceName, documentation) })
     option.addAll(listOptions(options))
     doc = documentation.forService(this@asService)
-
 }
 
 private fun <T> walkMessage(
@@ -206,8 +206,7 @@ private fun Descriptors.FileDescriptor.toFile() = file {
  * Produces events from the associated file.
  */
 private class ProtoFileEvents(
-    private val fileDescriptor: Descriptors.FileDescriptor,
-    private val shouldGenerate: Boolean = true
+    private val fileDescriptor: Descriptors.FileDescriptor
 ) {
 
     private val file = fileDescriptor.toFile()
@@ -220,37 +219,34 @@ private class ProtoFileEvents(
      * Opens with an [FileEntered] event. Then go the events regarding the file metadata. Then go
      * the events regarding the file contents. At last, closes with an [FileExited] event.
      */
-    suspend fun SequenceScope<CompilerEvent>.produceFileEvents() {
+    suspend fun SequenceScope<EventMessage>.produceFileEvents() {
         yield(
             FileEntered.newBuilder()
                 .setPath(file.path)
                 .setFile(file)
-                .setGenerationRequested(shouldGenerate)
                 .build()
         )
         produceOptionEvents(fileDescriptor.options) {
             FileOptionDiscovered.newBuilder()
                 .setFile(file.path)
                 .setOption(it)
-                .setGenerationRequested(shouldGenerate)
                 .build()
         }
-        val messageEvents = MessageCompilerEvents(file, documentation, shouldGenerate)
+        val messageEvents = MessageCompilerEvents(file, documentation)
         fileDescriptor.messageTypes.forEach {
             messageEvents.apply { produceMessageEvents(it) }
         }
-        val enumEvents = EnumCompilerEvents(file, documentation, shouldGenerate)
+        val enumEvents = EnumCompilerEvents(file, documentation)
         fileDescriptor.enumTypes.forEach {
             enumEvents.apply { produceEnumEvents(it) }
         }
-        val serviceEvents = ServiceCompilerEvents(file, documentation, shouldGenerate)
+        val serviceEvents = ServiceCompilerEvents(file, documentation)
         fileDescriptor.services.forEach {
             serviceEvents.apply { produceServiceEvents(it) }
         }
         yield(
             FileExited.newBuilder()
                 .setFile(file.path)
-                .setGenerationRequested(shouldGenerate)
                 .build()
         )
     }

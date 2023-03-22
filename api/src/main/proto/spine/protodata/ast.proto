@@ -405,6 +405,9 @@ message Service {
 
     // Documentation of this service.
     Doc doc = 4;
+
+    // Path to the file which declares this service.
+    FilePath file = 5;
 }
 
 // A name of an RPC method.

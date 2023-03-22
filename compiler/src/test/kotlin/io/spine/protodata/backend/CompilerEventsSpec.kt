@@ -27,7 +27,7 @@
 package io.spine.protodata.backend
 
 import com.google.common.truth.Truth
-import com.google.common.truth.extensions.proto.ProtoTruth
+import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.Message
@@ -39,7 +39,6 @@ import io.kotest.matchers.shouldNotBe
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto
 import io.spine.protobuf.unpackGuessingType
-import io.spine.protodata.event.CompilerEvent
 import io.spine.protodata.event.EnumConstantEntered
 import io.spine.protodata.event.EnumConstantExited
 import io.spine.protodata.event.EnumEntered
@@ -75,7 +74,7 @@ class CompilerEventsSpec {
 
     private val nl: String = System.lineSeparator()
 
-    private lateinit var events: List<CompilerEvent>
+    private lateinit var events: List<EventMessage>
 
     @BeforeEach
     fun parseEvents() {
@@ -88,7 +87,7 @@ class CompilerEventsSpec {
             fileToGenerate += DoctorProto.getDescriptor().fullName
             protoFile.addAll(allTheTypes)
         }
-        events = CompilerEvents.parse(request).filter { it.getGenerationRequested() }.toList()
+        events = CompilerEvents.parse(request).toList()
     }
 
     @Nested
@@ -210,7 +209,7 @@ class CompilerEventsSpec {
     @Test
     fun `include message doc info`() {
         val typeEntered = emitted<TypeEntered>()
-        ProtoTruth.assertThat(typeEntered.type)
+        assertThat(typeEntered.type)
             .comparingExpectedFieldsOnly()
             .isEqualTo(messageType {
                 name = typeName { simpleName = "Journey" }
@@ -250,7 +249,7 @@ class CompilerEventsSpec {
 
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
-        ProtoTruth.assertThat(events)
+        assertThat(events)
             .comparingElementsUsing(Correspondences.type<EventMessage>())
             .containsAtLeastElementsIn(javaClasses)
             .inOrder()

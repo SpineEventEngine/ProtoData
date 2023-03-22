@@ -27,10 +27,10 @@
 package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors
+import io.spine.base.EventMessage
 import io.spine.protodata.File
 import io.spine.protodata.Service
 import io.spine.protodata.ServiceName
-import io.spine.protodata.event.CompilerEvent
 import io.spine.protodata.event.RpcEntered
 import io.spine.protodata.event.RpcExited
 import io.spine.protodata.event.RpcOptionDiscovered
@@ -44,8 +44,7 @@ import io.spine.protodata.name
  */
 internal class ServiceCompilerEvents(
     private val file: File,
-    private val documentation: Documentation,
-    private val shouldGenerate: Boolean
+    private val documentation: Documentation
 ) {
 
     /**
@@ -54,20 +53,20 @@ internal class ServiceCompilerEvents(
      * Opens with an [ServiceEntered] event. Then go the events regarding the service metadata.
      * Then go the events regarding the RPC methods. At last, closes with an [ServiceExited] event.
      */
-    internal suspend fun SequenceScope<CompilerEvent>.produceServiceEvents(
+    internal suspend fun SequenceScope<EventMessage>.produceServiceEvents(
         descriptor: Descriptors.ServiceDescriptor
     ) {
+        val path = file.path
         val serviceName = descriptor.name()
         val service = Service.newBuilder()
             .setName(serviceName)
             .setDoc(documentation.forService(descriptor))
+            .setFile(path)
             .build()
-        val path = file.path
         yield(
             ServiceEntered.newBuilder()
                 .setFile(path)
                 .setService(service)
-                .setGenerationRequested(shouldGenerate)
                 .build()
         )
         produceOptionEvents(descriptor.options) {
@@ -75,7 +74,6 @@ internal class ServiceCompilerEvents(
                 .setFile(path)
                 .setService(serviceName)
                 .setOption(it)
-                .setGenerationRequested(shouldGenerate)
                 .build()
         }
         descriptor.methods.forEach { produceRpcEvents(serviceName, it) }
@@ -83,12 +81,11 @@ internal class ServiceCompilerEvents(
             ServiceExited.newBuilder()
                 .setFile(path)
                 .setService(serviceName)
-                .setGenerationRequested(shouldGenerate)
                 .build()
         )
     }
 
-    private suspend fun SequenceScope<CompilerEvent>.produceRpcEvents(
+    private suspend fun SequenceScope<EventMessage>.produceRpcEvents(
         service: ServiceName,
         descriptor: Descriptors.MethodDescriptor
     ) {
@@ -99,7 +96,6 @@ internal class ServiceCompilerEvents(
                 .setFile(path)
                 .setService(service)
                 .setRpc(rpc)
-                .setGenerationRequested(shouldGenerate)
                 .build()
         )
         produceOptionEvents(descriptor.options) {
@@ -108,7 +104,6 @@ internal class ServiceCompilerEvents(
                 .setService(service)
                 .setRpc(rpc.name)
                 .setOption(it)
-                .setGenerationRequested(shouldGenerate)
                 .build()
         }
         yield(
@@ -116,7 +111,6 @@ internal class ServiceCompilerEvents(
                 .setFile(path)
                 .setService(service)
                 .setRpc(rpc.name)
-                .setGenerationRequested(shouldGenerate)
                 .build()
         )
     }
