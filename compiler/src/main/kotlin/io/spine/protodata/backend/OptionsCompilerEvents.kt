@@ -48,18 +48,28 @@ internal suspend fun SequenceScope<CompilerEvent>.produceOptionEvents(
     options: GeneratedMessageV3.ExtendableMessage<*>,
     ctor: (Option) -> CompilerEvent
 ) {
-    options.allFields.forEach { (optionDescriptor, value) ->
-        if(value is Collection<*>) {
-            value.forEach {
-                val option = toOption(optionDescriptor, it!!)
-                yield(ctor(option))
-            }
-        } else {
-            val option = toOption(optionDescriptor, value)
-            yield(ctor(option))
-        }
+    parseOptions(options).forEach {
+        yield(ctor(it))
     }
 }
+
+internal fun listOptions(options: GeneratedMessageV3.ExtendableMessage<*>): List<Option> =
+    parseOptions(options).toList()
+
+private fun parseOptions(options: GeneratedMessageV3.ExtendableMessage<*>): Sequence<Option> =
+    sequence {
+        options.allFields.forEach { (optionDescriptor, value) ->
+            if (value is Collection<*>) {
+                value.forEach {
+                    val option = toOption(optionDescriptor, it!!)
+                    yield(option)
+                }
+            } else {
+                val option = toOption(optionDescriptor, value)
+                yield(option)
+            }
+        }
+    }
 
 private fun toOption(
     optionDescriptor: FieldDescriptor,

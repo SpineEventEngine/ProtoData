@@ -29,12 +29,24 @@ package io.spine.protodata.backend
 import com.google.protobuf.Descriptors
 import com.google.protobuf.compiler.PluginProtos
 import io.spine.code.proto.FileSet
-import io.spine.protodata.File
+import io.spine.protodata.EnumType
+import io.spine.protodata.FilePath
+import io.spine.protodata.MessageType
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.Service
+import io.spine.protodata.enumType
 import io.spine.protodata.event.CompilerEvent
 import io.spine.protodata.event.FileEntered
 import io.spine.protodata.event.FileExited
 import io.spine.protodata.event.FileOptionDiscovered
+import io.spine.protodata.event.dependencyDiscovered
+import io.spine.protodata.file
+import io.spine.protodata.messageType
+import io.spine.protodata.name
+import io.spine.protodata.oneofGroup
 import io.spine.protodata.path
+import io.spine.protodata.service
+import io.spine.protodata.typeUrl
 
 /**
  * A factory for Protobuf compiler events.
@@ -54,21 +66,140 @@ public object CompilerEvents {
         return sequence {
             val (ownFiles, dependencies) = files.files()
                 .partition { it.name in filesToGenerate }
-//            dependencies
-//                .map(::toDependencyEvent)
-//                .forEach { yield(it) }
+            yieldAll(dependencies.map(::toDependencyEvent))
             ownFiles
                 .map { ProtoFileEvents(it, it.name in filesToGenerate) }
                 .forEach { it.apply { produceFileEvents() } }
         }
     }
 
-//    private fun toDependencyEvent(fileDescriptor: Descriptors.FileDescriptor) =
-//        dependencyDiscovered {
-//            val id = fileDescriptor.path()
-//            file = id
-//            content = fileDescriptor.toPbSourceFile()
-//        }
+    private fun toDependencyEvent(fileDescriptor: Descriptors.FileDescriptor) =
+        dependencyDiscovered {
+            val id = fileDescriptor.path()
+            file = id
+            content = fileDescriptor.toPbSourceFile()
+        }
+}
+
+private fun Descriptors.FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
+    val path = path()
+    val result = ProtobufSourceFile.newBuilder()
+        .setFilePath(path)
+        .setFile(toFile())
+    val doc = Documentation.fromFile(this)
+    result.putAllType(
+        messageTypes(path, doc)
+            .map { it.name.typeUrl() to it }
+            .toMap()
+    )
+    result.putAllEnumType(
+        enumTypes(path, doc)
+            .map { it.name.typeUrl() to it }
+            .toMap()
+    )
+    result.putAllService(
+        services(path, doc)
+            .map { it.name.typeUrl() to it }
+            .toMap()
+    )
+    return result.build()
+}
+
+private fun Descriptors.FileDescriptor.messageTypes(
+    path: FilePath,
+    doc: Documentation
+): Sequence<MessageType> {
+    var messages = messageTypes.asSequence()
+    for (msg in messageTypes) {
+        messages += walkMessage(msg) { it.nestedTypes }
+    }
+    return messages.map { it.asMessage(path, doc) }
+}
+
+private fun Descriptors.FileDescriptor.enumTypes(
+    path: FilePath,
+    doc: Documentation
+): Sequence<EnumType> {
+    var enums = enumTypes.asSequence()
+    for (msg in messageTypes) {
+        enums += walkMessage(msg) { it.enumTypes }
+    }
+    return enums.map { it.asEnum(path, doc) }
+}
+
+private fun Descriptors.FileDescriptor.services(
+    path: FilePath,
+    doc: Documentation
+): Sequence<Service> = services.asSequence().map { it.asService(path, doc) }
+
+private fun Descriptors.Descriptor.asMessage(
+    path: FilePath,
+    documentation: Documentation
+) = messageType {
+    val typeName = name()
+    name = typeName
+    file = path
+    doc = documentation.forMessage(this@asMessage)
+    option.addAll(listOptions(options))
+    if (containingType != null) {
+        declaredIn = containingType.name()
+    }
+    oneofGroup.addAll(realOneofs.map { oneofGroup {
+        val groupName = it.name()
+        name = groupName
+        field.addAll(it.fields.map { f -> f.buildFieldWithOptions(typeName, documentation) })
+        option.addAll(listOptions(options))
+        doc = documentation.forOneof(it)
+    }})
+    field.addAll(fields.map { it.buildFieldWithOptions(typeName, documentation) })
+    nestedMessages.addAll(nestedTypes.map { it.name() })
+    nestedEnums.addAll(enumTypes.map { it.name() })
+}
+
+private fun Descriptors.EnumDescriptor.asEnum(
+    path: FilePath, documentation: Documentation
+) = enumType {
+    val typeName = name()
+    name = typeName
+    option.addAll(listOptions(options))
+    file = path
+    constant.addAll(values.map { it.buildConstantWithOptions(typeName, documentation) })
+    if (containingType != null) {
+        declaredIn = containingType.name()
+    }
+    doc = documentation.forEnum(this@asEnum)
+}
+
+private fun Descriptors.ServiceDescriptor.asService(
+    path: FilePath, documentation: Documentation
+) = service {
+    val serviceName = name()
+    name = serviceName
+    rpc.addAll(methods.map { it.buildRpcWithOptions(serviceName, documentation) })
+    option.addAll(listOptions(options))
+    doc = documentation.forService(this@asService)
+
+}
+
+private fun <T> walkMessage(
+    type: Descriptors.Descriptor,
+    extractorFun: (Descriptors.Descriptor) -> Iterable<T>
+): Sequence<T> {
+    val queue = ArrayDeque<Descriptors.Descriptor>()
+    queue.add(type)
+    return sequence {
+        while (queue.isNotEmpty()) {
+            val msg = queue.removeFirst()
+            yieldAll(extractorFun(msg))
+            queue.addAll(msg.nestedTypes)
+        }
+    }
+}
+
+private fun Descriptors.FileDescriptor.toFile() = file {
+    path = path()
+    packageName = `package`
+    syntax = this@toFile.syntax.toSyntaxVersion()
 }
 
 /**
@@ -79,15 +210,9 @@ private class ProtoFileEvents(
     private val shouldGenerate: Boolean = true
 ) {
 
-    private val file = File.newBuilder()
-        .setPath(fileDescriptor.path())
-        .setPackageName(fileDescriptor.`package`)
-        .setSyntax(fileDescriptor.syntax.toSyntaxVersion())
-        .build()
+    private val file = fileDescriptor.toFile()
 
-    private val documentation = Documentation(
-        fileDescriptor.toProto().sourceCodeInfo.locationList
-    )
+    private val documentation = Documentation.fromFile(fileDescriptor)
 
     /**
      * Yields compiler events for the given file.

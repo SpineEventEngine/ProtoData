@@ -28,10 +28,8 @@ package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors
 import io.spine.protodata.File
-import io.spine.protodata.Rpc
 import io.spine.protodata.Service
 import io.spine.protodata.ServiceName
-import io.spine.protodata.cardinality
 import io.spine.protodata.event.CompilerEvent
 import io.spine.protodata.event.RpcEntered
 import io.spine.protodata.event.RpcExited
@@ -95,16 +93,7 @@ internal class ServiceCompilerEvents(
         descriptor: Descriptors.MethodDescriptor
     ) {
         val path = file.path
-        val name = descriptor.name()
-        val cardinality = descriptor.cardinality()
-        val rpc = Rpc.newBuilder()
-            .setName(name)
-            .setCardinality(cardinality)
-            .setRequestType(descriptor.inputType.name())
-            .setResponseType(descriptor.outputType.name())
-            .setDoc(documentation.forRpc(descriptor))
-            .setService(service)
-            .build()
+        val rpc = descriptor.buildRpc(service, documentation)
         yield(
             RpcEntered.newBuilder()
                 .setFile(path)
@@ -117,7 +106,7 @@ internal class ServiceCompilerEvents(
             RpcOptionDiscovered.newBuilder()
                 .setFile(path)
                 .setService(service)
-                .setRpc(name)
+                .setRpc(rpc.name)
                 .setOption(it)
                 .setGenerationRequested(shouldGenerate)
                 .build()
@@ -126,7 +115,7 @@ internal class ServiceCompilerEvents(
             RpcExited.newBuilder()
                 .setFile(path)
                 .setService(service)
-                .setRpc(name)
+                .setRpc(rpc.name)
                 .setGenerationRequested(shouldGenerate)
                 .build()
         )

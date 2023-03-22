@@ -70,7 +70,6 @@ internal class ProtoSourceFileView
     internal fun on(@External e: FileEntered) = alter {
         filePath = e.file.path
         file = e.file
-        generationRequested = e.generationRequested
     }
 
     @Subscribe

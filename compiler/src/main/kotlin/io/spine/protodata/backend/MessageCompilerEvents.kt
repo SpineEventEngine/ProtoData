@@ -27,8 +27,6 @@
 package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors
-import com.google.protobuf.Empty
-import io.spine.protodata.Field
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.OneofGroup
@@ -171,14 +169,7 @@ internal class MessageCompilerEvents(
         descriptor: Descriptors.FieldDescriptor
     ) {
         val fieldName = descriptor.name()
-        val field = Field.newBuilder()
-            .setName(fieldName)
-            .setDeclaringType(type)
-            .setNumber(descriptor.number)
-            .setOrderOfDeclaration(descriptor.index)
-            .assignTypeAndCardinality(descriptor)
-            .setDoc(documentation.forField(descriptor))
-            .build()
+        val field = descriptor.buildField(type, documentation)
         val path = file.path
         yield(
             FieldEntered.newBuilder()
@@ -205,31 +196,5 @@ internal class MessageCompilerEvents(
                 .setGenerationRequested(shouldGenerate)
                 .build()
         )
-    }
-
-    /**
-     * Assigns the field type and cardinality (`map`/`list`/`oneof_name`/`single`) to the receiver
-     * builder.
-     *
-     * @return the receiver for method chaining.
-     */
-    private fun Field.Builder.assignTypeAndCardinality(
-        desc: Descriptors.FieldDescriptor
-    ): Field.Builder {
-        if (desc.isMapField) {
-            val (keyField, valueField) = desc.messageType.fields
-            map = Field.OfMap.newBuilder()
-                .setKeyType(keyField.primitiveType())
-                .build()
-            type = valueField.type()
-        } else {
-            type = desc.type()
-            when {
-                desc.isRepeated -> list = Empty.getDefaultInstance()
-                desc.realContainingOneof != null -> oneofName = desc.realContainingOneof.name()
-                else -> single = Empty.getDefaultInstance()
-            }
-        }
-        return this
     }
 }

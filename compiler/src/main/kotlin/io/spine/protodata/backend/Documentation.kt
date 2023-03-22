@@ -39,6 +39,12 @@ internal class Documentation(
     locations: List<DescriptorProtos.SourceCodeInfo.Location>
 ) {
 
+    companion object {
+        fun fromFile(file: Descriptors.FileDescriptor) = Documentation(
+            file.toProto().sourceCodeInfo.locationList
+        )
+    }
+
     private val docs: Map<LocationPath, DescriptorProtos.SourceCodeInfo.Location> =
         locations.associateBy(LocationPath.Companion::from)
 
