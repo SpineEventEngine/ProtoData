@@ -42,7 +42,6 @@ import io.spine.protodata.typeUrl
 import io.spine.testing.server.blackbox.BlackBox
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -52,13 +51,19 @@ import com.google.common.truth.extensions.proto.ProtoTruth.assertThat as assertM
 class CodeGenerationContextSpec {
 
     @Test
-    fun `contain 'ProtobufSource' file view`() {
+    fun `contain 'ProtobufSourceFile' view`() {
         val ctx = CodeGenerationContext.builder().build()
         assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileView::class.java))
     }
 
+    @Test
+    fun `contain 'ProtobufDependencyFile' file view`() {
+        val ctx = CodeGenerationContext.builder().build()
+        assertTrue(ctx.hasEntitiesOfType(DependencyView::class.java))
+    }
+
     @Nested
-    inner class `construct 'ProtobufSource' based on a descriptor set with` {
+    inner class `construct views based on a descriptor set with` {
 
         private lateinit var ctx: BlackBox
 
@@ -109,12 +114,11 @@ class CodeGenerationContextSpec {
                 .hasSize(2)
         }
 
-        @Disabled
         @Test
         fun dependencies() {
             val assertSourceFile = ctx.assertEntity(
                 AnyProto.getDescriptor().path(),
-                ProtoSourceFileView::class.java
+                DependencyView::class.java
             )
             assertSourceFile
                 .exists()
