@@ -27,19 +27,28 @@
 package io.spine.protodata.backend
 
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.AnyProto
 import com.google.protobuf.BoolValue
+import com.google.protobuf.DescriptorProtos
+import com.google.protobuf.EmptyProto
+import com.google.protobuf.TimestampProto
+import com.google.protobuf.WrappersProto
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.option.OptionsProto
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
+import io.spine.protodata.ProtobufDependencyFile
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
+import io.spine.protodata.filePath
 import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.typeUrl
 import io.spine.testing.server.blackbox.BlackBox
+import io.spine.time.TimeProto
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -63,18 +72,26 @@ class CodeGenerationContextSpec {
     }
 
     @Nested
-    inner class `construct views based on a descriptor set with` {
+    inner class `construct views based on a descriptor set` {
 
         private lateinit var ctx: BlackBox
+        private val dependencies = listOf(
+            AnyProto.getDescriptor(),
+            DescriptorProtos.getDescriptor(),
+            DoctorProto.getDescriptor(),
+            EmptyProto.getDescriptor(),
+            OptionsProto.getDescriptor(),
+            TimestampProto.getDescriptor(),
+            TimeProto.getDescriptor(),
+            WrappersProto.getDescriptor()
+        ).map { it.toProto() }
 
         @BeforeEach
         fun buildViews() {
             ctx = BlackBox.from(CodeGenerationContext.builder())
-            val protoDescriptor = DoctorProto.getDescriptor().toProto()
             val set = CodeGeneratorRequest.newBuilder()
-                .addProtoFile(protoDescriptor)
-                .addProtoFile(AnyProto.getDescriptor().toProto())
-                .addFileToGenerate(protoDescriptor.name)
+                .addAllProtoFile(dependencies)
+                .addFileToGenerate(DoctorProto.getDescriptor().toProto().name)
                 .build()
             ProtobufCompilerContext().use {
                 it.emitted(CompilerEvents.parse(set))
@@ -82,7 +99,7 @@ class CodeGenerationContextSpec {
         }
 
         @Test
-        fun `files marked for generation`() {
+        fun `with files marked for generation`() {
             val assertSourceFile = ctx.assertEntity(
                 DoctorProto.getDescriptor().path(), ProtoSourceFileView::class.java
             )
@@ -115,13 +132,51 @@ class CodeGenerationContextSpec {
         }
 
         @Test
-        fun dependencies() {
+        fun `with dependencies`() {
             val assertSourceFile = ctx.assertEntity(
                 AnyProto.getDescriptor().path(),
                 DependencyView::class.java
             )
             assertSourceFile
                 .exists()
+        }
+
+        @Test
+        fun `exactly the same way for dependencies and for files to generate`() {
+            val secondContext = BlackBox.from(CodeGenerationContext.builder())
+            val set = CodeGeneratorRequest.newBuilder()
+                .addAllProtoFile(dependencies)
+                .addAllFileToGenerate(dependencies.map { it.name })
+                .build()
+            ProtobufCompilerContext().use {
+                it.emitted(CompilerEvents.parse(set))
+            }
+
+            val recordsOfDependencies = dependencies
+                .filter { it.name != DoctorProto.getDescriptor().name }
+                .map {
+                println(it.name)
+                val assertEntity = ctx.assertEntity(
+                    filePath { value = it.name },
+                    DependencyView::class.java
+                )
+                assertEntity.exists()
+                assertEntity.actual()!!.state()
+            }.map { state -> (state as ProtobufDependencyFile).content }
+            val recordsOfFilesToGenerate = dependencies
+                .filter { it.name != DoctorProto.getDescriptor().name }
+                .map {
+                    val assertEntity = secondContext.assertEntity(
+                        filePath { value = it.name },
+                        ProtoSourceFileView::class.java
+                    )
+                    assertEntity.exists()
+                    assertEntity
+                        .actual()!!.state() as ProtobufSourceFile
+                }
+            assertThat(recordsOfDependencies)
+                .ignoringRepeatedFieldOrder()
+                .containsExactlyElementsIn(recordsOfFilesToGenerate)
         }
     }
 }
