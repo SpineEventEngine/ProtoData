@@ -27,7 +27,15 @@
 package io.spine.protodata.backend
 
 import com.google.protobuf.DescriptorProtos
-import com.google.protobuf.Descriptors
+import com.google.protobuf.DescriptorProtos.SourceCodeInfo
+import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Descriptors.EnumDescriptor
+import com.google.protobuf.Descriptors.EnumValueDescriptor
+import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.MethodDescriptor
+import com.google.protobuf.Descriptors.OneofDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.protodata.Doc
 import io.spine.string.trimWhitespace
 import io.spine.util.interlaced
@@ -36,22 +44,22 @@ import io.spine.util.interlaced
  * Documentation contained in a Protobuf file.
  */
 internal class Documentation(
-    locations: List<DescriptorProtos.SourceCodeInfo.Location>
+    locations: List<SourceCodeInfo.Location>
 ) {
 
     companion object {
-        fun fromFile(file: Descriptors.FileDescriptor) = Documentation(
+        fun fromFile(file: FileDescriptor) = Documentation(
             file.toProto().sourceCodeInfo.locationList
         )
     }
 
-    private val docs: Map<LocationPath, DescriptorProtos.SourceCodeInfo.Location> =
+    private val docs: Map<LocationPath, SourceCodeInfo.Location> =
         locations.associateBy(LocationPath.Companion::from)
 
     /**
      * Obtains documentation for the given message.
      */
-    fun forMessage(descriptor: Descriptors.Descriptor): Doc {
+    fun forMessage(descriptor: Descriptor): Doc {
         val path = LocationPath.fromMessage(descriptor)
         return commentsAt(path)
     }
@@ -59,7 +67,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given message field.
      */
-    fun forField(descriptor: Descriptors.FieldDescriptor): Doc {
+    fun forField(descriptor: FieldDescriptor): Doc {
         val path = LocationPath.fromMessage(descriptor.containingType)
                                .field(descriptor)
         return commentsAt(path)
@@ -68,7 +76,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given `oneof` group.
      */
-    fun forOneof(descriptor: Descriptors.OneofDescriptor): Doc {
+    fun forOneof(descriptor: OneofDescriptor): Doc {
         val path = LocationPath.fromMessage(descriptor.containingType)
                                .oneof(descriptor)
         return commentsAt(path)
@@ -77,7 +85,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given enum type.
      */
-    fun forEnum(descriptor: Descriptors.EnumDescriptor): Doc {
+    fun forEnum(descriptor: EnumDescriptor): Doc {
         val path = LocationPath.fromEnum(descriptor)
         return commentsAt(path)
     }
@@ -85,7 +93,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given enum constant.
      */
-    fun forEnumConstant(descriptor: Descriptors.EnumValueDescriptor): Doc {
+    fun forEnumConstant(descriptor: EnumValueDescriptor): Doc {
         val path = LocationPath.fromEnum(descriptor.type)
                                .constant(descriptor)
         return commentsAt(path)
@@ -94,7 +102,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given service.
      */
-    fun forService(descriptor: Descriptors.ServiceDescriptor): Doc {
+    fun forService(descriptor: ServiceDescriptor): Doc {
         val path = LocationPath.fromService(descriptor)
         return commentsAt(path)
     }
@@ -102,14 +110,14 @@ internal class Documentation(
     /**
      * Obtains documentation for the given RPC method.
      */
-    fun forRpc(descriptor: Descriptors.MethodDescriptor): Doc {
+    fun forRpc(descriptor: MethodDescriptor): Doc {
         val path = LocationPath.fromService(descriptor.service)
                                .rpc(descriptor)
         return commentsAt(path)
     }
 
     private fun commentsAt(path: LocationPath): Doc {
-        val location = docs[path] ?: DescriptorProtos.SourceCodeInfo.Location.getDefaultInstance()
+        val location = docs[path] ?: SourceCodeInfo.Location.getDefaultInstance()
         return Doc.newBuilder()
                   .setLeadingComment(location.leadingComments.trimWhitespace())
                   .setTrailingComment(location.trailingComments.trimWhitespace())
@@ -137,14 +145,14 @@ private constructor(private val value: List<Int>) {
         /**
          * Obtains the `LocationPath` from the Protobuf's `Location`.
          */
-        fun from(location: DescriptorProtos.SourceCodeInfo.Location): LocationPath {
+        fun from(location: SourceCodeInfo.Location): LocationPath {
             return LocationPath(location.pathList)
         }
 
         /**
          * Obtains the `LocationPath` from the given message.
          */
-        fun fromMessage(descriptor: Descriptors.Descriptor): LocationPath {
+        fun fromMessage(descriptor: Descriptor): LocationPath {
             val numbers = mutableListOf<Int>()
             numbers.add(DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER)
             if (!descriptor.topLevel) {
@@ -158,7 +166,7 @@ private constructor(private val value: List<Int>) {
         /**
          * Obtains the `LocationPath` from the given enum.
          */
-        fun fromEnum(descriptor: Descriptors.EnumDescriptor): LocationPath {
+        fun fromEnum(descriptor: EnumDescriptor): LocationPath {
             val numbers = mutableListOf<Int>()
             if (descriptor.topLevel) {
                 numbers.add(DescriptorProtos.FileDescriptorProto.ENUM_TYPE_FIELD_NUMBER)
@@ -174,16 +182,16 @@ private constructor(private val value: List<Int>) {
         /**
          * Obtains the `LocationPath` from the given service.
          */
-        fun fromService(descriptor: Descriptors.ServiceDescriptor): LocationPath {
+        fun fromService(descriptor: ServiceDescriptor): LocationPath {
             return LocationPath(listOf(
                 DescriptorProtos.FileDescriptorProto.SERVICE_FIELD_NUMBER,
                 descriptor.index
             ))
         }
 
-        private fun upToTop(parent: Descriptors.Descriptor): List<Int> {
+        private fun upToTop(parent: Descriptor): List<Int> {
             val rootPath = mutableListOf<Int>()
-            var containingType: Descriptors.Descriptor? = parent
+            var containingType: Descriptor? = parent
             while (containingType != null) {
                 rootPath.add(containingType.index)
                 containingType = containingType.containingType
@@ -199,7 +207,7 @@ private constructor(private val value: List<Int>) {
      *
      * It's expected that the field belongs to the message located at this location path.
      */
-    fun field(field: Descriptors.FieldDescriptor): LocationPath =
+    fun field(field: FieldDescriptor): LocationPath =
         subDeclaration(DescriptorProtos.DescriptorProto.FIELD_FIELD_NUMBER, field.index)
 
     /**
@@ -207,7 +215,7 @@ private constructor(private val value: List<Int>) {
      *
      * It's expected that the group is declared in the message located at this location path.
      */
-    fun oneof(group: Descriptors.OneofDescriptor): LocationPath =
+    fun oneof(group: OneofDescriptor): LocationPath =
         subDeclaration(DescriptorProtos.DescriptorProto.ONEOF_DECL_FIELD_NUMBER, group.index)
 
     /**
@@ -215,7 +223,7 @@ private constructor(private val value: List<Int>) {
      *
      * It's expected that the constant belongs to the enum located at this location path.
      */
-    fun constant(constant: Descriptors.EnumValueDescriptor): LocationPath =
+    fun constant(constant: EnumValueDescriptor): LocationPath =
         subDeclaration(DescriptorProtos.EnumDescriptorProto.VALUE_FIELD_NUMBER, constant.index)
 
     /**
@@ -223,7 +231,7 @@ private constructor(private val value: List<Int>) {
      *
      * It's expected that the RPC belongs to the service located at this location path.
      */
-    fun rpc(rpc: Descriptors.MethodDescriptor): LocationPath =
+    fun rpc(rpc: MethodDescriptor): LocationPath =
         subDeclaration(DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER, rpc.index)
 
     override fun toString(): String {
@@ -234,8 +242,8 @@ private constructor(private val value: List<Int>) {
         LocationPath(value + arrayOf(descriptorFieldNumber, index))
 }
 
-private val Descriptors.Descriptor.topLevel: Boolean
+private val Descriptor.topLevel: Boolean
     get() = containingType == null
 
-private val Descriptors.EnumDescriptor.topLevel: Boolean
+private val EnumDescriptor.topLevel: Boolean
     get() = containingType == null
