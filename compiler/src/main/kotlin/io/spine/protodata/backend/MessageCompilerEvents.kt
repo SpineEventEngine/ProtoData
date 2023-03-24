@@ -29,7 +29,6 @@ package io.spine.protodata.backend
 import com.google.protobuf.Descriptors
 import io.spine.base.EventMessage
 import io.spine.protodata.File
-import io.spine.protodata.MessageType
 import io.spine.protodata.OneofGroup
 import io.spine.protodata.TypeName
 import io.spine.protodata.event.FieldEntered
@@ -41,6 +40,7 @@ import io.spine.protodata.event.OneofOptionDiscovered
 import io.spine.protodata.event.TypeEntered
 import io.spine.protodata.event.TypeExited
 import io.spine.protodata.event.TypeOptionDiscovered
+import io.spine.protodata.messageType
 import io.spine.protodata.name
 
 /**
@@ -63,14 +63,16 @@ internal class MessageCompilerEvents(
     ) {
         val typeName = descriptor.name()
         val path = file.path
-        val type = MessageType.newBuilder().apply {
-                name = typeName
-                file = path
-                if (nestedIn != null) {
-                    declaredIn = nestedIn
-                }
-                doc = documentation.forMessage(descriptor)
-            }.build()
+        val type = messageType {
+            name = typeName
+            file = path
+            if (nestedIn != null) {
+                declaredIn = nestedIn
+            }
+            doc = documentation.forMessage(descriptor)
+            nestedMessages.addAll(descriptor.nestedTypes.map { it.name() })
+            nestedEnums.addAll(descriptor.enumTypes.map { it.name() })
+        }
         yield(
             TypeEntered.newBuilder()
                 .setFile(path)
