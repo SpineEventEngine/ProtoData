@@ -35,8 +35,15 @@ import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
 import io.spine.protodata.cardinality
 import io.spine.protodata.constantName
+import io.spine.protodata.file
 import io.spine.protodata.name
+import io.spine.protodata.path
 
+/**
+ * Converts this field descriptor into a [Field] with options.
+ *
+ * @see buildField
+ */
 internal fun Descriptors.FieldDescriptor.buildFieldWithOptions(
     declaringType: TypeName,
     documentation: Documentation
@@ -47,6 +54,13 @@ internal fun Descriptors.FieldDescriptor.buildFieldWithOptions(
         .build()
 }
 
+/**
+ * Converts this field descriptor into a [Field].
+ *
+ * The resulting [Field] will not reflect the field options.
+ *
+ * @see buildFieldWithOptions
+ */
 internal fun Descriptors.FieldDescriptor.buildField(
     declaringType: TypeName,
     documentation: Documentation
@@ -87,6 +101,11 @@ private fun Field.Builder.assignTypeAndCardinality(
     return this
 }
 
+/**
+ * Converts this enum value descriptor into an [EnumConstant] with options.
+ *
+ * @see buildConstant
+ */
 internal fun Descriptors.EnumValueDescriptor.buildConstantWithOptions(
     declaringType: TypeName,
     documentation: Documentation
@@ -97,6 +116,13 @@ internal fun Descriptors.EnumValueDescriptor.buildConstantWithOptions(
         .build()
 }
 
+/**
+ * Converts this enum value descriptor into an [EnumConstant].
+ *
+ * The resulting [EnumConstant] will not reflect the options on the enum constant.
+ *
+ * @see buildConstantWithOptions
+ */
 internal fun Descriptors.EnumValueDescriptor.buildConstant(
     declaringType: TypeName,
     documentation: Documentation
@@ -110,6 +136,11 @@ internal fun Descriptors.EnumValueDescriptor.buildConstant(
         .build()
 }
 
+/**
+ * Converts this method descriptor into an [Rpc] with options.
+ *
+ * @see buildRpc
+ */
 internal fun Descriptors.MethodDescriptor.buildRpcWithOptions(
     declaringService: ServiceName,
     documentation: Documentation
@@ -120,6 +151,13 @@ internal fun Descriptors.MethodDescriptor.buildRpcWithOptions(
         .build()
 }
 
+/**
+ * Converts this method descriptor into an [Rpc].
+ *
+ * The resulting [Rpc] will not reflect the method options.
+ *
+ * @see buildRpcWithOptions
+ */
 internal fun Descriptors.MethodDescriptor.buildRpc(
     declaringService: ServiceName,
     documentation: Documentation
@@ -134,5 +172,27 @@ internal fun Descriptors.MethodDescriptor.buildRpc(
         .setDoc(documentation.forRpc(this))
         .setService(declaringService)
         .build()
+}
+
+/**
+ * Extracts metadata from this file descriptor, including file options.
+ *
+ * @see toFile
+ */
+internal fun Descriptors.FileDescriptor.toFileWithOptions() =
+    toFile()
+        .toBuilder()
+        .addAllOption(listOptions(options))
+        .build()
+
+/**
+ * Extracts metadata from this file descriptor, excluding file options.
+ *
+ * @see toFileWithOptions
+ */
+internal fun Descriptors.FileDescriptor.toFile() = file {
+    path = path()
+    packageName = `package`
+    syntax = this@toFile.syntax.toSyntaxVersion()
 }
 

@@ -34,7 +34,6 @@ import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.Service
 import io.spine.protodata.enumType
 import io.spine.protodata.event.dependencyDiscovered
-import io.spine.protodata.file
 import io.spine.protodata.messageType
 import io.spine.protodata.name
 import io.spine.protodata.oneofGroup
@@ -42,7 +41,11 @@ import io.spine.protodata.path
 import io.spine.protodata.service
 import io.spine.protodata.typeUrl
 
-
+/**
+ * Creates a `DependencyDiscovered` event from the given file descriptor.
+ *
+ * The event reflects all the definitions from the file.
+ */
 internal fun toDependencyEvent(fileDescriptor: Descriptors.FileDescriptor) =
     dependencyDiscovered {
         val id = fileDescriptor.path()
@@ -56,7 +59,7 @@ private fun Descriptors.FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
         .setFilePath(path)
         .setFile(toFileWithOptions())
     val doc = Documentation.fromFile(this)
-    with(ModelBuilder(path, doc)) {
+    with(DefinitionsBuilder(path, doc)) {
         result.putAllType(
             messageTypes()
                 .map { it.name.typeUrl() to it }
@@ -76,11 +79,22 @@ private fun Descriptors.FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     return result.build()
 }
 
-private class ModelBuilder(
+/**
+ * A builder for the Protobuf definitions of a single `.proto` file.
+ *
+ * @property path the relative file path to the Protobuf file
+ * @property documentation all the documentation and comments present in the file
+ */
+private class DefinitionsBuilder(
     private val path: FilePath,
-    private val documentation: Documentation
+    private val documentation: Documentation,
 ) {
 
+    /**
+     * Builds the message type definitions.
+     *
+     * @return all the message types declared in the file, including nested types.
+     */
     fun Descriptors.FileDescriptor.messageTypes(): Sequence<MessageType> {
         var messages = messageTypes.asSequence()
         for (msg in messageTypes) {
@@ -89,6 +103,11 @@ private class ModelBuilder(
         return messages.map { it.asMessage() }
     }
 
+    /**
+     * Builds the enum type definitions.
+     *
+     * @return all the enums declared in the file, including nested enums.
+     */
     fun Descriptors.FileDescriptor.enumTypes(): Sequence<EnumType> {
         var enums = enumTypes.asSequence()
         for (msg in messageTypes) {
@@ -97,6 +116,11 @@ private class ModelBuilder(
         return enums.map { it.asEnum() }
     }
 
+    /**
+     * Builds the service definitions.
+     *
+     * @return all the services declared in the file, including the nested ones.
+     */
     fun Descriptors.FileDescriptor.services(): Sequence<Service> =
         services.asSequence().map { it.asService() }
 
@@ -144,10 +168,16 @@ private class ModelBuilder(
     }
 }
 
-
+/**
+ * Produces a sequence by walking through all the nested message definitions staring with `type`.
+ *
+ * @param type the message definition which may contain nested message definition to walk though
+ * @param extractorFun a function that, given a message definition, extracts the items of interest
+ * @return results of the calls to [extractorFun] flattened into one sequence
+ */
 private fun <T> walkMessage(
     type: Descriptors.Descriptor,
-    extractorFun: (Descriptors.Descriptor) -> Iterable<T>
+    extractorFun: (Descriptors.Descriptor) -> Iterable<T>,
 ): Sequence<T> {
     val queue = ArrayDeque<Descriptors.Descriptor>()
     queue.add(type)
@@ -158,16 +188,4 @@ private fun <T> walkMessage(
             queue.addAll(msg.nestedTypes)
         }
     }
-}
-
-private fun Descriptors.FileDescriptor.toFileWithOptions() =
-    toFile()
-        .toBuilder()
-        .addAllOption(listOptions(options))
-        .build()
-
-internal fun Descriptors.FileDescriptor.toFile() = file {
-    path = path()
-    packageName = `package`
-    syntax = this@toFile.syntax.toSyntaxVersion()
 }

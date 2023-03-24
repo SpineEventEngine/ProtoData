@@ -26,10 +26,12 @@
 
 package io.spine.protodata.backend
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
@@ -201,8 +203,8 @@ class CompilerEventsSpec {
 
         event.option.name shouldBe  "idempotency_level"
         event.option.value.unpackGuessingType() shouldBe enumValue {
-            name = DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS.name
-            number = DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
+            name = NO_SIDE_EFFECTS.name
+            number = NO_SIDE_EFFECTS_VALUE
         }
     }
 
@@ -216,7 +218,7 @@ class CompilerEventsSpec {
             })
 
         val doc = typeEntered.type.doc
-        Truth.assertThat(doc.leadingComment.split(nl))
+        assertThat(doc.leadingComment.split(nl))
             .containsExactly(
                 "A Doctor's journey.",
                 "",
@@ -227,7 +229,7 @@ class CompilerEventsSpec {
         doc.trailingComment shouldBe "Impl note: test type."
         doc.detachedCommentList[0] shouldBe "Detached 1."
 
-        Truth.assertThat(doc.detachedCommentList[1].split(nl))
+        assertThat(doc.detachedCommentList[1].split(nl))
             .containsExactly(
                 "Detached 2.",
                 "Indentation is not preserved in Protobuf.",
@@ -260,7 +262,6 @@ class CompilerEventsSpec {
         return events.find { it.javaClass == javaClass }!! as E
     }
 }
-
 
 /**
  * Obtains the option of the given type [T] from this [FileOptionDiscovered] event.

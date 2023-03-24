@@ -53,6 +53,9 @@ internal suspend fun SequenceScope<EventMessage>.produceOptionEvents(
     }
 }
 
+/**
+ * Parsed the given `options` message into a list of [Option]s.
+ */
 internal fun listOptions(options: GeneratedMessageV3.ExtendableMessage<*>): List<Option> =
     parseOptions(options).toList()
 
