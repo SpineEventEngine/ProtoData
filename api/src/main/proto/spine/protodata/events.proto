@@ -58,8 +58,6 @@ message FileOptionDiscovered {
 message FileExited {
 
     FilePath file = 1;
-
-    bool generation_requested = 2;
 }
 
 // Emitted when processing reaches a message type.
@@ -140,8 +138,6 @@ message FieldOptionDiscovered {
     FieldName field = 3;
 
     Option option = 4;
-
-    bool generation_requested = 5;
 }
 
 // Emitted when a field is completely discovered including the options.
@@ -152,8 +148,6 @@ message FieldExited {
     TypeName type = 2;
 
     FieldName field = 3;
-
-    bool generation_requested = 4;
 }
 
 // Emitted when processing reaches an enum type.
@@ -172,8 +166,6 @@ message EnumOptionDiscovered {
     TypeName type = 2;
 
     Option option = 3;
-
-    bool generation_requested = 4;
 }
 
 // Emitted when processing reaches an enum constant a.k.a. enum value.
@@ -214,8 +206,6 @@ message EnumExited {
     FilePath file = 1;
 
     TypeName type = 2;
-
-    bool generation_requested = 3;
 }
 
 // Emitted when the processing reaches a service.
@@ -276,6 +266,11 @@ message RpcExited {
     RpcName rpc = 3;
 }
 
+// Emitted when a Protobuf dependency file is discovered.
+//
+// Normally, no code should be generated for dependencies. However, they can be used for additional
+// info when generating code for the module's own types.
+//
 message DependencyDiscovered {
 
     FilePath file = 1;
