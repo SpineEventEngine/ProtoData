@@ -54,102 +54,96 @@ private fun Descriptors.FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     val path = path()
     val result = ProtobufSourceFile.newBuilder()
         .setFilePath(path)
-        .setFile(toFile())
+        .setFile(toFileWithOptions())
     val doc = Documentation.fromFile(this)
-    result.putAllType(
-        messageTypes(path, doc)
-            .map { it.name.typeUrl() to it }
-            .toMap()
-    )
-    result.putAllEnumType(
-        enumTypes(path, doc)
-            .map { it.name.typeUrl() to it }
-            .toMap()
-    )
-    result.putAllService(
-        services(path, doc)
-            .map { it.name.typeUrl() to it }
-            .toMap()
-    )
+    with(ModelBuilder(path, doc)) {
+        result.putAllType(
+            messageTypes()
+                .map { it.name.typeUrl() to it }
+                .toMap()
+        )
+        result.putAllEnumType(
+            enumTypes()
+                .map { it.name.typeUrl() to it }
+                .toMap()
+        )
+        result.putAllService(
+            services()
+                .map { it.name.typeUrl() to it }
+                .toMap()
+        )
+    }
     return result.build()
 }
 
-private fun Descriptors.FileDescriptor.messageTypes(
-    path: FilePath,
-    doc: Documentation
-): Sequence<MessageType> {
-    var messages = messageTypes.asSequence()
-    for (msg in messageTypes) {
-        messages += walkMessage(msg) { it.nestedTypes }
-    }
-    return messages.map { it.asMessage(path, doc) }
-}
+private class ModelBuilder(
+    private val path: FilePath,
+    private val documentation: Documentation
+) {
 
-private fun Descriptors.FileDescriptor.enumTypes(
-    path: FilePath,
-    doc: Documentation
-): Sequence<EnumType> {
-    var enums = enumTypes.asSequence()
-    for (msg in messageTypes) {
-        enums += walkMessage(msg) { it.enumTypes }
+    fun Descriptors.FileDescriptor.messageTypes(): Sequence<MessageType> {
+        var messages = messageTypes.asSequence()
+        for (msg in messageTypes) {
+            messages += walkMessage(msg) { it.nestedTypes }
+        }
+        return messages.map { it.asMessage() }
     }
-    return enums.map { it.asEnum(path, doc) }
-}
 
-private fun Descriptors.FileDescriptor.services(
-    path: FilePath,
-    doc: Documentation
-): Sequence<Service> = services.asSequence().map { it.asService(path, doc) }
-
-private fun Descriptors.Descriptor.asMessage(
-    path: FilePath,
-    documentation: Documentation
-) = messageType {
-    val typeName = name()
-    name = typeName
-    file = path
-    doc = documentation.forMessage(this@asMessage)
-    option.addAll(listOptions(options))
-    if (containingType != null) {
-        declaredIn = containingType.name()
+    fun Descriptors.FileDescriptor.enumTypes(): Sequence<EnumType> {
+        var enums = enumTypes.asSequence()
+        for (msg in messageTypes) {
+            enums += walkMessage(msg) { it.enumTypes }
+        }
+        return enums.map { it.asEnum() }
     }
-    oneofGroup.addAll(realOneofs.map { oneofGroup {
-        val groupName = it.name()
-        name = groupName
-        field.addAll(it.fields.map { f -> f.buildFieldWithOptions(typeName, documentation) })
+
+    fun Descriptors.FileDescriptor.services(): Sequence<Service> =
+        services.asSequence().map { it.asService() }
+
+    private fun Descriptors.Descriptor.asMessage() = messageType {
+        val typeName = name()
+        name = typeName
+        file = path
+        doc = documentation.forMessage(this@asMessage)
         option.addAll(listOptions(options))
-        doc = documentation.forOneof(it)
+        if (containingType != null) {
+            declaredIn = containingType.name()
+        }
+        oneofGroup.addAll(realOneofs.map { oneofGroup {
+            val groupName = it.name()
+            name = groupName
+            field.addAll(it.fields.map { f -> f.buildFieldWithOptions(typeName, documentation) })
+            option.addAll(listOptions(options))
+            doc = documentation.forOneof(it)
+        }
+        })
+        field.addAll(fields.map { it.buildFieldWithOptions(typeName, documentation) })
+        nestedMessages.addAll(nestedTypes.map { it.name() })
+        nestedEnums.addAll(enumTypes.map { it.name() })
     }
-    })
-    field.addAll(fields.map { it.buildFieldWithOptions(typeName, documentation) })
-    nestedMessages.addAll(nestedTypes.map { it.name() })
-    nestedEnums.addAll(enumTypes.map { it.name() })
+
+    private fun Descriptors.EnumDescriptor.asEnum() = enumType {
+        val typeName = name()
+        name = typeName
+        option.addAll(listOptions(options))
+        file = path
+        constant.addAll(values.map { it.buildConstantWithOptions(typeName, documentation) })
+        if (containingType != null) {
+            declaredIn = containingType.name()
+        }
+        doc = documentation.forEnum(this@asEnum)
+    }
+
+    private fun Descriptors.ServiceDescriptor.asService() = service {
+        val serviceName = name()
+        name = serviceName
+        file = path
+        rpc.addAll(methods.map { it.buildRpcWithOptions(serviceName, documentation) })
+        option.addAll(listOptions(options))
+        doc = documentation.forService(this@asService)
+    }
 }
 
-private fun Descriptors.EnumDescriptor.asEnum(
-    path: FilePath, documentation: Documentation
-) = enumType {
-    val typeName = name()
-    name = typeName
-    option.addAll(listOptions(options))
-    file = path
-    constant.addAll(values.map { it.buildConstantWithOptions(typeName, documentation) })
-    if (containingType != null) {
-        declaredIn = containingType.name()
-    }
-    doc = documentation.forEnum(this@asEnum)
-}
-
-private fun Descriptors.ServiceDescriptor.asService(
-    path: FilePath, documentation: Documentation
-) = service {
-    val serviceName = name()
-    name = serviceName
-    file = path
-    rpc.addAll(methods.map { it.buildRpcWithOptions(serviceName, documentation) })
-    option.addAll(listOptions(options))
-    doc = documentation.forService(this@asService)
-}
 
 private fun <T> walkMessage(
     type: Descriptors.Descriptor,
@@ -165,6 +159,12 @@ private fun <T> walkMessage(
         }
     }
 }
+
+private fun Descriptors.FileDescriptor.toFileWithOptions() =
+    toFile()
+        .toBuilder()
+        .addAllOption(listOptions(options))
+        .build()
 
 internal fun Descriptors.FileDescriptor.toFile() = file {
     path = path()
