@@ -26,7 +26,10 @@
 
 package io.spine.protodata.backend
 
-import com.google.protobuf.Descriptors
+import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Descriptors.EnumDescriptor
+import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.protodata.EnumType
 import io.spine.protodata.FilePath
 import io.spine.protodata.MessageType
@@ -46,14 +49,14 @@ import io.spine.protodata.typeUrl
  *
  * The event reflects all the definitions from the file.
  */
-internal fun toDependencyEvent(fileDescriptor: Descriptors.FileDescriptor) =
+internal fun discoverDependencies(fileDescriptor: FileDescriptor) =
     dependencyDiscovered {
         val id = fileDescriptor.path()
         file = id
         content = fileDescriptor.toPbSourceFile()
     }
 
-private fun Descriptors.FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
+private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     val path = path()
     val result = ProtobufSourceFile.newBuilder()
         .setFilePath(path)
@@ -95,7 +98,7 @@ private class DefinitionsBuilder(
      *
      * @return all the message types declared in the file, including nested types.
      */
-    fun Descriptors.FileDescriptor.messageTypes(): Sequence<MessageType> {
+    fun FileDescriptor.messageTypes(): Sequence<MessageType> {
         var messages = messageTypes.asSequence()
         for (msg in messageTypes) {
             messages += walkMessage(msg) { it.nestedTypes }
@@ -108,7 +111,7 @@ private class DefinitionsBuilder(
      *
      * @return all the enums declared in the file, including nested enums.
      */
-    fun Descriptors.FileDescriptor.enumTypes(): Sequence<EnumType> {
+    fun FileDescriptor.enumTypes(): Sequence<EnumType> {
         var enums = enumTypes.asSequence()
         for (msg in messageTypes) {
             enums += walkMessage(msg) { it.enumTypes }
@@ -121,10 +124,10 @@ private class DefinitionsBuilder(
      *
      * @return all the services declared in the file, including the nested ones.
      */
-    fun Descriptors.FileDescriptor.services(): Sequence<Service> =
+    fun FileDescriptor.services(): Sequence<Service> =
         services.asSequence().map { it.asService() }
 
-    private fun Descriptors.Descriptor.asMessage() = messageType {
+    private fun Descriptor.asMessage() = messageType {
         val typeName = name()
         name = typeName
         file = path
@@ -146,7 +149,7 @@ private class DefinitionsBuilder(
         nestedEnums.addAll(enumTypes.map { it.name() })
     }
 
-    private fun Descriptors.EnumDescriptor.asEnum() = enumType {
+    private fun EnumDescriptor.asEnum() = enumType {
         val typeName = name()
         name = typeName
         option.addAll(listOptions(options))
@@ -158,7 +161,7 @@ private class DefinitionsBuilder(
         doc = documentation.forEnum(this@asEnum)
     }
 
-    private fun Descriptors.ServiceDescriptor.asService() = service {
+    private fun ServiceDescriptor.asService() = service {
         val serviceName = name()
         name = serviceName
         file = path
@@ -176,10 +179,10 @@ private class DefinitionsBuilder(
  * @return results of the calls to [extractorFun] flattened into one sequence
  */
 private fun <T> walkMessage(
-    type: Descriptors.Descriptor,
-    extractorFun: (Descriptors.Descriptor) -> Iterable<T>,
+    type: Descriptor,
+    extractorFun: (Descriptor) -> Iterable<T>,
 ): Sequence<T> {
-    val queue = ArrayDeque<Descriptors.Descriptor>()
+    val queue = ArrayDeque<Descriptor>()
     queue.add(type)
     return sequence {
         while (queue.isNotEmpty()) {

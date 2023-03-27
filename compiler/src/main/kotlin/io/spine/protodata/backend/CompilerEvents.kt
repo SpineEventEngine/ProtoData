@@ -53,7 +53,7 @@ public object CompilerEvents {
             val (ownFiles, dependencies) = files.files().partition {
                 it.name in filesToGenerate
             }
-            yieldAll(dependencies.map(::toDependencyEvent))
+            yieldAll(dependencies.map(::discoverDependencies))
             ownFiles
                 .map(::ProtoFileEvents)
                 .forEach { it.apply { produceFileEvents() } }
