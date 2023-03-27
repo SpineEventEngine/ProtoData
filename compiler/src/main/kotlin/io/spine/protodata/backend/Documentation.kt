@@ -34,7 +34,7 @@ import com.google.protobuf.DescriptorProtos.EnumDescriptorProto.VALUE_FIELD_NUMB
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER
-import com.google.protobuf.DescriptorProtos.SourceCodeInfo
+import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
@@ -51,7 +51,7 @@ import io.spine.util.interlaced
  * Documentation contained in a Protobuf file.
  */
 internal class Documentation(
-    locations: List<SourceCodeInfo.Location>
+    locations: List<Location>
 ) {
 
     companion object {
@@ -60,7 +60,7 @@ internal class Documentation(
         )
     }
 
-    private val docs: Map<LocationPath, SourceCodeInfo.Location> =
+    private val docs: Map<LocationPath, Location> =
         locations.associateBy(LocationPath.Companion::from)
 
     /**
@@ -124,7 +124,7 @@ internal class Documentation(
     }
 
     private fun commentsAt(path: LocationPath): Doc {
-        val location = docs[path] ?: SourceCodeInfo.Location.getDefaultInstance()
+        val location = docs[path] ?: Location.getDefaultInstance()
         return Doc.newBuilder()
                   .setLeadingComment(location.leadingComments.trimWhitespace())
                   .setTrailingComment(location.trailingComments.trimWhitespace())
@@ -152,7 +152,7 @@ private constructor(private val value: List<Int>) {
         /**
          * Obtains the `LocationPath` from the Protobuf's `Location`.
          */
-        fun from(location: SourceCodeInfo.Location): LocationPath {
+        fun from(location: Location): LocationPath {
             return LocationPath(location.pathList)
         }
 
