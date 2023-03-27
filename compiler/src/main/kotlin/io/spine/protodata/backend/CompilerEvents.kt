@@ -50,8 +50,9 @@ public object CompilerEvents {
         val filesToGenerate = request.fileToGenerateList.toSet()
         val files = FileSet.of(request.protoFileList)
         return sequence {
-            val (ownFiles, dependencies) = files.files()
-                .partition { it.name in filesToGenerate }
+            val (ownFiles, dependencies) = files.files().partition {
+                it.name in filesToGenerate
+            }
             yieldAll(dependencies.map(::toDependencyEvent))
             ownFiles
                 .map(::ProtoFileEvents)
