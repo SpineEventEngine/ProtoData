@@ -26,7 +26,14 @@
 
 package io.spine.protodata.backend
 
-import com.google.protobuf.DescriptorProtos
+import com.google.protobuf.DescriptorProtos.DescriptorProto
+import com.google.protobuf.DescriptorProtos.DescriptorProto.FIELD_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.DescriptorProto.NESTED_TYPE_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.DescriptorProto.ONEOF_DECL_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.EnumDescriptorProto.VALUE_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.FileDescriptorProto
+import com.google.protobuf.DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.SourceCodeInfo
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
@@ -154,10 +161,10 @@ private constructor(private val value: List<Int>) {
          */
         fun fromMessage(descriptor: Descriptor): LocationPath {
             val numbers = mutableListOf<Int>()
-            numbers.add(DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER)
+            numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
             if (!descriptor.topLevel) {
                 numbers.addAll(upToTop(descriptor.containingType))
-                numbers.add(DescriptorProtos.DescriptorProto.NESTED_TYPE_FIELD_NUMBER)
+                numbers.add(NESTED_TYPE_FIELD_NUMBER)
             }
             numbers.add(descriptor.index)
             return LocationPath(numbers)
@@ -169,11 +176,11 @@ private constructor(private val value: List<Int>) {
         fun fromEnum(descriptor: EnumDescriptor): LocationPath {
             val numbers = mutableListOf<Int>()
             if (descriptor.topLevel) {
-                numbers.add(DescriptorProtos.FileDescriptorProto.ENUM_TYPE_FIELD_NUMBER)
+                numbers.add(FileDescriptorProto.ENUM_TYPE_FIELD_NUMBER)
             } else {
-                numbers.add(DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER)
+                numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
                 numbers.addAll(upToTop(descriptor.containingType))
-                numbers.add(DescriptorProtos.DescriptorProto.ENUM_TYPE_FIELD_NUMBER)
+                numbers.add(DescriptorProto.ENUM_TYPE_FIELD_NUMBER)
             }
             numbers.add(descriptor.index)
             return LocationPath(numbers)
@@ -184,7 +191,7 @@ private constructor(private val value: List<Int>) {
          */
         fun fromService(descriptor: ServiceDescriptor): LocationPath {
             return LocationPath(listOf(
-                DescriptorProtos.FileDescriptorProto.SERVICE_FIELD_NUMBER,
+                FileDescriptorProto.SERVICE_FIELD_NUMBER,
                 descriptor.index
             ))
         }
@@ -196,7 +203,7 @@ private constructor(private val value: List<Int>) {
                 rootPath.add(containingType.index)
                 containingType = containingType.containingType
             }
-            return rootPath.interlaced(DescriptorProtos.DescriptorProto.NESTED_TYPE_FIELD_NUMBER)
+            return rootPath.interlaced(NESTED_TYPE_FIELD_NUMBER)
                 .toList()
                 .reversed()
         }
@@ -208,7 +215,7 @@ private constructor(private val value: List<Int>) {
      * It's expected that the field belongs to the message located at this location path.
      */
     fun field(field: FieldDescriptor): LocationPath =
-        subDeclaration(DescriptorProtos.DescriptorProto.FIELD_FIELD_NUMBER, field.index)
+        subDeclaration(FIELD_FIELD_NUMBER, field.index)
 
     /**
      * Obtains the `LocationPath` to the given `oneof` group.
@@ -216,7 +223,7 @@ private constructor(private val value: List<Int>) {
      * It's expected that the group is declared in the message located at this location path.
      */
     fun oneof(group: OneofDescriptor): LocationPath =
-        subDeclaration(DescriptorProtos.DescriptorProto.ONEOF_DECL_FIELD_NUMBER, group.index)
+        subDeclaration(ONEOF_DECL_FIELD_NUMBER, group.index)
 
     /**
      * Obtains the `LocationPath` to the given enum constant.
@@ -224,7 +231,7 @@ private constructor(private val value: List<Int>) {
      * It's expected that the constant belongs to the enum located at this location path.
      */
     fun constant(constant: EnumValueDescriptor): LocationPath =
-        subDeclaration(DescriptorProtos.EnumDescriptorProto.VALUE_FIELD_NUMBER, constant.index)
+        subDeclaration(VALUE_FIELD_NUMBER, constant.index)
 
     /**
      * Obtains the `LocationPath` to the given RPC.
@@ -232,7 +239,7 @@ private constructor(private val value: List<Int>) {
      * It's expected that the RPC belongs to the service located at this location path.
      */
     fun rpc(rpc: MethodDescriptor): LocationPath =
-        subDeclaration(DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER, rpc.index)
+        subDeclaration(METHOD_FIELD_NUMBER, rpc.index)
 
     override fun toString(): String {
         return "LocationPath(${value.joinToString()})"
