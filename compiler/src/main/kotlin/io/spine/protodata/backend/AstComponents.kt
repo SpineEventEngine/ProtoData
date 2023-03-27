@@ -79,7 +79,7 @@ internal fun Descriptors.FieldDescriptor.buildField(
  * Copies the field type and cardinality (`map`/`list`/`oneof_name`/`single`) from
  * the given descriptor to the receiver builder.
  *
- * @return the receiver for method chaining.
+ * @return the receiver for method chaining
  */
 private fun Field.Builder.copyTypeAndCardinality(
     desc: Descriptors.FieldDescriptor
@@ -195,4 +195,3 @@ internal fun Descriptors.FileDescriptor.toFile() = file {
     packageName = `package`
     syntax = this@toFile.syntax.toSyntaxVersion()
 }
-

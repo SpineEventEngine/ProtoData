@@ -26,8 +26,8 @@
 
 package io.spine.protodata.backend
 
-import com.google.protobuf.Descriptors
-import com.google.protobuf.compiler.PluginProtos
+import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
 import io.spine.protodata.event.FileEntered
@@ -46,7 +46,7 @@ public object CompilerEvents {
      *
      * The resulting sequence is always finite, it's limited by the type set.
      */
-    public fun parse(request: PluginProtos.CodeGeneratorRequest): Sequence<EventMessage> {
+    public fun parse(request: CodeGeneratorRequest): Sequence<EventMessage> {
         val filesToGenerate = request.fileToGenerateList.toSet()
         val files = FileSet.of(request.protoFileList)
         return sequence {
@@ -64,7 +64,7 @@ public object CompilerEvents {
  * Produces events from the associated file.
  */
 private class ProtoFileEvents(
-    private val fileDescriptor: Descriptors.FileDescriptor
+    private val fileDescriptor: FileDescriptor
 ) {
 
     private val file = fileDescriptor.toFile()
