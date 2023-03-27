@@ -170,8 +170,10 @@ internal class Run(version: String) : CliktCommand(
         val registry = createRegistry()
         val request = loadRequest(registry)
         val config = resolveConfig()
+
         // TODO: Print out command line with parameters, if command-line parameter
         // (e.g. --debug or --info) is passed.
+
         Pipeline(plugins, renderer, sources, request, config)()
     }
 
@@ -289,7 +291,9 @@ internal class Run(version: String) : CliktCommand(
             printError(e.message)
             printError("Please add the required class `$className` to the user classpath.")
             if (classPath != null) {
+
                 // TODO: Split classpath having each part on a separate line.
+
                 printError("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
             }
             exitProcess(1)
