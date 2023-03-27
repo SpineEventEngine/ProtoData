@@ -70,18 +70,18 @@ internal fun Descriptors.FieldDescriptor.buildField(
         .setDeclaringType(declaringType)
         .setNumber(number)
         .setOrderOfDeclaration(index)
-        .assignTypeAndCardinality(this)
+        .copyTypeAndCardinality(this)
         .setDoc(documentation.forField(this))
         .build()
 }
 
 /**
- * Assigns the field type and cardinality (`map`/`list`/`oneof_name`/`single`) to the receiver
- * builder.
+ * Copies the field type and cardinality (`map`/`list`/`oneof_name`/`single`) from
+ * the given descriptor to the receiver builder.
  *
  * @return the receiver for method chaining.
  */
-private fun Field.Builder.assignTypeAndCardinality(
+private fun Field.Builder.copyTypeAndCardinality(
     desc: Descriptors.FieldDescriptor
 ): Field.Builder {
     if (desc.isMapField) {
