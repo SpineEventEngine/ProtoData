@@ -171,7 +171,7 @@ private class DefinitionsBuilder(
 /**
  * Produces a sequence by walking through all the nested message definitions staring with `type`.
  *
- * @param type the message definition which may contain nested message definition to walk though
+ * @param type the message definition which may contain nested message definition to walk through
  * @param extractorFun a function that, given a message definition, extracts the items of interest
  * @return results of the calls to [extractorFun] flattened into one sequence
  */
