@@ -34,16 +34,16 @@ import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.EmptyProto
 import com.google.protobuf.TimestampProto
 import com.google.protobuf.WrappersProto
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import com.google.protobuf.compiler.codeGeneratorRequest
 import io.spine.option.OptionsProto
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
-import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ProtobufDependencyFile
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
 import io.spine.protodata.filePath
+import io.spine.protodata.option
 import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.typeUrl
@@ -89,10 +89,10 @@ class CodeGenerationContextSpec {
         @BeforeEach
         fun buildViews() {
             ctx = BlackBox.from(CodeGenerationContext.builder())
-            val set = CodeGeneratorRequest.newBuilder()
-                .addAllProtoFile(dependencies)
-                .addFileToGenerate(DoctorProto.getDescriptor().toProto().name)
-                .build()
+            val set = codeGeneratorRequest {
+                protoFile.addAll(dependencies)
+                fileToGenerate.add(DoctorProto.getDescriptor().toProto().name)
+            }
             ProtobufCompilerContext().use {
                 it.emitted(CompilerEvents.parse(set))
             }
@@ -115,14 +115,12 @@ class CodeGenerationContextSpec {
             assertThat(journeyType.name.typeUrl())
                 .isEqualTo(typeName)
             assertMessage(journeyType.optionList)
-                .containsExactly(
-                    Option.newBuilder()
-                        .setName("beta_type")
-                        .setNumber(BETA_TYPE_FIELD_NUMBER)
-                        .setType(TYPE_BOOL.asType())
-                        .setValue(AnyPacker.pack(BoolValue.of(true)))
-                        .build()
-                )
+                .containsExactly(option {
+                    name = "beta_type"
+                    number = BETA_TYPE_FIELD_NUMBER
+                    type = TYPE_BOOL.asType()
+                    value = AnyPacker.pack(BoolValue.of(true))
+                })
             assertThat(journeyType.fieldList)
                 .hasSize(4)
             assertThat(journeyType.oneofGroupList)
@@ -144,10 +142,10 @@ class CodeGenerationContextSpec {
         @Test
         fun `exactly the same way for dependencies and for files to generate`() {
             val secondContext = BlackBox.from(CodeGenerationContext.builder())
-            val set = CodeGeneratorRequest.newBuilder()
-                .addAllProtoFile(dependencies)
-                .addAllFileToGenerate(dependencies.map { it.name })
-                .build()
+            val set = codeGeneratorRequest {
+                protoFile.addAll(dependencies)
+                fileToGenerate.addAll(dependencies.map { it.name })
+            }
             ProtobufCompilerContext().use {
                 it.emitted(CompilerEvents.parse(set))
             }
