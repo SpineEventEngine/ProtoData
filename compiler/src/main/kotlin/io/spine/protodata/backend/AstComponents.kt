@@ -26,7 +26,10 @@
 
 package io.spine.protodata.backend
 
-import com.google.protobuf.Descriptors
+import com.google.protobuf.Descriptors.EnumValueDescriptor
+import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Empty
 import io.spine.protodata.EnumConstant
 import io.spine.protodata.Field
@@ -44,7 +47,7 @@ import io.spine.protodata.path
  *
  * @see buildField
  */
-internal fun Descriptors.FieldDescriptor.buildFieldWithOptions(
+internal fun FieldDescriptor.buildFieldWithOptions(
     declaringType: TypeName,
     documentation: Documentation
 ): Field {
@@ -61,7 +64,7 @@ internal fun Descriptors.FieldDescriptor.buildFieldWithOptions(
  *
  * @see buildFieldWithOptions
  */
-internal fun Descriptors.FieldDescriptor.buildField(
+internal fun FieldDescriptor.buildField(
     declaringType: TypeName,
     documentation: Documentation
 ): Field {
@@ -82,7 +85,7 @@ internal fun Descriptors.FieldDescriptor.buildField(
  * @return the receiver for method chaining
  */
 private fun Field.Builder.copyTypeAndCardinality(
-    desc: Descriptors.FieldDescriptor
+    desc: FieldDescriptor
 ): Field.Builder {
     if (desc.isMapField) {
         val (keyField, valueField) = desc.messageType.fields
@@ -106,7 +109,7 @@ private fun Field.Builder.copyTypeAndCardinality(
  *
  * @see buildConstant
  */
-internal fun Descriptors.EnumValueDescriptor.buildConstantWithOptions(
+internal fun EnumValueDescriptor.buildConstantWithOptions(
     declaringType: TypeName,
     documentation: Documentation
 ): EnumConstant {
@@ -123,7 +126,7 @@ internal fun Descriptors.EnumValueDescriptor.buildConstantWithOptions(
  *
  * @see buildConstantWithOptions
  */
-internal fun Descriptors.EnumValueDescriptor.buildConstant(
+internal fun EnumValueDescriptor.buildConstant(
     declaringType: TypeName,
     documentation: Documentation
 ): EnumConstant {
@@ -141,7 +144,7 @@ internal fun Descriptors.EnumValueDescriptor.buildConstant(
  *
  * @see buildRpc
  */
-internal fun Descriptors.MethodDescriptor.buildRpcWithOptions(
+internal fun MethodDescriptor.buildRpcWithOptions(
     declaringService: ServiceName,
     documentation: Documentation
 ) : Rpc {
@@ -158,7 +161,7 @@ internal fun Descriptors.MethodDescriptor.buildRpcWithOptions(
  *
  * @see buildRpcWithOptions
  */
-internal fun Descriptors.MethodDescriptor.buildRpc(
+internal fun MethodDescriptor.buildRpc(
     declaringService: ServiceName,
     documentation: Documentation
 ) : Rpc {
@@ -179,7 +182,7 @@ internal fun Descriptors.MethodDescriptor.buildRpc(
  *
  * @see toFile
  */
-internal fun Descriptors.FileDescriptor.toFileWithOptions() =
+internal fun FileDescriptor.toFileWithOptions() =
     toFile()
         .toBuilder()
         .addAllOption(listOptions(options))
@@ -190,7 +193,7 @@ internal fun Descriptors.FileDescriptor.toFileWithOptions() =
  *
  * @see toFileWithOptions
  */
-internal fun Descriptors.FileDescriptor.toFile() = file {
+internal fun FileDescriptor.toFile() = file {
     path = path()
     packageName = `package`
     syntax = this@toFile.syntax.toSyntaxVersion()
