@@ -44,6 +44,10 @@ import "spine/protodata/ast.proto";
 message ProtobufSourceFile {
     option (entity).kind = VIEW;
 
+    // The relative path to the file.
+    //
+    // Must be the same as `file.path`.
+    //
     FilePath file_path = 1;
 
     File file = 2;
@@ -73,13 +77,19 @@ message ProtobufSourceFile {
 
 // A Protobuf definitions file which is included into the module as a dependency.
 //
-// Unlike `ProtobufSourceFile`, `ProtobufDependencyFile` should not result in any code generation.
+// Unlike `ProtobufSourceFile`, `ProtobufDependency` should not result in any code generation.
 // Rather, it serves an informative purpose.
 //
-message ProtobufDependencyFile {
+message ProtobufDependency {
     option (entity).kind = VIEW;
 
+    // The relative path to the dependency.
+    //
+    // This is the same path as the one used when the dependency is used in an import statement.
+    //
+    // Must be the same as `file.file_path`.
+    //
     FilePath file_path = 1;
 
-    ProtobufSourceFile content = 2;
+    ProtobufSourceFile file = 2;
 }

@@ -43,7 +43,7 @@ import io.spine.option.OptionsProto
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
-import io.spine.protodata.ProtobufDependencyFile
+import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
 import io.spine.protodata.filePath
@@ -69,7 +69,7 @@ class CodeGenerationContextSpec {
     }
 
     @Test
-    fun `contain 'ProtobufDependencyFile' file view`() {
+    fun `contain 'ProtobufDependency' file view`() {
         val ctx = CodeGenerationContext.builder().build()
         assertTrue(ctx.hasEntitiesOfType(DependencyView::class.java))
     }
@@ -157,7 +157,7 @@ class CodeGenerationContextSpec {
                 )
                 assertEntity.exists()
                 assertEntity.actual()!!.state()
-            }.map { state -> (state as ProtobufDependencyFile).content }
+            }.map { state -> (state as ProtobufDependency).file }
             val recordsOfFilesToGenerate = dependencies
                 .filter { it.name != DoctorProto.getDescriptor().name }
                 .map {

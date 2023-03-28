@@ -281,7 +281,7 @@ message RpcExited {
 //
 message DependencyDiscovered {
 
-    FilePath file = 1;
+    FilePath path = 1;
 
-    ProtobufSourceFile content = 2;
+    ProtobufSourceFile file = 2;
 }

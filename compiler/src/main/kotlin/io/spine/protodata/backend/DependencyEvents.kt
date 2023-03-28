@@ -52,8 +52,8 @@ import io.spine.protodata.typeUrl
 internal fun discoverDependencies(fileDescriptor: FileDescriptor) =
     dependencyDiscovered {
         val id = fileDescriptor.path()
-        file = id
-        content = fileDescriptor.toPbSourceFile()
+        path = id
+        file = fileDescriptor.toPbSourceFile()
     }
 
 private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
