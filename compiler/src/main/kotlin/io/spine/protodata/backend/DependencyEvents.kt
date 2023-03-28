@@ -29,6 +29,7 @@ package io.spine.protodata.backend
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.protodata.EnumType
 import io.spine.protodata.FilePath
@@ -36,6 +37,7 @@ import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoDeclaration
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.Service
+import io.spine.protodata.TypeName
 import io.spine.protodata.enumType
 import io.spine.protodata.event.dependencyDiscovered
 import io.spine.protodata.messageType
@@ -119,6 +121,9 @@ private class DefinitionFactory(
     fun services(): Sequence<Service> =
         file.services.asSequence().map { it.asService() }
 
+    /**
+     * Converts the receiver `Descriptor` into a [MessageType].
+     */
     private fun Descriptor.asMessage() = messageType {
         val typeName = name()
         name = typeName
@@ -128,17 +133,18 @@ private class DefinitionFactory(
         if (containingType != null) {
             declaredIn = containingType.name()
         }
-        oneofGroup.addAll(realOneofs.map { oneofGroup {
-            val groupName = it.name()
-            name = groupName
-            field.addAll(it.fields.map { f -> f.buildFieldWithOptions(typeName, documentation) })
-            option.addAll(listOptions(options))
-            doc = documentation.forOneof(it)
-        }
-        })
+        oneofGroup.addAll(realOneofs.map { it.asOneof(typeName) })
         field.addAll(fields.map { it.buildFieldWithOptions(typeName, documentation) })
         nestedMessages.addAll(nestedTypes.map { it.name() })
         nestedEnums.addAll(enumTypes.map { it.name() })
+    }
+
+    private fun OneofDescriptor.asOneof(typeName: TypeName) = oneofGroup {
+        val groupName = name()
+        name = groupName
+        field.addAll(fields.map { f -> f.buildFieldWithOptions(typeName, documentation) })
+        option.addAll(listOptions(options))
+        doc = documentation.forOneof(this@asOneof)
     }
 
     private fun EnumDescriptor.asEnum() = enumType {
