@@ -31,6 +31,7 @@ import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
 import com.google.protobuf.EnumValue
 import com.google.protobuf.GeneratedMessageV3
+import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import io.spine.base.EventMessage
 import io.spine.protobuf.AnyPacker
 import io.spine.protobuf.TypeConverter
@@ -45,7 +46,7 @@ import io.spine.protodata.Option
  *     a function which given an option, constructs a fitting event
  */
 internal suspend fun SequenceScope<EventMessage>.produceOptionEvents(
-    options: GeneratedMessageV3.ExtendableMessage<*>,
+    options: ExtendableMessage<*>,
     ctor: (Option) -> EventMessage
 ) {
     parseOptions(options).forEach {
@@ -56,10 +57,10 @@ internal suspend fun SequenceScope<EventMessage>.produceOptionEvents(
 /**
  * Parsed the given `options` message into a list of [Option]s.
  */
-internal fun listOptions(options: GeneratedMessageV3.ExtendableMessage<*>): List<Option> =
+internal fun listOptions(options: ExtendableMessage<*>): List<Option> =
     parseOptions(options).toList()
 
-private fun parseOptions(options: GeneratedMessageV3.ExtendableMessage<*>): Sequence<Option> =
+private fun parseOptions(options: ExtendableMessage<*>): Sequence<Option> =
     sequence {
         options.allFields.forEach { (optionDescriptor, value) ->
             if (value is Collection<*>) {

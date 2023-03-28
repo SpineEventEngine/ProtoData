@@ -33,14 +33,21 @@ import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Empty
 import io.spine.protodata.EnumConstant
 import io.spine.protodata.Field
+import io.spine.protodata.FieldKt
+import io.spine.protodata.FieldKt.ofMap
+import io.spine.protodata.File
 import io.spine.protodata.Rpc
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
 import io.spine.protodata.cardinality
 import io.spine.protodata.constantName
+import io.spine.protodata.copy
+import io.spine.protodata.enumConstant
+import io.spine.protodata.field
 import io.spine.protodata.file
 import io.spine.protodata.name
 import io.spine.protodata.path
+import io.spine.protodata.rpc
 
 /**
  * Converts this field descriptor into a [Field] with options.
@@ -52,9 +59,11 @@ internal fun FieldDescriptor.buildFieldWithOptions(
     documentation: Documentation
 ): Field {
     val field = buildField(declaringType, documentation)
-    return field.toBuilder()
-        .addAllOption(listOptions(options))
-        .build()
+    return field.copy {
+        // There are several similar expressions in this file. Sadly, they have no common
+        // compile-time type which would allow us to extract the duplicates into a function.
+        option.addAll(listOptions(options))
+    }
 }
 
 /**
@@ -67,31 +76,25 @@ internal fun FieldDescriptor.buildFieldWithOptions(
 internal fun FieldDescriptor.buildField(
     declaringType: TypeName,
     documentation: Documentation
-): Field {
-    return Field.newBuilder()
-        .setName(name())
-        .setDeclaringType(declaringType)
-        .setNumber(number)
-        .setOrderOfDeclaration(index)
-        .copyTypeAndCardinality(this)
-        .setDoc(documentation.forField(this))
-        .build()
+) = field {
+    name = name()
+    orderOfDeclaration = index
+    doc = documentation.forField(this@buildField)
+    this@field.number = this@buildField.number
+    this@field.declaringType = declaringType
+    copyTypeAndCardinality(this@buildField)
 }
 
 /**
  * Copies the field type and cardinality (`map`/`list`/`oneof_name`/`single`) from
- * the given descriptor to the receiver builder.
- *
- * @return the receiver for method chaining
+ * the given descriptor to the receiver DSL-style builder.
  */
-private fun Field.Builder.copyTypeAndCardinality(
+private fun FieldKt.Dsl.copyTypeAndCardinality(
     desc: FieldDescriptor
-): Field.Builder {
+) {
     if (desc.isMapField) {
         val (keyField, valueField) = desc.messageType.fields
-        map = Field.OfMap.newBuilder()
-            .setKeyType(keyField.primitiveType())
-            .build()
+        map = ofMap { keyType = keyField.primitiveType() }
         type = valueField.type()
     } else {
         type = desc.type()
@@ -101,7 +104,6 @@ private fun Field.Builder.copyTypeAndCardinality(
             else -> single = Empty.getDefaultInstance()
         }
     }
-    return this
 }
 
 /**
@@ -114,9 +116,9 @@ internal fun EnumValueDescriptor.buildConstantWithOptions(
     documentation: Documentation
 ): EnumConstant {
     val constant = buildConstant(declaringType, documentation)
-    return constant.toBuilder()
-        .addAllOption(listOptions(options))
-        .build()
+    return constant.copy {
+        option.addAll(listOptions(options))
+    }
 }
 
 /**
@@ -129,14 +131,12 @@ internal fun EnumValueDescriptor.buildConstantWithOptions(
 internal fun EnumValueDescriptor.buildConstant(
     declaringType: TypeName,
     documentation: Documentation
-): EnumConstant {
-    return EnumConstant.newBuilder()
-        .setName(constantName { value = name })
-        .setDeclaredIn(declaringType)
-        .setNumber(number)
-        .setOrderOfDeclaration(index)
-        .setDoc(documentation.forEnumConstant(this))
-        .build()
+) = enumConstant {
+    name = constantName { value = this@buildConstant.name }
+    declaredIn = declaringType
+    this@enumConstant.number = this@buildConstant.number
+    orderOfDeclaration = index
+    doc = documentation.forEnumConstant(this@buildConstant)
 }
 
 /**
@@ -147,11 +147,11 @@ internal fun EnumValueDescriptor.buildConstant(
 internal fun MethodDescriptor.buildRpcWithOptions(
     declaringService: ServiceName,
     documentation: Documentation
-) : Rpc {
-    return buildRpc(declaringService, documentation)
-        .toBuilder()
-        .addAllOption(listOptions(options))
-        .build()
+): Rpc {
+    val rpc = buildRpc(declaringService, documentation)
+    return rpc.copy {
+        option.addAll(listOptions(options))
+    }
 }
 
 /**
@@ -164,17 +164,13 @@ internal fun MethodDescriptor.buildRpcWithOptions(
 internal fun MethodDescriptor.buildRpc(
     declaringService: ServiceName,
     documentation: Documentation
-) : Rpc {
-    val name = name()
-    val cardinality = cardinality()
-    return Rpc.newBuilder()
-        .setName(name)
-        .setCardinality(cardinality)
-        .setRequestType(inputType.name())
-        .setResponseType(outputType.name())
-        .setDoc(documentation.forRpc(this))
-        .setService(declaringService)
-        .build()
+) = rpc {
+    name = name()
+    cardinality = cardinality()
+    requestType = inputType.name()
+    responseType = outputType.name()
+    doc = documentation.forRpc(this@buildRpc)
+    service = declaringService
 }
 
 /**
@@ -182,11 +178,12 @@ internal fun MethodDescriptor.buildRpc(
  *
  * @see toFile
  */
-internal fun FileDescriptor.toFileWithOptions() =
-    toFile()
-        .toBuilder()
-        .addAllOption(listOptions(options))
-        .build()
+internal fun FileDescriptor.toFileWithOptions(): File {
+    val file = toFile()
+    return file.copy {
+        option.addAll(listOptions(options))
+    }
+}
 
 /**
  * Extracts metadata from this file descriptor, excluding file options.
