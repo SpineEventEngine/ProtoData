@@ -26,7 +26,6 @@
 
 package io.spine.protodata.backend
 
-import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.AnyProto
 import com.google.protobuf.BoolValue
@@ -35,6 +34,11 @@ import com.google.protobuf.EmptyProto
 import com.google.protobuf.TimestampProto
 import com.google.protobuf.WrappersProto
 import com.google.protobuf.compiler.codeGeneratorRequest
+import io.kotest.matchers.collections.containExactly
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.maps.shouldContainKey
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
 import io.spine.option.OptionsProto
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
@@ -54,7 +58,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import com.google.common.truth.extensions.proto.ProtoTruth.assertThat as assertMessage
 
 @DisplayName("`Code Generation` context should")
 class CodeGenerationContextSpec {
@@ -109,24 +112,18 @@ class CodeGenerationContextSpec {
 
             val types = actual.typeMap
             val typeName = "type.spine.io/spine.protodata.test.Journey"
-            assertThat(types)
-                .containsKey(typeName)
+            types shouldContainKey typeName
             val journeyType = types[typeName]!!
-            assertThat(journeyType.name.typeUrl())
-                .isEqualTo(typeName)
-            assertMessage(journeyType.optionList)
-                .containsExactly(option {
-                    name = "beta_type"
-                    number = BETA_TYPE_FIELD_NUMBER
-                    type = TYPE_BOOL.asType()
-                    value = AnyPacker.pack(BoolValue.of(true))
-                })
-            assertThat(journeyType.fieldList)
-                .hasSize(4)
-            assertThat(journeyType.oneofGroupList)
-                .hasSize(1)
-            assertThat(journeyType.oneofGroupList[0].fieldList)
-                .hasSize(2)
+            journeyType.name.typeUrl() shouldBe typeName
+            journeyType.optionList should containExactly(option {
+                name = "beta_type"
+                number = BETA_TYPE_FIELD_NUMBER
+                type = TYPE_BOOL.asType()
+                value = AnyPacker.pack(BoolValue.of(true))
+            })
+            journeyType.fieldList shouldHaveSize 4
+            journeyType.oneofGroupList shouldHaveSize 1
+            journeyType.oneofGroupList[0].fieldList shouldHaveSize 2
         }
 
         @Test
