@@ -42,6 +42,7 @@ import io.spine.protodata.messageType
 import io.spine.protodata.name
 import io.spine.protodata.oneofGroup
 import io.spine.protodata.path
+import io.spine.protodata.protobufSourceFile
 import io.spine.protodata.service
 
 /**
@@ -58,71 +59,65 @@ internal fun discoverDependencies(fileDescriptor: FileDescriptor) =
 
 private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     val path = path()
-    val result = ProtobufSourceFile.newBuilder()
-        .setFilePath(path)
-        .setFile(toFileWithOptions())
     val doc = Documentation.fromFile(this)
-    with(DefinitionsBuilder(path, doc)) {
-        result.putAllType(
-            messageTypes().associateByName()
-        )
-        result.putAllEnumType(
-            enumTypes().associateByName()
-        )
-        result.putAllService(
-            services().associateByName()
-        )
+    val definitions = DefinitionFactory(this, path, doc)
+    return protobufSourceFile {
+        filePath = path
+        file = toFileWithOptions()
+        type.putAll(definitions.messageTypes().associateByName())
+        enumType.putAll(definitions.enumTypes().associateByName())
+        service.putAll(definitions.services().associateByName())
     }
-    return result.build()
 }
 
 private fun <T : ProtoDeclaration> Sequence<T>.associateByName() =
     associateBy { it.name.typeUrl() }
 
 /**
- * A builder for the Protobuf definitions of a single `.proto` file.
+ * A factory of Protobuf definitions of a single `.proto` file.
  *
  * @property path the relative file path to the Protobuf file
  * @property documentation all the documentation and comments present in the file
  */
-private class DefinitionsBuilder(
+private class DefinitionFactory(
+    private val file: FileDescriptor,
     private val path: FilePath,
     private val documentation: Documentation,
 ) {
 
     /**
-     * Builds the message type definitions.
+     * Builds the message type definitions from the [file].
      *
      * @return all the message types declared in the file, including nested types.
      */
-    fun FileDescriptor.messageTypes(): Sequence<MessageType> {
-        var messages = messageTypes.asSequence()
-        for (msg in messageTypes) {
+    fun messageTypes(): Sequence<MessageType> {
+        var messages = file.messageTypes.asSequence()
+        for (msg in file.messageTypes) {
             messages += walkMessage(msg) { it.nestedTypes }
         }
         return messages.map { it.asMessage() }
     }
 
     /**
-     * Builds the enum type definitions.
+     * Builds the enum type definitions from the [file].
      *
      * @return all the enums declared in the file, including nested enums.
      */
-    fun FileDescriptor.enumTypes(): Sequence<EnumType> {
-        var enums = enumTypes.asSequence()
-        for (msg in messageTypes) {
+    fun enumTypes(): Sequence<EnumType> {
+        var enums = file.enumTypes.asSequence()
+        for (msg in file.messageTypes) {
             enums += walkMessage(msg) { it.enumTypes }
         }
         return enums.map { it.asEnum() }
     }
 
     /**
-     * Builds the service definitions.
+     * Builds the service definitions from the [file].
      *
      * @return all the services declared in the file, including the nested ones.
      */
-    fun FileDescriptor.services(): Sequence<Service> =
-        services.asSequence().map { it.asService() }
+    fun services(): Sequence<Service> =
+        file.services.asSequence().map { it.asService() }
 
     private fun Descriptor.asMessage() = messageType {
         val typeName = name()
