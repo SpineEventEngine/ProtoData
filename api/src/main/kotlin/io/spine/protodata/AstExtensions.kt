@@ -50,31 +50,9 @@ import io.spine.protodata.CallCardinality.UNARY
 public fun MessageType.qualifiedName(): String = name.qualifiedName()
 
 /**
- * Obtains the type URl of the type.
- *
- * A type URL contains the type URL prefix and the qualified name of the type separated by
- * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
- *
- * @see MessageType.qualifiedName
- * @see TypeName.typeUrl
- */
-public fun MessageType.typeUrl(): String = name.typeUrl()
-
-/**
- * Obtains the type URl of the type.
- *
- * A type URL contains the type URL prefix and the qualified name of the type separated by
- * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
- *
- * @see MessageType.qualifiedName
- * @see TypeName.typeUrl
- */
-public fun EnumType.typeUrl(): String = name.typeUrl()
-
-/**
  * Obtains the fully qualified name from this `TypeName`.
  */
-public fun TypeName.qualifiedName(): String {
+public fun TypeNameOrBuilder.qualifiedName(): String {
     val names = buildList<String> {
         add(packageName)
         addAll(nestingTypeNameList)
@@ -82,32 +60,6 @@ public fun TypeName.qualifiedName(): String {
     }
     return names.filter { it.isNotEmpty() }.joinToString(separator = ".")
 }
-
-/**
- * Obtains the type URL from this `TypeName`.
- *
- * A type URL contains the type URL prefix and the qualified name of the type separated by
- * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
- *
- * @see TypeName.qualifiedName
- * @see MessageType.typeUrl
- */
-public fun TypeName.typeUrl(): String = "${typeUrlPrefix}/${qualifiedName()}"
-
-/**
- * Obtains the type URl from this `ServiceName`.
- *
- * A type URL contains the type URL prefix and the qualified name of the type separated by
- * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
- */
-public fun ServiceName.typeUrl(): String = "$typeUrlPrefix/$packageName.$simpleName"
-
-/**
- * Obtains the type URl of this service.
- *
- * @see ServiceName.typeUrl
- */
-public fun Service.typeUrl(): String = name.typeUrl()
 
 /**
  * Shows if this field is a `map`.

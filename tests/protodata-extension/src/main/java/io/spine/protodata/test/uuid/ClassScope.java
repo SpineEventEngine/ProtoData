@@ -35,7 +35,6 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.protodata.Ast.qualifiedName;
-import static io.spine.protodata.Ast.typeUrl;
 import static java.lang.String.format;
 
 /**
@@ -56,7 +55,7 @@ final class ClassScope implements InsertionPoint {
 
     @Override
     public String getLabel() {
-        return format("class_scope:%s", typeUrl(typeName));
+        return format("class_scope:%s", typeName.typeUrl());
     }
 
     /**

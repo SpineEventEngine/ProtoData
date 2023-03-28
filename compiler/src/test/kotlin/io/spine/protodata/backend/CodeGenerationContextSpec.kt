@@ -50,7 +50,6 @@ import io.spine.protodata.filePath
 import io.spine.protodata.option
 import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
-import io.spine.protodata.typeUrl
 import io.spine.testing.server.blackbox.BlackBox
 import io.spine.time.TimeProto
 import org.junit.jupiter.api.Assertions.assertTrue

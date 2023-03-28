@@ -33,6 +33,7 @@ import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.protodata.EnumType
 import io.spine.protodata.FilePath
 import io.spine.protodata.MessageType
+import io.spine.protodata.ProtoDeclaration
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.Service
 import io.spine.protodata.enumType
@@ -42,7 +43,6 @@ import io.spine.protodata.name
 import io.spine.protodata.oneofGroup
 import io.spine.protodata.path
 import io.spine.protodata.service
-import io.spine.protodata.typeUrl
 
 /**
  * Creates a `DependencyDiscovered` event from the given file descriptor.
@@ -64,23 +64,20 @@ private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     val doc = Documentation.fromFile(this)
     with(DefinitionsBuilder(path, doc)) {
         result.putAllType(
-            messageTypes()
-                .map { it.name.typeUrl() to it }
-                .toMap()
+            messageTypes().associateByName()
         )
         result.putAllEnumType(
-            enumTypes()
-                .map { it.name.typeUrl() to it }
-                .toMap()
+            enumTypes().associateByName()
         )
         result.putAllService(
-            services()
-                .map { it.name.typeUrl() to it }
-                .toMap()
+            services().associateByName()
         )
     }
     return result.build()
 }
+
+private fun <T : ProtoDeclaration> Sequence<T>.associateByName() =
+    associateBy { it.name.typeUrl() }
 
 /**
  * A builder for the Protobuf definitions of a single `.proto` file.

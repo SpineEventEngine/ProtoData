@@ -57,7 +57,6 @@ import io.spine.protodata.event.TypeEntered
 import io.spine.protodata.event.TypeOptionDiscovered
 import io.spine.protodata.isPartOfOneof
 import io.spine.protodata.plugin.View
-import io.spine.protodata.typeUrl
 import io.spine.server.entity.alter
 
 /**
