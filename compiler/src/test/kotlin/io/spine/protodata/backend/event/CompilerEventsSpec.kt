@@ -26,14 +26,14 @@
 
 package io.spine.protodata.backend.event
 
-import com.google.common.truth.Truth
-import com.google.common.truth.extensions.proto.ProtoTruth
+import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
 import com.google.protobuf.enumValue
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.base.EventMessage
@@ -209,31 +209,29 @@ class CompilerEventsSpec {
     @Test
     fun `include message doc info`() {
         val typeEntered = emitted<TypeEntered>()
-        ProtoTruth.assertThat(typeEntered.type)
+        assertThat(typeEntered.type)
             .comparingExpectedFieldsOnly()
             .isEqualTo(messageType {
                 name = typeName { simpleName = "Journey" }
             })
 
         val doc = typeEntered.type.doc
-        Truth.assertThat(doc.leadingComment.split(nl))
-            .containsExactly(
-                "A Doctor's journey.",
-                "",
-                "A test type",
-                ""
-            )
+        doc.leadingComment.split(nl) shouldContainExactly listOf(
+            "A Doctor's journey.",
+            "",
+            "A test type",
+            ""
+        )
 
         doc.trailingComment shouldBe "Impl note: test type."
         doc.detachedCommentList[0] shouldBe "Detached 1."
 
-        Truth.assertThat(doc.detachedCommentList[1].split(nl))
-            .containsExactly(
-                "Detached 2.",
-                "Indentation is not preserved in Protobuf.",
-                "",
-                "Bla bla!"
-            )
+        doc.detachedCommentList[1].split(nl) shouldContainExactly listOf(
+            "Detached 2.",
+            "Indentation is not preserved in Protobuf.",
+            "",
+            "Bla bla!"
+        )
     }
 
     @Test
@@ -249,7 +247,7 @@ class CompilerEventsSpec {
 
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
-        ProtoTruth.assertThat(events)
+        assertThat(events)
             .comparingElementsUsing(Correspondences.type<EventMessage>())
             .containsAtLeastElementsIn(javaClasses)
             .inOrder()
