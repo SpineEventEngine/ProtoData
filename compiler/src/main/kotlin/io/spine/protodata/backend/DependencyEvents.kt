@@ -28,6 +28,7 @@ package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
+import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
@@ -66,13 +67,13 @@ private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     return protobufSourceFile {
         filePath = path
         file = toFileWithOptions()
-        type.putAll(definitions.messageTypes().associateByName())
-        enumType.putAll(definitions.enumTypes().associateByName())
-        service.putAll(definitions.services().associateByName())
+        type.putAll(definitions.messageTypes().associateByUrl())
+        enumType.putAll(definitions.enumTypes().associateByUrl())
+        service.putAll(definitions.services().associateByUrl())
     }
 }
 
-private fun <T : ProtoDeclaration> Sequence<T>.associateByName() =
+private fun <T : ProtoDeclaration> Sequence<T>.associateByUrl() =
     associateBy { it.name.typeUrl() }
 
 /**
@@ -134,7 +135,7 @@ private class DefinitionFactory(
             declaredIn = containingType.name()
         }
         oneofGroup.addAll(realOneofs.map { it.asOneof(typeName) })
-        field.addAll(fields.map { it.buildFieldWithOptions(typeName, documentation) })
+        field.addAll(listFields(fields, typeName))
         nestedMessages.addAll(nestedTypes.map { it.name() })
         nestedEnums.addAll(enumTypes.map { it.name() })
     }
@@ -142,7 +143,7 @@ private class DefinitionFactory(
     private fun OneofDescriptor.asOneof(typeName: TypeName) = oneofGroup {
         val groupName = name()
         name = groupName
-        field.addAll(fields.map { f -> f.buildFieldWithOptions(typeName, documentation) })
+        field.addAll(listFields(fields, typeName))
         option.addAll(listOptions(options))
         doc = documentation.forOneof(this@asOneof)
     }
@@ -167,6 +168,9 @@ private class DefinitionFactory(
         option.addAll(listOptions(options))
         doc = documentation.forService(this@asService)
     }
+
+    private fun listFields(descriptors: Iterable<FieldDescriptor>, declaringType: TypeName) =
+        descriptors.map { f -> f.buildFieldWithOptions(declaringType, documentation) }
 }
 
 /**
