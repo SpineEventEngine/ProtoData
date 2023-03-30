@@ -42,7 +42,7 @@ public interface ProtoDeclaration : Message {
     public val name: ProtoDeclarationName
 
     /**
-     * Obtains the type URl of the type.
+     * Obtains the type URL of the type.
      *
      * A type URL contains the type URL prefix and the qualified name of the type separated by
      * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
