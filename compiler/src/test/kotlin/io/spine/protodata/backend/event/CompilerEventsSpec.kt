@@ -29,6 +29,8 @@ package io.spine.protodata.backend.event
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
@@ -201,8 +203,8 @@ class CompilerEventsSpec {
 
         event.option.name shouldBe  "idempotency_level"
         event.option.value.unpackGuessingType() shouldBe enumValue {
-            name = DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS.name
-            number = DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
+            name = NO_SIDE_EFFECTS.name
+            number = NO_SIDE_EFFECTS_VALUE
         }
     }
 
