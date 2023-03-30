@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata.backend.event
 
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
@@ -39,6 +39,10 @@ import io.spine.protodata.File
 import io.spine.protodata.Rpc
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
+import io.spine.protodata.backend.Documentation
+import io.spine.protodata.backend.primitiveType
+import io.spine.protodata.backend.toSyntaxVersion
+import io.spine.protodata.backend.type
 import io.spine.protodata.cardinality
 import io.spine.protodata.constantName
 import io.spine.protodata.copy

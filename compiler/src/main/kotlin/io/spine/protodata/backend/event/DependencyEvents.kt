@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata.backend.event
 
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
@@ -39,6 +39,7 @@ import io.spine.protodata.ProtoDeclaration
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.Service
 import io.spine.protodata.TypeName
+import io.spine.protodata.backend.Documentation
 import io.spine.protodata.enumType
 import io.spine.protodata.event.dependencyDiscovered
 import io.spine.protodata.messageType

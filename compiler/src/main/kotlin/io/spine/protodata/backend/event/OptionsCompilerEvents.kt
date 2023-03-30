@@ -24,18 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata.backend.event
 
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
 import com.google.protobuf.EnumValue
-import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import io.spine.base.EventMessage
 import io.spine.protobuf.AnyPacker
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.Option
+import io.spine.protodata.backend.type
 
 /**
  * Yields events regarding a set of options.

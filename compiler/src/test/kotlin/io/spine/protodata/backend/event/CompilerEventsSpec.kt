@@ -24,14 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata.backend.event
 
-import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
+import com.google.common.truth.Truth
+import com.google.common.truth.extensions.proto.ProtoTruth
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
-import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS
-import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
@@ -203,22 +201,22 @@ class CompilerEventsSpec {
 
         event.option.name shouldBe  "idempotency_level"
         event.option.value.unpackGuessingType() shouldBe enumValue {
-            name = NO_SIDE_EFFECTS.name
-            number = NO_SIDE_EFFECTS_VALUE
+            name = DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS.name
+            number = DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
         }
     }
 
     @Test
     fun `include message doc info`() {
         val typeEntered = emitted<TypeEntered>()
-        assertThat(typeEntered.type)
+        ProtoTruth.assertThat(typeEntered.type)
             .comparingExpectedFieldsOnly()
             .isEqualTo(messageType {
                 name = typeName { simpleName = "Journey" }
             })
 
         val doc = typeEntered.type.doc
-        assertThat(doc.leadingComment.split(nl))
+        Truth.assertThat(doc.leadingComment.split(nl))
             .containsExactly(
                 "A Doctor's journey.",
                 "",
@@ -229,7 +227,7 @@ class CompilerEventsSpec {
         doc.trailingComment shouldBe "Impl note: test type."
         doc.detachedCommentList[0] shouldBe "Detached 1."
 
-        assertThat(doc.detachedCommentList[1].split(nl))
+        Truth.assertThat(doc.detachedCommentList[1].split(nl))
             .containsExactly(
                 "Detached 2.",
                 "Indentation is not preserved in Protobuf.",
@@ -251,7 +249,7 @@ class CompilerEventsSpec {
 
     private fun assertEmits(vararg types: KClass<out EventMessage>) {
         val javaClasses = types.map { it.java }
-        assertThat(events)
+        ProtoTruth.assertThat(events)
             .comparingElementsUsing(Correspondences.type<EventMessage>())
             .containsAtLeastElementsIn(javaClasses)
             .inOrder()
@@ -295,4 +293,3 @@ private fun List<EventMessage>.findTypeUrlPrefixEvent(): FileOptionDiscovered? =
 private fun List<EventMessage>.findRequiredFieldOptionEvent(): FieldOptionDiscovered? = find {
     it is FieldOptionDiscovered && it.option.number == OptionsProto.REQUIRED_FIELD_NUMBER
 } as FieldOptionDiscovered?
-

@@ -24,13 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata.backend.event
 
 import com.google.protobuf.Descriptors
 import io.spine.base.EventMessage
 import io.spine.protodata.File
 import io.spine.protodata.OneofGroup
 import io.spine.protodata.TypeName
+import io.spine.protodata.backend.Documentation
 import io.spine.protodata.event.FieldEntered
 import io.spine.protodata.event.FieldExited
 import io.spine.protodata.event.FieldOptionDiscovered

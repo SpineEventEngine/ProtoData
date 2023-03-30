@@ -46,6 +46,7 @@ import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
+import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.filePath
 import io.spine.protodata.option
 import io.spine.protodata.path
