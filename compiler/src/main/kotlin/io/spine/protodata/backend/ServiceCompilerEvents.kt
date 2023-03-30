@@ -90,7 +90,7 @@ internal class ServiceCompilerEvents(
         descriptor: Descriptors.MethodDescriptor
     ) {
         val path = file.path
-        val rpc = descriptor.buildRpc(service, documentation)
+        val rpc = buildRpc(descriptor, service, documentation)
         yield(
             RpcEntered.newBuilder()
                 .setFile(path)

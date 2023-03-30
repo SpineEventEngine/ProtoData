@@ -58,7 +58,7 @@ internal fun FieldDescriptor.buildFieldWithOptions(
     declaringType: TypeName,
     documentation: Documentation
 ): Field {
-    val field = buildField(declaringType, documentation)
+    val field = buildField(this, declaringType, documentation)
     return field.copy {
         // There are several similar expressions in this file. Sadly, they have no common
         // compile-time type which would allow us to extract the duplicates into a function.
@@ -73,16 +73,17 @@ internal fun FieldDescriptor.buildFieldWithOptions(
  *
  * @see buildFieldWithOptions
  */
-internal fun FieldDescriptor.buildField(
-    declaringType: TypeName,
+internal fun buildField(
+    desc: FieldDescriptor,
+    declaredIn: TypeName,
     documentation: Documentation
 ) = field {
-    name = name()
-    orderOfDeclaration = index
-    doc = documentation.forField(this@buildField)
-    this@field.number = this@buildField.number
-    this@field.declaringType = declaringType
-    copyTypeAndCardinality(this@buildField)
+    name = desc.name()
+    orderOfDeclaration = desc.index
+    doc = documentation.forField(desc)
+    number = desc.number
+    declaringType = declaredIn
+    copyTypeAndCardinality(desc)
 }
 
 /**
@@ -115,7 +116,7 @@ internal fun EnumValueDescriptor.buildConstantWithOptions(
     declaringType: TypeName,
     documentation: Documentation
 ): EnumConstant {
-    val constant = buildConstant(declaringType, documentation)
+    val constant = buildConstant(this, declaringType, documentation)
     return constant.copy {
         option.addAll(listOptions(options))
     }
@@ -128,15 +129,16 @@ internal fun EnumValueDescriptor.buildConstantWithOptions(
  *
  * @see buildConstantWithOptions
  */
-internal fun EnumValueDescriptor.buildConstant(
+internal fun buildConstant(
+    desc: EnumValueDescriptor,
     declaringType: TypeName,
     documentation: Documentation
 ) = enumConstant {
-    name = constantName { value = this@buildConstant.name }
+    name = constantName { value = desc.name }
     declaredIn = declaringType
-    this@enumConstant.number = this@buildConstant.number
-    orderOfDeclaration = index
-    doc = documentation.forEnumConstant(this@buildConstant)
+    number = desc.number
+    orderOfDeclaration = desc.index
+    doc = documentation.forEnumConstant(desc)
 }
 
 /**
@@ -148,7 +150,7 @@ internal fun MethodDescriptor.buildRpcWithOptions(
     declaringService: ServiceName,
     documentation: Documentation
 ): Rpc {
-    val rpc = buildRpc(declaringService, documentation)
+    val rpc = buildRpc(this, declaringService, documentation)
     return rpc.copy {
         option.addAll(listOptions(options))
     }
@@ -161,15 +163,16 @@ internal fun MethodDescriptor.buildRpcWithOptions(
  *
  * @see buildRpcWithOptions
  */
-internal fun MethodDescriptor.buildRpc(
+internal fun buildRpc(
+    desc: MethodDescriptor,
     declaringService: ServiceName,
     documentation: Documentation
 ) = rpc {
-    name = name()
-    cardinality = cardinality()
-    requestType = inputType.name()
-    responseType = outputType.name()
-    doc = documentation.forRpc(this@buildRpc)
+    name = desc.name()
+    cardinality = desc.cardinality()
+    requestType = desc.inputType.name()
+    responseType = desc.outputType.name()
+    doc = documentation.forRpc(desc)
     service = declaringService
 }
 

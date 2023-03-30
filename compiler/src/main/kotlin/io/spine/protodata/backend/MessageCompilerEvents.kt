@@ -164,7 +164,7 @@ internal class MessageCompilerEvents(
         descriptor: Descriptors.FieldDescriptor
     ) {
         val fieldName = descriptor.name()
-        val field = descriptor.buildField(type, documentation)
+        val field = buildField(descriptor, type, documentation)
         val path = file.path
         yield(
             FieldEntered.newBuilder()

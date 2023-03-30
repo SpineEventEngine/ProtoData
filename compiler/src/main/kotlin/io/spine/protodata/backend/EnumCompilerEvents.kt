@@ -105,7 +105,7 @@ internal class EnumCompilerEvents(
         val name = ConstantName.newBuilder()
             .setValue(descriptor.name)
             .build()
-        val constant = descriptor.buildConstant(type, documentation)
+        val constant = buildConstant(descriptor, type, documentation)
         val path = file.path
         yield(
             EnumConstantEntered.newBuilder()
