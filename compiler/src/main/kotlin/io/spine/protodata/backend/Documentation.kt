@@ -65,7 +65,7 @@ internal class Documentation(
     }
 
     private val docs: Map<LocationPath, Location> =
-        locations.associateBy(LocationPath.Companion::from)
+        locations.associateBy(LocationPath::from)
 
     /**
      * Obtains documentation for the given message.
