@@ -55,6 +55,10 @@ internal class Documentation(
 ) {
 
     companion object {
+
+        /**
+         * Creates an instance of `Documentation` with all the docs from the given file.
+         */
         fun fromFile(file: FileDescriptor) = Documentation(
             file.toProto().sourceCodeInfo.locationList
         )
