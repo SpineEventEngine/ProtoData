@@ -75,7 +75,7 @@ private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
 }
 
 private fun <T : ProtoDeclaration> Sequence<T>.associateByUrl() =
-    associateBy { it.name.typeUrl() }
+    associateBy { it.name.typeUrl }
 
 /**
  * A factory of Protobuf definitions of a single `.proto` file.

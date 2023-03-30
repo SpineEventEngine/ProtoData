@@ -114,7 +114,7 @@ class CodeGenerationContextSpec {
             val typeName = "type.spine.io/spine.protodata.test.Journey"
             types shouldContainKey typeName
             val journeyType = types[typeName]!!
-            journeyType.name.typeUrl() shouldBe typeName
+            journeyType.name.typeUrl shouldBe typeName
             journeyType.optionList should containExactly(option {
                 name = "beta_type"
                 number = BETA_TYPE_FIELD_NUMBER

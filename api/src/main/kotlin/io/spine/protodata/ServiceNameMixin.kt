@@ -35,7 +35,6 @@ import io.spine.annotation.Internal
 @GeneratedMixin
 public interface ServiceNameMixin : ProtoDeclarationName, ServiceNameOrBuilder {
 
-    override fun typeUrl(): String {
-        return "$typeUrlPrefix/$packageName.$simpleName"
-    }
+    override val typeUrl: String
+        get() = "$typeUrlPrefix/$packageName.$simpleName"
 }

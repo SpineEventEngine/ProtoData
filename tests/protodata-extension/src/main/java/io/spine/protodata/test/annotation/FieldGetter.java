@@ -56,7 +56,7 @@ final class FieldGetter implements InsertionPoint {
     @NonNull
     @Override
     public String getLabel() {
-        return format("getter-for:%s.%s", field.getType().typeUrl(), field.getField().getValue());
+        return format("getter-for:%s.%s", field.getType().getTypeUrl(), field.getField().getValue());
     }
 
     @NonNull

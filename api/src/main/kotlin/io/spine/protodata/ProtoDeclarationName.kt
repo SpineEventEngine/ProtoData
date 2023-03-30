@@ -42,5 +42,5 @@ public interface ProtoDeclarationName : Message {
      * A type URL contains the type URL prefix and the qualified name of the type separated by
      * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
      */
-    public fun typeUrl(): String
+    public val typeUrl: String
 }

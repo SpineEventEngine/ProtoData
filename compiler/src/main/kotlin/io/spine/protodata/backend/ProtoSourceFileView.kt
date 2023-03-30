@@ -78,7 +78,7 @@ internal class ProtoSourceFileView
 
     @Subscribe
     internal fun on(@External e: TypeEntered) = alter {
-        putType(e.type.typeUrl(), e.type)
+        putType(e.type.typeUrl, e.type)
     }
 
     @Subscribe
@@ -115,7 +115,7 @@ internal class ProtoSourceFileView
 
     @Subscribe
     internal fun on(@External e: EnumEntered) = alter {
-        putEnumType(e.type.typeUrl(), e.type)
+        putEnumType(e.type.typeUrl, e.type)
     }
 
     @Subscribe
@@ -136,7 +136,7 @@ internal class ProtoSourceFileView
 
     @Subscribe
     internal fun on(@External e: ServiceEntered) = alter{
-        putService(e.service.typeUrl(), e.service)
+        putService(e.service.typeUrl, e.service)
     }
 
     @Subscribe
@@ -157,7 +157,7 @@ internal class ProtoSourceFileView
     }
 
     private fun modifyType(name: TypeName, changes: MessageType.Builder.() -> Unit) {
-        val typeUrl = name.typeUrl()
+        val typeUrl = name.typeUrl
         val typeBuilder = builder()
             .getTypeOrThrow(typeUrl)
             .toBuilder()
@@ -166,7 +166,7 @@ internal class ProtoSourceFileView
     }
 
     private fun modifyEnum(name: TypeName, changes: EnumType.Builder.() -> Unit) {
-        val typeUrl = name.typeUrl()
+        val typeUrl = name.typeUrl
         val typeBuilder = builder()
             .getEnumTypeOrThrow(typeUrl)
             .toBuilder()
@@ -175,7 +175,7 @@ internal class ProtoSourceFileView
     }
 
     private fun modifyService(name: ServiceName, changes: Service.Builder.() -> Unit) {
-        val typeUrl = name.typeUrl()
+        val typeUrl = name.typeUrl
         val builder = builder()
             .getServiceOrThrow(typeUrl)
             .toBuilder()
