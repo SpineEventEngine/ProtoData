@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend.event
 
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
-import io.spine.protodata.Documentation
-import io.spine.protodata.File
-import io.spine.protodata.path
+import io.spine.protodata.backend.Documentation
+import io.spine.protodata.event.FileEntered
+import io.spine.protodata.event.FileExited
+import io.spine.protodata.event.FileOptionDiscovered
 
 /**
  * A factory for Protobuf compiler events.
@@ -50,8 +51,11 @@ public object CompilerEvents {
         val filesToGenerate = request.fileToGenerateList.toSet()
         val files = FileSet.of(request.protoFileList)
         return sequence {
-            files.files()
-                .filter { it.name in filesToGenerate }
+            val (ownFiles, dependencies) = files.files().partition {
+                it.name in filesToGenerate
+            }
+            yieldAll(dependencies.map(::discoverDependencies))
+            ownFiles
                 .map(::ProtoFileEvents)
                 .forEach { it.apply { produceFileEvents() } }
         }
@@ -65,15 +69,9 @@ private class ProtoFileEvents(
     private val fileDescriptor: FileDescriptor
 ) {
 
-    private val file = File.newBuilder()
-        .setPath(fileDescriptor.path())
-        .setPackageName(fileDescriptor.`package`)
-        .setSyntax(fileDescriptor.syntax.toSyntaxVersion())
-        .build()
+    private val file = fileDescriptor.toFile()
 
-    private val documentation = Documentation(
-        fileDescriptor.toProto().sourceCodeInfo.locationList
-    )
+    private val documentation = Documentation.fromFile(fileDescriptor)
 
     /**
      * Yields compiler events for the given file.

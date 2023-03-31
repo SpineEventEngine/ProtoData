@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package io.spine.protodata
 
-package io.spine.internal.dependency
+import io.spine.annotation.GeneratedMixin
+import io.spine.annotation.Internal
 
-// https://pmd.github.io/
-object Pmd {
-    const val version = "6.55.0"
+/**
+ * Name of a service declared in Protobuf.
+ */
+@Internal
+@GeneratedMixin
+public interface ServiceNameMixin : ProtoDeclarationName, ServiceNameOrBuilder {
+
+    override val typeUrl: String
+        get() = "$typeUrlPrefix/$packageName.$simpleName"
 }

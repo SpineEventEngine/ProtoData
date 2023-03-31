@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package io.spine.protodata
 
-package io.spine.internal.dependency
+import com.google.protobuf.Message
+import io.spine.annotation.GeneratedMixin
+import io.spine.annotation.Internal
 
-// https://pmd.github.io/
-object Pmd {
-    const val version = "6.55.0"
+/**
+ * A high-level Protobuf declaration, such as a message, an enum, or a service.
+ */
+@Internal
+@GeneratedMixin
+public interface ProtoDeclaration : Message {
+
+    /**
+     * Obtains the name of this Protobuf declaration.
+     */
+    public val name: ProtoDeclarationName
+
+    /**
+     * The type URL of the type.
+     *
+     * A type URL contains the type URL prefix and the qualified name of the type separated by
+     * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+     */
+    public val typeUrl: String
+        get() = name.typeUrl
 }

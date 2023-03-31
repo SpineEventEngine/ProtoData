@@ -36,6 +36,7 @@ option java_outer_classname = "EventsProto";
 option java_multiple_files = true;
 
 import "spine/protodata/ast.proto";
+import "spine/protodata/source.proto";
 
 // Emitted when processing of a file begins.
 message FileEntered {
@@ -263,4 +264,24 @@ message RpcExited {
     ServiceName service = 2;
 
     RpcName rpc = 3;
+}
+
+// Emitted when the Protobuf compiler discovers a dependency file.
+//
+// The order of files reported by events of this type is unspecified. Users should not rely on any
+// particular order.
+//
+// Each file is only reported by one event, even if the file is imported into
+//
+// `DependencyDiscovered` events always precede all other Protobuf compiler events, i.e.
+// the first `FileEntered` will always be emitted after the last `DependencyDiscovered`.
+//
+// Normally, no code should be generated for dependencies. However, they can be used for additional
+// info when generating code for the module's own types.
+//
+message DependencyDiscovered {
+
+    FilePath path = 1;
+
+    ProtobufSourceFile file = 2;
 }

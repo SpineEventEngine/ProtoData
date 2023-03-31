@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend.event
 
 import com.google.protobuf.Descriptors
-import com.google.protobuf.Empty
 import io.spine.base.EventMessage
-import io.spine.protodata.Documentation
-import io.spine.protodata.Field
 import io.spine.protodata.File
-import io.spine.protodata.MessageType
 import io.spine.protodata.OneofGroup
 import io.spine.protodata.TypeName
+import io.spine.protodata.backend.Documentation
+import io.spine.protodata.event.FieldEntered
+import io.spine.protodata.event.FieldExited
+import io.spine.protodata.event.FieldOptionDiscovered
+import io.spine.protodata.event.OneofGroupEntered
+import io.spine.protodata.event.OneofGroupExited
+import io.spine.protodata.event.OneofOptionDiscovered
+import io.spine.protodata.event.TypeEntered
+import io.spine.protodata.event.TypeExited
+import io.spine.protodata.event.TypeOptionDiscovered
+import io.spine.protodata.messageType
 import io.spine.protodata.name
 
 /**
@@ -57,14 +64,16 @@ internal class MessageCompilerEvents(
     ) {
         val typeName = descriptor.name()
         val path = file.path
-        val type = MessageType.newBuilder().apply {
-                name = typeName
-                file = path
-                if (nestedIn != null) {
-                    declaredIn = nestedIn
-                }
-                doc = documentation.forMessage(descriptor)
-            }.build()
+        val type = messageType {
+            name = typeName
+            file = path
+            if (nestedIn != null) {
+                declaredIn = nestedIn
+            }
+            doc = documentation.forMessage(descriptor)
+            nestedMessages.addAll(descriptor.nestedTypes.map { it.name() })
+            nestedEnums.addAll(descriptor.enumTypes.map { it.name() })
+        }
         yield(
             TypeEntered.newBuilder()
                 .setFile(path)
@@ -156,14 +165,7 @@ internal class MessageCompilerEvents(
         descriptor: Descriptors.FieldDescriptor
     ) {
         val fieldName = descriptor.name()
-        val field = Field.newBuilder()
-            .setName(fieldName)
-            .setDeclaringType(type)
-            .setNumber(descriptor.number)
-            .setOrderOfDeclaration(descriptor.index)
-            .assignTypeAndCardinality(descriptor)
-            .setDoc(documentation.forField(descriptor))
-            .build()
+        val field = buildField(descriptor, type, documentation)
         val path = file.path
         yield(
             FieldEntered.newBuilder()
@@ -187,31 +189,5 @@ internal class MessageCompilerEvents(
                 .setField(fieldName)
                 .build()
         )
-    }
-
-    /**
-     * Assigns the field type and cardinality (`map`/`list`/`oneof_name`/`single`) to the receiver
-     * builder.
-     *
-     * @return the receiver for method chaining.
-     */
-    private fun Field.Builder.assignTypeAndCardinality(
-        desc: Descriptors.FieldDescriptor
-    ): Field.Builder {
-        if (desc.isMapField) {
-            val (keyField, valueField) = desc.messageType.fields
-            map = Field.OfMap.newBuilder()
-                .setKeyType(keyField.primitiveType())
-                .build()
-            type = valueField.type()
-        } else {
-            type = desc.type()
-            when {
-                desc.isRepeated -> list = Empty.getDefaultInstance()
-                desc.realContainingOneof != null -> oneofName = desc.realContainingOneof.name()
-                else -> single = Empty.getDefaultInstance()
-            }
-        }
-        return this
     }
 }

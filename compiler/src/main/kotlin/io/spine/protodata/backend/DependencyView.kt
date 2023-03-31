@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.protodata.backend
 
-// https://pmd.github.io/
-object Pmd {
-    const val version = "6.55.0"
+import io.spine.core.External
+import io.spine.core.Subscribe
+import io.spine.protodata.FilePath
+import io.spine.protodata.ProtobufDependency
+import io.spine.protodata.event.DependencyDiscovered
+import io.spine.protodata.plugin.View
+import io.spine.server.entity.alter
+
+/**
+ * A view of a dependency Proto file.
+ */
+internal class DependencyView :
+    View<FilePath, ProtobufDependency, ProtobufDependency.Builder>() {
+
+    @Subscribe
+    internal fun on(@External e: DependencyDiscovered) = alter {
+        filePath = e.path
+        file = e.file
+    }
 }
