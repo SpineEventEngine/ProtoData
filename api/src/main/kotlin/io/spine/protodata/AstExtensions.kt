@@ -45,6 +45,38 @@ import io.spine.protodata.CallCardinality.SERVER_STREAMING
 import io.spine.protodata.CallCardinality.UNARY
 
 /**
+ * Obtains the type URL of the type.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ *
+ * @see MessageType.qualifiedName
+ * @see TypeName.typeUrl
+ */
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun MessageType.typeUrl(): String = typeUrl
+
+/**
+ * Obtains the type URL of the type.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ *
+ * @see MessageType.qualifiedName
+ * @see TypeName.typeUrl
+ */
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun EnumType.typeUrl(): String = typeUrl
+
+/**
  * Obtains the package and the name of the type.
  */
 public fun MessageType.qualifiedName(): String = name.qualifiedName()
@@ -60,6 +92,47 @@ public fun TypeNameOrBuilder.qualifiedName(): String {
     }
     return names.filter { it.isNotEmpty() }.joinToString(separator = ".")
 }
+
+/**
+ * Obtains the type URL from this `TypeName`.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ *
+ * @see TypeName.qualifiedName
+ * @see MessageType.typeUrl
+ */
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun TypeName.typeUrl(): String = typeUrl
+
+/**
+ * Obtains the type URL from this `ServiceName`.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ */
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun ServiceName.typeUrl(): String = typeUrl
+
+/**
+ * Obtains the type URL of this service.
+ *
+ * @see ServiceName.typeUrl
+ */
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun Service.typeUrl(): String = typeUrl
 
 /**
  * Shows if this field is a `map`.
