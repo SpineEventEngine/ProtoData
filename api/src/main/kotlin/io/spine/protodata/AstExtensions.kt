@@ -45,7 +45,7 @@ import io.spine.protodata.CallCardinality.SERVER_STREAMING
 import io.spine.protodata.CallCardinality.UNARY
 
 /**
- * Obtains the type URl of the type.
+ * Obtains the type URL of the type.
  *
  * A type URL contains the type URL prefix and the qualified name of the type separated by
  * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
@@ -61,7 +61,7 @@ import io.spine.protodata.CallCardinality.UNARY
 public fun MessageType.typeUrl(): String = typeUrl
 
 /**
- * Obtains the type URl of the type.
+ * Obtains the type URL of the type.
  *
  * A type URL contains the type URL prefix and the qualified name of the type separated by
  * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
@@ -110,7 +110,7 @@ public fun TypeNameOrBuilder.qualifiedName(): String {
 public fun TypeName.typeUrl(): String = typeUrl
 
 /**
- * Obtains the type URl from this `ServiceName`.
+ * Obtains the type URL from this `ServiceName`.
  *
  * A type URL contains the type URL prefix and the qualified name of the type separated by
  * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
@@ -123,7 +123,7 @@ public fun TypeName.typeUrl(): String = typeUrl
 public fun ServiceName.typeUrl(): String = typeUrl
 
 /**
- * Obtains the type URl of this service.
+ * Obtains the type URL of this service.
  *
  * @see ServiceName.typeUrl
  */
