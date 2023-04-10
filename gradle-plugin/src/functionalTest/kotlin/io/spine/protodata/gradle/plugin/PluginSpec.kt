@@ -26,7 +26,6 @@
 
 package io.spine.protodata.gradle.plugin
 
-import com.google.common.truth.Truth.assertThat
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
@@ -66,7 +65,7 @@ class PluginSpec {
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
         this.projectDir = projectDir
-        generatedProtoDir = projectDir.resolve("build/generated-proto")
+        generatedProtoDir = projectDir.resolve("build/generated/source/proto")
         generatedDir = projectDir.resolve("generated")
         generatedMainDir = generatedDir.resolve("main")
         generatedJavaDir = generatedMainDir.resolve("java")
@@ -144,7 +143,7 @@ class PluginSpec {
     }
 
     @Test
-    fun `copy 'grpc' directory from 'generated-proto' to 'generated'`() {
+    fun `copy 'grpc' directory from Protobuf's default dir to 'generated'`() {
         createProject("copy-grpc")
 
         val result = project.executeTask(build)
