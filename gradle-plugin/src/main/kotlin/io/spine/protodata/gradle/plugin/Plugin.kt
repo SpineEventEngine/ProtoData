@@ -345,11 +345,17 @@ private fun configureCompileTasks(
     javaCompile.source = javaCompile.source.filter(notInSourceDir).asFileTree
 
     // Do the same for `KotlinCompile`, if it's present in the project.
+    @Suppress("IfThenToSafeAccess") // Looks more readable.
     if (kotlinCompile is KotlinCompileTool) {
         val filteredKotlin = kotlinCompile.sources.filter(notInSourceDir).toSet()
         with(kotlinCompile.sources as ConfigurableFileCollection) {
             setFrom(filteredKotlin)
         }
+    } else if (kotlinCompile != null) {
+        kotlinCompile.project.logger.warn(
+            "ProtoData plugin cannot configure `{}` of type `{}`.",
+            kotlinCompile.path, kotlinCompile.javaClass
+        )
     }
 }
 
