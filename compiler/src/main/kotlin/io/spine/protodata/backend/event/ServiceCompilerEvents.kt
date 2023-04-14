@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,16 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend.event
 
 import com.google.protobuf.Descriptors
 import io.spine.base.EventMessage
-import io.spine.protodata.Documentation
 import io.spine.protodata.File
-import io.spine.protodata.Rpc
 import io.spine.protodata.Service
 import io.spine.protodata.ServiceName
-import io.spine.protodata.cardinality
+import io.spine.protodata.backend.Documentation
+import io.spine.protodata.event.RpcEntered
+import io.spine.protodata.event.RpcExited
+import io.spine.protodata.event.RpcOptionDiscovered
+import io.spine.protodata.event.ServiceEntered
+import io.spine.protodata.event.ServiceExited
+import io.spine.protodata.event.ServiceOptionDiscovered
 import io.spine.protodata.name
 
 /**
@@ -53,12 +57,13 @@ internal class ServiceCompilerEvents(
     internal suspend fun SequenceScope<EventMessage>.produceServiceEvents(
         descriptor: Descriptors.ServiceDescriptor
     ) {
+        val path = file.path
         val serviceName = descriptor.name()
         val service = Service.newBuilder()
             .setName(serviceName)
             .setDoc(documentation.forService(descriptor))
+            .setFile(path)
             .build()
-        val path = file.path
         yield(
             ServiceEntered.newBuilder()
                 .setFile(path)
@@ -86,16 +91,7 @@ internal class ServiceCompilerEvents(
         descriptor: Descriptors.MethodDescriptor
     ) {
         val path = file.path
-        val name = descriptor.name()
-        val cardinality = descriptor.cardinality()
-        val rpc = Rpc.newBuilder()
-            .setName(name)
-            .setCardinality(cardinality)
-            .setRequestType(descriptor.inputType.name())
-            .setResponseType(descriptor.outputType.name())
-            .setDoc(documentation.forRpc(descriptor))
-            .setService(service)
-            .build()
+        val rpc = buildRpc(descriptor, service, documentation)
         yield(
             RpcEntered.newBuilder()
                 .setFile(path)
@@ -107,7 +103,7 @@ internal class ServiceCompilerEvents(
             RpcOptionDiscovered.newBuilder()
                 .setFile(path)
                 .setService(service)
-                .setRpc(name)
+                .setRpc(rpc.name)
                 .setOption(it)
                 .build()
         }
@@ -115,7 +111,7 @@ internal class ServiceCompilerEvents(
             RpcExited.newBuilder()
                 .setFile(path)
                 .setService(service)
-                .setRpc(name)
+                .setRpc(rpc.name)
                 .build()
         )
     }

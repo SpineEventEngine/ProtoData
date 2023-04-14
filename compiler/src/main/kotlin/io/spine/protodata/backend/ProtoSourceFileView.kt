@@ -57,8 +57,7 @@ import io.spine.protodata.event.TypeEntered
 import io.spine.protodata.event.TypeOptionDiscovered
 import io.spine.protodata.isPartOfOneof
 import io.spine.protodata.plugin.View
-import io.spine.protodata.typeUrl
-import io.spine.server.entity.update
+import io.spine.server.entity.alter
 
 /**
  * A view which collects information about a Protobuf source file.
@@ -67,25 +66,19 @@ internal class ProtoSourceFileView
     : View<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
     @Subscribe
-    internal fun on(@External e: FileEntered) {
-        update {
-            filePath = e.file.path
-            file = e.file
-        }
+    internal fun on(@External e: FileEntered) = alter {
+        filePath = e.file.path
+        file = e.file
     }
 
     @Subscribe
-    internal fun on(@External e: FileOptionDiscovered) {
-        update {
-            fileBuilder.addOption(e.option)
-        }
+    internal fun on(@External e: FileOptionDiscovered) = alter {
+        fileBuilder.addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: TypeEntered) {
-        update {
-            putType(e.type.typeUrl(), e.type)
-        }
+    internal fun on(@External e: TypeEntered) = alter {
+        putType(e.type.typeUrl, e.type)
     }
 
     @Subscribe
@@ -121,10 +114,8 @@ internal class ProtoSourceFileView
     }
 
     @Subscribe
-    internal fun on(@External e: EnumEntered) {
-        update {
-            putEnumType(e.type.typeUrl(), e.type)
-        }
+    internal fun on(@External e: EnumEntered) = alter {
+        putEnumType(e.type.typeUrl, e.type)
     }
 
     @Subscribe
@@ -144,10 +135,8 @@ internal class ProtoSourceFileView
     }
 
     @Subscribe
-    internal fun on(@External e: ServiceEntered) {
-        update {
-            putService(e.service.typeUrl(), e.service)
-        }
+    internal fun on(@External e: ServiceEntered) = alter{
+        putService(e.service.typeUrl, e.service)
     }
 
     @Subscribe
@@ -168,7 +157,7 @@ internal class ProtoSourceFileView
     }
 
     private fun modifyType(name: TypeName, changes: MessageType.Builder.() -> Unit) {
-        val typeUrl = name.typeUrl()
+        val typeUrl = name.typeUrl
         val typeBuilder = builder()
             .getTypeOrThrow(typeUrl)
             .toBuilder()
@@ -177,7 +166,7 @@ internal class ProtoSourceFileView
     }
 
     private fun modifyEnum(name: TypeName, changes: EnumType.Builder.() -> Unit) {
-        val typeUrl = name.typeUrl()
+        val typeUrl = name.typeUrl
         val typeBuilder = builder()
             .getEnumTypeOrThrow(typeUrl)
             .toBuilder()
@@ -186,7 +175,7 @@ internal class ProtoSourceFileView
     }
 
     private fun modifyService(name: ServiceName, changes: Service.Builder.() -> Unit) {
-        val typeUrl = name.typeUrl()
+        val typeUrl = name.typeUrl
         val builder = builder()
             .getServiceOrThrow(typeUrl)
             .toBuilder()

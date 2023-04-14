@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package io.spine.protodata
+
+import com.google.protobuf.Message
+import io.spine.annotation.GeneratedMixin
+import io.spine.annotation.Internal
 
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * A high-level Protobuf declaration, such as a message, an enum, or a service.
  */
-val protoDataVersion: String by extra("0.7.8")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.162")
+@Internal
+@GeneratedMixin
+public interface ProtoDeclaration : Message {
+
+    /**
+     * Obtains the name of this Protobuf declaration.
+     */
+    public val name: ProtoDeclarationName
+
+    /**
+     * The type URL of the type.
+     *
+     * A type URL contains the type URL prefix and the qualified name of the type separated by
+     * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+     */
+    public val typeUrl: String
+        get() = name.typeUrl
+}

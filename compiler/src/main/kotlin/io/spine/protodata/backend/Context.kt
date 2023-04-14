@@ -28,7 +28,6 @@ package io.spine.protodata.backend
 
 import io.spine.base.EventMessage
 import io.spine.core.userId
-import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.BoundedContext.singleTenant
 import io.spine.server.BoundedContextBuilder
@@ -44,13 +43,10 @@ public object CodeGenerationContext {
      */
     @JvmStatic
     public fun builder(): BoundedContextBuilder = singleTenant("Code Generation").apply {
-        add(ViewRepository.default(builtinView()))
+        add(ViewRepository.default(ProtoSourceFileView::class.java))
+        add(ViewRepository.default(DependencyView::class.java))
         add(ConfigView.Repo())
     }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun builtinView(): Class<View<*, *, *>> =
-        ProtoSourceFileView::class.java as Class<View<*, *, *>>
 }
 
 /**

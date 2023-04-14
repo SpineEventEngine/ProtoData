@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.protodata.Ast.typeUrl;
 import static io.spine.string.Strings.camelCase;
 import static io.spine.protodata.renderer.LineNumber.notInFile;
 import static java.lang.String.format;
@@ -57,7 +56,7 @@ final class FieldGetter implements InsertionPoint {
     @NonNull
     @Override
     public String getLabel() {
-        return format("getter-for:%s.%s", typeUrl(field.getType()), field.getField().getValue());
+        return format("getter-for:%s.%s", field.getType().getTypeUrl(), field.getField().getValue());
     }
 
     @NonNull

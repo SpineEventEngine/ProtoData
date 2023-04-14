@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend.event
 
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
 import com.google.protobuf.EnumValue
-import com.google.protobuf.GeneratedMessageV3
+import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import io.spine.base.EventMessage
 import io.spine.protobuf.AnyPacker
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.Option
+import io.spine.protodata.backend.type
 
 /**
  * Yields events regarding a set of options.
@@ -45,21 +46,34 @@ import io.spine.protodata.Option
  *     a function which given an option, constructs a fitting event
  */
 internal suspend fun SequenceScope<EventMessage>.produceOptionEvents(
-    options: GeneratedMessageV3.ExtendableMessage<*>,
+    options: ExtendableMessage<*>,
     ctor: (Option) -> EventMessage
 ) {
-    options.allFields.forEach { (optionDescriptor, value) ->
-        if(value is Collection<*>) {
-            value.forEach {
-                val option = toOption(optionDescriptor, it!!)
-                yield(ctor(option))
-            }
-        } else {
-            val option = toOption(optionDescriptor, value)
-            yield(ctor(option))
-        }
+    parseOptions(options).forEach {
+        yield(ctor(it))
     }
 }
+
+/**
+ * Parses the given `options` message into a list of [Option]s.
+ */
+internal fun listOptions(options: ExtendableMessage<*>): List<Option> =
+    parseOptions(options).toList()
+
+private fun parseOptions(options: ExtendableMessage<*>): Sequence<Option> =
+    sequence {
+        options.allFields.forEach { (optionDescriptor, value) ->
+            if (value is Collection<*>) {
+                value.forEach {
+                    val option = toOption(optionDescriptor, it!!)
+                    yield(option)
+                }
+            } else {
+                val option = toOption(optionDescriptor, value)
+                yield(option)
+            }
+        }
+    }
 
 private fun toOption(
     optionDescriptor: FieldDescriptor,

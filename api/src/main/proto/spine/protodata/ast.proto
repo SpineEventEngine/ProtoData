@@ -81,6 +81,7 @@ message File {
 // Applicable to message and enum types.
 //
 message TypeName {
+    option (is).java_type = "TypeNameMixin";
 
     // The short name of the type.
     string simple_name = 1;
@@ -115,6 +116,7 @@ message TypeName {
 
 // A Protobuf message type.
 message MessageType {
+    option (is).java_type = "ProtoDeclaration";
 
     TypeName name = 1;
 
@@ -159,6 +161,7 @@ message MessageType {
 
 // A Protobuf enum type.
 message EnumType {
+    option (is).java_type = "ProtoDeclaration";
 
     TypeName name = 1;
 
@@ -372,6 +375,7 @@ message OneofGroup {
 
 // A name of a Protobuf service type.
 message ServiceName {
+    option (is).java_type = "ServiceNameMixin";
 
     // The short name of the service type.
     string simple_name = 1;
@@ -391,6 +395,7 @@ message ServiceName {
 
 // A Protobuf service type.
 message Service {
+    option (is).java_type = "ProtoDeclaration";
 
     ServiceName name = 1;
 
@@ -405,6 +410,9 @@ message Service {
 
     // Documentation of this service.
     Doc doc = 4;
+
+    // Path to the file which declares this service.
+    FilePath file = 5;
 }
 
 // A name of an RPC method.

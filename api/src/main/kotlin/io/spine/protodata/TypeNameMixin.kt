@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package io.spine.protodata
+
+import io.spine.annotation.GeneratedMixin
+import io.spine.annotation.Internal
 
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Name of a message or enum type.
  */
-val protoDataVersion: String by extra("0.7.8")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.162")
+@Internal
+@GeneratedMixin
+public interface TypeNameMixin : ProtoDeclarationName, TypeNameOrBuilder {
+
+    override val typeUrl: String
+        get() = "$typeUrlPrefix/${qualifiedName()}"
+}

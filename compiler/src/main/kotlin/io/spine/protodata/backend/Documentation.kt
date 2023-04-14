@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,20 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.backend
 
 import com.google.protobuf.DescriptorProtos.DescriptorProto
-import com.google.protobuf.DescriptorProtos.EnumDescriptorProto
+import com.google.protobuf.DescriptorProtos.DescriptorProto.FIELD_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.DescriptorProto.NESTED_TYPE_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.DescriptorProto.ONEOF_DECL_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.EnumDescriptorProto.VALUE_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
-import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto
+import com.google.protobuf.DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
+import io.spine.protodata.Doc
 import io.spine.string.trimWhitespace
 import io.spine.util.interlaced
 
@@ -47,6 +53,16 @@ import io.spine.util.interlaced
 internal class Documentation(
     locations: List<Location>
 ) {
+
+    companion object {
+
+        /**
+         * Creates an instance of `Documentation` with all the docs from the given file.
+         */
+        fun fromFile(file: FileDescriptor) = Documentation(
+            file.toProto().sourceCodeInfo.locationList
+        )
+    }
 
     private val docs: Map<LocationPath, Location> =
         locations.associateBy(LocationPath::from)
@@ -149,10 +165,10 @@ private constructor(private val value: List<Int>) {
          */
         fun fromMessage(descriptor: Descriptor): LocationPath {
             val numbers = mutableListOf<Int>()
-            numbers.add(FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER)
+            numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
             if (!descriptor.topLevel) {
                 numbers.addAll(upToTop(descriptor.containingType))
-                numbers.add(DescriptorProto.NESTED_TYPE_FIELD_NUMBER)
+                numbers.add(NESTED_TYPE_FIELD_NUMBER)
             }
             numbers.add(descriptor.index)
             return LocationPath(numbers)
@@ -166,7 +182,7 @@ private constructor(private val value: List<Int>) {
             if (descriptor.topLevel) {
                 numbers.add(FileDescriptorProto.ENUM_TYPE_FIELD_NUMBER)
             } else {
-                numbers.add(FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER)
+                numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
                 numbers.addAll(upToTop(descriptor.containingType))
                 numbers.add(DescriptorProto.ENUM_TYPE_FIELD_NUMBER)
             }
@@ -191,7 +207,7 @@ private constructor(private val value: List<Int>) {
                 rootPath.add(containingType.index)
                 containingType = containingType.containingType
             }
-            return rootPath.interlaced(DescriptorProto.NESTED_TYPE_FIELD_NUMBER)
+            return rootPath.interlaced(NESTED_TYPE_FIELD_NUMBER)
                 .toList()
                 .reversed()
         }
@@ -203,7 +219,7 @@ private constructor(private val value: List<Int>) {
      * It's expected that the field belongs to the message located at this location path.
      */
     fun field(field: FieldDescriptor): LocationPath =
-        subDeclaration(DescriptorProto.FIELD_FIELD_NUMBER, field.index)
+        subDeclaration(FIELD_FIELD_NUMBER, field.index)
 
     /**
      * Obtains the `LocationPath` to the given `oneof` group.
@@ -211,7 +227,7 @@ private constructor(private val value: List<Int>) {
      * It's expected that the group is declared in the message located at this location path.
      */
     fun oneof(group: OneofDescriptor): LocationPath =
-        subDeclaration(DescriptorProto.ONEOF_DECL_FIELD_NUMBER, group.index)
+        subDeclaration(ONEOF_DECL_FIELD_NUMBER, group.index)
 
     /**
      * Obtains the `LocationPath` to the given enum constant.
@@ -219,7 +235,7 @@ private constructor(private val value: List<Int>) {
      * It's expected that the constant belongs to the enum located at this location path.
      */
     fun constant(constant: EnumValueDescriptor): LocationPath =
-        subDeclaration(EnumDescriptorProto.VALUE_FIELD_NUMBER, constant.index)
+        subDeclaration(VALUE_FIELD_NUMBER, constant.index)
 
     /**
      * Obtains the `LocationPath` to the given RPC.
@@ -227,7 +243,7 @@ private constructor(private val value: List<Int>) {
      * It's expected that the RPC belongs to the service located at this location path.
      */
     fun rpc(rpc: MethodDescriptor): LocationPath =
-        subDeclaration(ServiceDescriptorProto.METHOD_FIELD_NUMBER, rpc.index)
+        subDeclaration(METHOD_FIELD_NUMBER, rpc.index)
 
     override fun toString(): String {
         return "LocationPath(${value.joinToString()})"

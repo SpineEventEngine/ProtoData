@@ -80,4 +80,16 @@ public class SuppressWarningsAnnotation :
         val warningsList = warnings.joinToString { '"' + it + '"' }
         return warningsList
     }
+
+    /**
+     * Overrides the check method and removes all the checks.
+     *
+     * `SuppressWarnings` is a valid type annotation, so we don't have to check it. However,
+     * in JDK 19, this annotation type does not have a `@Target`. Because of this, the check fails.
+     *
+     * See the [JDK bug](https://bugs.openjdk.org/browse/JDK-8280745) for more info.
+     */
+    override fun checkAnnotationClass() {
+        // Do nothing.
+    }
 }
