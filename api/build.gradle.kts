@@ -42,6 +42,9 @@ dependencies {
         api(it)
     }
 
+    api(spine.logging)
+    implementation(spine.reflect)
+
     with(Jackson) {
         implementation(databind)
         implementation(dataformatYaml)

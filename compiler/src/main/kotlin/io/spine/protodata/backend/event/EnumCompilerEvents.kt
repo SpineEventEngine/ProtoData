@@ -30,20 +30,20 @@ import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.ConstantName
-import io.spine.protodata.EnumType
-import io.spine.protodata.Documentation
 import io.spine.protodata.File
 import io.spine.protodata.TypeName
 import io.spine.protodata.backend.Documentation
+import io.spine.protodata.enumType
 import io.spine.protodata.event.EnumConstantEntered
 import io.spine.protodata.event.EnumConstantExited
-import io.spine.protodata.event.EnumConstantOptionDiscovered
 import io.spine.protodata.event.EnumEntered
 import io.spine.protodata.event.EnumExited
-import io.spine.protodata.event.EnumOptionDiscovered
-import io.spine.protodata.constantName
-import io.spine.protodata.enumConstant
-import io.spine.protodata.enumType
+import io.spine.protodata.event.enumConstantEntered
+import io.spine.protodata.event.enumConstantExited
+import io.spine.protodata.event.enumConstantOptionDiscovered
+import io.spine.protodata.event.enumEntered
+import io.spine.protodata.event.enumExited
+import io.spine.protodata.event.enumOptionDiscovered
 import io.spine.protodata.name
 
 /**

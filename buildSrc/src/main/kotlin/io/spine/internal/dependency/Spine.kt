@@ -61,13 +61,13 @@ class Spine(p: ExtensionAware) {
          *
          * @see [ProtoData]
          */
-        const val protoData = "0.7.6"
+        const val protoData = "0.8.0"
 
         /**
          * The default version of `base` to use.
          * @see [Spine.base]
          */
-        const val base = "2.0.0-SNAPSHOT.165"
+        const val base = "2.0.0-SNAPSHOT.170"
 
         /**
          * The default version of `core-java` to use.
@@ -147,6 +147,8 @@ class Spine(p: ExtensionAware) {
     }
 
     val base = "$group:spine-base:${p.baseVersion}"
+    val logging = "$group:spine-logging:${p.baseVersion}"
+    val reflect = "$group:spine-reflect:${p.baseVersion}"
     val baseTypes = "$group:spine-base-types:${p.baseTypesVersion}"
     val time = "$group:spine-time:${p.timeVersion}"
     val change = "$group:spine-change:${p.changeVersion}"

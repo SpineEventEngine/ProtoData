@@ -236,7 +236,6 @@ private fun Project.hasJavaOrKotlin(): Boolean {
 private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact, ext: Extension) {
     val protobuf = this.protobufGradlePluginAdapter
     protobuf.run {
-        generatedFilesBaseDir = "$buildDir/generated-proto/"
         plugins {
             it.create(PROTODATA_PROTOC_PLUGIN) {
                 it.artifact = protocPlugin.coordinates

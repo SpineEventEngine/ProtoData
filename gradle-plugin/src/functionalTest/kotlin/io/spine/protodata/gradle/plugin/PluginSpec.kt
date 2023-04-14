@@ -26,7 +26,6 @@
 
 package io.spine.protodata.gradle.plugin
 
-import com.google.common.truth.Truth.assertThat
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
@@ -58,7 +57,6 @@ class PluginSpec {
     private lateinit var project: GradleProject
     private lateinit var projectDir: File
     private lateinit var generatedDir: File
-    private lateinit var generatedProtoDir: File
     private lateinit var generatedMainDir: File
     private lateinit var generatedJavaDir: File
     private lateinit var generatedKotlinDir: File
@@ -66,7 +64,6 @@ class PluginSpec {
     @BeforeEach
     fun prepareDir(@TempDir projectDir: File) {
         this.projectDir = projectDir
-        generatedProtoDir = projectDir.resolve("build/generated-proto")
         generatedDir = projectDir.resolve("generated")
         generatedMainDir = generatedDir.resolve("main")
         generatedJavaDir = generatedMainDir.resolve("java")
@@ -153,10 +150,10 @@ class PluginSpec {
         printFilteredBuildOutput(projectDir, result)
 
         val parameterClass = "io/spine/protodata/test/Buz.java"
-        assertExists(generatedProtoDir.resolve("main/java/$parameterClass"))
+        assertExists(generatedDir.resolve("main/java/$parameterClass"))
 
         val serviceClass = "io/spine/protodata/test/FizServiceGrpc.java"
-        assertExists(generatedProtoDir.resolve("main/grpc/$serviceClass"))
+        assertExists(generatedDir.resolve("main/grpc/$serviceClass"))
 
         assertExists(generatedJavaDir)
         assertExists(generatedJavaDir.resolve(parameterClass))
