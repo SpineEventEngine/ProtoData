@@ -41,6 +41,7 @@ import com.github.ajalt.clikt.parameters.types.path
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
+import io.spine.logging.WithLogging
 import io.spine.option.OptionsProvider
 import io.spine.protobuf.outerClass
 import io.spine.protodata.backend.Pipeline
@@ -58,6 +59,8 @@ import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.string.Separator
+import io.spine.string.pi
 import io.spine.tools.code.manifest.Version
 import java.io.File
 import java.io.File.pathSeparator
@@ -102,7 +105,7 @@ internal class Run(version: String) : CliktCommand(
             "Version ${version}.",
     epilog = "https://github.com/SpineEventEngine/ProtoData/",
     printHelpOnEmptyArgs = true
-) {
+), WithLogging {
     private fun Parameter.toOption(completionCandidates: CompletionCandidates? = null) = option(
         name, shortName,
         help = help,
@@ -291,10 +294,10 @@ internal class Run(version: String) : CliktCommand(
             printError(e.message)
             printError("Please add the required class `$className` to the user classpath.")
             if (classPath != null) {
-
-                // TODO: Split classpath having each part on a separate line.
-
-                printError("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
+                printError("Provided user classpath:")
+                val cp = classPath!!
+                val cpStr = cp.joinToString(separator = Separator.nl()).pi(" ".repeat(2))
+                printError(cpStr)
             }
             exitProcess(1)
         }
