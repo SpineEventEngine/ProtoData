@@ -74,8 +74,6 @@ public sealed class Parameter(
 
         if (name != other.name) return false
         if (shortName != other.shortName) return false
-        if (help != other.help) return false
-
-        return true
+        return help == other.help
     }
 }
