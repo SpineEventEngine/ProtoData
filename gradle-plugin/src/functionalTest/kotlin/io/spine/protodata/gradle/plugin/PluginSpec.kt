@@ -141,7 +141,7 @@ class PluginSpec {
     }
 
     @Test
-    fun `copy 'grpc' directory from 'generated-proto' to 'generated'`() {
+    fun `copy 'grpc' directory from Protobuf's default dir to 'generated'`() {
         createProject("copy-grpc")
 
         val result = project.executeTask(build)
