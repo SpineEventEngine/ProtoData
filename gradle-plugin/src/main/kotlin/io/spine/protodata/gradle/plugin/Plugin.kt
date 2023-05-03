@@ -324,6 +324,11 @@ private fun Extension.configureSourceSet(sourceSet: SourceSet) {
  * Configures given compilation tasks NOT to take source files from
  * the given [sourceDir].
  *
+ * ProtoData saves processed files into separate directories and adds them to the source sets.
+ * This method removes files that were NOT processed by ProtoData from the compiler's classpath
+ * to avoid duplications and clashes. The `sourceDir` is the input directory for ProtoData. Java and
+ * Kotlin compilers must use ProtoData's output directories as their inputs.
+ *
  * @param sourceDir
  *          the directory (by default it's `build/generated-proto`) which must be excluded
  *          from compilation to avoid double class errors
