@@ -343,6 +343,7 @@ private fun configureCompileTasks(
     kotlinCompile: KotlinCompile<*>?
 ) {
     val pathToExclude = sourceDir.asFile.canonicalPath
+
     // Exclude source files located under the given path.
     //
     // Regular `exclude(String)` only works with relative paths and it unable to filter by
