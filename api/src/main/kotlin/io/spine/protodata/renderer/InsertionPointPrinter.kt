@@ -82,31 +82,6 @@ public abstract class InsertionPointPrinter(
                 file.updateLines(lines)
             }
         }
-        sources.prepareCode { file -> file.prepare() }
-    }
-
-    private fun SourceFile.prepare() {
-        val lines = lines().toMutableList()
-        supportedInsertionPoints().forEach { point ->
-            point.applyTo(lines)
-        }
-        updateLines(lines)
-    }
-
-    private fun InsertionPoint.applyTo(lines: MutableList<String>) {
-        val lineNumber = locate(lines)
-        val comment = target.comment(this.codeLine)
-        when (lineNumber) {
-            is LineIndex -> {
-                val index = lineNumber.value
-                checkPositionIndex(index, lines.size, "Line number")
-                lines.add(index, comment)
-            }
-
-            is EndOfFile -> lines.add(comment)
-            is Nowhere -> {} /* No need to add anything.
-                                Insertion point should not appear in the file. */
-        }
     }
 
     private fun renderInlinePoint(
