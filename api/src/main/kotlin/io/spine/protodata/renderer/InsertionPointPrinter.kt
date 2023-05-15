@@ -114,7 +114,7 @@ public abstract class InsertionPointPrinter(
 private fun List<String>.checkLineNumber(index: Int) {
     if (index < 0 || index >= size) {
         throw RenderingException(
-            "Line index $index is out of bounds. File contains $size lines: ${this.joinToString("\n") {" -- " + it + " ++"} }")
+            "Line index $index is out of bounds. File contains $size lines.")
     }
 }
 
