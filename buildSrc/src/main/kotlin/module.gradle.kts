@@ -24,6 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import Module_gradle.Module
+import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.errorprone
+import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.idea
+import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.java
+import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.kotlin
+import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.main
+import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.sourceSets
+import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.test
+import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.testImplementation
+import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.testRuntimeOnly
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.JUnit
@@ -35,19 +45,8 @@ import io.spine.internal.gradle.javac.configureJavac
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.report.license.LicenseReporter
-import org.gradle.api.Project
-import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getValue
-import org.gradle.kotlin.dsl.getting
 import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -123,6 +122,7 @@ fun Module.setupTests() {
             events = setOf(TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED)
             showExceptions = true
             showCauses = true
+            showStackTraces = true
         }
     }
 }
