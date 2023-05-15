@@ -43,23 +43,20 @@ import kotlin.io.path.readLines
 import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("Insertion points should")
-class `Insertion points should` {
+class `Insertion points should appear at` {
 
-    @Nested
-    inner class `appear at` {
+    private lateinit var file: Path
 
-        private lateinit var file: Path
-
-        @BeforeEach
-        fun preparePipeline(@TempDir path: Path) {
-            file = path / "sources.kt"
-            file.createFile()
-            file.writeText("""
+    @BeforeEach
+    fun preparePipeline(@TempDir path: Path) {
+        file = path / "sources.kt"
+        file.createFile()
+        file.writeText(
+            """
              class LabMouse {
                  companion object {
                      const val I_AM_CONSTANT: String = "!!"
@@ -69,40 +66,40 @@ class `Insertion points should` {
                      return "trololo"
                  }
             }
-            """.trimIndent())
-            Pipeline(
-                plugins = listOf(),
-                renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
-                sources = listOf(SourceFileSet.from(path)),
-                request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
-            )()
-        }
+            """.trimIndent()
+        )
+        Pipeline(
+            plugins = listOf(),
+            renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
+            sources = listOf(SourceFileSet.from(path)),
+            request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
+        )()
+    }
 
-        @Test
-        fun `the start of a file`() {
-            val contents = file.readLines()
-            assertThat(contents)
-                .isNotEmpty()
-            assertThat(contents[0])
-                .contains(FILE_START.label)
-        }
+    @Test
+    fun `the start of a file`() {
+        val contents = file.readLines()
+        assertThat(contents)
+            .isNotEmpty()
+        assertThat(contents[0])
+            .contains(FILE_START.label)
+    }
 
-        @Test
-        fun `the end of a file`() {
-            val contents = file.readLines()
-            assertThat(contents)
-                .isNotEmpty()
-            assertThat(contents.last())
-                .contains(FILE_END.label)
-        }
+    @Test
+    fun `the end of a file`() {
+        val contents = file.readLines()
+        assertThat(contents)
+            .isNotEmpty()
+        assertThat(contents.last())
+            .contains(FILE_END.label)
+    }
 
-        @Test
-        fun `a specific line and column`() {
-            val contents = file.readLines()
-            assertThat(contents)
-                .isNotEmpty()
-            assertThat(contents[3])
-                .contains("I_AM_CONSTANT:/* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */      String")
-        }
+    @Test
+    fun `a specific line and column`() {
+        val contents = file.readLines()
+        assertThat(contents)
+            .isNotEmpty()
+        assertThat(contents[3])
+            .contains("I_AM_CONSTANT:/* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */      String")
     }
 }
