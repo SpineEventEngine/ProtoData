@@ -26,7 +26,6 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.base.Preconditions.checkPositionIndex
 import io.spine.protodata.TextCoordinates
 import io.spine.protodata.TextCoordinates.KindCase.END_OF_FILE
 import io.spine.protodata.TextCoordinates.KindCase.INLINE
@@ -92,11 +91,7 @@ public abstract class InsertionPointPrinter(
         val position = coordinates.inline
         lines.checkLineNumber(position.cursor.line)
         val originalLine = lines[position.cursor.line]
-        checkPositionIndex(
-            position.cursor.column,
-            originalLine.length,
-            "Line does not have column ${position.cursor.column}: `$originalLine`."
-        )
+        checkLinePosition(position.cursor.column, originalLine)
         val lineStart = originalLine.substring(0, position.cursor.column)
         val lineEnd = originalLine.substring(position.cursor.column)
         val label = point.codeLine
@@ -115,5 +110,17 @@ public abstract class InsertionPointPrinter(
     }
 }
 
-private fun List<String>.checkLineNumber(index: Int) =
-    checkPositionIndex(index, size, "Line number")
+private fun List<String>.checkLineNumber(index: Int) {
+    if (index < 0 || index > size) {
+        throw RenderingException(
+            "Line index $index is out of bounds. File contains $size lines.")
+    }
+}
+
+private fun checkLinePosition(position: Int, originalLine: String) {
+    if (position < 0 || position > originalLine.length) {
+        throw IllegalStateException(
+            "Line does not have column $position: `$originalLine`."
+        )
+    }
+}
