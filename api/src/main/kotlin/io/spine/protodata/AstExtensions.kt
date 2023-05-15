@@ -45,36 +45,46 @@ import io.spine.protodata.CallCardinality.SERVER_STREAMING
 import io.spine.protodata.CallCardinality.UNARY
 
 /**
+ * Obtains the type URL of the type.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ *
+ * @see MessageType.qualifiedName
+ * @see TypeName.typeUrl
+ */
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun MessageType.typeUrl(): String = typeUrl
+
+/**
+ * Obtains the type URL of the type.
+ *
+ * A type URL contains the type URL prefix and the qualified name of the type separated by
+ * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
+ *
+ * @see MessageType.qualifiedName
+ * @see TypeName.typeUrl
+ */
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun EnumType.typeUrl(): String = typeUrl
+
+/**
  * Obtains the package and the name of the type.
  */
 public fun MessageType.qualifiedName(): String = name.qualifiedName()
 
 /**
- * Obtains the type URl of the type.
- *
- * A type URL contains the type URL prefix and the qualified name of the type separated by
- * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
- *
- * @see MessageType.qualifiedName
- * @see TypeName.typeUrl
- */
-public fun MessageType.typeUrl(): String = name.typeUrl()
-
-/**
- * Obtains the type URl of the type.
- *
- * A type URL contains the type URL prefix and the qualified name of the type separated by
- * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
- *
- * @see MessageType.qualifiedName
- * @see TypeName.typeUrl
- */
-public fun EnumType.typeUrl(): String = name.typeUrl()
-
-/**
  * Obtains the fully qualified name from this `TypeName`.
  */
-public fun TypeName.qualifiedName(): String {
+public fun TypeNameOrBuilder.qualifiedName(): String {
     val names = buildList<String> {
         add(packageName)
         addAll(nestingTypeNameList)
@@ -92,22 +102,37 @@ public fun TypeName.qualifiedName(): String {
  * @see TypeName.qualifiedName
  * @see MessageType.typeUrl
  */
-public fun TypeName.typeUrl(): String = "${typeUrlPrefix}/${qualifiedName()}"
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun TypeName.typeUrl(): String = typeUrl
 
 /**
- * Obtains the type URl from this `ServiceName`.
+ * Obtains the type URL from this `ServiceName`.
  *
  * A type URL contains the type URL prefix and the qualified name of the type separated by
  * the slash (`/`) symbol. See the docs of `google.protobuf.Any.type_url` for more info.
  */
-public fun ServiceName.typeUrl(): String = "$typeUrlPrefix/$packageName.$simpleName"
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun ServiceName.typeUrl(): String = typeUrl
 
 /**
- * Obtains the type URl of this service.
+ * Obtains the type URL of this service.
  *
  * @see ServiceName.typeUrl
  */
-public fun Service.typeUrl(): String = name.typeUrl()
+@Deprecated(
+    message = "Replaced with a Kotlin property (or a Java-style getter).",
+    replaceWith = ReplaceWith("typeUrl"),
+    level = DeprecationLevel.HIDDEN
+)
+public fun Service.typeUrl(): String = typeUrl
 
 /**
  * Shows if this field is a `map`.
@@ -195,12 +220,12 @@ private val FileDescriptor.typeUrlPrefix: String
 /**
  * Obtains the name of this `oneof` as a [OneofName].
  */
-internal fun OneofDescriptor.name(): OneofName = oneofName { value = name }
+public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
 
 /**
  * Obtains the name of this field as a [FieldName].
  */
-internal fun FieldDescriptor.name(): FieldName = fieldName { value = name }
+public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
 
 /**
  * Obtains the relative path to this file as a [FilePath].
@@ -219,7 +244,7 @@ public fun ServiceDescriptor.name(): ServiceName = serviceName {
 /**
  * Obtains the name of this RPC method as an [RpcName].
  */
-internal fun MethodDescriptor.name(): RpcName = rpcName { value = name }
+public fun MethodDescriptor.name(): RpcName = rpcName { value = name }
 
 /**
  * Obtains a [Type] wrapping this `PrimitiveType`.

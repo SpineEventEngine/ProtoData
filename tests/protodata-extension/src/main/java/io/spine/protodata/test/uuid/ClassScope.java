@@ -58,7 +58,7 @@ final class ClassScope implements InsertionPoint {
 
     @Override
     public String getLabel() {
-        return format("class_scope:%s", typeUrl(typeName));
+        return format("class_scope:%s", typeName.getTypeUrl());
     }
 
     /**

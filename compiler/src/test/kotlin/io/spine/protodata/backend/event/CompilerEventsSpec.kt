@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,22 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.event
+package io.spine.protodata.backend.event
 
-import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
-import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS
+import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
 import com.google.protobuf.enumValue
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto
 import io.spine.protobuf.unpackGuessingType
+import io.spine.protodata.event.EnumConstantEntered
+import io.spine.protodata.event.EnumConstantExited
+import io.spine.protodata.event.EnumEntered
+import io.spine.protodata.event.EnumExited
+import io.spine.protodata.event.FieldEntered
+import io.spine.protodata.event.FieldExited
+import io.spine.protodata.event.FieldOptionDiscovered
+import io.spine.protodata.event.FileEntered
+import io.spine.protodata.event.FileExited
+import io.spine.protodata.event.FileOptionDiscovered
+import io.spine.protodata.event.OneofGroupEntered
+import io.spine.protodata.event.OneofGroupExited
+import io.spine.protodata.event.RpcEntered
+import io.spine.protodata.event.RpcExited
+import io.spine.protodata.event.RpcOptionDiscovered
+import io.spine.protodata.event.ServiceEntered
+import io.spine.protodata.event.ServiceExited
+import io.spine.protodata.event.TypeEntered
+import io.spine.protodata.event.TypeExited
 import io.spine.protodata.messageType
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.typeName
@@ -183,8 +203,8 @@ class CompilerEventsSpec {
 
         event.option.name shouldBe  "idempotency_level"
         event.option.value.unpackGuessingType() shouldBe enumValue {
-            name = IdempotencyLevel.NO_SIDE_EFFECTS.name
-            number = IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
+            name = NO_SIDE_EFFECTS.name
+            number = NO_SIDE_EFFECTS_VALUE
         }
     }
 
@@ -198,24 +218,22 @@ class CompilerEventsSpec {
             })
 
         val doc = typeEntered.type.doc
-        assertThat(doc.leadingComment.split(nl))
-            .containsExactly(
-                "A Doctor's journey.",
-                "",
-                "A test type",
-                ""
-            )
+        doc.leadingComment.split(nl) shouldContainExactly listOf(
+            "A Doctor's journey.",
+            "",
+            "A test type",
+            ""
+        )
 
         doc.trailingComment shouldBe "Impl note: test type."
         doc.detachedCommentList[0] shouldBe "Detached 1."
 
-        assertThat(doc.detachedCommentList[1].split(nl))
-            .containsExactly(
-                "Detached 2.",
-                "Indentation is not preserved in Protobuf.",
-                "",
-                "Bla bla!"
-            )
+        doc.detachedCommentList[1].split(nl) shouldContainExactly listOf(
+            "Detached 2.",
+            "Indentation is not preserved in Protobuf.",
+            "",
+            "Bla bla!"
+        )
     }
 
     @Test
@@ -275,4 +293,3 @@ private fun List<EventMessage>.findTypeUrlPrefixEvent(): FileOptionDiscovered? =
 private fun List<EventMessage>.findRequiredFieldOptionEvent(): FieldOptionDiscovered? = find {
     it is FieldOptionDiscovered && it.option.number == OptionsProto.REQUIRED_FIELD_NUMBER
 } as FieldOptionDiscovered?
-
