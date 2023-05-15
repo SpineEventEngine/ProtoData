@@ -41,6 +41,8 @@ import kotlin.io.path.createFile
 import kotlin.io.path.div
 import kotlin.io.path.readLines
 import kotlin.io.path.writeText
+import org.junit.internal.Throwables
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -68,12 +70,20 @@ class `Insertion points should appear at` {
             }
             """.trimIndent()
         )
-        Pipeline(
-            plugins = listOf(),
-            renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
-            sources = listOf(SourceFileSet.from(path)),
-            request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
-        )()
+        try {
+            Pipeline(
+                plugins = listOf(),
+                renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
+                sources = listOf(SourceFileSet.from(path)),
+                request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
+            )()
+        } catch (t: Throwable) {
+            System.err.println(">> !!!!!!")
+            System.err.println(t.message)
+            System.err.println(Throwables.getStacktrace(t))
+            System.err.println(">> !!!!!!")
+            Assertions.fail(t)
+        }
     }
 
     @Test
