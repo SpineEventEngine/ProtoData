@@ -123,6 +123,7 @@ fun Module.setupTests() {
             showExceptions = true
             showCauses = true
             showStackTraces = true
+            showStandardStreams = true
         }
     }
 }
