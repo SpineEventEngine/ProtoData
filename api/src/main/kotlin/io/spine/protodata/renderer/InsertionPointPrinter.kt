@@ -89,9 +89,10 @@ public abstract class InsertionPointPrinter(
         point: InsertionPoint,
     ) {
         val position = coordinates.inline
-        lines.checkLineNumber(position.cursor.line)
-        val originalLine = lines[position.cursor.line]
-        checkLinePosition(position.cursor.column, originalLine)
+        val lineIndex = position.cursor.line
+        lines.checkLineNumber(lineIndex)
+        val originalLine = lines[lineIndex]
+        originalLine.checkLinePosition(position.cursor.column)
         val lineStart = originalLine.substring(0, position.cursor.column)
         val lineEnd = originalLine.substring(position.cursor.column)
         val label = point.codeLine
@@ -106,7 +107,7 @@ public abstract class InsertionPointPrinter(
             comment += " ".repeat(COMMENT_PADDING_LENGTH - paddingAfterLabel)
         }
         val annotatedLine = lineStart + comment + lineEnd
-        lines[position.cursor.line] = annotatedLine
+        lines[lineIndex] = annotatedLine
     }
 }
 
@@ -117,10 +118,10 @@ private fun List<String>.checkLineNumber(index: Int) {
     }
 }
 
-private fun checkLinePosition(position: Int, originalLine: String) {
-    if (position < 0 || position > originalLine.length) {
-        throw IllegalStateException(
-            "Line does not have column $position: `$originalLine`."
+private fun String.checkLinePosition(position: Int) {
+    if (position < 0 || position > length) {
+        throw RenderingException(
+            "Line does not have column $position: `$this`."
         )
     }
 }
