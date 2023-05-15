@@ -40,7 +40,7 @@ import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
 import kotlin.io.path.readLines
-import kotlin.io.path.writeText
+import kotlin.io.path.writeLines
 import org.junit.internal.Throwables
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -57,19 +57,17 @@ class `Insertion points should appear at` {
     fun preparePipeline(@TempDir path: Path) {
         file = path / "sources.kt"
         file.createFile()
-        file.writeText(
-            """
-             class LabMouse {
-                 companion object {
-                     const val I_AM_CONSTANT: String = "!!"
-                 }
-                
-                 fun letsHaveFun(): String {
-                     return "trololo"
-                 }
-            }
-            """.trimIndent()
-        )
+        file.writeLines(listOf(
+             "class LabMouse {",
+             "    companion object {",
+             "        const val I_AM_CONSTANT: String = \"!!\"",
+             "    }",
+             "   ",
+             "    fun letsHaveFun(): String {",
+             "        return \"trololo\"",
+             "    }",
+             "}"
+        ))
         try {
             Pipeline(
                 plugins = listOf(),
