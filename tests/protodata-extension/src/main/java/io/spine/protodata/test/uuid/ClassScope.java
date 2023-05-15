@@ -36,7 +36,6 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.protodata.Ast.qualifiedName;
-import static io.spine.protodata.Ast.typeUrl;
 import static io.spine.text.TextFactory.positionNotFound;
 import static java.lang.String.format;
 

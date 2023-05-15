@@ -38,7 +38,6 @@ import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.string.Strings.camelCase;
-import static io.spine.protodata.renderer.LineNumber.notInFile;
 import static io.spine.text.TextFactory.positionNotFound;
 import static java.lang.String.format;
 
