@@ -122,8 +122,6 @@ fun Module.setupTests() {
             events = setOf(TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED)
             showExceptions = true
             showCauses = true
-            showStackTraces = true
-            showStandardStreams = true
         }
     }
 }

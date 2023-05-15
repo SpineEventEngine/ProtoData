@@ -57,31 +57,25 @@ class `Insertion points should appear at` {
     fun preparePipeline(@TempDir path: Path) {
         file = path / "sources.kt"
         file.createFile()
-        file.writeLines(listOf(
-             "class LabMouse {",
-             "    companion object {",
-             "        const val I_AM_CONSTANT: String = \"!!\"",
-             "    }",
-             "   ",
-             "    fun letsHaveFun(): String {",
-             "        return \"trololo\"",
-             "    }",
-             "}"
-        ))
-        try {
-            Pipeline(
-                plugins = listOf(),
-                renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
-                sources = listOf(SourceFileSet.from(path)),
-                request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
-            )()
-        } catch (t: Throwable) {
-            System.err.println(">> !!!!!!")
-            System.err.println(t.message)
-            System.err.println(Throwables.getStacktrace(t))
-            System.err.println(">> !!!!!!")
-            Assertions.fail(t)
-        }
+        file.writeLines(
+            listOf(
+                "class LabMouse {",
+                "    companion object {",
+                "        const val I_AM_CONSTANT: String = \"!!\"",
+                "    }",
+                "   ",
+                "    fun letsHaveFun(): String {",
+                "        return \"trololo\"",
+                "    }",
+                "}"
+            )
+        )
+        Pipeline(
+            plugins = listOf(),
+            renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
+            sources = listOf(SourceFileSet.from(path)),
+            request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
+        )()
     }
 
     @Test
