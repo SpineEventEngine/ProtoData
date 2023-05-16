@@ -61,7 +61,7 @@ public abstract class InsertionPointPrinter(
             supportedInsertionPoints().forEach { point ->
                 val text = file.text()
                 val coordinates = point.locate(text)
-                val lines = text.lines().toMutableList()
+                val lines = file.lines().toMutableList()
                 when (coordinates.kindCase) {
                     INLINE -> {
                         renderInlinePoint(coordinates, lines, point)

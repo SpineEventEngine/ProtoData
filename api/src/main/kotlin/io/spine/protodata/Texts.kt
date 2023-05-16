@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,36 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata
 
-import io.spine.protodata.TextCoordinates
-import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.splitLines
+import io.spine.protodata.renderer.SourceFile
 import io.spine.text.Text
-import io.spine.tools.code.CommonLanguages.Java
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(Java) {
-
-    override fun supportedInsertionPoints(): Set<InsertionPoint> =
-        GenericInsertionPoint.values().toSet()
-}
-
-public enum class GenericInsertionPoint : InsertionPoint {
-
-    FILE_START {
-        override fun locate(text: Text): TextCoordinates = startOfFile()
-    },
-    FILE_MIDDLE {
-        override fun locate(text: Text): TextCoordinates = atLine(text.splitLines().size / 2)
-    },
-    FILE_END {
-        override fun locate(text: Text): TextCoordinates = endOfFile()
-    },
-    OUTSIDE_FILE {
-        override fun locate(text: Text): TextCoordinates = nowhere()
-    };
-
-    override val label: String
-        get() = name.lowercase()
-}
+public fun Text.splitLines(): List<String> =
+    SourceFile.lineSplitter.splitToList(value)

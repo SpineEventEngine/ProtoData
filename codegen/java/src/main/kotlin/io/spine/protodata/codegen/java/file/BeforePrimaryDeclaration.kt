@@ -29,6 +29,7 @@ package io.spine.protodata.codegen.java.file
 import io.spine.logging.Logging
 import io.spine.protodata.TextCoordinates
 import io.spine.protodata.renderer.InsertionPoint
+import io.spine.protodata.splitLines
 import io.spine.text.Text
 import java.lang.System.lineSeparator
 
@@ -64,7 +65,7 @@ internal object BeforePrimaryDeclaration : InsertionPoint, Logging {
 
     override fun locate(text: Text): TextCoordinates {
         var isBlockComment = false
-        val lines = text.lines()
+        val lines = text.splitLines()
         lines.forEachIndexed { index, line ->
             if (line.contains("/*")) {
                 isBlockComment = true

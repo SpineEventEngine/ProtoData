@@ -29,6 +29,7 @@ package io.spine.protodata.renderer
 import com.google.common.base.Preconditions.checkArgument
 import com.google.common.base.Splitter
 import io.spine.protodata.renderer.InsertionPoint.Companion.COMMENT_PADDING_LENGTH
+import io.spine.protodata.splitLines
 import io.spine.text.Text
 import io.spine.text.TextFactory.checkNoSeparator
 import io.spine.text.TextFactory.text
@@ -236,8 +237,7 @@ private constructor(
      * Obtains the entire content of this file as a list of lines.
      */
     public fun lines(): List<String> {
-        val lineSplitter = Splitter.on(Pattern.compile("\n|(\r\n)|\r"))
-        return lineSplitter.splitToList(text().value)
+        return text().splitLines()
     }
 
     public fun text(): Text {
