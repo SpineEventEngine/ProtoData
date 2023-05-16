@@ -55,23 +55,10 @@ class `Insertion points should appear at` {
     fun preparePipeline(@TempDir path: Path) {
         file = path / "sources.kt"
         file.createFile()
-//        file.writeLines(
-//            listOf(
-//                "class LabMouse {",
-//                "    companion object {",
-//                "        const val I_AM_CONSTANT: String = \"!!\"",
-//                "    }",
-//                "   ",
-//                "    fun letsHaveFun(): String {",
-//                "        return \"trololo\"",
-//                "    }",
-//                "}"
-//            )
-//        )
         file.writeText("""
             class LabMouse {
                 companion object {
-                    const val I_AM_CONSTANT: String = \"!!\"
+                    const val I_AM_CONSTANT: String = "!!"
                 }
                
                 fun letsHaveFun(): String {
