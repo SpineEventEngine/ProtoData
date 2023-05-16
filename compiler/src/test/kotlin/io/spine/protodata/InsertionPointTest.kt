@@ -40,9 +40,7 @@ import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
 import kotlin.io.path.readLines
-import kotlin.io.path.writeLines
-import org.junit.internal.Throwables
-import org.junit.jupiter.api.Assertions
+import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -57,19 +55,30 @@ class `Insertion points should appear at` {
     fun preparePipeline(@TempDir path: Path) {
         file = path / "sources.kt"
         file.createFile()
-        file.writeLines(
-            listOf(
-                "class LabMouse {",
-                "    companion object {",
-                "        const val I_AM_CONSTANT: String = \"!!\"",
-                "    }",
-                "   ",
-                "    fun letsHaveFun(): String {",
-                "        return \"trololo\"",
-                "    }",
-                "}"
-            )
-        )
+//        file.writeLines(
+//            listOf(
+//                "class LabMouse {",
+//                "    companion object {",
+//                "        const val I_AM_CONSTANT: String = \"!!\"",
+//                "    }",
+//                "   ",
+//                "    fun letsHaveFun(): String {",
+//                "        return \"trololo\"",
+//                "    }",
+//                "}"
+//            )
+//        )
+        file.writeText("""
+            class LabMouse {
+                companion object {
+                    const val I_AM_CONSTANT: String = \"!!\"
+                }
+               
+                fun letsHaveFun(): String {
+                    return \"trololo\"
+                }
+            }
+        """.trimIndent())
         Pipeline(
             plugins = listOf(),
             renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
