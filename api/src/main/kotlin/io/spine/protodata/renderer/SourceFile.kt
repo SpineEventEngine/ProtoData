@@ -236,7 +236,8 @@ private constructor(
      * Obtains the entire content of this file as a list of lines.
      */
     public fun lines(): List<String> {
-        return text().lines()
+        val lineSplitter = Splitter.on(Pattern.compile("\n|(\r\n)|\r"))
+        return lineSplitter.splitToList(text().value)
     }
 
     public fun text(): Text {
