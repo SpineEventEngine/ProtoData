@@ -27,6 +27,7 @@
 package io.spine.protodata.test.annotation;
 
 import io.spine.protodata.TextCoordinates;
+import io.spine.protodata.Texts;
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.protodata.test.FieldId;
 import io.spine.text.Position;
@@ -67,7 +68,7 @@ final class FieldGetter implements InsertionPoint {
         String fieldName = camelCase(field.getField().getValue());
         String getterName = "get" + fieldName;
         Pattern pattern = Pattern.compile("public .+ " + getterName);
-        List<String> lines = text.lines();
+        List<String> lines = Texts.splitLines(text);
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             if (pattern.matcher(line).find()) {

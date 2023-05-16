@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:JvmName("Texts")
+
 package io.spine.protodata
 
 import io.spine.protodata.renderer.SourceFile
