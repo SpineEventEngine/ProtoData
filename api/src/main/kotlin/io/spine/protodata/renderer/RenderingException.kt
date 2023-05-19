@@ -26,11 +26,12 @@
 
 package io.spine.protodata.renderer
 
-import java.lang.String.format
-
+/**
+ * An exception thrown when insertion-point-based rendering fails.
+ */
 public class RenderingException(
-    message: String, vararg args: Any
-) : RuntimeException(format(message, args)) {
+    message: String
+) : RuntimeException(message) {
     private companion object {
         private const val serialVersionUID: Long = 6688853873215023495L
     }
