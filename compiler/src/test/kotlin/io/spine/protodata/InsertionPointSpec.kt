@@ -46,8 +46,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-@DisplayName("Insertion points should")
-class `Insertion points should appear at` {
+@DisplayName("Insertion points should appear at")
+class InsertionPointsSpec {
 
     private lateinit var file: Path
 

@@ -265,7 +265,7 @@ public sealed class LineNumber {
  * See [this thread](https://youtrack.jetbrains.com/issue/KT-46144) for more details.
  */
 @Deprecated("Use Protobuf-based `TextCoordinates.whole_line` instead.")
-internal data class LineIndex constructor(val value: Int) : LineNumber() {
+internal data class LineIndex(val value: Int) : LineNumber() {
     init {
         if (value < 0) {
             throw IndexOutOfBoundsException("Invalid line number: `$value`.")
