@@ -31,5 +31,11 @@ package io.spine.protodata
 import io.spine.protodata.renderer.SourceFile
 import io.spine.text.Text
 
+/**
+ * Splits this text into lines by the line break characters.
+ *
+ * Empty lines are never skipped. The lines are neither trimmed nor modified in any other way.
+ * The lines don't contain line break characters at the end.
+ */
 public fun Text.splitLines(): List<String> =
     SourceFile.lineSplitter.splitToList(value)
