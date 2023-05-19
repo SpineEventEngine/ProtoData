@@ -33,7 +33,6 @@ import io.spine.protodata.test.AnnotationInsertionPoint.IMPORT
 import io.spine.tools.code.CommonLanguages.Java
 import kotlin.io.path.Path
 
-
 public class NullableAnnotationRenderer : Renderer(Java) {
 
     override fun render(sources: SourceFileSet) {

@@ -240,6 +240,9 @@ private constructor(
         return text().splitLines()
     }
 
+    /**
+     * Obtains the text content of this source file.
+     */
     public fun text(): Text {
         initializeCode()
         return text(code)
