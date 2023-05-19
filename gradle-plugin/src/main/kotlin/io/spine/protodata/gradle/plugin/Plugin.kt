@@ -46,18 +46,18 @@ import io.spine.tools.gradle.protobuf.protobufGradlePluginAdapter
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
+import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -324,6 +324,11 @@ private fun Extension.configureSourceSet(sourceSet: SourceSet) {
  * Configures given compilation tasks NOT to take source files from
  * the given [sourceDir].
  *
+ * ProtoData saves processed files into separate directories and adds them to the source sets.
+ * This method removes files that were NOT processed by ProtoData from the compiler's classpath
+ * to avoid duplications and clashes. The `sourceDir` is the input directory for ProtoData. Java and
+ * Kotlin compilers must use ProtoData's output directories as their inputs.
+ *
  * @param sourceDir
  *          the directory (by default it's `build/generated-proto`) which must be excluded
  *          from compilation to avoid double class errors
@@ -337,21 +342,22 @@ private fun configureCompileTasks(
     javaCompile: JavaCompile,
     kotlinCompile: KotlinCompile<*>?
 ) {
-    // The predicate to filter out files from `build/generated-proto` directory.
-    val notInSourceDir: (File) -> Boolean = { file -> !file.residesIn(sourceDir) }
+    val pathToExclude = sourceDir.asFile.canonicalPath
 
-    // Re-set sources for `JavaCompile` assuming filtering.
-    javaCompile.source = javaCompile.source.filter(notInSourceDir).asFileTree
+    // Exclude source files located under the given path.
+    //
+    // Regular `exclude(String)` only works with relative paths and it unable to filter by
+    // source sets.
+    val predicate  = { f: FileTreeElement ->
+        f.file.canonicalPath.startsWith(pathToExclude)
+    }
 
-    // Do the same for `KotlinCompile`, if it's present in the project.
-    @Suppress("IfThenToSafeAccess") // Looks more readable.
-    if (kotlinCompile is KotlinCompileTool) {
-        val filteredKotlin = kotlinCompile.sources.filter(notInSourceDir).toSet()
-        with(kotlinCompile.sources as ConfigurableFileCollection) {
-            setFrom(filteredKotlin)
-        }
-    } else if (kotlinCompile != null) {
-        kotlinCompile.project.logger.warn(
+    javaCompile.exclude(predicate)
+
+    if (kotlinCompile is PatternFilterable) {
+        kotlinCompile.exclude(predicate)
+    } else {
+        kotlinCompile?.project?.logger?.warn(
             "ProtoData plugin cannot configure `{}` of type `{}`.",
             kotlinCompile.path, kotlinCompile.javaClass
         )
@@ -374,9 +380,6 @@ private fun Project.configureIdea(ext: Extension) {
 
 private fun filterSources(sources: Set<File>, excludeDir: File): Set<File> =
     sources.filter { !it.residesIn(excludeDir) }.toSet()
-
-private fun File.residesIn(directory: Directory): Boolean =
-    residesIn(directory.asFile)
 
 private fun File.residesIn(directory: File): Boolean =
     canonicalFile.startsWith(directory.absolutePath)
