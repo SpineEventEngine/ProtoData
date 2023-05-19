@@ -25,15 +25,6 @@
  */
 
 import Module_gradle.Module
-import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.errorprone
-import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.idea
-import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.java
-import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.kotlin
-import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.main
-import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.sourceSets
-import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.test
-import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.testImplementation
-import gradle.kotlin.dsl.accessors._c8d696934cdd5667eb93359e059b7e2e.testRuntimeOnly
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.JUnit
