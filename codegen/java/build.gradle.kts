@@ -40,7 +40,7 @@ dependencies {
     api(JavaPoet.lib)
 
     testImplementation(JavaX.annotations)
-    testImplementation(Spine(project).testUtilTime)
+    testImplementation(Spine.testUtilTime)
     testImplementation(project(":test-env"))
 }
 

@@ -93,12 +93,11 @@ project.run {
 }
 
 fun Module.setDependencies() {
-    val spine = Spine(this)
     dependencies {
         ErrorProne.apply {
             errorprone(core)
         }
-        testImplementation(spine.coreJava.testUtilServer)
+        testImplementation(Spine.CoreJava.testUtilServer)
         testImplementation(kotlin("test-junit5"))
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)

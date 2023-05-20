@@ -27,9 +27,8 @@
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
-    val spine = io.spine.internal.dependency.Spine(project)
     dependencies {
-        classpath(spine.mcJavaPlugin)
+        classpath(spine = io.spine.internal.dependency.Spine.mcJavaPlugin)
     }
 }
 

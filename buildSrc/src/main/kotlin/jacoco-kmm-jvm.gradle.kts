@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,54 +24,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.Spine
+import java.io.File
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.getting
+import org.gradle.kotlin.dsl.jacoco
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
-    `build-proto-model`
-}
-
-dependencies {
-    listOf(
-        Spine.base,
-        Spine.CoreJava.server,
-        Spine.toolBase,
-    ).forEach {
-        api(it)
-    }
-
-    api(Spine.logging)
-    runtimeOnly(Spine.loggingBackend)
-    runtimeOnly(Spine.loggingContext)
-    implementation(Spine.reflect)
-
-    with(Jackson) {
-        implementation(databind)
-        implementation(dataformatYaml)
-        runtimeOnly(moduleKotlin)
-    }
-
-    testImplementation(project(":test-env"))
+    jacoco
 }
 
 /**
- * Force `generated` directory and Kotlin code generation.
+ * Configures [JacocoReport] task to run in a Kotlin KMM project for `commonMain` and `jvmMain`
+ * source sets.
+ *
+ * This script plugin must be applied using the following construct at the end of
+ * a `build.gradle.kts` file of a module:
+ *
+ * ```kotlin
+ * apply(plugin="jacoco-kmm-jvm")
+ * ```
+ * Please do not apply this script plugin in the `plugins {}` block because `jacocoTestReport`
+ * task is not yet available at this stage.
  */
-protobuf {
-//    generatedFilesBaseDir = "$projectDir/generated"
-    generateProtoTasks.all().configureEach {
-        builtins.maybeCreate("kotlin")
-    }
-}
+private val about = ""
 
-idea {
-    module {
-        generatedSourceDirs.apply {
-            add(file("$projectDir/generated/main/kotlin"))
-            add(file("$projectDir/generated/test/kotlin"))
-        }
-        testSources.from(
-            project.file("$projectDir/generated/test/kotlin"),
-        )
-    }
+/**
+ * Configure Jacoco task with custom input from this KMM project.
+ */
+val jacocoTestReport: JacocoReport by tasks.getting(JacocoReport::class) {
+
+    val classFiles = File("${buildDir}/classes/kotlin/jvm/")
+        .walkBottomUp()
+        .toSet()
+    classDirectories.setFrom(classFiles)
+
+    val coverageSourceDirs = arrayOf(
+        "src/commonMain",
+        "src/jvmMain"
+    )
+    sourceDirectories.setFrom(files(coverageSourceDirs))
+
+    executionData.setFrom(files("${buildDir}/jacoco/jvmTest.exec"))
 }

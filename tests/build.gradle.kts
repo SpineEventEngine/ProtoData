@@ -54,15 +54,14 @@ subprojects {
     repositories.standardToSpineSdk()
 
     val protoDataVersion: String by extra
-    val spine = io.spine.internal.dependency.Spine(project)
     configurations {
         forceVersions()
         all {
             resolutionStrategy {
                 force(
-                    spine.base,
-                    spine.toolBase,
-                    spine.validation.runtime,
+                    Spine.base,
+                    Spine.toolBase,
+                    Spine.validation.runtime,
                     "io.spine.protodata:compiler:$protoDataVersion",
                     "io.spine.protodata:codegen-java:$protoDataVersion"
                 )
