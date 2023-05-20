@@ -40,10 +40,6 @@ object Spine {
      */
     object ArtifactVersion {
 
-        /** The version of [ProtoData]. */
-        @Deprecated("Please use `ProtoData.version` instead.")
-        const val protoData = ProtoData.version
-
         /** The version of [Spine.base]. */
         const val base = "2.0.0-SNAPSHOT.180"
 

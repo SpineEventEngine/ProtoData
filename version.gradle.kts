@@ -33,4 +33,3 @@
  * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
  */
 val protoDataVersion: String by extra("0.8.2")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.162")
