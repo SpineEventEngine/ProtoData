@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.8.1</version>
+<version>0.8.2</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -38,7 +38,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>com.github.ajalt.clikt</groupId>
     <artifactId>clikt</artifactId>
-    <version>3.2.0</version>
+    <version>3.5.2</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -50,19 +50,19 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>com.google.protobuf</groupId>
     <artifactId>protobuf-java</artifactId>
-    <version>3.22.0</version>
+    <version>3.22.2</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>com.google.protobuf</groupId>
     <artifactId>protobuf-java-util</artifactId>
-    <version>3.22.0</version>
+    <version>3.22.2</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>com.google.protobuf</groupId>
     <artifactId>protobuf-kotlin</artifactId>
-    <version>3.22.0</version>
+    <version>3.22.2</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -74,31 +74,31 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.grpc</groupId>
     <artifactId>grpc-protobuf</artifactId>
-    <version>1.52.0</version>
+    <version>1.53.0</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>io.grpc</groupId>
     <artifactId>grpc-stub</artifactId>
-    <version>1.52.0</version>
+    <version>1.53.0</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-base</artifactId>
-    <version>2.0.0-SNAPSHOT.170</version>
+    <version>2.0.0-SNAPSHOT.180</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-logging</artifactId>
-    <version>2.0.0-SNAPSHOT.170</version>
+    <version>2.0.0-SNAPSHOT.183</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-reflect</artifactId>
-    <version>2.0.0-SNAPSHOT.170</version>
+    <version>2.0.0-SNAPSHOT.182</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -116,7 +116,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.validation</groupId>
     <artifactId>spine-validation-java-runtime</artifactId>
-    <version>2.0.0-SNAPSHOT.90</version>
+    <version>2.0.0-SNAPSHOT.80</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -128,13 +128,13 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-reflect</artifactId>
-    <version>1.8.0</version>
+    <version>1.8.10</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-stdlib-jdk8</artifactId>
-    <version>1.8.0</version>
+    <version>1.8.10</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -147,6 +147,18 @@ all modules and does not describe the project structure per-subproject.
     <groupId>com.google.flogger</groupId>
     <artifactId>flogger-system-backend</artifactId>
     <version>0.7.4</version>
+    <scope>runtime</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.spine</groupId>
+    <artifactId>spine-logging-backend</artifactId>
+    <version>2.0.0-SNAPSHOT.183</version>
+    <scope>runtime</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.spine</groupId>
+    <artifactId>spine-logging-context</artifactId>
+    <version>2.0.0-SNAPSHOT.183</version>
     <scope>runtime</scope>
   </dependency>
   <dependency>
@@ -192,21 +204,27 @@ all modules and does not describe the project structure per-subproject.
     <scope>test</scope>
   </dependency>
   <dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-test-junit5</artifactId>
+    <version>1.8.10</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
     <groupId>org.junit.jupiter</groupId>
     <artifactId>junit-jupiter-engine</artifactId>
-    <version>5.9.2</version>
+    <version>5.9.3</version>
     <scope>test</scope>
   </dependency>
   <dependency>
     <groupId>org.junit.jupiter</groupId>
     <artifactId>junit-jupiter-params</artifactId>
-    <version>5.9.2</version>
+    <version>5.9.3</version>
     <scope>test</scope>
   </dependency>
   <dependency>
     <groupId>com.google.errorprone</groupId>
     <artifactId>error_prone_core</artifactId>
-    <version>2.16</version>
+    <version>2.18.0</version>
   </dependency>
   <dependency>
     <groupId>com.google.errorprone</groupId>
@@ -222,7 +240,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>com.google.protobuf</groupId>
     <artifactId>protoc</artifactId>
-    <version>3.22.0</version>
+    <version>3.22.2</version>
   </dependency>
   <dependency>
     <groupId>io.gitlab.arturbosch.detekt</groupId>
@@ -237,23 +255,23 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.protodata</groupId>
     <artifactId>protodata-fat-cli</artifactId>
-    <version>0.7.5</version>
+    <version>0.6.1</version>
   </dependency>
   <dependency>
     <groupId>io.spine.protodata</groupId>
     <artifactId>protodata-protoc</artifactId>
-    <version>0.7.5</version>
+    <version>0.6.1</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-mc-java-checks</artifactId>
-    <version>2.0.0-SNAPSHOT.145</version>
+    <version>2.0.0-SNAPSHOT.132</version>
     <scope>provided</scope>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-mc-java-plugins</artifactId>
-    <version>2.0.0-SNAPSHOT.145</version>
+    <version>2.0.0-SNAPSHOT.132</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
@@ -263,12 +281,12 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-testlib</artifactId>
-    <version>2.0.0-SNAPSHOT.170</version>
+    <version>2.0.0-SNAPSHOT.183</version>
   </dependency>
   <dependency>
     <groupId>io.spine.validation</groupId>
     <artifactId>spine-validation-java-bundle</artifactId>
-    <version>2.0.0-SNAPSHOT.90</version>
+    <version>2.0.0-SNAPSHOT.80</version>
   </dependency>
   <dependency>
     <groupId>org.jacoco</groupId>
@@ -283,27 +301,27 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>dokka-analysis</artifactId>
-    <version>1.7.20</version>
+    <version>1.8.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>dokka-base</artifactId>
-    <version>1.7.20</version>
+    <version>1.8.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>dokka-core</artifactId>
-    <version>1.7.20</version>
+    <version>1.8.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
     <artifactId>javadoc-plugin</artifactId>
-    <version>1.7.20</version>
+    <version>1.8.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-compiler-embeddable</artifactId>
-    <version>1.8.0</version>
+    <version>1.8.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
@@ -313,22 +331,17 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-klib-commonizer-embeddable</artifactId>
-    <version>1.8.0</version>
+    <version>1.8.10</version>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-scripting-compiler-embeddable</artifactId>
-    <version>1.8.0</version>
-  </dependency>
-  <dependency>
-    <groupId>org.jetbrains.kotlin</groupId>
-    <artifactId>kotlin-test-junit5</artifactId>
     <version>1.8.10</version>
   </dependency>
   <dependency>
     <groupId>org.junit.jupiter</groupId>
     <artifactId>junit-jupiter</artifactId>
-    <version>5.9.2</version>
+    <version>5.9.3</version>
   </dependency>
 </dependencies>
 
