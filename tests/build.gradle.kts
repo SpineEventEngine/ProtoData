@@ -27,12 +27,14 @@
 import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.forceVersions
+import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
+import io.spine.internal.gradle.protobuf.excludeProtocOutput
+import io.spine.internal.gradle.protobuf.setupKotlinCompile
 import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 
 @Suppress("RemoveRedundantQualifierName")
 plugins {
@@ -62,6 +64,7 @@ subprojects {
                     Spine.base,
                     Spine.toolBase,
                     Spine.validation.runtime,
+                    Spine.logging,
                     "io.spine.protodata:compiler:$protoDataVersion",
                     "io.spine.protodata:codegen-java:$protoDataVersion"
                 )
@@ -72,6 +75,10 @@ subprojects {
     protobuf {
         protoc {
             artifact = Protobuf.compiler
+        }
+        generateProtoTasks.all().configureEach {
+            excludeProtocOutput()
+            setupKotlinCompile()
         }
     }
 
