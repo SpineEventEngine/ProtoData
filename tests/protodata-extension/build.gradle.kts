@@ -28,7 +28,7 @@
 buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
     dependencies {
-        classpath(spine = io.spine.internal.dependency.Spine.mcJavaPlugin)
+        classpath(io.spine.internal.dependency.Spine.McJava.pluginLib)
     }
 }
 
