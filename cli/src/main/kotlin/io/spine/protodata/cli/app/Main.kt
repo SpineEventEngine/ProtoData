@@ -302,12 +302,13 @@ internal class Run(version: String) : CliktCommand(
             exitProcess(1)
         }
     }
-}
 
-/**
- * Prints the given error [message] to the screen.
- */
-private fun printError(message: String?) = TermUi.echo(message, err = true)
+
+    /**
+     * Prints the given error [message] to the screen.
+     */
+    private fun printError(message: String?) = echo(message, trailingNewline = false, err = true)
+}
 
 /**
  * Creates a list that contain a single, empty source set.
