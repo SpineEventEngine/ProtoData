@@ -173,10 +173,6 @@ internal class Run(version: String) : CliktCommand(
         val registry = createRegistry()
         val request = loadRequest(registry)
         val config = resolveConfig()
-
-        // TODO: Print out command line with parameters, if command-line parameter
-        // (e.g. --debug or --info) is passed.
-
         Pipeline(plugins, renderer, sources, request, config)()
     }
 

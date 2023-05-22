@@ -161,21 +161,6 @@ public object ConfigFormatParam : Parameter(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }
 }
 
-public object InfoLoggingParam : Parameter(
-    name = "--info",
-    shortName = "-i",
-    help = """
-        Set log level to info `INFO`.        
-    """
-)
-
-public object DebugLoggingParam : Parameter(
-    name = "--debug",
-    shortName = "-d",
-    help = """
-        Set log level to `DEBUG`.        
-    """
-)
 /**
  * Abbreviations for short parameter names to be used inside `help` texts.
  */
