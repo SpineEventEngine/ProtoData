@@ -88,7 +88,6 @@ public class Plugin : GradlePlugin<Project> {
             createConfigurations(version)
             createTasks(ext)
             configureWithProtobufPlugin(version, ext)
-            //configureSourceSets(ext)
             configureIdea(ext)
         }
     }
