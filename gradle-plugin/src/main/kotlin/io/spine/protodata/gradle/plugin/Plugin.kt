@@ -330,8 +330,8 @@ private fun Extension.configureSourceSet(sourceSet: SourceSet) {
  * Kotlin compilers must use ProtoData's output directories as their inputs.
  *
  * @param sourceDir
- *          the directory (by default it's `build/generated-proto`) which must be excluded
- *          from compilation to avoid double class errors
+ *          the directory used by Protobuf Gradle Plugin (`build/generated/source/proto`)
+ *          which must be excluded from compilation to avoid double class errors
  * @param javaCompile
  *          compilation task for Java in the configured project
  * @param kotlinCompile
