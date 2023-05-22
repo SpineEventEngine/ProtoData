@@ -56,7 +56,6 @@ dependencies {
  * Force `generated` directory and Kotlin code generation.
  */
 protobuf {
-    generatedFilesBaseDir = "$projectDir/generated"
     generateProtoTasks.all().configureEach {
         builtins.maybeCreate("kotlin")
     }
