@@ -24,21 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.protobuf.setup
-
-plugins {
-    id("java-library")
-    id("com.google.protobuf")
-}
-
-// For generating test fixtures. See `src/test/proto`.
-protobuf {
-    configurations.excludeProtobufLite()
-    protoc {
-        artifact = Protobuf.compiler
-    }
-    generateProtoTasks.all().configureEach {
-        setup()
-    }
-}
+//import io.spine.internal.dependency.Protobuf
+//import io.spine.internal.gradle.protobuf.setup
+//
+//plugins {
+//    id("java-library")
+//    id("com.google.protobuf")
+//}
+//
+//// For generating test fixtures. See `src/test/proto`.
+//protobuf {
+//    configurations.excludeProtobufLite()
+//    protoc {
+//        artifact = Protobuf.compiler
+//    }
+//    generateProtoTasks.all().configureEach {
+//        setup()
+//    }
+//}
