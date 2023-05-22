@@ -328,7 +328,11 @@ internal constructor(
     }
 }
 
-
+/**
+ * A fluent builder for inserting code into pre-prepared inline insertion points.
+ *
+ * @see SourceFile.atInline
+ */
 public sealed interface SourceAtPointInline {
     /**
      * Adds the specified code fragment into the insertion point.
@@ -347,14 +351,14 @@ public sealed interface SourceAtPointInline {
  */
 internal object Unlocated : SourceAtPointInline, Logging {
     override fun add(codeFragment: String) {
-//        throw IllegalStateException("!!!")
+        // Do nothind.
     }
 }
 
 /**
- * A fluent builder for inserting code into pre-prepared inline insertion points.
+ * A [SourceAtPointInline] at a point at a specific point or points in the file.
  *
- * @see SourceFile.atInline
+ * The points are defined by the insertion point specified via the [point].
  */
 internal class Located(
     private val file: SourceFile,
