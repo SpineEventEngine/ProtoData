@@ -64,6 +64,7 @@ subprojects {
                     Spine.toolBase,
                     Spine.validation.runtime,
                     Spine.logging,
+                    Spine.reflect,
                     "io.spine.protodata:compiler:$protoDataVersion",
                     "io.spine.protodata:codegen-java:$protoDataVersion"
                 )
