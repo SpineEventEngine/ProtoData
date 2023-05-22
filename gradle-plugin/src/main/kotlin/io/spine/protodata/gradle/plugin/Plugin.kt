@@ -46,18 +46,13 @@ import io.spine.tools.gradle.protobuf.protobufGradlePluginAdapter
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.Directory
-import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -93,7 +88,7 @@ public class Plugin : GradlePlugin<Project> {
             createConfigurations(version)
             createTasks(ext)
             configureWithProtobufPlugin(version, ext)
-            configureSourceSets(ext)
+            //configureSourceSets(ext)
             configureIdea(ext)
         }
     }
@@ -262,8 +257,48 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
                     " with the option `$nameEncoded`.")
         }
     }
+    task.excludeProtocOutput()
     handleLaunchTaskDependency(task, sourceSet, ext)
 }
+
+/**
+ * Exclude [GenerateProtoTask.outputBaseDir] from Java source set directories to avoid
+ * duplicated source code files.
+ */
+private fun GenerateProtoTask.excludeProtocOutput() {
+    val protocOutputDir = File(outputBaseDir).parentFile
+    val java: SourceDirectorySet = sourceSet.java
+
+    // Filter out directories belonging to `build/generated/source/proto`.
+    val newSourceDirectories = java.sourceDirectories
+        .filter { !it.residesIn(protocOutputDir) }
+        .toSet()
+    java.setSrcDirs(listOf<String>())
+    java.srcDirs(newSourceDirectories)
+
+    // Add copied files to the Java source set.
+    java.srcDir(generatedDir("java"))
+    java.srcDir(generatedDir("kotlin"))
+}
+
+/**
+ * Obtains the `generated` directory for the source set of the task.
+ *
+ * If [language] is specified returns the subdirectory for this language.
+ */
+private fun GenerateProtoTask.generatedDir(language: String = ""): File {
+    val path = "${project.targetBaseDir}/${sourceSet.name}/$language"
+    return File(path)
+}
+
+/**
+ * Obtains the name of the directory where ProtoData places generated files.
+ */
+private val Project.targetBaseDir: String
+    get() {
+        val ext = extensions.getByType(CodegenSettings::class.java)
+        return ext.targetBaseDir.toString()
+    }
 
 /**
  * Makes a [LaunchProtoData], if it exists for the given [sourceSet], depend on
@@ -290,82 +325,9 @@ private fun Project.handleLaunchTaskDependency(
     }
 }
 
-private fun Project.configureSourceSets(ext: Extension) {
-    afterEvaluate {
-        sourceSets.forEach(ext::configureSourceSet)
-    }
-}
-
-private fun Extension.configureSourceSet(sourceSet: SourceSet) {
-    val sourceDirs = sourceDirs(sourceSet).getOrElse(listOf())
-    val targetDirs = targetDirs(sourceSet).get()
-
-    sourceSet.java.srcDir(targetDirs)
-
-    val kotlin = sourceSet.extensions.findByName("kotlin") as SourceDirectorySet?
-    kotlin?.apply {
-        srcDir(targetDirs)
-    }
-
-    if (sourceDirs.isEmpty()) {
-        return
-    }
-    val javaCompile = project.javaCompileFor(sourceSet)!!
-    val kotlinCompile: KotlinCompile<*>? = project.kotlinCompileFor(sourceSet)
-    sourceDirs.asSequence()
-        .zip(targetDirs.asSequence())
-        .filter { it.first != it.second }
-        .forEach { (sourceDir, _) ->
-            configureCompileTasks(sourceDir, javaCompile, kotlinCompile)
-        }
-}
-
-/**
- * Configures given compilation tasks NOT to take source files from
- * the given [sourceDir].
- *
- * ProtoData saves processed files into separate directories and adds them to the source sets.
- * This method removes files that were NOT processed by ProtoData from the compiler's classpath
- * to avoid duplications and clashes. The `sourceDir` is the input directory for ProtoData. Java and
- * Kotlin compilers must use ProtoData's output directories as their inputs.
- *
- * @param sourceDir
- *          the directory (by default it's `build/generated-proto`) which must be excluded
- *          from compilation to avoid double class errors
- * @param javaCompile
- *          compilation task for Java in the configured project
- * @param kotlinCompile
- *          is non-null if Kotlin is enabled in the configured project
- */
-private fun configureCompileTasks(
-    sourceDir: Directory,
-    javaCompile: JavaCompile,
-    kotlinCompile: KotlinCompile<*>?
-) {
-    val pathToExclude = sourceDir.asFile.canonicalPath
-
-    // Exclude source files located under the given path.
-    //
-    // Regular `exclude(String)` only works with relative paths and it unable to filter by
-    // source sets.
-    val predicate  = { f: FileTreeElement ->
-        f.file.canonicalPath.startsWith(pathToExclude)
-    }
-
-    javaCompile.exclude(predicate)
-
-    if (kotlinCompile is PatternFilterable) {
-        kotlinCompile.exclude(predicate)
-    } else {
-        kotlinCompile?.project?.logger?.warn(
-            "ProtoData plugin cannot configure `{}` of type `{}`.",
-            kotlinCompile.path, kotlinCompile.javaClass
-        )
-    }
-}
-
 private fun Project.configureIdea(ext: Extension) {
     afterEvaluate {
+        @Suppress("DEPRECATION")
         val duplicateClassesDir = file(ext.srcBaseDir)
         pluginManager.withPlugin("idea") {
             val idea = extensions.getByType<IdeaModel>()

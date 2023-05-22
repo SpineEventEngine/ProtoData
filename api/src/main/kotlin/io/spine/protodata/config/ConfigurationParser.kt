@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.google.common.io.ByteSource
 import com.google.protobuf.Message
-import io.spine.json.Json.fromJson
 import io.spine.protobuf.defaultInstance
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.config.ConfigurationFormat.JSON
@@ -41,6 +40,7 @@ import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
 import io.spine.protodata.config.ConfigurationFormat.UNRECOGNIZED
 import io.spine.protodata.config.ConfigurationFormat.YAML
+import io.spine.type.fromJson
 import java.nio.charset.Charset.defaultCharset
 
 /**
@@ -93,7 +93,7 @@ private object ProtoJsonParser : ProtobufParser() {
     override fun doParse(source: ByteSource, cls: Class<out Message>): Message {
         val charSource = source.asCharSource(defaultCharset())
         val json = charSource.read()
-        return fromJson(json, cls)
+        return cls.fromJson(json)
     }
 }
 

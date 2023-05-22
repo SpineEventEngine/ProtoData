@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,35 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.publish.proto
-
-import org.gradle.api.Project
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 /**
- * Registers an `assembleProto` Gradle task which locates and assembles all `.proto` files
- * in a Gradle project.
- *
- * The result of assembly is a [Jar] task with an archive output classified as "proto".
+ * This object provides high-level constants, like version of JVM, to be used
+ * throughout the project.
  */
-object AssembleProto {
-
-    private const val taskName = "assembleProto"
-
-    /**
-     * Performs the task registration for the passed [project].
-     */
-    fun registerIn(project: Project): TaskProvider<Jar> {
-        val task = project.tasks.register(taskName, Jar::class.java) {
-            description =
-                "Assembles a JAR artifact with all Proto definitions from the classpath."
-            from(project.protoFiles())
-            include {
-                it.file.isProtoFileOrDir()
-            }
-            archiveClassifier.set("proto")
-        }
-        return task
-    }
+object BuildSettings {
+    private const val JVM_VERSION = 11
+    val javaVersion: JavaLanguageVersion = JavaLanguageVersion.of(JVM_VERSION)
 }

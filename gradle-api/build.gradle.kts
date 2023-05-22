@@ -28,8 +28,7 @@ import io.spine.internal.dependency.Spine
 
 dependencies {
     compileOnly(gradleApi())
-    val spine = Spine(project)
-    implementation(spine.toolBase)
+    implementation(Spine.toolBase)
     testImplementation(gradleApi())
-    testImplementation(spine.pluginTestlib)
+    testImplementation(Spine.pluginTestlib)
 }
