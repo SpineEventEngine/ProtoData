@@ -28,13 +28,6 @@
 
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine.McJava
-import io.spine.internal.gradle.protobuf.setupKotlinCompile
-import io.spine.internal.gradle.protobuf.excludeProtocOutput
-
-plugins {
-    id("java-library")
-    id("com.google.protobuf")
-}
 
 /**
  * The dependency onto Spine Validation causes the circular dependency in this Gradle project.
@@ -49,15 +42,4 @@ apply {
 
 dependencies {
     Protobuf.libs.forEach { "api"(it) }
-}
-
-protobuf {
-    configurations.excludeProtobufLite()
-    protoc {
-        artifact = Protobuf.compiler
-    }
-    generateProtoTasks.all().configureEach {
-        excludeProtocOutput()
-        setupKotlinCompile()
-    }
 }

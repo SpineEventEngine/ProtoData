@@ -63,7 +63,7 @@ object Spine {
         const val mc = "2.0.0-SNAPSHOT.130"
 
         /** The version of [McJava]. */
-        const val mcJava = "2.0.0-SNAPSHOT.132"
+        const val mcJava = "2.0.0-SNAPSHOT.147"
 
         /** The version of [Spine.baseTypes]. */
         const val baseTypes = "2.0.0-SNAPSHOT.120"

@@ -30,8 +30,6 @@ import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
-import io.spine.internal.gradle.protobuf.excludeProtocOutput
-import io.spine.internal.gradle.protobuf.setupKotlinCompile
 import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -75,10 +73,6 @@ subprojects {
     protobuf {
         protoc {
             artifact = Protobuf.compiler
-        }
-        generateProtoTasks.all().configureEach {
-            excludeProtocOutput()
-            setupKotlinCompile()
         }
     }
 
