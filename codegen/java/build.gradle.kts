@@ -27,6 +27,7 @@
 import io.spine.internal.dependency.JavaPoet
 import io.spine.internal.dependency.JavaX
 import io.spine.internal.dependency.Spine
+import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 plugins {
     `build-proto-model`
@@ -44,16 +45,16 @@ dependencies {
 }
 
 // Allows test suites to fetch generated Java files as resources.
-//protobuf {
-//    generateProtoTasks {
-//        ofSourceSet("test").forEach { task ->
-//            tasks.processTestResources {
-//                from(task.outputs)
-//                duplicatesStrategy = INCLUDE
-//            }
-//        }
-//    }
-//}
+protobuf {
+    generateProtoTasks {
+        ofSourceSet("test").forEach { task ->
+            tasks.processTestResources {
+                from(task.outputs)
+                duplicatesStrategy = INCLUDE
+            }
+        }
+    }
+}
 
 // For some reason, `validation-runtime` dependency appears on both compile and runtime classpaths.
 // This expression explicitly excludes this dependency from the list.
