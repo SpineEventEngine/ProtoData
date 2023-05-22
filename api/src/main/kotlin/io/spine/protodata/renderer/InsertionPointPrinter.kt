@@ -26,11 +26,14 @@
 
 package io.spine.protodata.renderer
 
+import io.spine.core.userId
 import io.spine.protodata.TextCoordinates
 import io.spine.protodata.TextCoordinates.KindCase.END_OF_FILE
 import io.spine.protodata.TextCoordinates.KindCase.INLINE
 import io.spine.protodata.TextCoordinates.KindCase.WHOLE_LINE
-import io.spine.protodata.renderer.InsertionPoint.Companion.COMMENT_PADDING_LENGTH
+import io.spine.protodata.event.insertionPointPrinted
+import io.spine.protodata.filePath
+import io.spine.server.integration.ThirdPartyContext
 import io.spine.tools.code.Language
 
 /**
@@ -64,16 +67,18 @@ public abstract class InsertionPointPrinter(
                 val lines = file.lines().toMutableList()
                 when (coordinates.kindCase) {
                     INLINE -> {
-                        renderInlinePoint(coordinates, lines, point)
+                        renderInlinePoint(coordinates, lines, point, file)
                     }
                     WHOLE_LINE -> {
                         val comment = target.comment(point.codeLine)
                         lines.checkLineNumber(coordinates.wholeLine)
                         lines.add(coordinates.wholeLine, comment)
+                        reportPoint(file, point.label, comment)
                     }
                     END_OF_FILE -> {
                         val comment = target.comment(point.codeLine)
                         lines.add(comment)
+                        reportPoint(file, point.label, comment)
                     }
                     else -> {} // No need to add anything.
                                // Insertion point should not appear in the file.
@@ -87,6 +92,7 @@ public abstract class InsertionPointPrinter(
         coordinates: TextCoordinates,
         lines: MutableList<String>,
         point: InsertionPoint,
+        file: SourceFile
     ) {
         val position = coordinates.inline
         val lineIndex = position.cursor.line
@@ -95,21 +101,26 @@ public abstract class InsertionPointPrinter(
         originalLine.checkLinePosition(position.cursor.column)
         val lineStart = originalLine.substring(0, position.cursor.column)
         val lineEnd = originalLine.substring(position.cursor.column)
-        val label = point.codeLine
-        var comment = target.comment(label)
-        val labelEndIndex = comment.indexOf(label) + label.length
-        val paddingAfterLabel = comment.length - labelEndIndex
-        if (paddingAfterLabel > COMMENT_PADDING_LENGTH) {
-            error("Comment padding after insertion point ${point.label} is loo long." +
-                    " Expected $COMMENT_PADDING_LENGTH symbols but found $paddingAfterLabel.")
-        }
-        if (paddingAfterLabel < COMMENT_PADDING_LENGTH) {
-            comment += " ".repeat(COMMENT_PADDING_LENGTH - paddingAfterLabel)
-        }
-        val annotatedLine = lineStart + comment + lineEnd
+        val codeLine = point.codeLine
+        val comment = target.comment(codeLine)
+        val annotatedLine = "$lineStart $comment $lineEnd"
         lines[lineIndex] = annotatedLine
+        reportPoint(file, point.label, comment)
+    }
+
+    private fun reportPoint(sourceFile: SourceFile, pointLabel: String, comment: String) {
+        val event = insertionPointPrinted {
+            file = filePath { value = sourceFile.relativePath.toString() }
+            label = pointLabel
+            representationInCode = comment
+        }
+        InsertionPointPrinterContext.emittedEvent(event, actorId)
     }
 }
+
+private val actorId = userId { value = InsertionPointPrinter::class.qualifiedName!! }
+
+private val InsertionPointPrinterContext = ThirdPartyContext.singleTenant("Insertion points")
 
 private fun List<String>.checkLineNumber(index: Int) {
     if (index < 0 || index >= size) {

@@ -27,9 +27,9 @@
 package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
-import io.spine.server.query.QueryingClient
 import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.server.BoundedContext
+import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
 
 /**
@@ -51,6 +51,7 @@ protected constructor(
      */
     public fun renderSources(sources: SourceFileSet) {
         val relevantFiles = sources.subsetWhere { supportedLanguage.matches(it.relativePath) }
+        relevantFiles.prepareForQueries(this)
         render(relevantFiles)
         sources.mergeBack(relevantFiles)
     }

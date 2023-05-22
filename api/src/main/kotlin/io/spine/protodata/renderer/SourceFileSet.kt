@@ -29,6 +29,7 @@ package io.spine.protodata.renderer
 import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
+import io.spine.server.query.Querying
 import io.spine.util.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files.walk
@@ -65,6 +66,7 @@ internal constructor(
     private val files: MutableMap<Path, SourceFile>
     private val deletedFiles = mutableSetOf<SourceFile>()
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
+    internal lateinit var querying: Querying
 
     init {
         val map = HashMap<Path, SourceFile>(files.size)
@@ -215,6 +217,10 @@ internal constructor(
         other.deletedFiles.forEach {
             files.remove(it.relativePath)
         }
+    }
+
+    internal fun prepareForQueries(querying: Querying) {
+        this.querying = querying
     }
 
     override fun toString(): String = toList().joinToString()

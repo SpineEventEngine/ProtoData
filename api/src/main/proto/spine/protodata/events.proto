@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2022, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -284,4 +284,13 @@ message DependencyDiscovered {
     FilePath path = 1;
 
     ProtobufSourceFile file = 2;
+}
+
+message InsertionPointPrinted {
+
+    FilePath file = 1;
+
+    string label = 2 [(required) = true];
+
+    string representation_in_code = 3 [(required) = true];
 }
