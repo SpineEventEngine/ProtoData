@@ -67,8 +67,6 @@ spinePublishing {
     artifactPrefix = "protodata-"
 }
 
-val spine = Spine(project)
-
 allprojects {
     apply(from = "$rootDir/version.gradle.kts")
     group = "io.spine.protodata"
@@ -80,9 +78,9 @@ allprojects {
         resolutionStrategy {
             force(
                 io.spine.internal.dependency.Grpc.ProtocPlugin.artifact,
-                spine.base,
-                spine.testlib,
-                spine.server
+                Spine.base,
+                Spine.testlib,
+                Spine.server
             )
         }
     }

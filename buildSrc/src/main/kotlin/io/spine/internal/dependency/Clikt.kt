@@ -28,6 +28,6 @@ package io.spine.internal.dependency
 
 // https://ajalt.github.io/clikt/
 object Clikt {
-    private const val version = "3.2.0"
+    private const val version = "3.5.2"
     const val lib = "com.github.ajalt.clikt:clikt:$version"
 }

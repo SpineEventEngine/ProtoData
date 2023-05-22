@@ -31,10 +31,12 @@ import com.github.ajalt.clikt.core.UsageError
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.kotest.matchers.string.shouldEndWith
+import io.kotest.matchers.string.shouldStartWith
 import io.spine.base.Time
-import io.spine.json.Json
 import io.spine.option.OptionsProto
 import io.spine.protobuf.AnyPacker
+import io.spine.protobuf.pack
 import io.spine.protodata.cli.given.CustomOptionPlugin
 import io.spine.protodata.cli.given.CustomOptionRenderer
 import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
@@ -54,6 +56,7 @@ import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.time.LocalDates
 import io.spine.time.Month.SEPTEMBER
 import io.spine.time.toInstant
+import io.spine.type.toCompactJson
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.pathString
@@ -199,14 +202,13 @@ class `Command line application should` {
         @Test
         fun `Protobuf JSON`() {
             val time = Time.currentTime()
-            val echo = Echo
-                .newBuilder()
+            val echo = Echo.newBuilder()
                 .setMessage("English, %s!")
                 .setExtraMessage(StringValue.of("Do you speak it?"))
-                .setArg(AnyPacker.pack(StringValue.of("Adam Falkner")))
+                .setArg(StringValue.of("Adam Falkner").pack())
                 .setWhen(time)
                 .build()
-            val json = Json.toCompactJson(echo)
+            val json = echo.toCompactJson()
             launchApp(
                 "-r", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
@@ -224,8 +226,7 @@ class `Command line application should` {
         @Test
         fun `binary Protobuf`(@TempDir configDir: Path) {
             val time = LocalDates.of(1962, SEPTEMBER, 12)
-            val echo = Echo
-                .newBuilder()
+            val echo = Echo.newBuilder()
                 .setMessage("We choose to go to the %s.")
                 .setArg(AnyPacker.pack(StringValue.of("Moon")))
                 .setExtraMessage(StringValue.of("and do the other things"))
@@ -242,11 +243,11 @@ class `Command line application should` {
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
-            val assertText = assertThat(srcRoot.resolve(ECHO_FILE).readText())
-            assertText
-                .startsWith(time.toInstant().toString())
-            assertText
-                .endsWith("We choose to go to the Moon.:and do the other things")
+
+            val text = srcRoot.resolve(ECHO_FILE).readText()
+
+            text shouldStartWith time.toInstant().toString()
+            text shouldEndWith "We choose to go to the Moon.:and do the other things"
         }
 
         @Suppress("TestFunctionName")

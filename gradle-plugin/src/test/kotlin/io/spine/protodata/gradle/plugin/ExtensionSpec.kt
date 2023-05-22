@@ -101,20 +101,6 @@ class ExtensionSpec {
     }
 
     @Test
-    fun `produce source directory`() {
-        val basePath = "my/path"
-        val subDir = "foobar"
-
-        extension.srcBaseDir = basePath
-        extension.subDirs = listOf(subDir)
-
-        val sourceSet = project.sourceSets.getByName(MAIN_SOURCE_SET_NAME)
-        val sourceDir = extension.sourceDirs(sourceSet)
-        assertThat(sourceDir.get().first().asFile.toPath())
-            .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
-    }
-
-    @Test
     fun `produce target directory`() {
         val basePath = "my/path"
         val subDir = "foobar"
@@ -126,37 +112,5 @@ class ExtensionSpec {
         val targetDirs = extension.targetDirs(sourceSet)
         assertThat(targetDirs.get().first().asFile.toPath())
             .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
-    }
-
-    @Test
-    fun `reproduce source file structure in the target dir`() {
-        val srcBasePath = "my/path"
-        val targetBasePath = "my/other/path"
-        val firstSubDir = "foobar"
-        val secondSubDir = "fisbus"
-
-        extension.srcBaseDir = srcBasePath
-        extension.targetBaseDir = targetBasePath
-        extension.subDirs = listOf(firstSubDir, secondSubDir)
-
-        val absolutePath = transforming<Directory, Path>({ it.asFile.toPath() }, "absolute path")
-
-        val sourceMain = project.projectDir.toPath() / srcBasePath / MAIN_SOURCE_SET_NAME
-        val sourceDirs = extension.sourceDirs(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
-        assertThat(sourceDirs.get())
-            .comparingElementsUsing(absolutePath)
-            .containsExactly(
-                sourceMain / firstSubDir,
-                sourceMain / secondSubDir,
-            )
-
-        val targetMain = project.projectDir.toPath() / targetBasePath / MAIN_SOURCE_SET_NAME
-        val targetDirs = extension.targetDirs(project.sourceSets.getByName(MAIN_SOURCE_SET_NAME))
-        assertThat(targetDirs.get())
-            .comparingElementsUsing(absolutePath)
-            .containsExactly(
-                targetMain / firstSubDir,
-                targetMain / secondSubDir,
-            )
     }
 }

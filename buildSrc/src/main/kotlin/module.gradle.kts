@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import Module_gradle.Module
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.JUnit
@@ -35,19 +36,8 @@ import io.spine.internal.gradle.javac.configureJavac
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.report.license.LicenseReporter
-import org.gradle.api.Project
-import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getValue
-import org.gradle.kotlin.dsl.getting
 import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -93,12 +83,11 @@ project.run {
 }
 
 fun Module.setDependencies() {
-    val spine = Spine(this)
     dependencies {
         ErrorProne.apply {
             errorprone(core)
         }
-        testImplementation(spine.coreJava.testUtilServer)
+        testImplementation(Spine.CoreJava.testUtilServer)
         testImplementation(kotlin("test-junit5"))
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
@@ -147,29 +136,6 @@ fun Module.applyGeneratedDirectories() {
     val generatedTestKotlin = "$generatedTest/kotlin"
     val generatedTestGrpc = "$generatedTest/grpc"
     val generatedTestSpine = "$generatedTest/spine"
-
-    sourceSets {
-        main {
-            java.srcDirs(
-                generatedJava,
-                generatedGrpc,
-                generatedSpine,
-            )
-            kotlin.srcDirs(
-                generatedKotlin,
-            )
-        }
-        test {
-            java.srcDirs(
-                generatedTestJava,
-                generatedTestGrpc,
-                generatedTestSpine,
-            )
-            kotlin.srcDirs(
-                generatedTestKotlin,
-            )
-        }
-    }
 
     idea {
         module {
