@@ -32,6 +32,9 @@ import io.spine.protodata.event.InsertionPointPrinted
 import io.spine.protodata.plugin.View
 import io.spine.server.entity.alter
 
+/**
+ * A view of insertion points added to a single code file.
+ */
 public class InsertionPointsView : View<FilePath, InsertedPoints, InsertedPoints.Builder>() {
 
     @Subscribe
