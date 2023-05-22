@@ -62,23 +62,11 @@ public interface CodegenSettings {
     public var requestFilesDir: Any
 
     /**
-     * The base directory where the files generated from Protobuf resides.
-     *
-     * Files are placed under this dir and divided under subdirectories by source sets, and then by
-     * the [subDirs]. For example, a Java class generated from a main-scope `.proto` definition
-     * would be placed under `$srcBaseDir/main/java`, where `main` is the name of the source set
-     * and `java` is a subdir.
-     *
-     * By default, `srcBaseDir` points to the directory which is specified in
-     * `protobuf.generatedFilesBaseDir` to the Protobuf Gradle plugin.
-     *
-     * If `srcBaseDir` is changed, Protobuf compiler settings are NOT affected.
-     *
-     * To change the location where `protoc` stores files it generates, please refer to
-     * the Protobuf Gradle plugin DSL.
-     *
-     * @see subDir
+     * The base directory where Protobuf Gradle Plugin placed generated source code files.
      */
+    @Deprecated("Starting from v0.9.2 Protobuf Gradle Plugin uses" +
+            " a fixed path `build/generated/source/proto`." +
+            " Therefore this property cannot be set and will be removed.")
     public var srcBaseDir: Any
 
     /**

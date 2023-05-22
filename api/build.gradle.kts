@@ -65,12 +65,13 @@ protobuf {
 
 idea {
     module {
+        val generatedDir = "$projectDir/generated"
         generatedSourceDirs.apply {
-            add(file("$projectDir/generated/main/kotlin"))
-            add(file("$projectDir/generated/test/kotlin"))
+            add(file("$generatedDir/main/kotlin"))
+            add(file("$generatedDir/test/kotlin"))
         }
         testSources.from(
-            project.file("$projectDir/generated/test/kotlin"),
+            project.file("$generatedDir/test/kotlin"),
         )
     }
 }

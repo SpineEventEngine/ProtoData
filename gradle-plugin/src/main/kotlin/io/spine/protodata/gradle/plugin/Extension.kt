@@ -98,9 +98,11 @@ public class Extension(internal val project: Project): CodegenSettings {
     internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
         requestFilesDirProperty.file(CodeGeneratorRequestFile.name(forSourceSet))
 
-    public override var srcBaseDir: Any
-        get() = srcBaseDirProperty.get()
-        set(value) = srcBaseDirProperty.set(project.file(value))
+    @Deprecated("Starting from v0.9.2 Protobuf Gradle Plugin uses" +
+            " a fixed path `build/generated/source/proto`." +
+            " Therefore even this property returns that dir for the project, it has no sense and" +
+            " will be removed.")
+    public override var srcBaseDir: Any = project.buildDir.resolve("generated/source/proto")
 
     private val srcBaseDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(provider {

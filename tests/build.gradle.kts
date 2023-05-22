@@ -75,9 +75,6 @@ subprojects {
         protoc {
             artifact = Protobuf.compiler
         }
-        generateProtoTasks.all().configureEach {
-            excludeProtocOutput()
-        }
     }
 
     tasks.withType<KotlinCompile> {

@@ -53,10 +53,5 @@ protoData {
     plugins(
         "io.spine.protodata.test.uuid.UuidPlugin"
     )
-    srcBaseDir = protobufDir
     targetBaseDir = protobufDir
-}
-
-protobuf {
-    generatedFilesBaseDir = protobufDir
 }
