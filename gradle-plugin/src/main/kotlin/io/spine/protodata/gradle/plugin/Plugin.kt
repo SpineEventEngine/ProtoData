@@ -42,7 +42,8 @@ import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
-import io.spine.tools.gradle.protobuf.protobufGradlePluginAdapter
+import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
+import io.spine.tools.gradle.protobuf.protobufExtension
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -88,7 +89,7 @@ public class Plugin : GradlePlugin<Project> {
             createConfigurations(version)
             createTasks(ext)
             configureWithProtobufPlugin(version, ext)
-            configureIdea(ext)
+            configureIdea()
         }
     }
 
@@ -228,15 +229,18 @@ private fun Project.hasJavaOrKotlin(): Boolean {
 }
 
 private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact, ext: Extension) {
-    val protobuf = this.protobufGradlePluginAdapter
-    protobuf.run {
+
+    protobufExtension?.run {
         plugins {
-            it.create(PROTODATA_PROTOC_PLUGIN) {
-                it.artifact = protocPlugin.coordinates
+            it.create(PROTODATA_PROTOC_PLUGIN) { locator ->
+                locator.artifact = protocPlugin.coordinates
             }
         }
-        configureProtoTasks { task ->
-            configureProtoTask(task, ext)
+
+        generateProtoTasks {
+            it.all().forEach { task ->
+                configureProtoTask(task, ext)
+            }
         }
     }
 }
@@ -324,16 +328,15 @@ private fun Project.handleLaunchTaskDependency(
     }
 }
 
-private fun Project.configureIdea(ext: Extension) {
+private fun Project.configureIdea() {
     afterEvaluate {
-        @Suppress("DEPRECATION")
-        val duplicateClassesDir = file(ext.srcBaseDir)
+        val protocOutput = file(generatedSourceProtoDir)
         pluginManager.withPlugin("idea") {
             val idea = extensions.getByType<IdeaModel>()
             with(idea.module) {
-                sourceDirs = filterSources(sourceDirs, duplicateClassesDir)
-                testSources.filter { !it.residesIn(duplicateClassesDir) }
-                generatedSourceDirs = filterSources(generatedSourceDirs, duplicateClassesDir)
+                sourceDirs = filterSources(sourceDirs, protocOutput)
+                testSources.filter { !it.residesIn(protocOutput) }
+                generatedSourceDirs = filterSources(generatedSourceDirs, protocOutput)
             }
         }
     }
