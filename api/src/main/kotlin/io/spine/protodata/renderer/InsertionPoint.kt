@@ -31,16 +31,17 @@ import com.google.protobuf.Empty
 import io.spine.annotation.Internal
 import io.spine.logging.Logging.loggerFor
 import io.spine.protodata.TextCoordinates
-import io.spine.protodata.TextCoordinates.KindCase.END_OF_FILE
 import io.spine.protodata.TextCoordinates.KindCase.INLINE
-import io.spine.protodata.TextCoordinates.KindCase.NOT_IN_FILE
 import io.spine.protodata.TextCoordinates.KindCase.WHOLE_LINE
 import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
-import io.spine.text.Cursor
-import io.spine.text.Position
+import io.spine.protodata.textCoordinates
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
+import io.spine.text.cursor
+import io.spine.text.position
+import io.spine.protodata.TextCoordinates.KindCase.END_OF_FILE as KIND_EOF
+import io.spine.protodata.TextCoordinates.KindCase.NOWHERE as KIND_NOWHERE
 
 /**
  * A point is a source file, where more code may be inserted.
@@ -90,8 +91,8 @@ public interface InsertionPoint : CoordinatesFactory {
                 logUnsupportedKind()
                 LineNumber.at(coords.inline.cursor.line)
             }
-            END_OF_FILE -> LineNumber.endOfFile()
-            NOT_IN_FILE -> LineNumber.notInFile()
+            KIND_EOF -> LineNumber.endOfFile()
+            KIND_NOWHERE -> LineNumber.notInFile()
             else -> error("Unexpected text coordinates `$coords`.")
         }
     }
@@ -118,6 +119,18 @@ public interface InsertionPoint : CoordinatesFactory {
     public fun locate(text: Text): TextCoordinates
 }
 
+private val START_OF_FILE = textCoordinates {
+    wholeLine = 0
+}
+
+private val END_OF_FILE = textCoordinates {
+    endOfFile = Empty.getDefaultInstance()
+}
+
+private val NOWHERE = textCoordinates {
+    nowhere = Empty.getDefaultInstance()
+}
+
 /**
  * A factory of [TextCoordinates] instances.
  *
@@ -131,43 +144,39 @@ public sealed interface CoordinatesFactory {
      * Creates coordinates pointing at a specific line and column in the file.
      */
     public fun at(line: Int, column: Int): TextCoordinates {
-        val cursor = Cursor.newBuilder()
-            .setLine(line)
-            .setColumn(column)
-        return TextCoordinates.newBuilder()
-            .setInline(Position.newBuilder().setCursor(cursor))
-            .build()
+        val cursor = cursor {
+            this.line = line
+            this.column = column
+        }
+        val position = position {
+            this.cursor = cursor
+        }
+        return textCoordinates {
+            inline = position
+        }
     }
 
     /**
      * Creates coordinates pointing at the beginning of a specific line in the text.
      */
-    public fun atLine(line: Int): TextCoordinates =
-        TextCoordinates.newBuilder()
-            .setWholeLine(line)
-            .build()
+    public fun atLine(line: Int): TextCoordinates = textCoordinates {
+        wholeLine = line
+    }
 
     /**
      * Creates coordinates pointing at the beginning of the first line in the text.
      */
-    public fun startOfFile(): TextCoordinates =
-        atLine(0)
+    public fun startOfFile(): TextCoordinates = START_OF_FILE
 
     /**
      * Creates coordinates pointing at the point after the last line in the text.
      */
-    public fun endOfFile(): TextCoordinates =
-        TextCoordinates.newBuilder()
-            .setEndOfFile(Empty.getDefaultInstance())
-            .build()
+    public fun endOfFile(): TextCoordinates = END_OF_FILE
 
     /**
      * Creates coordinates that do not point at anywhere in the text.
      */
-    public fun nowhere(): TextCoordinates =
-        TextCoordinates.newBuilder()
-            .setNotInFile(Empty.getDefaultInstance())
-            .build()
+    public fun nowhere(): TextCoordinates = NOWHERE
 }
 
 /**

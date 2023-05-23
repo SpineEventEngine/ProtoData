@@ -33,6 +33,6 @@ public class RenderingException(
     message: String
 ) : RuntimeException(message) {
     private companion object {
-        private const val serialVersionUID: Long = 6688853873215023495L
+        private const val serialVersionUID: Long = 0L
     }
 }

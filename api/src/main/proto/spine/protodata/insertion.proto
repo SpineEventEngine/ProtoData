@@ -62,7 +62,7 @@ message TextCoordinates {
         google.protobuf.Empty end_of_file = 3;
 
         // Specifies that there is no such place in a given file.
-        google.protobuf.Empty not_in_file = 4;
+        google.protobuf.Empty nowhere = 4;
     }
 }
 
