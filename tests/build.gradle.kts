@@ -27,9 +27,11 @@
 import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
+import io.spine.internal.gradle.protobuf.excludeProtocOutput
 import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -61,15 +63,16 @@ subprojects {
     repositories.standardToSpineSdk()
 
     val protoDataVersion: String by extra
-    val spine = io.spine.internal.dependency.Spine(project)
     configurations {
         forceVersions()
         all {
             resolutionStrategy {
                 force(
-                    spine.base,
-                    spine.toolBase,
-                    spine.validation.runtime,
+                    Spine.base,
+                    Spine.toolBase,
+                    Spine.validation.runtime,
+                    Spine.logging,
+                    Spine.reflect,
                     "io.spine.protodata:compiler:$protoDataVersion",
                     "io.spine.protodata:codegen-java:$protoDataVersion"
                 )

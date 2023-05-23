@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,22 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.java.publish
-
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskContainer
-import org.gradle.api.tasks.TaskProvider
+package io.spine.internal.dependency
 
 /**
- * Locates `publish` task in this [TaskContainer].
+ * Dependencies on ProtoData modules.
  *
- * This task publishes all defined publications to all defined repositories. To achieve that,
- * the task depends on all `publish`*PubName*`PublicationTo`*RepoName*`Repository` tasks.
- *
- * Please note, task execution would not copy publications to the local Maven cache.
- *
- * @see <a href="https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:tasks">
- *     Tasks | Maven Publish Plugin</a>
+ * See [`SpineEventEngine/ProtoData`](https://github.com/SpineEventEngine/ProtoData/).
  */
-internal val TaskContainer.publish: TaskProvider<Task>
-    get() = named("publish")
+@Suppress("unused")
+object ProtoData {
+    const val version = "0.8.1"
+    const val group = "io.spine.protodata"
+    const val compiler = "$group:protodata-compiler:$version"
+
+    const val codegenJava = "io.spine.protodata:protodata-codegen-java:$version"
+
+    const val pluginId = "io.spine.protodata"
+    const val pluginLib = "${Spine.group}:protodata:$version"
+}

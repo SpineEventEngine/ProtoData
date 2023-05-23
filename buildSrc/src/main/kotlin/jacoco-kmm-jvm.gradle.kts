@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,34 +24,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-
-buildscript {
-    standardSpineSdkRepositories()
-    apply(from = "$rootDir/../version.gradle.kts")
-    val protoDataVersion: String by extra
-    dependencies {
-        classpath("io.spine.protodata:gradle-plugin:$protoDataVersion")
-    }
-}
+import java.io.File
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.getting
+import org.gradle.kotlin.dsl.jacoco
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
-    id("io.spine.protodata")
+    jacoco
 }
 
-dependencies {
-    protoData(project(":protodata-extension"))
-}
+/**
+ * Configures [JacocoReport] task to run in a Kotlin KMM project for `commonMain` and `jvmMain`
+ * source sets.
+ *
+ * This script plugin must be applied using the following construct at the end of
+ * a `build.gradle.kts` file of a module:
+ *
+ * ```kotlin
+ * apply(plugin="jacoco-kmm-jvm")
+ * ```
+ * Please do not apply this script plugin in the `plugins {}` block because `jacocoTestReport`
+ * task is not yet available at this stage.
+ */
+private val about = ""
 
-val protobufDir = "$projectDir/proto-gen/"
+/**
+ * Configure Jacoco task with custom input from this KMM project.
+ */
+val jacocoTestReport: JacocoReport by tasks.getting(JacocoReport::class) {
 
-protoData {
-    renderers(
-        "io.spine.protodata.test.uuid.ClassScopePrinter",
-        "io.spine.protodata.test.uuid.UuidJavaRenderer"
+    val classFiles = File("${buildDir}/classes/kotlin/jvm/")
+        .walkBottomUp()
+        .toSet()
+    classDirectories.setFrom(classFiles)
+
+    val coverageSourceDirs = arrayOf(
+        "src/commonMain",
+        "src/jvmMain"
     )
-    plugins(
-        "io.spine.protodata.test.uuid.UuidPlugin"
-    )
-    targetBaseDir = protobufDir
+    sourceDirectories.setFrom(files(coverageSourceDirs))
+
+    executionData.setFrom(files("${buildDir}/jacoco/jvmTest.exec"))
 }

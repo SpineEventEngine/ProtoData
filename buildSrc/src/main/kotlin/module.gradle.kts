@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import Module_gradle.Module
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.JUnit
@@ -82,12 +83,11 @@ project.run {
 }
 
 fun Module.setDependencies() {
-    val spine = Spine(this)
     dependencies {
         ErrorProne.apply {
             errorprone(core)
         }
-        testImplementation(spine.coreJava.testUtilServer)
+        testImplementation(Spine.CoreJava.testUtilServer)
         testImplementation(kotlin("test-junit5"))
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
@@ -136,29 +136,6 @@ fun Module.applyGeneratedDirectories() {
     val generatedTestKotlin = "$generatedTest/kotlin"
     val generatedTestGrpc = "$generatedTest/grpc"
     val generatedTestSpine = "$generatedTest/spine"
-
-    sourceSets {
-        main {
-            java.srcDirs(
-                generatedJava,
-                generatedGrpc,
-                generatedSpine,
-            )
-            kotlin.srcDirs(
-                generatedKotlin,
-            )
-        }
-        test {
-            java.srcDirs(
-                generatedTestJava,
-                generatedTestGrpc,
-                generatedTestSpine,
-            )
-            kotlin.srcDirs(
-                generatedTestKotlin,
-            )
-        }
-    }
 
     idea {
         module {

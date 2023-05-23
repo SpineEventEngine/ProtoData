@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,35 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.publish.proto
+package io.spine.internal.dependency
 
-import org.gradle.api.Project
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
-
-/**
- * Registers an `assembleProto` Gradle task which locates and assembles all `.proto` files
- * in a Gradle project.
- *
- * The result of assembly is a [Jar] task with an archive output classified as "proto".
- */
-object AssembleProto {
-
-    private const val taskName = "assembleProto"
-
-    /**
-     * Performs the task registration for the passed [project].
-     */
-    fun registerIn(project: Project): TaskProvider<Jar> {
-        val task = project.tasks.register(taskName, Jar::class.java) {
-            description =
-                "Assembles a JAR artifact with all Proto definitions from the classpath."
-            from(project.protoFiles())
-            include {
-                it.file.isProtoFileOrDir()
-            }
-            archiveClassifier.set("proto")
-        }
-        return task
-    }
+// https://github.com/Kotlin/kotlinx-kover
+object Kover {
+    const val version = "0.7.0-Beta"
+    const val id = "org.jetbrains.kotlinx.kover"
+    const val classpath = "org.jetbrains.kotlinx:kover-gradle-plugin:$version"
 }

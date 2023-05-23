@@ -41,6 +41,7 @@ import com.github.ajalt.clikt.parameters.types.path
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
+import io.spine.logging.WithLogging
 import io.spine.option.OptionsProvider
 import io.spine.protobuf.outerClass
 import io.spine.protodata.backend.Pipeline
@@ -58,6 +59,8 @@ import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.string.Separator
+import io.spine.string.pi
 import io.spine.tools.code.manifest.Version
 import java.io.File
 import java.io.File.pathSeparator
@@ -70,8 +73,11 @@ import kotlin.system.exitProcess
  *
  * When the application is done, or an unhandled error occurs, exits the process.
  */
-public fun main(args: Array<String>): Unit =
-    Run(readVersion()).main(args)
+public fun main(args: Array<String>) {
+    val version = readVersion()
+    val run = Run(version)
+    run.main(args)
+}
 
 private fun readVersion(): String = Version.fromManifestOf(Run::class.java).value
 
@@ -99,7 +105,7 @@ internal class Run(version: String) : CliktCommand(
             "Version ${version}.",
     epilog = "https://github.com/SpineEventEngine/ProtoData/",
     printHelpOnEmptyArgs = true
-) {
+), WithLogging {
     private fun Parameter.toOption(completionCandidates: CompletionCandidates? = null) = option(
         name, shortName,
         help = help,
@@ -165,44 +171,17 @@ internal class Run(version: String) : CliktCommand(
         val plugins = loadPlugins()
         val renderer = loadRenderers()
         val registry = createRegistry()
-        val codegenRequest = loadRequest(registry)
+        val request = loadRequest(registry)
         val config = resolveConfig()
-        Pipeline(plugins, renderer, sources, codegenRequest, config)()
+        Pipeline(plugins, renderer, sources, request, config)()
     }
 
-    private fun resolveConfig(): Configuration? {
-        val hasFile = configurationFile != null
-        val hasValue = configurationValue != null
-        val hasFormat = configurationFormat != null
-        if (hasFile && hasValue) {
-            throw MutuallyExclusiveGroupException(
-                listOf(ConfigFileParam.name, ConfigValueParam.name)
-            )
-        }
-        checkUsage(hasValue == hasFormat) {
-            "Options `${ConfigValueParam.name}` and `${ConfigFileParam.name}`" +
-                    " must be used together."
-        }
-        return when {
-            hasFile -> Configuration.file(configurationFile!!)
-            hasValue -> {
-                val format = ConfigurationFormat.valueOf(configurationFormat!!.uppercase())
-                Configuration.rawValue(configurationValue!!, format)
-            }
-            else -> null
-        }
-    }
-
-    private fun loadRequest(extensions: ExtensionRegistry = ExtensionRegistry.getEmptyRegistry()) =
-        codegenRequestFile.inputStream().use {
+    private fun loadRequest(
+        extensions: ExtensionRegistry = ExtensionRegistry.getEmptyRegistry()
+    ): CodeGeneratorRequest {
+        return codegenRequestFile.inputStream().use {
             CodeGeneratorRequest.parseFrom(it, extensions)
         }
-
-    private fun createRegistry(): ExtensionRegistry {
-        val optionsProviders = loadOptions()
-        val registry = ExtensionRegistry.newInstance()
-        optionsProviders.forEach { it.registerIn(registry) }
-        return registry
     }
 
     private fun createSourceFileSets(): List<SourceFileSet> {
@@ -237,6 +216,13 @@ internal class Run(version: String) : CliktCommand(
 
     private fun loadRenderers() = load(RendererBuilder(), renderers)
 
+    private fun createRegistry(): ExtensionRegistry {
+        val optionsProviders = loadOptions()
+        val registry = ExtensionRegistry.newInstance()
+        optionsProviders.forEach { it.registerIn(registry) }
+        return registry
+    }
+
     private fun loadOptions(): List<OptionsProvider> {
         val providers = load(OptionsProviderBuilder(), optionProviders)
         val request = loadRequest()
@@ -248,14 +234,40 @@ internal class Run(version: String) : CliktCommand(
         return allProviders
     }
 
+    private fun resolveConfig(): Configuration? {
+        val hasFile = configurationFile != null
+        val hasValue = configurationValue != null
+        val hasFormat = configurationFormat != null
+        if (hasFile && hasValue) {
+            throw MutuallyExclusiveGroupException(
+                listOf(ConfigFileParam.name, ConfigValueParam.name)
+            )
+        }
+        checkUsage(hasValue == hasFormat) {
+            "Options `${ConfigValueParam.name}` and `${ConfigFileParam.name}`" +
+                    " must be used together."
+        }
+        return when {
+            hasFile -> Configuration.file(configurationFile!!)
+            hasValue -> {
+                val format = ConfigurationFormat.valueOf(configurationFormat!!.uppercase())
+                Configuration.rawValue(configurationValue!!, format)
+            }
+            else -> null
+        }
+    }
+
+    /**
+     * Filter out files that do not have outer classes yet.
+     *
+     * These are `.proto` files being processed by ProtoData that contain
+     * option definitions. We cannot use these files because there is no binary Java
+     * code generated for them at this stage. Because of this they cannot be added to
+     * an `ExtensionRegistry` later.
+     */
     private fun filterOptionFiles(files: FileSet): Sequence<FileOptionsProvider> {
         val fileProviders = files.files()
             .filter { it.extensions.isNotEmpty() }
-            // Filter out files that do not have outer classes yet.
-            // These are `.proto` files being processed by ProtoData that contain
-            // option definitions. We cannot use these files because there is no binary Java
-            // code generated for them at this stage. Because of this they cannot be added to
-            // an `ExtensionRegistry` later.
             .filter { it.outerClass != null }
             .map(::FileOptionsProvider)
             .asSequence()
@@ -278,17 +290,21 @@ internal class Run(version: String) : CliktCommand(
             printError(e.message)
             printError("Please add the required class `$className` to the user classpath.")
             if (classPath != null) {
-                printError("User classpath contains: `${classPath!!.joinToString(pathSeparator)}`.")
+                printError("Provided user classpath:")
+                val cp = classPath!!
+                val cpStr = cp.joinToString(separator = Separator.nl()).pi(" ".repeat(2))
+                printError(cpStr)
             }
             exitProcess(1)
         }
     }
-}
 
-/**
- * Prints the given error [message] to the screen.
- */
-private fun printError(message: String?) = TermUi.echo(message, err = true)
+
+    /**
+     * Prints the given error [message] to the screen.
+     */
+    private fun printError(message: String?) = echo(message, trailingNewline = false, err = true)
+}
 
 /**
  * Creates a list that contain a single, empty source set.

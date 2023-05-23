@@ -35,10 +35,9 @@ plugins {
     `build-proto-model`
 }
 
-val spine = Spine(project)
 dependencies {
-    api(spine.server)
-    api(spine.toolBase)
+    api(Spine.server)
+    api(Spine.toolBase)
     api(project(":api"))
     with(Jackson) {
         api(databind)

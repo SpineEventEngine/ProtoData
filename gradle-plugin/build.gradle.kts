@@ -38,8 +38,6 @@ plugins {
     `write-manifest`
 }
 
-val spine = Spine(project)
-
 @Suppress(
     "UNUSED_VARIABLE" /* `test` and `functionalTest`*/,
     "UnstableApiUsage" /* testing suites feature */
@@ -52,8 +50,8 @@ testing {
                 implementation(Kotlin.gradlePluginLib)
                 implementation(gradleKotlinDsl())
                 implementation(Protobuf.GradlePlugin.lib)
-                implementation(spine.pluginBase)
-                implementation(spine.pluginTestlib)
+                implementation(Spine.pluginBase)
+                implementation(Spine.pluginTestlib)
             }
         }
 
@@ -62,9 +60,9 @@ testing {
             dependencies {
                 implementation(Kotlin.gradlePluginLib)
                 implementation(Kotlin.testJUnit5)
-                implementation(spine.pluginBase)
-                implementation(spine.testlib)
-                implementation(spine.pluginTestlib)
+                implementation(Spine.pluginBase)
+                implementation(Spine.testlib)
+                implementation(Spine.pluginTestlib)
                 implementation(project(":gradle-plugin"))
             }
         }
@@ -81,8 +79,8 @@ dependencies {
 
     implementation(project(":api"))
     implementation(project(":cli-api"))
-    implementation(spine.toolBase)
-    implementation(spine.pluginBase)
+    implementation(Spine.toolBase)
+    implementation(Spine.pluginBase)
     implementation(Kotlin.gradlePluginApi)
 }
 

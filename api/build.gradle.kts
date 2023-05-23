@@ -32,16 +32,17 @@ plugins {
 }
 
 dependencies {
-    val spine = Spine(project)
-
     listOf(
-        spine.base,
-        spine.text,
-        spine.coreJava.server,
-        spine.toolBase,
+        Spine.base,
+        Spine.text,
+        Spine.CoreJava.server,
+        Spine.toolBase,
     ).forEach {
         api(it)
     }
+
+    api(Spine.logging)
+    implementation(Spine.reflect)
 
     with(Jackson) {
         implementation(databind)
@@ -63,12 +64,13 @@ protobuf {
 
 idea {
     module {
+        val generatedDir = "$projectDir/generated"
         generatedSourceDirs.apply {
-            add(file("$projectDir/generated/main/kotlin"))
-            add(file("$projectDir/generated/test/kotlin"))
+            add(file("$generatedDir/main/kotlin"))
+            add(file("$generatedDir/test/kotlin"))
         }
         testSources.from(
-            project.file("$projectDir/generated/test/kotlin"),
+            project.file("$generatedDir/test/kotlin"),
         )
     }
 }

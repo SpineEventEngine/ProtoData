@@ -161,7 +161,6 @@ public object ConfigFormatParam : Parameter(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }
 }
 
-
 /**
  * Abbreviations for short parameter names to be used inside `help` texts.
  */
