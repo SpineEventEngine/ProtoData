@@ -75,7 +75,7 @@ object Spine {
         const val change = "2.0.0-SNAPSHOT.118"
 
         /** The version of [Spine.text]. */
-        const val text = "2.0.0-SNAPSHOT.3"
+        const val text = "2.0.0-SNAPSHOT.4"
 
         /** The version of [Spine.toolBase]. */
         const val toolBase = "2.0.0-SNAPSHOT.162"
