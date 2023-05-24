@@ -43,9 +43,6 @@ import kotlin.reflect.KClass
 
 private const val OF = "of"
 
-private val immutableListClass = ClassName(ImmutableList::class)
-private val immutableMapClass = ClassName(ImmutableMap::class)
-
 /**
  * A piece of Java code.
  *
@@ -419,7 +416,7 @@ constructor(
  * The resulting expression always yields an instance of Guava `ImmutableList`.
  */
 public fun listExpression(expressions: List<Expression>): MethodCall =
-    immutableListClass.call(OF, expressions)
+    ClassName(ImmutableList::class).call(OF, expressions)
 
 /**
  * Constructs an expression of a list of the given [expressions].
@@ -448,6 +445,8 @@ public fun mapExpression(
     keyType: ClassName?,
     valueType: ClassName?
 ): MethodCall {
+    val immutableMapClass = ClassName(ImmutableMap::class)
+
     if (expressions.isEmpty()) {
         return immutableMapClass.call(OF)
     }
