@@ -45,10 +45,4 @@ public object Names {
      * The name of the Gradle extension added by ProtoData Gradle plugin.
      */
     public const val EXTENSION_NAME: String = "protoData"
-
-    /**
-     * The name of the Gradle Configuration created by ProtoData Gradle plugin for holding
-     * user-defined classpath.
-     */
-    public const val USER_CLASSPATH_CONFIGURATION_NAME: String = "protoData"
 }

@@ -38,7 +38,6 @@ import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
-import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION_NAME
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
@@ -47,6 +46,7 @@ import io.spine.tools.gradle.protobuf.protobufExtension
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
@@ -109,6 +109,12 @@ public class Plugin : GradlePlugin<Project> {
 
 private const val PROTO_DATA_RAW_ARTIFACT = "protoDataRawArtifact"
 
+/**
+ * The name of the Gradle Configuration created by ProtoData Gradle plugin for holding
+ * user-defined classpath.
+ */
+public const val USER_CLASSPATH_CONFIGURATION_NAME: String = "protoData"
+
 private fun Project.createExtension(): Extension {
     val extension = Extension(this)
     extensions.add(CodegenSettings::class.java, EXTENSION_NAME, extension)
@@ -130,6 +136,12 @@ private fun Project.createConfigurations(protoDataVersion: String) {
         it.exclude(group = Artifacts.group, module = Artifacts.compiler)
     }
 }
+
+private val Project.protoDataRawArtifact: Configuration
+    get() = configurations.getByName(PROTO_DATA_RAW_ARTIFACT)
+
+private val Project.userClasspath: Configuration
+    get() = configurations.getByName(USER_CLASSPATH_CONFIGURATION_NAME)
 
 /**
  * Creates [LaunchProtoData] and `clean` task for all source sets of this project
@@ -154,17 +166,14 @@ private fun Project.createTasks(ext: Extension) {
  */
 @CanIgnoreReturnValue
 private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): LaunchProtoData {
-    val artifactConfig = configurations.getByName(PROTO_DATA_RAW_ARTIFACT)
-    val userCpConfig = configurations.getByName(USER_CLASSPATH_CONFIGURATION_NAME)
-
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
         renderers = ext.renderers
         plugins = ext.plugins
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)
-        protoDataConfig = artifactConfig
-        userClasspathConfig = userCpConfig
+        protoDataConfig = protoDataRawArtifact
+        userClasspathConfig = userClasspath
         project.afterEvaluate {
             sources = ext.sourceDirs(sourceSet)
             targets = ext.targetDirs(sourceSet)
@@ -175,8 +184,8 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
             checkRequestFile(sourceSet)
         }
         dependsOn(
-            artifactConfig.buildDependencies,
-            userCpConfig.buildDependencies
+            protoDataRawArtifact.buildDependencies,
+            userClasspath.buildDependencies
         )
         val launchTask = this
         javaCompileFor(sourceSet)?.dependsOn(launchTask)
@@ -187,8 +196,8 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
 
 private fun Project.createCleanTask(sourceSet: SourceSet, ext: Extension) {
     val project = this
-    val taskName = CleanTask.nameFor(sourceSet)
-    tasks.create<Delete>(taskName) {
+    val cleanSourceSet = CleanTask.nameFor(sourceSet)
+    tasks.create<Delete>(cleanSourceSet) {
         delete(ext.targetDirs(sourceSet))
 
         tasks.getByName("clean").dependsOn(this)
@@ -250,14 +259,16 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
         task.builtins.maybeCreate("kotlin")
     }
     val sourceSet = task.sourceSet
-    task.plugins.run {
+    task.plugins.apply {
         create(PROTODATA_PROTOC_PLUGIN) {
             val requestFile = ext.requestFile(sourceSet)
             val path = requestFile.get().asFile.absolutePath
             val nameEncoded = path.base64Encoded()
             it.option(nameEncoded)
-            logger.debug("The task `${task.name}` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
-                    " with the option `$nameEncoded`.")
+            if (logger.isDebugEnabled) {
+                logger.debug("The task `${task.name}` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
+                        " with the option `$nameEncoded`.")
+            }
         }
     }
     task.excludeProtocOutput()
@@ -276,7 +287,13 @@ private fun GenerateProtoTask.excludeProtocOutput() {
     val newSourceDirectories = java.sourceDirectories
         .filter { !it.residesIn(protocOutputDir) }
         .toSet()
+
+    // Clear the source directories of the Java source set.
+    // This trick was needed when building `base` module of Spine.
+    // Otherwise, the `java` plugin would complain about duplicate source files.
     java.setSrcDirs(listOf<String>())
+
+    // Add the filtered directories back to the Java source set.
     java.srcDirs(newSourceDirectories)
 
     // Add copied files to the Java source set.
