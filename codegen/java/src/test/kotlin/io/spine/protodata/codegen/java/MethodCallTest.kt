@@ -28,10 +28,10 @@ package io.spine.protodata.codegen.java
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
-import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.Duration
 import com.google.protobuf.FieldMask
 import com.google.protobuf.Timestamp
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.test.Sidekick
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -41,32 +41,30 @@ class `'MethodCall' should` {
     @Test
     fun `print method invocation`() {
         val defaultInstance = ClassName(Timestamp::class).getDefaultInstance()
-        assertThat(defaultInstance.toCode())
-            .isEqualTo("${Timestamp::class.qualifiedName}.getDefaultInstance()")
+        defaultInstance.toCode() shouldBe "${Timestamp::class.qualifiedName}.getDefaultInstance()"
     }
 
     @Test
     fun `print arguments`() {
-        val call = MethodCall(MessageReference("msg"), name = "putHeader", arguments = listOf(
-            LiteralString("cookez?"), LiteralString("heck_yeah")
-        ))
-        assertThat(call.toCode())
-            .isEqualTo("msg.putHeader(\"cookez?\", \"heck_yeah\")")
+        val call = MethodCall(
+            MessageReference("msg"),
+            name = "putHeader",
+            arguments = listOf(LiteralString("cookez?"), LiteralString("heck_yeah"))
+        )
+        call.toCode() shouldBe "msg.putHeader(\"cookez?\", \"heck_yeah\")"
     }
 
     @Test
     fun `print type arguments`() {
         val call = ClassName(ImmutableMap::class).call(
             "builder",
-            arguments = listOf(), generics = listOf(
-                ClassName(Sidekick::class), ClassName(Duration::class)
-            )
+            arguments = listOf(),
+            generics = listOf(ClassName(Sidekick::class), ClassName(Duration::class))
         )
         val immutableMap = ImmutableMap::class.qualifiedName
         val sidekick = Sidekick::class.qualifiedName
         val duration = Duration::class.qualifiedName
-        assertThat(call.toCode())
-            .isEqualTo("$immutableMap.<$sidekick, $duration>builder()")
+        call.toCode() shouldBe "$immutableMap.<$sidekick, $duration>builder()"
     }
 
     @Nested
@@ -76,34 +74,32 @@ class `'MethodCall' should` {
         fun `another method`() {
             val defaultInstance = ClassName(Timestamp::class).getDefaultInstance()
             val getParser = defaultInstance.chain("getParserForType")
-            assertThat(getParser.toCode())
-                .isEqualTo(
+            getParser.toCode() shouldBe
                     "${Timestamp::class.qualifiedName}.getDefaultInstance().getParserForType()"
-                )
         }
 
         @Test
         fun `a field setter by name`() {
             val defaultInstance = ClassName(Timestamp::class).newBuilder()
             val setter = defaultInstance.chainSet("nanos", Literal(100_000))
-            assertThat(setter.toCode())
-                .isEqualTo("${Timestamp::class.qualifiedName}.newBuilder().setNanos(100000)")
+            setter.toCode() shouldBe
+                    "${Timestamp::class.qualifiedName}.newBuilder().setNanos(100000)"
         }
 
         @Test
         fun `a field setter by 'FieldName'`() {
             val defaultInstance = ClassName(Timestamp::class).newBuilder()
             val setter = defaultInstance.chainSet("seconds", Literal(100_000L))
-            assertThat(setter.toCode())
-                .isEqualTo("${Timestamp::class.qualifiedName}.newBuilder().setSeconds(100000)")
+            setter.toCode() shouldBe
+                    "${Timestamp::class.qualifiedName}.newBuilder().setSeconds(100000)"
         }
 
         @Test
         fun `add() method`() {
             val defaultInstance = ClassName(FieldMask::class).newBuilder()
             val setter = defaultInstance.chainAdd("paths", Literal(3))
-            assertThat(setter.toCode())
-                .isEqualTo("${FieldMask::class.qualifiedName}.newBuilder().addPaths(3)")
+            setter.toCode() shouldBe
+                    "${FieldMask::class.qualifiedName}.newBuilder().addPaths(3)"
         }
 
         @Test
@@ -113,17 +109,17 @@ class `'MethodCall' should` {
                 "paths",
                 listExpression(Literal(1), Literal(2))
             )
-            assertThat(setter.toCode())
-                .isEqualTo("${FieldMask::class.qualifiedName}.newBuilder()" +
-                        ".addAllPaths(${ImmutableList::class.qualifiedName}.of(1, 2))")
+            setter.toCode() shouldBe
+                    "${FieldMask::class.qualifiedName}.newBuilder()" +
+                    ".addAllPaths(${ImmutableList::class.qualifiedName}.of(1, 2))"
         }
 
         @Test
         fun `build() method`() {
             val defaultInstance = ClassName(FieldMask::class).newBuilder()
             val setter = defaultInstance.chainBuild()
-            assertThat(setter.toCode())
-                .isEqualTo("${FieldMask::class.qualifiedName}.newBuilder().build()")
+            setter.toCode() shouldBe
+                    "${FieldMask::class.qualifiedName}.newBuilder().build()"
         }
     }
 }

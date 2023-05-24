@@ -26,11 +26,11 @@
 
 package io.spine.protodata.protoc
 
-import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.TimestampProto
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import com.google.protobuf.compiler.version
+import io.kotest.matchers.shouldBe
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.util.*
@@ -76,8 +76,7 @@ class PluginSpec {
         launchMain(request)
         val read = requestFile.readBytes()
         val restoredRequest = CodeGeneratorRequest.parseFrom(read)
-        assertThat(restoredRequest)
-            .isEqualTo(request)
+        restoredRequest shouldBe request
     }
 
     private fun constructRequest(): CodeGeneratorRequest = codeGeneratorRequest {
@@ -93,12 +92,12 @@ class PluginSpec {
 
     private fun launchMain(request: CodeGeneratorRequest) {
         val requestStream = ByteArrayInputStream(request.toByteArray())
-        val stdIn = System.`in`
+        val saveStdIn = System.`in`
         try {
             System.setIn(requestStream)
             main()
         } finally {
-            System.setIn(stdIn)
+            System.setIn(saveStdIn)
         }
     }
 }

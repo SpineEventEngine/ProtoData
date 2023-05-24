@@ -28,12 +28,15 @@ package io.spine.protodata.codegen.java
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
-import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.Empty
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.Field
 import io.spine.protodata.FieldName
 import io.spine.protodata.OneofName
 import io.spine.protodata.PrimitiveType.TYPE_STRING
+import io.spine.protodata.field
+import io.spine.protodata.fieldName
+import io.spine.protodata.oneofName
 import org.junit.jupiter.api.Test
 
 class `'FieldAccess' should` {
@@ -117,34 +120,29 @@ private val IMMUTABLE_MAP = ImmutableMap::class.qualifiedName!!
 private fun Field.access() =
     MessageReference("msg").field(this)
 
-private fun singleField() = Field
-    .newBuilder()
-    .setName(FieldName.newBuilder().setValue("incarnation"))
-    .setSingle(Empty.getDefaultInstance())
-    .build()
+private fun singleField() = field {
+    name = fieldName { value = "incarnation" }
+    single = Empty.getDefaultInstance()
+}
 
-private fun listField() = Field
-    .newBuilder()
-    .setName(FieldName.newBuilder().setValue("route"))
-    .setList(Empty.getDefaultInstance())
-    .build()
+private fun listField() = field {
+    name = fieldName { value = "route" }
+    list = Empty.getDefaultInstance()
+}
 
-private fun mapField() = Field
-    .newBuilder()
-    .setName(FieldName.newBuilder().setValue("attributes"))
-    .setMap(Field.OfMap.newBuilder().setKeyType(TYPE_STRING))
-    .build()
+private fun mapField() = field {
+    name = fieldName { value = "attributes" }
+    map = Field.OfMap.newBuilder().setKeyType(TYPE_STRING).build()
+}
 
-private fun oneofField() = Field
-    .newBuilder()
-    .setName(FieldName.newBuilder().setValue("sidekick"))
-    .setOneofName(OneofName.newBuilder().setValue("crew"))
-    .build()
+private fun oneofField() = field {
+    name = fieldName { value = "sidekick" }
+    oneofName = oneofName { value = "crew" }
+}
 
 private fun assertCode(
     expression: Expression,
     accessor: String
 ) {
-    assertThat(expression.toCode())
-        .isEqualTo("msg.${accessor}")
+    expression.toCode() shouldBe "msg.${accessor}"
 }

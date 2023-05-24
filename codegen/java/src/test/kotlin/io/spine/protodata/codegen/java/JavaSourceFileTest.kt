@@ -27,6 +27,7 @@
 package io.spine.protodata.codegen.java
 
 import com.google.common.truth.Truth.assertThat
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.TypeName
 import io.spine.protodata.codegen.java.TypedInsertionPoint.BUILDER_IMPLEMENTS
 import io.spine.protodata.codegen.java.TypedInsertionPoint.BUILDER_SCOPE
@@ -97,8 +98,7 @@ class `'SourceFile' with Java should` : WithSourceFileSet() {
 
             val lineIndex = file.lineNumberBy(suffix = comment)
             val insertionPointIndex = file.lineNumberBy(suffix = point.codeLine)
-            assertThat(lineIndex)
-                .isEqualTo(insertionPointIndex + 1)
+            lineIndex shouldBe insertionPointIndex + 1
         }
     }
 }

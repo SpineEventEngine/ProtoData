@@ -26,20 +26,22 @@
 
 package io.spine.protodata.codegen.java
 
-import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.ByteString
 import com.google.protobuf.Empty
 import com.google.protobuf.Timestamp
+import io.kotest.matchers.shouldBe
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.Field
 import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
 import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.test.Incarnation
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class `'Expression' should` {
+@DisplayName("`Expression` should")
+class ExpressionSpec {
 
     @Test
     fun `pack value into any`() {
@@ -106,8 +108,7 @@ class `'This' should` {
     fun `convert to a 'MessageReference'`() {
         val msg = This.asMessage
         val field = msg.field("foo", SINGLE)
-        assertThat(field.getter.toCode())
-            .isEqualTo("this.getFoo()")
+        field.getter.toCode() shouldBe "this.getFoo()"
     }
 }
 
@@ -197,19 +198,16 @@ class `'ClassName' should` {
     @Test
     fun `obtain canonical name`() {
         val cls = ClassName(Timestamp.Builder::class)
-        assertThat(cls.canonical)
-            .isEqualTo("com.google.protobuf.Timestamp.Builder")
+        cls.canonical shouldBe "com.google.protobuf.Timestamp.Builder"
     }
 
     @Test
     fun `obtain binary name`() {
         val cls = ClassName(Timestamp.Builder::class)
-        assertThat(cls.binary)
-            .isEqualTo("com.google.protobuf.Timestamp\$Builder")
+        cls.binary shouldBe "com.google.protobuf.Timestamp\$Builder"
     }
 }
 
 private fun assertCode(expression: Expression, code: String) {
-    assertThat(expression.toCode())
-        .isEqualTo(code)
+    expression.toCode() shouldBe code
 }
