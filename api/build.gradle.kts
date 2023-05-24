@@ -51,12 +51,3 @@ dependencies {
 
     testImplementation(project(":test-env"))
 }
-
-/**
- * Force `generated` directory and Kotlin code generation.
- */
-protobuf {
-    generateProtoTasks.all().configureEach {
-        builtins.maybeCreate("kotlin")
-    }
-}
