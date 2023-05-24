@@ -239,7 +239,7 @@ private fun Project.hasJavaOrKotlin(): Boolean {
 
 private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact, ext: Extension) {
 
-    protobufExtension?.run {
+    protobufExtension?.apply {
         plugins {
             it.create(PROTODATA_PROTOC_PLUGIN) { locator ->
                 locator.artifact = protocPlugin.coordinates
