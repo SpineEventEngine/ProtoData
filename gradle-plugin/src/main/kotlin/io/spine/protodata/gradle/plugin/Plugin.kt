@@ -82,15 +82,13 @@ import org.gradle.api.Plugin as GradlePlugin
  */
 public class Plugin : GradlePlugin<Project> {
 
-    override fun apply(target: Project) {
+    override fun apply(project: Project): Unit = with(project) {
         val version = readVersion()
-        with(target) {
-            val ext = createExtension()
-            createConfigurations(version)
-            createTasks(ext)
-            configureWithProtobufPlugin(version, ext)
-            configureIdea()
-        }
+        val ext = createExtension()
+        createConfigurations(version)
+        createTasks(ext)
+        configureWithProtobufPlugin(version, ext)
+        configureIdea()
     }
 
     public companion object {
@@ -194,6 +192,12 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
     return result
 }
 
+/**
+ * Creates a task which deletes the generated code for the given [sourceSet].
+ *
+ * Makes a `clean` task depend on the created task. Also makes the task which launches
+ * ProtoData CLI depend on the created task.
+ */
 private fun Project.createCleanTask(sourceSet: SourceSet, ext: Extension) {
     val project = this
     val cleanSourceSet = CleanTask.nameFor(sourceSet)
@@ -206,37 +210,24 @@ private fun Project.createCleanTask(sourceSet: SourceSet, ext: Extension) {
     }
 }
 
+/**
+ * The ID of the Protobuf Gradle Plugin.
+ */
 private const val PROTOBUF_PLUGIN = "com.google.protobuf"
 
 private fun Project.configureWithProtobufPlugin(protoDataVersion: String, ext: Extension) {
-    val protocArtifact = ProtocPluginArtifact(protoDataVersion)
-    if (pluginManager.hasPlugin(PROTOBUF_PLUGIN)) {
-        configureProtobufPlugin(protocArtifact, ext)
-    } else {
-        pluginManager.withPlugin(PROTOBUF_PLUGIN) {
-            configureProtobufPlugin(protocArtifact, ext)
-        }
+    val protocPlugin = ProtocPluginArtifact(protoDataVersion)
+    pluginManager.withPlugin(PROTOBUF_PLUGIN) {
+        configureProtobufPlugin(protocPlugin, ext)
     }
 }
 
 /**
- * Verifies if the project has `java` plugin or `compileKotlin` or `compileTestKotlin` tasks.
+ * Configures the Protobuf Gradle Plugin by adding ProtoData plugin to the list of `protoc` plugins.
  *
- * The current Protobuf support of Kotlin is based on Java codegen. Therefore,
- * it's likely that Java would be enabled in the project for Kotlin proto
- * code to be generated. Though, it may change someday and Kotlin support of Protobuf would be
- * self-sufficient. This method assumes such case when it checks the presence of
- * Kotlin compilation tasks.
+ * Also configures the `GenerateProtoTaskCollection` by adding a configuration action for each
+ * of the tasks.
  */
-private fun Project.hasJavaOrKotlin(): Boolean {
-    if (pluginManager.hasPlugin("java")) {
-        return true
-    }
-    val compileKotlin = tasks.findByName("compileKotlin")
-    val compileTestKotlin = tasks.findByName("compileTestKotlin")
-    return compileKotlin != null || compileTestKotlin != null
-}
-
 private fun Project.configureProtobufPlugin(
     protocPlugin: ProtocPluginArtifact,
     ext: Extension
@@ -260,6 +251,15 @@ private fun Project.configureProtobufPlugin(
     }
 }
 
+/**
+ * Configures the given [task] by enabling Kotlin code generation and adding and
+ * configuring ProtoData `protoc` plugin for the task.
+ *
+ * The method also handles exclusion of duplicated source code and task dependencies.
+ *
+ * @see [GenerateProtoTask.excludeProtocOutput]
+ * @see [Project.handleLaunchTaskDependency]
+ */
 private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) {
     if (hasJavaOrKotlin()) {
         task.builtins.maybeCreate("kotlin")
@@ -279,6 +279,24 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
     }
     task.excludeProtocOutput()
     handleLaunchTaskDependency(task, sourceSet, ext)
+}
+
+/**
+ * Verifies if the project has `java` plugin or `compileKotlin` or `compileTestKotlin` tasks.
+ *
+ * The current Protobuf support of Kotlin is based on Java codegen. Therefore,
+ * it's likely that Java would be enabled in the project for Kotlin proto
+ * code to be generated. Though, it may change someday and Kotlin support of Protobuf would be
+ * self-sufficient. This method assumes such case when it checks the presence of
+ * Kotlin compilation tasks.
+ */
+private fun Project.hasJavaOrKotlin(): Boolean {
+    if (pluginManager.hasPlugin("java")) {
+        return true
+    }
+    val compileKotlin = tasks.findByName("compileKotlin")
+    val compileTestKotlin = tasks.findByName("compileTestKotlin")
+    return compileKotlin != null || compileTestKotlin != null
 }
 
 /**
