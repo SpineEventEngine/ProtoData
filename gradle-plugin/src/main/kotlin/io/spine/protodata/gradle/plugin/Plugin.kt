@@ -377,6 +377,10 @@ private fun Project.handleLaunchTaskDependency(
  * we define in [GenerateProtoTask.excludeProtocOutput].
  */
 private fun Project.configureIdea() {
+
+    fun filterSources(sources: Set<File>, excludeDir: File): Set<File> =
+        sources.filter { !it.residesIn(excludeDir) }.toSet()
+
     gradle.afterProject {
         pluginManager.withPlugin("idea") {
             val protocOutput = file(generatedSourceProtoDir)
@@ -390,8 +394,9 @@ private fun Project.configureIdea() {
     }
 }
 
-private fun filterSources(sources: Set<File>, excludeDir: File): Set<File> =
-    sources.filter { !it.residesIn(excludeDir) }.toSet()
-
+/**
+ * Tells if this file resides in the given [directory].
+ */
 private fun File.residesIn(directory: File): Boolean =
     canonicalFile.startsWith(directory.absolutePath)
+
