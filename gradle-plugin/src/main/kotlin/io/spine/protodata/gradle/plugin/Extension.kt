@@ -41,19 +41,6 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.listProperty
 
 /**
- * Default subdirectories under a generated source set.
- */
-private val defaultSubdirectories = listOf(
-    "java",
-    "kotlin",
-    "grpc",
-    "js",
-    "dart",
-    "spine",
-    "protodata"
-)
-
-/**
  * The `protoData { }` Gradle extension.
  */
 public class Extension(internal val project: Project): CodegenSettings {
@@ -94,12 +81,23 @@ public class Extension(internal val project: Project): CodegenSettings {
     internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
         requestFilesDirProperty.file(CodeGeneratorRequestFile.name(forSourceSet))
 
+    /**
+     * Synthetic property for providing the source directories for the given
+     * source set under [Project.generatedSourceProtoDir].
+     *
+     * @see sourceDirs
+     */
     private val srcBaseDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(provider {
             layout.projectDirectory.dir(generatedSourceProtoDir.toString())
         })
     }
 
+    /**
+     * Allows to configure the subdirectories under the generated source set.
+     *
+     * Defaults to [defaultSubdirectories].
+     */
     public override var subDirs: List<String>
         get() = subDirProperty.get()
         set(value) {
@@ -143,5 +141,23 @@ public class Extension(internal val project: Project): CodegenSettings {
         return sourceSetDir.map { root: Directory ->
             subDirs.map { root.dir(it) }
         }
+    }
+
+    public companion object {
+
+        /**
+         * Default subdirectories expected by ProtoData under a generated source set.
+         *
+         * @see subDirs
+         */
+        public val defaultSubdirectories: List<String> = listOf(
+            "java",
+            "kotlin",
+            "grpc",
+            "js",
+            "dart",
+            "spine",
+            "protodata"
+        )
     }
 }
