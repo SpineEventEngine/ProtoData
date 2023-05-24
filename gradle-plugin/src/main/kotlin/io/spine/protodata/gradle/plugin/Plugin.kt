@@ -237,8 +237,10 @@ private fun Project.hasJavaOrKotlin(): Boolean {
     return compileKotlin != null || compileTestKotlin != null
 }
 
-private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact, ext: Extension) {
-
+private fun Project.configureProtobufPlugin(
+    protocPlugin: ProtocPluginArtifact,
+    ext: Extension
+) {
     protobufExtension?.apply {
         plugins {
             it.create(PROTODATA_PROTOC_PLUGIN) { locator ->
@@ -246,6 +248,10 @@ private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact, 
             }
         }
 
+        // The below block adds a configuration action for the `GenerateProtoTaskCollection`.
+        // We cannot do it like `generateProtoTasks.all().forEach { ... }` because it breaks the
+        // order of the configuration of the `GenerateProtoTaskCollection`. This, in turn,
+        // leads to missing generated sources in the `compileJava` task.
         generateProtoTasks {
             it.all().forEach { task ->
                 configureProtoTask(task, ext)
