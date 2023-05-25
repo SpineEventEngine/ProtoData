@@ -85,4 +85,12 @@ private fun Iterable<String>.linesToCode(indentLevel: Int): String =
         INDENT.repeat(indentLevel) + it
     }
 
+/**
+ * A four-spaces indent.
+ *
+ * For the sake of simplicity, we do not attempt to select the right indentation format for each
+ * case (programming languages, spaces VS tabs, etc.). We inform the API users about the indentation
+ * at [SourceAtLine.withExtraIndentation]. For custom use cases, users may add their
+ * own indentation formatted according to their preference.
+ */
 private const val INDENT: String = "    "
