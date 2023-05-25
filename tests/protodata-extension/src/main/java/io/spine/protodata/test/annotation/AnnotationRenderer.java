@@ -48,7 +48,7 @@ public final class AnnotationRenderer extends JavaRenderer {
         // Don't do anything if this source file set is for a language
         // other than Java. For the root cause of this please see this issue:
         // https://github.com/SpineEventEngine/ProtoData/issues/90
-         if (!sources.sourceRoot().endsWith("java")) {
+         if (!sources.inputRoot().endsWith("java")) {
              return;
          }
         Set<Annotated> annotatedFields = select(Annotated.class).all();
