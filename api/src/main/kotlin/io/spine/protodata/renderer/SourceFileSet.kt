@@ -49,11 +49,12 @@ import kotlin.text.Charsets.UTF_8
  *
  * The resulting files are written to the [outputRoot] directory.
  *
- * When files are [deleted][delete], they still remain in the set, but are marked as deleted.
- * Actual deletion happens when the set is [written][write].
+ * When files are [deleted][delete], they still remain in the set,
+ * but are marked as deleted. Actual deletion happens when
+ * the set is [written][write].
  *
- * The source set can be configured to perform some [actions][prepareCode] before
- * reading the files.
+ * The source set can be configured to perform some [actions][prepareCode]
+ * before reading the files.
  *
  * @see SourceFile
  */
@@ -104,7 +105,8 @@ internal constructor(
          * @param outputRoot
          *         the directory to which to write the processed files.
          *         If same as the [sourceRoot], all files **will be overwritten**.
-         *         If different from the `sourceRoot`, the files in `sourceRoot` will not be changed.
+         *         If different from the `sourceRoot`, the files in `sourceRoot`
+         *         will not be changed.
          */
         public fun from(inputRoot: Path, outputRoot: Path): SourceFileSet {
             val source = inputRoot.canonical()
@@ -120,8 +122,8 @@ internal constructor(
         }
 
         /**
-         * Creates an empty source set which can be appended with new files and written to
-         * the given target directory.
+         * Creates an empty source set which can be appended with new files and
+         * written to the given target directory.
          */
         public fun empty(target: Path): SourceFileSet {
             checkTarget(target)
@@ -201,8 +203,8 @@ internal constructor(
     /**
      * Delete the given [file] from the source set.
      *
-     * Does not delete the file from the file system. All the FS operations are performed in
-     * the [write] method.
+     * Does not delete the file from the file system. All the FS operations are
+     * performed in the [write] method.
      */
     internal fun delete(file: Path) {
         val sourceFile = file(file)
@@ -213,8 +215,8 @@ internal constructor(
     /**
      * Writes this source set to the file system.
      *
-     * The sources existing on the file system at the moment are deleted, along with the whole
-     * directory structure and the new files are written.
+     * The sources existing on the file system at the moment are deleted,
+     * along with the whole directory structure and the new files are written.
      */
     public fun write(charset: Charset = UTF_8) {
         deletedFiles.forEach {
@@ -230,8 +232,9 @@ internal constructor(
     /**
      * Applies the given [action] to all the code files which are accessed by a [Renderer].
      *
-     * When a file's code is first accessed, runs the given action. The action may change the code
-     * if necessary, for example, by adding insertion points.
+     * When a file's code is first accessed, runs the given action.
+     * The action may change the code if necessary, for example,
+     * by adding insertion points.
      */
     internal fun prepareCode(action: (SourceFile) -> Unit) {
         files.values.forEach {
