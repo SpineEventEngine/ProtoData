@@ -31,6 +31,7 @@ import io.spine.protodata.InsertedPoints
 import io.spine.protodata.filePath
 import io.spine.server.query.select
 import io.spine.text.Text
+import io.spine.text.TextFactory.text
 import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
