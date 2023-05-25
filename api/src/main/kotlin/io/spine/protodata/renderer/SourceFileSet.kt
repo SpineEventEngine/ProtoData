@@ -29,6 +29,7 @@ package io.spine.protodata.renderer
 import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
+import io.spine.string.ti
 import io.spine.util.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files.walk
@@ -156,7 +157,11 @@ internal constructor(
     public fun file(path: Path): SourceFile {
         val found = find(path)
         require(found != null) {
-            "File not found: `$path`. Source root: `$inputRoot`. Target root: `$outputRoot`."
+            """
+            File not found: `$path`.
+            Input root: `$inputRoot`.
+            Output root: `$outputRoot`."
+            """.ti()
         }
         return found
     }
