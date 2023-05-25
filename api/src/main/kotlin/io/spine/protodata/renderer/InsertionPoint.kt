@@ -171,6 +171,8 @@ public sealed interface CoordinatesFactory {
 
     /**
      * Creates coordinates that do not point at anywhere in the text.
+     *
+     * The insertion point will NOT be placed in the file at question.
      */
     public fun nowhere(): TextCoordinates = NOWHERE
 }
