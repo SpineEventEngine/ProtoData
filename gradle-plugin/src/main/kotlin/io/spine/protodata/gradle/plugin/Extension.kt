@@ -45,25 +45,22 @@ import org.gradle.kotlin.dsl.listProperty
  */
 public class Extension(internal val project: Project): CodegenSettings {
 
-    public override fun plugins(vararg classNames: String) {
+    public override fun plugins(vararg classNames: String): Unit =
         plugins.addAll(classNames.toList())
-    }
 
     private val factory = project.objects
 
     internal val plugins: ListProperty<String> =
         factory.listProperty(String::class.java).convention(listOf())
 
-    public override fun renderers(vararg classNames: String) {
+    public override fun renderers(vararg classNames: String): Unit =
         renderers.addAll(classNames.toList())
-    }
 
     internal val renderers: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
 
-    public override fun optionProviders(vararg classNames: String) {
+    public override fun optionProviders(vararg classNames: String): Unit =
         optionProviders.addAll(classNames.toList())
-    }
 
     internal val optionProviders: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
