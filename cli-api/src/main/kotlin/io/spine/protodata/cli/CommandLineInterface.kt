@@ -163,7 +163,7 @@ public object ConfigFormatParam : Parameter(
 
 public object InfoLoggingParam : Parameter(
     name = "--info",
-    shortName = "-i",
+    shortName = "-I",
     help = """
         Set log level to `INFO`.        
     """
@@ -171,7 +171,7 @@ public object InfoLoggingParam : Parameter(
 
 public object DebugLoggingParam : Parameter(
     name = "--debug",
-    shortName = "-d",
+    shortName = "-D",
     help = """
         Set log level to `DEBUG`.        
     """
