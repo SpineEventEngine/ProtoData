@@ -42,12 +42,18 @@ import kotlin.io.path.writeText
 /**
  * A file with source code.
  *
- * This file is a part of a source set. It should be treated as a part of a software module rather
- * than a file system object. One `SourceFile` may reflect multiple actual FS files. For example,
- * a `SourceFile` may be read from one location on the FS and written into another location.
+ * This file is a part of a [source set][SourceFileSet]. It should be treated as
+ * a part of a software module rather than a file system object.
+ * One `SourceFile` may reflect multiple actual files on a file system. For example,
+ * a `SourceFile` may be read from one location on the file system and written
+ * into another location.
+ *
+ * @see SourceFileSet
  */
-@Suppress("TooManyFunctions") /* Those functions constitute the primary API and
-                                         should not be represented as extensions. */
+@Suppress(
+    "TooManyFunctions"
+    /* Those functions constitute the primary API and should not be represented as extensions. */
+)
 public class SourceFile
 private constructor(
 
@@ -92,9 +98,11 @@ private constructor(
         /**
          * Constructs a file from source code.
          *
-         * @param relativePath the FS path for the file relative to the source root; the file might
-         *             not exist on the file system
-         * @param code the source code
+         * @param relativePath
+         *         the FS path for the file relative to the source root; the file might
+         *         not exist on the file system.
+         * @param code
+         *         the source code.
          */
         internal fun fromCode(relativePath: Path, code: String): SourceFile =
             SourceFile(code, relativePath, changed = true)
@@ -103,12 +111,13 @@ private constructor(
     /**
      * Creates a new fluent builder for adding code at the given [insertionPoint].
      *
-     * If the [insertionPoint] is not found in the code, no action will be performed as the result.
-     * If there are more than one instances of the same insertion point, the code will be added to
-     * all of them.
+     * If the [insertionPoint] is not found in the code, no action will be
+     * performed as the result. If there are more than one instances of
+     * the same insertion point, the code will be added to all of them.
      *
-     * Insertion points should be marked with comments of special format. The added code is always
-     * inserted after the line with the comment, and the line with the comment is preserved.
+     * Insertion points should be marked with comments of special format.
+     * The added code is always inserted after the line with the comment, and
+     * the line with the comment is preserved.
      */
     public fun at(insertionPoint: InsertionPoint): SourceAtPoint =
         SourceAtPoint(this, insertionPoint)
@@ -116,13 +125,14 @@ private constructor(
     /**
      * Deletes this file from the source set.
      *
-     * As the result of this method, the associated source file will be eventually removed from
-     * the file system.
+     * As the result of this method, the associated source file will be
+     * eventually removed from the file system.
      *
-     * If the file was created earlier (by the same or a different [Renderer]), the file will not
-     * be written to the file system.
+     * If the file was created earlier (by the same or a different [Renderer]),
+     * the file will not be written to the file system.
      *
-     * After this method, the file will no longer be accessible via associated the `SourceSet`.
+     * After this method, the file will no longer be accessible via
+     * the associated `SourceSet`.
      */
     public fun delete() {
         sources.delete(relativePath)
@@ -131,9 +141,9 @@ private constructor(
     /**
      * Changes the contents of this file to the provided [newCode].
      *
-     * **Note.** This method may overwrite the work of other [Renderer]s, as well as remove
-     * the insertion points from the file. Use with caution. Prefer using [at(InsertionPoint)][at]
-     * when possible.
+     * **Note** This method may overwrite the work of other [Renderer]s, as well
+     * as remove the insertion points from the file. Use with caution.
+     * Prefer using [at(InsertionPoint)][at] when possible.
      */
     public fun overwrite(newCode: String) {
         this.code = newCode
@@ -157,24 +167,27 @@ private constructor(
     /**
      * Writes the source code into the file on the file system.
      *
-     * It may be the case that the file is read from one directory (source) and written into another
-     * directory (target). Thus, the initial path from where the file is read may not coincide with
-     * the path from where the file is written.
+     * It may be the case that the file is read from one directory (source) and
+     * written into another directory (target). Thus, the initial path from where
+     * the file is read may not coincide with the path from where the file is written.
      *
-     * @param rootDir the directory into which the file should be written;
-     *                this file's [relativePath] is resolved upon this directory
-     * @param charset the charset to use to write the file; UTF-8 is the default
-     * @param forceWrite if `true`, this file must be written to the FS even if no changes have been
-     *                   done upon it; otherwise, the file may not be written to avoid unnecessary
-     *                   file system operations
+     * @param baseDir
+     *         the directory into which the file should be written;
+     *         this file's [relativePath] is resolved upon this directory.
+     * @param charset
+     *         the charset to use to write the file; UTF-8 is the default.
+     * @param forceWrite
+     *         if `true`, this file must be written to the FS even if no changes have been
+     *         done upon it; otherwise, the file may not be written to avoid unnecessary
+     *         file system operations.
      */
     internal fun write(
-        rootDir: Path,
+        baseDir: Path,
         charset: Charset = Charsets.UTF_8,
         forceWrite: Boolean = false
     ) {
         if (changed || forceWrite) {
-            val targetPath = rootDir / relativePath
+            val targetPath = baseDir / relativePath
             targetPath.toFile()
                 .parentFile
                 .mkdirs()
@@ -185,12 +198,13 @@ private constructor(
     /**
      * Deletes this source file from the file system.
      *
-     * It may be the case that the file is read from one directory (source) and changed in another
-     * directory (target). Thus, the initial path from where the file is read may not coincide with
-     * the path from where the file is deleted.
+     * It may be the case that the file is read from one directory (source) and
+     * changed in another directory (target). Thus, the initial path from where
+     * the file is read may not coincide with the path from where the file is deleted.
      *
-     * @param rootDir the root directory where the file lies; the [relativePath] is resolved upon
-     *                this directory
+     * @param rootDir
+     *         the root directory where the file lies; the [relativePath] is resolved
+     *         upon this directory.
      * @see write
      */
     internal fun rm(rootDir: Path) {
@@ -267,7 +281,7 @@ internal constructor(
      * Adds the given code lines at the associated insertion point.
      *
      * @param lines
-     *      code lines
+     *         the code lines.
      */
     public fun add(lines: Iterable<String>) {
         val sourceLines = file.lines()
