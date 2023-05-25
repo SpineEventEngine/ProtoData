@@ -30,8 +30,8 @@ import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
-import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.parameters.options.NullableOption
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -41,15 +41,19 @@ import com.github.ajalt.clikt.parameters.types.path
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
+import io.spine.logging.Level
 import io.spine.logging.WithLogging
+import io.spine.logging.atDebug
+import io.spine.logging.context.LogLevelMap
+import io.spine.logging.context.ScopedLoggingContext
 import io.spine.option.OptionsProvider
 import io.spine.protobuf.outerClass
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.config.Configuration
-import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.cli.ConfigFileParam
 import io.spine.protodata.cli.ConfigFormatParam
 import io.spine.protodata.cli.ConfigValueParam
+import io.spine.protodata.cli.DebugLoggingParam
+import io.spine.protodata.cli.InfoLoggingParam
 import io.spine.protodata.cli.OptionProviderParam
 import io.spine.protodata.cli.Parameter
 import io.spine.protodata.cli.PluginParam
@@ -58,9 +62,12 @@ import io.spine.protodata.cli.RequestParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
+import io.spine.protodata.config.Configuration
+import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.string.Separator
 import io.spine.string.pi
+import io.spine.string.ti
 import io.spine.tools.code.manifest.Version
 import java.io.File
 import java.io.File.pathSeparator
@@ -166,13 +173,47 @@ internal class Run(version: String) : CliktCommand(
         )
     )
 
+    private val debug: Boolean by DebugLoggingParam.toOption().flag(default = false)
+    private val info: Boolean by InfoLoggingParam.toOption().flag(default = false)
+    private val loggingLevel: Level by lazy {
+        check(!(debug && info)) {
+            "Debug and info logging levels cannot be enabled at the same time."
+        }
+        when {
+            debug -> Level.DEBUG
+            info -> Level.INFO
+            else -> Level.WARNING
+        }
+    }
+
     override fun run() {
+        if (loggingLevel != Level.WARNING) {
+            doRun()
+        } else {
+            val logLevelMap = LogLevelMap.create(mapOf(), loggingLevel)
+            val context = ScopedLoggingContext.newContext().withLogLevelMap(logLevelMap)
+            context.execute {
+                doRun()
+            }
+        }
+    }
+
+    private fun doRun() {
         val sources = createSourceFileSets()
         val plugins = loadPlugins()
         val renderer = loadRenderers()
         val registry = createRegistry()
         val request = loadRequest(registry)
         val config = resolveConfig()
+        logger.atDebug().log {
+            """
+            Starting code generation with the following parameters:
+            - plugins: ${plugins.joinToString()}
+            - renderers: ${renderer.joinToString()}
+            - request: ${request.fileToGenerateList.joinToString()}
+            - config: ${config}.
+            """".ti()
+        }
         Pipeline(plugins, renderer, sources, request, config)()
     }
 
