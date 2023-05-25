@@ -31,7 +31,6 @@ import io.spine.protodata.InsertedPoints
 import io.spine.protodata.filePath
 import io.spine.server.query.select
 import io.spine.text.Text
-import io.spine.text.TextFactory.text
 import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
@@ -108,7 +107,7 @@ private constructor(
      * Creates a new fluent builder for adding code at the given [insertionPoint].
      *
      * If the [insertionPoint] is not found in the code, no action will be performed as the result.
-     * If there are more than one instances of the same insertion point, the code will be added to
+     * If there are more than one instance of the same insertion point, the code will be added to
      * all of them.
      *
      * Insertion points should be marked with comments of special format. The added code is always
