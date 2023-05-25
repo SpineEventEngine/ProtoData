@@ -435,10 +435,10 @@ public fun listExpression(vararg expressions: Expression): MethodCall =
  *         the expressions representing the entries.
  * @param keyType
  *         the type of the keys of the map;
- *         must be non-null if the map is not empty, may be `null` otherwise.
+ *         must be non-`null` if the map is not empty, may be `null` otherwise.
  * @param valueType
  *         the type of the values of the map;
- *         must be non-null if the map is not empty, may be `null` otherwise.
+ *         must be non-`null` if the map is not empty, may be `null` otherwise.
  */
 public fun mapExpression(
     expressions: Map<Expression, Expression>,
