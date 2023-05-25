@@ -24,4 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+@JvmLoggingDomain("ProtoData")
 package io.spine.protodata;
+
+import com.google.errorprone.annotations.CheckReturnValue;
+import io.spine.logging.JvmLoggingDomain;
+
+import javax.annotation.ParametersAreNonnullByDefault;
