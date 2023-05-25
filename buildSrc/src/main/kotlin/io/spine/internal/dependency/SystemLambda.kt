@@ -26,19 +26,9 @@
 
 package io.spine.internal.dependency
 
-/**
- * Dependencies on ProtoData modules.
- *
- * See [`SpineEventEngine/ProtoData`](https://github.com/SpineEventEngine/ProtoData/).
- */
-@Suppress("unused")
-object ProtoData {
-    const val version = "0.8.2"
-    const val group = "io.spine.protodata"
-    const val compiler = "$group:protodata-compiler:$version"
-
-    const val codegenJava = "io.spine.protodata:protodata-codegen-java:$version"
-
-    const val pluginId = "io.spine.protodata"
-    const val pluginLib = "${Spine.group}:protodata:$version"
+// https://github.com/stefanbirkner/system-lambda
+object SystemLambda {
+    const val version = "1.2.1"
+    const val group = "com.github.stefanbirkner"
+    const val lib = "$group:system-lambda:$version"
 }

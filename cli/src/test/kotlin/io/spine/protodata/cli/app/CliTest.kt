@@ -30,7 +30,8 @@ import com.github.ajalt.clikt.core.MissingOption
 import com.github.ajalt.clikt.core.UsageError
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.StringValue
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import com.google.protobuf.compiler.codeGeneratorRequest
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldStartWith
 import io.spine.base.Time
@@ -90,14 +91,18 @@ class `Command line application should` {
 
         val project = ProjectProto.getDescriptor()
         val testProto = TestProto.getDescriptor()
-        val request = CodeGeneratorRequest.newBuilder()
-            .addProtoFile(project.toProto())
-            .addProtoFile(testProto.toProto())
-            .addProtoFile(TestOptionsProto.getDescriptor().toProto())
-            .addProtoFile(OptionsProto.getDescriptor().toProto())
-            .addFileToGenerate(project.name)
-            .addFileToGenerate(testProto.name)
-            .build()
+        val request = codeGeneratorRequest {
+            protoFile.addAll(listOf(
+                project.toProto(),
+                testProto.toProto(),
+                TestOptionsProto.getDescriptor().toProto(),
+                OptionsProto.getDescriptor().toProto()
+            ))
+            fileToGenerate.addAll(listOf(
+                project.name,
+                testProto.name
+            ))
+        }
         codegenRequestFile.writeBytes(request.toByteArray())
     }
 
@@ -109,8 +114,7 @@ class `Command line application should` {
             "--src", srcRoot.toString(),
             "-t", codegenRequestFile.toString()
         )
-        assertThat(sourceFile.readText())
-            .isEqualTo("_${Project::class.simpleName}.getUuid() ")
+        sourceFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
     }
 
     @Test
@@ -123,8 +127,7 @@ class `Command line application should` {
             "--op", TestOptionProvider::class.jvmName
         )
         val generatedFile = srcRoot.resolve(CustomOptionRenderer.FILE_NAME)
-        assertThat(generatedFile.readText())
-            .isEqualTo("custom_field_for_test")
+        generatedFile.readText() shouldBe "custom_field_for_test"
     }
 
     @Test
@@ -136,8 +139,7 @@ class `Command line application should` {
             "-t", codegenRequestFile.toString(),
         )
         val generatedFile = srcRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
-        assertThat(generatedFile.readText())
-            .isEqualTo("true, true")
+        generatedFile.readText() shouldBe "true, true"
     }
 
     @Nested
@@ -158,8 +160,7 @@ class `Command line application should` {
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
-            assertThat(srcRoot.resolve(ECHO_FILE).readText())
-                .isEqualTo(name)
+            srcRoot.resolve(ECHO_FILE).readText() shouldBe name
         }
 
         @Test
@@ -172,8 +173,7 @@ class `Command line application should` {
                 "--cv", """{ "value": "$name" }""",
                 "--cf", "json"
             )
-            assertThat(srcRoot.resolve(ECHO_FILE).readText())
-                .isEqualTo(name)
+            srcRoot.resolve(ECHO_FILE).readText() shouldBe name
         }
     }
 
@@ -195,8 +195,7 @@ class `Command line application should` {
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
-            assertThat(srcRoot.resolve(ECHO_FILE).readText())
-                .isEqualTo(name)
+            srcRoot.resolve(ECHO_FILE).readText() shouldBe name
         }
 
         @Test
@@ -265,8 +264,7 @@ class `Command line application should` {
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
-            assertThat(srcRoot.resolve(ECHO_FILE).readText())
-                .isEqualTo(name)
+            srcRoot.resolve(ECHO_FILE).readText() shouldBe name
         }
 
         @Test
@@ -279,8 +277,7 @@ class `Command line application should` {
                 "--cv", plainString,
                 "--cf", "plain"
             )
-            assertThat(srcRoot.resolve(ECHO_FILE).readText())
-                .isEqualTo(plainString)
+            srcRoot.resolve(ECHO_FILE).readText() shouldBe plainString
         }
     }
 

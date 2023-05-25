@@ -26,8 +26,11 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.truth.Truth8.assertThat
+import io.kotest.matchers.optional.shouldBePresent
+import io.kotest.matchers.shouldBe
 import java.nio.file.Path
+import java.util.*
+import java.util.Optional.empty
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -58,26 +61,23 @@ class SourceFileSetSpec {
     @Test
     fun `find existing file by relative path`() {
         val found = set.findFile(existingSourceFile)
-        assertThat(found)
-            .isPresent()
-        assertThat(found.get().relativePath)
-            .isEqualTo(existingSourceFile)
+        found shouldBePresent {
+            it.relativePath shouldBe existingSourceFile
+        }
     }
 
     @Test
     fun `find existing file by absolute path`() {
         val found = set.findFile(existingSourceFileAbsolute)
-        assertThat(found)
-            .isPresent()
-        assertThat(found.get().relativePath)
-            .isEqualTo(existingSourceFile)
+        found shouldBePresent {
+            it.relativePath shouldBe existingSourceFile
+        }
     }
 
     @Test
     fun `not find a non-existing file`() {
         val found = set.findFile(Path("non/existing/file.txt"))
-        assertThat(found)
-            .isEmpty()
+        found shouldBe empty()
     }
 
     @Test

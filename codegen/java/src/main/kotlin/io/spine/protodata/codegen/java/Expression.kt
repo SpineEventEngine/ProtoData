@@ -43,9 +43,6 @@ import kotlin.reflect.KClass
 
 private const val OF = "of"
 
-private val immutableListClass = ClassName(ImmutableList::class)
-private val immutableMapClass = ClassName(ImmutableMap::class)
-
 /**
  * A piece of Java code.
  *
@@ -62,7 +59,7 @@ public sealed interface JavaPrintable {
 /**
  * A piece of Java code which yields a value.
  */
-public sealed class Expression(private val code: String): JavaPrintable {
+public sealed class Expression(private val code: String) : JavaPrintable {
 
     /**
      * Prints this Java expression.
@@ -83,12 +80,10 @@ public sealed class Expression(private val code: String): JavaPrintable {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
         other as Expression
-        if (code != other.code) return false
-        return true
+        return code == other.code
     }
 
-    override fun hashCode(): Int =
-        code.hashCode()
+    override fun hashCode(): Int = code.hashCode()
 }
 
 /**
@@ -392,19 +387,21 @@ constructor(
      * Constructs an expression chaining a setter call.
      */
     public fun chainSet(name: String, value: Expression): MethodCall =
-        FieldAccess(this, fieldName(name)).setter(value)
+        fieldAccess(name).setter(value)
 
     /**
      * Constructs an expression chaining a call of an `addField(...)` method.
      */
     public fun chainAdd(name: String, value: Expression): MethodCall =
-        FieldAccess(this, fieldName(name)).add(value)
+        fieldAccess(name).add(value)
 
     /**
      * Constructs an expression chaining a call of an `addAllField(...)` method.
      */
     public fun chainAddAll(name: String, value: Expression): MethodCall =
-        FieldAccess(this, fieldName(name)).addAll(value)
+        fieldAccess(name).addAll(value)
+
+    private fun fieldAccess(name: String) = FieldAccess(this, fieldName(name))
 
     /**
      * Constructs an expression chaining a call of the `build()` method.
@@ -419,7 +416,7 @@ constructor(
  * The resulting expression always yields an instance of Guava `ImmutableList`.
  */
 public fun listExpression(expressions: List<Expression>): MethodCall =
-    immutableListClass.call(OF, expressions)
+    ClassName(ImmutableList::class).call(OF, expressions)
 
 /**
  * Constructs an expression of a list of the given [expressions].
@@ -434,17 +431,22 @@ public fun listExpression(vararg expressions: Expression): MethodCall =
  *
  * The resulting expression always yields an instance of Guava `ImmutableMap`.
  *
- * @param expressions the expressions representing the entries
- * @param keyType the type of the keys of the map;
- *                must be non-null if the map is not empty, may be `null` otherwise
- * @param valueType the type of the values of the map;
- *                  must be non-null if the map is not empty, may be `null` otherwise
+ * @param expressions
+ *         the expressions representing the entries.
+ * @param keyType
+ *         the type of the keys of the map;
+ *         must be non-`null` if the map is not empty, may be `null` otherwise.
+ * @param valueType
+ *         the type of the values of the map;
+ *         must be non-`null` if the map is not empty, may be `null` otherwise.
  */
 public fun mapExpression(
     expressions: Map<Expression, Expression>,
     keyType: ClassName?,
     valueType: ClassName?
 ): MethodCall {
+    val immutableMapClass = ClassName(ImmutableMap::class)
+
     if (expressions.isEmpty()) {
         return immutableMapClass.call(OF)
     }
@@ -469,7 +471,7 @@ private fun List<ClassName>.genericTypes() =
 private fun List<Expression>.formatParams() =
     joinToString { it.toCode() }
 
-private fun fieldName(value: String) = FieldName
-    .newBuilder()
-    .setValue(value)
-    .build()
+/**
+ * Creates new instance of [FieldName] for the given [value].
+ */
+private fun fieldName(value: String) = FieldName.newBuilder().setValue(value).build()

@@ -89,7 +89,6 @@ private constructor(
             return SourceFile(absolute.readText(charset), relativePath)
         }
 
-
         /**
          * Constructs a file from source code.
          *
