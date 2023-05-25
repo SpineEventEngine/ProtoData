@@ -27,13 +27,13 @@
 package io.spine.protodata.renderer
 
 import io.spine.core.userId
-import io.spine.protodata.TextCoordinates
-import io.spine.protodata.TextCoordinates.KindCase.END_OF_FILE
-import io.spine.protodata.TextCoordinates.KindCase.INLINE
-import io.spine.protodata.TextCoordinates.KindCase.WHOLE_LINE
 import io.spine.protodata.event.insertionPointPrinted
 import io.spine.protodata.filePath
 import io.spine.server.integration.ThirdPartyContext
+import io.spine.text.TextCoordinates
+import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
+import io.spine.text.TextCoordinates.KindCase.INLINE
+import io.spine.text.TextCoordinates.KindCase.WHOLE_LINE
 import io.spine.tools.code.Language
 
 /**
@@ -75,7 +75,7 @@ public abstract class InsertionPointPrinter(
                         lines.add(coordinates.wholeLine, comment)
                         reportPoint(file, point.label, comment)
                     }
-                    END_OF_FILE -> {
+                    END_OF_TEXT -> {
                         val comment = target.comment(point.codeLine)
                         lines.add(comment)
                         reportPoint(file, point.label, comment)
@@ -94,13 +94,14 @@ public abstract class InsertionPointPrinter(
         point: InsertionPoint,
         file: SourceFile
     ) {
-        val position = coordinates.inline
-        val lineIndex = position.cursor.line
+        val cursor = coordinates.inline
+        val lineIndex = cursor.line
+        val column = cursor.column
         lines.checkLineNumber(lineIndex)
         val originalLine = lines[lineIndex]
-        originalLine.checkLinePosition(position.cursor.column)
-        val lineStart = originalLine.substring(0, position.cursor.column)
-        val lineEnd = originalLine.substring(position.cursor.column)
+        originalLine.checkLinePosition(column)
+        val lineStart = originalLine.substring(0, column)
+        val lineEnd = originalLine.substring(column)
         val codeLine = point.codeLine
         val comment = target.comment(codeLine)
         val annotatedLine = "$lineStart $comment $lineEnd"

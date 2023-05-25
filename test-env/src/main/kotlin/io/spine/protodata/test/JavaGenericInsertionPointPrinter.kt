@@ -26,11 +26,10 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.TextCoordinates
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.splitLines
 import io.spine.text.Text
+import io.spine.text.TextCoordinates
 import io.spine.tools.code.CommonLanguages.Java
 
 public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(Java) {
@@ -45,7 +44,7 @@ public enum class GenericInsertionPoint : InsertionPoint {
         override fun locate(text: Text): TextCoordinates = startOfFile()
     },
     FILE_MIDDLE {
-        override fun locate(text: Text): TextCoordinates = atLine(text.splitLines().size / 2)
+        override fun locate(text: Text): TextCoordinates = atLine(text.lines().size / 2)
     },
     FILE_END {
         override fun locate(text: Text): TextCoordinates = endOfFile()

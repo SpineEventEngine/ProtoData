@@ -26,11 +26,10 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.TextCoordinates
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.splitLines
 import io.spine.text.Text
+import io.spine.text.TextCoordinates
 import io.spine.tools.code.CommonLanguages.Java
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
 
@@ -45,7 +44,7 @@ public enum class AnnotationInsertionPoint : InsertionPoint {
 
     IMPORT {
         override fun locate(text: Text): TextCoordinates {
-            val lines = text.splitLines()
+            val lines = text.lines()
             val packageLineIndex = lines.asSequence()
                 .mapIndexed { index, line -> index to line }
                 .find { (_, line) -> line.startsWith("package") }
@@ -56,7 +55,7 @@ public enum class AnnotationInsertionPoint : InsertionPoint {
     },
     BEFORE_RETURN_TYPE_METHOD_FOO {
         override fun locate(text: Text): TextCoordinates {
-            val lines = text.splitLines()
+            val lines = text.lines()
             val (lineIndex, line) = lines.asSequence()
                 .mapIndexed { index, line -> index to line }
                 .find { (_, line) ->

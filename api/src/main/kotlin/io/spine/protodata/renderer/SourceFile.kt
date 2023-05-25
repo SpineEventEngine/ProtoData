@@ -29,7 +29,6 @@ package io.spine.protodata.renderer
 import com.google.common.base.Splitter
 import io.spine.protodata.InsertedPoints
 import io.spine.protodata.filePath
-import io.spine.protodata.splitLines
 import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
@@ -243,7 +242,7 @@ private constructor(
      * Obtains the entire content of this file as a list of lines.
      */
     public fun lines(): List<String> {
-        return text().splitLines()
+        return text().lines()
     }
 
     /**

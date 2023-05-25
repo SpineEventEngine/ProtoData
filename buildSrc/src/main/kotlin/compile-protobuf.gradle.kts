@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,32 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+import io.spine.internal.dependency.Protobuf
+import io.spine.internal.gradle.protobuf.setup
 
-import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.text.Text
-import io.spine.text.TextCoordinates
-import io.spine.tools.code.CommonLanguages.Kotlin
-
-public class VariousKtInsertionPointsPrinter : InsertionPointPrinter(Kotlin) {
-
-    override fun supportedInsertionPoints(): Set<InsertionPoint> =
-        KotlinInsertionPoint.values().toSet()
+plugins {
+    id("java-library")
+    id("com.google.protobuf")
 }
 
-public enum class KotlinInsertionPoint : InsertionPoint {
 
-    FILE_START {
-        override fun locate(text: Text): TextCoordinates = startOfFile()
-    },
-    FILE_END {
-        override fun locate(text: Text): TextCoordinates = endOfFile()
-    },
-    LINE_FOUR_COL_THIRTY_THREE {
-        override fun locate(text: Text): TextCoordinates = at(3, 33)
-    };
-
-    override val label: String
-        get() = name.lowercase()
+// For generating test fixtures. See `src/test/proto`.
+protobuf {
+    configurations.excludeProtobufLite()
+    protoc {
+        artifact = Protobuf.compiler
+    }
+    generateProtoTasks.all().configureEach {
+        setup()
+    }
 }

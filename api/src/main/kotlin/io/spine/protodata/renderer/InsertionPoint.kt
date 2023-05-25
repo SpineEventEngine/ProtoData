@@ -30,18 +30,17 @@ import com.google.common.flogger.StackSize.FULL
 import com.google.protobuf.Empty
 import io.spine.annotation.Internal
 import io.spine.logging.Logging.loggerFor
-import io.spine.protodata.TextCoordinates
-import io.spine.protodata.TextCoordinates.KindCase.INLINE
-import io.spine.protodata.TextCoordinates.KindCase.WHOLE_LINE
 import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
-import io.spine.protodata.textCoordinates
 import io.spine.text.Text
+import io.spine.text.TextCoordinates
+import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
+import io.spine.text.TextCoordinates.KindCase.INLINE
+import io.spine.text.TextCoordinates.KindCase.WHOLE_LINE
 import io.spine.text.TextFactory.text
 import io.spine.text.cursor
-import io.spine.text.position
-import io.spine.protodata.TextCoordinates.KindCase.END_OF_FILE as KIND_EOF
-import io.spine.protodata.TextCoordinates.KindCase.NOWHERE as KIND_NOWHERE
+import io.spine.text.textCoordinates
+import io.spine.text.TextCoordinates.KindCase.NOWHERE as KIND_NOWHERE
 
 /**
  * A point is a source file, where more code may be inserted.
@@ -89,9 +88,9 @@ public interface InsertionPoint : CoordinatesFactory {
             WHOLE_LINE -> LineNumber.at(coords.wholeLine)
             INLINE -> {
                 logUnsupportedKind()
-                LineNumber.at(coords.inline.cursor.line)
+                LineNumber.at(coords.inline.line)
             }
-            KIND_EOF -> LineNumber.endOfFile()
+            END_OF_TEXT -> LineNumber.endOfFile()
             KIND_NOWHERE -> LineNumber.notInFile()
             else -> error("Unexpected text coordinates `$coords`.")
         }
@@ -124,7 +123,7 @@ private val START_OF_FILE = textCoordinates {
 }
 
 private val END_OF_FILE = textCoordinates {
-    endOfFile = Empty.getDefaultInstance()
+    endOfText = Empty.getDefaultInstance()
 }
 
 private val NOWHERE = textCoordinates {
@@ -148,11 +147,8 @@ public sealed interface CoordinatesFactory {
             this.line = line
             this.column = column
         }
-        val position = position {
-            this.cursor = cursor
-        }
         return textCoordinates {
-            inline = position
+            inline = cursor
         }
     }
 

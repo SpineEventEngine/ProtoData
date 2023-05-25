@@ -92,7 +92,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-logging</artifactId>
-    <version>2.0.0-SNAPSHOT.182</version>
+    <version>2.0.0-SNAPSHOT.183</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -110,7 +110,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-text</artifactId>
-    <version>2.0.0-SNAPSHOT.4</version>
+    <version>2.0.0-SNAPSHOT.5</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
