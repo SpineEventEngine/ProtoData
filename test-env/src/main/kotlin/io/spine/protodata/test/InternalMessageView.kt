@@ -36,6 +36,9 @@ import io.spine.server.entity.update
 import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
+/**
+ * A view on a message type that should be hidden from public API.
+ */
 public class InternalMessageView
     : View<TypeName, InternalType, InternalType.Builder>() {
 
@@ -47,6 +50,9 @@ public class InternalMessageView
     }
 }
 
+/**
+ * The repo for the [InternalMessageView].
+ */
 public class InternalMessageRepository :
     ViewRepository<TypeName, InternalMessageView, InternalType>() {
 

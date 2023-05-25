@@ -33,15 +33,25 @@ import io.spine.text.TextCoordinates
 import io.spine.tools.code.CommonLanguages.Java
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
 
-
+/**
+ * An [InsertionPointPrinter] for the [AnnotationInsertionPoint].
+ */
 public class AnnotationInsertionPointPrinter: InsertionPointPrinter(Java) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> =
         AnnotationInsertionPoint.values().toSet()
 }
 
+/**
+ * Insertion points that help renderers annotate certain parts of a Java file.
+ */
 public enum class AnnotationInsertionPoint : InsertionPoint {
 
+    /**
+     * An insertion point in the imports black.
+     *
+     * This insertion point allows to import types into the Java file.
+     */
     IMPORT {
         override fun locate(text: Text): TextCoordinates {
             val lines = text.lines()
@@ -53,6 +63,12 @@ public enum class AnnotationInsertionPoint : InsertionPoint {
             return atLine(targetLine)
         }
     },
+
+    /**
+     * An insertion point before the return type of method called `foo`.
+     *
+     * This insertion point allows to annotate the return type.
+     */
     BEFORE_RETURN_TYPE_METHOD_FOO {
         override fun locate(text: Text): TextCoordinates {
             val lines = text.lines()

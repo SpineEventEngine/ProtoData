@@ -36,6 +36,9 @@ import io.spine.tools.code.CommonLanguages.Java
 import kotlin.io.path.Path
 import kotlin.io.path.div
 
+/**
+ * A renderer that deletes Java classes generated from message types marked as deleted.
+ */
 public class DeletingRenderer : Renderer(Java) {
 
     override fun render(sources: SourceFileSet) {

@@ -35,6 +35,9 @@ import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.entity.update
 import io.spine.server.route.EventRouting
 
+/**
+ * A view of a message type that should not be represented by a Java class.
+ */
 public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>() {
 
     @Subscribe
@@ -46,6 +49,9 @@ public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>(
     }
 }
 
+/**
+ * The repository for [DeletedTypeView].
+ */
 public class DeletedTypeRepository
     : ViewRepository<TypeName, DeletedTypeView, DeletedType>() {
 
