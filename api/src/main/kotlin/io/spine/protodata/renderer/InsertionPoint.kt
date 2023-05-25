@@ -217,8 +217,7 @@ public class ProtocInsertionPoint(
      */
     public constructor(scope: String, type: TypeName) : this("$scope:${type.qualifiedName()}")
 
-    override fun locate(text: Text): TextCoordinates =
-        nowhere()
+    override fun locate(text: Text): TextCoordinates = nowhere()
 
     /**
      * The code line in the Protobuf compiler style.
