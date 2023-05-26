@@ -63,25 +63,27 @@ public abstract class InsertionPointPrinter(
         sources.prepareCode { file ->
             supportedInsertionPoints().forEach { point ->
                 val text = file.text()
-                val coordinates = point.locate(text)
+                val coords = point.locate(text)
                 val lines = file.lines().toMutableList()
-                when (coordinates.kindCase) {
-                    INLINE -> {
-                        renderInlinePoint(coordinates, lines, point, file)
+                coords.forEach { coordinates ->
+                    when (coordinates.kindCase) {
+                        INLINE -> {
+                            renderInlinePoint(coordinates, lines, point, file)
+                        }
+                        WHOLE_LINE -> {
+                            val comment = target.comment(point.codeLine)
+                            lines.checkLineNumber(coordinates.wholeLine)
+                            lines.add(coordinates.wholeLine, comment)
+                            reportPoint(file, point.label, comment)
+                        }
+                        END_OF_TEXT -> {
+                            val comment = target.comment(point.codeLine)
+                            lines.add(comment)
+                            reportPoint(file, point.label, comment)
+                        }
+                        else -> {} // No need to add anything.
+                        // Insertion point should not appear in the file.
                     }
-                    WHOLE_LINE -> {
-                        val comment = target.comment(point.codeLine)
-                        lines.checkLineNumber(coordinates.wholeLine)
-                        lines.add(coordinates.wholeLine, comment)
-                        reportPoint(file, point.label, comment)
-                    }
-                    END_OF_TEXT -> {
-                        val comment = target.comment(point.codeLine)
-                        lines.add(comment)
-                        reportPoint(file, point.label, comment)
-                    }
-                    else -> {} // No need to add anything.
-                               // Insertion point should not appear in the file.
                 }
                 file.updateLines(lines)
             }

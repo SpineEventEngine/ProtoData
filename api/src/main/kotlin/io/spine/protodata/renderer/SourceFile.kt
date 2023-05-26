@@ -133,7 +133,7 @@ private constructor(
      *
      * @see at
      */
-    public fun atInline(insertionPoint: InsertionPoint): SourceAtPointInline {
+    public fun atInline(insertionPoint: InsertionPoint): SourceAtPoint {
         val points = sources.querying.select<InsertedPoints>()
             .find(filePath { value = relativePath.toString() })
             .orElseThrow()

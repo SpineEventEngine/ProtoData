@@ -28,6 +28,7 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
+import io.spine.protodata.renderer.UnitaryInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.CommonLanguages.Java
@@ -45,7 +46,7 @@ public class AnnotationInsertionPointPrinter: InsertionPointPrinter(Java) {
 /**
  * Insertion points that help renderers annotate certain parts of a Java file.
  */
-public enum class AnnotationInsertionPoint : InsertionPoint {
+public enum class AnnotationInsertionPoint : UnitaryInsertionPoint {
 
     /**
      * An insertion point in the imports black.
@@ -53,7 +54,7 @@ public enum class AnnotationInsertionPoint : InsertionPoint {
      * This insertion point allows to import types into the Java file.
      */
     IMPORT {
-        override fun locate(text: Text): TextCoordinates {
+        override fun locateOccurrence(text: Text): TextCoordinates {
             val lines = text.lines()
             val packageLineIndex = lines.asSequence()
                 .mapIndexed { index, line -> index to line }
@@ -70,7 +71,7 @@ public enum class AnnotationInsertionPoint : InsertionPoint {
      * This insertion point allows to annotate the return type.
      */
     BEFORE_RETURN_TYPE_METHOD_FOO {
-        override fun locate(text: Text): TextCoordinates {
+        override fun locateOccurrence(text: Text): TextCoordinates {
             val lines = text.lines()
             val (lineIndex, line) = lines.asSequence()
                 .mapIndexed { index, line -> index to line }

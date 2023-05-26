@@ -29,6 +29,7 @@ package io.spine.protodata.renderer
 import com.google.common.flogger.StackSize.FULL
 import com.google.protobuf.Empty
 import io.spine.annotation.Internal
+import io.spine.logging.Logging
 import io.spine.logging.Logging.loggerFor
 import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
@@ -45,26 +46,7 @@ import io.spine.text.TextCoordinates.KindCase.NOWHERE as KIND_NOWHERE
 /**
  * A point is a source file, where more code may be inserted.
  */
-public interface InsertionPoint : CoordinatesFactory {
-
-    public companion object {
-
-        /**
-         * The number of characters which right-pad an insertion point [codeLine] when it is added
-         * to an existing line of code.
-         *
-         * Since insertion points are added as comments, the comments must be closed in order for
-         * the code after the insertion point to be compilable. This number of characters includes
-         * any comment-closing syntax (e.g. the asterisk and slash in Kotlin, Java, and
-         * some other languages). After the comment-closing syntax follow while-space characters.
-         *
-         * If the comment-closing characters are too many, an error occurs.
-         *
-         * This padding is constant for all languages and all renderers. When inserting code into
-         * an exiting line, a renderer will always respect this padding.
-         */
-        internal const val COMMENT_PADDING_LENGTH: Int = 8
-    }
+public interface InsertionPoint : CoordinatesFactory, Logging {
 
     /**
      * The name of this insertion point.
@@ -74,8 +56,6 @@ public interface InsertionPoint : CoordinatesFactory {
     /**
      * Locates the line number where the insertion point should be added.
      *
-     * An insertion point should only appear once in a file.
-     *
      * @param
      *     lines a list of code lines in a source file
      * @return the line number at which the insertion point should be added.
@@ -84,11 +64,18 @@ public interface InsertionPoint : CoordinatesFactory {
     @Deprecated("Use locate(Text) instead.")
     public fun locate(lines: List<String>): LineNumber {
         val coords = locate(text(lines))
-        return when (coords.kindCase) {
-            WHOLE_LINE -> LineNumber.at(coords.wholeLine)
+        if (coords.size > 1) {
+            _warn().log("Cannot process more than one `TextCoordinates`.")
+        }
+        if (coords.isEmpty()) {
+            return LineNumber.notInFile()
+        }
+        val coordinates = coords.first()
+        return when (coordinates.kindCase) {
+            WHOLE_LINE -> LineNumber.at(coordinates.wholeLine)
             INLINE -> {
                 logUnsupportedKind()
-                LineNumber.at(coords.inline.line)
+                LineNumber.at(coordinates.inline.line)
             }
             END_OF_TEXT -> LineNumber.endOfFile()
             KIND_NOWHERE -> LineNumber.notInFile()
@@ -106,16 +93,39 @@ public interface InsertionPoint : CoordinatesFactory {
             )
 
     /**
-     * Locates the site where the insertion point should be added.
+     * Locates the sites where the insertion point should be added.
      *
-     * An insertion point should only appear once in a file.
+     * An insertion point can appear multiple times in a given code file.
      *
      * @param text the existing code
      * @return the coordinates in the text where the insertion point should be added
      * @see SourceFile.at
      * @see SourceFile.atInline
      */
-    public fun locate(text: Text): TextCoordinates
+    public fun locate(text: Text): Set<TextCoordinates>
+}
+
+/**
+ * An insertion point that can only occur once per code file.
+ *
+ * Implementations should use [locateOccurrence] instead of [locate].
+ */
+public interface UnitaryInsertionPoint : InsertionPoint {
+
+    override fun locate(text: Text): Set<TextCoordinates> =
+        setOf(locateOccurrence(text))
+
+    /**
+     * Locates the site where the insertion point should be added.
+     *
+     * This insertion point should only appear once in a file.
+     *
+     * @param text the existing code
+     * @return the coordinates in the text where the insertion point should be added
+     * @see SourceFile.at
+     * @see SourceFile.atInline
+     */
+    public fun locateOccurrence(text: Text): TextCoordinates
 }
 
 private val START_OF_FILE = textCoordinates {
@@ -217,7 +227,7 @@ public class ProtocInsertionPoint(
      */
     public constructor(scope: String, type: TypeName) : this("$scope:${type.qualifiedName()}")
 
-    override fun locate(text: Text): TextCoordinates = nowhere()
+    override fun locate(text: Text): Set<TextCoordinates> = setOf()
 
     /**
      * The code line in the Protobuf compiler style.

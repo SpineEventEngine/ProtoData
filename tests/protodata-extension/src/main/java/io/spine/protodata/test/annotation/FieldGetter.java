@@ -27,7 +27,7 @@
 package io.spine.protodata.test.annotation;
 
 import io.spine.text.TextCoordinates;
-import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.protodata.renderer.UnitaryInsertionPoint`;
 import io.spine.protodata.test.FieldId;
 import io.spine.text.Text;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -45,7 +45,7 @@ import static java.lang.String.format;
  * <p>This implementation should only be used for test purposes. It might not cover all the possible
  * edge cases when fining the line where the getter is.
  */
-final class FieldGetter implements InsertionPoint {
+final class FieldGetter implements UnitaryInsertionPoint {
 
     private final FieldId field;
 
@@ -61,7 +61,7 @@ final class FieldGetter implements InsertionPoint {
 
     @NonNull
     @Override
-    public TextCoordinates locate(Text text) {
+    public TextCoordinates locateOccurrence(Text text) {
         String fieldName = camelCase(field.getField().getValue());
         String getterName = "get" + fieldName;
         Pattern pattern = Pattern.compile("public .+ " + getterName);

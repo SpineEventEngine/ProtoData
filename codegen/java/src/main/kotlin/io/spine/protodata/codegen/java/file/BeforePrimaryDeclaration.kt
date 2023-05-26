@@ -27,7 +27,7 @@
 package io.spine.protodata.codegen.java.file
 
 import io.spine.logging.Logging
-import io.spine.protodata.renderer.InsertionPoint
+import io.spine.protodata.renderer.UnitaryInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import java.lang.System.lineSeparator
@@ -57,12 +57,12 @@ private val pattern = Regex("((class)|(@?interface)|(enum))\\s+")
  * This insertion point is not bound to the contents of the file in `label`, thus allowing this type
  * to be an object.
  */
-internal object BeforePrimaryDeclaration : InsertionPoint, Logging {
+internal object BeforePrimaryDeclaration : UnitaryInsertionPoint, Logging {
 
     override val label: String
         get() = this.javaClass.simpleName
 
-    override fun locate(text: Text): TextCoordinates {
+    override fun locateOccurrence(text: Text): TextCoordinates {
         var isBlockComment = false
         val lines = text.lines()
         lines.forEachIndexed { index, line ->

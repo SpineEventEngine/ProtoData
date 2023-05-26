@@ -28,6 +28,7 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
+import io.spine.protodata.renderer.UnitaryInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.CommonLanguages.Java
@@ -38,19 +39,19 @@ public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(Java) {
         GenericInsertionPoint.values().toSet()
 }
 
-public enum class GenericInsertionPoint : InsertionPoint {
+public enum class GenericInsertionPoint : UnitaryInsertionPoint {
 
     FILE_START {
-        override fun locate(text: Text): TextCoordinates = startOfFile()
+        override fun locateOccurrence(text: Text): TextCoordinates = startOfFile()
     },
     FILE_MIDDLE {
-        override fun locate(text: Text): TextCoordinates = atLine(text.lines().size / 2)
+        override fun locateOccurrence(text: Text): TextCoordinates = atLine(text.lines().size / 2)
     },
     FILE_END {
-        override fun locate(text: Text): TextCoordinates = endOfFile()
+        override fun locateOccurrence(text: Text): TextCoordinates = endOfFile()
     },
     OUTSIDE_FILE {
-        override fun locate(text: Text): TextCoordinates = nowhere()
+        override fun locateOccurrence(text: Text): TextCoordinates = nowhere()
     };
 
     override val label: String
