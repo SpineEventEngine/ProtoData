@@ -27,7 +27,7 @@
 package io.spine.protodata.test.annotation;
 
 import io.spine.text.TextCoordinates;
-import io.spine.protodata.renderer.UnitaryInsertionPoint`;
+import io.spine.protodata.renderer.UnitaryInsertionPoint;
 import io.spine.protodata.test.FieldId;
 import io.spine.text.Text;
 import org.checkerframework.checker.nullness.qual.NonNull;

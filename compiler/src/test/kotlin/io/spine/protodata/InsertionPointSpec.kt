@@ -77,12 +77,29 @@ class InsertionPointsSpec {
                     return \"trololo\"
                 }
             }
-        """.trimIndent())
-        javaFile.writeText(JAVA_FILE_CONTENTS)
+            """.trimIndent()
+        )
+        javaFile.writeText("""
+            package com.example;
+            
+            public class Source {
+            
+                public void foo() {}
+                
+                public int bar() {
+                    return 42;
+                }
+                
+                public final String baz() {
+                    return "123";
+                }
+            }
+            """.trimIndent()
+        )
         Pipeline(
             plugins = listOf(),
             renderers = listOf(
-//                VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator(),
+                VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator(),
                 NonVoidMethodPrinter(), IgnoreValueAnnotator()
             ),
             sources = listOf(SourceFileSet.from(path)),
@@ -90,57 +107,37 @@ class InsertionPointsSpec {
         )()
     }
 
-//    @Test
-//    fun `the start of a file`() {
-//        val contents = kotlinFile.readLines()
-//        assertThat(contents)
-//            .isNotEmpty()
-//        assertThat(contents[0])
-//            .contains(FILE_START.label)
-//    }
-//
-//    @Test
-//    fun `the end of a file`() {
-//        val contents = kotlinFile.readLines()
-//        assertThat(contents)
-//            .isNotEmpty()
-//        assertThat(contents.last())
-//            .contains(FILE_END.label)
-//    }
-//
-//    @Test
-//    fun `a specific line and column`() {
-//        val contents = kotlinFile.readLines()
-//        assertThat(contents)
-//            .isNotEmpty()
-//        assertThat(contents[3])
-//            .contains("I_AM_CONSTANT:  /* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */ String")
-//    }
+    @Test
+    fun `the start of a file`() {
+        val contents = kotlinFile.readLines()
+        assertThat(contents)
+            .isNotEmpty()
+        assertThat(contents[0])
+            .contains(FILE_START.label)
+    }
+
+    @Test
+    fun `the end of a file`() {
+        val contents = kotlinFile.readLines()
+        assertThat(contents)
+            .isNotEmpty()
+        assertThat(contents.last())
+            .contains(FILE_END.label)
+    }
+
+    @Test
+    fun `a specific line and column`() {
+        val contents = kotlinFile.readLines()
+        assertThat(contents)
+            .isNotEmpty()
+        assertThat(contents[3])
+            .contains("I_AM_CONSTANT:  /* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */ String")
+    }
 
     @Test
     fun `in multiple places in a line`() {
         val contents = javaFile.readText()
-        contents shouldContain ANNOTATION_TYPE
-        System.err.println(contents)
-        val lines = javaFile.readLines()
-        // Should have all the same text plus two insertion points and two annotations.
-        lines shouldHaveSize JAVA_FILE_CONTENTS.lines().size + 4
+        contents shouldContain Regex("@$ANNOTATION_TYPE\\s+public int bar")
+        contents shouldContain Regex("@$ANNOTATION_TYPE\\s+public final String baz")
     }
 }
-
-private const val JAVA_FILE_CONTENTS = """
-package com.example;
-
-public class Source {
-
-    public void foo() {}
-    
-    public int bar() {
-        return 42;
-    }
-    
-    public final String baz() {
-        return "123";
-    }
-}
-"""

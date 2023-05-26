@@ -72,9 +72,14 @@ internal constructor(
         val updatedLines = ArrayList(sourceLines)
         val pointMarker = point.codeLine
         val newCode = lines.linesToCode(indentLevel)
+        val lineCount = newCode.lineSequence().count()
         sourceLines.mapIndexed { index, line -> index to line }
                    .filter { (_, line) -> line.contains(pointMarker) }
-                   .map { it.first + 1 }
+                   // Calculate actual line where to put the new code:
+                   //   1. Take the index of the insertion point before any new code is added.
+                   //   2. Add the number of lines taken up by the code inserted above this line.
+                   //   3. Insert code at the next line, after the insertion point.
+                   .mapIndexed { index, (lineNumber, _) -> lineNumber + index * lineCount + 1 }
                    .forEach { index -> updatedLines.add(index, newCode) }
         file.updateLines(updatedLines)
     }
