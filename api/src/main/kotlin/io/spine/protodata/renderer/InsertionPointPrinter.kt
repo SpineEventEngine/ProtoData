@@ -64,51 +64,67 @@ public abstract class InsertionPointPrinter(
             supportedInsertionPoints().forEach { point ->
                 val text = file.text()
                 val coords = point.locate(text)
-                val lines = file.lines().toMutableList()
-                coords.forEach { coordinates ->
-                    when (coordinates.kindCase) {
-                        INLINE -> {
-                            renderInlinePoint(coordinates, lines, point, file)
-                        }
-                        WHOLE_LINE -> {
-                            val comment = target.comment(point.codeLine)
-                            lines.checkLineNumber(coordinates.wholeLine)
-                            lines.add(coordinates.wholeLine, comment)
-                            reportPoint(file, point.label, comment)
-                        }
-                        END_OF_TEXT -> {
-                            val comment = target.comment(point.codeLine)
-                            lines.add(comment)
-                            reportPoint(file, point.label, comment)
-                        }
-                        else -> {} // No need to add anything.
-                        // Insertion point should not appear in the file.
+                val precedent = coords.precedentType()
+                if (precedent != null) {
+                    coords.ensureSameType(point, precedent)
+                    val lines = file.lines().toMutableList()
+                    when (precedent) {
+                        INLINE -> renderInlinePoint(coords, lines, point, file)
+                        WHOLE_LINE -> renderWholeLinePoint(coords, lines, point, file)
+                        else -> error("Unexpected precedent type $precedent.")
                     }
+                    file.updateLines(lines)
                 }
-                file.updateLines(lines)
             }
         }
     }
 
-    private fun renderInlinePoint(
-        coordinates: TextCoordinates,
+    private fun renderWholeLinePoint(
+        coordinates: Set<TextCoordinates>,
         lines: MutableList<String>,
         point: InsertionPoint,
         file: SourceFile
     ) {
-        val cursor = coordinates.inline
-        val lineIndex = cursor.line
-        val column = cursor.column
-        lines.checkLineNumber(lineIndex)
-        val originalLine = lines[lineIndex]
-        originalLine.checkLinePosition(column)
-        val lineStart = originalLine.substring(0, column)
-        val lineEnd = originalLine.substring(column)
-        val codeLine = point.codeLine
-        val comment = target.comment(codeLine)
-        val annotatedLine = "$lineStart $comment $lineEnd"
-        lines[lineIndex] = annotatedLine
+        val comment = target.comment(point.codeLine)
+        val lineNumbers = coordinates.filter { it.hasWholeLine() }.map { it.wholeLine }
+        lineNumbers.forEach {
+            lines.checkLineNumber(it)
+        }
+        val correctedLineNumbers = lineNumbers.asSequence()
+            .sorted()
+            .mapIndexed { index, lineNumber -> lineNumber + index }
+        correctedLineNumbers.forEach {
+            lines.add(it, comment)
+        }
+        if (END_OF_FILE in coordinates) {
+            lines.add(comment)
+        }
         reportPoint(file, point.label, comment)
+    }
+
+    private fun renderInlinePoint(
+        coordinates: Set<TextCoordinates>,
+        lines: MutableList<String>,
+        point: InsertionPoint,
+        file: SourceFile
+    ) {
+        val cursors = coordinates.map { it.inline }
+        cursors.forEach {
+        }
+        cursors.forEach { cursor ->
+            val lineIndex = cursor.line
+            val column = cursor.column
+            lines.checkLineNumber(lineIndex)
+            val originalLine = lines[lineIndex]
+            originalLine.checkLinePosition(column)
+            val lineStart = originalLine.substring(0, column)
+            val lineEnd = originalLine.substring(column)
+            val codeLine = point.codeLine
+            val comment = target.comment(codeLine)
+            val annotatedLine = "$lineStart $comment $lineEnd"
+            lines[lineIndex] = annotatedLine
+            reportPoint(file, point.label, comment)
+        }
     }
 
     private fun reportPoint(sourceFile: SourceFile, pointLabel: String, comment: String) {
@@ -138,4 +154,33 @@ private fun String.checkLinePosition(position: Int) {
             "Line does not have column $position: `$this`."
         )
     }
+}
+
+private fun Iterable<TextCoordinates>.precedentType(): TextCoordinates.KindCase? {
+    forEach { coords ->
+        when (coords.kindCase) {
+            INLINE -> return INLINE
+            WHOLE_LINE, END_OF_TEXT -> return WHOLE_LINE
+            else -> {} // Keep searching for the type.
+        }
+    }
+    return null
+}
+
+private fun Iterable<TextCoordinates>.ensureSameType(insertionPoint: InsertionPoint,
+                                                     definingType: TextCoordinates.KindCase) {
+    forEach { coords ->
+        if (!coords.compatibleWith(definingType)) {
+            throw RenderingException(
+                "One insertion point (${insertionPoint::class.qualifiedName}) cannot be " +
+                        "whole-line and inline at the same time."
+            )
+        }
+    }
+}
+
+private fun TextCoordinates.compatibleWith(type: TextCoordinates.KindCase) = when (kindCase) {
+    INLINE, WHOLE_LINE -> type == kindCase
+    END_OF_TEXT -> type == WHOLE_LINE
+    else -> true
 }

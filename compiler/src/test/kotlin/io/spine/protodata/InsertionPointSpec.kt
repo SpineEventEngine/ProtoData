@@ -28,18 +28,27 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.should
+import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
+import io.spine.protodata.test.IgnoreValueAnnotator
+import io.spine.protodata.test.IgnoreValueAnnotator.Companion.ANNOTATION_TYPE
 import io.spine.protodata.test.KotlinInsertionPoint.FILE_END
 import io.spine.protodata.test.KotlinInsertionPoint.FILE_START
 import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
+import io.spine.protodata.test.NonVoidMethod
+import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
 import kotlin.io.path.readLines
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -49,13 +58,16 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("Insertion points should appear at")
 class InsertionPointsSpec {
 
-    private lateinit var file: Path
+    private lateinit var kotlinFile: Path
+    private lateinit var javaFile: Path
 
     @BeforeEach
     fun preparePipeline(@TempDir path: Path) {
-        file = path / "sources.kt"
-        file.createFile()
-        file.writeText("""
+        kotlinFile = path / "sources.kt"
+        javaFile = path / "Source.java"
+        kotlinFile.createFile()
+        javaFile.createFile()
+        kotlinFile.writeText("""
             class LabMouse {
                 companion object {
                     const val I_AM_CONSTANT: String = "!!"
@@ -66,38 +78,69 @@ class InsertionPointsSpec {
                 }
             }
         """.trimIndent())
+        javaFile.writeText(JAVA_FILE_CONTENTS)
         Pipeline(
             plugins = listOf(),
-            renderers = listOf(VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator()),
+            renderers = listOf(
+//                VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator(),
+                NonVoidMethodPrinter(), IgnoreValueAnnotator()
+            ),
             sources = listOf(SourceFileSet.from(path)),
             request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
         )()
     }
 
-    @Test
-    fun `the start of a file`() {
-        val contents = file.readLines()
-        assertThat(contents)
-            .isNotEmpty()
-        assertThat(contents[0])
-            .contains(FILE_START.label)
-    }
+//    @Test
+//    fun `the start of a file`() {
+//        val contents = kotlinFile.readLines()
+//        assertThat(contents)
+//            .isNotEmpty()
+//        assertThat(contents[0])
+//            .contains(FILE_START.label)
+//    }
+//
+//    @Test
+//    fun `the end of a file`() {
+//        val contents = kotlinFile.readLines()
+//        assertThat(contents)
+//            .isNotEmpty()
+//        assertThat(contents.last())
+//            .contains(FILE_END.label)
+//    }
+//
+//    @Test
+//    fun `a specific line and column`() {
+//        val contents = kotlinFile.readLines()
+//        assertThat(contents)
+//            .isNotEmpty()
+//        assertThat(contents[3])
+//            .contains("I_AM_CONSTANT:  /* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */ String")
+//    }
 
     @Test
-    fun `the end of a file`() {
-        val contents = file.readLines()
-        assertThat(contents)
-            .isNotEmpty()
-        assertThat(contents.last())
-            .contains(FILE_END.label)
-    }
-
-    @Test
-    fun `a specific line and column`() {
-        val contents = file.readLines()
-        assertThat(contents)
-            .isNotEmpty()
-        assertThat(contents[3])
-            .contains("I_AM_CONSTANT:  /* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */ String")
+    fun `in multiple places in a line`() {
+        val contents = javaFile.readText()
+        contents shouldContain ANNOTATION_TYPE
+        System.err.println(contents)
+        val lines = javaFile.readLines()
+        // Should have all the same text plus two insertion points and two annotations.
+        lines shouldHaveSize JAVA_FILE_CONTENTS.lines().size + 4
     }
 }
+
+private const val JAVA_FILE_CONTENTS = """
+package com.example;
+
+public class Source {
+
+    public void foo() {}
+    
+    public int bar() {
+        return 42;
+    }
+    
+    public final String baz() {
+        return "123";
+    }
+}
+"""

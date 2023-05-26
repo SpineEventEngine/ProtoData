@@ -132,7 +132,7 @@ private val START_OF_FILE = textCoordinates {
     wholeLine = 0
 }
 
-private val END_OF_FILE = textCoordinates {
+internal val END_OF_FILE = textCoordinates {
     endOfText = Empty.getDefaultInstance()
 }
 
