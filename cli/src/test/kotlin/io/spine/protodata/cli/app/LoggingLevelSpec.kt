@@ -127,12 +127,15 @@ private fun tapConsole(block: () -> Unit): String {
     System.setOut(stream);
     System.setErr(stream)
 
-    try {
-        block()
-        bytes.flush()
-        return bytes.toString()
-    } finally {
-        System.setOut(saveOut)
-        System.setErr(saveErr)
+    stream.use {
+        try {
+            block()
+            bytes.flush()
+            stream.flush()
+            return bytes.toString()
+        } finally {
+            System.setOut(saveOut)
+            System.setErr(saveErr)
+        }
     }
 }
