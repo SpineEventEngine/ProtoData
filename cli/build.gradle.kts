@@ -26,6 +26,7 @@
 
 import io.spine.internal.dependency.Clikt
 import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.SystemLambda
 import io.spine.internal.gradle.publish.SpinePublishing
 
 plugins {
@@ -51,6 +52,7 @@ dependencies {
     implementation(kotlin("reflect"))
 
     testImplementation(project(":test-env"))
+    testImplementation(SystemLambda.lib)
 }
 
 // For some reason, `validation-runtime` dependency appears on both compile and runtime classpaths.

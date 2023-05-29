@@ -176,7 +176,7 @@ internal class Run(version: String) : CliktCommand(
     private val debug: Boolean by DebugLoggingParam.toOption().flag(default = false)
     private val info: Boolean by InfoLoggingParam.toOption().flag(default = false)
     private val loggingLevel: Level by lazy {
-        check(!(debug && info)) {
+        checkUsage(!(debug && info)) {
             "Debug and info logging levels cannot be enabled at the same time."
         }
         when {
@@ -187,7 +187,7 @@ internal class Run(version: String) : CliktCommand(
     }
 
     override fun run() {
-        if (loggingLevel != Level.WARNING) {
+        if (loggingLevel == Level.WARNING) {
             doRun()
         } else {
             val logLevelMap = LogLevelMap.create(mapOf(), loggingLevel)
@@ -201,20 +201,22 @@ internal class Run(version: String) : CliktCommand(
     private fun doRun() {
         val sources = createSourceFileSets()
         val plugins = loadPlugins()
-        val renderer = loadRenderers()
+        val renderers = loadRenderers()
         val registry = createRegistry()
         val request = loadRequest(registry)
         val config = resolveConfig()
-        logger.atDebug().log {
-            """
-            Starting code generation with the following parameters:
-            - plugins: ${plugins.joinToString()}
-            - renderers: ${renderer.joinToString()}
-            - request: ${request.fileToGenerateList.joinToString()}
-            - config: ${config}.
-            """".ti()
+
+        logger.atDebug().log { """
+            Starting code generation with the following arguments:
+              - plugins: ${plugins.joinToString()}
+              - renderers: ${renderers.joinToString()}
+              - request
+                  - files to generate: ${request.fileToGenerateList.joinToString()}
+                  - parameter: ${request.parameter}
+              - config: ${config}.
+            """.ti()
         }
-        Pipeline(plugins, renderer, sources, request, config)()
+        Pipeline(plugins, renderers, sources, request, config)()
     }
 
     private fun loadRequest(
