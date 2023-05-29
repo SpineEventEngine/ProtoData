@@ -28,13 +28,18 @@ package io.spine.protodata.cli.app
 
 import com.github.ajalt.clikt.core.UsageError
 import com.google.protobuf.compiler.codeGeneratorRequest
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.spine.logging.Level
+import io.spine.logging.WithLogging
 import io.spine.option.OptionsProto
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
-import io.spine.protodata.test.PlainStringRenderer
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
+import io.spine.tools.code.CommonLanguages.any
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.nio.file.Path
@@ -94,21 +99,23 @@ class `ProtoData CLI logging levels should` {
 
     @Test
     fun `set 'DEBUG' logging level`() {
-        val consoleOutput = tapConsole {
-            launchWithLoggingParams(
-                "--debug"
-            )
-        }
-        // The below tests both the logging domain and the message issued `atDebug` level.
-        // It also tests that the message is indented correctly. If not, the message is
-        // likely to have more than one space after the logging domain prefix.
-        consoleOutput shouldContain
-                "[ProtoData] Starting code generation with the following arguments:"
+        launchWithLoggingParams("--debug")
+
+        LoggingLevelAsserter.debugEnabled shouldBe true
+        LoggingLevelAsserter.infoEnabled shouldBe true
+    }
+
+    @Test
+    fun `set 'INFO' logging level`() {
+        launchWithLoggingParams("--info")
+
+        LoggingLevelAsserter.infoEnabled shouldBe true
+        LoggingLevelAsserter.debugEnabled shouldBe false
     }
 
     private fun launchWithLoggingParams(vararg argv: String) {
         val params = mutableListOf(
-            "-r", PlainStringRenderer::class.jvmName,
+            "-r", LoggingLevelAsserter::class.jvmName,
             "--src", srcRoot.toString(),
             "-t", codegenRequestFile.toString(),
             "--cv", "testing-logging-levels",
@@ -119,23 +126,18 @@ class `ProtoData CLI logging levels should` {
     }
 }
 
-private fun tapConsole(block: () -> Unit): String {
-    val bytes = ByteArrayOutputStream()
-    val stream = PrintStream(bytes)
-    val saveOut = System.out
-    val saveErr = System.err
-    System.setOut(stream);
-    System.setErr(stream)
+/**
+ * A pseudo-renderer which asserts that the logging levels are set correctly.
+ */
+class LoggingLevelAsserter: Renderer(any), WithLogging {
 
-    stream.use {
-        try {
-            block()
-            bytes.flush()
-            stream.flush()
-            return bytes.toString()
-        } finally {
-            System.setOut(saveOut)
-            System.setErr(saveErr)
-        }
+    override fun render(sources: SourceFileSet) {
+        debugEnabled = logger.at(Level.DEBUG).isEnabled()
+        infoEnabled = logger.at(Level.INFO).isEnabled()
+    }
+
+    companion object {
+        internal var debugEnabled: Boolean = false
+        internal var infoEnabled: Boolean = false
     }
 }
