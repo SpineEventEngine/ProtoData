@@ -118,22 +118,23 @@ public abstract class InsertionPointPrinter(
                 line.checkLinePosition(it)
             }
             val cols = columns.sorted()
-            val annotatedLine = buildString {
-                append(line.substring(0, cols.first()))
-                cols.forEachIndexed { index, column ->
-                    append(' ')
-                    append(comment)
-                    append(' ')
-                    val nextPart = if (index + 1 == cols.size) {
-                        line.substring(column)
-                    } else {
-                        line.substring(column, cols[index + 1])
-                    }
-                    append(nextPart)
-                }
-            }
-            lines[lineNumber] = annotatedLine
+            lines[lineNumber] = annotate(line, cols, comment)
             reportPoint(file, point.label, comment)
+        }
+    }
+
+    private fun annotate(line: String, cols: List<Int>, comment: String) = buildString {
+        append(line.substring(0, cols.first()))
+        cols.forEachIndexed { index, column ->
+            append(' ')
+            append(comment)
+            append(' ')
+            val nextPart = if (index + 1 == cols.size) {
+                line.substring(column)
+            } else {
+                line.substring(column, cols[index + 1])
+            }
+            append(nextPart)
         }
     }
 
