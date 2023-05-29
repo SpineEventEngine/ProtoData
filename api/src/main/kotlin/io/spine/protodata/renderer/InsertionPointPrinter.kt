@@ -156,6 +156,8 @@ private fun String.checkLinePosition(position: Int) {
     }
 }
 
+@Suppress("ReturnCount")
+    // As this function is pretty small, it's easy to read even with 3 return statements.
 private fun Iterable<TextCoordinates>.precedentType(): TextCoordinates.KindCase? {
     forEach { coords ->
         when (coords.kindCase) {
