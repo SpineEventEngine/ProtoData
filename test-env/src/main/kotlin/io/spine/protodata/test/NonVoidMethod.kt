@@ -39,6 +39,7 @@ import kotlin.text.RegexOption.DOT_MATCHES_ALL
 public class NonVoidMethod : InsertionPoint {
 
     private companion object {
+        @Suppress("MaxLineLength")
         private val publicInstanceMethodPattern = Regex(
             "\\s*public\\s+((final)|(abstract)\\s+)?(synchronized)?(?!(class)|(@?interface)|(enum)|(void)).+\\s*",
             DOT_MATCHES_ALL
