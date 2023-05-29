@@ -36,6 +36,9 @@ import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
+import io.spine.protodata.test.CompanionFramer
+import io.spine.protodata.test.CompanionLalalaRenderer
+import io.spine.protodata.test.CompanionLalalaRenderer.Companion.LALALA
 import io.spine.protodata.test.IgnoreValueAnnotator
 import io.spine.protodata.test.IgnoreValueAnnotator.Companion.ANNOTATION_TYPE
 import io.spine.protodata.test.KotlinInsertionPoint.FILE_END
@@ -50,6 +53,7 @@ import kotlin.io.path.div
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import kotlin.text.RegexOption.DOT_MATCHES_ALL
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -100,7 +104,8 @@ class InsertionPointsSpec {
             plugins = listOf(),
             renderers = listOf(
                 VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator(),
-                NonVoidMethodPrinter(), IgnoreValueAnnotator()
+                NonVoidMethodPrinter(), IgnoreValueAnnotator(),
+                CompanionFramer(), CompanionLalalaRenderer()
             ),
             sources = listOf(SourceFileSet.from(path)),
             request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
@@ -135,9 +140,15 @@ class InsertionPointsSpec {
     }
 
     @Test
-    fun `in multiple places in a line`() {
+    fun `in multiple places in a file`() {
         val contents = javaFile.readText()
         contents shouldContain Regex("@$ANNOTATION_TYPE\\s+public int bar")
         contents shouldContain Regex("@$ANNOTATION_TYPE\\s+public final String baz")
+    }
+
+    @Test
+    fun `in multiple places in one line`() {
+        val lines = kotlinFile.readLines()
+        lines[2] shouldContain Regex("$LALALA\\s+companion.+$LALALA\\s+object", DOT_MATCHES_ALL)
     }
 }

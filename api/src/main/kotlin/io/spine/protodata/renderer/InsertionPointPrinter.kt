@@ -109,20 +109,30 @@ public abstract class InsertionPointPrinter(
         file: SourceFile
     ) {
         val cursors = coordinates.map { it.inline }
-        cursors.forEach {
-        }
-        cursors.forEach { cursor ->
-            val lineIndex = cursor.line
-            val column = cursor.column
-            lines.checkLineNumber(lineIndex)
-            val originalLine = lines[lineIndex]
-            originalLine.checkLinePosition(column)
-            val lineStart = originalLine.substring(0, column)
-            val lineEnd = originalLine.substring(column)
-            val codeLine = point.codeLine
-            val comment = target.comment(codeLine)
-            val annotatedLine = "$lineStart $comment $lineEnd"
-            lines[lineIndex] = annotatedLine
+        val cursorsByLine = cursors.groupBy({ it.line }, { it.column })
+        val comment = target.comment(point.codeLine)
+        cursorsByLine.forEach { lineNumber, columns ->
+            lines.checkLineNumber(lineNumber)
+            val line = lines[lineNumber]
+            columns.forEach {
+                line.checkLinePosition(it)
+            }
+            val cols = columns.sorted()
+            val annotatedLine = buildString {
+                append(line.substring(0, cols.first()))
+                cols.forEachIndexed { index, column ->
+                    append(' ')
+                    append(comment)
+                    append(' ')
+                    val nextPart = if (index + 1 == cols.size) {
+                        line.substring(column)
+                    } else {
+                        line.substring(column, cols[index + 1])
+                    }
+                    append(nextPart)
+                }
+            }
+            lines[lineNumber] = annotatedLine
             reportPoint(file, point.label, comment)
         }
     }
