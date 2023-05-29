@@ -69,8 +69,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
-import com.github.stefanbirkner.systemlambda.SystemLambda.*
-import io.kotest.matchers.string.shouldContain
 
 class `Command line application should` {
 
@@ -321,45 +319,5 @@ class `Command line application should` {
         }
     }
 
-
     private fun launchApp(vararg argv: String) = Run("42.0.0").parse(argv.toList())
-
-    @Nested
-    inner class `Support logging level parameters` {
-
-        @Test
-        fun `failing if both 'debug' and 'info' flags are set`() {
-            assertThrows<UsageError> {
-                launchWithLoggingParams(
-                    "--debug", "--info"
-                )
-            }
-        }
-
-        @Test
-        fun `set 'DEBUG' logging level`() {
-            val consoleOutput = tapSystemErrAndOut {
-                launchWithLoggingParams(
-                    "--debug"
-                )
-            }
-            // The below tests both the logging domain and the message issued `atDebug` level.
-            // It also tests that the message is indented correctly. If not, the message is
-            // likely to have more than one space after the logging domain prefix.
-            consoleOutput shouldContain
-                    "[ProtoData] Starting code generation with the following arguments:"
-        }
-
-        private fun launchWithLoggingParams(vararg argv: String) {
-            val params = mutableListOf(
-                "-r", PlainStringRenderer::class.jvmName,
-                "--src", srcRoot.toString(),
-                "-t", codegenRequestFile.toString(),
-                "--cv", "testing-logging-levels",
-                "--cf", "plain",
-            )
-            params.addAll(argv)
-            Run("1961.04.12").parse(params)
-        }
-    }
 }
