@@ -26,8 +26,10 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.truth.Truth8.assertThat
+import io.kotest.matchers.optional.shouldBePresent
+import io.kotest.matchers.shouldBe
 import java.nio.file.Path
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -40,50 +42,64 @@ import org.junit.jupiter.api.io.TempDir
 class SourceFileSetSpec {
 
     private lateinit var set: SourceFileSet
-    private lateinit var existingSourceFile: Path
-    private lateinit var existingSourceFileAbsolute: Path
+    private lateinit var existingSourceFiles: List<Path>
+    private lateinit var existingSourceFilesAbsolute: List<Path>
 
     @BeforeEach
     fun createSet(@TempDir tempDir: Path) {
-        existingSourceFile = Path("pkg/example/foo.txt")
-        existingSourceFileAbsolute = tempDir / existingSourceFile
-        existingSourceFileAbsolute.parent.toFile().mkdirs()
-        existingSourceFileAbsolute.toFile().let { textFile ->
-            textFile.createNewFile()
-            textFile.writeText("this is a non-empty file")
+        existingSourceFiles = listOf(
+            Path("pkg/example/foo.txt"),
+            Path("another/sample/bar.txt"),
+            Path("src/main/app.kt")
+        )
+        existingSourceFilesAbsolute = existingSourceFiles.map { tempDir / it }
+        existingSourceFilesAbsolute.forEach {
+            it.parent.toFile().mkdirs()
+            it.toFile().let { textFile ->
+                textFile.createNewFile()
+                textFile.writeText("this is a non-empty file")
+            }
         }
         set = SourceFileSet.from(tempDir)
     }
 
     @Test
     fun `find existing file by relative path`() {
-        val found = set.findFile(existingSourceFile)
-        assertThat(found)
-            .isPresent()
-        assertThat(found.get().relativePath)
-            .isEqualTo(existingSourceFile)
+        val found = set.findFile(existingSourceFiles[0])
+        found shouldBePresent {
+            it.relativePath shouldBe existingSourceFiles[0]
+        }
     }
 
     @Test
     fun `find existing file by absolute path`() {
-        val found = set.findFile(existingSourceFileAbsolute)
-        assertThat(found)
-            .isPresent()
-        assertThat(found.get().relativePath)
-            .isEqualTo(existingSourceFile)
+        val found = set.findFile(existingSourceFilesAbsolute[0])
+        found shouldBePresent {
+            it.relativePath shouldBe existingSourceFiles[0]
+        }
     }
 
     @Test
     fun `not find a non-existing file`() {
-        val found = set.findFile(Path("non/existing/file.txt"))
-        assertThat(found)
-            .isEmpty()
+        val found = set.find(Path("non/existing/file.txt"))
+        found shouldBe null
     }
 
     @Test
-    fun `fail when a non-existing file must be present`() {
+    fun `fail when a non-existing file is referenced`() {
         assertThrows(IllegalArgumentException::class.java) {
             set.file(Path("i/don/t/exis.txt"))
         }
+    }
+
+    @Test
+    fun `iterate over actual files`() {
+        set.size shouldBe 3
+
+        // This should delete the second file from the set.
+        set.file(existingSourceFiles[1]).delete()
+
+        set.size shouldBe 2
+        set.find(existingSourceFiles[1]) shouldBe null
     }
 }

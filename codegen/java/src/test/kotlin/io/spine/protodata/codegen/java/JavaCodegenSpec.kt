@@ -28,7 +28,7 @@
 
 package io.spine.protodata.codegen.java
 
-import com.google.common.truth.Truth.assertThat
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.Option
 import io.spine.protodata.codegen.java.file.javaMultipleFiles
 import io.spine.protodata.codegen.java.file.javaOuterClassName
@@ -56,8 +56,7 @@ class JavaCodegenSpec {
 
             val className = type.javaClassName(declaredIn = file)
 
-            assertThat(className.binary)
-                .isEqualTo("$JAVA_PACKAGE_NAME.$typeName")
+            className.binary shouldBe "$JAVA_PACKAGE_NAME.$typeName"
         }
 
         @Test
@@ -69,8 +68,7 @@ class JavaCodegenSpec {
 
             val className = type.javaClassName(declaredIn = file)
 
-            assertThat(className.binary)
-                .isEqualTo("$JAVA_PACKAGE_NAME.$nestingType$$typeName")
+            className.binary shouldBe "$JAVA_PACKAGE_NAME.$nestingType$$typeName"
         }
 
         @Test
@@ -81,8 +79,7 @@ class JavaCodegenSpec {
 
             val className = type.javaClassName(declaredIn = file)
 
-            assertThat(className.binary)
-                .isEqualTo("${JAVA_PACKAGE_NAME}.${OUTER_CLASS_NAME}$${typeName}")
+            className.binary shouldBe "${JAVA_PACKAGE_NAME}.${OUTER_CLASS_NAME}$${typeName}"
         }
 
         @Test
@@ -93,8 +90,7 @@ class JavaCodegenSpec {
 
             val className = type.javaClassName(declaredIn = file)
 
-            assertThat(className.binary)
-                .isEqualTo("$JAVA_PACKAGE_NAME.$typeName")
+            className.binary shouldBe "$JAVA_PACKAGE_NAME.$typeName"
         }
     }
 
@@ -109,8 +105,7 @@ class JavaCodegenSpec {
 
             val className = type.javaFile(declaredIn = file)
 
-            assertThat(className.toString())
-                .isEqualTo("$packageNameAsPath$typeName.java")
+            className.toString() shouldBe "$packageNameAsPath$typeName.java"
         }
 
         @Test
@@ -122,8 +117,7 @@ class JavaCodegenSpec {
 
             val className = type.javaFile(declaredIn = file)
 
-            assertThat(className.toString())
-                .isEqualTo("$packageNameAsPath$firstNesting.java")
+            className.toString() shouldBe "$packageNameAsPath$firstNesting.java"
         }
 
         @Test
@@ -133,8 +127,7 @@ class JavaCodegenSpec {
 
             val className = type.javaFile(declaredIn = file)
 
-            assertThat(className.toString())
-                .isEqualTo("$packageNameAsPath$OUTER_CLASS_NAME.java")
+            className.toString() shouldBe "$packageNameAsPath$OUTER_CLASS_NAME.java"
         }
     }
 }

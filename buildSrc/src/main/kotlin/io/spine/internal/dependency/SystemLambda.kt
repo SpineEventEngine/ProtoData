@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,25 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
+package io.spine.internal.dependency
 
-/**
- * The name of various objects in ProtoData Gradle API.
- */
-public object Names {
-
-    /**
-     * The name of the `protoc` plugin exposed by ProtoData.
-     */
-    public const val PROTODATA_PROTOC_PLUGIN: String = "protodata"
-
-    /**
-     * The ID of the ProtoData Gradle plugin.
-     */
-    public const val GRADLE_PLUGIN_ID: String = "io.spine.protodata"
-
-    /**
-     * The name of the Gradle extension added by ProtoData Gradle plugin.
-     */
-    public const val EXTENSION_NAME: String = "protoData"
+// https://github.com/stefanbirkner/system-lambda
+object SystemLambda {
+    const val version = "1.2.1"
+    const val group = "com.github.stefanbirkner"
+    const val lib = "$group:system-lambda:$version"
 }

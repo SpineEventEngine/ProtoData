@@ -52,25 +52,3 @@ dependencies {
 
     testImplementation(project(":test-env"))
 }
-
-/**
- * Force `generated` directory and Kotlin code generation.
- */
-protobuf {
-    generateProtoTasks.all().configureEach {
-        builtins.maybeCreate("kotlin")
-    }
-}
-
-idea {
-    module {
-        val generatedDir = "$projectDir/generated"
-        generatedSourceDirs.apply {
-            add(file("$generatedDir/main/kotlin"))
-            add(file("$generatedDir/test/kotlin"))
-        }
-        testSources.from(
-            project.file("$generatedDir/test/kotlin"),
-        )
-    }
-}

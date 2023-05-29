@@ -82,7 +82,7 @@ object Spine {
         const val text = "2.0.0-SNAPSHOT.5"
 
         /** The version of [Spine.toolBase]. */
-        const val toolBase = "2.0.0-SNAPSHOT.162"
+        const val toolBase = "2.0.0-SNAPSHOT.170"
 
         /** The version of [Spine.validation]. */
         @Deprecated("Please use `Validation.version` instead.")

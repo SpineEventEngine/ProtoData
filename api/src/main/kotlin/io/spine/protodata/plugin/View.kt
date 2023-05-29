@@ -94,9 +94,9 @@ import io.spine.validate.ValidatingBuilder
  * Views have repositories which are responsible for storing states and for delivering correct
  * events to the correct views. See [ViewRepository] for more.
  *
- * @param I the type of the ID of the view; can be a Protobuf message, a String, an int, or a long
- * @param M the type of the view's state; must be a Protobuf message implementing [EntityState]
- * @param B the type of the view's state builder; must match `<M>`
+ * @param I the type of the ID of the view; can be a Protobuf message, a String, an int, or a long.
+ * @param M the type of the view's state; must be a Protobuf message implementing [EntityState].
+ * @param B the type of the view's state builder; must match `<M>`.
  */
 public open class View<I, M : EntityState<I>, B : ValidatingBuilder<M>> : Projection<I, M, B>()
 
@@ -133,8 +133,8 @@ public open class ViewRepository<I, V : View<I, S, *>, S : EntityState<I>>
 /**
  * A default [ViewRepository].
  *
- * A [ViewRepository] can be customized in case event routing must be adjusted. Otherwise, users
- * should use `DefaultViewRepository` by calling [ViewRepository.default].
+ * A [ViewRepository] can be customized in case event routing must be adjusted.
+ * Otherwise, users should use `DefaultViewRepository` by calling [ViewRepository.default].
  */
 internal class DefaultViewRepository(
     private val cls: Class<View<Any, EntityState<Any>, *>>

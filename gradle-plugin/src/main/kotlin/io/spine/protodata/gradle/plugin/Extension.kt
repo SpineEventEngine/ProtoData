@@ -26,10 +26,11 @@
 
 package io.spine.protodata.gradle.plugin
 
-import io.spine.tools.gradle.protobuf.generatedFilesBaseDir
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodeGeneratorRequestFile.DEFAULT_DIRECTORY
 import io.spine.protodata.gradle.CodegenSettings
+import io.spine.tools.fs.DirectoryName.generated
+import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -40,47 +41,26 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.listProperty
 
 /**
- * Default subdirectories under a generated source set.
- */
-private val defaultSubdirectories = listOf(
-    "java",
-    "kotlin",
-    "grpc",
-    "js",
-    "dart",
-    "spine",
-    "protodata"
-)
-
-/**
- * The default name of the output directory of ProtoData placed under the project root.
- */
-private const val DEFAULT_TARGET_DIR = "generated"
-
-/**
  * The `protoData { }` Gradle extension.
  */
 public class Extension(internal val project: Project): CodegenSettings {
 
-    public override fun plugins(vararg classNames: String) {
+    public override fun plugins(vararg classNames: String): Unit =
         plugins.addAll(classNames.toList())
-    }
 
     private val factory = project.objects
 
     internal val plugins: ListProperty<String> =
         factory.listProperty(String::class.java).convention(listOf())
 
-    public override fun renderers(vararg classNames: String) {
+    public override fun renderers(vararg classNames: String): Unit =
         renderers.addAll(classNames.toList())
-    }
 
     internal val renderers: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
 
-    public override fun optionProviders(vararg classNames: String) {
+    public override fun optionProviders(vararg classNames: String): Unit =
         optionProviders.addAll(classNames.toList())
-    }
 
     internal val optionProviders: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
@@ -98,27 +78,23 @@ public class Extension(internal val project: Project): CodegenSettings {
     internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
         requestFilesDirProperty.file(CodeGeneratorRequestFile.name(forSourceSet))
 
-    @Deprecated("Starting from v0.9.2 Protobuf Gradle Plugin uses" +
-            " a fixed path `build/generated/source/proto`." +
-            " Therefore even this property returns that dir for the project, it has no sense and" +
-            " will be removed.")
-    public override var srcBaseDir: Any = project.buildDir.resolve("generated/source/proto")
-
+    /**
+     * Synthetic property for providing the source directories for the given
+     * source set under [Project.generatedSourceProtoDir].
+     *
+     * @see sourceDirs
+     */
     private val srcBaseDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(provider {
-            layout.projectDirectory.dir(project.generatedFilesBaseDir)
+            layout.projectDirectory.dir(generatedSourceProtoDir.toString())
         })
     }
 
-    @Deprecated("Use `subDirs` instead.")
-    public override var subDir: String
-        get() = subDirProperty.get().first()
-        set(value) {
-            if (value.isNotEmpty()) {
-                subDirProperty.set(listOf(value))
-            }
-        }
-
+    /**
+     * Allows to configure the subdirectories under the generated source set.
+     *
+     * Defaults to [defaultSubdirectories].
+     */
     public override var subDirs: List<String>
         get() = subDirProperty.get()
         set(value) {
@@ -136,14 +112,12 @@ public class Extension(internal val project: Project): CodegenSettings {
 
     private val targetBaseDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(
-            layout.projectDirectory.dir(DEFAULT_TARGET_DIR)
+            layout.projectDirectory.dir(generated.name)
         )
     }
 
     /**
      * Obtains the source directories for the given source set.
-     *
-     * @see srcBaseDir for the rules for the source dir construction
      */
     internal fun sourceDirs(sourceSet: SourceSet): Provider<List<Directory>> =
         compileDir(sourceSet, srcBaseDirProperty)
@@ -164,5 +138,23 @@ public class Extension(internal val project: Project): CodegenSettings {
         return sourceSetDir.map { root: Directory ->
             subDirs.map { root.dir(it) }
         }
+    }
+
+    public companion object {
+
+        /**
+         * Default subdirectories expected by ProtoData under a generated source set.
+         *
+         * @see subDirs
+         */
+        public val defaultSubdirectories: List<String> = listOf(
+            "java",
+            "kotlin",
+            "grpc",
+            "js",
+            "dart",
+            "spine",
+            "protodata"
+        )
     }
 }

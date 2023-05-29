@@ -26,13 +26,12 @@
 
 package io.spine.protodata.gradle.plugin
 
-import com.google.common.truth.Correspondence.transforming
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.gradle.ProtobufPlugin
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.tools.gradle.project.sourceSets
 import java.io.File
-import java.nio.file.Path
 import kotlin.io.path.div
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
@@ -96,21 +95,24 @@ class ExtensionSpec {
     fun `specify request file location`() {
         val path = "my/path/to/main.bin"
         extension.requestFilesDir = path
-        assertThat(extension.requestFilesDirProperty.get().asFile)
-            .isEqualTo(project.projectDir.resolve(path))
+        extension.requestFilesDirProperty.get().asFile shouldBe project.projectDir.resolve(path)
     }
 
     @Test
     fun `produce target directory`() {
         val basePath = "my/path"
-        val subDir = "foobar"
+        val expected = listOf("foo", "bar")
 
         extension.targetBaseDir = basePath
-        extension.subDirs = listOf(subDir)
+        extension.subDirs = expected
 
         val sourceSet = project.sourceSets.getByName(MAIN_SOURCE_SET_NAME)
-        val targetDirs = extension.targetDirs(sourceSet)
-        assertThat(targetDirs.get().first().asFile.toPath())
-            .isEqualTo(project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME / subDir)
+        val targetDirs = extension.targetDirs(sourceSet).get()
+
+        val mainDir = project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME
+        targetDirs[0].toPath() shouldBe mainDir / expected[0]
+        targetDirs[1].toPath() shouldBe mainDir / expected[1]
     }
 }
+
+private fun Directory.toPath() = asFile.toPath()
