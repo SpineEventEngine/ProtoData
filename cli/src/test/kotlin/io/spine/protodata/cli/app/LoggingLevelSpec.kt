@@ -27,7 +27,6 @@
 package io.spine.protodata.cli.app
 
 import com.github.ajalt.clikt.core.UsageError
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrAndOut
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.string.shouldContain
 import io.spine.option.OptionsProto
@@ -36,6 +35,8 @@ import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import java.nio.file.Path
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
@@ -45,10 +46,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
+
 class `ProtoData CLI logging levels should` {
 
-    private lateinit var srcRoot : Path
     private lateinit var codegenRequestFile: Path
+    private lateinit var srcRoot : Path
     private lateinit var sourceFile: Path
 
     @BeforeEach
@@ -93,7 +95,7 @@ class `ProtoData CLI logging levels should` {
 
     @Test
     fun `set 'DEBUG' logging level`() {
-        val consoleOutput = tapSystemErrAndOut {
+        val consoleOutput = tapConsole {
             launchWithLoggingParams(
                 "--debug"
             )
@@ -118,3 +120,20 @@ class `ProtoData CLI logging levels should` {
     }
 }
 
+private fun tapConsole(block: () -> Unit): String {
+    val bytes = ByteArrayOutputStream()
+    val stream = PrintStream(bytes)
+    val saveOut = System.out
+    val saveErr = System.err
+    System.setOut(stream);
+    System.setErr(stream)
+
+    try {
+        block()
+        bytes.flush()
+        return bytes.toString()
+    } finally {
+        System.setOut(saveOut)
+        System.setErr(saveErr)
+    }
+}
