@@ -129,6 +129,7 @@ private fun tapConsole(block: () -> Unit): String {
 
     stream.use {
         try {
+            Thread.sleep(1000)
             block()
             bytes.flush()
             stream.flush()
