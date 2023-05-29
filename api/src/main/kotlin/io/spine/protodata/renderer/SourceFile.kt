@@ -132,7 +132,7 @@ private constructor(
      * Creates a new fluent builder for adding code at the given inline [insertionPoint].
      *
      * If the [insertionPoint] is not found in the code, no action will be performed as the result.
-     * If there are more than one instances of the same insertion point, the code will be added to
+     * If there are more than one instance of the same insertion point, the code will be added to
      * all of them.
      *
      * Code inserted via the resulting fluent builder, unlike code inserted via [SourceFile.at],
