@@ -60,6 +60,7 @@ import kotlin.text.Charsets.UTF_8
  *
  * @see SourceFile
  */
+@Suppress("TooManyFunctions") // All part of the public API.
 public class SourceFileSet
 internal constructor(
     files: Set<SourceFile>,
