@@ -46,7 +46,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
-
 class `ProtoData CLI logging levels should` {
 
     private lateinit var codegenRequestFile: Path
