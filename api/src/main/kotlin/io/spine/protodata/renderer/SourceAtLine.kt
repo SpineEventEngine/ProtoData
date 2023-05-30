@@ -58,7 +58,7 @@ internal constructor(
      * Adds the given code lines at the associated insertion point.
      *
      * @param lines
-     *      code lines
+     *         code lines.
      */
     public fun add(vararg lines: String): Unit =
         add(lines.toList())
@@ -67,7 +67,7 @@ internal constructor(
      * Adds the given code lines at the associated insertion point.
      *
      * @param lines
-     *      code lines
+     *         code lines.
      */
     public fun add(lines: Iterable<String>) {
         val sourceLines = file.lines()

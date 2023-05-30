@@ -97,7 +97,8 @@ public interface InsertionPoint : CoordinatesFactory, Logging {
      *
      * An insertion point can appear multiple times in a given code file.
      *
-     * @param text the existing code
+     * @param text
+     *         the existing code.
      * @return the coordinates in the text where the insertion point should be added
      * @see SourceFile.at
      * @see SourceFile.atInline
@@ -120,7 +121,8 @@ public interface NonRepeatingInsertionPoint : InsertionPoint {
      *
      * This insertion point should only appear once in a file.
      *
-     * @param text the existing code
+     * @param text
+     *         the existing code.
      * @return the coordinates in the text where the insertion point should be added
      * @see SourceFile.at
      * @see SourceFile.atInline
