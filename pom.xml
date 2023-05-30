@@ -102,6 +102,12 @@ all modules and does not describe the project structure per-subproject.
     <scope>compile</scope>
   </dependency>
   <dependency>
+    <groupId>io.spine</groupId>
+    <artifactId>spine-text</artifactId>
+    <version>2.0.0-SNAPSHOT.5</version>
+    <scope>compile</scope>
+  </dependency>
+  <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-tool-base</artifactId>
     <version>2.0.0-SNAPSHOT.170</version>
