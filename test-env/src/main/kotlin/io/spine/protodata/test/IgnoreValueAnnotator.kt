@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,13 +28,24 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.tools.code.CommonLanguages.JavaScript
+import io.spine.tools.code.CommonLanguages.Java
 
-public class JsRenderer : Renderer(JavaScript) {
+/**
+ * A renderer that adds the `com.acme.ItsOkToIgnoreReturnValue` annotation to all public non-void
+ * instance methods in the file.
+ */
+public class IgnoreValueAnnotator : Renderer(Java) {
+
+    public companion object {
+        public const val ANNOTATION_TYPE: String = "com.acme.ItsOkToIgnoreReturnValue"
+    }
 
     override fun render(sources: SourceFileSet) {
+        val point = NonVoidMethod()
         sources.forEach {
-            it.overwrite(it.text().value.replace("Hello", "Hello JavaScript"))
+            it.at(point)
+                .withExtraIndentation(1)
+                .add("@$ANNOTATION_TYPE")
         }
     }
 }

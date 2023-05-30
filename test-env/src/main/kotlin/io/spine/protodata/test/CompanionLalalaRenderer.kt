@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,13 +28,22 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.tools.code.CommonLanguages.JavaScript
+import io.spine.tools.code.CommonLanguages.Kotlin
 
-public class JsRenderer : Renderer(JavaScript) {
+/**
+ * Renders the text "Lalala" as a [frame][CompanionFrame] in a companion object declaration.
+ */
+public class CompanionLalalaRenderer : Renderer(Kotlin) {
+
+    public companion object {
+        public const val LALALA: String = "Lalala"
+    }
 
     override fun render(sources: SourceFileSet) {
-        sources.forEach {
-            it.overwrite(it.text().value.replace("Hello", "Hello JavaScript"))
+        val insertionPoint = CompanionFrame()
+        sources.forEach { file ->
+            file.atInline(insertionPoint)
+                .add(LALALA)
         }
     }
 }

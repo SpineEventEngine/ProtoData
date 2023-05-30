@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2022, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -284,4 +284,27 @@ message DependencyDiscovered {
     FilePath path = 1;
 
     ProtobufSourceFile file = 2;
+}
+
+// Emitted when an insertion point printer adds an insertion point to a code file.
+message InsertionPointPrinted {
+
+    // Path to the code file.
+    //
+    // This path is relative to the source file set which contains the file.
+    //
+    FilePath file = 1;
+
+    // The insertion point label.
+    //
+    // This is a unique text that allows ProtoData to find insertion points in the text later.
+    //
+    string label = 2 [(required) = true];
+
+    // The appearance of the insertion point in the code.
+    //
+    // This is typically a comment which contains the insertion point label and possibly some other
+    // syntax. New code can be inserted right after this substring in the code file.
+    //
+    string representation_in_code = 3 [(required) = true];
 }

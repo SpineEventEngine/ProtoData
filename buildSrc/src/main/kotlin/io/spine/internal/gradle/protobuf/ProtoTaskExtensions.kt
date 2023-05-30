@@ -172,7 +172,7 @@ private fun GenerateProtoTask.deleteComGoogle(language: String) {
  * Exclude [GenerateProtoTask.outputBaseDir] from Java source set directories to avoid
  * duplicated source code files.
  */
-fun GenerateProtoTask.excludeProtocOutput() {
+private fun GenerateProtoTask.excludeProtocOutput() {
     val protocOutputDir = File(outputBaseDir).parentFile
     val java: SourceDirectorySet = sourceSet.java
 
@@ -191,7 +191,7 @@ fun GenerateProtoTask.excludeProtocOutput() {
 /**
  * Make sure Kotlin compilation explicitly depends on this `GenerateProtoTask` to avoid racing.
  */
-fun GenerateProtoTask.setupKotlinCompile() {
+private fun GenerateProtoTask.setupKotlinCompile() {
     val kotlinCompile = project.kotlinCompileFor(sourceSet)
     kotlinCompile?.dependsOn(this)
 }

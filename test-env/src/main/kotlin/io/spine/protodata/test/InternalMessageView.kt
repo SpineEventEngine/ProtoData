@@ -28,14 +28,17 @@ package io.spine.protodata.test
 
 import io.spine.core.External
 import io.spine.core.Subscribe
-import io.spine.protodata.event.TypeEntered
 import io.spine.protodata.TypeName
+import io.spine.protodata.event.TypeEntered
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.entity.update
 import io.spine.server.route.EventRoute.withId
 import io.spine.server.route.EventRouting
 
+/**
+ * A view on a message type that should be hidden from public API.
+ */
 public class InternalMessageView
     : View<TypeName, InternalType, InternalType.Builder>() {
 
@@ -47,6 +50,9 @@ public class InternalMessageView
     }
 }
 
+/**
+ * The repo for the [InternalMessageView].
+ */
 public class InternalMessageRepository :
     ViewRepository<TypeName, InternalMessageView, InternalType>() {
 

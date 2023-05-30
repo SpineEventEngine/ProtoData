@@ -28,13 +28,21 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.tools.code.CommonLanguages.JavaScript
+import io.spine.protodata.test.AnnotationInsertionPoint.BEFORE_RETURN_TYPE_METHOD_FOO
+import io.spine.protodata.test.AnnotationInsertionPoint.IMPORT
+import io.spine.tools.code.CommonLanguages.Java
+import kotlin.io.path.Path
 
-public class JsRenderer : Renderer(JavaScript) {
+/**
+ * A renderer that adds the `@Nullable` annotation to the return type of a method called `foo()`.
+ */
+public class NullableAnnotationRenderer : Renderer(Java) {
 
     override fun render(sources: SourceFileSet) {
-        sources.forEach {
-            it.overwrite(it.text().value.replace("Hello", "Hello JavaScript"))
-        }
+        val file = sources.file(Path("ClassWithMethod.java"))
+        file.at(IMPORT)
+            .add("import javax.annotation.Nullable;")
+        file.atInline(BEFORE_RETURN_TYPE_METHOD_FOO)
+            .add("@Nullable")
     }
 }

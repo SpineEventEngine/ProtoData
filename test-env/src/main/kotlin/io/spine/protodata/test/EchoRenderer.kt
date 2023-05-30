@@ -29,15 +29,17 @@ package io.spine.protodata.test
 import com.google.protobuf.StringValue
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.config.configAs
-import io.spine.tools.code.CommonLanguages.any
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.test.Echo
 import io.spine.time.toInstant
+import io.spine.tools.code.CommonLanguages.any
 import kotlin.io.path.Path
 
 public const val ECHO_FILE: String = "name.txt"
 
+/**
+ * A renderer that writes the contents of its Java-class-style configuration into a file.
+ */
 public class EchoRenderer : Renderer(any) {
 
     override fun render(sources: SourceFileSet) {
@@ -46,6 +48,9 @@ public class EchoRenderer : Renderer(any) {
     }
 }
 
+/**
+ * A renderer that writes the contents of its Protobuf-style configuration into a file.
+ */
 public class ProtoEchoRenderer : Renderer(any) {
 
     override fun render(sources: SourceFileSet) {
@@ -65,6 +70,9 @@ public class ProtoEchoRenderer : Renderer(any) {
     }
 }
 
+/**
+ * A renderer that writes the contents of its plain string configuration into a file.
+ */
 public class PlainStringRenderer : Renderer(any) {
 
     override fun render(sources: SourceFileSet) {
@@ -73,4 +81,7 @@ public class PlainStringRenderer : Renderer(any) {
     }
 }
 
+/**
+ * A wrapper type for a ProtoData configuration.
+ */
 public data class Name(public val value: String)

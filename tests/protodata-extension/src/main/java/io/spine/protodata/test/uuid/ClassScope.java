@@ -27,9 +27,10 @@
 package io.spine.protodata.test.uuid;
 
 import com.google.common.base.Objects;
+import io.spine.text.TextCoordinates;
 import io.spine.protodata.TypeName;
-import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.LineNumber;
+import io.spine.protodata.renderer.NonRepeatingInsertionPoint;
+import io.spine.text.Text;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ import static java.lang.String.format;
  *
  * <p>New member declarations should go under this insertion point.
  */
-final class ClassScope implements InsertionPoint {
+final class ClassScope implements NonRepeatingInsertionPoint {
 
     private static final String NATIVE_INSERTION_POINT_FMT =
             "// @@protoc_insertion_point(class_scope:%s)";
@@ -67,15 +68,16 @@ final class ClassScope implements InsertionPoint {
      * is not added either.
      */
     @Override
-    public LineNumber locate(List<String> lines) {
+    public TextCoordinates locateOccurrence(Text text) {
         String pattern = format(NATIVE_INSERTION_POINT_FMT, qualifiedName(typeName));
+        List<String> lines = text.lines();
         for (int lineNumber = 0; lineNumber < lines.size(); lineNumber++) {
             String line = lines.get(lineNumber);
             if (line.contains(pattern)) {
-                return LineNumber.at(lineNumber);
+                return atLine(lineNumber);
             }
         }
-        return LineNumber.notInFile();
+        return nowhere();
     }
 
     @Override

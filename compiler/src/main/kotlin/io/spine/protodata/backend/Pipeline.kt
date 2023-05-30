@@ -128,7 +128,6 @@ public class Pipeline(
         }
         val events = CompilerEvents.parse(request)
         protocContext.emitted(events)
-
         renderers.forEach { r ->
             r.protoDataContext = codeGenContext
             sources.forEach(r::renderSources)

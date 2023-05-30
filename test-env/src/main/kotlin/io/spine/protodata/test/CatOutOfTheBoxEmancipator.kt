@@ -41,7 +41,7 @@ public class CatOutOfTheBoxEmancipator : Renderer(any) {
 
     override fun render(sources: SourceFileSet) {
         sources.forEach {
-            it.code()
+            it.text()
         }
     }
 }

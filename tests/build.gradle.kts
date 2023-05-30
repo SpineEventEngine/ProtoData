@@ -30,17 +30,23 @@ import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
-import io.spine.internal.gradle.protobuf.excludeProtocOutput
 import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+buildscript {
+    dependencies {
+        classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
+        classpath(io.spine.internal.dependency.Kotlin.gradlePluginLib)
+    }
+}
 
 @Suppress("RemoveRedundantQualifierName")
 plugins {
     java
     kotlin("jvm") apply false
+    id("com.google.protobuf")
     idea
-    protobuf
 }
 
 subprojects {

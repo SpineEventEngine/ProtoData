@@ -29,7 +29,7 @@ package io.spine.protodata.backend
 import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
 import com.google.errorprone.annotations.CanIgnoreReturnValue
-import com.google.protobuf.compiler.PluginProtos
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ConfigurationError
@@ -37,6 +37,7 @@ import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
+import io.spine.protodata.test.AnnotationInsertionPointPrinter
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.DeletedTypeRepository
 import io.spine.protodata.test.DeletedTypeView
@@ -52,6 +53,7 @@ import io.spine.protodata.test.Journey
 import io.spine.protodata.test.JsRenderer
 import io.spine.protodata.test.KtRenderer
 import io.spine.protodata.test.NoOpRenderer
+import io.spine.protodata.test.NullableAnnotationRenderer
 import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
@@ -78,7 +80,7 @@ class PipelineSpec {
     private lateinit var srcRoot : Path
     private lateinit var codegenRequestFile: Path
     private lateinit var sourceFile: Path
-    private lateinit var request: PluginProtos.CodeGeneratorRequest
+    private lateinit var request: CodeGeneratorRequest
     private lateinit var renderer: UnderscorePrefixRenderer
     private lateinit var overwritingSourceSet: SourceFileSet
 
@@ -170,6 +172,25 @@ class PipelineSpec {
             contains(initialContent)
             contains("/* INSERT:'file_end' */")
         }
+    }
+
+    @Test
+    fun `write into inline insertion points`() {
+        val sourceFile = write("ClassWithMethod.java", """
+            class ClassWithMethod {
+                public java.lang.String foo() {
+                    return "happy halloween";
+                }
+            }
+        """.trimIndent())
+        Pipeline(
+            plugins = listOf(),
+            renderers = listOf(AnnotationInsertionPointPrinter(), NullableAnnotationRenderer()),
+            sources = listOf(SourceFileSet.from(srcRoot)),
+            request = CodeGeneratorRequest.getDefaultInstance()
+        )()
+        assertTextIn(sourceFile)
+            .contains("@Nullable String")
     }
 
     @Test
@@ -343,9 +364,6 @@ class PipelineSpec {
                 ),
                 request
             )()
-
-            //destination2.toFile().walkTopDown().forEach { println(it.name) }
-            //println(destination2.resolve(existingFilePath))
 
             assertDoesNotExist(destination2.resolve(existingFilePath))
 
