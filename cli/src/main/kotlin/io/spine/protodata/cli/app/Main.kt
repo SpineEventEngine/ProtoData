@@ -54,7 +54,6 @@ import io.spine.protodata.cli.ConfigFormatParam
 import io.spine.protodata.cli.ConfigValueParam
 import io.spine.protodata.cli.DebugLoggingParam
 import io.spine.protodata.cli.InfoLoggingParam
-import io.spine.protodata.cli.OptionProviderParam
 import io.spine.protodata.cli.Parameter
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RendererParam
@@ -127,8 +126,9 @@ internal class Run(version: String) : CliktCommand(
     private val renderers: List<String>
             by RendererParam.toOption().multiple(default = listOf())
 
+    @Deprecated("Do not use. Scheduled for removal.")
     private val optionProviders: List<String>
-            by OptionProviderParam.toOption().multiple()
+            by io.spine.protodata.cli.OptionProviderParam.toOption().multiple()
 
     private val codegenRequestFile: File
             by RequestParam.toOption().file(

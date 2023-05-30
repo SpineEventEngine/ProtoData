@@ -69,6 +69,7 @@ public object RendererParam : Parameter(
 /**
  * The command-line parameter for specifying providers of options.
  */
+@Deprecated("Do not use. Will be removed in the next release.")
 public object OptionProviderParam : Parameter(
     name = "--option-provider",
     shortName = "--op",
@@ -226,6 +227,7 @@ public object DebugLoggingParam : Parameter(
 private object dash {
     val p = lazy { PluginParam.shortName }
     val r = lazy { RendererParam.shortName }
+    @Deprecated("Do not use. Scheduled for removal.")
     val op = lazy { OptionProviderParam.shortName }
     val src = lazy { SourceRootParam.shortName }
 }
