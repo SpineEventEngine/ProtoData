@@ -241,7 +241,7 @@ public class ProtocInsertionPoint(
 /**
  * A pointer to a line in a source file.
  */
-@Deprecated("Use Protobuf-based `TextCoordinates` instead.")
+@Deprecated("Use `TextCoordinates` instead.")
 public sealed class LineNumber {
 
     public companion object {
