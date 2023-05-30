@@ -26,7 +26,6 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.base.Preconditions
 import io.spine.string.Indent.Companion.defaultJavaIndent
 import io.spine.string.atLevel
 
@@ -49,7 +48,7 @@ internal constructor(
      * Each unit adds four spaces.
      */
     public fun withExtraIndentation(level: Int): SourceAtLine {
-        Preconditions.checkArgument(level >= 0, "Indentation level cannot be negative.")
+        require(level >= 0) { "Indentation level cannot be negative." }
         indentLevel = level
         return this
     }
