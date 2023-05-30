@@ -119,10 +119,6 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield(RendererParam.name)
                 yield(it)
             }
-//            optionProviders.get().forEach {
-//                yield(OptionProviderParam.name)
-//                yield(it)
-//            }
             yield(RequestParam.name)
             yield(project.file(requestFile).absolutePath)
 
