@@ -1,11 +1,11 @@
 # ProtoData
 
-[![Build on Ubuntu](https://github.com/SpineEventEngine/ProtoData/actions/workflows/build-on-ubuntu.yml/badge.svg)](https://github.com/SpineEventEngine/ProtoData/actions/workflows/build-on-ubuntu.yml)
-[![Build on Windows](https://github.com/SpineEventEngine/ProtoData/actions/workflows/build-on-windows.yml/badge.svg)](https://github.com/SpineEventEngine/ProtoData/actions/workflows/build-on-windows.yml)
-[![Installation on Ubuntu](https://github.com/SpineEventEngine/ProtoData/actions/workflows/installation.yml/badge.svg)](https://github.com/SpineEventEngine/ProtoData/actions/workflows/installation.yml)
-[![codecov.io](https://codecov.io/github/SpineEventEngine/ProtoData/coverage.svg?branch=master)](https://codecov.io/github/SpineEventEngine/ProtoData?branch=master)
+[![Build on Ubuntu](https://github.com/SpineEventEngine/ProtoData/actions/workflows/build-on-ubuntu.yml/badge.svg)][ubuntu-build]
+[![Build on Windows](https://github.com/SpineEventEngine/ProtoData/actions/workflows/build-on-windows.yml/badge.svg)][windows-build]
+[![Installation on Ubuntu](https://github.com/SpineEventEngine/ProtoData/actions/workflows/installation.yml/badge.svg)][ubuntu-install]
+[![codecov.io](https://codecov.io/github/SpineEventEngine/ProtoData/coverage.svg?branch=master)][codecov-report]
 
-[![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
+[![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)][apache-license]
 
 _ProtoData_ is a collection of tools for generating quality domain models from Protobuf definitions.
 
@@ -62,3 +62,9 @@ Start using the app:
 
 Note that it is necessary to keep the structure of the archive intact: the scripts in `bin` rely
 on the relative path to other files in the archive.
+
+[ubuntu-build]: https://github.com/SpineEventEngine/ProtoData/actions/workflows/build-on-ubuntu.yml
+[windows-build]: https://github.com/SpineEventEngine/ProtoData/actions/workflows/build-on-windows.yml
+[ubuntu-install]: https://github.com/SpineEventEngine/ProtoData/actions/workflows/installation.yml
+[codecov-report]: https://codecov.io/github/SpineEventEngine/ProtoData?branch=master
+[apache-license]: https://www.apache.org/licenses/LICENSE-2.0
