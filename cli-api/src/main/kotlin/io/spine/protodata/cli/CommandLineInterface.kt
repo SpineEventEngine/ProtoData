@@ -29,7 +29,6 @@
 package io.spine.protodata.cli
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.option.OptionsProvider
 import io.spine.protodata.config.ConfigurationFormat.JSON
 import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
@@ -63,22 +62,6 @@ public object RendererParam : Parameter(
         The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
         There can only be multiple renderers. To pass more than one value, type:
            `<...> ${dash.r} com.foo.MyJavaRenderer ${dash.r} com.foo.MyKotlinRenderer`.
-        """
-)
-
-/**
- * The command-line parameter for specifying providers of options.
- */
-@Deprecated("Do not use. Will be removed in the next release.")
-public object OptionProviderParam : Parameter(
-    name = "--option-provider",
-    shortName = "--op",
-    help = """
-        The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
-        There can be multiple providers.
-        Spine SDK `options.proto` and `time_options.proto` are provided by default.
-        To pass more than one value, type:
-           `<...> ${dash.op} com.foo.TypeOptionsProvider ${dash.op} com.foo.FieldOptionsProvider`.
         """
 )
 
@@ -227,15 +210,13 @@ public object DebugLoggingParam : Parameter(
 private object dash {
     val p = lazy { PluginParam.shortName }
     val r = lazy { RendererParam.shortName }
-    @Deprecated("Do not use. Scheduled for removal.")
-    val op = lazy { OptionProviderParam.shortName }
     val src = lazy { SourceRootParam.shortName }
 }
 
 /**
  * Abbreviations for long plugin names to be used in `help` texts.
  */
-@Suppress("ClassName") // for better readability
+@Suppress("ClassName") // for better readability in `help` texts.
 private object ddash {
     val tr = lazy { TargetRootParam.name }
     val confVal = lazy { ConfigValueParam.name }
