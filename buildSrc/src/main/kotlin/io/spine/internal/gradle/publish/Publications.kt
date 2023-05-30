@@ -140,8 +140,7 @@ internal class StandardJavaPublicationHandler(
      */
     override fun handlePublications() {
         val jars = project.artifacts(jarFlags)
-        val publications = project.publications
-        publications.create<MavenPublication>("mavenJava") {
+        project.publications.create<MavenPublication>("mavenJava") {
             assignMavenCoordinates()
             specifyArtifacts(jars)
         }
