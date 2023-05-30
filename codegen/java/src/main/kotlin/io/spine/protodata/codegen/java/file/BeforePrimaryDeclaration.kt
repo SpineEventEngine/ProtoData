@@ -81,4 +81,3 @@ internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint, Logging {
         return nowhere()
     }
 }
-
