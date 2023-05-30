@@ -40,14 +40,12 @@ import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.code.proto.FileSet
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.atDebug
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
-import io.spine.option.OptionsProvider
-import io.spine.protobuf.outerClass
+import io.spine.option.OptionsProvider.registryWithAllOptions
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.cli.ConfigFileParam
 import io.spine.protodata.cli.ConfigFormatParam
@@ -126,10 +124,6 @@ internal class Run(version: String) : CliktCommand(
     private val renderers: List<String>
             by RendererParam.toOption().multiple(default = listOf())
 
-    @Deprecated("Do not use. Scheduled for removal.")
-    private val optionProviders: List<String>
-            by io.spine.protodata.cli.OptionProviderParam.toOption().multiple()
-
     private val codegenRequestFile: File
             by RequestParam.toOption().file(
                 mustExist = true,
@@ -202,7 +196,7 @@ internal class Run(version: String) : CliktCommand(
         val sources = createSourceFileSets()
         val plugins = loadPlugins()
         val renderers = loadRenderers()
-        val registry = createRegistry()
+        val registry = registryWithAllOptions()
         val request = loadRequest(registry)
         val config = resolveConfig()
 
@@ -259,24 +253,6 @@ internal class Run(version: String) : CliktCommand(
 
     private fun loadRenderers() = load(RendererBuilder(), renderers)
 
-    private fun createRegistry(): ExtensionRegistry {
-        val optionsProviders = loadOptions()
-        val registry = ExtensionRegistry.newInstance()
-        optionsProviders.forEach { it.registerIn(registry) }
-        return registry
-    }
-
-    private fun loadOptions(): List<OptionsProvider> {
-        val providers = load(OptionsProviderBuilder(), optionProviders)
-        val request = loadRequest()
-        val files: FileSet = FileSet.of(request.protoFileList)
-        val fileProviders = filterOptionFiles(files)
-        val allProviders = providers.toMutableList()
-        allProviders.addAll(fileProviders)
-        allProviders.add(SpineOptionsProvider())
-        return allProviders
-    }
-
     private fun resolveConfig(): Configuration? {
         val hasFile = configurationFile != null
         val hasValue = configurationValue != null
@@ -298,23 +274,6 @@ internal class Run(version: String) : CliktCommand(
             }
             else -> null
         }
-    }
-
-    /**
-     * Filter out files that do not have outer classes yet.
-     *
-     * These are `.proto` files being processed by ProtoData that contain
-     * option definitions. We cannot use these files because there is no binary Java
-     * code generated for them at this stage. Because of this they cannot be added to
-     * an `ExtensionRegistry` later.
-     */
-    private fun filterOptionFiles(files: FileSet): Sequence<FileOptionsProvider> {
-        val fileProviders = files.files()
-            .filter { it.extensions.isNotEmpty() }
-            .filter { it.outerClass != null }
-            .map(::FileOptionsProvider)
-            .asSequence()
-        return fileProviders
     }
 
     private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {

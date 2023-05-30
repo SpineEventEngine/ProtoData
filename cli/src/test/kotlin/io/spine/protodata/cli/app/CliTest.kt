@@ -116,6 +116,7 @@ class `Command line application should` {
     }
 
     @Test
+    @Disabled("To be removed together with the deprecated option.")
     fun `supply options by a provider`() {
         launchApp(
             "-p", CustomOptionPlugin::class.jvmName,
