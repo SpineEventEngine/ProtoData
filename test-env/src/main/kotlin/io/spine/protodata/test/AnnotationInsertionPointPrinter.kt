@@ -28,7 +28,7 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.renderer.UnitaryInsertionPoint
+import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.CommonLanguages.Java
@@ -46,7 +46,7 @@ public class AnnotationInsertionPointPrinter: InsertionPointPrinter(Java) {
 /**
  * Insertion points that help renderers annotate certain parts of a Java file.
  */
-public enum class AnnotationInsertionPoint : UnitaryInsertionPoint {
+public enum class AnnotationInsertionPoint : NonRepeatingInsertionPoint {
 
     /**
      * An insertion point in the imports black.

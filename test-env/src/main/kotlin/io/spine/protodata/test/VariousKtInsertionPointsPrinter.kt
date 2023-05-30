@@ -28,7 +28,7 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.renderer.UnitaryInsertionPoint
+import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.CommonLanguages.Kotlin
@@ -39,7 +39,7 @@ public class VariousKtInsertionPointsPrinter : InsertionPointPrinter(Kotlin) {
         KotlinInsertionPoint.values().toSet()
 }
 
-public enum class KotlinInsertionPoint : UnitaryInsertionPoint {
+public enum class KotlinInsertionPoint : NonRepeatingInsertionPoint {
 
     FILE_START {
         override fun locateOccurrence(text: Text): TextCoordinates = startOfFile()

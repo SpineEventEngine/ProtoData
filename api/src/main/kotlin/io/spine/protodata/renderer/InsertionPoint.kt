@@ -110,7 +110,7 @@ public interface InsertionPoint : CoordinatesFactory, Logging {
  *
  * Implementations should use [locateOccurrence] instead of [locate].
  */
-public interface UnitaryInsertionPoint : InsertionPoint {
+public interface NonRepeatingInsertionPoint : InsertionPoint {
 
     override fun locate(text: Text): Set<TextCoordinates> =
         setOf(locateOccurrence(text))
