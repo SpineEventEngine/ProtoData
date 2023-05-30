@@ -24,11 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+@JvmLoggingDomain("ProtoData")
+package io.spine.protodata;
 
-// https://github.com/stefanbirkner/system-lambda
-object SystemLambda {
-    const val version = "1.2.1"
-    const val group = "com.github.stefanbirkner"
-    const val lib = "$group:system-lambda:$version"
-}
+import com.google.errorprone.annotations.CheckReturnValue;
+import io.spine.logging.JvmLoggingDomain;
+
+import javax.annotation.ParametersAreNonnullByDefault;

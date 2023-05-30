@@ -25,7 +25,7 @@
  */
 
 import io.spine.internal.dependency.Clikt
-import io.spine.internal.dependency.Flogger
+import io.spine.internal.dependency.Spine
 import io.spine.internal.gradle.publish.SpinePublishing
 
 plugins {
@@ -39,15 +39,16 @@ plugins {
 
 dependencies {
     implementation(Clikt.lib)
-    implementation(Flogger.lib)
+
+    implementation(Spine.logging)
+    runtimeOnly(Spine.loggingContext)
+    runtimeOnly(Spine.loggingBackend)
 
     implementation(project(":cli-api"))
     implementation(project(":api"))
     implementation(project(":compiler"))
     implementation(project(":codegen-java"))
     implementation(kotlin("reflect"))
-
-    runtimeOnly(Flogger.Runtime.systemBackend)
 
     testImplementation(project(":test-env"))
 }

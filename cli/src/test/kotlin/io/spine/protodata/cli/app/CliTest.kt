@@ -28,15 +28,13 @@ package io.spine.protodata.cli.app
 
 import com.github.ajalt.clikt.core.MissingOption
 import com.github.ajalt.clikt.core.UsageError
-import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.StringValue
 import com.google.protobuf.compiler.codeGeneratorRequest
+import com.google.protobuf.stringValue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldStartWith
 import io.spine.base.Time
 import io.spine.option.OptionsProto
-import io.spine.protobuf.AnyPacker
 import io.spine.protobuf.pack
 import io.spine.protodata.cli.given.CustomOptionPlugin
 import io.spine.protodata.cli.given.CustomOptionRenderer
@@ -46,7 +44,6 @@ import io.spine.protodata.cli.given.TestOptionProvider
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.test.ECHO_FILE
-import io.spine.protodata.test.Echo
 import io.spine.protodata.test.EchoRenderer
 import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.Project
@@ -54,6 +51,7 @@ import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.ProtoEchoRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
+import io.spine.protodata.test.echo
 import io.spine.time.LocalDates
 import io.spine.time.Month.SEPTEMBER
 import io.spine.time.toInstant
@@ -201,13 +199,12 @@ class `Command line application should` {
         @Test
         fun `Protobuf JSON`() {
             val time = Time.currentTime()
-            val echo = Echo.newBuilder()
-                .setMessage("English, %s!")
-                .setExtraMessage(StringValue.of("Do you speak it?"))
-                .setArg(StringValue.of("Adam Falkner").pack())
-                .setWhen(time)
-                .build()
-            val json = echo.toCompactJson()
+            val json = echo {
+                message = "English, %s!"
+                extraMessage = stringValue { value = "Do you speak it?" }
+                arg = stringValue { value = "Adam Falkner" }.pack()
+                when_ = time
+            }.toCompactJson()
             launchApp(
                 "-r", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
@@ -215,26 +212,25 @@ class `Command line application should` {
                 "--cv", json,
                 "--cf", "proto_json"
             )
-            val assertText = assertThat(srcRoot.resolve(ECHO_FILE).readText())
-            assertText
-                .startsWith(time.toInstant().toString())
-            assertText
-                .endsWith("English, Adam Falkner!:Do you speak it?")
+            val text = srcRoot.resolve(ECHO_FILE).readText()
+
+            text shouldStartWith time.toInstant().toString()
+            text shouldEndWith "English, Adam Falkner!:Do you speak it?"
         }
 
         @Test
         fun `binary Protobuf`(@TempDir configDir: Path) {
             val time = LocalDates.of(1962, SEPTEMBER, 12)
-            val echo = Echo.newBuilder()
-                .setMessage("We choose to go to the %s.")
-                .setArg(AnyPacker.pack(StringValue.of("Moon")))
-                .setExtraMessage(StringValue.of("and do the other things"))
-                .setWhen(time.toTimestamp())
-                .build()
+            val bytes = echo {
+                message = "We choose to go to the %s."
+                extraMessage = stringValue { value = "and do the other things" }
+                arg = stringValue { value = "Moon" }.pack()
+                when_ = time.toTimestamp()
+            }.toByteArray()
 
             val configFile = configDir.resolve("config.bin")
             configFile.createFile()
-            configFile.writeBytes(echo.toByteArray())
+            configFile.writeBytes(bytes)
 
             launchApp(
                 "-r", ProtoEchoRenderer::class.jvmName,
