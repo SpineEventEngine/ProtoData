@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.8.4</version>
+<version>0.8.7</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -148,12 +148,6 @@ all modules and does not describe the project structure per-subproject.
     <artifactId>spine-logging-context</artifactId>
     <version>2.0.0-SNAPSHOT.184</version>
     <scope>runtime</scope>
-  </dependency>
-  <dependency>
-    <groupId>com.github.stefanbirkner</groupId>
-    <artifactId>system-lambda</artifactId>
-    <version>1.2.1</version>
-    <scope>test</scope>
   </dependency>
   <dependency>
     <groupId>com.google.truth</groupId>
