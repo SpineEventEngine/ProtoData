@@ -167,6 +167,18 @@ private fun String.checkLinePosition(position: Int) {
     }
 }
 
+/**
+ * Finds the precedent type for all the given coordinates.
+ *
+ * A precedent type is the common kind of all the coordinates. It can be either `WHOLE_LINE` or
+ * `INLINE`. `END_OF_TEXT` coordinates are considered `WHOLE_LINE`. If none of the coordinates
+ * define a particular place in the text, i.e. all have the `NOWHERE` kind, the precedent is not
+ * defined and `null` is returned.
+ *
+ * This method does not look through all the coordinates. It stops the search as soon as at least
+ * one non-`NOWHERE` instance is found. This method does not guarantee that all the coordinates
+ * are compatible with the found precedent type.
+ */
 @Suppress("ReturnCount")
     // As this function is pretty small, it's easy to read even with 3 return statements.
 private fun Iterable<TextCoordinates>.precedentType(): TextCoordinates.KindCase? {
@@ -180,10 +192,14 @@ private fun Iterable<TextCoordinates>.precedentType(): TextCoordinates.KindCase?
     return null
 }
 
+/**
+ * Checks if all the receiver coordinates are [compatible][compatibleWith]
+ * the given [precedentType].
+ */
 private fun Iterable<TextCoordinates>.ensureSameType(insertionPoint: InsertionPoint,
-                                                     definingType: TextCoordinates.KindCase) {
+                                                     precedentType: TextCoordinates.KindCase) {
     forEach { coords ->
-        if (!coords.compatibleWith(definingType)) {
+        if (!coords.compatibleWith(precedentType)) {
             throw RenderingException(
                 "One insertion point (${insertionPoint::class.qualifiedName}) cannot be " +
                         "whole-line and inline at the same time."
@@ -192,8 +208,17 @@ private fun Iterable<TextCoordinates>.ensureSameType(insertionPoint: InsertionPo
     }
 }
 
-private fun TextCoordinates.compatibleWith(type: TextCoordinates.KindCase) = when (kindCase) {
-    INLINE, WHOLE_LINE -> type == kindCase
-    END_OF_TEXT -> type == WHOLE_LINE
+/**
+ * Checks if these `TextCoordinates` are compatible with the given [precedentType].
+ *
+ * `TextCoordinates` of kinds `WHOLE_LINE` or `END_OF_TEXT` are compatible with the `WHOLE_LINE`
+ * precedent type. `TextCoordinates` of kind `INLINE` are compatible with the `INLINE` precedent
+ * type. `TextCoordinates` of kind `NOWHERE` are compatible with any type.
+ */
+private fun TextCoordinates.compatibleWith(
+    precedentType: TextCoordinates.KindCase
+) = when (kindCase) {
+    INLINE, WHOLE_LINE -> precedentType == kindCase
+    END_OF_TEXT -> precedentType == WHOLE_LINE
     else -> true
 }
