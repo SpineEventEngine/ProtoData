@@ -263,7 +263,7 @@ internal constructor(
     }
 
     /**
-     * Initialize this set with a [Querying] instance for performing internal checks.
+     * Initializes this set with a [Querying] instance for performing internal checks.
      */
     internal fun prepareForQueries(querying: Querying) {
         this.querying = querying
