@@ -38,6 +38,10 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import java.io.File.pathSeparator
 
+/**
+ * The command-line parameter for specifying ProtoData plugins used in
+ * the code generation process.
+ */
 public object PluginParam : Parameter(
     name = "--plugin",
     shortName = "-p",
@@ -48,6 +52,10 @@ public object PluginParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying renderers used in
+ * the code generation process.
+ */
 public object RendererParam : Parameter(
     name = "--renderer",
     shortName = "-r",
@@ -58,6 +66,9 @@ public object RendererParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying providers of options.
+ */
 public object OptionProviderParam : Parameter(
     name = "--option-provider",
     shortName = "--op",
@@ -70,6 +81,10 @@ public object OptionProviderParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying the path to the file with
+ * serialized [CodeGeneratorRequest].
+ */
 public object RequestParam : Parameter(
     name = "--request",
     shortName = "-t", // "-r" is already taken.
@@ -77,6 +92,10 @@ public object RequestParam : Parameter(
             "`${CodeGeneratorRequest.getDescriptor().name}`."
 )
 
+/**
+ * The command-line parameter for specifying the path to the directory with
+ * source files to be processed.
+ */
 public object SourceRootParam : Parameter(
     name = "--source-root",
     shortName = "--src",
@@ -96,6 +115,10 @@ public object SourceRootParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying the path to the directory where
+ * to put the processed files.
+ */
 public object TargetRootParam : Parameter(
     name = "--target-root",
     altName = "--destination",
@@ -111,6 +134,9 @@ public object TargetRootParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for composing the user-defined classpath for ProtoData.
+ */
 public object UserClasspathParam : Parameter(
     name = "--user-classpath",
     shortName = "--ucp",
@@ -123,6 +149,10 @@ public object UserClasspathParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying the path to the file with custom
+ * configuration for ProtoData.
+ */
 public object ConfigFileParam : Parameter(
     name = "--configuration-file",
     shortName = "-c",
@@ -138,6 +168,9 @@ public object ConfigFileParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying custom configuration values for ProtoData.
+ */
 public object ConfigValueParam : Parameter(
     name = "--configuration-value",
     shortName = "--cv",
@@ -148,6 +181,9 @@ public object ConfigValueParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying the format of custom configuration for ProtoData.
+ */
 public object ConfigFormatParam : Parameter(
     name = "--configuration-format",
     shortName = "--cf",
@@ -161,6 +197,9 @@ public object ConfigFormatParam : Parameter(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }
 }
 
+/**
+ * The command-line parameter which turns the `INFO` logging level on.
+ */
 public object InfoLoggingParam : Parameter(
     name = "--info",
     shortName = "-I",
@@ -169,6 +208,9 @@ public object InfoLoggingParam : Parameter(
     """
 )
 
+/**
+ * The command-line parameter which turns the `DEBUG` logging level on.
+ */
 public object DebugLoggingParam : Parameter(
     name = "--debug",
     shortName = "-D",
