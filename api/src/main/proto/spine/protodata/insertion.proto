@@ -64,5 +64,9 @@ message InsertedPoints {
     FilePath file = 1;
 
     // Insertion points added to the given file.
+    //
+    // Since a code file might have more than one instance of the same insertion point, this list
+    // may contain repetitions.
+    //
     repeated InsertedPoint point = 2 [(validate) = true];
 }
