@@ -116,20 +116,6 @@ class `Command line application should` {
     }
 
     @Test
-    @Disabled("To be removed together with the deprecated option.")
-    fun `supply options by a provider`() {
-        launchApp(
-            "-p", CustomOptionPlugin::class.jvmName,
-            "-r", CustomOptionRenderer::class.jvmName,
-            "--src", srcRoot.toString(),
-            "-t", codegenRequestFile.toString(),
-            "--op", TestOptionProvider::class.jvmName
-        )
-        val generatedFile = srcRoot.resolve(CustomOptionRenderer.FILE_NAME)
-        generatedFile.readText() shouldBe "custom_field_for_test"
-    }
-
-    @Test
     fun `provide Spine options by default`() {
         launchApp(
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
