@@ -26,7 +26,14 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.base.Preconditions.checkPositionIndex
+import io.spine.core.userId
+import io.spine.protodata.event.insertionPointPrinted
+import io.spine.protodata.filePath
+import io.spine.server.integration.ThirdPartyContext
+import io.spine.text.TextCoordinates
+import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
+import io.spine.text.TextCoordinates.KindCase.INLINE
+import io.spine.text.TextCoordinates.KindCase.WHOLE_LINE
 import io.spine.tools.code.Language
 
 /**
@@ -53,30 +60,165 @@ public abstract class InsertionPointPrinter(
     protected abstract fun supportedInsertionPoints(): Set<InsertionPoint>
 
     final override fun render(sources: SourceFileSet) {
-        sources.prepareCode { file -> file.prepare() }
-    }
-
-    private fun SourceFile.prepare() {
-        val lines = lines().toMutableList()
-        supportedInsertionPoints().forEach { point ->
-            point.applyTo(lines)
-        }
-        updateLines(lines)
-    }
-
-    private fun InsertionPoint.applyTo(lines: MutableList<String>) {
-        val lineNumber = locate(lines)
-        val comment = target.comment(this.codeLine)
-        when (lineNumber) {
-            is LineIndex -> {
-                val index = lineNumber.value
-                checkPositionIndex(index, lines.size, "Line number")
-                lines.add(index, comment)
+        sources.prepareCode { file ->
+            supportedInsertionPoints().forEach { point ->
+                val text = file.text()
+                val coords = point.locate(text)
+                val precedent = coords.precedentType()
+                if (precedent != null) {
+                    coords.ensureSameType(point, precedent)
+                    val lines = file.lines().toMutableList()
+                    when (precedent) {
+                        INLINE -> renderInlinePoint(coords, lines, point, file)
+                        WHOLE_LINE -> renderWholeLinePoint(coords, lines, point, file)
+                        else -> error("Unexpected precedent type $precedent.")
+                    }
+                    file.updateLines(lines)
+                }
             }
-
-            is EndOfFile -> lines.add(comment)
-            is Nowhere -> {} /* No need to add anything.
-                                Insertion point should not appear in the file. */
         }
     }
+
+    private fun renderWholeLinePoint(
+        coordinates: Set<TextCoordinates>,
+        lines: MutableList<String>,
+        point: InsertionPoint,
+        file: SourceFile
+    ) {
+        val comment = target.comment(point.codeLine)
+        val lineNumbers = coordinates.filter { it.hasWholeLine() }.map { it.wholeLine }
+        lineNumbers.forEach {
+            lines.checkLineNumber(it)
+        }
+        val correctedLineNumbers = lineNumbers.asSequence()
+            .sorted()
+            .mapIndexed { index, lineNumber -> lineNumber + index }
+        correctedLineNumbers.forEach {
+            lines.add(it, comment)
+        }
+        if (END_OF_FILE in coordinates) {
+            lines.add(comment)
+        }
+        reportPoint(file, point.label, comment)
+    }
+
+    private fun renderInlinePoint(
+        coordinates: Set<TextCoordinates>,
+        lines: MutableList<String>,
+        point: InsertionPoint,
+        file: SourceFile
+    ) {
+        val cursors = coordinates.map { it.inline }
+        val cursorsByLine = cursors.groupBy({ it.line }, { it.column })
+        val comment = target.comment(point.codeLine)
+        cursorsByLine.forEach { lineNumber, columns ->
+            lines.checkLineNumber(lineNumber)
+            val line = lines[lineNumber]
+            columns.forEach {
+                line.checkLinePosition(it)
+            }
+            val cols = columns.sorted()
+            lines[lineNumber] = annotate(line, cols, comment)
+            reportPoint(file, point.label, comment)
+        }
+    }
+
+    private fun annotate(line: String, cols: List<Int>, comment: String) = buildString {
+        append(line.substring(0, cols.first()))
+        cols.forEachIndexed { index, column ->
+            append(' ')
+            append(comment)
+            append(' ')
+            val nextPart = if (index + 1 == cols.size) {
+                line.substring(column)
+            } else {
+                line.substring(column, cols[index + 1])
+            }
+            append(nextPart)
+        }
+    }
+
+    private fun reportPoint(sourceFile: SourceFile, pointLabel: String, comment: String) {
+        val event = insertionPointPrinted {
+            file = filePath { value = sourceFile.relativePath.toString() }
+            label = pointLabel
+            representationInCode = comment
+        }
+        InsertionPointPrinterContext.emittedEvent(event, actorId)
+    }
+}
+
+private val actorId = userId { value = InsertionPointPrinter::class.qualifiedName!! }
+
+private val InsertionPointPrinterContext = ThirdPartyContext.singleTenant("Insertion points")
+
+private fun List<String>.checkLineNumber(index: Int) {
+    if (index < 0 || index >= size) {
+        throw RenderingException(
+            "Line index $index is out of bounds. File contains $size lines.")
+    }
+}
+
+private fun String.checkLinePosition(position: Int) {
+    if (position < 0 || position >= length) {
+        throw RenderingException(
+            "Line does not have column $position: `$this`."
+        )
+    }
+}
+
+/**
+ * Finds the precedent type for all the given coordinates.
+ *
+ * A precedent type is the common kind of all the coordinates. It can be either `WHOLE_LINE` or
+ * `INLINE`. `END_OF_TEXT` coordinates are considered `WHOLE_LINE`. If none of the coordinates
+ * define a particular place in the text, i.e. all have the `NOWHERE` kind, the precedent is not
+ * defined and `null` is returned.
+ *
+ * This method does not look through all the coordinates. It stops the search as soon as at least
+ * one non-`NOWHERE` instance is found. This method does not guarantee that all the coordinates
+ * are compatible with the found precedent type.
+ */
+@Suppress("ReturnCount")
+    // As this function is pretty small, it's easy to read even with 3 return statements.
+private fun Iterable<TextCoordinates>.precedentType(): TextCoordinates.KindCase? {
+    forEach { coords ->
+        when (coords.kindCase) {
+            INLINE -> return INLINE
+            WHOLE_LINE, END_OF_TEXT -> return WHOLE_LINE
+            else -> {} // Keep searching for the type.
+        }
+    }
+    return null
+}
+
+/**
+ * Checks if all the receiver coordinates are [compatible][compatibleWith]
+ * the given [precedentType].
+ */
+private fun Iterable<TextCoordinates>.ensureSameType(insertionPoint: InsertionPoint,
+                                                     precedentType: TextCoordinates.KindCase) {
+    forEach { coords ->
+        if (!coords.compatibleWith(precedentType)) {
+            throw RenderingException(
+                "One insertion point (${insertionPoint::class.qualifiedName}) cannot be " +
+                        "whole-line and inline at the same time."
+            )
+        }
+    }
+}
+
+/**
+ * Checks if these `TextCoordinates` are compatible with the given [precedentType].
+ *
+ * `TextCoordinates` of kinds `WHOLE_LINE` or `END_OF_TEXT` are compatible with the `WHOLE_LINE`
+ * precedent type. `TextCoordinates` of kind `INLINE` are compatible with the `INLINE` precedent
+ * type. `TextCoordinates` of kind `NOWHERE` are compatible with any type.
+ */
+private fun TextCoordinates.compatibleWith(
+    precedentType: TextCoordinates.KindCase
+) = when (kindCase) {
+    INLINE, WHOLE_LINE -> precedentType == kindCase
+    END_OF_TEXT -> precedentType == WHOLE_LINE
+    else -> true
 }

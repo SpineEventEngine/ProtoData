@@ -42,7 +42,7 @@ public class UnderscorePrefixRenderer : Renderer(Java) {
             val oldName = internalType.name.simpleName
             val newName = "_$oldName"
             sources.forEach {
-                it.overwrite(it.code().replace(oldName, newName))
+                it.overwrite(it.text().value.replace(oldName, newName))
             }
         }
     }

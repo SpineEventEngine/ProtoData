@@ -60,8 +60,8 @@ internal sealed interface ConfigurationParser {
 private sealed class ProtobufParser : ConfigurationParser {
 
     final override fun <T> parse(source: ByteSource, cls: Class<T>): T {
-        if (!Message::class.java.isAssignableFrom(cls)) {
-            error("Expected a message class but got `${cls.canonicalName}`.")
+        require(Message::class.java.isAssignableFrom(cls)) {
+            "Expected a message class but got `${cls.canonicalName}`."
         }
         @Suppress("UNCHECKED_CAST")
         return doParse(source, cls as Class<out Message>) as T

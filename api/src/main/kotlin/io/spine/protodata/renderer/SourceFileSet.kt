@@ -29,6 +29,7 @@ package io.spine.protodata.renderer
 import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
+import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.util.theOnly
 import java.nio.charset.Charset
@@ -59,6 +60,7 @@ import kotlin.text.Charsets.UTF_8
  *
  * @see SourceFile
  */
+@Suppress("TooManyFunctions") // All part of the public API.
 public class SourceFileSet
 internal constructor(
     files: Set<SourceFile>,
@@ -87,6 +89,7 @@ internal constructor(
     private val files: MutableMap<Path, SourceFile>
     private val deletedFiles = mutableSetOf<SourceFile>()
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
+    internal lateinit var querying: Querying
 
     init {
         val map = HashMap<Path, SourceFile>(files.size)
@@ -257,6 +260,13 @@ internal constructor(
         other.deletedFiles.forEach {
             files.remove(it.relativePath)
         }
+    }
+
+    /**
+     * Initializes this set with a [Querying] instance for performing internal checks.
+     */
+    internal fun prepareForQueries(querying: Querying) {
+        this.querying = querying
     }
 
     override fun iterator(): Iterator<SourceFile> =

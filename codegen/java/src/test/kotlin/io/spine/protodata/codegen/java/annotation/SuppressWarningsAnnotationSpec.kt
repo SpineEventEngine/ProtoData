@@ -52,7 +52,8 @@ class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
     private fun loadCode() = sources.first()
         .file(Path(JAVA_FILE))
-        .code()
+        .text()
+        .value
 
     @Nested
     inner class `suppress ALL warnings ` {

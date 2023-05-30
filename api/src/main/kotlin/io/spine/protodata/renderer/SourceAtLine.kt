@@ -1,0 +1,101 @@
+/*
+ * Copyright 2023, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package io.spine.protodata.renderer
+
+import io.spine.string.Indent.Companion.defaultJavaIndent
+import io.spine.string.atLevel
+
+/**
+ * A fluent builder for inserting code into pre-prepared insertion points.
+ *
+ * @see SourceFile.at
+ */
+public class SourceAtLine
+internal constructor(
+    private val file: SourceFile,
+    private val point: InsertionPoint
+) {
+
+    private var indentLevel: Int = 0
+
+    /**
+     * Specifies extra indentation to be added to inserted code lines
+     *
+     * Each unit adds four spaces.
+     */
+    public fun withExtraIndentation(level: Int): SourceAtLine {
+        require(level >= 0) { "Indentation level cannot be negative." }
+        indentLevel = level
+        return this
+    }
+
+    /**
+     * Adds the given code lines at the associated insertion point.
+     *
+     * @param lines
+     *         code lines.
+     */
+    public fun add(vararg lines: String): Unit =
+        add(lines.toList())
+
+    /**
+     * Adds the given code lines at the associated insertion point.
+     *
+     * @param lines
+     *         code lines.
+     */
+    public fun add(lines: Iterable<String>) {
+        val sourceLines = file.lines()
+        val updatedLines = ArrayList(sourceLines)
+        val pointMarker = point.codeLine
+        val newCode = lines.linesToCode(indentLevel)
+        val lineCount = newCode.lineSequence().count()
+        sourceLines.mapIndexed { index, line -> index to line }
+                   .filter { (_, line) -> line.contains(pointMarker) }
+                   // Calculate actual line where to put the new code:
+                   //   1. Take the index of the insertion point before any new code is added.
+                   //   2. Add the number of lines taken up by the code inserted above this line.
+                   //   3. Insert code at the next line, after the insertion point.
+                   .mapIndexed { index, (lineNumber, _) -> lineNumber + index * lineCount + 1 }
+                   .forEach { index -> updatedLines.add(index, newCode) }
+        file.updateLines(updatedLines)
+    }
+}
+
+/**
+ * Joins these lines of code into a code block, accounting for extra indent.
+ *
+ * For the sake of simplicity, we do not attempt to select the right indentation format for each
+ * case (programming languages, spaces VS tabs, etc.) and just use four spaces. We inform
+ * the API users about the indentation at [SourceAtLine.withExtraIndentation].
+ * For custom use cases, users may add their own indentation formatted according to
+ * their preference.
+ */
+private fun Iterable<String>.linesToCode(indentLevel: Int): String =
+    joinToString(System.lineSeparator()) {
+        defaultJavaIndent.atLevel(indentLevel) + it
+    }

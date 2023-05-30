@@ -27,9 +27,9 @@
 package io.spine.protodata.codegen.java.file
 
 import io.spine.logging.Logging
-import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.LineNumber
-import io.spine.protodata.renderer.LineNumber.Companion.notInFile
+import io.spine.protodata.renderer.NonRepeatingInsertionPoint
+import io.spine.text.Text
+import io.spine.text.TextCoordinates
 import java.lang.System.lineSeparator
 
 /**
@@ -44,7 +44,6 @@ import java.lang.System.lineSeparator
  * an unwanted match.
  */
 private val pattern = Regex("((class)|(@?interface)|(enum))\\s+")
-
 /**
  * An insertion point located just before the primary declaration of a Java file.
  *
@@ -58,13 +57,14 @@ private val pattern = Regex("((class)|(@?interface)|(enum))\\s+")
  * This insertion point is not bound to the contents of the file in `label`, thus allowing this type
  * to be an object.
  */
-internal object BeforePrimaryDeclaration : InsertionPoint, Logging {
+internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint, Logging {
 
     override val label: String
         get() = this.javaClass.simpleName
 
-    override fun locate(lines: List<String>): LineNumber {
+    override fun locateOccurrence(text: Text): TextCoordinates {
         var isBlockComment = false
+        val lines = text.lines()
         lines.forEachIndexed { index, line ->
             if (line.contains("/*")) {
                 isBlockComment = true
@@ -73,11 +73,11 @@ internal object BeforePrimaryDeclaration : InsertionPoint, Logging {
                 isBlockComment = false
             }
             if (!isBlockComment && pattern.find(line) != null) {
-                return LineNumber.at(index)
+                return atLine(index)
             }
         }
         _warn().log("Could not find the primary declaration in the code:" + lineSeparator() +
                 lines.joinToString(separator = lineSeparator()))
-        return notInFile()
+        return nowhere()
     }
 }

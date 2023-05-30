@@ -28,6 +28,7 @@ package io.spine.protodata.backend
 
 import io.spine.base.EventMessage
 import io.spine.core.userId
+import io.spine.protodata.InsertionPointsView
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.BoundedContext.singleTenant
 import io.spine.server.BoundedContextBuilder
@@ -45,6 +46,7 @@ public object CodeGenerationContext {
     public fun builder(): BoundedContextBuilder = singleTenant("Code Generation").apply {
         add(ViewRepository.default(ProtoSourceFileView::class.java))
         add(ViewRepository.default(DependencyView::class.java))
+        add(ViewRepository.default(InsertionPointsView::class.java))
         add(ConfigView.Repo())
     }
 }

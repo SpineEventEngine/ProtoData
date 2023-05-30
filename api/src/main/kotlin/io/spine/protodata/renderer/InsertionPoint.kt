@@ -26,13 +26,27 @@
 
 package io.spine.protodata.renderer
 
+import com.google.common.flogger.StackSize.FULL
+import com.google.protobuf.Empty
+import io.spine.annotation.Internal
+import io.spine.logging.Logging
+import io.spine.logging.Logging.loggerFor
 import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
+import io.spine.text.Text
+import io.spine.text.TextCoordinates
+import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
+import io.spine.text.TextCoordinates.KindCase.INLINE
+import io.spine.text.TextCoordinates.KindCase.WHOLE_LINE
+import io.spine.text.TextFactory.text
+import io.spine.text.cursor
+import io.spine.text.textCoordinates
+import io.spine.text.TextCoordinates.KindCase.NOWHERE as KIND_NOWHERE
 
 /**
  * A point is a source file, where more code may be inserted.
  */
-public interface InsertionPoint {
+public interface InsertionPoint : CoordinatesFactory, Logging {
 
     /**
      * The name of this insertion point.
@@ -42,14 +56,137 @@ public interface InsertionPoint {
     /**
      * Locates the line number where the insertion point should be added.
      *
-     * An insertion point should only appear once in a file.
-     *
      * @param
      *     lines a list of code lines in a source file
      * @return the line number at which the insertion point should be added.
      * @see LineNumber
      */
-    public fun locate(lines: List<String>): LineNumber
+    @Deprecated("Use locate(Text) instead.")
+    public fun locate(lines: List<String>): LineNumber {
+        val coords = locate(text(lines))
+        if (coords.size > 1) {
+            _warn().log("Cannot process more than one `TextCoordinates`.")
+        }
+        if (coords.isEmpty()) {
+            return LineNumber.notInFile()
+        }
+        val coordinates = coords.first()
+        return when (coordinates.kindCase) {
+            WHOLE_LINE -> LineNumber.at(coordinates.wholeLine)
+            INLINE -> {
+                logUnsupportedKind()
+                LineNumber.at(coordinates.inline.line)
+            }
+            END_OF_TEXT -> LineNumber.endOfFile()
+            KIND_NOWHERE -> LineNumber.notInFile()
+            else -> error("Unexpected text coordinates `$coords`.")
+        }
+    }
+
+    private fun logUnsupportedKind() =
+        loggerFor(InsertionPoint::class.java)
+            .atWarning()
+            .withStackTrace(FULL)
+            .log(
+                "`locate(List<String>)` does not support inline insertion. " +
+                        "A whole line insertion will be generated."
+            )
+
+    /**
+     * Locates the sites where the insertion point should be added.
+     *
+     * An insertion point can appear multiple times in a given code file.
+     *
+     * @param text
+     *         the existing code.
+     * @return the coordinates in the text where the insertion point should be added
+     * @see SourceFile.at
+     * @see SourceFile.atInline
+     */
+    public fun locate(text: Text): Set<TextCoordinates>
+}
+
+/**
+ * An insertion point that can only occur once per code file.
+ *
+ * Implementations should use [locateOccurrence] instead of [locate].
+ */
+public interface NonRepeatingInsertionPoint : InsertionPoint {
+
+    override fun locate(text: Text): Set<TextCoordinates> =
+        setOf(locateOccurrence(text))
+
+    /**
+     * Locates the site where the insertion point should be added.
+     *
+     * This insertion point should only appear once in a file.
+     *
+     * @param text
+     *         the existing code.
+     * @return the coordinates in the text where the insertion point should be added
+     * @see SourceFile.at
+     * @see SourceFile.atInline
+     */
+    public fun locateOccurrence(text: Text): TextCoordinates
+}
+
+private val START_OF_FILE = textCoordinates {
+    wholeLine = 0
+}
+
+internal val END_OF_FILE = textCoordinates {
+    endOfText = Empty.getDefaultInstance()
+}
+
+private val NOWHERE = textCoordinates {
+    nowhere = Empty.getDefaultInstance()
+}
+
+/**
+ * A factory of [TextCoordinates] instances.
+ *
+ * This interface serves as a trait for the [InsertionPoint] type. The methods it provides are meant
+ * to be used by the authors of custom insertion points.
+ */
+@Internal
+public sealed interface CoordinatesFactory {
+
+    /**
+     * Obtains coordinates pointing at a specific line and column in the file.
+     */
+    public fun at(line: Int, column: Int): TextCoordinates {
+        val cursor = cursor {
+            this.line = line
+            this.column = column
+        }
+        return textCoordinates {
+            inline = cursor
+        }
+    }
+
+    /**
+     * Obtains coordinates pointing at the beginning of a specific line in the text.
+     */
+    public fun atLine(line: Int): TextCoordinates = textCoordinates {
+        wholeLine = line
+    }
+
+    /**
+     * Obtains coordinates pointing at the beginning of the first line in the text.
+     */
+    public fun startOfFile(): TextCoordinates = START_OF_FILE
+
+    /**
+     * Obtains coordinates pointing at the point after the last line in the text.
+     */
+    public fun endOfFile(): TextCoordinates = END_OF_FILE
+
+    /**
+     * Obtains coordinates that do not point at anywhere in the text.
+     *
+     * The insertion point will NOT be placed in the file at question.
+     */
+    public fun nowhere(): TextCoordinates = NOWHERE
 }
 
 /**
@@ -90,10 +227,9 @@ public class ProtocInsertionPoint(
      * <scope>:<qualified type name>
      * ```
      */
-    public constructor(scope: String, type: TypeName): this("$scope:${type.qualifiedName()}")
+    public constructor(scope: String, type: TypeName) : this("$scope:${type.qualifiedName()}")
 
-    override fun locate(lines: List<String>): LineNumber =
-        LineNumber.notInFile()
+    override fun locate(text: Text): Set<TextCoordinates> = setOf()
 
     /**
      * The code line in the Protobuf compiler style.
@@ -105,6 +241,7 @@ public class ProtocInsertionPoint(
 /**
  * A pointer to a line in a source file.
  */
+@Deprecated("User Protobuf-based `TextCoordinates` instead.")
 public sealed class LineNumber {
 
     public companion object {
@@ -145,6 +282,7 @@ public sealed class LineNumber {
  * designed to only provide the whole bit range, not to insure invariants.
  * See [this thread](https://youtrack.jetbrains.com/issue/KT-46144) for more details.
  */
+@Deprecated("Use Protobuf-based `TextCoordinates.whole_line` instead.")
 internal data class LineIndex(val value: Int) : LineNumber() {
     init {
         if (value < 0) {
@@ -153,12 +291,12 @@ internal data class LineIndex(val value: Int) : LineNumber() {
     }
 }
 
-/**
- * A [LineNumber] which always lies at the end of the file.
- */
+
+@Deprecated("Use Protobuf-based `TextCoordinates.end_of_file` instead.")
 internal object EndOfFile : LineNumber()
 
 /**
  * A [LineNumber] representing that the looked up line is nowhere to be found in the file.
  */
+@Deprecated("Use Protobuf-based `TextCoordinates.not_in_file` instead.")
 internal object Nowhere : LineNumber()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.renderer
 
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.tools.code.CommonLanguages.JavaScript
-
-public class JsRenderer : Renderer(JavaScript) {
-
-    override fun render(sources: SourceFileSet) {
-        sources.forEach {
-            it.overwrite(it.text().value.replace("Hello", "Hello JavaScript"))
-        }
+/**
+ * An exception thrown when insertion-point-based rendering fails.
+ */
+public class RenderingException(
+    message: String
+) : RuntimeException(message) {
+    private companion object {
+        private const val serialVersionUID: Long = 0L
     }
 }

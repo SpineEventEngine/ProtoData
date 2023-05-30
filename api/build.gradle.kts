@@ -34,6 +34,7 @@ plugins {
 dependencies {
     listOf(
         Spine.base,
+        Spine.text,
         Spine.CoreJava.server,
         Spine.toolBase,
     ).forEach {

@@ -26,9 +26,10 @@
 
 package io.spine.protodata.test.annotation;
 
-import io.spine.protodata.renderer.InsertionPoint;
-import io.spine.protodata.renderer.LineNumber;
+import io.spine.text.TextCoordinates;
+import io.spine.protodata.renderer.NonRepeatingInsertionPoint;
 import io.spine.protodata.test.FieldId;
+import io.spine.text.Text;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
@@ -36,7 +37,6 @@ import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.string.Strings.camelCase;
-import static io.spine.protodata.renderer.LineNumber.notInFile;
 import static java.lang.String.format;
 
 /**
@@ -45,7 +45,7 @@ import static java.lang.String.format;
  * <p>This implementation should only be used for test purposes. It might not cover all the possible
  * edge cases when fining the line where the getter is.
  */
-final class FieldGetter implements InsertionPoint {
+final class FieldGetter implements NonRepeatingInsertionPoint {
 
     private final FieldId field;
 
@@ -61,16 +61,17 @@ final class FieldGetter implements InsertionPoint {
 
     @NonNull
     @Override
-    public LineNumber locate(List<String> lines) {
+    public TextCoordinates locateOccurrence(Text text) {
         String fieldName = camelCase(field.getField().getValue());
         String getterName = "get" + fieldName;
         Pattern pattern = Pattern.compile("public .+ " + getterName);
+        List<String> lines = text.lines();
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             if (pattern.matcher(line).find()) {
-                return LineNumber.at(i);
+                return atLine(i);
             }
         }
-        return notInFile();
+        return nowhere();
     }
 }

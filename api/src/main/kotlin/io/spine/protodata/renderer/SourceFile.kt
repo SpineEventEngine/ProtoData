@@ -26,8 +26,12 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.base.Preconditions.checkArgument
 import com.google.common.base.Splitter
+import io.spine.protodata.InsertedPoints
+import io.spine.protodata.filePath
+import io.spine.server.query.select
+import io.spine.text.Text
+import io.spine.text.TextFactory.text
 import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
@@ -112,15 +116,43 @@ private constructor(
      * Creates a new fluent builder for adding code at the given [insertionPoint].
      *
      * If the [insertionPoint] is not found in the code, no action will be
-     * performed as the result. If there are more than one instances of
+     * performed as the result. If there are more than one instance of
      * the same insertion point, the code will be added to all of them.
      *
      * Insertion points should be marked with comments of special format.
      * The added code is always inserted after the line with the comment, and
      * the line with the comment is preserved.
+     *
+     * @see atInline
      */
-    public fun at(insertionPoint: InsertionPoint): SourceAtPoint =
-        SourceAtPoint(this, insertionPoint)
+    public fun at(insertionPoint: InsertionPoint): SourceAtLine =
+        SourceAtLine(this, insertionPoint)
+
+    /**
+     * Creates a new fluent builder for adding code at the given inline [insertionPoint].
+     *
+     * If the [insertionPoint] is not found in the code, no action will be performed as the result.
+     * If there are more than one instance of the same insertion point, the code will be added to
+     * all of them.
+     *
+     * Code inserted via the resulting fluent builder, unlike code inserted via [SourceFile.at],
+     * will be placed right into the line that contains the insertion point. Authors of [Renderer]s
+     * may choose to either use insertion points in the whole-line mode or in the inline mode. Also,
+     * the same insertion point may be used in both modes.
+     *
+     * @see at
+     */
+    public fun atInline(insertionPoint: InsertionPoint): SourceAtPoint {
+        val points = sources.querying.select<InsertedPoints>()
+            .find(filePath { value = relativePath.toString() })
+            .orElseThrow()
+        val point = points.pointList.filter { it.label == insertionPoint.label }.firstOrNull()
+        return if (point != null) {
+            SpecificPoint(this@SourceFile, point)
+        } else {
+            NoOp
+        }
+    }
 
     /**
      * Deletes this file from the source set.
@@ -215,16 +247,24 @@ private constructor(
     /**
      * Obtains the entire content of this file.
      */
+    @Deprecated("Use `text()` instead.", ReplaceWith("text()"))
     public fun code(): String {
-        initializeCode()
-        return code
+        return text().value
     }
 
     /**
      * Obtains the entire content of this file as a list of lines.
      */
     public fun lines(): List<String> {
-        return lineSplitter.splitToList(code())
+        return text().lines()
+    }
+
+    /**
+     * Obtains the text content of this source file.
+     */
+    public fun text(): Text {
+        initializeCode()
+        return text(code)
     }
 
     internal fun whenRead(action: (SourceFile) -> Unit) {
@@ -243,62 +283,3 @@ private constructor(
 
     override fun toString(): String = relativePath.toString()
 }
-
-/**
- * A fluent builder for inserting code into pre-prepared insertion points.
- *
- * @see SourceFile.at for the start of the fluent API and the detailed description of its behaviour.
- */
-public class SourceAtPoint
-internal constructor(
-    private val file: SourceFile,
-    private val point: InsertionPoint
-) {
-
-    private var indentLevel: Int = 0
-
-    /**
-     * Specifies extra indentation to be added to inserted code lines
-     *
-     * Each unit adds four spaces.
-     */
-    public fun withExtraIndentation(level: Int): SourceAtPoint {
-        checkArgument(level >= 0, "Indentation level cannot be negative.")
-        indentLevel = level
-        return this
-    }
-
-    /**
-     * Adds the given code lines at the associated insertion point.
-     *
-     * @param lines
-     *      code lines
-     */
-    public fun add(vararg lines: String): Unit =
-        add(lines.toList())
-
-    /**
-     * Adds the given code lines at the associated insertion point.
-     *
-     * @param lines
-     *         the code lines.
-     */
-    public fun add(lines: Iterable<String>) {
-        val sourceLines = file.lines()
-        val updatedLines = ArrayList(sourceLines)
-        val pointMarker = point.codeLine
-        val newCode = lines.linesToCode(indentLevel)
-        sourceLines.mapIndexed { index, line -> index to line }
-                   .filter { (_, line) -> line.contains(pointMarker) }
-                   .map { it.first + 1 }
-                   .forEach { index -> updatedLines.add(index, newCode) }
-        file.updateLines(updatedLines)
-    }
-}
-
-private fun Iterable<String>.linesToCode(indentLevel: Int): String =
-    joinToString(lineSeparator()) {
-        INDENT.repeat(indentLevel) + it
-    }
-
-private const val INDENT: String = "    "

@@ -26,15 +26,31 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.tools.code.CommonLanguages.JavaScript
+import io.spine.protodata.renderer.InsertionPoint
+import io.spine.protodata.renderer.InsertionPointPrinter
+import io.spine.protodata.renderer.NonRepeatingInsertionPoint
+import io.spine.text.Text
+import io.spine.text.TextCoordinates
+import io.spine.tools.code.CommonLanguages.Kotlin
 
-public class JsRenderer : Renderer(JavaScript) {
+public class VariousKtInsertionPointsPrinter : InsertionPointPrinter(Kotlin) {
 
-    override fun render(sources: SourceFileSet) {
-        sources.forEach {
-            it.overwrite(it.text().value.replace("Hello", "Hello JavaScript"))
-        }
-    }
+    override fun supportedInsertionPoints(): Set<InsertionPoint> =
+        KotlinInsertionPoint.values().toSet()
+}
+
+public enum class KotlinInsertionPoint : NonRepeatingInsertionPoint {
+
+    FILE_START {
+        override fun locateOccurrence(text: Text): TextCoordinates = startOfFile()
+    },
+    FILE_END {
+        override fun locateOccurrence(text: Text): TextCoordinates = endOfFile()
+    },
+    LINE_FOUR_COL_THIRTY_THREE {
+        override fun locateOccurrence(text: Text): TextCoordinates = at(3, 33)
+    };
+
+    override val label: String
+        get() = name.lowercase()
 }
