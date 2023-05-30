@@ -152,7 +152,7 @@ private val NOWHERE = textCoordinates {
 public sealed interface CoordinatesFactory {
 
     /**
-     * Creates coordinates pointing at a specific line and column in the file.
+     * Obtains coordinates pointing at a specific line and column in the file.
      */
     public fun at(line: Int, column: Int): TextCoordinates {
         val cursor = cursor {
@@ -165,24 +165,24 @@ public sealed interface CoordinatesFactory {
     }
 
     /**
-     * Creates coordinates pointing at the beginning of a specific line in the text.
+     * Obtains coordinates pointing at the beginning of a specific line in the text.
      */
     public fun atLine(line: Int): TextCoordinates = textCoordinates {
         wholeLine = line
     }
 
     /**
-     * Creates coordinates pointing at the beginning of the first line in the text.
+     * Obtains coordinates pointing at the beginning of the first line in the text.
      */
     public fun startOfFile(): TextCoordinates = START_OF_FILE
 
     /**
-     * Creates coordinates pointing at the point after the last line in the text.
+     * Obtains coordinates pointing at the point after the last line in the text.
      */
     public fun endOfFile(): TextCoordinates = END_OF_FILE
 
     /**
-     * Creates coordinates that do not point at anywhere in the text.
+     * Obtains coordinates that do not point at anywhere in the text.
      *
      * The insertion point will NOT be placed in the file at question.
      */
