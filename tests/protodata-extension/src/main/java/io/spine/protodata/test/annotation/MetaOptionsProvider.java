@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,25 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.app
+package io.spine.protodata.test.annotation;
 
-import com.google.protobuf.Descriptors.FileDescriptor
-import com.google.protobuf.ExtensionRegistry
-import io.spine.option.OptionsProvider
-import io.spine.protobuf.registerAllExtensions
+import com.google.auto.service.AutoService;
+import com.google.protobuf.ExtensionRegistry;
+import io.spine.option.OptionsProvider;
+import io.spine.protodata.test.MetaProto;
 
 /**
- * An [OptionsProvider] which provides all the options defined in a single Protobuf file.
+ * Registers custom proto options introduced by this library.
  */
-internal class FileOptionsProvider(private val descriptor: FileDescriptor) : OptionsProvider {
+@AutoService(OptionsProvider.class)
+public class MetaOptionsProvider implements OptionsProvider {
 
-    /**
-     * Supplies the given [registry] with the options from the associated descriptor
-     * of the proto file. The outer class for the file must exist.
-     *
-     * @throws IllegalStateException if the outer class for the proto file does not exist.
-     */
-    override fun registerIn(registry: ExtensionRegistry) {
-        descriptor.registerAllExtensions(registry)
+    @Override
+    public void registerIn(ExtensionRegistry registry) {
+        MetaProto.registerAllExtensions(registry);
     }
 }

@@ -28,7 +28,6 @@ package io.spine.protodata.gradle.plugin
 
 import io.spine.protodata.CLI_APP_CLASS
 import io.spine.protodata.cli.ConfigFileParam
-import io.spine.protodata.cli.OptionProviderParam
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RendererParam
 import io.spine.protodata.cli.RequestParam
@@ -118,10 +117,6 @@ public abstract class LaunchProtoData : JavaExec() {
             }
             renderers.get().forEach {
                 yield(RendererParam.name)
-                yield(it)
-            }
-            optionProviders.get().forEach {
-                yield(OptionProviderParam.name)
                 yield(it)
             }
             yield(RequestParam.name)

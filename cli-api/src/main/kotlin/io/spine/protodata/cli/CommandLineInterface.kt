@@ -29,7 +29,6 @@
 package io.spine.protodata.cli
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.option.OptionsProvider
 import io.spine.protodata.config.ConfigurationFormat.JSON
 import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
@@ -38,6 +37,10 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import java.io.File.pathSeparator
 
+/**
+ * The command-line parameter for specifying ProtoData plugins used in
+ * the code generation process.
+ */
 public object PluginParam : Parameter(
     name = "--plugin",
     shortName = "-p",
@@ -48,6 +51,10 @@ public object PluginParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying renderers used in
+ * the code generation process.
+ */
 public object RendererParam : Parameter(
     name = "--renderer",
     shortName = "-r",
@@ -58,18 +65,10 @@ public object RendererParam : Parameter(
         """
 )
 
-public object OptionProviderParam : Parameter(
-    name = "--option-provider",
-    shortName = "--op",
-    help = """
-        The name of a Java class, a subtype of `${OptionsProvider::class.qualifiedName}`.
-        There can be multiple providers.
-        Spine SDK `options.proto` and `time_options.proto` are provided by default.
-        To pass more than one value, type:
-           `<...> ${dash.op} com.foo.TypeOptionsProvider ${dash.op} com.foo.FieldOptionsProvider`.
-        """
-)
-
+/**
+ * The command-line parameter for specifying the path to the file with
+ * serialized [CodeGeneratorRequest].
+ */
 public object RequestParam : Parameter(
     name = "--request",
     shortName = "-t", // "-r" is already taken.
@@ -77,6 +76,10 @@ public object RequestParam : Parameter(
             "`${CodeGeneratorRequest.getDescriptor().name}`."
 )
 
+/**
+ * The command-line parameter for specifying the path to the directory with
+ * source files to be processed.
+ */
 public object SourceRootParam : Parameter(
     name = "--source-root",
     shortName = "--src",
@@ -96,6 +99,10 @@ public object SourceRootParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying the path to the directory where
+ * to put the processed files.
+ */
 public object TargetRootParam : Parameter(
     name = "--target-root",
     altName = "--destination",
@@ -111,6 +118,9 @@ public object TargetRootParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for composing the user-defined classpath for ProtoData.
+ */
 public object UserClasspathParam : Parameter(
     name = "--user-classpath",
     shortName = "--ucp",
@@ -123,6 +133,10 @@ public object UserClasspathParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying the path to the file with custom
+ * configuration for ProtoData.
+ */
 public object ConfigFileParam : Parameter(
     name = "--configuration-file",
     shortName = "-c",
@@ -138,6 +152,9 @@ public object ConfigFileParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying custom configuration values for ProtoData.
+ */
 public object ConfigValueParam : Parameter(
     name = "--configuration-value",
     shortName = "--cv",
@@ -148,6 +165,9 @@ public object ConfigValueParam : Parameter(
         """
 )
 
+/**
+ * The command-line parameter for specifying the format of custom configuration for ProtoData.
+ */
 public object ConfigFormatParam : Parameter(
     name = "--configuration-format",
     shortName = "--cf",
@@ -161,6 +181,9 @@ public object ConfigFormatParam : Parameter(
         setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }
 }
 
+/**
+ * The command-line parameter which turns the `INFO` logging level on.
+ */
 public object InfoLoggingParam : Parameter(
     name = "--info",
     shortName = "-I",
@@ -169,6 +192,9 @@ public object InfoLoggingParam : Parameter(
     """
 )
 
+/**
+ * The command-line parameter which turns the `DEBUG` logging level on.
+ */
 public object DebugLoggingParam : Parameter(
     name = "--debug",
     shortName = "-D",
@@ -184,14 +210,13 @@ public object DebugLoggingParam : Parameter(
 private object dash {
     val p = lazy { PluginParam.shortName }
     val r = lazy { RendererParam.shortName }
-    val op = lazy { OptionProviderParam.shortName }
     val src = lazy { SourceRootParam.shortName }
 }
 
 /**
  * Abbreviations for long plugin names to be used in `help` texts.
  */
-@Suppress("ClassName") // for better readability
+@Suppress("ClassName") // for better readability in `help` texts.
 private object ddash {
     val tr = lazy { TargetRootParam.name }
     val confVal = lazy { ConfigValueParam.name }

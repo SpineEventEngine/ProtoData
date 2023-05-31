@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.internal.dependency.AutoService
+
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
     io.spine.internal.gradle.doApplyStandard(repositories)
@@ -37,6 +39,9 @@ apply {
 }
 
 dependencies {
+    annotationProcessor(AutoService.processor)
+    compileOnly(AutoService.annotations)
+
     compileOnly("io.spine.protodata:compiler")
     implementation("io.spine.protodata:codegen-java")
 }

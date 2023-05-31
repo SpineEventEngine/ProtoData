@@ -35,13 +35,8 @@ import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
-import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
-import io.spine.text.TextCoordinates.KindCase.INLINE
-import io.spine.text.TextCoordinates.KindCase.WHOLE_LINE
-import io.spine.text.TextFactory.text
 import io.spine.text.cursor
 import io.spine.text.textCoordinates
-import io.spine.text.TextCoordinates.KindCase.NOWHERE as KIND_NOWHERE
 
 /**
  * A point is a source file, where more code may be inserted.
@@ -52,36 +47,6 @@ public interface InsertionPoint : CoordinatesFactory, Logging {
      * The name of this insertion point.
      */
     public val label: String
-
-    /**
-     * Locates the line number where the insertion point should be added.
-     *
-     * @param
-     *     lines a list of code lines in a source file
-     * @return the line number at which the insertion point should be added.
-     * @see LineNumber
-     */
-    @Deprecated("Use locate(Text) instead.")
-    public fun locate(lines: List<String>): LineNumber {
-        val coords = locate(text(lines))
-        if (coords.size > 1) {
-            _warn().log("Cannot process more than one `TextCoordinates`.")
-        }
-        if (coords.isEmpty()) {
-            return LineNumber.notInFile()
-        }
-        val coordinates = coords.first()
-        return when (coordinates.kindCase) {
-            WHOLE_LINE -> LineNumber.at(coordinates.wholeLine)
-            INLINE -> {
-                logUnsupportedKind()
-                LineNumber.at(coordinates.inline.line)
-            }
-            END_OF_TEXT -> LineNumber.endOfFile()
-            KIND_NOWHERE -> LineNumber.notInFile()
-            else -> error("Unexpected text coordinates `$coords`.")
-        }
-    }
 
     private fun logUnsupportedKind() =
         loggerFor(InsertionPoint::class.java)
@@ -237,66 +202,3 @@ public class ProtocInsertionPoint(
     public val protocStyleCodeLine: String
         get() = "@@protoc_insertion_point($label)"
 }
-
-/**
- * A pointer to a line in a source file.
- */
-@Deprecated("User Protobuf-based `TextCoordinates` instead.")
-public sealed class LineNumber {
-
-    public companion object {
-
-        /**
-         * Creates a `LineNumber` pointing at a given line.
-         */
-        @JvmStatic
-        public fun at(number: Int): LineNumber = LineIndex(number)
-
-        /**
-         * Creates a `LineNumber` pointing at the start of the file.
-         *
-         * This is a convenience method equivalent to calling `at(0)`.
-         */
-        @JvmStatic
-        public fun startOfFile(): LineNumber = at(0)
-
-        /**
-         * Creates a `LineNumber` pointing at the end of the file, no matter the index of the actual
-         * line.
-         */
-        @JvmStatic
-        public fun endOfFile(): LineNumber = EndOfFile
-
-        /**
-         * Creates a `LineNumber` not pointing at any line.
-         */
-        @JvmStatic
-        public fun notInFile(): LineNumber = Nowhere
-    }
-}
-
-/**
- * A [LineNumber] pointing at a particular line.
- *
- * Implementation note. We do not use unsigned integers here by design. `UInt`s in Kotlin are
- * designed to only provide the whole bit range, not to insure invariants.
- * See [this thread](https://youtrack.jetbrains.com/issue/KT-46144) for more details.
- */
-@Deprecated("Use Protobuf-based `TextCoordinates.whole_line` instead.")
-internal data class LineIndex(val value: Int) : LineNumber() {
-    init {
-        if (value < 0) {
-            throw IndexOutOfBoundsException("Invalid line number: `$value`.")
-        }
-    }
-}
-
-
-@Deprecated("Use Protobuf-based `TextCoordinates.end_of_file` instead.")
-internal object EndOfFile : LineNumber()
-
-/**
- * A [LineNumber] representing that the looked up line is nowhere to be found in the file.
- */
-@Deprecated("Use Protobuf-based `TextCoordinates.not_in_file` instead.")
-internal object Nowhere : LineNumber()
