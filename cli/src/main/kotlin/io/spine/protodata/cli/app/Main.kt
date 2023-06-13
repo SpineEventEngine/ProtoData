@@ -40,12 +40,13 @@ import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.code.proto.FileSet
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.atDebug
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
-import io.spine.option.OptionsProvider.registryWithAllOptions
+import io.spine.option.OptionsProvider
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.cli.ConfigFileParam
 import io.spine.protodata.cli.ConfigFormatParam
@@ -196,7 +197,7 @@ internal class Run(version: String) : CliktCommand(
         val sources = createSourceFileSets()
         val plugins = loadPlugins()
         val renderers = loadRenderers()
-        val registry = registryWithAllOptions()
+        val registry = createRegistry()
         val request = loadRequest(registry)
         val config = resolveConfig()
 
@@ -252,6 +253,15 @@ internal class Run(version: String) : CliktCommand(
     private fun loadPlugins() = load(PluginBuilder(), plugins)
 
     private fun loadRenderers() = load(RendererBuilder(), renderers)
+
+    private fun createRegistry(): ExtensionRegistry {
+        val registry = OptionsProvider.registryWithAllOptions()
+        val request = loadRequest()
+        val files: FileSet = FileSet.of(request.protoFileList)
+        val filesProvider = FileSetOptionsProvider(files)
+        filesProvider.registerIn(registry)
+        return registry
+    }
 
     private fun resolveConfig(): Configuration? {
         val hasFile = configurationFile != null
