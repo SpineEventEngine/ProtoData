@@ -24,19 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@Suppress("RemoveRedundantQualifierName")
-buildscript {
-    io.spine.internal.gradle.doApplyStandard(repositories)
-    dependencies {
-        classpath(io.spine.internal.dependency.Spine.McJava.pluginLib)
+package io.spine.protodata.cli.app
+
+import com.google.protobuf.ExtensionRegistry
+import io.spine.option.OptionsProto
+import io.spine.option.OptionsProvider
+import io.spine.time.validation.TimeOptionsProto
+
+/**
+ * Registers the definitions from {@code spine/options.proto} and {@code spine/time_options.proto}
+ * in the {@code ExtensionRegistry}.
+ */
+internal class SpineOptionsProvider : OptionsProvider {
+
+    override fun registerIn(registry: ExtensionRegistry) {
+        OptionsProto.registerAllExtensions(registry)
+        TimeOptionsProto.registerAllExtensions(registry)
     }
-}
-
-apply {
-    plugin("io.spine.mc-java")
-}
-
-dependencies {
-    compileOnly("io.spine.protodata:compiler")
-    implementation("io.spine.protodata:codegen-java")
 }
