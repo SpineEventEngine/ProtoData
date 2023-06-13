@@ -34,6 +34,13 @@ import io.spine.protobuf.registerAllExtensions
 
 /**
  * An [OptionsProvider] which provides all the options defined in a set of Protobuf files.
+ *
+ * This provider takes all the Protobuf files known to ProtoData and extracts option definitions
+ * from them. This allows the users not to specify any options explicitly, as all the custom options
+ * used in the Protobuf definitions will be accounted for by this provider.
+ *
+ * If, for some reason, this approach is not enough for some users, they may provide
+ * a custom [OptionsProvider] implementation via the service loader mechanism.
  */
 internal class FileSetOptionsProvider(
     private val files: FileSet
