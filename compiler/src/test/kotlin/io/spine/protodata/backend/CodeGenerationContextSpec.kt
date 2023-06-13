@@ -31,6 +31,7 @@ import com.google.protobuf.AnyProto
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.EmptyProto
+import com.google.protobuf.StringValue
 import com.google.protobuf.TimestampProto
 import com.google.protobuf.WrappersProto
 import com.google.protobuf.compiler.codeGeneratorRequest
@@ -39,6 +40,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.spine.option.OptionsProto
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
@@ -51,8 +53,11 @@ import io.spine.protodata.filePath
 import io.spine.protodata.option
 import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.test.PhDProto
+import io.spine.protodata.test.XtraOptsProto
 import io.spine.testing.server.blackbox.BlackBox
 import io.spine.time.TimeProto
+import io.spine.util.theOnly
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -84,17 +89,23 @@ class CodeGenerationContextSpec {
             DoctorProto.getDescriptor(),
             EmptyProto.getDescriptor(),
             OptionsProto.getDescriptor(),
+            PhDProto.getDescriptor(),
             TimestampProto.getDescriptor(),
             TimeProto.getDescriptor(),
-            WrappersProto.getDescriptor()
+            WrappersProto.getDescriptor(),
+            XtraOptsProto.getDescriptor(),
         ).map { it.toProto() }
+        private val filesToGenerate = setOf(
+            DoctorProto.getDescriptor().name,
+            PhDProto.getDescriptor().name
+        )
 
         @BeforeEach
         fun buildViews() {
             ctx = BlackBox.from(CodeGenerationContext.builder())
             val set = codeGeneratorRequest {
                 protoFile.addAll(dependencies)
-                fileToGenerate.add(DoctorProto.getDescriptor().toProto().name)
+                fileToGenerate.addAll(filesToGenerate)
             }
             ProtobufCompilerContext().use {
                 it.emitted(CompilerEvents.parse(set))
@@ -146,20 +157,17 @@ class CodeGenerationContextSpec {
             ProtobufCompilerContext().use {
                 it.emitted(CompilerEvents.parse(set))
             }
-
-            val recordsOfDependencies = dependencies
-                .filter { it.name != DoctorProto.getDescriptor().name }
+            val thirdPartyFiles = dependencies.filter { it.name !in filesToGenerate }
+            val recordsOfDependencies = thirdPartyFiles
                 .map {
-                println(it.name)
-                val assertEntity = ctx.assertEntity(
-                    filePath { value = it.name },
-                    DependencyView::class.java
-                )
-                assertEntity.exists()
-                assertEntity.actual()!!.state()
-            }.map { state -> (state as ProtobufDependency).file }
-            val recordsOfFilesToGenerate = dependencies
-                .filter { it.name != DoctorProto.getDescriptor().name }
+                    val assertEntity = ctx.assertEntity(
+                        filePath { value = it.name },
+                        DependencyView::class.java
+                    )
+                    assertEntity.exists()
+                    assertEntity.actual()!!.state()
+                }.map { state -> (state as ProtobufDependency).file }
+            val recordsOfFilesToGenerate = thirdPartyFiles
                 .map {
                     val assertEntity = secondContext.assertEntity(
                         filePath { value = it.name },
@@ -172,6 +180,20 @@ class CodeGenerationContextSpec {
             assertThat(recordsOfDependencies)
                 .ignoringRepeatedFieldOrder()
                 .containsExactlyElementsIn(recordsOfFilesToGenerate)
+        }
+
+        @Test
+        fun `with respect for custom options among the source files`() {
+            val phdFile = ctx.assertEntity(
+                PhDProto.getDescriptor().path(),
+                ProtoSourceFileView::class.java
+            ).actual()!!.state() as ProtobufSourceFile
+            val paperType = phdFile.typeMap.values.find { it.name.simpleName == "Paper" }!!
+            val keywordsField = paperType.fieldList.find { it.name.value == "keywords" }!!
+            keywordsField.optionList shouldHaveSize 1
+            val option = keywordsField.optionList.theOnly()
+            option.name shouldBe "xtra_option"
+            option.value.unpack(StringValue::class.java).value shouldContain "please"
         }
     }
 }
