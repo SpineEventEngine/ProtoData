@@ -32,7 +32,7 @@ package io.spine.internal.dependency
  * See [`SpineEventEngine/validation`](https://github.com/SpineEventEngine/validation/).
  */
 object Validation {
-    const val version = "2.0.0-SNAPSHOT.81"
+    const val version = "2.0.0-SNAPSHOT.95"
     const val group = "io.spine.validation"
     const val runtime = "$group:spine-validation-java-runtime:$version"
     const val java = "$group:spine-validation-java:$version"
