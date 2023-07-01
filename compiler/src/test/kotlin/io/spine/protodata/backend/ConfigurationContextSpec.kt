@@ -27,15 +27,19 @@
 package io.spine.protodata.backend
 
 import com.google.common.collect.ImmutableSet
-import com.google.common.truth.Truth.assertThat
+import io.kotest.matchers.collections.shouldContainExactly
 import io.spine.base.EventMessage
-import io.spine.protodata.config.ConfigFile
 import io.spine.protodata.config.ConfigurationFormat
-import io.spine.protodata.config.RawConfig
+import io.spine.protodata.config.configFile
 import io.spine.protodata.config.event.FileConfigDiscovered
 import io.spine.protodata.config.event.RawConfigDiscovered
+import io.spine.protodata.config.event.fileConfigDiscovered
+import io.spine.protodata.config.event.rawConfigDiscovered
+import io.spine.protodata.config.rawConfig
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
+import io.spine.server.dispatch.DispatchOutcome
+import io.spine.server.dispatch.DispatchOutcomes.successfulOutcome
 import io.spine.server.event.EventDispatcher
 import io.spine.server.type.EventClass
 import io.spine.server.type.EventEnvelope
@@ -65,22 +69,24 @@ class ConfigurationContextSpec {
 
     @Test
     fun `emit file configuration event`() {
-        val event = FileConfigDiscovered.newBuilder()
-            .setFile(ConfigFile.newBuilder().setPath("foo/bar.bin"))
-            .build()
+        val configFile = configFile {
+            path = "foo/bar.bin"
+        }
+        val event = fileConfigDiscovered {
+            file = configFile
+        }
         checkEvent(event)
     }
 
     @Test
     fun `emit raw configuration event`() {
-        val raw = RawConfig.newBuilder()
-            .setFormat(ConfigurationFormat.JSON)
-            .setValue("{}")
-            .build()
-        val event = RawConfigDiscovered
-            .newBuilder()
-            .setConfig(raw)
-            .build()
+        val raw = rawConfig {
+            format = ConfigurationFormat.JSON
+            value = "{}"
+        }
+        val event = rawConfigDiscovered {
+            config = raw
+        }
         checkEvent(event)
     }
 
@@ -88,8 +94,7 @@ class ConfigurationContextSpec {
         ConfigurationContext().use {
             it.emitted(event)
         }
-        assertThat(subscriber.receivedEvents)
-            .containsExactly(event)
+        subscriber.receivedEvents shouldContainExactly listOf(event)
     }
 }
 
@@ -99,8 +104,9 @@ private class TestSubscriber : EventDispatcher {
 
     override fun messageClasses(): ImmutableSet<EventClass> = externalEventClasses()
 
-    override fun dispatch(envelope: EventEnvelope) {
+    override fun dispatch(envelope: EventEnvelope): DispatchOutcome {
         receivedEvents.add(envelope.message())
+        return successfulOutcome(envelope.messageId())
     }
 
     override fun externalEventClasses(): ImmutableSet<EventClass> =

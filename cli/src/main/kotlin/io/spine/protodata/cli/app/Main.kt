@@ -43,7 +43,6 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
-import io.spine.logging.atDebug
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
 import io.spine.option.OptionsProvider
