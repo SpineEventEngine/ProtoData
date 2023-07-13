@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
-import io.spine.protodata.gradle.CodegenSettings
 import io.spine.internal.dependency.JavaX
+import io.spine.protodata.gradle.CodegenSettings
 
 buildscript {
     standardSpineSdkRepositories()
@@ -54,6 +54,7 @@ extensions.getByType<CodegenSettings>().apply {
         "io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration",
 
         "io.spine.protodata.test.annotation.PrintFieldGetter",
+        "io.spine.protodata.test.annotation.PrintMessageClass",
         "io.spine.protodata.test.annotation.AnnotationRenderer",
         "io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation"
     )
