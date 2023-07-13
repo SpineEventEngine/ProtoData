@@ -24,13 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * ProtoData components for generating annotations in the generated code.
- */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
 package io.spine.protodata.test.annotation;
 
-import com.google.errorprone.annotations.CheckReturnValue;
+import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.protodata.renderer.InsertionPointPrinter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Set;
+
+import static io.spine.tools.code.CommonLanguages.java;
+import static java.util.stream.Collectors.toSet;
+
+/**
+ * An {@code InsertionPointPrinter} for the {@link MessageClass} insertion point.
+ */
+@SuppressWarnings("unused") // Accessed reflectively by ProtoData.
+public final class PrintMessageClass extends InsertionPointPrinter {
+
+    public PrintMessageClass() {
+        super(java());
+    }
+
+    @NonNull
+    @Override
+    protected Set<InsertionPoint> supportedInsertionPoints() {
+        return Set.of(new MessageClass());
+    }
+}

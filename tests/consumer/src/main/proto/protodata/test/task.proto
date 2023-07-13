@@ -17,6 +17,18 @@ message Task {
     Status status = 3;
 
     google.protobuf.Timestamp when_closed = 4;
+
+    Ownership ownership = 5;
+
+    message Ownership {
+
+        oneof kind {
+
+            IndividualUserId individual = 1;
+
+            OrgId organization = 2;
+        }
+    }
 }
 
 enum Status {
@@ -24,4 +36,12 @@ enum Status {
     OPEN = 1;
     FINISHED = 2;
     CANCELED = 3;
+}
+
+message IndividualUserId {
+    string uuid = 1;
+}
+
+message OrgId {
+    string uuid = 2;
 }

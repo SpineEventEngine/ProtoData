@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,14 @@ public final class AnnotationRenderer extends JavaRenderer {
          }
         Set<Annotated> annotatedFields = select(Annotated.class).all();
         annotatedFields.forEach(field -> renderFor(field, sources));
+
+        sources.forEach(file -> {
+           file.at(new MessageClass())
+               .withExtraIndentation(2)
+               .add("@javax.annotation.Generated(" + System.lineSeparator() +
+                    "    \"by ProtoData tests\"" + System.lineSeparator() +
+                    ")");
+        });
     }
 
     private void renderFor(Annotated field, SourceFileSet sourceSet) {

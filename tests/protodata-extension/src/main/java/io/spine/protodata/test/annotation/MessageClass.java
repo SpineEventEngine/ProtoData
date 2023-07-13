@@ -24,13 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * ProtoData components for generating annotations in the generated code.
- */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
 package io.spine.protodata.test.annotation;
 
-import com.google.errorprone.annotations.CheckReturnValue;
+import com.google.common.collect.ImmutableSet;
+import io.spine.text.TextCoordinates;
+import io.spine.protodata.renderer.InsertionPoint;
+import io.spine.text.Text;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Set;
+
+/**
+ * An insertion point at the line before a class declaration.
+ */
+final class MessageClass implements InsertionPoint {
+
+    @Override
+    public String getLabel() {
+        return "MessageClass";
+    }
+
+    @Override
+    public Set<TextCoordinates> locate(Text text) {
+        var lines = text.lines();
+        var coords = ImmutableSet.<TextCoordinates>builder();
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).contains("final class ")) {
+                coords.add(atLine(i));
+            }
+        }
+        return coords.build();
+    }
+}
