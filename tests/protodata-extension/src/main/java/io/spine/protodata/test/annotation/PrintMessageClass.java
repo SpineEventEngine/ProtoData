@@ -36,7 +36,7 @@ import static io.spine.tools.code.CommonLanguages.java;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * An {@code InsertionPointPrinter} for the {@link MessageClass} insertion point\.
+ * An {@code InsertionPointPrinter} for the {@link MessageClass} insertion point.
  */
 @SuppressWarnings("unused") // Accessed reflectively by ProtoData.
 public final class PrintMessageClass extends InsertionPointPrinter {
