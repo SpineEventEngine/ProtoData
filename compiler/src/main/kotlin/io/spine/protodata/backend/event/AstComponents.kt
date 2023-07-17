@@ -41,7 +41,7 @@ import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
 import io.spine.protodata.backend.Documentation
 import io.spine.protodata.backend.primitiveType
-import io.spine.protodata.backend.toSyntaxVersion
+import io.spine.protodata.backend.syntaxVersion
 import io.spine.protodata.backend.type
 import io.spine.protodata.cardinality
 import io.spine.protodata.constantName
@@ -197,8 +197,8 @@ internal fun FileDescriptor.toFileWithOptions(): File {
  *
  * @see toFileWithOptions
  */
-internal fun FileDescriptor.toFile() = file {
+internal fun FileDescriptor.toFile(): File = file {
     path = path()
     packageName = `package`
-    syntax = this@toFile.syntax.toSyntaxVersion()
+    syntax = this@toFile.syntaxVersion()
 }

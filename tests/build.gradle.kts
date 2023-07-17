@@ -29,6 +29,7 @@ import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
+import io.spine.internal.dependency.Validation
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
@@ -68,7 +69,7 @@ subprojects {
                 force(
                     Spine.base,
                     Spine.toolBase,
-                    Spine.validation.runtime,
+                    Validation.runtime,
                     Spine.logging,
                     Spine.reflect,
                     "io.spine.protodata:compiler:$protoDataVersion",
