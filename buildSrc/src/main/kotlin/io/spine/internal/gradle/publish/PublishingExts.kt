@@ -86,12 +86,6 @@ internal val TaskContainer.publish: TaskProvider<Task>
     get() = named(PUBLISH_TASK)
 
 /**
- * Obtains the provider of the `publish` task which publishes this [Project].
- */
-private val Project.modulePublish: TaskProvider<Task>
-    get() = tasks.publish
-
-/**
  * Sets dependencies for `publish` task in this [Project].
  *
  * This method performs the following:
@@ -108,15 +102,18 @@ internal fun Project.configurePublishTask(destinations: Set<Repository>) {
 
 private fun Project.attachCredentialsVerification(destinations: Set<Repository>) {
     val checkCredentials = tasks.registerCheckCredentialsTask(destinations)
-    modulePublish.configure { dependsOn(checkCredentials) }
+    val localPublish = tasks.publish
+    localPublish.configure { dependsOn(checkCredentials) }
 }
 
 private fun Project.bindToRootPublish() {
     if (project == rootProject) {
         return
     }
+
+    val localPublish = tasks.publish
     val rootPublish = rootProject.tasks.getOrCreatePublishTask()
-    rootPublish.configure { dependsOn(modulePublish) }
+    rootPublish.configure { dependsOn(localPublish) }
 }
 
 /**
