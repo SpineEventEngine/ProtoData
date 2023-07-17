@@ -43,9 +43,6 @@ import com.google.protobuf.Descriptors.FieldDescriptor.Type.STRING
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT32
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT64
 import com.google.protobuf.Descriptors.FileDescriptor
-import com.google.protobuf.Descriptors.FileDescriptor.Syntax.PROTO2
-import com.google.protobuf.Descriptors.FileDescriptor.Syntax.PROTO3
-import com.google.protobuf.Descriptors.FileDescriptor.Syntax.UNKNOWN
 import io.spine.protodata.File.SyntaxVersion
 import io.spine.protodata.PrimitiveType
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
@@ -64,6 +61,7 @@ import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.PrimitiveType.TYPE_UINT32
 import io.spine.protodata.PrimitiveType.TYPE_UINT64
 import io.spine.protodata.Type
+import io.spine.protodata.type
 import io.spine.protodata.asType
 import io.spine.protodata.name
 
@@ -107,28 +105,23 @@ internal fun FieldDescriptor.primitiveType(): PrimitiveType =
 /**
  * Obtains the type of the given [field] as an enum type.
  */
-internal fun enum(field: FieldDescriptor): Type {
-    return Type.newBuilder()
-        .setEnumeration(field.enumType.name())
-        .build()
+internal fun enum(field: FieldDescriptor): Type = type {
+    enumeration = field.enumType.name()
 }
 
 /**
  * Obtains the type of the given [field] as message type.
  */
-internal fun message(field: FieldDescriptor): Type {
-    return Type.newBuilder()
-        .setMessage(field.messageType.name())
-        .build()
+internal fun message(field: FieldDescriptor): Type = type {
+    message = field.messageType.name()
 }
 
 /**
- * Converts this `google.protobuf.FieldDescriptor.Syntax` into
- * a `spine.protodata.File.SyntaxVersion`.
+ * Obtains the syntax version of the given [FileDescriptor].
  */
-internal fun FileDescriptor.Syntax.toSyntaxVersion(): SyntaxVersion =
-    when (this) {
-        PROTO2 -> SyntaxVersion.PROTO2
-        PROTO3 -> SyntaxVersion.PROTO3
-        UNKNOWN -> SyntaxVersion.UNRECOGNIZED
+internal fun FileDescriptor.syntaxVersion(): SyntaxVersion =
+    when (toProto().syntax) {
+        "proto2" -> SyntaxVersion.PROTO2
+        "proto3" -> SyntaxVersion.PROTO3
+        else -> SyntaxVersion.PROTO2
     }
