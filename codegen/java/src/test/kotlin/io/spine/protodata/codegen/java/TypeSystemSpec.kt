@@ -29,6 +29,7 @@ package io.spine.protodata.codegen.java
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.ByteString
+import com.google.protobuf.ByteString.copyFrom
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
 import com.google.protobuf.Empty
 import io.spine.protobuf.pack
@@ -136,7 +137,9 @@ class TypeSystemSpec {
 
         @Test
         fun bytes() {
-            val value = value { bytesValue = ByteString.copyFrom(ByteArray(3) { index -> index.toByte() }) }
+            val value = value {
+                bytesValue = copyFrom(ByteArray(3) { index -> index.toByte() })
+            }
             checkCode(value, "${ByteString::class.qualifiedName}.copyFrom(new byte[]{0, 1, 2})")
         }
 
