@@ -32,26 +32,26 @@ import com.google.protobuf.ByteString
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
 import com.google.protobuf.Empty
 import io.spine.protobuf.pack
-import io.spine.protodata.ConstantName
-import io.spine.protodata.EnumConstant
-import io.spine.protodata.EnumType
-import io.spine.protodata.EnumValue
-import io.spine.protodata.Field
-import io.spine.protodata.FieldName
-import io.spine.protodata.filePath
-import io.spine.protodata.MessageType
-import io.spine.protodata.MessageValue
-import io.spine.protodata.option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.Type
-import io.spine.protodata.type
-import io.spine.protodata.TypeName
 import io.spine.protodata.Value
+import io.spine.protodata.constantName
+import io.spine.protodata.enumConstant
+import io.spine.protodata.fieldName
 import io.spine.protodata.file
+import io.spine.protodata.filePath
+import io.spine.protodata.option
+import io.spine.protodata.type
+import io.spine.protodata.typeName
+import io.spine.protodata.value
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import io.spine.protodata.field as newField
+import io.spine.protodata.enumType as newEnumType
+import io.spine.protodata.enumValue
+import io.spine.protodata.messageType
+import io.spine.protodata.messageValue
 
 @DisplayName("`TypeSystem` should")
 class TypeSystemSpec {
@@ -68,40 +68,40 @@ class TypeSystemSpec {
         packageName = "acme.example"
         option.add(multipleFilesOption)
     }
-    private val messageTypeName = TypeName.newBuilder()
-        .setPackageName(protoFile.packageName)
-        .setSimpleName("Foo")
-        .setTypeUrlPrefix("type.spine.io")
-        .build()
-    private val field = Field.newBuilder()
-        .setType(Type.newBuilder().setPrimitive(TYPE_STRING))
-        .setName(FieldName.newBuilder().setValue("bar"))
-        .setSingle(Empty.getDefaultInstance())
-        .build()
-    private val messageType = MessageType.newBuilder()
-        .setFile(filePath)
-        .setName(messageTypeName)
-        .addField(field)
-        .build()
-    private val enumTypeName = TypeName.newBuilder()
-        .setPackageName(protoFile.packageName)
-        .setTypeUrlPrefix(messageTypeName.typeUrlPrefix)
-        .setSimpleName("Kind")
-        .build()
-    private val undefinedConstant = EnumConstant.newBuilder()
-        .setName(ConstantName.newBuilder().setValue("UNDEFINED"))
-        .setNumber(0)
-        .build()
-    private val enumConstant = EnumConstant.newBuilder()
-        .setName(ConstantName.newBuilder().setValue("INSTANCE"))
-        .setNumber(1)
-        .build()
-    private val enumType = EnumType.newBuilder()
-        .setFile(filePath)
-        .setName(enumTypeName)
-        .addConstant(undefinedConstant)
-        .addConstant(enumConstant)
-        .build()
+    private val messageTypeName = typeName {
+        packageName = protoFile.packageName
+        simpleName = "Foo"
+        typeUrlPrefix = "type.spine.io"
+    }
+    private val stringField = newField {
+        type = type { primitive = TYPE_STRING }
+        name = fieldName { value = "bar" }
+        single = Empty.getDefaultInstance()
+    }
+    private val messageType = messageType {
+        file = filePath
+        name = messageTypeName
+        field.add(stringField)
+    }
+    private val enumTypeName = typeName {
+        packageName = protoFile.packageName
+        typeUrlPrefix = messageTypeName.typeUrlPrefix
+        simpleName = "Kind"
+    }
+    private val undefinedConstant = enumConstant {
+        name = constantName { value = "UNDEFINED" }
+        number = 0
+    }
+    private val enumConstant = enumConstant {
+        name = constantName { value = "INSTANCE" }
+        number = 1
+    }
+    private val enumType = newEnumType {
+        file = filePath
+        name = enumTypeName
+        constant.add(undefinedConstant)
+        constant.add(enumConstant)
+    }
     private val typeSystem: TypeSystem = TypeSystem.newBuilder()
         .put(protoFile, messageType)
         .put(protoFile, enumType)
@@ -112,78 +112,60 @@ class TypeSystemSpec {
 
         @Test
         fun ints() {
-            val value = Value.newBuilder()
-                .setIntValue(42)
-                .build()
+            val value = value { intValue = 42 }
             checkCode(value, "42")
         }
 
         @Test
         fun floats() {
-            val value = Value.newBuilder()
-                .setDoubleValue(.1)
-                .build()
+            val value = value { doubleValue = .1 }
             checkCode(value, "0.1")
         }
 
         @Test
         fun bool() {
-            val value = Value.newBuilder()
-                .setBoolValue(true)
-                .build()
+            val value = value { boolValue = true }
             checkCode(value, "true")
         }
 
         @Test
         fun string() {
-            val value = Value.newBuilder()
-                .setStringValue("hello")
-                .build()
+            val value = value { stringValue = "hello" }
             checkCode(value, "\"hello\"")
         }
 
         @Test
         fun bytes() {
-            val value = Value.newBuilder()
-                .setBytesValue(ByteString.copyFrom(ByteArray(3) { index -> index.toByte() }))
-                .build()
+            val value = value { bytesValue = ByteString.copyFrom(ByteArray(3) { index -> index.toByte() }) }
             checkCode(value, "${ByteString::class.qualifiedName}.copyFrom(new byte[]{0, 1, 2})")
         }
 
         @Test
         fun `empty message`() {
-            val emptyMessage = MessageValue.newBuilder()
-                .setType(messageTypeName)
-                .build()
-            val value = Value.newBuilder()
-                .setMessageValue(emptyMessage)
-                .build()
+            val emptyMessage = messageValue { type = messageTypeName }
+            val value = value { messageValue = emptyMessage }
             checkCode(value, "acme.example.Foo.getDefaultInstance()")
         }
 
         @Test
         fun `message with a field`() {
-            val message = MessageValue.newBuilder()
-                .setType(messageTypeName)
-                .putFields("bar", Value.newBuilder()
-                    .setStringValue("hello there")
-                    .build())
-                .build()
-            val value = Value.newBuilder()
-                .setMessageValue(message)
-                .build()
+            val message = messageValue {
+                type = messageTypeName
+                fields.put("bar", value { stringValue = "hello there" })
+            }
+            val value = value { messageValue = message }
             checkCode(value, "acme.example.Foo.newBuilder().setBar(\"hello there\").build()")
         }
 
         @Test
         fun `enum value`() {
-            val enumValue = EnumValue.newBuilder()
-                .setType(enumTypeName)
-                .setConstNumber(1)
-                .build()
-            val value = Value.newBuilder()
-                .setEnumValue(enumValue)
-                .build()
+            val enumVal = enumValue {
+                type = enumTypeName
+                constNumber = 1
+            }
+            val value = value {
+                enumValue = enumVal
+            }
             checkCode(value, "acme.example.Kind.forNumber(1)")
         }
 
