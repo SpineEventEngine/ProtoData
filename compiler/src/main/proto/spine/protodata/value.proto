@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package spine.protodata;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata";
+option java_outer_classname = "ValueProto";
+option java_multiple_files = true;
+
+import "spine/protodata/ast.proto";
+
+// This file contains definitions which describe Protobuf message, enum, and scalar values without
+// referring to the value types at compile time.
+//
+// These definitions are built to encompass any value which can be represented in a typed fashion
+// in Protobuf.
+//
+// These definitions are inspired by the `google/protobuf/struct.proto`.
+//
+// Unlike types defined in `struct.proto`, these definitions keep strict typing at runtime. Values
+// are bound to their precise types.
+//
+// Also, unlike `struct.proto`, these definitions do not have special treatment when converting
+// to JSON. Consider using Google's types when JSON printing is required.
+
+// `Value` represents a dynamically typed value which can be either null, a bool, a number,
+// a string, a byte string, a recursive message value, an enum value, a list, or a map of values.
+//
+// Absence of any kind of value indicates an error.
+//
+message Value {
+    // The kind of value.
+    oneof kind {
+
+        // Represents a null value.
+        NullValue null_value = 1;
+
+        // Represents a boolean value.
+        bool bool_value = 2;
+
+        // Represents a floating point number.
+        double double_value = 3;
+
+        // Represents an integer number.
+        int64 int_value = 4;
+
+        // Represents a string value.
+        string string_value = 5;
+
+        bytes bytes_value = 6;
+
+        // Represents a structured value.
+        MessageValue message_value = 7;
+
+        EnumValue enum_value = 8;
+
+        // Represents a repeated `Value`.
+        ListValue list_value = 9;
+
+        // Represents a repeated `Value`.
+        MapValue map_value = 10;
+    }
+
+    reserved 11 to 20; // For possible extra options in the `kind` oneof.
+
+    // The concrete Protobuf type of this value.
+    //
+    // Can be used, for example, to distinguish between number values.
+    //
+    // If `list_value` is set, this is the type of the elements.
+    //
+    // If `map_value` is set, this is the type of the map values.
+    //
+    protodata.Type type = 21;
+}
+
+// `NullValue` is a singleton enumeration to represent the null value for the `Value` type union.
+enum NullValue {
+
+    // Null value.
+    NULL_VALUE = 0;
+}
+
+// `MessageValue` represents a message for the `Value` type union.
+message MessageValue {
+
+    // Unordered map of dynamically typed values.
+    map<string, Value> fields = 1;
+
+    // Type of the message.
+    //
+    // Same as the `Value.type.message`.
+    //
+    protodata.TypeName type = 2;
+}
+
+// `MessageValue` represents an enum constant for the `Value` type union.
+message EnumValue {
+
+    // The number associated with this enum constant.
+    uint32 const_number = 1;
+
+    // Type of the enum.
+    //
+    // Same as the `Value.type.enumeration`.
+    //
+    protodata.TypeName type = 2;
+}
+
+// `ListValue` is a wrapper around a repeated field of values.
+message ListValue {
+
+    // Repeated field of dynamically typed values.
+    repeated Value values = 1;
+}
+
+// `MapValue` represents a map for the `Value` type union.
+//
+// The map must not contain repeating keys.
+//
+message MapValue {
+
+    repeated Entry value = 1;
+
+    // A single map entry.
+    message Entry {
+
+        // A map key.
+        //
+        // In Protobuf, a map key can only be of certain primitive types. See the official doc for
+        // more info: https://developers.google.com/protocol-buffers/docs/proto3#maps
+        //
+        Value key = 1;
+
+        // A map value.
+        Value value = 2;
+    }
+}
