@@ -77,7 +77,7 @@ message Value {
     protodata.Type type = 21;
 }
 
-// `NullValue` is a singleton enumeration to represent the null value for the `Value` type union.
+// `NullValue` is a singleton enumeration to represent the `null` value for the `Value` type union.
 enum NullValue {
 
     // Null value.
@@ -131,7 +131,7 @@ message MapValue {
         // A map key.
         //
         // In Protobuf, a map key can only be of certain primitive types. See the official doc for
-        // more info: https://developers.google.com/protocol-buffers/docs/proto3#maps
+        // more info: https://developers.google.com/protocol-buffers/docs/proto3#maps.
         //
         Value key = 1;
 
