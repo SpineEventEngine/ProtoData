@@ -75,11 +75,11 @@ private constructor(
     /**
      * Obtains the name of the Java class generated from a Protobuf type with the given name.
      */
-    public fun javaTypeName(type: Type): String {
+    public fun javaTypeName(type: Type): ClassName {
         return when {
             type.hasPrimitive() -> type.primitive.toPrimitiveName()
-            type.hasMessage() -> classNameFor(type.message).canonical
-            type.hasEnumeration() -> classNameFor(type.enumeration).canonical
+            type.hasMessage() -> classNameFor(type.message)
+            type.hasEnumeration() -> classNameFor(type.enumeration)
             else -> unknownType(type)
         }
     }
