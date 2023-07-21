@@ -54,12 +54,13 @@ message Value {
         // Represents a structured value.
         MessageValue message_value = 7;
 
+        // Represents an enum constant `Value`.
         EnumValue enum_value = 8;
 
         // Represents a repeated `Value`.
         ListValue list_value = 9;
 
-        // Represents a repeated `Value`.
+        // Represents a map `Value`.
         MapValue map_value = 10;
     }
 
