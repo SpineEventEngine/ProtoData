@@ -61,7 +61,6 @@ public object Values {
     /**
      * Converts the given message into a value.
      *
-     *
      * If the message is equal to the default instance, it will be represented by
      * a `MessageValue` with no fields. Otherwise, all the present fields are converted
      * into `Value`s.
