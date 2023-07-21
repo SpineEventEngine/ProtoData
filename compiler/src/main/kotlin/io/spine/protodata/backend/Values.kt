@@ -29,7 +29,6 @@ package io.spine.protodata.backend
 import com.google.protobuf.ByteString
 import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.FieldDescriptor
-import com.google.protobuf.Descriptors.FieldDescriptor.JavaType
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.BOOLEAN
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.BYTE_STRING
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.DOUBLE
@@ -43,11 +42,11 @@ import com.google.protobuf.MapEntry
 import com.google.protobuf.Message
 import io.spine.protobuf.isNotDefault
 import io.spine.protodata.EnumValue
-import io.spine.protodata.ListValue
 import io.spine.protodata.MapValue
 import io.spine.protodata.MessageValue
 import io.spine.protodata.NullValue.NULL_VALUE
 import io.spine.protodata.Value
+import io.spine.protodata.listValue
 import io.spine.protodata.mapValue
 import io.spine.protodata.name
 import io.spine.protodata.value
@@ -139,20 +138,11 @@ public object Values {
     }
 
     private fun fromList(field: FieldDescriptor, value: Any): Value {
-        val values = value as List<*>
-        val listBuilder = values
-            .stream()
-            .map { entry -> singularValue(value, field) }
-            .collect(
-                ListValue::newBuilder,
-                ListValue.Builder::addValues
-            ) { l, r ->
-                l.addAllValues(
-                    r.getValuesList()
-                )
-            }
+        val list = value as List<*>
         return value {
-            listValue = listBuilder.build()
+            listValue = listValue {
+                values.addAll(list.map { entry -> singularValue(entry!!, field) })
+            }
         }
     }
 }
