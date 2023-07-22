@@ -140,7 +140,9 @@ public fun BoundedContextBuilder.addView(view: KClass<out View<*, *, *>>): Bound
     add(ViewRepository.default(view.java))
 
 /**
- * Adds the default `ViewRepository` instance for the specified view class to this `MutableSet`.
+ * Adds the default [ViewRepository] instance for the specified [View] class to this `MutableSet`.
+ *
+ * Use this function when you need to [add][Plugin.views] a view to a [Plugin].
  */
 public fun MutableSet<ViewRepository<*, *, *>>.addDefault(view: KClass<out View<*, *, *>>) {
     add(ViewRepository.default(view.java))
