@@ -52,7 +52,7 @@ public object CodeGenerationContext {
 }
 
 /**
- * A an external bounded context.
+ * An external bounded context.
  *
  * This context can emit events which are visible to the `Code Generation` context.
  */
