@@ -66,39 +66,39 @@ internal class ProtoSourceFileView
     : View<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
     @Subscribe
-    internal fun on(@External e: FileEntered) = alter {
+    fun on(@External e: FileEntered) = alter {
         filePath = e.file.path
         file = e.file
     }
 
     @Subscribe
-    internal fun on(@External e: FileOptionDiscovered) = alter {
+    fun on(@External e: FileOptionDiscovered) = alter {
         fileBuilder.addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: TypeEntered) = alter {
+    fun on(@External e: TypeEntered) = alter {
         putType(e.type.typeUrl, e.type)
     }
 
     @Subscribe
-    internal fun on(@External e: TypeOptionDiscovered) = modifyType(e.type) {
+    fun on(@External e: TypeOptionDiscovered) = modifyType(e.type) {
         addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: OneofGroupEntered) = modifyType(e.type) {
+    fun on(@External e: OneofGroupEntered) = modifyType(e.type) {
         addOneofGroup(e.group)
     }
 
     @Subscribe
-    internal fun on(@External e: OneofOptionDiscovered) = modifyType(e.type) {
+    fun on(@External e: OneofOptionDiscovered) = modifyType(e.type) {
         val oneof = findOneof(e.group)
         oneof.addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: FieldEntered) = modifyType(e.type) {
+    fun on(@External e: FieldEntered) = modifyType(e.type) {
         if (e.field.isPartOfOneof()) {
             val oneof = findOneof(e.field.oneofName)
             oneof.addField(e.field)
@@ -108,49 +108,49 @@ internal class ProtoSourceFileView
     }
 
     @Subscribe
-    internal fun on(@External e: FieldOptionDiscovered) = modifyType(e.type) {
+    fun on(@External e: FieldOptionDiscovered) = modifyType(e.type) {
         val field = findField(e.field)
         field.addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: EnumEntered) = alter {
+    fun on(@External e: EnumEntered) = alter {
         putEnumType(e.type.typeUrl, e.type)
     }
 
     @Subscribe
-    internal fun on(@External e: EnumOptionDiscovered) = modifyEnum(e.type) {
+    fun on(@External e: EnumOptionDiscovered) = modifyEnum(e.type) {
         addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: EnumConstantEntered) = modifyEnum(e.type) {
+    fun on(@External e: EnumConstantEntered) = modifyEnum(e.type) {
         addConstant(e.constant)
     }
 
     @Subscribe
-    internal fun on(@External e: EnumConstantOptionDiscovered) = modifyEnum(e.type) {
+    fun on(@External e: EnumConstantOptionDiscovered) = modifyEnum(e.type) {
         val const = constantBuilderList.find { it.name == e.constant }!!
         const.addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: ServiceEntered) = alter{
+    fun on(@External e: ServiceEntered) = alter{
         putService(e.service.typeUrl, e.service)
     }
 
     @Subscribe
-    internal fun on(@External e: ServiceOptionDiscovered) = modifyService(e.service) {
+    fun on(@External e: ServiceOptionDiscovered) = modifyService(e.service) {
         addOption(e.option)
     }
 
     @Subscribe
-    internal fun on(@External e: RpcEntered) = modifyService(e.service) {
+    fun on(@External e: RpcEntered) = modifyService(e.service) {
         addRpc(e.rpc)
     }
 
     @Subscribe
-    internal fun on(@External e: RpcOptionDiscovered) = modifyService(e.service) {
+    fun on(@External e: RpcOptionDiscovered) = modifyService(e.service) {
         rpcBuilderList
             .find { it.name == e.rpc }!!
             .addOption(e.option)
