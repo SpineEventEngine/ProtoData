@@ -36,6 +36,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
@@ -116,25 +117,41 @@ public class Pipeline(
         under<DefaultMode> {
             use(Delivery.direct())
         }
-        val contextBuilder = CodeGenerationContext.builder()
-        plugins.forEach { contextBuilder.apply(it) }
-        val codeGenContext = contextBuilder.build()
-
+        val codegenContext = assembleCodegenContext()
         val configurationContext = ConfigurationContext()
         val protocContext = ProtobufCompilerContext()
+        emitEvents(configurationContext, protocContext)
+        renderSources(codegenContext)
+        protocContext.close()
+        configurationContext.close()
+        codegenContext.close()
+    }
+
+    private fun assembleCodegenContext(): BoundedContext {
+        val builder = CodeGenerationContext.builder()
+        plugins.forEach {
+            builder.apply(it)
+        }
+        return builder.build()
+    }
+
+    private fun emitEvents(
+        configurationContext: ConfigurationContext,
+        protocContext: ProtobufCompilerContext
+    ) {
         if (config != null) {
             val event = config.produceEvent()
             configurationContext.emitted(event)
         }
         val events = CompilerEvents.parse(request)
         protocContext.emitted(events)
+    }
+
+    private fun renderSources(codegenContext: BoundedContext) {
         renderers.forEach { r ->
-            r.protoDataContext = codeGenContext
+            r.protoDataContext = codegenContext
             sources.forEach(r::renderSources)
         }
         sources.forEach { it.write() }
-        protocContext.close()
-        configurationContext.close()
-        codeGenContext.close()
     }
 }
