@@ -27,6 +27,7 @@
 package io.spine.protodata.plugin
 
 import io.spine.base.EntityState
+import io.spine.server.BoundedContextBuilder
 import io.spine.server.DefaultRepository
 import io.spine.server.projection.Projection
 import io.spine.server.projection.ProjectionRepository
@@ -34,6 +35,7 @@ import io.spine.server.projection.model.ProjectionClass
 import io.spine.server.route.EventRoute
 import io.spine.server.route.EventRouting
 import io.spine.validate.ValidatingBuilder
+import kotlin.reflect.KClass
 
 /**
  * A view on the Protobuf sources.
@@ -129,6 +131,13 @@ public open class ViewRepository<I, V : View<I, S, *>, S : EntityState<I>>
         routing.replaceDefault(EventRoute.byFirstMessageField(idClass()))
     }
 }
+
+/**
+ * Adds a [View] by its class to the bounded context with the default
+ * instance of [ViewRepository].
+ */
+public fun BoundedContextBuilder.addView(view: KClass<out View<*, *, *>>): BoundedContextBuilder =
+    add(ViewRepository.default(view.java))
 
 /**
  * A default [ViewRepository].
