@@ -117,14 +117,17 @@ public class Pipeline(
         under<DefaultMode> {
             use(Delivery.direct())
         }
-        val codegenContext = assembleCodegenContext()
-        val configurationContext = ConfigurationContext()
-        val protocContext = ProtobufCompilerContext()
-        emitEvents(configurationContext, protocContext)
-        renderSources(codegenContext)
-        protocContext.close()
-        configurationContext.close()
-        codegenContext.close()
+        val codegen = assembleCodegenContext()
+        codegen.use {
+            val configuration = ConfigurationContext()
+            configuration.use {
+                val compiler = ProtobufCompilerContext()
+                compiler.use {
+                    emitEvents(configuration, compiler)
+                    renderSources(codegen)
+                }
+            }
+        }
     }
 
     private fun assembleCodegenContext(): BoundedContext {
