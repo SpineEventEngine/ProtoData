@@ -139,15 +139,15 @@ public class Pipeline(
     }
 
     private fun emitEvents(
-        configurationContext: ConfigurationContext,
-        protocContext: ProtobufCompilerContext
+        configuration: ConfigurationContext,
+        compiler: ProtobufCompilerContext
     ) {
         if (config != null) {
             val event = config.produceEvent()
-            configurationContext.emitted(event)
+            configuration.emitted(event)
         }
         val events = CompilerEvents.parse(request)
-        protocContext.emitted(events)
+        compiler.emitted(events)
     }
 
     private fun renderSources(codegenContext: BoundedContext) {
