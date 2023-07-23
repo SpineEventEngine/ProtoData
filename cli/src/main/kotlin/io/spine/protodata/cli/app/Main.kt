@@ -298,7 +298,6 @@ internal class Run(version: String) : CliktCommand(
             return createByName(className, classLoader)
         } catch (e: ClassNotFoundException) {
             printError(e.stackTraceToString())
-            printError(e.message)
             printError("Please add the required class `$className` to the user classpath.")
             if (classPath != null) {
                 printError("Provided user classpath:")
@@ -314,7 +313,7 @@ internal class Run(version: String) : CliktCommand(
     /**
      * Prints the given error [message] to the screen.
      */
-    private fun printError(message: String?) = echo(message, trailingNewline = false, err = true)
+    private fun printError(message: String?) = echo(message, trailingNewline = true, err = true)
 }
 
 /**
