@@ -130,6 +130,9 @@ public class Pipeline(
         }
     }
 
+    /**
+     * Assembles the `Code Generation` context by applying given [plugins].
+     */
     private fun assembleCodegenContext(): BoundedContext {
         val builder = CodeGenerationContext.builder()
         plugins.forEach {
