@@ -62,7 +62,7 @@ import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.string.Separator
+import io.spine.string.Separator.Companion.nl
 import io.spine.string.pi
 import io.spine.string.ti
 import io.spine.tools.code.manifest.Version
@@ -144,7 +144,7 @@ internal class Run(version: String) : CliktCommand(
                 canBeSymlink = false
             ).splitPaths()
 
-    private val classPath: List<Path>?
+    private val classpath: List<Path>?
             by UserClasspathParam.toOption().path(
                 mustExist = true,
                 mustBeReadable = true
@@ -298,23 +298,28 @@ internal class Run(version: String) : CliktCommand(
             return createByName(className, classLoader)
         } catch (e: ClassNotFoundException) {
             printError(e.stackTraceToString())
-            printError(e.message)
-            printError("Please add the required class `$className` to the user classpath.")
-            if (classPath != null) {
-                printError("Provided user classpath:")
-                val cp = classPath!!
-                val cpStr = cp.joinToString(separator = Separator.nl()).pi(" ".repeat(2))
-                printError(cpStr)
-            }
+            printAddingToClasspath(className)
             exitProcess(1)
         }
     }
 
+    private fun printAddingToClasspath(className: String) {
+        printError("Please add the required class `$className` to the user classpath.")
+        if (classpath == null) {
+            printError("No user classpath was provided.")
+            return
+        }
+
+        printError("Provided user classpath:")
+        val cp = classpath!!
+        val cpStr = cp.joinToString(separator = nl()).pi(indent = " ".repeat(2))
+        printError(cpStr)
+    }
 
     /**
      * Prints the given error [message] to the screen.
      */
-    private fun printError(message: String?) = echo(message, trailingNewline = false, err = true)
+    private fun printError(message: String?) = echo(message, trailingNewline = true, err = true)
 }
 
 /**

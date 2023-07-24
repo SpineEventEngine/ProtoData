@@ -39,7 +39,6 @@ plugins {
 }
 
 @Suppress(
-    "UNUSED_VARIABLE" /* `test` and `functionalTest`*/,
     "UnstableApiUsage" /* testing suites feature */
 )
 testing {

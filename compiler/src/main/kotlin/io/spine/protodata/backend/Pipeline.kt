@@ -36,6 +36,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.apply
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
@@ -116,25 +117,47 @@ public class Pipeline(
         under<DefaultMode> {
             use(Delivery.direct())
         }
-        val contextBuilder = CodeGenerationContext.builder()
-        plugins.forEach { contextBuilder.apply(it) }
-        val codeGenContext = contextBuilder.build()
+        val codegen = assembleCodegenContext()
+        codegen.use {
+            val configuration = ConfigurationContext()
+            configuration.use {
+                val compiler = ProtobufCompilerContext()
+                compiler.use {
+                    emitEvents(configuration, compiler)
+                    renderSources(codegen)
+                }
+            }
+        }
+    }
 
-        val configurationContext = ConfigurationContext()
-        val protocContext = ProtobufCompilerContext()
+    /**
+     * Assembles the `Code Generation` context by applying given [plugins].
+     */
+    private fun assembleCodegenContext(): BoundedContext {
+        val builder = CodeGenerationContext.builder()
+        plugins.forEach {
+            builder.apply(it)
+        }
+        return builder.build()
+    }
+
+    private fun emitEvents(
+        configuration: ConfigurationContext,
+        compiler: ProtobufCompilerContext
+    ) {
         if (config != null) {
             val event = config.produceEvent()
-            configurationContext.emitted(event)
+            configuration.emitted(event)
         }
         val events = CompilerEvents.parse(request)
-        protocContext.emitted(events)
+        compiler.emitted(events)
+    }
+
+    private fun renderSources(codegenContext: BoundedContext) {
         renderers.forEach { r ->
-            r.protoDataContext = codeGenContext
+            r.protoDataContext = codegenContext
             sources.forEach(r::renderSources)
         }
         sources.forEach { it.write() }
-        protocContext.close()
-        configurationContext.close()
-        codeGenContext.close()
     }
 }
