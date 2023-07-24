@@ -119,7 +119,7 @@ public object TargetRootParam : Parameter(
 )
 
 /**
- * The command-line parameter for composing the user-defined classpath for ProtoData.
+ * The command-line parameter for composing the user-defined classpath.
  */
 public object UserClasspathParam : Parameter(
     name = "--user-classpath",
@@ -153,7 +153,7 @@ public object ConfigFileParam : Parameter(
 )
 
 /**
- * The command-line parameter for specifying custom configuration values for ProtoData.
+ * The command-line parameter for specifying custom configuration values.
  */
 public object ConfigValueParam : Parameter(
     name = "--configuration-value",
@@ -166,7 +166,7 @@ public object ConfigValueParam : Parameter(
 )
 
 /**
- * The command-line parameter for specifying the format of custom configuration for ProtoData.
+ * The command-line parameter for specifying the format of a custom configuration.
  */
 public object ConfigFormatParam : Parameter(
     name = "--configuration-format",
@@ -216,7 +216,7 @@ private object dash {
 /**
  * Abbreviations for long plugin names to be used in `help` texts.
  */
-@Suppress("ClassName") // for better readability in `help` texts.
+@Suppress("ClassName", "SpellCheckingInspection") // for better readability in `help` texts.
 private object ddash {
     val tr = lazy { TargetRootParam.name }
     val confVal = lazy { ConfigValueParam.name }

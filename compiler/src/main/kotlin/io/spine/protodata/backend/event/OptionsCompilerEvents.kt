@@ -29,28 +29,28 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
-import com.google.protobuf.EnumValue
 import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import io.spine.base.EventMessage
-import io.spine.protobuf.AnyPacker
 import io.spine.protobuf.TypeConverter
+import io.spine.protobuf.pack
 import io.spine.protodata.Option
 import io.spine.protodata.backend.type
+import io.spine.protodata.option
 
 /**
  * Yields events regarding a set of options.
  *
  * @param options
- *     the set of options, such as `FileOptions`, `FieldOptions`, etc.
- * @param ctor
- *     a function which given an option, constructs a fitting event
+ *         the set of options, such as `FileOptions`, `FieldOptions`, etc.
+ * @param factory
+ *         a function which given an option, constructs a fitting event.
  */
 internal suspend fun SequenceScope<EventMessage>.produceOptionEvents(
     options: ExtendableMessage<*>,
-    ctor: (Option) -> EventMessage
+    factory: (Option) -> EventMessage
 ) {
     parseOptions(options).forEach {
-        yield(ctor(it))
+        yield(factory(it))
     }
 }
 
@@ -80,22 +80,23 @@ private fun toOption(
     value: Any
 ): Option {
     val optionValue = fieldToAny(optionDescriptor, value)
-    val option = Option.newBuilder()
-        .setName(optionDescriptor.name)
-        .setNumber(optionDescriptor.number)
-        .setType(optionDescriptor.type())
-        .setValue(optionValue)
-        .build()
+    val option = option {
+        name = optionDescriptor.name
+        number = optionDescriptor.number
+        type = optionDescriptor.type()
+        this.value = optionValue
+    }
     return option
 }
 
 private fun fieldToAny(field: FieldDescriptor, value: Any): com.google.protobuf.Any =
     if (field.type == ENUM) {
-        val enumValue = value as EnumValueDescriptor
-        AnyPacker.pack(EnumValue.newBuilder()
-                                .setName(enumValue.name)
-                                .setNumber(enumValue.number)
-                                .build())
+        val descr = value as EnumValueDescriptor
+        val enumValue = com.google.protobuf.enumValue {
+            name = descr.name
+            number = descr.number
+        }
+        enumValue.pack()
     } else {
         TypeConverter.toAny(value)
     }
