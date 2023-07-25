@@ -73,8 +73,7 @@ internal constructor(
      * @see from
      * @see outputRoot
      */
-    @get:JvmName("inputRoot")
-    public val inputRoot: Path,
+    private val inputRoot: Path,
 
     /**
      * A directory where the source set should be placed after code generation.
@@ -82,8 +81,7 @@ internal constructor(
      * @see from
      * @see inputRoot
      */
-    @get:JvmName("outputRoot")
-    public val outputRoot: Path
+    private val outputRoot: Path
 ) : Iterable<SourceFile> {
 
     private val files: MutableMap<Path, SourceFile>
