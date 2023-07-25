@@ -26,7 +26,15 @@
 
 package io.spine.protodata.codegen
 
+/**
+ * A piece of code.
+ *
+ * This is an general interface for composable language-specific code-building elements.
+ */
 public interface CodePrintable {
 
+    /**
+     * Obtains the plain text representation of this code element.
+     */
     public fun toCode(): String
 }
