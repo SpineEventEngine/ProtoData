@@ -41,13 +41,28 @@ import io.spine.protodata.Value.KindCase.MESSAGE_VALUE
 import io.spine.protodata.Value.KindCase.NULL_VALUE
 import io.spine.protodata.Value.KindCase.STRING_VALUE
 
+/**
+ * The type system of an application being built by ProtoData.
+ *
+ * The type system knows the association between the Protobuf types and the types of
+ * a target language.
+ *
+ * @param T the type of a language-specific type name
+ * @param V the type of a language-specific expression, i.e. the code that yields a value
+ */
 public abstract class BaseTypeSystem<T: CodePrintable, V: CodePrintable>
 protected constructor(
     private val knownTypes: Map<TypeName, T>
 ) {
 
+    /**
+     * A [ValueConverter] for converting Protobuf values into language-specific code expressions.
+     */
     protected abstract val valueConverter: ValueConverter<V>
 
+    /**
+     * Converts the given Protobuf type into a language-specific type name.
+     */
     public fun typeNameToCode(type: Type): T {
         return when {
             type.hasPrimitive() -> convertPrimitiveType(type.primitive)
@@ -57,11 +72,26 @@ protected constructor(
         }
     }
 
+    /**
+     * Converts the given Protobuf primitive type into a language-specific type name.
+     *
+     * For example, `PrimitiveType.TYPE_INT64` is converted into `long` in Java.
+     */
     protected abstract fun convertPrimitiveType(type: PrimitiveType): T
 
+    /**
+     * Converts the given Protobuf type name into a language-specific type name.
+     *
+     * The type name can represent a message or an enum type.
+     */
     public fun convertTypeName(protoName: TypeName): T =
         knownTypes[protoName] ?: unknownType(protoName)
 
+    /**
+     * Converts the given Protobuf value into a language-specific code expression.
+     *
+     * @see ValueConverter
+     */
     public fun valueToCode(value: Value): V = with(valueConverter) {
         when (value.kindCase) {
             NULL_VALUE -> toNull(value)
@@ -78,6 +108,9 @@ protected constructor(
         }
     }
 
+    /**
+     * A factory of language-specific code, that represents a Protobuf value.
+     */
     public interface ValueConverter<V: CodePrintable> {
 
         /**
