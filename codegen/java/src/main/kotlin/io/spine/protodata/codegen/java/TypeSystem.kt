@@ -191,15 +191,16 @@ private class JavaValueConverter(
 
     override fun toInt(value: Value): Expression = Literal(value.intValue)
 
-    override fun toString(value: Value): Expression = Literal(value.stringValue)
+    override fun toString(value: Value): Expression = LiteralString(value.stringValue)
 
-    override fun toBytes(value: Value): Expression = Literal(value.bytesValue)
+    override fun toBytes(value: Value): Expression = LiteralBytes(value.bytesValue)
 
     override fun toMessage(value: Value): Expression = typeSystem.messageValueToJava(value)
 
     override fun toEnum(value: Value): Expression = typeSystem.enumValueToJava(value)
 
-    override fun toList(value: Value): Expression = listExpression(typeSystem.listValuesToJava(value))
+    override fun toList(value: Value): Expression =
+        listExpression(typeSystem.listValuesToJava(value))
 
     override fun toMap(value: Value): Expression = typeSystem.mapValueToJava(value)
 }

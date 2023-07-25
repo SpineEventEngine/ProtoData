@@ -173,7 +173,7 @@ class TypeSystemSpec {
         }
 
         private fun checkCode(value: Value, expectedCode: String) {
-            val expression = typeSystem.valueToJava(value)
+            val expression = typeSystem.valueToCode(value)
             assertThat(expression.toCode())
                 .isEqualTo(expectedCode)
         }
