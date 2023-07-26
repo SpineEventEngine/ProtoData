@@ -25,7 +25,7 @@ import "spine/protodata/ast.proto";
 // Also, unlike `struct.proto`, these definitions do not have special treatment when converting
 // to JSON. Consider using Google's types when JSON printing is required.
 
-// `Value` represents a dynamically typed value which can be either null, a bool, a number,
+// `Value` represents a dynamically typed value which can be either `null`, a `bool`, a number,
 // a string, a byte string, a recursive message value, an enum value, a list, or a map of values.
 //
 // Absence of any kind of value indicates an error.
@@ -34,7 +34,7 @@ message Value {
     // The kind of value.
     oneof kind {
 
-        // Represents a null value.
+        // Represents a `null` value.
         NullValue null_value = 1;
 
         // Represents a boolean value.
@@ -80,7 +80,7 @@ message Value {
 // `NullValue` is a singleton enumeration to represent the `null` value for the `Value` type union.
 enum NullValue {
 
-    // Null value.
+    // `null` value.
     NULL_VALUE = 0;
 }
 
