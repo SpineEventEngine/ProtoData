@@ -42,7 +42,7 @@ import io.spine.protodata.Value.KindCase.NULL_VALUE
 import io.spine.protodata.Value.KindCase.STRING_VALUE
 
 /**
- * The type system of an application being built by ProtoData.
+ * An abstract base for type systems of an application being built by ProtoData.
  *
  * The type system knows the association between the Protobuf types and the types of
  * a target language.
