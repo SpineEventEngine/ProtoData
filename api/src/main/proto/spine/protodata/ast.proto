@@ -478,6 +478,10 @@ enum CallCardinality {
 message Option {
 
     // The short name of the option.
+    //
+    // The name includes only the name of the field (or of the extension field) without the package
+    // or the enclosing type.
+    //
     string name = 1;
 
     // The field number of the option.
