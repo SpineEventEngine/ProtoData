@@ -57,9 +57,9 @@ class ValuesSpec {
         v.messageValue.type.qualifiedName() shouldBe FieldMask.getDescriptor().fullName
         v.messageValue.fieldsMap shouldHaveKey "paths"
         val list = v.messageValue.fieldsMap["paths"]!!.listValue
-        list.getValues(0).stringValue shouldBe "foo"
-        list.getValues(1).stringValue shouldBe "bar"
-        list.getValues(2).stringValue shouldBe "baz"
+        list.valuesList[0].stringValue shouldBe "foo"
+        list.valuesList[0].stringValue shouldBe "bar"
+        list.valuesList[0].stringValue shouldBe "baz"
     }
 
     @Test
@@ -71,9 +71,9 @@ class ValuesSpec {
         })
         v.messageValue.fieldsMap shouldHaveKey "signatures"
         val map = v.messageValue.fieldsMap["signatures"]!!.mapValue
-        map.getValue(0).key.stringValue shouldBe "John"
-        map.getValue(0).value.stringValue shouldBe "JD"
-        map.getValue(1).key.stringValue shouldBe "Alan"
-        map.getValue(1).value.stringValue shouldBe "Big Al"
+        map.valueList[0].key.stringValue shouldBe "John"
+        map.valueList[0].value.stringValue shouldBe "JD"
+        map.valueList[1].key.stringValue shouldBe "Alan"
+        map.valueList[1].value.stringValue shouldBe "Big Al"
     }
 }
