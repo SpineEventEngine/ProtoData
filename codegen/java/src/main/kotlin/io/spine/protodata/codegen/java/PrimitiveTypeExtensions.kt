@@ -55,16 +55,6 @@ internal fun PrimitiveType.toClass(): ClassName {
     return ClassName(klass.javaObjectType)
 }
 
-/**
- * Obtains a name of the class which corresponds to this primitive type.
- */
-internal fun PrimitiveType.toPrimitiveName(): ClassName {
-    val klass = primitiveClass()
-    val primitiveClass = klass.javaPrimitiveType
-        ?: error("Expected a primitive type, but got `$klass`.")
-    return ClassName("", listOf(primitiveClass.name))
-}
-
 private fun PrimitiveType.primitiveClass(): KClass<*> =
     when (this) {
         TYPE_DOUBLE -> Double::class

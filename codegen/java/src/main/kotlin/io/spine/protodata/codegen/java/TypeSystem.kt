@@ -57,7 +57,7 @@ private constructor(
 
     override val valueConverter: ValueConverter<Expression> by lazy { JavaValueConverter(this) }
 
-    override fun convertPrimitiveType(type: PrimitiveType): ClassName = type.toPrimitiveName()
+    override fun convertPrimitiveType(type: PrimitiveType): ClassName = type.toClass()
 
     public companion object {
 
