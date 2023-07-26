@@ -50,7 +50,7 @@ import io.spine.type.KnownTypes
  *
  * Includes all the types known to the app at runtime.
  */
-public class TypeSystem
+public class JavaTypeSystem
 private constructor(
     knownTypes: Map<TypeName, ClassName>
 ) : BaseTypeSystem<ClassName, Expression>(knownTypes) {
@@ -62,14 +62,14 @@ private constructor(
     public companion object {
 
         /**
-         * Creates a new `TypeSystem` builder.
+         * Creates a new `JavaTypeSystem` builder.
          */
         @JvmStatic
         public fun newBuilder(): Builder = Builder()
     }
 
     /**
-     * The builder of a new `TypeSystem` of an application.
+     * The builder of a new `JavaTypeSystem` of an application.
      */
     public class Builder internal constructor() {
 
@@ -121,13 +121,13 @@ private constructor(
         }
 
         /**
-         * Builds an instance of `TypeSystem`.
+         * Builds an instance of `JavaTypeSystem`.
          */
-        public fun build(): TypeSystem = TypeSystem(knownTypes)
+        public fun build(): JavaTypeSystem = JavaTypeSystem(knownTypes)
     }
 }
 
-private fun TypeSystem.mapValueToJava(value: Value): MethodCall {
+private fun JavaTypeSystem.mapValueToJava(value: Value): MethodCall {
     val firstEntry = value.mapValue.valueList.firstOrNull()
     val firstKey = firstEntry?.key
     val keyClass = firstKey?.type?.let(this::toClass)
@@ -136,14 +136,14 @@ private fun TypeSystem.mapValueToJava(value: Value): MethodCall {
     return mapExpression(mapValuesToJava(value), keyClass, valueClass)
 }
 
-private fun TypeSystem.enumValueToJava(value: Value): MethodCall {
+private fun JavaTypeSystem.enumValueToJava(value: Value): MethodCall {
     val enumValue = value.enumValue
     val type = enumValue.type
     val enumClassName = convertTypeName(type)
     return enumClassName.enumValue(enumValue.constNumber)
 }
 
-private fun TypeSystem.messageValueToJava(value: Value): Expression {
+private fun JavaTypeSystem.messageValueToJava(value: Value): Expression {
     val messageValue = value.messageValue
     val type = messageValue.type
     val className = convertTypeName(type)
@@ -158,12 +158,12 @@ private fun TypeSystem.messageValueToJava(value: Value): Expression {
     }
 }
 
-private fun TypeSystem.listValuesToJava(value: Value): List<Expression> =
+private fun JavaTypeSystem.listValuesToJava(value: Value): List<Expression> =
     value.listValue
         .valuesList
         .map(this::valueToCode)
 
-private fun TypeSystem.mapValuesToJava(value: Value): Map<Expression, Expression> =
+private fun JavaTypeSystem.mapValuesToJava(value: Value): Map<Expression, Expression> =
     value.mapValue.valueList.associate { valueToCode(it.key) to valueToCode(it.value) }
 
 /**
@@ -173,14 +173,14 @@ private fun TypeSystem.mapValuesToJava(value: Value): Map<Expression, Expression
  *
  * @throws IllegalStateException if the type is unknown
  */
-private fun TypeSystem.toClass(type: Type): ClassName = when (type.kindCase) {
+private fun JavaTypeSystem.toClass(type: Type): ClassName = when (type.kindCase) {
     PRIMITIVE -> type.primitive.toClass()
     MESSAGE, ENUMERATION -> convertTypeName(type.message)
     else -> throw IllegalArgumentException("Type is empty.")
 }
 
 private class JavaValueConverter(
-    private val typeSystem: TypeSystem
+    private val typeSystem: JavaTypeSystem
 ) : ValueConverter<Expression> {
 
     override fun toNull(value: Value): Expression = Null

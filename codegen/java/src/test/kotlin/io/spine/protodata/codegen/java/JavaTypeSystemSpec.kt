@@ -54,8 +54,8 @@ import io.spine.protodata.enumValue
 import io.spine.protodata.messageType
 import io.spine.protodata.messageValue
 
-@DisplayName("`TypeSystem` should")
-class TypeSystemSpec {
+@DisplayName("`JavaTypeSystem` should")
+class JavaTypeSystemSpec {
 
     private val filePath = filePath { value = "acme/example/foo.proto" }
     val multipleFilesOption = option {
@@ -103,7 +103,7 @@ class TypeSystemSpec {
         constant.add(undefinedConstant)
         constant.add(enumConstant)
     }
-    private val typeSystem: TypeSystem = TypeSystem.newBuilder()
+    private val typeSystem: JavaTypeSystem = JavaTypeSystem.newBuilder()
         .put(protoFile, messageType)
         .put(protoFile, enumType)
         .build()
