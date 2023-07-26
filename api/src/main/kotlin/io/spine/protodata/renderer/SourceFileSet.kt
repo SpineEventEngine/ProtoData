@@ -267,6 +267,14 @@ internal constructor(
         this.querying = querying
     }
 
+
+    /**
+     * Creates a subset of this source set which contains only the files
+     * matching the given [predicate].
+     */
+    internal fun subsetWhere(predicate: (SourceFile) -> Boolean) =
+        SourceFileSet(this.filter(predicate).toSet(), inputRoot, outputRoot)
+
     override fun iterator(): Iterator<SourceFile> =
         files.values.iterator()
 
@@ -275,13 +283,6 @@ internal constructor(
      */
     override fun toString(): String = toList().joinToString()
 }
-
-/**
- * Creates a subset of this source set which contains only the files
- * matching the given [predicate].
- */
-internal fun SourceFileSet.subsetWhere(predicate: (SourceFile) -> Boolean) =
-    SourceFileSet(this.filter(predicate).toSet(), inputRoot, outputRoot)
 
 /**
  * Obtains absolute [normalized][normalize] version of this path.

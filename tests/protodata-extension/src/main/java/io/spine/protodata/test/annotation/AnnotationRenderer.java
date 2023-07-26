@@ -45,12 +45,6 @@ public final class AnnotationRenderer extends JavaRenderer {
 
     @Override
     protected void render(SourceFileSet sources) {
-        // Don't do anything if this source file set is for a language
-        // other than Java. For the root cause of this please see this issue:
-        // https://github.com/SpineEventEngine/ProtoData/issues/90
-         if (!sources.inputRoot().endsWith("java")) {
-             return;
-         }
         Set<Annotated> annotatedFields = select(Annotated.class).all();
         annotatedFields.forEach(field -> renderFor(field, sources));
 
@@ -68,9 +62,13 @@ public final class AnnotationRenderer extends JavaRenderer {
         FieldGetter getter = new FieldGetter(id);
         Path path = javaFileOf(id.getType(), id.getFile());
 
-        sourceSet.file(path)
-                 .at(getter)
-                 .withExtraIndentation(INDENT_LEVEL)
-                 .add('@' + field.getJavaAnnotation());
+        var file = sourceSet.find(path);
+        if (file != null) {
+            // TODO:2023-07-25:dmytro.dashenkov: Remove the need in this check.
+            //   https://github.com/SpineEventEngine/ProtoData/issues/90
+            file.at(getter)
+                .withExtraIndentation(INDENT_LEVEL)
+                .add('@' + field.getJavaAnnotation());
+        }
     }
 }
