@@ -44,9 +44,11 @@ class ValuesSpec {
     @Test
     fun `convert a simple message to a Value`() {
         val v = Values.from(Time.currentTime())
-        v.messageValue.type.simpleName shouldBe "Timestamp"
-        v.messageValue.fieldsMap shouldHaveKey "seconds"
-        v.messageValue.fieldsMap["seconds"]!!.intValue shouldBeGreaterThan 0
+        v.messageValue.apply {
+            type.simpleName shouldBe "Timestamp"
+            fieldsMap shouldHaveKey "seconds"
+            fieldsMap["seconds"]!!.intValue shouldBeGreaterThan 0
+        }
     }
 
     @Test
