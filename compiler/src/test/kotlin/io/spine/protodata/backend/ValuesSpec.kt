@@ -58,8 +58,8 @@ class ValuesSpec {
         v.messageValue.fieldsMap shouldHaveKey "paths"
         val list = v.messageValue.fieldsMap["paths"]!!.listValue
         list.valuesList[0].stringValue shouldBe "foo"
-        list.valuesList[0].stringValue shouldBe "bar"
-        list.valuesList[0].stringValue shouldBe "baz"
+        list.valuesList[1].stringValue shouldBe "bar"
+        list.valuesList[2].stringValue shouldBe "baz"
     }
 
     @Test
