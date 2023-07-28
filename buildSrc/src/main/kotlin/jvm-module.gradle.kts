@@ -149,6 +149,9 @@ fun Module.addDependencies() = dependencies {
     compileOnlyApi(JavaX.annotations)
     ErrorProne.annotations.forEach { compileOnlyApi(it) }
 
+    implementation(Spine.Logging.lib)
+    runtimeOnly(Spine.Logging.backend)
+
     testImplementation(Guava.testLib)
     testImplementation(JUnit.runner)
     testImplementation(JUnit.pioneer)
@@ -159,8 +162,6 @@ fun Module.addDependencies() = dependencies {
     testImplementation(Kotest.datatest)
     testImplementation(Kotest.runnerJUnit5Jvm)
     testImplementation(JUnit.runner)
-
-    runtimeOnly(Flogger.Runtime.systemBackend)
 }
 
 fun Module.forceConfigurations() {
