@@ -61,6 +61,15 @@ public interface Plugin {
      * Obtains the [policies][Policy] added by this plugin.
      */
     public fun policies(): Set<Policy<*>> = setOf()
+
+    /**
+     * Extends the given bounded context being build with additional functionality.
+     *
+     * This callback is invoked after all the views and policies are added to the context.
+     *
+     * @param context The `BoundedContextBuilder` to extend.
+     */
+    public fun extend(context: BoundedContextBuilder) {}
 }
 
 /**
@@ -70,20 +79,28 @@ public fun BoundedContextBuilder.apply(plugin: Plugin) {
     val repos = plugin.viewRepositories().toMutableList()
     val defaultRepos = plugin.views().map { ViewRepository.default(it) }
     repos.addAll(defaultRepos)
-    val repeatedView = repos.map { it.entityClass() }
-                            .groupingBy { it }
-                            .eachCount()
-                            .filter { it.value > 1 }
-                            .keys
-                            .firstOrNull()
-    if (repeatedView != null) {
-        throw ConfigurationError(
-            "View `${repeatedView}` is repeated. " +
-                    "Please only submit one repository OR the class for the view."
-        )
-    }
+    plugin.checkNoViewRepoDuplication(repos)
     repos.forEach(this::add)
     plugin.policies().forEach {
         addEventDispatcher(it)
+    }
+    plugin.extend(this)
+}
+
+private fun Plugin.checkNoViewRepoDuplication(repos: MutableList<ViewRepository<*, *, *>>) {
+    val repeatedView = repos.map { it.entityClass() }
+        .groupingBy { it }
+        .eachCount()
+        .filter { it.value > 1 }
+        .keys
+        .firstOrNull()
+    if (repeatedView != null) {
+        throw ConfigurationError(
+            "The plugin `${this::class.qualifiedName}` exposes the `${View::class.simpleName}`" +
+                    " class `${repeatedView.name}` via the `views()` method and via " +
+                    " the `${ViewRepository::class.simpleName}` returned by" +
+                    " the `viewRepositories()` method." +
+                    " Please submit either a repository OR a class of the view."
+        )
     }
 }
