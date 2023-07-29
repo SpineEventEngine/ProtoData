@@ -26,9 +26,9 @@
 
 package io.spine.internal.dependency
 
-// https://www.mojohaus.org/animal-sniffer/animal-sniffer-maven-plugin/
+// https://asm.ow2.io/
 @Suppress("unused", "ConstPropertyName")
-object AnimalSniffer {
-    private const val version = "1.21"
-    const val lib = "org.codehaus.mojo:animal-sniffer-annotations:${version}"
+object Asm {
+    private const val version = "9.2"
+    const val lib = "org.ow2.asm:asm:$version"
 }

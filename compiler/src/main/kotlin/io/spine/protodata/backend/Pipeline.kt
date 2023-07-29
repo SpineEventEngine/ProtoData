@@ -33,7 +33,7 @@ import io.spine.environment.DefaultMode
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.plugin.apply
+import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.BoundedContext
@@ -136,7 +136,7 @@ public class Pipeline(
     private fun assembleCodegenContext(): BoundedContext {
         val builder = CodeGenerationContext.builder()
         plugins.forEach {
-            builder.apply(it)
+            it.applyTo(builder)
         }
         return builder.build()
     }
