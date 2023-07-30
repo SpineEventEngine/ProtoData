@@ -150,6 +150,10 @@ public fun MutableSet<Class<out View<*,  *, *>>>.add(view: KClass<out View<*, *,
 
 /**
  * Adds specified entity class to this `BoundedContextBuilder`.
+ *
+ * A default repository instance will be created for this class.
+ * This instance will be added to the repository registration list for
+ * the bounded context being built.
  */
 public inline fun <reified I, reified E : Entity<I, *>>
         BoundedContextBuilder.add(entity: KClass<out E>) {
