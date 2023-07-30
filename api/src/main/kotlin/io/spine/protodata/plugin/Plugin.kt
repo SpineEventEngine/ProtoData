@@ -142,7 +142,15 @@ private fun Plugin.checkNoViewRepoDuplication(repos: MutableList<ViewRepository<
 }
 
 /**
- * Adds the specified view class to this `MutableSet`.
+ * Adds the specified view class to this `MutableSet` which represents a set of views
+ * exposed by a `Plugin`.
+ *
+ * Usage scenario:
+ * ```kotlin
+ * override fun views(): Set<Class<out View<*, *, *>>> = buildSet {
+ *     add(MyView::class)
+ * }
+ * ```
  */
 public fun MutableSet<Class<out View<*,  *, *>>>.add(view: KClass<out View<*, *, *>>) {
     add(view.java)
@@ -154,6 +162,9 @@ public fun MutableSet<Class<out View<*,  *, *>>>.add(view: KClass<out View<*, *,
  * A default repository instance will be created for this class.
  * This instance will be added to the repository registration list for
  * the bounded context being built.
+ *
+ * @param I the type of entity identifiers.
+ * @param E the type of entities.
  */
 public inline fun <reified I, reified E : Entity<I, *>>
         BoundedContextBuilder.add(entity: KClass<out E>) {
