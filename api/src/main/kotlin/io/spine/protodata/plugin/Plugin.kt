@@ -29,6 +29,8 @@ package io.spine.protodata.plugin
 import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
 import io.spine.server.BoundedContextBuilder
+import io.spine.server.entity.Entity
+import kotlin.reflect.KClass
 
 /**
  * A plugin into the code generation process.
@@ -90,15 +92,7 @@ public interface Plugin {
     ReplaceWith("this.applyTo(context)")
 )
 public fun BoundedContextBuilder.apply(plugin: Plugin) {
-    val repos = plugin.viewRepositories().toMutableList()
-    val defaultRepos = plugin.views().map { ViewRepository.default(it) }
-    repos.addAll(defaultRepos)
-    plugin.checkNoViewRepoDuplication(repos)
-    repos.forEach(this::add)
-    plugin.policies().forEach {
-        addEventDispatcher(it)
-    }
-    plugin.extend(this)
+    plugin.applyTo(this)
 }
 
 /**
@@ -145,4 +139,34 @@ private fun Plugin.checkNoViewRepoDuplication(repos: MutableList<ViewRepository<
                     " Please submit either a repository OR a class of the view."
         )
     }
+}
+
+/**
+ * Adds the specified view class to this `MutableSet` which represents a set of views
+ * exposed by a `Plugin`.
+ *
+ * Usage scenario:
+ * ```kotlin
+ * override fun views(): Set<Class<out View<*, *, *>>> = buildSet {
+ *     add(MyView::class)
+ * }
+ * ```
+ */
+public fun MutableSet<Class<out View<*,  *, *>>>.add(view: KClass<out View<*, *, *>>) {
+    add(view.java)
+}
+
+/**
+ * Adds specified entity class to this `BoundedContextBuilder`.
+ *
+ * A default repository instance will be created for this class.
+ * This instance will be added to the repository registration list for
+ * the bounded context being built.
+ *
+ * @param I the type of entity identifiers.
+ * @param E the type of entities.
+ */
+public inline fun <reified I, reified E : Entity<I, *>>
+        BoundedContextBuilder.add(entity: KClass<out E>) {
+    add(entity.java)
 }
