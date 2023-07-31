@@ -26,85 +26,24 @@
 
 package io.spine.protodata.codegen.java
 
-import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.BoolValue
-import com.google.protobuf.ByteString
-import com.google.protobuf.ByteString.copyFrom
-import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
-import com.google.protobuf.Empty
-import io.spine.protobuf.pack
-import io.spine.protodata.PrimitiveType.TYPE_BOOL
-import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.Value
-import io.spine.protodata.constantName
-import io.spine.protodata.enumConstant
-import io.spine.protodata.fieldName
-import io.spine.protodata.file
-import io.spine.protodata.filePath
-import io.spine.protodata.option
-import io.spine.protodata.type
-import io.spine.protodata.typeName
+import com.google.protobuf.StringValue
+import io.kotest.matchers.shouldBe
+import io.spine.protodata.codegen.java.given.TypesTestEnv.javaPackageOption
+import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
+import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
 import io.spine.protodata.value
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import io.spine.protodata.field as newField
-import io.spine.protodata.enumType as newEnumType
-import io.spine.protodata.enumValue
-import io.spine.protodata.messageType
-import io.spine.protodata.messageValue
+import io.spine.protobuf.unpack
 
 @DisplayName("`JavaTypeSystem` should")
 class JavaTypeSystemSpec {
 
-    private val filePath = filePath { value = "acme/example/foo.proto" }
-    val multipleFilesOption = option {
-        name = "java_multiple_files"
-        number = JAVA_MULTIPLE_FILES_FIELD_NUMBER
-        type = type { primitive = TYPE_BOOL }
-        value = BoolValue.of(true).pack()
+    @Test
+    fun `convert a message type name into a Java class name`() {
+        val cls = typeSystem.convertTypeName(messageTypeName)
+        cls.simpleName shouldBe messageTypeName.simpleName
+        val expectedPackage = javaPackageOption.value.unpack<StringValue>().value
+        cls.binary shouldBe expectedPackage + '.' +  messageTypeName.simpleName
     }
-    private val protoFile = file {
-        path = filePath
-        packageName = "acme.example"
-        option.add(multipleFilesOption)
-    }
-    private val messageTypeName = typeName {
-        packageName = protoFile.packageName
-        simpleName = "Foo"
-        typeUrlPrefix = "type.spine.io"
-    }
-    private val stringField = newField {
-        type = type { primitive = TYPE_STRING }
-        name = fieldName { value = "bar" }
-        single = Empty.getDefaultInstance()
-    }
-    private val messageType = messageType {
-        file = filePath
-        name = messageTypeName
-        field.add(stringField)
-    }
-    private val enumTypeName = typeName {
-        packageName = protoFile.packageName
-        typeUrlPrefix = messageTypeName.typeUrlPrefix
-        simpleName = "Kind"
-    }
-    private val undefinedConstant = enumConstant {
-        name = constantName { value = "UNDEFINED" }
-        number = 0
-    }
-    private val enumConstant = enumConstant {
-        name = constantName { value = "INSTANCE" }
-        number = 1
-    }
-    private val enumType = newEnumType {
-        file = filePath
-        name = enumTypeName
-        constant.add(undefinedConstant)
-        constant.add(enumConstant)
-    }
-    private val typeSystem: JavaTypeSystem = JavaTypeSystem.newBuilder()
-        .put(protoFile, messageType)
-        .put(protoFile, enumType)
-        .build()
 }
