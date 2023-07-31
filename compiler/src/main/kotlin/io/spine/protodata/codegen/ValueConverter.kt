@@ -41,6 +41,7 @@ import io.spine.protodata.Value.KindCase.STRING_VALUE
 /**
  * A factory of language-specific code, that represents a Protobuf value.
  */
+@Suppress("TooManyFunctions")
 public abstract class ValueConverter<V: CodeElement> {
 
     /**

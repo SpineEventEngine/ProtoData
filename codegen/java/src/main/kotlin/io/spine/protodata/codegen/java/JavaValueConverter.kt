@@ -45,32 +45,7 @@ public class JavaValueConverter(
 
     override fun toBytes(value: Value): Expression = LiteralBytes(value.bytesValue)
 
-    override fun toMessage(value: Value): Expression = messageValueToJava(value)
-
-    override fun toEnum(value: Value): Expression = enumValueToJava(value)
-
-    override fun toList(value: Value): Expression = listExpression(listValuesToJava(value))
-
-    override fun toMap(value: Value): Expression = mapValueToJava(value)
-
-
-    private fun mapValueToJava(value: Value): MethodCall {
-        val firstEntry = value.mapValue.valueList.firstOrNull()
-        val firstKey = firstEntry?.key
-        val keyClass = firstKey?.type?.let(typeSystem::toClass)
-        val firstValue = firstEntry?.value
-        val valueClass = firstValue?.type?.let(typeSystem::toClass)
-        return mapExpression(mapValuesToJava(value), keyClass, valueClass)
-    }
-
-    private fun enumValueToJava(value: Value): MethodCall {
-        val enumValue = value.enumValue
-        val type = enumValue.type
-        val enumClassName = typeSystem.convertTypeName(type)
-        return enumClassName.enumValue(enumValue.constNumber)
-    }
-
-    private fun messageValueToJava(value: Value): Expression {
+    override fun toMessage(value: Value): Expression {
         val messageValue = value.messageValue
         val type = messageValue.type
         val className = typeSystem.convertTypeName(type)
@@ -85,11 +60,29 @@ public class JavaValueConverter(
         }
     }
 
-    private fun listValuesToJava(value: Value): List<Expression> =
-        value.listValue
+    override fun toEnum(value: Value): MethodCall {
+        val enumValue = value.enumValue
+        val type = enumValue.type
+        val enumClassName = typeSystem.convertTypeName(type)
+        return enumClassName.enumValue(enumValue.constNumber)
+    }
+
+    override fun toList(value: Value): Expression {
+        val expressions = value.listValue
             .valuesList
             .map(this::valueToCode)
+        return listExpression(expressions)
+    }
 
-    private fun mapValuesToJava(value: Value): Map<Expression, Expression> =
-        value.mapValue.valueList.associate { valueToCode(it.key) to valueToCode(it.value) }
+    override fun toMap(value: Value): MethodCall {
+        val firstEntry = value.mapValue.valueList.firstOrNull()
+        val firstKey = firstEntry?.key
+        val keyClass = firstKey?.type?.let(typeSystem::toClass)
+        val firstValue = firstEntry?.value
+        val valueClass = firstValue?.type?.let(typeSystem::toClass)
+        val valuesMap = value.mapValue.valueList.associate {
+            valueToCode(it.key) to valueToCode(it.value)
+        }
+        return mapExpression(valuesMap, keyClass, valueClass)
+    }
 }
