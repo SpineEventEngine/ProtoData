@@ -57,7 +57,7 @@ private constructor(
 
     override val valueConverter: ValueConverter<Expression> by lazy { JavaValueConverter(this) }
 
-    override fun convertPrimitiveType(type: PrimitiveType): ClassName = type.toClass()
+    override fun convertPrimitiveType(type: PrimitiveType): ClassName = type.toJavaClass()
 
     public companion object {
 
@@ -107,7 +107,7 @@ private constructor(
         }
 
         /**
-         * Adds all the definitions from the given `file` to the type system.
+         * Adds all the definitions from the given [file] to the type system.
          */
         @CanIgnoreReturnValue
         public fun addFrom(file: ProtobufSourceFile): Builder {
@@ -174,7 +174,7 @@ private fun JavaTypeSystem.mapValuesToJava(value: Value): Map<Expression, Expres
  * @throws IllegalStateException if the type is unknown
  */
 private fun JavaTypeSystem.toClass(type: Type): ClassName = when (type.kindCase) {
-    PRIMITIVE -> type.primitive.toClass()
+    PRIMITIVE -> type.primitive.toJavaClass()
     MESSAGE, ENUMERATION -> convertTypeName(type.message)
     else -> throw IllegalArgumentException("Type is empty.")
 }

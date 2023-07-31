@@ -47,8 +47,8 @@ import io.spine.protodata.Value.KindCase.STRING_VALUE
  * The type system knows the association between the Protobuf types and the types of
  * a target language.
  *
- * @param T the type of a language-specific type name
- * @param V the type of a language-specific expression, i.e. the code that yields a value
+ * @param T the type of language-specific type name.
+ * @param V the type of language-specific expression, i.e. the code that yields a value.
  */
 public abstract class BaseTypeSystem<T: CodeElement, V: CodeElement>
 protected constructor(
