@@ -30,9 +30,11 @@ import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.BoolValue
 import com.google.protobuf.ByteString
 import com.google.protobuf.ByteString.copyFrom
+import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
 import com.google.protobuf.Empty
 import io.spine.protobuf.pack
+import io.spine.protodata.PrimitiveType
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.Value
@@ -54,8 +56,8 @@ import io.spine.protodata.enumValue
 import io.spine.protodata.messageType
 import io.spine.protodata.messageValue
 
-@DisplayName("`JavaTypeSystem` should")
-class JavaTypeSystemSpec {
+@DisplayName("`JavaValueConverter` should convert values into")
+class JavaValueConverterSpec {
 
     private val filePath = filePath { value = "acme/example/foo.proto" }
     val multipleFilesOption = option {
@@ -107,4 +109,72 @@ class JavaTypeSystemSpec {
         .put(protoFile, messageType)
         .put(protoFile, enumType)
         .build()
+    private val converter = JavaValueConverter(typeSystem)
+
+    @Test
+    fun ints() {
+        val value = value { intValue = 42 }
+        checkCode(value, "42")
+    }
+
+    @Test
+    fun floats() {
+        val value = value { doubleValue = .1 }
+        checkCode(value, "0.1")
+    }
+
+    @Test
+    fun bool() {
+        val value = value { boolValue = true }
+        checkCode(value, "true")
+    }
+
+    @Test
+    fun string() {
+        val value = value { stringValue = "hello" }
+        checkCode(value, "\"hello\"")
+    }
+
+    @Test
+    fun bytes() {
+        val value = value {
+            bytesValue = ByteString.copyFrom(ByteArray(3) { index -> index.toByte() })
+        }
+        checkCode(value, "${ByteString::class.qualifiedName}.copyFrom(new byte[]{0, 1, 2})")
+    }
+
+    @Test
+    fun `empty message`() {
+        val emptyMessage = messageValue { type = messageTypeName }
+        val value = value { messageValue = emptyMessage }
+        checkCode(value, "acme.example.Foo.getDefaultInstance()")
+    }
+
+    @Test
+    fun `message with a field`() {
+        val message = messageValue {
+            type = messageTypeName
+            fields.put("bar", value { stringValue = "hello there" })
+        }
+        val value = value { messageValue = message }
+        checkCode(value, "acme.example.Foo.newBuilder().setBar(\"hello there\").build()")
+    }
+
+    @Test
+    fun `enum value`() {
+        val enumVal = enumValue {
+            type = enumTypeName
+            constNumber = 1
+        }
+        val value = value {
+            enumValue = enumVal
+        }
+        checkCode(value, "acme.example.Kind.forNumber(1)")
+    }
+
+    private fun checkCode(value: Value, expectedCode: String) {
+        val expression = converter.valueToCode(value)
+        assertThat(expression.toCode())
+            .isEqualTo(expectedCode)
+    }
 }

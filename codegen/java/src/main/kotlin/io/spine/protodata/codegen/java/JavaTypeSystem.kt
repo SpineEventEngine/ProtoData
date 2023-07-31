@@ -41,7 +41,6 @@ import io.spine.protodata.Type.KindCase.PRIMITIVE
 import io.spine.protodata.TypeName
 import io.spine.protodata.Value
 import io.spine.protodata.codegen.BaseTypeSystem
-import io.spine.protodata.codegen.BaseTypeSystem.ValueConverter
 import io.spine.protodata.name
 import io.spine.type.KnownTypes
 
@@ -54,8 +53,6 @@ public class JavaTypeSystem
 private constructor(
     knownTypes: Map<TypeName, ClassName>
 ) : BaseTypeSystem<ClassName, Expression>(knownTypes) {
-
-    override val valueConverter: ValueConverter<Expression> by lazy { JavaValueConverter(this) }
 
     override fun convertPrimitiveType(type: PrimitiveType): ClassName = type.toJavaClass()
 
@@ -127,45 +124,6 @@ private constructor(
     }
 }
 
-private fun JavaTypeSystem.mapValueToJava(value: Value): MethodCall {
-    val firstEntry = value.mapValue.valueList.firstOrNull()
-    val firstKey = firstEntry?.key
-    val keyClass = firstKey?.type?.let(this::toClass)
-    val firstValue = firstEntry?.value
-    val valueClass = firstValue?.type?.let(this::toClass)
-    return mapExpression(mapValuesToJava(value), keyClass, valueClass)
-}
-
-private fun JavaTypeSystem.enumValueToJava(value: Value): MethodCall {
-    val enumValue = value.enumValue
-    val type = enumValue.type
-    val enumClassName = convertTypeName(type)
-    return enumClassName.enumValue(enumValue.constNumber)
-}
-
-private fun JavaTypeSystem.messageValueToJava(value: Value): Expression {
-    val messageValue = value.messageValue
-    val type = messageValue.type
-    val className = convertTypeName(type)
-    return if (messageValue.fieldsMap.isEmpty()) {
-        className.getDefaultInstance()
-    } else {
-        var builder = className.newBuilder()
-        messageValue.fieldsMap.forEach { (k, v) ->
-            builder = builder.chainSet(k, valueToCode(v))
-        }
-        builder.chainBuild()
-    }
-}
-
-private fun JavaTypeSystem.listValuesToJava(value: Value): List<Expression> =
-    value.listValue
-        .valuesList
-        .map(this::valueToCode)
-
-private fun JavaTypeSystem.mapValuesToJava(value: Value): Map<Expression, Expression> =
-    value.mapValue.valueList.associate { valueToCode(it.key) to valueToCode(it.value) }
-
 /**
  * Obtains the canonical name of the class representing the given [type] in Java.
  *
@@ -173,34 +131,8 @@ private fun JavaTypeSystem.mapValuesToJava(value: Value): Map<Expression, Expres
  *
  * @throws IllegalStateException if the type is unknown
  */
-private fun JavaTypeSystem.toClass(type: Type): ClassName = when (type.kindCase) {
+internal fun JavaTypeSystem.toClass(type: Type): ClassName = when (type.kindCase) {
     PRIMITIVE -> type.primitive.toJavaClass()
     MESSAGE, ENUMERATION -> convertTypeName(type.message)
     else -> throw IllegalArgumentException("Type is empty.")
-}
-
-private class JavaValueConverter(
-    private val typeSystem: JavaTypeSystem
-) : ValueConverter<Expression> {
-
-    override fun toNull(value: Value): Expression = Null
-
-    override fun toBool(value: Value): Expression = Literal(value.boolValue)
-
-    override fun toDouble(value: Value): Expression = Literal(value.doubleValue)
-
-    override fun toInt(value: Value): Expression = Literal(value.intValue)
-
-    override fun toString(value: Value): Expression = LiteralString(value.stringValue)
-
-    override fun toBytes(value: Value): Expression = LiteralBytes(value.bytesValue)
-
-    override fun toMessage(value: Value): Expression = typeSystem.messageValueToJava(value)
-
-    override fun toEnum(value: Value): Expression = typeSystem.enumValueToJava(value)
-
-    override fun toList(value: Value): Expression =
-        listExpression(typeSystem.listValuesToJava(value))
-
-    override fun toMap(value: Value): Expression = typeSystem.mapValueToJava(value)
 }

@@ -29,17 +29,6 @@ package io.spine.protodata.codegen
 import io.spine.protodata.PrimitiveType
 import io.spine.protodata.Type
 import io.spine.protodata.TypeName
-import io.spine.protodata.Value
-import io.spine.protodata.Value.KindCase.BOOL_VALUE
-import io.spine.protodata.Value.KindCase.BYTES_VALUE
-import io.spine.protodata.Value.KindCase.DOUBLE_VALUE
-import io.spine.protodata.Value.KindCase.ENUM_VALUE
-import io.spine.protodata.Value.KindCase.INT_VALUE
-import io.spine.protodata.Value.KindCase.LIST_VALUE
-import io.spine.protodata.Value.KindCase.MAP_VALUE
-import io.spine.protodata.Value.KindCase.MESSAGE_VALUE
-import io.spine.protodata.Value.KindCase.NULL_VALUE
-import io.spine.protodata.Value.KindCase.STRING_VALUE
 
 /**
  * An abstract base for type systems of an application being built by ProtoData.
@@ -54,11 +43,6 @@ public abstract class BaseTypeSystem<T: CodeElement, V: CodeElement>
 protected constructor(
     private val knownTypes: Map<TypeName, T>
 ) {
-
-    /**
-     * A [ValueConverter] for converting Protobuf values into language-specific code expressions.
-     */
-    protected abstract val valueConverter: ValueConverter<V>
 
     /**
      * Converts the given Protobuf type into a language-specific type name.
@@ -86,83 +70,6 @@ protected constructor(
      */
     public fun convertTypeName(protoName: TypeName): T =
         knownTypes[protoName] ?: unknownType(protoName)
-
-    /**
-     * Converts the given Protobuf value into a language-specific code expression.
-     *
-     * @see ValueConverter
-     */
-    public fun valueToCode(value: Value): V = with(valueConverter) {
-        when (value.kindCase) {
-            NULL_VALUE -> toNull(value)
-            BOOL_VALUE -> toBool(value)
-            DOUBLE_VALUE -> toDouble(value)
-            INT_VALUE -> toInt(value)
-            STRING_VALUE -> toString(value)
-            BYTES_VALUE -> toBytes(value)
-            MESSAGE_VALUE -> toMessage(value)
-            ENUM_VALUE -> toEnum(value)
-            LIST_VALUE -> toList(value)
-            MAP_VALUE -> toMap(value)
-            else -> throw IllegalArgumentException("Empty value")
-        }
-    }
-
-    /**
-     * A factory of language-specific code, that represents a Protobuf value.
-     */
-    public interface ValueConverter<V: CodeElement> {
-
-        /**
-         * Converts the given `null` value into a language-specific `null` representation.
-         */
-        public fun toNull(value: Value): V
-
-        /**
-         * Converts the given `bool` value into a language-specific `bool` representation.
-         */
-        public fun toBool(value: Value): V
-
-        /**
-         * Converts the given `double` value into a language-specific `double` representation.
-         */
-        public fun toDouble(value: Value): V
-
-        /**
-         * Converts the given `int` value into a language-specific `int` representation.
-         */
-        public fun toInt(value: Value): V
-
-        /**
-         * Converts the given `string` value into a language-specific `string` representation.
-         */
-        public fun toString(value: Value): V
-
-        /**
-         * Converts the given `bytes` value into a language-specific syte string representation.
-         */
-        public fun toBytes(value: Value): V
-
-        /**
-         * Converts the given message value into a language-specific message representation.
-         */
-        public fun toMessage(value: Value): V
-
-        /**
-         * Converts the given enum constant into a language-specific enum representation.
-         */
-        public fun toEnum(value: Value): V
-
-        /**
-         * Converts the given list into a language-specific representation of a list of values.
-         */
-        public fun toList(value: Value): V
-
-        /**
-         * Converts the given map into a language-specific map.
-         */
-        public fun toMap(value: Value): V
-    }
 }
 
 private fun unknownType(type: Type): Nothing =
