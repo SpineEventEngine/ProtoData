@@ -50,7 +50,7 @@ import io.spine.protodata.Value.KindCase.STRING_VALUE
  * @param T the type of a language-specific type name
  * @param V the type of a language-specific expression, i.e. the code that yields a value
  */
-public abstract class BaseTypeSystem<T: CodePrintable, V: CodePrintable>
+public abstract class BaseTypeSystem<T: CodeElement, V: CodeElement>
 protected constructor(
     private val knownTypes: Map<TypeName, T>
 ) {
@@ -111,7 +111,7 @@ protected constructor(
     /**
      * A factory of language-specific code, that represents a Protobuf value.
      */
-    public interface ValueConverter<V: CodePrintable> {
+    public interface ValueConverter<V: CodeElement> {
 
         /**
          * Converts the given `null` value into a language-specific `null` representation.

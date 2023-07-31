@@ -31,7 +31,7 @@ package io.spine.protodata.codegen
  *
  * This is an general interface for composable language-specific code-building elements.
  */
-public interface CodePrintable {
+public interface CodeElement {
 
     /**
      * Obtains the plain text representation of this code element.

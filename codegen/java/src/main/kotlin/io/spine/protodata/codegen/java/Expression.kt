@@ -38,7 +38,7 @@ import io.spine.protodata.Field.CardinalityCase.LIST
 import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
-import io.spine.protodata.codegen.CodePrintable
+import io.spine.protodata.codegen.CodeElement
 import io.spine.string.camelCase
 import kotlin.reflect.KClass
 
@@ -49,7 +49,7 @@ private const val OF = "of"
  *
  * Can be an expression, a reference to a variable, an identifier, etc.
  */
-public sealed interface JavaPrintable: CodePrintable
+public sealed interface JavaPrintable: CodeElement
 
 /**
  * A piece of Java code which yields a value.
