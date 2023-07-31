@@ -97,7 +97,7 @@ class ProjectConfigSpec {
 
 private val taskNames: Correspondence<Any, String> =
     correspondence("is task named") { something, name ->
-        something is Task && something.name == name!!
+        something is Task && something.name == name
     }
 
 private fun <I, O> correspondence(
