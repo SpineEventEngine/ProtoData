@@ -29,6 +29,9 @@ package io.spine.protodata.codegen.java
 import io.spine.protodata.Value
 import io.spine.protodata.codegen.ValueConverter
 
+/**
+ * A [ValueConverter] which converts values into Java expressions.
+ */
 public class JavaValueConverter(
     private val typeSystem: JavaTypeSystem
 ) : ValueConverter<Expression>() {
