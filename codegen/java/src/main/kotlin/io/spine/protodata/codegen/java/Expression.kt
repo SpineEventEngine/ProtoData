@@ -39,6 +39,7 @@ import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
 import io.spine.protodata.codegen.CodeElement
+import io.spine.protodata.codegen.TypeNameElement
 import io.spine.string.camelCase
 import kotlin.reflect.KClass
 
@@ -132,7 +133,7 @@ public class ClassName
 internal constructor(
     private val packageName: String,
     private val simpleNames: List<String>
-) : JavaElement {
+) : JavaElement, TypeNameElement {
 
     /**
      * The canonical name of the class.
