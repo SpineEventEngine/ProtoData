@@ -37,9 +37,8 @@ import io.spine.protodata.TypeName
  * a target language.
  *
  * @param T the type of language-specific type name.
- * @param V the type of language-specific expression, i.e. the code that yields a value.
  */
-public abstract class BaseTypeSystem<T: CodeElement, V: CodeElement>
+public abstract class BaseTypeSystem<T: CodeElement>
 protected constructor(
     private val knownTypes: Map<TypeName, T>
 ) {

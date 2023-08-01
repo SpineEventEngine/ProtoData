@@ -52,7 +52,7 @@ import io.spine.type.KnownTypes
 public class JavaTypeSystem
 private constructor(
     knownTypes: Map<TypeName, ClassName>
-) : BaseTypeSystem<ClassName, Expression>(knownTypes) {
+) : BaseTypeSystem<ClassName>(knownTypes) {
 
     override fun convertPrimitiveType(type: PrimitiveType): ClassName = type.toJavaClass()
 
