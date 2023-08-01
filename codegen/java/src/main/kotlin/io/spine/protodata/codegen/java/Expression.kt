@@ -49,12 +49,12 @@ private const val OF = "of"
  *
  * Can be an expression, a reference to a variable, an identifier, etc.
  */
-public sealed interface JavaPrintable: CodeElement
+public sealed interface JavaElement: CodeElement
 
 /**
  * A piece of Java code which yields a value.
  */
-public sealed class Expression(private val code: String) : JavaPrintable {
+public sealed class Expression(private val code: String) : JavaElement {
 
     /**
      * Prints this Java expression.
@@ -132,7 +132,7 @@ public class ClassName
 internal constructor(
     private val packageName: String,
     private val simpleNames: List<String>
-) : JavaPrintable {
+) : JavaElement {
 
     /**
      * The canonical name of the class.
@@ -363,7 +363,7 @@ public class MethodCall
  */
 @JvmOverloads
 constructor(
-    scope: JavaPrintable,
+    scope: JavaElement,
     name: String,
     arguments: List<Expression> = listOf(),
     generics: List<ClassName> = listOf()
