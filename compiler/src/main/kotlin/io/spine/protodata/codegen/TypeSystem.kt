@@ -29,6 +29,7 @@ package io.spine.protodata.codegen
 import io.spine.protodata.EnumType
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
+import io.spine.protodata.ProtoDeclaration
 import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
@@ -37,7 +38,7 @@ import io.spine.server.query.select
 
 
 public class TypeSystem
-private constructor(
+public constructor(
     private val files: Set<ProtobufSourceFile>
 ) {
 
@@ -50,26 +51,25 @@ private constructor(
         }
     }
 
-    public fun findMessage(name: TypeName): MessageType? =
+    public fun findMessage(name: TypeName): Pair<MessageType, File>? =
         findIn(name) { it.typeMap }
 
-    public fun findEnum(name: TypeName): EnumType? =
+    public fun findEnum(name: TypeName): Pair<EnumType, File>? =
         findIn(name) { it.enumTypeMap }
 
-    public fun findFileFor(name: TypeName): File? {
-        val typeUrl = name.typeUrl
-        return files.find { typeUrl in it.typeMap || typeUrl in it.enumTypeMap }?.file
-    }
+    public fun findMessageOrEnum(name: TypeName): Pair<ProtoDeclaration, File>? =
+        findMessage(name) ?: findEnum(name)
 
     private fun <T> findIn(
         name: TypeName,
         mapSelector: (ProtobufSourceFile) -> Map<String, T>
-    ): T? {
+    ): Pair<T, File>? {
         val typeUrl = name.typeUrl
         val file = files.find {
             mapSelector(it).containsKey(typeUrl)
         }
         val types = file?.let(mapSelector)
-        return types?.get(typeUrl)
+        val type = types?.get(typeUrl)
+        return if (type != null) type to file.file else null
     }
 }

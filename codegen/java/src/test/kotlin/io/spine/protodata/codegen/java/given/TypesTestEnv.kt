@@ -34,7 +34,7 @@ import com.google.protobuf.StringValue
 import io.spine.protobuf.pack
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.codegen.java.JavaTypeSystem
+import io.spine.protodata.codegen.TypeSystem
 import io.spine.protodata.constantName
 import io.spine.protodata.enumConstant
 import io.spine.protodata.fieldName
@@ -42,7 +42,7 @@ import io.spine.protodata.file
 import io.spine.protodata.filePath
 import io.spine.protodata.messageType
 import io.spine.protodata.option
-import io.spine.protodata.path
+import io.spine.protodata.protobufSourceFile
 import io.spine.protodata.type
 import io.spine.protodata.typeName
 import io.spine.protodata.enumType as newEnumType
@@ -103,8 +103,13 @@ object TypesTestEnv {
         constant.add(undefinedConstant)
         constant.add(enumConstant)
     }
-    val typeSystem: JavaTypeSystem = JavaTypeSystem.newBuilder()
-        .put(protoFile, messageType)
-        .put(protoFile, enumType)
-        .build()
+    val typeSystem = run {
+        val file = protobufSourceFile {
+            filePath = TypesTestEnv.filePath
+            file = protoFile
+            type.put(messageTypeName.typeUrl, messageType)
+            enumType.put(enumTypeName.typeUrl, TypesTestEnv.enumType)
+        }
+        TypeSystem(setOf(file))
+    }
 }

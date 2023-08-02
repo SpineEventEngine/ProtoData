@@ -33,6 +33,7 @@ import io.spine.protodata.Value
 import io.spine.protodata.codegen.java.given.TypesTestEnv
 import io.spine.protodata.codegen.java.given.TypesTestEnv.enumTypeName
 import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
+import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
 import io.spine.protodata.type
 import io.spine.protodata.value
 import org.junit.jupiter.api.DisplayName
@@ -43,7 +44,7 @@ import io.spine.protodata.messageValue
 @DisplayName("`JavaValueConverter` should convert values into")
 class JavaValueConverterSpec {
 
-    private val converter = JavaValueConverter(TypesTestEnv.typeSystem)
+    private val converter = JavaValueConverter(JavaTypeConverter(typeSystem))
 
     @Test
     fun ints() {

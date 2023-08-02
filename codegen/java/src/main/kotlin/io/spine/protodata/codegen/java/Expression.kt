@@ -41,6 +41,8 @@ import io.spine.protodata.FieldName
 import io.spine.protodata.codegen.CodeElement
 import io.spine.protodata.codegen.TypeNameElement
 import io.spine.string.camelCase
+import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
 private const val OF = "of"
@@ -157,6 +159,13 @@ internal constructor(
     @get:JvmName("binary")
     public val binary: String
         get() = "$packageName.${simpleNames.joinToString("$")}"
+
+    @get:JvmName("javaFile")
+    public val javaFile: Path by lazy {
+        val dir = packageName.replace('.', '/')
+        val topLevelClass = simpleNames.first()
+        Path("$dir/$topLevelClass.java")
+    }
 
     /**
      * The simple name of this class.

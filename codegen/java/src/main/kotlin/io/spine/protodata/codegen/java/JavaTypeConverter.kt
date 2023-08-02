@@ -26,24 +26,36 @@
 
 package io.spine.protodata.codegen.java
 
-import com.google.protobuf.StringValue
-import io.kotest.matchers.shouldBe
-import io.spine.protodata.codegen.java.given.TypesTestEnv.javaPackageOption
-import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
-import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
-import io.spine.protodata.value
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import io.spine.protobuf.unpack
+import io.spine.protobuf.isNotDefault
+import io.spine.protodata.TypeName
+import io.spine.protodata.codegen.GeneratedDeclaration
+import io.spine.protodata.codegen.TypeConverter
+import io.spine.protodata.codegen.TypeSystem
 
-@DisplayName("`JavaTypeSystem` should")
-class JavaTypeSystemSpec {
 
-    @Test
-    fun `convert a message type name into a Java class name`() {
-        val cls = typeSystem.convertTypeName(messageTypeName)
-        cls.simpleName shouldBe messageTypeName.simpleName
-        val expectedPackage = javaPackageOption.value.unpack<StringValue>().value
-        cls.binary shouldBe expectedPackage + '.' +  messageTypeName.simpleName
+public class JavaTypeConverter(
+    private val typeSystem: TypeSystem
+) : TypeConverter<ClassName> {
+
+    override fun primaryDeclarationFor(name: TypeName): GeneratedDeclaration<ClassName> {
+        val file = typeSystem.findMessageOrEnum(name)?.second
+        check(file != null) { "Unknown type `${name.typeUrl}`." }
+        val cls = name.javaClassName(declaredIn = file)
+        return GeneratedDeclaration(cls, cls.javaFile)
+    }
+
+    @Suppress("ReturnCount")
+    public fun rejectionDeclarationFor(name: TypeName): GeneratedDeclaration<ClassName>? {
+        val declaration = typeSystem.findMessage(name) ?: return null
+        val (msg, file) = declaration
+        val fileName = file.path.value
+        if (!fileName.endsWith("rejections.proto")
+            || msg.declaredIn.isNotDefault()) {
+            return null
+        }
+        val packageName = file.javaPackage()
+        val simpleName = name.simpleName
+        val cls = ClassName(packageName, listOf(simpleName))
+        return GeneratedDeclaration(cls, cls.javaFile)
     }
 }

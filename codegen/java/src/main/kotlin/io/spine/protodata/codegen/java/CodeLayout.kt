@@ -92,7 +92,7 @@ internal fun TypeName.javaClassName(declaredIn: File): ClassName {
     return ClassName(packageName, nameElements)
 }
 
-private fun File.javaPackage() =
+internal fun File.javaPackage() =
     optionList.find("java_package", StringValue::class.java)
         ?.value
         ?: packageName

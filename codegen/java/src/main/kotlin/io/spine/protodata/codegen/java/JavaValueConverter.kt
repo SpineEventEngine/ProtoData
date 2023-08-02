@@ -26,14 +26,19 @@
 
 package io.spine.protodata.codegen.java
 
+import io.spine.protodata.Type
+import io.spine.protodata.Type.KindCase.ENUMERATION
+import io.spine.protodata.Type.KindCase.MESSAGE
+import io.spine.protodata.Type.KindCase.PRIMITIVE
 import io.spine.protodata.Value
 import io.spine.protodata.codegen.ValueConverter
 
 /**
  * A [ValueConverter] which converts values into Java expressions.
  */
+@Suppress("TooManyFunctions")
 public class JavaValueConverter(
-    private val typeSystem: JavaTypeSystem
+    private val typeConverter: JavaTypeConverter
 ) : ValueConverter<Expression>() {
 
     override fun toNull(value: Value): Expression = Null
@@ -51,7 +56,7 @@ public class JavaValueConverter(
     override fun toMessage(value: Value): Expression {
         val messageValue = value.messageValue
         val type = messageValue.type
-        val className = typeSystem.convertTypeName(type)
+        val className = typeConverter.primaryDeclarationFor(type).name
         return if (messageValue.fieldsMap.isEmpty()) {
             className.getDefaultInstance()
         } else {
@@ -66,7 +71,7 @@ public class JavaValueConverter(
     override fun toEnum(value: Value): MethodCall {
         val enumValue = value.enumValue
         val type = enumValue.type
-        val enumClassName = typeSystem.convertTypeName(type)
+        val enumClassName = typeConverter.primaryDeclarationFor(type).name
         return enumClassName.enumValue(enumValue.constNumber)
     }
 
@@ -80,12 +85,19 @@ public class JavaValueConverter(
     override fun toMap(value: Value): MethodCall {
         val firstEntry = value.mapValue.valueList.firstOrNull()
         val firstKey = firstEntry?.key
-        val keyClass = firstKey?.type?.let(typeSystem::toClass)
+        val keyClass = firstKey?.type?.toClass()
         val firstValue = firstEntry?.value
-        val valueClass = firstValue?.type?.let(typeSystem::toClass)
+        val valueClass = firstValue?.type?.toClass()
         val valuesMap = value.mapValue.valueList.associate {
             valueToCode(it.key) to valueToCode(it.value)
         }
         return mapExpression(valuesMap, keyClass, valueClass)
+    }
+
+    private fun Type.toClass(): ClassName = when (kindCase) {
+        MESSAGE -> typeConverter.primaryDeclarationFor(message).name
+        ENUMERATION -> typeConverter.primaryDeclarationFor(enumeration).name
+        PRIMITIVE -> primitive.toJavaClass()
+        else -> error("Expected a valid type.")
     }
 }
