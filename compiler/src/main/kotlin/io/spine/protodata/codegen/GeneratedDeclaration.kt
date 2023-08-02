@@ -28,7 +28,15 @@ package io.spine.protodata.codegen
 
 import java.nio.file.Path
 
-public data class GeneratedDeclaration<out T: TypeNameElement>(
+/**
+ * A generated type declaration.
+ *
+ * @property name the name of the generated type.
+ * @property path the path to the file where the declaration is placed.
+ *
+ * @param T the language-specific type of the type name element.
+ */
+public data class GeneratedDeclaration<out T : TypeNameElement>(
     public val name: T,
     public val path: Path
 )

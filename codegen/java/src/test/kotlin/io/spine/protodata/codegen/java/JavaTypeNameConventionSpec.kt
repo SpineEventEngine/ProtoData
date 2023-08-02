@@ -28,7 +28,6 @@ package io.spine.protodata.codegen.java
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.codegen.java.given.TypesTestEnv.enumType
 import io.spine.protodata.codegen.java.given.TypesTestEnv.enumTypeName
 import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
 import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
@@ -36,12 +35,12 @@ import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`JavaTypeConverter` should")
-class JavaTypeConverterSpec {
+@DisplayName("`JavaTypeNameConvention` should")
+class JavaTypeNameConventionSpec {
 
     @Test
     fun `convert a message type name into a Java class name`() {
-        val converter = JavaTypeConverter(typeSystem)
+        val converter = JavaTypeNameConvention(typeSystem)
         val declaration = converter.primaryDeclarationFor(messageTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
@@ -51,7 +50,7 @@ class JavaTypeConverterSpec {
 
     @Test
     fun `convert an enum type name into a Java class name`() {
-        val converter = JavaTypeConverter(typeSystem)
+        val converter = JavaTypeNameConvention(typeSystem)
         val declaration = converter.primaryDeclarationFor(enumTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration

@@ -29,13 +29,15 @@ package io.spine.protodata.codegen.java
 import io.spine.protobuf.isNotDefault
 import io.spine.protodata.TypeName
 import io.spine.protodata.codegen.GeneratedDeclaration
-import io.spine.protodata.codegen.TypeConverter
+import io.spine.protodata.codegen.TypeNameConvention
 import io.spine.protodata.codegen.TypeSystem
 
-
-public class JavaTypeConverter(
+/**
+ * A [TypeNameConvention] by which Java [ClassName]s are generated from Proto type names.
+ */
+public class JavaTypeNameConvention(
     private val typeSystem: TypeSystem
-) : TypeConverter<ClassName> {
+) : TypeNameConvention<ClassName> {
 
     override fun primaryDeclarationFor(name: TypeName): GeneratedDeclaration<ClassName> {
         val file = typeSystem.findMessageOrEnum(name)?.second
@@ -44,6 +46,10 @@ public class JavaTypeConverter(
         return GeneratedDeclaration(cls, cls.javaFile)
     }
 
+    /**
+     * Obtains the declaration of a rejection throwable generated from a message
+     * with the given [name].
+     */
     @Suppress("ReturnCount")
     public fun rejectionDeclarationFor(name: TypeName): GeneratedDeclaration<ClassName>? {
         val declaration = typeSystem.findMessage(name) ?: return null

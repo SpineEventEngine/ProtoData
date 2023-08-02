@@ -28,8 +28,13 @@ package io.spine.protodata.codegen
 
 import io.spine.protodata.TypeName
 
+/**
+ * The scheme by which the Protobuf type names are converted into language-specific type names.
+ */
+public interface TypeNameConvention<out T: TypeNameElement> {
 
-public interface TypeConverter<out T: TypeNameElement> {
-
+    /**
+     * Given a Protobuf type name, obtains the primary declaration generated from this Proto type.
+     */
     public fun primaryDeclarationFor(name: TypeName): GeneratedDeclaration<T>
 }
