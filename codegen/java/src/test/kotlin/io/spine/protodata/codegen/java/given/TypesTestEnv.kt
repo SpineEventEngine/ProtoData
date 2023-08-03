@@ -28,6 +28,7 @@ package io.spine.protodata.codegen.java.given
 
 import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_OUTER_CLASSNAME_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_PACKAGE_FIELD_NUMBER
 import com.google.protobuf.Empty
 import com.google.protobuf.StringValue
@@ -51,6 +52,7 @@ import io.spine.protodata.field as newField
 object TypesTestEnv {
 
     val filePath = filePath { value = "acme/example/foo.proto" }
+    val rejectionsFilePath = filePath { value = "acme/example/cartoon_rejections.proto" }
     val multipleFilesOption = option {
         name = "java_multiple_files"
         number = JAVA_MULTIPLE_FILES_FIELD_NUMBER
@@ -63,15 +65,32 @@ object TypesTestEnv {
         type = type { primitive = TYPE_STRING }
         value = StringValue.of("ua.acme.example").pack()
     }
+    val outerClassnameOption = option {
+        name = "java_outer_classname"
+        number = JAVA_OUTER_CLASSNAME_FIELD_NUMBER
+        type = type { primitive = TYPE_STRING }
+        value = StringValue.of("CartoonRejections").pack()
+    }
     val protoFile = file {
         path = filePath
         packageName = "acme.example"
         option.add(multipleFilesOption)
         option.add(javaPackageOption)
     }
+    val rejectionsProtoFile = file {
+        path = rejectionsFilePath
+        packageName = "acme.example"
+        option.add(javaPackageOption)
+        option.add(outerClassnameOption)
+    }
     val messageTypeName = typeName {
         packageName = protoFile.packageName
         simpleName = "Foo"
+        typeUrlPrefix = "type.spine.io"
+    }
+    val rejectionTypeName = typeName {
+        packageName = rejectionsProtoFile.packageName
+        simpleName = "CannotDrawCartoon"
         typeUrlPrefix = "type.spine.io"
     }
     val stringField = newField {
@@ -79,10 +98,20 @@ object TypesTestEnv {
         name = fieldName { value = "bar" }
         single = Empty.getDefaultInstance()
     }
+    val idField = newField {
+        type = type { primitive = TYPE_STRING }
+        name = fieldName { value = "uuid" }
+        single = Empty.getDefaultInstance()
+    }
     val messageType = messageType {
         file = filePath
         name = messageTypeName
         field.add(stringField)
+    }
+    val rejectionType = messageType {
+        file = rejectionsFilePath
+        name = rejectionTypeName
+        field.add(idField)
     }
     val enumTypeName = typeName {
         packageName = protoFile.packageName
@@ -104,12 +133,17 @@ object TypesTestEnv {
         constant.add(enumConstant)
     }
     val typeSystem = run {
-        val file = protobufSourceFile {
+        val definitions = protobufSourceFile {
             filePath = TypesTestEnv.filePath
             file = protoFile
             type.put(messageTypeName.typeUrl, messageType)
             enumType.put(enumTypeName.typeUrl, TypesTestEnv.enumType)
         }
-        TypeSystem(setOf(file))
+        val rejections = protobufSourceFile {
+            filePath = rejectionsFilePath
+            file = rejectionsProtoFile
+            type.put(rejectionTypeName.typeUrl, rejectionType)
+        }
+        TypeSystem(setOf(definitions, rejections))
     }
 }

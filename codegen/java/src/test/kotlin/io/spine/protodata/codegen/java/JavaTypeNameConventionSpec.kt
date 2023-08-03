@@ -30,6 +30,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.protodata.codegen.java.given.TypesTestEnv.enumTypeName
 import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
+import io.spine.protodata.codegen.java.given.TypesTestEnv.rejectionTypeName
 import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
@@ -56,5 +57,30 @@ class JavaTypeNameConventionSpec {
         val (cls, path) = declaration
         cls.binary shouldBe "ua.acme.example.Kind"
         path shouldBe Path("ua/acme/example/Kind.java")
+    }
+
+    @Test
+    fun `convert a rejection type name into a rejection throwable class`() {
+        val converter = JavaTypeNameConvention(typeSystem)
+
+        val message = converter.primaryDeclarationFor(rejectionTypeName)
+        message shouldNotBe null
+        val throwable = converter.rejectionDeclarationFor(rejectionTypeName)
+        throwable shouldNotBe null
+
+        val (messageClass, messagePath) = message
+        messageClass.binary shouldBe "ua.acme.example.CartoonRejections\$CannotDrawCartoon"
+        messagePath shouldBe Path("ua/acme/example/CartoonRejections.java")
+
+        val (throwableClass, throwablePath) = throwable!!
+        throwableClass.binary shouldBe "ua.acme.example.CannotDrawCartoon"
+        throwablePath shouldBe Path("ua/acme/example/CannotDrawCartoon.java")
+    }
+
+    @Test
+    fun `not convert a regular message name to a rejection throwables class`() {
+        val converter = JavaTypeNameConvention(typeSystem)
+        val declaration = converter.rejectionDeclarationFor(messageTypeName)
+        declaration shouldBe null
     }
 }
