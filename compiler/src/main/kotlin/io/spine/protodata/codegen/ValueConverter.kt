@@ -26,6 +26,7 @@
 
 package io.spine.protodata.codegen
 
+import io.spine.protodata.Type
 import io.spine.protodata.Value
 import io.spine.protodata.Value.KindCase.BOOL_VALUE
 import io.spine.protodata.Value.KindCase.BYTES_VALUE
@@ -51,7 +52,7 @@ public abstract class ValueConverter<V: CodeElement> {
      */
     public fun valueToCode(value: Value): V =
         when (value.kindCase) {
-            NULL_VALUE -> toNull(value)
+            NULL_VALUE -> toNull(value.type)
             BOOL_VALUE -> toBool(value)
             DOUBLE_VALUE -> toDouble(value)
             INT_VALUE -> toInt(value)
@@ -67,7 +68,7 @@ public abstract class ValueConverter<V: CodeElement> {
     /**
      * Converts the given `null` value into a language-specific `null` representation.
      */
-    protected abstract fun toNull(value: Value): V
+    protected abstract fun toNull(type: Type): V
 
     /**
      * Converts the given `bool` value into a language-specific `bool` representation.

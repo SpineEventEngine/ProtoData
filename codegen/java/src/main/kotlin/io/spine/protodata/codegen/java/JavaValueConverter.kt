@@ -41,7 +41,7 @@ public class JavaValueConverter(
     private val typeConverter: JavaTypeNameConvention
 ) : ValueConverter<Expression>() {
 
-    override fun toNull(value: Value): Expression = Null
+    override fun toNull(type: Type): Expression = Null
 
     override fun toBool(value: Value): Expression = Literal(value.boolValue)
 
