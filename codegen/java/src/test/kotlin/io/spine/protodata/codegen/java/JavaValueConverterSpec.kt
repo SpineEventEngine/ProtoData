@@ -26,9 +26,9 @@
 
 package io.spine.protodata.codegen.java
 
-import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.ByteString
 import com.google.protobuf.ByteString.copyFrom
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.Value
 import io.spine.protodata.codegen.java.given.TypesTestEnv.enumTypeName
 import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
@@ -107,7 +107,6 @@ class JavaValueConverterSpec {
 
     private fun checkCode(value: Value, expectedCode: String) {
         val expression = converter.valueToCode(value)
-        assertThat(expression.toCode())
-            .isEqualTo(expectedCode)
+        expression.toCode() shouldBe expectedCode
     }
 }
