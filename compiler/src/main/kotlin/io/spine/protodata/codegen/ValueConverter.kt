@@ -66,7 +66,7 @@ public abstract class ValueConverter<V: CodeElement> {
         }
 
     /**
-     * Converts the given `null` value into a language-specific `null` representation.
+     * Converts the `null` value of the given type into a language-specific `null` representation.
      */
     protected abstract fun toNull(type: Type): V
 
