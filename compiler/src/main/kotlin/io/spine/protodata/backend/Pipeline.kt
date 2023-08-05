@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,7 +155,7 @@ public class Pipeline(
 
     private fun renderSources(codegenContext: BoundedContext) {
         renderers.forEach { r ->
-            r.protoDataContext = codegenContext
+            r.injectContext(codegenContext)
             sources.forEach(r::renderSources)
         }
         sources.forEach { it.write() }

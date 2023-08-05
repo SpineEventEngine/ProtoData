@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 
 package io.spine.protodata.renderer
 
+import io.spine.annotation.Internal
 import io.spine.base.EntityState
 import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.server.BoundedContext
@@ -44,7 +45,7 @@ protected constructor(
     private val supportedLanguage: Language
 ) : ConfiguredQuerying {
 
-    public lateinit var protoDataContext: BoundedContext
+    private lateinit var protoDataContext: BoundedContext
 
     /**
      * Performs required changes to the given source set.
@@ -74,4 +75,21 @@ protected constructor(
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
 
     final override fun configIsPresent(): Boolean = super.configIsPresent()
+
+    /**
+     * Injects the context of the ProtoData application.
+     *
+     * This method is `public` but is essentially `internal` to ProtoData SDK.
+     * It is annotated `@Internal` to prevent its accidental use by the users of the SDK.
+     *
+     * This method must be called by ProtoData only once.
+     * Repeat calls will result in `IllegalStateException`.
+     */
+    @Internal
+    public fun injectContext(protoDataContext: BoundedContext) {
+        check(!this::protoDataContext.isInitialized) {
+            "The ProtoData context is already assigned: `${this.protoDataContext.name().value}`."
+        }
+        this.protoDataContext = protoDataContext
+    }
 }
