@@ -60,6 +60,6 @@ public abstract class JavaRenderer : Renderer(Java) {
 
     private fun findFile(path: FilePath): File =
         select(ProtobufSourceFile::class.java)
-            .withId(path)
-            .orElseThrow { IllegalStateException("Unknown file `${path.value}`.") }.file
+            .findById(path)!!
+            .file
 }

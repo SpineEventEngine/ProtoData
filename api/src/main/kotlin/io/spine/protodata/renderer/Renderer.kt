@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ package io.spine.protodata.renderer
 import io.spine.base.EntityState
 import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.server.BoundedContext
+import io.spine.server.ContextAware
 import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
 
@@ -42,9 +43,9 @@ import io.spine.tools.code.Language
 public abstract class Renderer
 protected constructor(
     private val supportedLanguage: Language
-) : ConfiguredQuerying {
+) : ConfiguredQuerying, ContextAware {
 
-    public lateinit var protoDataContext: BoundedContext
+    private lateinit var protoDataContext: BoundedContext
 
     /**
      * Performs required changes to the given source set.
@@ -74,4 +75,28 @@ protected constructor(
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
 
     final override fun configIsPresent(): Boolean = super.configIsPresent()
+
+    /**
+     * Injects the context of the ProtoData application.
+     *
+     * This method is `public` but is essentially `internal` to ProtoData SDK.
+     *
+     * @see 
+     */
+    public override fun registerWith(protoDataContext: BoundedContext) {
+        if (isRegistered) {
+            check(this.protoDataContext == protoDataContext) {
+                "Unable to register the renderer `$this` with" +
+                        " `${protoDataContext.name().value}`." +
+                        " The renderer is already registered with" +
+                        " `${this.protoDataContext.name().value}`."
+            }
+            return
+        }
+        this.protoDataContext = protoDataContext
+    }
+
+    override fun isRegistered(): Boolean {
+        return this::protoDataContext.isInitialized
+    }
 }
