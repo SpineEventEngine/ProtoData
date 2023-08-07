@@ -37,6 +37,16 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import java.io.File.pathSeparator
 
+public object ModuleParam : Parameter(
+    name = "--module",
+    shortName = "-m",
+    help = """
+        The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
+        There can be multiple providers. To pass more than one value, type:
+           `<...> ${dash.p} com.foo.MyEntitiesPlugin ${dash.p} com.foo.OtherEntitiesPlugin`.
+        """
+)
+
 /**
  * The command-line parameter for specifying ProtoData plugins used in
  * the code generation process.

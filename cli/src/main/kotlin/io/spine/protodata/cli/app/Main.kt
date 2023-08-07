@@ -31,6 +31,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.options.NullableOption
+import com.github.ajalt.clikt.parameters.options.deprecated
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
@@ -52,6 +53,7 @@ import io.spine.protodata.cli.ConfigFormatParam
 import io.spine.protodata.cli.ConfigValueParam
 import io.spine.protodata.cli.DebugLoggingParam
 import io.spine.protodata.cli.InfoLoggingParam
+import io.spine.protodata.cli.ModuleParam
 import io.spine.protodata.cli.Parameter
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RendererParam
@@ -118,11 +120,18 @@ internal class Run(version: String) : CliktCommand(
 
     private fun NullableOption<Path, Path>.splitPaths() = split(pathSeparator)
 
+    private val modules: List<String>
+            by ModuleParam.toOption().multiple()
+
     private val plugins: List<String>
-            by PluginParam.toOption().multiple()
+            by PluginParam.toOption().multiple().deprecated(
+                "Supplying plugins separately is not recommended. Use `--module` instead."
+            )
 
     private val renderers: List<String>
-            by RendererParam.toOption().multiple(default = listOf())
+            by RendererParam.toOption().multiple(default = listOf()).deprecated(
+                "Supplying renderers separately is not recommended. Use `--module` instead."
+            )
 
     private val codegenRequestFile: File
             by RequestParam.toOption().file(
@@ -202,8 +211,7 @@ internal class Run(version: String) : CliktCommand(
 
         logger.atDebug().log { """
             Starting code generation with the following arguments:
-              - plugins: ${plugins.joinToString()}
-              - renderers: ${renderers.joinToString()}
+              - modules: ${plugins.joinToString()}
               - request
                   - files to generate: ${request.fileToGenerateList.joinToString()}
                   - parameter: ${request.parameter}

@@ -50,6 +50,10 @@ public class ImplicitModule(
 ) : Module<TypeNameElement> {
 
     override val nameConventions: Set<TypeNameConvention<TypeNameElement>> = emptySet()
+
+    override fun toString(): String {
+        return "${ImplicitModule::class.simpleName}(plugins=$plugins, renderers=$renderers)"
+    }
 }
 
 public fun <N : TypeNameElement> Module<N>.applyPlugins(codeGenContext: BoundedContextBuilder) {
