@@ -63,7 +63,7 @@ public fun <N : TypeNameElement> Module<N>.render(
     sources: Iterable<SourceFileSet>
 ) {
     renderers.forEach { r ->
-        r.protoDataContext = codegenContext
+        r.registerWith(codegenContext)
         sources.forEach(r::renderSources)
     }
 }
