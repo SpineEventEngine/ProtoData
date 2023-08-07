@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.ProtoData
 import io.spine.internal.dependency.Truth
 import io.spine.internal.dependency.Validation
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
@@ -70,10 +71,11 @@ subprojects {
                     Spine.base,
                     Spine.toolBase,
                     Validation.runtime,
-                    Spine.logging,
+                    Spine.Logging.lib,
+                    Spine.Logging.backend,
                     Spine.reflect,
-                    "io.spine.protodata:compiler:$protoDataVersion",
-                    "io.spine.protodata:codegen-java:$protoDataVersion"
+                    ProtoData.compiler,
+                    ProtoData.codegenJava,
                 )
             }
         }

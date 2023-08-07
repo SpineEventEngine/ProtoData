@@ -44,10 +44,8 @@ public class DeletingRenderer : Renderer(Java) {
     override fun render(sources: SourceFileSet) {
         val types = select<DeletedType>().all()
         types.forEach {
-            val source = select<ProtobufSourceFile>()
-                .withId(it.type.file)
-                .orElseThrow(::IllegalStateException)
-            val javaPackage = source.file.optionList
+            val source = select<ProtobufSourceFile>().findById(it.type.file)
+            val javaPackage = source!!.file.optionList
                 .find("java_package", StringValue::class.java)!!.value
             val simpleName = it.type.name.simpleName
             val javaFileDir = Path(javaPackage.replace('.', '/'))
