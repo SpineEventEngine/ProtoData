@@ -38,8 +38,8 @@ import io.spine.protodata.Field.CardinalityCase.LIST
 import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
-import io.spine.protodata.codegen.CodeElement
-import io.spine.protodata.codegen.TypeNameElement
+import io.spine.protodata.type.CodeElement
+import io.spine.protodata.type.TypeNameElement
 import io.spine.string.camelCase
 import java.nio.file.Path
 import kotlin.io.path.Path

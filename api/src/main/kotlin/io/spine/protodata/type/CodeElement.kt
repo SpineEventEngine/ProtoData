@@ -24,19 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen
-
-import java.nio.file.Path
+package io.spine.protodata.type
 
 /**
- * A generated type declaration.
+ * A piece of code.
  *
- * @property name the name of the generated type.
- * @property path the path to the file where the declaration is placed.
- *
- * @param T the language-specific type of the type name element.
+ * This is an general interface for composable language-specific code-building elements.
  */
-public data class GeneratedDeclaration<out T : TypeNameElement>(
-    public val name: T,
-    public val path: Path
-)
+public interface CodeElement {
+
+    /**
+     * Obtains the plain text representation of this code element.
+     */
+    public fun toCode(): String
+}

@@ -28,9 +28,9 @@ package io.spine.protodata.codegen.java
 
 import io.spine.protobuf.isNotDefault
 import io.spine.protodata.TypeName
-import io.spine.protodata.codegen.GeneratedDeclaration
-import io.spine.protodata.codegen.TypeNameConvention
-import io.spine.protodata.codegen.TypeSystem
+import io.spine.protodata.type.GeneratedDeclaration
+import io.spine.protodata.type.TypeNameConvention
+import io.spine.protodata.type.TypeSystem
 
 /**
  * A [TypeNameConvention] by which Java [ClassName]s are generated from Proto type names.

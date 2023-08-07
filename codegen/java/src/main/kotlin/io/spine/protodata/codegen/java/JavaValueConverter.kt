@@ -31,7 +31,7 @@ import io.spine.protodata.Type.KindCase.ENUMERATION
 import io.spine.protodata.Type.KindCase.MESSAGE
 import io.spine.protodata.Type.KindCase.PRIMITIVE
 import io.spine.protodata.Value
-import io.spine.protodata.codegen.ValueConverter
+import io.spine.protodata.type.ValueConverter
 
 /**
  * A [ValueConverter] which converts values into Java expressions.

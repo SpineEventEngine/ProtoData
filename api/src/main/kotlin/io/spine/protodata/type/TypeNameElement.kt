@@ -24,6 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen
+package io.spine.protodata.type
 
 public interface TypeNameElement : CodeElement

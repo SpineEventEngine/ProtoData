@@ -35,7 +35,7 @@ import com.google.protobuf.StringValue
 import io.spine.protobuf.pack
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.codegen.TypeSystem
+import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.constantName
 import io.spine.protodata.enumConstant
 import io.spine.protodata.fieldName
