@@ -26,10 +26,10 @@
 
 package io.spine.protodata.renderer
 
-import io.spine.annotation.Internal
 import io.spine.base.EntityState
 import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.server.BoundedContext
+import io.spine.server.ContextAware
 import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
 
@@ -43,7 +43,7 @@ import io.spine.tools.code.Language
 public abstract class Renderer
 protected constructor(
     private val supportedLanguage: Language
-) : ConfiguredQuerying {
+) : ConfiguredQuerying, ContextAware {
 
     private lateinit var protoDataContext: BoundedContext
 
@@ -80,16 +80,23 @@ protected constructor(
      * Injects the context of the ProtoData application.
      *
      * This method is `public` but is essentially `internal` to ProtoData SDK.
-     * It is annotated `@Internal` to prevent its accidental use by the users of the SDK.
      *
-     * This method must be called by ProtoData only once.
-     * Repeat calls will result in `IllegalStateException`.
+     * @see 
      */
-    @Internal
-    public fun injectContext(protoDataContext: BoundedContext) {
-        check(!this::protoDataContext.isInitialized) {
-            "The ProtoData context is already assigned: `${this.protoDataContext.name().value}`."
+    public override fun registerWith(protoDataContext: BoundedContext) {
+        if (isRegistered) {
+            check(this.protoDataContext == protoDataContext) {
+                "Unable to register the renderer `$this` with" +
+                        " `${protoDataContext.name().value}`." +
+                        " The renderer is already registered with" +
+                        " `${this.protoDataContext.name().value}`."
+            }
+            return
         }
         this.protoDataContext = protoDataContext
+    }
+
+    override fun isRegistered(): Boolean {
+        return this::protoDataContext.isInitialized
     }
 }

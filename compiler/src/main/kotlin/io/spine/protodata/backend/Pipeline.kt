@@ -155,7 +155,7 @@ public class Pipeline(
 
     private fun renderSources(codegenContext: BoundedContext) {
         renderers.forEach { r ->
-            r.injectContext(codegenContext)
+            r.registerWith(codegenContext)
             sources.forEach(r::renderSources)
         }
         sources.forEach { it.write() }
