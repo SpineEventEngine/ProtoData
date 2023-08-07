@@ -29,7 +29,7 @@ package io.spine.protodata.type
 /**
  * A piece of code.
  *
- * This is an general interface for composable language-specific code-building elements.
+ * This is a general interface for composable language-specific code-building elements.
  */
 public interface CodeElement {
 
