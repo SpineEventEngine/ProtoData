@@ -26,11 +26,11 @@
 
 package io.spine.protodata.test
 
-import io.spine.tools.code.CommonLanguages.Java
 import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.query.select
+import io.spine.tools.code.Java
 import java.io.File
 import kotlin.io.path.Path
 

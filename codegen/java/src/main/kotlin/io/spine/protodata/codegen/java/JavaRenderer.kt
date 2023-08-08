@@ -31,7 +31,7 @@ import io.spine.protodata.FilePath
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
 import io.spine.protodata.renderer.Renderer
-import io.spine.tools.code.CommonLanguages.Java
+import io.spine.tools.code.Java
 import java.nio.file.Path
 
 /**

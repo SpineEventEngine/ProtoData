@@ -26,11 +26,11 @@
 
 package io.spine.protodata.test
 
-import io.spine.tools.code.CommonLanguages.any
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.tools.code.AnyLanguage
 
-public class NoOpRenderer : Renderer(any) {
+public class NoOpRenderer : Renderer(AnyLanguage.willDo()) {
 
     override fun render(sources: SourceFileSet) {
         // Do nothing.

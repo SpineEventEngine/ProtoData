@@ -28,7 +28,7 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.tools.code.CommonLanguages.Java
+import io.spine.tools.code.Java
 
 /**
  * A renderer that adds the `com.acme.ItsOkToIgnoreReturnValue` annotation to all public non-void

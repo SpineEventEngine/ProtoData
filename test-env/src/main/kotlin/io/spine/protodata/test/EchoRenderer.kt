@@ -32,7 +32,7 @@ import io.spine.protodata.config.configAs
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.time.toInstant
-import io.spine.tools.code.CommonLanguages.any
+import io.spine.tools.code.AnyLanguage
 import kotlin.io.path.Path
 
 public const val ECHO_FILE: String = "name.txt"
@@ -40,7 +40,7 @@ public const val ECHO_FILE: String = "name.txt"
 /**
  * A renderer that writes the contents of its Java-class-style configuration into a file.
  */
-public class EchoRenderer : Renderer(any) {
+public class EchoRenderer : Renderer(AnyLanguage.willDo()) {
 
     override fun render(sources: SourceFileSet) {
         val name = configAs<Name>()
@@ -51,7 +51,7 @@ public class EchoRenderer : Renderer(any) {
 /**
  * A renderer that writes the contents of its Protobuf-style configuration into a file.
  */
-public class ProtoEchoRenderer : Renderer(any) {
+public class ProtoEchoRenderer : Renderer(AnyLanguage.willDo()) {
 
     override fun render(sources: SourceFileSet) {
         val echo = configAs<Echo>()
@@ -73,7 +73,7 @@ public class ProtoEchoRenderer : Renderer(any) {
 /**
  * A renderer that writes the contents of its plain string configuration into a file.
  */
-public class PlainStringRenderer : Renderer(any) {
+public class PlainStringRenderer : Renderer(AnyLanguage.willDo()) {
 
     override fun render(sources: SourceFileSet) {
         val echo = configAs<String>()

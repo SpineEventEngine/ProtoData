@@ -30,7 +30,7 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.test.AnnotationInsertionPoint.BEFORE_RETURN_TYPE_METHOD_FOO
 import io.spine.protodata.test.AnnotationInsertionPoint.IMPORT
-import io.spine.tools.code.CommonLanguages.Java
+import io.spine.tools.code.Java
 import kotlin.io.path.Path
 
 /**
