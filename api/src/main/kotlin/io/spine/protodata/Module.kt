@@ -35,6 +35,9 @@ import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 
+/**
+ * A set of components which sets up ProtoData to generate code for a specific purpose.
+ */
 public interface Module<out N : TypeNameElement> {
 
     public val renderers: List<Renderer>
@@ -44,6 +47,10 @@ public interface Module<out N : TypeNameElement> {
     public val nameConventions: Set<TypeNameConvention<N>>
 }
 
+/**
+ * This is an implicit synthetic module used for compatibility with plugins and renderers that are
+ * not joined into semantically meaningful modules.
+ */
 public class ImplicitModule(
     override val plugins: List<Plugin>,
     override val renderers: List<Renderer>

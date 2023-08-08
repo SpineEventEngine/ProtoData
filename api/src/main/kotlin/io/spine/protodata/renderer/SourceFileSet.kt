@@ -29,6 +29,8 @@ package io.spine.protodata.renderer
 import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
+import io.spine.protodata.TypeName
+import io.spine.protodata.type.TypeNameConvention
 import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.util.theOnly
@@ -195,6 +197,10 @@ internal constructor(
     public fun findFile(path: Path): Optional<SourceFile> =
         Optional.ofNullable(find(path))
 
+    public fun fileFor(typeName: TypeName): FileLookup = FileLookup(this, typeName)
+
+    public fun createFileFor(typeName: TypeName): FileCreation = FileCreation(this, typeName)
+
     /**
      * Creates a new source file at the given [path] and contains the given [code].
      */
@@ -315,4 +321,33 @@ private fun checkTarget(targetRoot: Path) {
             "${ls}."
         }
     }
+}
+
+public class FileLookup(
+    private val sources: SourceFileSet,
+    private val name: TypeName
+) {
+    public fun namedUsing(convention: TypeNameConvention<*>): SourceFile? {
+        val declaration = convention.primaryDeclarationFor(name)
+        val path = declaration?.path
+        return path?.let { probablePath -> sources.find(path) }
+    }
+}
+
+public class FileCreation(
+    private val sources: SourceFileSet,
+    private val name: TypeName
+) {
+    public fun namedUsing(convention: TypeNameConvention<*>): SourceFile? {
+        val declaration = convention.primaryDeclarationFor(name)
+        val path = declaration?.path
+        return path?.let { probablePath -> sources.find(path) }
+    }
+}
+
+public class FileCreationWithPath(
+    private val sources: SourceFileSet,
+    private val file: Path
+) {
+    public fun withCode(code: String): SourceFile = sources.createFile(file, code)
 }

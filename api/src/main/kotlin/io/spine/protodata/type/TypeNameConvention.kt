@@ -36,5 +36,5 @@ public interface TypeNameConvention<out T: TypeNameElement> {
     /**
      * Given a Protobuf type name, obtains the primary declaration generated from this Proto type.
      */
-    public fun primaryDeclarationFor(name: TypeName): GeneratedDeclaration<T>
+    public fun primaryDeclarationFor(name: TypeName): GeneratedDeclaration<T>?
 }
