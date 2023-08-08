@@ -30,7 +30,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
 import io.spine.protodata.TypeName
-import io.spine.protodata.type.TypeNameConvention
+import io.spine.protodata.type.TypeConvention
 import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.util.theOnly
@@ -327,8 +327,8 @@ public class FileLookup(
     private val sources: SourceFileSet,
     private val name: TypeName
 ) {
-    public fun namedUsing(convention: TypeNameConvention<*>): SourceFile? {
-        val declaration = convention.primaryDeclarationFor(name)
+    public fun namedUsing(convention: TypeConvention<*>): SourceFile? {
+        val declaration = convention.declarationFor(name)
         val path = declaration?.path
         return path?.let { probablePath -> sources.find(path) }
     }
@@ -338,8 +338,8 @@ public class FileCreation(
     private val sources: SourceFileSet,
     private val name: TypeName
 ) {
-    public fun namedUsing(convention: TypeNameConvention<*>): SourceFile? {
-        val declaration = convention.primaryDeclarationFor(name)
+    public fun namedUsing(convention: TypeConvention<*>): SourceFile? {
+        val declaration = convention.declarationFor(name)
         val path = declaration?.path
         return path?.let { probablePath -> sources.find(path) }
     }

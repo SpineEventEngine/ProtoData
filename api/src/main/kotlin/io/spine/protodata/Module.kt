@@ -30,7 +30,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.TypeNameConvention
+import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
@@ -44,7 +44,7 @@ public interface Module<out N : TypeNameElement> {
 
     public val plugins: List<Plugin>
 
-    public val nameConventions: Set<TypeNameConvention<N>>
+    public val nameConventions: Set<TypeConvention<N>>
 }
 
 /**
@@ -56,7 +56,7 @@ public class ImplicitModule(
     override val renderers: List<Renderer>
 ) : Module<TypeNameElement> {
 
-    override val nameConventions: Set<TypeNameConvention<TypeNameElement>> = emptySet()
+    override val nameConventions: Set<TypeConvention<TypeNameElement>> = emptySet()
 
     override fun toString(): String {
         return "${ImplicitModule::class.simpleName}(plugins=$plugins, renderers=$renderers)"

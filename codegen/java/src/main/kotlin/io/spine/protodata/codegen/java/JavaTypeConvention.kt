@@ -29,17 +29,17 @@ package io.spine.protodata.codegen.java
 import io.spine.protobuf.isNotDefault
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.GeneratedDeclaration
-import io.spine.protodata.type.TypeNameConvention
+import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeSystem
 
 /**
- * A [TypeNameConvention] by which Java [ClassName]s are generated from Proto type names.
+ * A [TypeConvention] by which Java [ClassName]s are generated from Proto type names.
  */
-public class JavaTypeNameConvention(
+public class JavaTypeConvention(
     private val typeSystem: TypeSystem
-) : TypeNameConvention<ClassName> {
+) : TypeConvention<ClassName> {
 
-    override fun primaryDeclarationFor(name: TypeName): GeneratedDeclaration<ClassName> {
+    override fun declarationFor(name: TypeName): GeneratedDeclaration<ClassName> {
         val file = typeSystem.findMessageOrEnum(name)?.second
         check(file != null) { "Unknown type `${name.typeUrl}`." }
         val cls = name.javaClassName(declaredIn = file)

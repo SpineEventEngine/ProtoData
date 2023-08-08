@@ -36,13 +36,13 @@ import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`JavaTypeNameConvention` should")
-class JavaTypeNameConventionSpec {
+@DisplayName("`JavaTypeConvention` should")
+class JavaTypeConventionSpec {
 
     @Test
     fun `convert a message type name into a Java class name`() {
-        val converter = JavaTypeNameConvention(typeSystem)
-        val declaration = converter.primaryDeclarationFor(messageTypeName)
+        val converter = JavaTypeConvention(typeSystem)
+        val declaration = converter.declarationFor(messageTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
         cls.binary shouldBe "ua.acme.example.Foo"
@@ -51,8 +51,8 @@ class JavaTypeNameConventionSpec {
 
     @Test
     fun `convert an enum type name into a Java class name`() {
-        val converter = JavaTypeNameConvention(typeSystem)
-        val declaration = converter.primaryDeclarationFor(enumTypeName)
+        val converter = JavaTypeConvention(typeSystem)
+        val declaration = converter.declarationFor(enumTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
         cls.binary shouldBe "ua.acme.example.Kind"
@@ -61,9 +61,9 @@ class JavaTypeNameConventionSpec {
 
     @Test
     fun `convert a rejection type name into a rejection throwable class`() {
-        val converter = JavaTypeNameConvention(typeSystem)
+        val converter = JavaTypeConvention(typeSystem)
 
-        val message = converter.primaryDeclarationFor(rejectionTypeName)
+        val message = converter.declarationFor(rejectionTypeName)
         message shouldNotBe null
         val throwable = converter.rejectionDeclarationFor(rejectionTypeName)
         throwable shouldNotBe null
@@ -79,7 +79,7 @@ class JavaTypeNameConventionSpec {
 
     @Test
     fun `not convert a regular message name to a rejection throwables class`() {
-        val converter = JavaTypeNameConvention(typeSystem)
+        val converter = JavaTypeConvention(typeSystem)
         val declaration = converter.rejectionDeclarationFor(messageTypeName)
         declaration shouldBe null
     }

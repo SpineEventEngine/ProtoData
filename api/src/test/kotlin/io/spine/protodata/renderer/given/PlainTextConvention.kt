@@ -28,12 +28,12 @@ package io.spine.protodata.renderer.given
 
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.GeneratedDeclaration
-import io.spine.protodata.type.TypeNameConvention
+import io.spine.protodata.type.TypeConvention
 import kotlin.io.path.Path
 
-object PlainTextConvention : TypeNameConvention<PlainTextName> {
+object PlainTextConvention : TypeConvention<PlainTextName> {
 
-    override fun primaryDeclarationFor(name: TypeName): GeneratedDeclaration<PlainTextName>? {
+    override fun declarationFor(name: TypeName): GeneratedDeclaration<PlainTextName>? {
         val generatedName = PlainTextName(name.simpleName)
         val packageDir = name.packageName.replace('.', '/')
         return GeneratedDeclaration(
