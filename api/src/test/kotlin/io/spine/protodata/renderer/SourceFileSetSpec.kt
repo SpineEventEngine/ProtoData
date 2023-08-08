@@ -28,6 +28,11 @@ package io.spine.protodata.renderer
 
 import io.kotest.matchers.optional.shouldBePresent
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.spine.protodata.renderer.given.PlainTextConvention
+import io.spine.protodata.type.GeneratedDeclaration
+import io.spine.protodata.type.TypeNameConvention
+import io.spine.protodata.typeName
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.Path
@@ -80,8 +85,27 @@ class SourceFileSetSpec {
     }
 
     @Test
+    fun `find existing file by naming convention`() {
+        val found = set.fileFor(typeName {
+            packageName = "pkg.example"
+            simpleName = "Foo"
+        }).namedUsing(PlainTextConvention)
+        found shouldNotBe null
+        found!!.relativePath shouldBe existingSourceFiles[0]
+    }
+
+    @Test
     fun `not find a non-existing file`() {
         val found = set.find(Path("non/existing/file.txt"))
+        found shouldBe null
+    }
+
+    @Test
+    fun `not find a non-existing by naming convention`() {
+        val found = set.fileFor(typeName {
+            packageName = "pkg.example.foobar"
+            simpleName = "IamNot"
+        }).namedUsing(PlainTextConvention)
         found shouldBe null
     }
 

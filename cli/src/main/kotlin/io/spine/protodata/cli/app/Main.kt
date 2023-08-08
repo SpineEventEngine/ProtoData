@@ -47,6 +47,7 @@ import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
 import io.spine.option.OptionsProvider
+import io.spine.protodata.Module
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.cli.ConfigFileParam
 import io.spine.protodata.cli.ConfigFormatParam
@@ -203,6 +204,7 @@ internal class Run(version: String) : CliktCommand(
 
     private fun doRun() {
         val sources = createSourceFileSets()
+        val modules = loadModules()
         val plugins = loadPlugins()
         val renderers = loadRenderers()
         val registry = createRegistry()
@@ -211,15 +213,24 @@ internal class Run(version: String) : CliktCommand(
 
         logger.atDebug().log { """
             Starting code generation with the following arguments:
-              - modules: ${plugins.joinToString()}
+              - modules: ${modules.joinToString()}
+              - plugins: ${plugins.joinToString()}
+              - renderers: ${renderers.joinToString()}
               - request
                   - files to generate: ${request.fileToGenerateList.joinToString()}
                   - parameter: ${request.parameter}
               - config: ${config}.
             """.ti()
         }
-        Pipeline(plugins, renderers, sources, request, config)()
+        val pipeline = if (modules.isNotEmpty()) {
+            Pipeline(modules, sources, request, config)
+        } else {
+            Pipeline(plugins, renderers, sources, request, config)
+        }
+        pipeline()
     }
+
+    private fun loadModules(): List<Module<*>> = load(ModuleBuilder(), modules)
 
     private fun loadRequest(
         extensions: ExtensionRegistry = ExtensionRegistry.getEmptyRegistry()
