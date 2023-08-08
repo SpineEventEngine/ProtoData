@@ -48,13 +48,10 @@ public interface InsertionPoint : CoordinatesFactory, WithLogging {
     public val label: String
 
     private fun logUnsupportedKind() =
-        logger
-            .atWarning()
-            .withStackTrace(FULL)
-            .log(
-                "`locate(List<String>)` does not support inline insertion. " +
-                        "A whole line insertion will be generated."
-            )
+        logger.atWarning().log{
+            "`locate(List<String>)` does not support inline insertion. " +
+                    "A whole line insertion will be generated."
+        }
 
     /**
      * Locates the sites where the insertion point should be added.
