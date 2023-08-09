@@ -47,14 +47,12 @@ import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
 import io.spine.option.OptionsProvider
-import io.spine.protodata.Module
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.cli.ConfigFileParam
 import io.spine.protodata.cli.ConfigFormatParam
 import io.spine.protodata.cli.ConfigValueParam
 import io.spine.protodata.cli.DebugLoggingParam
 import io.spine.protodata.cli.InfoLoggingParam
-import io.spine.protodata.cli.ModuleParam
 import io.spine.protodata.cli.Parameter
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RendererParam
@@ -121,17 +119,12 @@ internal class Run(version: String) : CliktCommand(
 
     private fun NullableOption<Path, Path>.splitPaths() = split(pathSeparator)
 
-    private val modules: List<String>
-            by ModuleParam.toOption().multiple()
-
     private val plugins: List<String>
-            by PluginParam.toOption().multiple().deprecated(
-                "Supplying plugins separately is not recommended. Use `--module` instead."
-            )
+            by PluginParam.toOption().multiple()
 
     private val renderers: List<String>
             by RendererParam.toOption().multiple(default = listOf()).deprecated(
-                "Supplying renderers separately is not recommended. Use `--module` instead."
+                "Supply Renderers via Plugins instead"
             )
 
     private val codegenRequestFile: File
@@ -204,7 +197,6 @@ internal class Run(version: String) : CliktCommand(
 
     private fun doRun() {
         val sources = createSourceFileSets()
-        val modules = loadModules()
         val plugins = loadPlugins()
         val renderers = loadRenderers()
         val registry = createRegistry()
@@ -213,7 +205,6 @@ internal class Run(version: String) : CliktCommand(
 
         logger.atDebug().log { """
             Starting code generation with the following arguments:
-              - modules: ${modules.joinToString()}
               - plugins: ${plugins.joinToString()}
               - renderers: ${renderers.joinToString()}
               - request
@@ -222,15 +213,13 @@ internal class Run(version: String) : CliktCommand(
               - config: ${config}.
             """.ti()
         }
-        val pipeline = if (modules.isNotEmpty()) {
-            Pipeline(modules, sources, request, config)
-        } else {
+        val pipeline = if (renderers.isNotEmpty()) {
             Pipeline(plugins, renderers, sources, request, config)
+        } else {
+            Pipeline(plugins, sources, request, config)
         }
         pipeline()
     }
-
-    private fun loadModules(): List<Module<*>> = load(ModuleBuilder(), modules)
 
     private fun loadRequest(
         extensions: ExtensionRegistry = ExtensionRegistry.getEmptyRegistry()

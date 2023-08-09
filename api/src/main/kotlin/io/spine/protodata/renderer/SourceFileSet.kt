@@ -330,7 +330,7 @@ public class FileLookup(
     public fun namedUsing(convention: TypeConvention<*>): SourceFile? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
-        return path?.let { probablePath -> sources.find(path) }
+        return path?.let { sources.find(it) }
     }
 }
 
@@ -341,7 +341,7 @@ public class FileCreation(
     public fun namedUsing(convention: TypeConvention<*>): SourceFile? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
-        return path?.let { probablePath -> sources.find(path) }
+        return path?.let { sources.find(it) }
     }
 }
 

@@ -30,14 +30,12 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.environment.DefaultMode
-import io.spine.protodata.ImplicitModule
-import io.spine.protodata.Module
-import io.spine.protodata.applyPlugins
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.config.Configuration
+import io.spine.protodata.plugin.ImplicitPluginWithRenderers
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
-import io.spine.protodata.render
+import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.BoundedContext
@@ -60,7 +58,7 @@ import io.spine.server.under
  */
 @Internal
 public class Pipeline(
-    private val modules: List<Module<*>>,
+    private val plugins: List<Plugin>,
     private val sources: List<SourceFileSet>,
     private val request: CodeGeneratorRequest,
     private val config: Configuration? = null
@@ -72,7 +70,7 @@ public class Pipeline(
         sources: List<SourceFileSet>,
         request: CodeGeneratorRequest,
         config: Configuration? = null
-    ) : this(modules = listOf(ImplicitModule(plugins, renderers)), sources, request, config)
+    ) : this(plugins + ImplicitPluginWithRenderers(renderers), sources, request, config)
 
     /**
      * Creates a new `Pipeline` with only one plugin and one source set.
@@ -147,7 +145,7 @@ public class Pipeline(
      */
     private fun assembleCodegenContext(): BoundedContext {
         val builder = CodeGenerationContext.builder()
-        modules.forEach {  it.applyPlugins(builder) }
+        plugins.forEach {  it.applyTo(builder) }
         return builder.build()
     }
 
@@ -164,7 +162,7 @@ public class Pipeline(
     }
 
     private fun renderSources(codegenContext: BoundedContext) {
-        modules.forEach { it.render(codegenContext, sources) }
+        plugins.forEach { it.render(codegenContext, sources) }
         sources.forEach { it.write() }
     }
 }

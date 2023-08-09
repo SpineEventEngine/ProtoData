@@ -28,6 +28,11 @@ package io.spine.protodata.plugin
 
 import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.type.TypeNameElement
+import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
 import kotlin.reflect.KClass
@@ -82,6 +87,17 @@ public interface Plugin {
      * @param context The `BoundedContextBuilder` to extend.
      */
     public fun extend(context: BoundedContextBuilder) {}
+
+    public fun renderers(): List<Renderer> = listOf()
+
+    public fun typeConventions(): Set<TypeConvention<*>> = setOf()
+}
+
+public class ImplicitPluginWithRenderers(
+    private val renderers: List<Renderer>
+) : Plugin {
+
+    override fun renderers(): List<Renderer> = renderers
 }
 
 /**
@@ -120,6 +136,13 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
         context.addEventDispatcher(it)
     }
     extend(context)
+}
+
+public fun Plugin.render(codegenContext: BoundedContext, sources: Iterable<SourceFileSet>) {
+    renderers().forEach { r ->
+        r.registerWith(codegenContext)
+        sources.forEach(r::renderSources)
+    }
 }
 
 private fun Plugin.checkNoViewRepoDuplication(repos: MutableList<ViewRepository<*, *, *>>) {
