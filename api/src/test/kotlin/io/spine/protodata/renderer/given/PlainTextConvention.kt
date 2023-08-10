@@ -29,6 +29,8 @@ package io.spine.protodata.renderer.given
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.GeneratedDeclaration
 import io.spine.protodata.type.TypeConvention
+import io.spine.tools.code.CommonLanguages
+import io.spine.tools.code.Language
 import kotlin.io.path.Path
 
 object PlainTextConvention : TypeConvention<PlainTextName> {
@@ -41,4 +43,6 @@ object PlainTextConvention : TypeConvention<PlainTextName> {
             Path("$packageDir/${name.simpleName.lowercase()}.txt")
         )
     }
+
+    override val language: Language = CommonLanguages.any
 }

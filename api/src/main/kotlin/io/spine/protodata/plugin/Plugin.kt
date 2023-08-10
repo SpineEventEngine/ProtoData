@@ -30,6 +30,7 @@ import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.type.ConventionSet
 import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
@@ -138,9 +139,15 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
     extend(context)
 }
 
-public fun Plugin.render(codegenContext: BoundedContext, sources: Iterable<SourceFileSet>) {
+@Internal
+public fun Plugin.render(
+    conventionSet: ConventionSet<TypeNameElement>,
+    codegenContext: BoundedContext,
+    sources: Iterable<SourceFileSet>
+) {
     renderers().forEach { r ->
         r.registerWith(codegenContext)
+        r.withTypeConventions(conventionSet)
         sources.forEach(r::renderSources)
     }
 }

@@ -38,6 +38,8 @@ import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.type.ConventionSet
+import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
@@ -63,6 +65,14 @@ public class Pipeline(
     private val request: CodeGeneratorRequest,
     private val config: Configuration? = null
 ) {
+
+    private val conventions: ConventionSet<TypeNameElement> by lazy {
+        val set = plugins
+            .asSequence()
+            .flatMap { it.typeConventions() }
+            .toSet()
+        ConventionSet(set)
+    }
 
     public constructor(
         plugins: List<Plugin>,
@@ -113,6 +123,7 @@ public class Pipeline(
             use(InMemoryStorageFactory.newInstance())
             use(InMemoryTransportFactory.newInstance())
         }
+
     }
 
     /**
@@ -162,7 +173,7 @@ public class Pipeline(
     }
 
     private fun renderSources(codegenContext: BoundedContext) {
-        plugins.forEach { it.render(codegenContext, sources) }
+        plugins.forEach { it.render(conventions, codegenContext, sources) }
         sources.forEach { it.write() }
     }
 }

@@ -28,33 +28,39 @@ package io.spine.protodata.codegen.java
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.codegen.java.given.TypesTestEnv.enumTypeName
 import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
+import io.spine.protodata.codegen.java.given.TypesTestEnv.rejectionTypeName
 import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`JavaTypeConvention` should")
-class JavaTypeConventionSpec {
+@DisplayName("`JavaRejectionConvention` should")
+class JavaRejectionConventionSpec {
 
     @Test
-    fun `convert a message type name into a Java class name`() {
-        val convention = JavaTypeConvention(typeSystem)
-        val declaration = convention.declarationFor(messageTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Foo"
-        path shouldBe Path("ua/acme/example/Foo.java")
+    fun `convert a rejection type name into a rejection throwable class`() {
+        val rejections = JavaRejectionConvention(typeSystem)
+        val messages = JavaTypeConvention(typeSystem)
+
+        val message = messages.declarationFor(rejectionTypeName)
+        message shouldNotBe null
+        val throwable = rejections.declarationFor(rejectionTypeName)
+        throwable shouldNotBe null
+
+        val (messageClass, messagePath) = message
+        messageClass.binary shouldBe "ua.acme.example.CartoonRejections\$CannotDrawCartoon"
+        messagePath shouldBe Path("ua/acme/example/CartoonRejections.java")
+
+        val (throwableClass, throwablePath) = throwable!!
+        throwableClass.binary shouldBe "ua.acme.example.CannotDrawCartoon"
+        throwablePath shouldBe Path("ua/acme/example/CannotDrawCartoon.java")
     }
 
     @Test
-    fun `convert an enum type name into a Java class name`() {
-        val convention = JavaTypeConvention(typeSystem)
-        val declaration = convention.declarationFor(enumTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Kind"
-        path shouldBe Path("ua/acme/example/Kind.java")
+    fun `not convert a regular message name to a rejection throwables class`() {
+        val convention = JavaRejectionConvention(typeSystem)
+        val declaration = convention.declarationFor(messageTypeName)
+        declaration shouldBe null
     }
 }

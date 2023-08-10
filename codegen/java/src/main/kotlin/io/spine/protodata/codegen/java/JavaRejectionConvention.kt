@@ -26,35 +26,29 @@
 
 package io.spine.protodata.codegen.java
 
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.codegen.java.given.TypesTestEnv.enumTypeName
-import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
-import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
-import kotlin.io.path.Path
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import io.spine.protobuf.isNotDefault
+import io.spine.protodata.TypeName
+import io.spine.protodata.type.GeneratedDeclaration
+import io.spine.protodata.type.TypeSystem
 
-@DisplayName("`JavaTypeConvention` should")
-class JavaTypeConventionSpec {
 
-    @Test
-    fun `convert a message type name into a Java class name`() {
-        val convention = JavaTypeConvention(typeSystem)
-        val declaration = convention.declarationFor(messageTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Foo"
-        path shouldBe Path("ua/acme/example/Foo.java")
-    }
+public class JavaRejectionConvention(
+    typeSystem: TypeSystem
+) : BaseJavaTypeConvention(typeSystem) {
 
-    @Test
-    fun `convert an enum type name into a Java class name`() {
-        val convention = JavaTypeConvention(typeSystem)
-        val declaration = convention.declarationFor(enumTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Kind"
-        path shouldBe Path("ua/acme/example/Kind.java")
+    @Suppress("ReturnCount")
+    override fun declarationFor(name: TypeName): GeneratedDeclaration<ClassName>? {
+        val declaration = typeSystem.findMessage(name) ?: return null
+        val (msg, file) = declaration
+        val fileName = file.path.value
+        if (!fileName.endsWith("rejections.proto")
+            || msg.declaredIn.isNotDefault()
+        ) {
+            return null
+        }
+        val packageName = file.javaPackage()
+        val simpleName = name.simpleName
+        val cls = ClassName(packageName, listOf(simpleName))
+        return GeneratedDeclaration(cls, cls.javaFile)
     }
 }

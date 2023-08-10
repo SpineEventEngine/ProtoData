@@ -24,24 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
+package io.spine.protodata.type
 
+import io.spine.annotation.Internal
 import io.spine.protodata.TypeName
-import io.spine.protodata.type.GeneratedDeclaration
-import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeSystem
+import io.spine.tools.code.Language
 
-/**
- * A [TypeConvention] by which Java [ClassName]s are generated from Proto type names.
- */
-public class JavaTypeConvention(
-    typeSystem: TypeSystem
-) : BaseJavaTypeConvention(typeSystem) {
 
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<ClassName> {
-        val file = typeSystem.findMessageOrEnum(name)?.second
-        check(file != null) { "Unknown type `${name.typeUrl}`." }
-        val cls = name.javaClassName(declaredIn = file)
-        return GeneratedDeclaration(cls, cls.javaFile)
+public interface TypeConventions<out N : TypeNameElement> {
+
+    public fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<N>>
+}
+
+@Internal
+public class ConventionSet<N : TypeNameElement>(
+    private val conventions: Set<TypeConvention<N>>
+) : TypeConventions<N> {
+
+    override fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<N>> =
+        conventions.asSequence()
+            .map { it.declarationFor(type) }
+            .filter { it != null }
+            .map { it!! }
+            .toSet()
+
+    internal fun <TN : N> subsetFor(language: Language): TypeConventions<TN> {
+        val subset = conventions
+            .filter { it.language == language }
+            .map { it as TypeConvention<TN> }
+            .toSet()
+        return ConventionSet(subset)
     }
 }

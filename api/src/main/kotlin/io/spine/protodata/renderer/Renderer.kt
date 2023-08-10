@@ -28,6 +28,9 @@ package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
 import io.spine.protodata.config.ConfiguredQuerying
+import io.spine.protodata.type.ConventionSet
+import io.spine.protodata.type.TypeConventions
+import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.ContextAware
 import io.spine.server.query.QueryingClient
@@ -46,6 +49,7 @@ protected constructor(
 ) : ConfiguredQuerying, ContextAware {
 
     private lateinit var protoDataContext: BoundedContext
+    private lateinit var typeConventions: ConventionSet<TypeNameElement>
 
     /**
      * Performs required changes to the given source set.
@@ -70,6 +74,10 @@ protected constructor(
 
     public final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)
+    }
+
+    protected fun <N : TypeNameElement> types(): TypeConventions<N> {
+        return typeConventions.subsetFor<N>(supportedLanguage)
     }
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
@@ -98,5 +106,9 @@ protected constructor(
 
     override fun isRegistered(): Boolean {
         return this::protoDataContext.isInitialized
+    }
+
+    internal fun withTypeConventions(conventions: ConventionSet<TypeNameElement>) {
+        this.typeConventions = conventions
     }
 }

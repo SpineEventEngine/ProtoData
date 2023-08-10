@@ -27,6 +27,7 @@
 package io.spine.protodata.type
 
 import io.spine.protodata.TypeName
+import io.spine.tools.code.Language
 
 /**
  * The scheme by which the Protobuf type names are converted into language-specific type names.
@@ -37,4 +38,6 @@ public interface TypeConvention<out T: TypeNameElement> {
      * Given a Protobuf type name, obtains the primary declaration generated from this Proto type.
      */
     public fun declarationFor(name: TypeName): GeneratedDeclaration<T>?
+
+    public val language: Language
 }

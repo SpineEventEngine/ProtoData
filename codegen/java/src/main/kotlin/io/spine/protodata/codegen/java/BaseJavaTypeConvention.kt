@@ -26,35 +26,14 @@
 
 package io.spine.protodata.codegen.java
 
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.codegen.java.given.TypesTestEnv.enumTypeName
-import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
-import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
-import kotlin.io.path.Path
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.type.TypeSystem
+import io.spine.tools.code.CommonLanguages
+import io.spine.tools.code.Language
 
-@DisplayName("`JavaTypeConvention` should")
-class JavaTypeConventionSpec {
+public abstract class BaseJavaTypeConvention(
+    protected val typeSystem: TypeSystem
+) : TypeConvention<ClassName> {
 
-    @Test
-    fun `convert a message type name into a Java class name`() {
-        val convention = JavaTypeConvention(typeSystem)
-        val declaration = convention.declarationFor(messageTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Foo"
-        path shouldBe Path("ua/acme/example/Foo.java")
-    }
-
-    @Test
-    fun `convert an enum type name into a Java class name`() {
-        val convention = JavaTypeConvention(typeSystem)
-        val declaration = convention.declarationFor(enumTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Kind"
-        path shouldBe Path("ua/acme/example/Kind.java")
-    }
+    final override val language: Language = CommonLanguages.Java
 }
