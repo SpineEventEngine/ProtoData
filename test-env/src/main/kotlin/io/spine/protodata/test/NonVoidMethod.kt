@@ -30,7 +30,7 @@ import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
-import io.spine.tools.code.CommonLanguages.Java
+import io.spine.tools.code.Java
 import io.spine.tools.code.Language
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
 

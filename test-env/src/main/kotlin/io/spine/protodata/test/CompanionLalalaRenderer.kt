@@ -28,7 +28,7 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.tools.code.CommonLanguages.Kotlin
+import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
 
 /**

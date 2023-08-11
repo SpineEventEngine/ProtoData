@@ -32,6 +32,8 @@ import io.spine.protodata.config.configAs
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.time.toInstant
+import io.spine.tools.code.AnyLanguage
+import io.spine.tools.code.Language
 import io.spine.tools.code.CommonLanguages.any
 import io.spine.tools.code.Language
 import kotlin.io.path.Path
@@ -41,7 +43,7 @@ public const val ECHO_FILE: String = "name.txt"
 /**
  * A renderer that writes the contents of its Java-class-style configuration into a file.
  */
-public class EchoRenderer : Renderer<Language>(any) {
+public class EchoRenderer : Renderer<Language>(AnyLanguage.willDo()) {
 
     override fun render(sources: SourceFileSet) {
         val name = configAs<Name>()
@@ -52,7 +54,7 @@ public class EchoRenderer : Renderer<Language>(any) {
 /**
  * A renderer that writes the contents of its Protobuf-style configuration into a file.
  */
-public class ProtoEchoRenderer : Renderer<Language>(any) {
+public class ProtoEchoRenderer : Renderer<Language>(AnyLanguage.willDo()) {
 
     override fun render(sources: SourceFileSet) {
         val echo = configAs<Echo>()
@@ -74,7 +76,7 @@ public class ProtoEchoRenderer : Renderer<Language>(any) {
 /**
  * A renderer that writes the contents of its plain string configuration into a file.
  */
-public class PlainStringRenderer : Renderer<Language>(any) {
+public class PlainStringRenderer : Renderer<Language>(AnyLanguage.willDo()) {
 
     override fun render(sources: SourceFileSet) {
         val echo = configAs<String>()

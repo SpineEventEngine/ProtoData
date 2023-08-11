@@ -39,7 +39,7 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
-import io.spine.tools.code.CommonLanguages.any
+import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -130,7 +130,7 @@ class `ProtoData CLI logging levels should` {
 /**
  * A pseudo-renderer which asserts that the logging levels are set correctly.
  */
-class LoggingLevelAsserter: Renderer<Language>(any), WithLogging {
+class LoggingLevelAsserter: Renderer<Language>(AnyLanguage.willDo()), WithLogging {
 
     override fun render(sources: SourceFileSet) {
         debugEnabled = logger.at(Level.DEBUG).isEnabled()

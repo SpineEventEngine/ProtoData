@@ -27,14 +27,14 @@
 package io.spine.protodata.cli.given
 
 import io.spine.protodata.cli.test.CustomField
-import io.spine.tools.code.CommonLanguages
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.query.select
+import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language
 import kotlin.io.path.Path
 
-class CustomOptionRenderer : Renderer<Language>(CommonLanguages.any) {
+class CustomOptionRenderer : Renderer<Language>(AnyLanguage.willDo()) {
 
     companion object {
         const val FILE_NAME = "custom_fields.csv"

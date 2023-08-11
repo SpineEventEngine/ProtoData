@@ -32,7 +32,7 @@ import io.spine.protodata.find
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.query.select
-import io.spine.tools.code.CommonLanguages.Java
+import io.spine.tools.code.Java
 import io.spine.tools.code.Language
 import kotlin.io.path.Path
 import kotlin.io.path.div

@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.10.0</version>
+<version>0.9.11</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -68,13 +68,13 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.grpc</groupId>
     <artifactId>grpc-protobuf</artifactId>
-    <version>1.56.1</version>
+    <version>1.57.0</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>io.grpc</groupId>
     <artifactId>grpc-stub</artifactId>
-    <version>1.56.1</version>
+    <version>1.57.0</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -86,7 +86,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-logging</artifactId>
-    <version>2.0.0-SNAPSHOT.198</version>
+    <version>2.0.0-SNAPSHOT.201</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -110,7 +110,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-tool-base</artifactId>
-    <version>2.0.0-SNAPSHOT.172</version>
+    <version>2.0.0-SNAPSHOT.181</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -146,13 +146,13 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-logging-backend</artifactId>
-    <version>2.0.0-SNAPSHOT.198</version>
+    <version>2.0.0-SNAPSHOT.201</version>
     <scope>runtime</scope>
   </dependency>
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-logging-context</artifactId>
-    <version>2.0.0-SNAPSHOT.198</version>
+    <version>2.0.0-SNAPSHOT.201</version>
     <scope>runtime</scope>
   </dependency>
   <dependency>
@@ -176,7 +176,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-testlib</artifactId>
-    <version>2.0.0-SNAPSHOT.172</version>
+    <version>2.0.0-SNAPSHOT.181</version>
     <scope>test</scope>
   </dependency>
   <dependency>
@@ -188,7 +188,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-testutil-time</artifactId>
-    <version>2.0.0-SNAPSHOT.131</version>
+    <version>2.0.0-SNAPSHOT.133</version>
     <scope>test</scope>
   </dependency>
   <dependency>
@@ -274,7 +274,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-base</artifactId>
-    <version>2.0.0-SNAPSHOT.172</version>
+    <version>2.0.0-SNAPSHOT.181</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>

@@ -30,7 +30,7 @@ import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
-import io.spine.tools.code.CommonLanguages.Kotlin
+import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
 import io.spine.tools.code.SlashAsteriskCommentLang
 

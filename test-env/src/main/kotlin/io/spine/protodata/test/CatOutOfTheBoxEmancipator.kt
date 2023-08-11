@@ -28,7 +28,7 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.tools.code.CommonLanguages.any
+import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language
 
 /**
@@ -38,7 +38,7 @@ import io.spine.tools.code.Language
  * Releases the proverbial Schrödinger's cat (insertion points) out of the box by observing
  * the code.
  */
-public class CatOutOfTheBoxEmancipator : Renderer<Language>(any) {
+public class CatOutOfTheBoxEmancipator : Renderer<Language>(AnyLanguage.willDo()) {
 
     override fun render(sources: SourceFileSet) {
         sources.forEach {

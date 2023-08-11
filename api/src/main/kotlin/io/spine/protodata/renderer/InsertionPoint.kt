@@ -29,8 +29,7 @@ package io.spine.protodata.renderer
 import com.google.common.flogger.StackSize.FULL
 import com.google.protobuf.Empty
 import io.spine.annotation.Internal
-import io.spine.logging.Logging
-import io.spine.logging.Logging.loggerFor
+import io.spine.logging.WithLogging
 import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
 import io.spine.text.Text
@@ -41,7 +40,7 @@ import io.spine.text.textCoordinates
 /**
  * A point is a source file, where more code may be inserted.
  */
-public interface InsertionPoint : CoordinatesFactory, Logging {
+public interface InsertionPoint : CoordinatesFactory, WithLogging {
 
     /**
      * The name of this insertion point.
@@ -49,13 +48,10 @@ public interface InsertionPoint : CoordinatesFactory, Logging {
     public val label: String
 
     private fun logUnsupportedKind() =
-        loggerFor(InsertionPoint::class.java)
-            .atWarning()
-            .withStackTrace(FULL)
-            .log(
-                "`locate(List<String>)` does not support inline insertion. " +
-                        "A whole line insertion will be generated."
-            )
+        logger.atWarning().log{
+            "`locate(List<String>)` does not support inline insertion. " +
+                    "A whole line insertion will be generated."
+        }
 
     /**
      * Locates the sites where the insertion point should be added.

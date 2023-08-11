@@ -32,9 +32,10 @@ import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.query.select
 import io.spine.tools.code.CommonLanguages
 import io.spine.tools.code.Language
+import io.spine.tools.code.AnyLanguage
 import kotlin.io.path.Path
 
-class DefaultOptionsCounterRenderer : Renderer<Language>(CommonLanguages.any) {
+class DefaultOptionsCounterRenderer : Renderer<Language>(AnyLanguage.willDo()) {
 
     companion object {
         const val FILE_NAME = "default_opts_counted.txt"

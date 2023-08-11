@@ -26,8 +26,9 @@
 
 package io.spine.protodata.codegen.java.file
 
-import io.spine.logging.Logging
+import io.spine.logging.WithLogging
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
+import io.spine.string.Separator
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import java.lang.System.lineSeparator
@@ -57,7 +58,7 @@ private val pattern = Regex("((class)|(@?interface)|(enum))\\s+")
  * This insertion point is not bound to the contents of the file in `label`, thus allowing this type
  * to be an object.
  */
-internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint, Logging {
+internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint, WithLogging {
 
     override val label: String
         get() = this.javaClass.simpleName
@@ -76,8 +77,11 @@ internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint, Logging {
                 return atLine(index)
             }
         }
-        _warn().log("Could not find the primary declaration in the code:" + lineSeparator() +
-                lines.joinToString(separator = lineSeparator()))
+        logger.atWarning().log {
+            val nl = Separator.nl()
+            "Could not find the primary declaration in the code:$nl" +
+                    lines.joinToString(separator = nl)
+        }
         return nowhere()
     }
 }

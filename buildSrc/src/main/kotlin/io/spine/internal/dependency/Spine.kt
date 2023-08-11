@@ -59,7 +59,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/logging">spine-logging</a>
          */
-        const val logging = "2.0.0-SNAPSHOT.198"
+        const val logging = "2.0.0-SNAPSHOT.201"
 
         /**
          * The version of [Spine.testlib].
@@ -96,14 +96,14 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/base-types">spine-base-types</a>
          */
-        const val baseTypes = "2.0.0-SNAPSHOT.123"
+        const val baseTypes = "2.0.0-SNAPSHOT.124"
 
         /**
          * The version of [Spine.time].
          *
          * @see <a href="https://github.com/SpineEventEngine/time">spine-time</a>
          */
-        const val time = "2.0.0-SNAPSHOT.131"
+        const val time = "2.0.0-SNAPSHOT.133"
 
         /**
          * The version of [Spine.change].
@@ -121,8 +121,10 @@ object Spine {
 
         /**
          * The version of [Spine.toolBase].
+         *
+         * @see <a href="https://github.com/SpineEventEngine/tool-base">spine-tool-base</a>
          */
-        const val toolBase = "2.0.0-SNAPSHOT.172"
+        const val toolBase = "2.0.0-SNAPSHOT.181"
 
         /**
          * The version of [Spine.javadocTools].
@@ -164,6 +166,8 @@ object Spine {
         const val lib = "$group:spine-logging:$version"
         const val backend = "$group:spine-logging-backend:$version"
         const val context = "$group:spine-logging-context:$version"
+        const val floggerApi = "$group:spine-flogger-api:$version"
+        const val smokeTest = "$group:spine-logging-smoke-test:$version"
     }
 
     /**
@@ -177,7 +181,9 @@ object Spine {
         const val pluginLib = "$toolsGroup:spine-mc-java-plugins:${version}:all"
     }
 
+    @Deprecated("Please use `javadocFilter` instead.", ReplaceWith("javadocFilter"))
     const val javadocTools = "$toolsGroup::${ArtifactVersion.javadocTools}"
+    const val javadocFilter = "$toolsGroup:spine-javadoc-filter:${ArtifactVersion.javadocTools}"
 
     const val client = CoreJava.client // Added for brevity.
     const val server = CoreJava.server // Added for brevity.
