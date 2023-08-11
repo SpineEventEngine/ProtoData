@@ -30,10 +30,11 @@ import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.CommonLanguages
 import io.spine.tools.code.Language
+import io.spine.tools.code.SlashAsteriskCommentLang
 
 public abstract class BaseJavaTypeConvention(
     protected val typeSystem: TypeSystem
-) : TypeConvention<ClassName> {
+) : TypeConvention<Language, ClassName> {
 
     final override val language: Language = CommonLanguages.Java
 }

@@ -43,13 +43,13 @@ import io.spine.tools.code.Language
  * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
  * have a `public` no-argument constructor.
  */
-public abstract class Renderer
+public abstract class Renderer<L : Language>
 protected constructor(
-    private val supportedLanguage: Language
+    private val supportedLanguage: L
 ) : ConfiguredQuerying, ContextAware {
 
     private lateinit var protoDataContext: BoundedContext
-    private lateinit var typeConventions: ConventionSet<TypeNameElement>
+    private lateinit var typeConventions: ConventionSet<Language, TypeNameElement<Language>>
 
     /**
      * Performs required changes to the given source set.
@@ -76,8 +76,8 @@ protected constructor(
         return QueryingClient(protoDataContext, type, javaClass.name)
     }
 
-    protected fun <N : TypeNameElement> types(): TypeConventions<N> {
-        return typeConventions.subsetFor<N>(supportedLanguage)
+    protected fun <N : TypeNameElement<L>> types(): TypeConventions<L, N> {
+        return typeConventions.subsetFor(supportedLanguage)
     }
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
@@ -108,7 +108,7 @@ protected constructor(
         return this::protoDataContext.isInitialized
     }
 
-    internal fun withTypeConventions(conventions: ConventionSet<TypeNameElement>) {
+    internal fun withTypeConventions(conventions: ConventionSet<Language, TypeNameElement<Language>>) {
         this.typeConventions = conventions
     }
 }

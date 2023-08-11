@@ -30,7 +30,9 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
 import io.spine.protodata.TypeName
+import io.spine.protodata.renderer.SourceFileSet.Companion.from
 import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.type.TypeNameElement
 import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.util.theOnly
@@ -41,6 +43,7 @@ import java.util.*
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
 import kotlin.text.Charsets.UTF_8
+import io.spine.tools.code.Language
 
 /**
  * A mutable set of source files that participate in code generation workflow.
@@ -327,7 +330,7 @@ public class FileLookup(
     private val sources: SourceFileSet,
     private val name: TypeName
 ) {
-    public fun namedUsing(convention: TypeConvention<*>): SourceFile? {
+    public fun <L: Language, N: TypeNameElement<L>> namedUsing(convention: TypeConvention<L, N>): SourceFile? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
         return path?.let { sources.find(it) }
@@ -338,7 +341,7 @@ public class FileCreation(
     private val sources: SourceFileSet,
     private val name: TypeName
 ) {
-    public fun namedUsing(convention: TypeConvention<*>): SourceFile? {
+    public fun <L: Language, N: TypeNameElement<L>> namedUsing(convention: TypeConvention<L, N>): SourceFile? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
         return path?.let { sources.find(it) }

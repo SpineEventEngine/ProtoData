@@ -29,11 +29,12 @@ package io.spine.protodata.test
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.CommonLanguages.Kotlin
+import io.spine.tools.code.Language
 
 /**
  * Renders the text "Lalala" as a [frame][CompanionFrame] in a companion object declaration.
  */
-public class CompanionLalalaRenderer : Renderer(Kotlin) {
+public class CompanionLalalaRenderer : Renderer<Language>(Kotlin) {
 
     public companion object {
         public const val LALALA: String = "Lalala"

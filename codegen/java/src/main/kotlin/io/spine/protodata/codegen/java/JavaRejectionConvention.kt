@@ -30,6 +30,7 @@ import io.spine.protobuf.isNotDefault
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.GeneratedDeclaration
 import io.spine.protodata.type.TypeSystem
+import io.spine.tools.code.Language
 
 
 public class JavaRejectionConvention(
@@ -37,7 +38,7 @@ public class JavaRejectionConvention(
 ) : BaseJavaTypeConvention(typeSystem) {
 
     @Suppress("ReturnCount")
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<ClassName>? {
+    override fun declarationFor(name: TypeName): GeneratedDeclaration<Language, ClassName>? {
         val declaration = typeSystem.findMessage(name) ?: return null
         val (msg, file) = declaration
         val fileName = file.path.value

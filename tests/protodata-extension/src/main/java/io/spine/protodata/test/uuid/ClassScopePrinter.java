@@ -27,6 +27,7 @@
 package io.spine.protodata.test.uuid;
 
 import io.spine.tools.code.CommonLanguages;
+import io.spine.tools.code.Language;
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.protodata.renderer.InsertionPointPrinter;
 import io.spine.protodata.test.UuidType;
@@ -39,7 +40,7 @@ import static java.util.stream.Collectors.toSet;
  * Prints the {@link ClassScope} insertion point.
  */
 @SuppressWarnings("unused") // Accessed reflectively.
-public final class ClassScopePrinter extends InsertionPointPrinter {
+public final class ClassScopePrinter extends InsertionPointPrinter<Language> {
 
     public ClassScopePrinter() {
         super(CommonLanguages.java());

@@ -30,6 +30,7 @@ import io.spine.protodata.TypeName
 import io.spine.protodata.type.GeneratedDeclaration
 import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeSystem
+import io.spine.tools.code.Language
 
 /**
  * A [TypeConvention] by which Java [ClassName]s are generated from Proto type names.
@@ -38,7 +39,7 @@ public class JavaTypeConvention(
     typeSystem: TypeSystem
 ) : BaseJavaTypeConvention(typeSystem) {
 
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<ClassName> {
+    override fun declarationFor(name: TypeName): GeneratedDeclaration<Language, ClassName> {
         val file = typeSystem.findMessageOrEnum(name)?.second
         check(file != null) { "Unknown type `${name.typeUrl}`." }
         val cls = name.javaClassName(declaredIn = file)

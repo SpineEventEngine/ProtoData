@@ -39,12 +39,14 @@ import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.type.ConventionSet
+import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
+import io.spine.tools.code.Language
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -66,17 +68,18 @@ public class Pipeline(
     private val config: Configuration? = null
 ) {
 
-    private val conventions: ConventionSet<TypeNameElement> by lazy {
-        val set = plugins
+    private val conventions: ConventionSet<Language, TypeNameElement<Language>> by lazy {
+        val set: Set<TypeConvention<*, *>> = plugins
             .asSequence()
             .flatMap { it.typeConventions() }
             .toSet()
-        ConventionSet(set)
+        val shoved = set as Set<TypeConvention<Language, TypeNameElement<Language>>>
+        return@lazy ConventionSet(shoved)
     }
 
     public constructor(
         plugins: List<Plugin>,
-        renderers: List<Renderer>,
+        renderers: List<Renderer<*>>,
         sources: List<SourceFileSet>,
         request: CodeGeneratorRequest,
         config: Configuration? = null
@@ -88,7 +91,7 @@ public class Pipeline(
     @VisibleForTesting
     public constructor(
         plugin: Plugin,
-        renderers: List<Renderer>,
+        renderers: List<Renderer<*>>,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
         config: Configuration? = null
@@ -100,7 +103,7 @@ public class Pipeline(
     @VisibleForTesting
     public constructor(
         plugin: Plugin,
-        renderer: Renderer,
+        renderer: Renderer<*>,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
         config: Configuration? = null
@@ -112,7 +115,7 @@ public class Pipeline(
     @VisibleForTesting
     public constructor(
         plugin: Plugin,
-        renderer: Renderer,
+        renderer: Renderer<*>,
         sources: List<SourceFileSet>,
         request: CodeGeneratorRequest,
         config: Configuration? = null
@@ -123,7 +126,6 @@ public class Pipeline(
             use(InMemoryStorageFactory.newInstance())
             use(InMemoryTransportFactory.newInstance())
         }
-
     }
 
     /**

@@ -31,27 +31,27 @@ import io.spine.protodata.TypeName
 import io.spine.tools.code.Language
 
 
-public interface TypeConventions<out N : TypeNameElement> {
+public interface TypeConventions<L : Language, N : TypeNameElement<L>> {
 
-    public fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<N>>
+    public fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<L, N>>
 }
 
 @Internal
-public class ConventionSet<N : TypeNameElement>(
-    private val conventions: Set<TypeConvention<N>>
-) : TypeConventions<N> {
+public class ConventionSet<L: Language, N : TypeNameElement<L>>(
+    private val conventions: Set<TypeConvention<L, N>>
+) : TypeConventions<L, N> {
 
-    override fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<N>> =
+    override fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<L, N>> =
         conventions.asSequence()
             .map { it.declarationFor(type) }
             .filter { it != null }
             .map { it!! }
             .toSet()
 
-    internal fun <TN : N> subsetFor(language: Language): TypeConventions<TN> {
+    internal fun <LN: Language, TN : TypeNameElement<LN>> subsetFor(language: LN): TypeConventions<LN, TN> {
         val subset = conventions
             .filter { it.language == language }
-            .map { it as TypeConvention<TN> }
+            .map { it as TypeConvention<LN, TN> }
             .toSet()
         return ConventionSet(subset)
     }

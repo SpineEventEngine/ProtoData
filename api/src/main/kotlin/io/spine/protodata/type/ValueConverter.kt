@@ -38,12 +38,13 @@ import io.spine.protodata.Value.KindCase.MAP_VALUE
 import io.spine.protodata.Value.KindCase.MESSAGE_VALUE
 import io.spine.protodata.Value.KindCase.NULL_VALUE
 import io.spine.protodata.Value.KindCase.STRING_VALUE
+import io.spine.tools.code.Language
 
 /**
  * A factory of language-specific code, that represents a Protobuf value.
  */
 @Suppress("TooManyFunctions")
-public abstract class ValueConverter<V: CodeElement> {
+public abstract class ValueConverter<V: CodeElement<L>, L: Language> {
 
     /**
      * Converts the given Protobuf value into a language-specific code expression.

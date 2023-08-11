@@ -36,6 +36,7 @@ import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
+import io.spine.tools.code.Language
 import kotlin.reflect.KClass
 
 /**
@@ -89,16 +90,16 @@ public interface Plugin {
      */
     public fun extend(context: BoundedContextBuilder) {}
 
-    public fun renderers(): List<Renderer> = listOf()
+    public fun renderers(): List<Renderer<*>> = listOf()
 
-    public fun typeConventions(): Set<TypeConvention<*>> = setOf()
+    public fun typeConventions(): Set<TypeConvention<*, *>> = setOf()
 }
 
 public class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer>
+    private val renderers: List<Renderer<*>>
 ) : Plugin {
 
-    override fun renderers(): List<Renderer> = renderers
+    override fun renderers(): List<Renderer<*>> = renderers
 }
 
 /**
@@ -141,7 +142,7 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
 
 @Internal
 public fun Plugin.render(
-    conventionSet: ConventionSet<TypeNameElement>,
+    conventionSet: ConventionSet<Language, TypeNameElement<Language>>,
     codegenContext: BoundedContext,
     sources: Iterable<SourceFileSet>
 ) {

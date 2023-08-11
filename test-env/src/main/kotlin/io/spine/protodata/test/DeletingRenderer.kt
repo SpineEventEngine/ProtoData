@@ -33,13 +33,14 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.query.select
 import io.spine.tools.code.CommonLanguages.Java
+import io.spine.tools.code.Language
 import kotlin.io.path.Path
 import kotlin.io.path.div
 
 /**
  * A renderer that deletes Java classes generated from message types marked as deleted.
  */
-public class DeletingRenderer : Renderer(Java) {
+public class DeletingRenderer : Renderer<Language>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val types = select<DeletedType>().all()

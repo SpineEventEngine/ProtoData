@@ -31,9 +31,10 @@ import io.spine.tools.code.CommonLanguages
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.query.select
+import io.spine.tools.code.Language
 import kotlin.io.path.Path
 
-class CustomOptionRenderer : Renderer(CommonLanguages.any) {
+class CustomOptionRenderer : Renderer<Language>(CommonLanguages.any) {
 
     companion object {
         const val FILE_NAME = "custom_fields.csv"

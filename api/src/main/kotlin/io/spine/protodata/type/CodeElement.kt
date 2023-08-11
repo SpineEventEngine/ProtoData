@@ -26,12 +26,14 @@
 
 package io.spine.protodata.type
 
+import io.spine.tools.code.Language
+
 /**
  * A piece of code.
  *
  * This is a general interface for composable language-specific code-building elements.
  */
-public interface CodeElement {
+public interface CodeElement<L: Language> {
 
     /**
      * Obtains the plain text representation of this code element.

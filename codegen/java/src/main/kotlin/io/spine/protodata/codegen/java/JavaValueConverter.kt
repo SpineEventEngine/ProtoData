@@ -32,6 +32,8 @@ import io.spine.protodata.Type.KindCase.MESSAGE
 import io.spine.protodata.Type.KindCase.PRIMITIVE
 import io.spine.protodata.Value
 import io.spine.protodata.type.ValueConverter
+import io.spine.tools.code.Language
+import io.spine.tools.code.SlashAsteriskCommentLang
 
 /**
  * A [ValueConverter] which converts values into Java expressions.
@@ -39,7 +41,7 @@ import io.spine.protodata.type.ValueConverter
 @Suppress("TooManyFunctions")
 public class JavaValueConverter(
     private val typeConverter: JavaTypeConvention
-) : ValueConverter<Expression>() {
+) : ValueConverter<Expression, Language>() {
 
     override fun toNull(type: Type): Expression = Null
 

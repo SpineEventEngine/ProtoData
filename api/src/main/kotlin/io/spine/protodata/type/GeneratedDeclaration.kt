@@ -26,6 +26,7 @@
 
 package io.spine.protodata.type
 
+import io.spine.tools.code.Language
 import java.nio.file.Path
 
 /**
@@ -36,7 +37,7 @@ import java.nio.file.Path
  *
  * @param T the language-specific type of the type name element.
  */
-public data class GeneratedDeclaration<out T : TypeNameElement>(
+public data class GeneratedDeclaration<L: Language, out T : TypeNameElement<L>>(
     public val name: T,
     public val path: Path
 )

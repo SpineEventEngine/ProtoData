@@ -29,8 +29,9 @@ package io.spine.protodata.test
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.CommonLanguages.Kotlin
+import io.spine.tools.code.Language
 
-public class KtRenderer : Renderer(Kotlin) {
+public class KtRenderer : Renderer<Language>(Kotlin) {
 
     override fun render(sources: SourceFileSet) {
         sources.forEach {

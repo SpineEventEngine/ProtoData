@@ -31,6 +31,7 @@ import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.CommonLanguages.Java
+import io.spine.tools.code.Language
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
 
 /**
@@ -61,7 +62,7 @@ public class NonVoidMethod : InsertionPoint {
 /**
  * A printer for [NonVoidMethod].
  */
-public class NonVoidMethodPrinter : InsertionPointPrinter(Java) {
+public class NonVoidMethodPrinter : InsertionPointPrinter<Language>(Java) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> = setOf(NonVoidMethod())
 }

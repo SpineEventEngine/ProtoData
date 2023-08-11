@@ -33,9 +33,9 @@ import io.spine.tools.code.CommonLanguages
 import io.spine.tools.code.Language
 import kotlin.io.path.Path
 
-object PlainTextConvention : TypeConvention<PlainTextName> {
+object PlainTextConvention : TypeConvention<Language, PlainTextName> {
 
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<PlainTextName>? {
+    override fun declarationFor(name: TypeName): GeneratedDeclaration<Language, PlainTextName> {
         val generatedName = PlainTextName(name.simpleName)
         val packageDir = name.packageName.replace('.', '/')
         return GeneratedDeclaration(

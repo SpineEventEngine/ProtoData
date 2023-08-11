@@ -32,12 +32,13 @@ import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.CommonLanguages.Java
+import io.spine.tools.code.Language
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
 
 /**
  * An [InsertionPointPrinter] for the [AnnotationInsertionPoint].
  */
-public class AnnotationInsertionPointPrinter: InsertionPointPrinter(Java) {
+public class AnnotationInsertionPointPrinter: InsertionPointPrinter<Language>(Java) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> =
         AnnotationInsertionPoint.values().toSet()

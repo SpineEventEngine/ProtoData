@@ -26,4 +26,6 @@
 
 package io.spine.protodata.type
 
-public interface TypeNameElement : CodeElement
+import io.spine.tools.code.Language
+
+public interface TypeNameElement<L : Language> : CodeElement<L>
