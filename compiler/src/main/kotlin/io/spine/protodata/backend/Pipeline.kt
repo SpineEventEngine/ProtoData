@@ -38,8 +38,8 @@ import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.ConventionSet
 import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.type.TypeConventions
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
@@ -68,13 +68,13 @@ public class Pipeline(
     private val config: Configuration? = null
 ) {
 
-    private val conventions: ConventionSet<Language, TypeNameElement<Language>> by lazy {
+    private val conventions: TypeConventions<Language, TypeNameElement<Language>> by lazy {
         val set: Set<TypeConvention<*, *>> = plugins
             .asSequence()
             .flatMap { it.typeConventions() }
             .toSet()
-        val shoved = set as Set<TypeConvention<Language, TypeNameElement<Language>>>
-        return@lazy ConventionSet(shoved)
+        val cast = set as Set<TypeConvention<Language, TypeNameElement<Language>>>
+        return@lazy TypeConventions(cast)
     }
 
     public constructor(

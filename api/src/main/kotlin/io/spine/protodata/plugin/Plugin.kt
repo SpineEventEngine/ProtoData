@@ -30,8 +30,8 @@ import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.ConventionSet
 import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.type.TypeConventions
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
@@ -142,7 +142,7 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
 
 @Internal
 public fun Plugin.render(
-    conventionSet: ConventionSet<Language, TypeNameElement<Language>>,
+    conventionSet: TypeConventions<Language, TypeNameElement<Language>>,
     codegenContext: BoundedContext,
     sources: Iterable<SourceFileSet>
 ) {

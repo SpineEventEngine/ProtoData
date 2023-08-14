@@ -26,22 +26,14 @@
 
 package io.spine.protodata.type
 
-import io.spine.annotation.Internal
 import io.spine.protodata.TypeName
 import io.spine.tools.code.Language
 
-
-public interface TypeConventions<L : Language, N : TypeNameElement<L>> {
-
-    public fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<L, N>>
-}
-
-@Internal
-public class ConventionSet<L: Language, N : TypeNameElement<L>>(
+public class TypeConventions<L : Language, N : TypeNameElement<L>>(
     private val conventions: Set<TypeConvention<L, N>>
-) : TypeConventions<L, N> {
+) {
 
-    override fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<L, N>> =
+    public fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<L, N>> =
         conventions.asSequence()
             .map { it.declarationFor(type) }
             .filter { it != null }
@@ -57,6 +49,6 @@ public class ConventionSet<L: Language, N : TypeNameElement<L>>(
                 it as TypeConvention<LN, TN>
             }
             .toSet()
-        return ConventionSet(subset)
+        return TypeConventions(subset)
     }
 }
