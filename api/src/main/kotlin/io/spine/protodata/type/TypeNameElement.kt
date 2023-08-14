@@ -28,4 +28,7 @@ package io.spine.protodata.type
 
 import io.spine.tools.code.Language
 
+/**
+ * A [CodeElement] that represents a name of a data type.
+ */
 public interface TypeNameElement<L : Language> : CodeElement<L>

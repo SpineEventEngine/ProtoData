@@ -92,6 +92,8 @@ public interface Plugin {
 
     /**
      * Obtains the [renderers][Renderer] added by this plugin.
+     *
+     * The renderers are guaranteed to be called in the order of their declaration in the plugin.
      */
     public fun renderers(): List<Renderer<*>> = listOf()
 
@@ -139,6 +141,11 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
     extend(context)
 }
 
+/**
+ * Renders source code via this Plugin's [Renderer]s.
+ *
+ * The renderers are guaranteed to be called in the order of their declaration in the plugin.
+ */
 @Internal
 public fun Plugin.render(
     conventionSet: TypeConventions<Language, TypeNameElement<Language>>,

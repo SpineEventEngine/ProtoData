@@ -200,6 +200,9 @@ internal constructor(
     public fun findFile(path: Path): Optional<SourceFile> =
         Optional.ofNullable(find(path))
 
+    /**
+     * Starts a file lookup for the given type name.
+     */
     public fun fileFor(typeName: TypeName): FileLookup = FileLookup(this, typeName)
 
     public fun createFileFor(typeName: TypeName): FileCreation = FileCreation(this, typeName)
@@ -326,10 +329,18 @@ private fun checkTarget(targetRoot: Path) {
     }
 }
 
+/**
+ * Part of the fluent API for finding source files.
+ */
 public class FileLookup(
     private val sources: SourceFileSet,
     private val name: TypeName
 ) {
+
+    /**
+     * Searches for a source file with for the given Proto type generated according to
+     * the given [convention].
+     */
     public fun <L: Language, N: TypeNameElement<L>> namedUsing(
         convention: TypeConvention<L, N>
     ): SourceFile? {
@@ -339,22 +350,40 @@ public class FileLookup(
     }
 }
 
+/**
+ * Part of the fluent API for creating new source files.
+ */
 public class FileCreation(
     private val sources: SourceFileSet,
     private val name: TypeName
 ) {
+
+    /**
+     * Attempts to create a file path for the given type name using the given [convention].
+     *
+     * If the convention does not define a declaration for the given type, returns `null`.
+     */
     public fun <L: Language, N: TypeNameElement<L>> namedUsing(
         convention: TypeConvention<L, N>
-    ): SourceFile? {
+    ): FileCreationWithPath? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
-        return path?.let { sources.find(it) }
+        return path?.let { FileCreationWithPath(sources, path) }
     }
 }
 
+/**
+ * Part of the fluent API for creating new source files.
+ */
 public class FileCreationWithPath(
     private val sources: SourceFileSet,
     private val file: Path
 ) {
+
+    /**
+     * Writes the given [code] into the provided file.
+     *
+     * @return the new source file
+     */
     public fun withCode(code: String): SourceFile = sources.createFile(file, code)
 }
