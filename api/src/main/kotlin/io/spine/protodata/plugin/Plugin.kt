@@ -90,16 +90,15 @@ public interface Plugin {
      */
     public fun extend(context: BoundedContextBuilder) {}
 
+    /**
+     * Obtains the [renderers][Renderer] added by this plugin.
+     */
     public fun renderers(): List<Renderer<*>> = listOf()
 
+    /**
+     * Obtains the [type conventions][TypeConvention] used by this plugin.
+     */
     public fun typeConventions(): Set<TypeConvention<*, *>> = setOf()
-}
-
-public class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
-
-    override fun renderers(): List<Renderer<*>> = renderers
 }
 
 /**

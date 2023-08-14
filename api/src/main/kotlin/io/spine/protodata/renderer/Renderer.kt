@@ -110,6 +110,9 @@ protected constructor(
         return this::protoDataContext.isInitialized
     }
 
+    /**
+     * Injects the [TypeConventions] for this renderer.
+     */
     internal fun withTypeConventions(
         conventions: TypeConventions<Language, TypeNameElement<Language>>
     ) {

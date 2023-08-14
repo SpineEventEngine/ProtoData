@@ -32,7 +32,6 @@ import io.spine.annotation.Internal
 import io.spine.environment.DefaultMode
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.config.Configuration
-import io.spine.protodata.plugin.ImplicitPluginWithRenderers
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
@@ -73,6 +72,7 @@ public class Pipeline(
             .asSequence()
             .flatMap { it.typeConventions() }
             .toSet()
+        @Suppress("UNCHECKED_CAST")
         val cast = set as Set<TypeConvention<Language, TypeNameElement<Language>>>
         return@lazy TypeConventions(cast)
     }
