@@ -27,6 +27,7 @@
 package io.spine.protodata.type
 
 import io.spine.protodata.TypeName
+import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language
 
 /**
@@ -54,6 +55,10 @@ public class TypeConventions<L : Language, N : TypeNameElement<L>>(
      */
     internal fun <LN: Language, TN : TypeNameElement<LN>>
             subsetFor(language: LN): TypeConventions<LN, TN> {
+        if (language == AnyLanguage) {
+            @Suppress("UNCHECKED_CAST") // Logically correct.
+            return this as TypeConventions<LN, TN>
+        }
         val subset = conventions
             .filter { it.language == language }
             .map {
