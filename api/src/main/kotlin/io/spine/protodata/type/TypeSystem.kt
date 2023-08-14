@@ -36,14 +36,23 @@ import io.spine.protodata.TypeName
 import io.spine.server.query.Querying
 import io.spine.server.query.select
 
-
+/**
+ * A collection of known Protobuf types.
+ */
 public class TypeSystem
+
+/**
+ * Creates a new `TypeSystem` from the given definition files.
+ */
 public constructor(
     private val files: Set<ProtobufSourceFile>
 ) {
 
     public companion object {
 
+        /**
+         * Builds a new `TypeSystem` by finding definitions via the given `Querying` instance.
+         */
         public fun from(client: Querying): TypeSystem {
             val files = client.select<ProtobufSourceFile>().all()
             val deps = client.select<ProtobufDependency>().all().map { it.file }
@@ -51,12 +60,21 @@ public constructor(
         }
     }
 
+    /**
+     * Looks up a message type by its name.
+     */
     public fun findMessage(name: TypeName): Pair<MessageType, File>? =
         findIn(name) { it.typeMap }
 
+    /**
+     * Looks up an enum type by its name.
+     */
     public fun findEnum(name: TypeName): Pair<EnumType, File>? =
         findIn(name) { it.enumTypeMap }
 
+    /**
+     * Looks up a message or enum type by its name.
+     */
     public fun findMessageOrEnum(name: TypeName): Pair<ProtoDeclaration, File>? =
         findMessage(name) ?: findEnum(name)
 
