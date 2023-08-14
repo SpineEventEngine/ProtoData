@@ -31,9 +31,12 @@ import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
 import io.spine.tools.code.Language
 
+/**
+ * An abstract base for Java [TypeConvention]s.
+ */
 public abstract class BaseJavaTypeConvention(
     protected val typeSystem: TypeSystem
-) : TypeConvention<Language, ClassName> {
+) : TypeConvention<Java, ClassName> {
 
-    final override val language: Language = Java
+    final override val language: Java = Java
 }

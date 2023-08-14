@@ -30,15 +30,18 @@ import io.spine.protobuf.isNotDefault
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.GeneratedDeclaration
 import io.spine.protodata.type.TypeSystem
+import io.spine.tools.code.Java
 import io.spine.tools.code.Language
 
-
+/**
+ * A convention which governs Java Rejection-Throwable class declarations.
+ */
 public class JavaRejectionConvention(
     typeSystem: TypeSystem
 ) : BaseJavaTypeConvention(typeSystem) {
 
     @Suppress("ReturnCount")
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<Language, ClassName>? {
+    override fun declarationFor(name: TypeName): GeneratedDeclaration<Java, ClassName>? {
         val declaration = typeSystem.findMessage(name) ?: return null
         val (msg, file) = declaration
         val fileName = file.path.value

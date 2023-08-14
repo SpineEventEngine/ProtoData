@@ -41,6 +41,7 @@ import io.spine.protodata.FieldName
 import io.spine.protodata.type.CodeElement
 import io.spine.protodata.type.TypeNameElement
 import io.spine.string.camelCase
+import io.spine.tools.code.Java
 import io.spine.tools.code.Language
 import io.spine.tools.code.SlashAsteriskCommentLang
 import java.nio.file.Path
@@ -54,7 +55,7 @@ private const val OF = "of"
  *
  * Can be an expression, a reference to a variable, an identifier, etc.
  */
-public sealed interface JavaElement: CodeElement<Language>
+public sealed interface JavaElement: CodeElement<Java>
 
 /**
  * A piece of Java code which yields a value.
@@ -137,7 +138,7 @@ public class ClassName
 internal constructor(
     private val packageName: String,
     private val simpleNames: List<String>
-) : JavaElement, TypeNameElement<Language> {
+) : JavaElement, TypeNameElement<Java> {
 
     /**
      * The canonical name of the class.

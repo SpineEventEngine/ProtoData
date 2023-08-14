@@ -39,5 +39,8 @@ public interface TypeConvention<L : Language, T: TypeNameElement<L>> {
      */
     public fun declarationFor(name: TypeName): GeneratedDeclaration<L, T>?
 
-    public val language: Language
+    /**
+     * The target programming language.
+     */
+    public val language: L
 }

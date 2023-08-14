@@ -75,7 +75,10 @@ protected constructor(
         return QueryingClient(protoDataContext, type, javaClass.name)
     }
 
-    protected fun <N : TypeNameElement<L>> types(): TypeConventions<L, N> {
+    /**
+     * Obtains conventions for generating language-specific types from Protobuf types.
+     */
+    protected fun <N : TypeNameElement<L>> typeConventions(): TypeConventions<L, N> {
         return typeConventions.subsetFor(supportedLanguage)
     }
 

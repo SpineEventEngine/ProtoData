@@ -29,10 +29,19 @@ package io.spine.protodata.type
 import io.spine.protodata.TypeName
 import io.spine.tools.code.Language
 
+/**
+ * A set of [TypeConvention]s.
+ *
+ * This can be either a set of conventions for a specific language or just a mishmash of
+ * different conventions.
+ */
 public class TypeConventions<L : Language, N : TypeNameElement<L>>(
     private val conventions: Set<TypeConvention<L, N>>
 ) {
 
+    /**
+     * Obtains all the possible generated declarations for the given Protobuf type.
+     */
     public fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<L, N>> =
         conventions.asSequence()
             .map { it.declarationFor(type) }
@@ -40,6 +49,9 @@ public class TypeConventions<L : Language, N : TypeNameElement<L>>(
             .map { it!! }
             .toSet()
 
+    /**
+     * Obtains a subset of these conventions for a specific language.
+     */
     internal fun <LN: Language, TN : TypeNameElement<LN>>
             subsetFor(language: LN): TypeConventions<LN, TN> {
         val subset = conventions
