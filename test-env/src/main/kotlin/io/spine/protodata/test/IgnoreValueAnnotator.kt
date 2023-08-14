@@ -35,7 +35,7 @@ import io.spine.tools.code.Language
  * A renderer that adds the `com.acme.ItsOkToIgnoreReturnValue` annotation to all public non-void
  * instance methods in the file.
  */
-public class IgnoreValueAnnotator : Renderer<Language>(Java) {
+public class IgnoreValueAnnotator : Renderer<Java>(Java) {
 
     public companion object {
         public const val ANNOTATION_TYPE: String = "com.acme.ItsOkToIgnoreReturnValue"

@@ -40,7 +40,7 @@ import kotlin.io.path.div
 /**
  * A renderer that deletes Java classes generated from message types marked as deleted.
  */
-public class DeletingRenderer : Renderer<Language>(Java) {
+public class DeletingRenderer : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val types = select<DeletedType>().all()

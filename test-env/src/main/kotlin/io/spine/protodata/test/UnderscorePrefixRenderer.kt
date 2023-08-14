@@ -35,7 +35,7 @@ import io.spine.tools.code.Language
 /**
  * A test [Renderer] which prepends underscore before an [InternalType] in all source files.
  */
-public class UnderscorePrefixRenderer : Renderer<Language>(Java) {
+public class UnderscorePrefixRenderer : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val internalTypes = select<InternalType>().all()

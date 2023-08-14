@@ -37,7 +37,7 @@ import io.spine.tools.code.SlashAsteriskCommentLang
 /**
  * An insertion point printer for the [CompanionFrame].
  */
-public class CompanionFramer : InsertionPointPrinter<Language>(Kotlin) {
+public class CompanionFramer : InsertionPointPrinter<Kotlin>(Kotlin) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> = setOf(CompanionFrame())
 }

@@ -31,7 +31,7 @@ import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.JavaScript
 import io.spine.tools.code.Language
 
-public class JsRenderer : Renderer<Language>(JavaScript) {
+public class JsRenderer : Renderer<JavaScript>(JavaScript) {
 
     override fun render(sources: SourceFileSet) {
         sources.forEach {

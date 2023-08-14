@@ -34,7 +34,7 @@ import io.spine.tools.code.Language
 /**
  * Renders the text "Lalala" as a [frame][CompanionFrame] in a companion object declaration.
  */
-public class CompanionLalalaRenderer : Renderer<Language>(Kotlin) {
+public class CompanionLalalaRenderer : Renderer<Kotlin>(Kotlin) {
 
     public companion object {
         public const val LALALA: String = "Lalala"

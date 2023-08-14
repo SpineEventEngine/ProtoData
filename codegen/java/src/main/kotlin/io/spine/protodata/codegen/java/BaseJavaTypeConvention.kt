@@ -28,13 +28,12 @@ package io.spine.protodata.codegen.java
 
 import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeSystem
-import io.spine.tools.code.CommonLanguages
+import io.spine.tools.code.Java
 import io.spine.tools.code.Language
-import io.spine.tools.code.SlashAsteriskCommentLang
 
 public abstract class BaseJavaTypeConvention(
     protected val typeSystem: TypeSystem
 ) : TypeConvention<Language, ClassName> {
 
-    final override val language: Language = CommonLanguages.Java
+    final override val language: Language = Java
 }

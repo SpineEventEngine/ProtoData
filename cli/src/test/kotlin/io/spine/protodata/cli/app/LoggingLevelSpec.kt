@@ -130,7 +130,7 @@ class `ProtoData CLI logging levels should` {
 /**
  * A pseudo-renderer which asserts that the logging levels are set correctly.
  */
-class LoggingLevelAsserter: Renderer<Language>(AnyLanguage.willDo()), WithLogging {
+class LoggingLevelAsserter: Renderer<AnyLanguage>(AnyLanguage), WithLogging {
 
     override fun render(sources: SourceFileSet) {
         debugEnabled = logger.at(Level.DEBUG).isEnabled()

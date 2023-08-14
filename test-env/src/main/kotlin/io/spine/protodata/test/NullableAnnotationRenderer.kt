@@ -37,7 +37,7 @@ import kotlin.io.path.Path
 /**
  * A renderer that adds the `@Nullable` annotation to the return type of a method called `foo()`.
  */
-public class NullableAnnotationRenderer : Renderer<Language>(Java) {
+public class NullableAnnotationRenderer : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val file = sources.file(Path("ClassWithMethod.java"))

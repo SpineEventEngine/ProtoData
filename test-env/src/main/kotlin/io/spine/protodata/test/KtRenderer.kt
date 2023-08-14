@@ -31,7 +31,7 @@ import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
 
-public class KtRenderer : Renderer<Language>(Kotlin) {
+public class KtRenderer : Renderer<Kotlin>(Kotlin) {
 
     override fun render(sources: SourceFileSet) {
         sources.forEach {

@@ -108,7 +108,9 @@ protected constructor(
         return this::protoDataContext.isInitialized
     }
 
-    internal fun withTypeConventions(conventions: ConventionSet<Language, TypeNameElement<Language>>) {
+    internal fun withTypeConventions(
+        conventions: ConventionSet<Language, TypeNameElement<Language>>
+    ) {
         this.typeConventions = conventions
     }
 }

@@ -48,10 +48,14 @@ public class ConventionSet<L: Language, N : TypeNameElement<L>>(
             .map { it!! }
             .toSet()
 
-    internal fun <LN: Language, TN : TypeNameElement<LN>> subsetFor(language: LN): TypeConventions<LN, TN> {
+    internal fun <LN: Language, TN : TypeNameElement<LN>>
+            subsetFor(language: LN): TypeConventions<LN, TN> {
         val subset = conventions
             .filter { it.language == language }
-            .map { it as TypeConvention<LN, TN> }
+            .map {
+                @Suppress("UNCHECKED_CAST") // Ensured by the filter.
+                it as TypeConvention<LN, TN>
+            }
             .toSet()
         return ConventionSet(subset)
     }

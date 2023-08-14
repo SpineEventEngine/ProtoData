@@ -62,7 +62,7 @@ public class NonVoidMethod : InsertionPoint {
 /**
  * A printer for [NonVoidMethod].
  */
-public class NonVoidMethodPrinter : InsertionPointPrinter<Language>(Java) {
+public class NonVoidMethodPrinter : InsertionPointPrinter<Java>(Java) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> = setOf(NonVoidMethod())
 }

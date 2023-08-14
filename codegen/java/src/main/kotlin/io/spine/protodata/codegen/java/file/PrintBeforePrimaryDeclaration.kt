@@ -36,7 +36,7 @@ import io.spine.tools.code.Language
  *
  * The insertion point is present in all the Java files.
  */
-public class PrintBeforePrimaryDeclaration : InsertionPointPrinter<Language>(Java) {
+public class PrintBeforePrimaryDeclaration : InsertionPointPrinter<Java>(Java) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> {
         return setOf(BeforePrimaryDeclaration)

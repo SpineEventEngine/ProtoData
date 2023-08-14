@@ -33,7 +33,7 @@ import io.spine.tools.code.Language
 import io.spine.util.theOnly
 import kotlin.io.path.name
 
-public class PrependingRenderer : Renderer<Language>(Java) {
+public class PrependingRenderer : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val files = sources.filter {
