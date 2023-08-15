@@ -67,14 +67,12 @@ public class Pipeline(
     private val config: Configuration? = null
 ) {
 
-    private val conventions: TypeConventions<Language, TypeNameElement<Language>> by lazy {
-        val set: Set<TypeConvention<*, *>> = plugins
+    private val conventions: Set<TypeConvention<Language, TypeNameElement<Language>>> by lazy {
+        @Suppress("UNCHECKED_CAST") // Cast to most abstract possible types.
+        plugins
             .asSequence()
             .flatMap { it.typeConventions() }
-            .toSet()
-        @Suppress("UNCHECKED_CAST")
-        val cast = set as Set<TypeConvention<Language, TypeNameElement<Language>>>
-        return@lazy TypeConventions(cast)
+            .toSet() as Set<TypeConvention<Language, TypeNameElement<Language>>>
     }
 
     /**

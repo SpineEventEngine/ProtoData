@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
 import io.spine.protodata.config.ConfiguredQuerying
+import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeConventions
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
@@ -48,7 +49,7 @@ protected constructor(
 ) : ConfiguredQuerying, ContextAware {
 
     private lateinit var protoDataContext: BoundedContext
-    private lateinit var typeConventions: TypeConventions<Language, TypeNameElement<Language>>
+    private lateinit var typeConventions: TypeConventions<L, TypeNameElement<L>>
 
     /**
      * Performs required changes to the given source set.
@@ -118,8 +119,8 @@ protected constructor(
      * Injects the [TypeConventions] for this renderer.
      */
     internal fun withTypeConventions(
-        allConventions: TypeConventions<Language, TypeNameElement<Language>>
+        allConventions: Set<TypeConvention<Language, TypeNameElement<Language>>>
     ) {
-        this.typeConventions = allConventions.subsetFor(supportedLanguage)
+        this.typeConventions = TypeConventions.from(allConventions, supportedLanguage)
     }
 }

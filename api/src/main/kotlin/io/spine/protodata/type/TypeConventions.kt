@@ -36,9 +36,39 @@ import io.spine.tools.code.Language
  * This can be either a set of conventions for a specific language or just a mishmash of
  * different conventions.
  */
-public class TypeConventions<L : Language, N : TypeNameElement<L>>(
+public class TypeConventions<L : Language, N : TypeNameElement<L>>
+private constructor(
     private val conventions: Set<TypeConvention<L, N>>
 ) {
+
+    internal companion object {
+
+        /**
+         * Constructs a new `TypeConventions` from a subset of the given [conventions] for a specific language.
+         *
+         * @param conventions a set of all known [TypeConvention]s.
+         * @param target the target language for which the convention is defined.
+         * @param L the specific type of the language.
+         * @param T the type of the type name code element specific for the `LN` language.
+         */
+        fun <L : Language, T : TypeNameElement<L>> from(
+            conventions: Set<TypeConvention<*, *>>,
+            target: L
+        ): TypeConventions<L, T> {
+            if (target == AnyLanguage) {
+                @Suppress("UNCHECKED_CAST") // Logically correct.
+                return TypeConventions(conventions as Set<TypeConvention<L, T>>)
+            }
+            val subset = conventions
+                .filter { it.language == target }
+                .map {
+                    @Suppress("UNCHECKED_CAST") // Ensured by the filter.
+                    it as TypeConvention<L, T>
+                }
+                .toSet()
+            return TypeConventions(subset)
+        }
+    }
 
     /**
      * Obtains all the possible generated declarations for the given Protobuf type.
@@ -49,27 +79,4 @@ public class TypeConventions<L : Language, N : TypeNameElement<L>>(
             .filter { it != null }
             .map { it!! }
             .toSet()
-
-    /**
-     * Obtains a subset of these conventions for a specific language.
-     *
-     * @param language the target language for which the convention is defined.
-     * @param LN the specific type of the language.
-     * @param TN the type of the type name code element specific for the `LN` language.
-     */
-    internal fun <LN: Language, TN : TypeNameElement<LN>>
-            subsetFor(language: LN): TypeConventions<LN, TN> {
-        if (language == AnyLanguage) {
-            @Suppress("UNCHECKED_CAST") // Logically correct.
-            return this as TypeConventions<LN, TN>
-        }
-        val subset = conventions
-            .filter { it.language == language }
-            .map {
-                @Suppress("UNCHECKED_CAST") // Ensured by the filter.
-                it as TypeConvention<LN, TN>
-            }
-            .toSet()
-        return TypeConventions(subset)
-    }
 }

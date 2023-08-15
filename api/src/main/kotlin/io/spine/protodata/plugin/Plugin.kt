@@ -148,7 +148,7 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
  */
 @Internal
 public fun Plugin.render(
-    conventionSet: TypeConventions<Language, TypeNameElement<Language>>,
+    conventionSet: Set<TypeConvention<Language, TypeNameElement<Language>>>,
     codegenContext: BoundedContext,
     sources: Iterable<SourceFileSet>
 ) {
