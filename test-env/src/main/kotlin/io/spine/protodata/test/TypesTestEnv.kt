@@ -60,7 +60,9 @@ import io.spine.protodata.field as newField
 public object TypesTestEnv {
 
     public val filePath: FilePath = filePath { value = "acme/example/foo.proto" }
-    public val rejectionsFilePath: FilePath = filePath { value = "acme/example/cartoon_rejections.proto" }
+    public val rejectionsFilePath: FilePath = filePath {
+        value = "acme/example/cartoon_rejections.proto"
+    }
     public val multipleFilesOption: Option = option {
         name = "java_multiple_files"
         number = JAVA_MULTIPLE_FILES_FIELD_NUMBER
