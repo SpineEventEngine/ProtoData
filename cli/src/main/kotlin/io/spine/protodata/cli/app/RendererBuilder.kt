@@ -31,4 +31,4 @@ import io.spine.protodata.renderer.Renderer
 /**
  * A reflective builder for renderers.
  */
-internal class RendererBuilder : ReflectiveBuilder<Renderer>()
+internal class RendererBuilder : ReflectiveBuilder<Renderer<*>>()

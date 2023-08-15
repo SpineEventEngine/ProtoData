@@ -34,13 +34,18 @@ import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
+import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.type.TypeConventions
+import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
+import io.spine.tools.code.Language
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -57,18 +62,41 @@ import io.spine.server.under
 @Internal
 public class Pipeline(
     private val plugins: List<Plugin>,
-    private val renderers: List<Renderer>,
     private val sources: List<SourceFileSet>,
     private val request: CodeGeneratorRequest,
     private val config: Configuration? = null
 ) {
+
+    private val conventions: Set<TypeConvention<Language, TypeNameElement<Language>>> by lazy {
+        @Suppress("UNCHECKED_CAST") // Cast to most abstract possible types.
+        plugins
+            .asSequence()
+            .flatMap { it.typeConventions() }
+            .toSet() as Set<TypeConvention<Language, TypeNameElement<Language>>>
+    }
+
+    /**
+     * Creates a new `Pipeline` with the given components.
+     *
+     * This constructor is used for tests and for backward compatibility. New users should defer
+     * to the default constructor and pass renderers via plugins.
+     */
+    @VisibleForTesting
+    public constructor(
+        plugins: List<Plugin>,
+        renderers: List<Renderer<*>>,
+        sources: List<SourceFileSet>,
+        request: CodeGeneratorRequest,
+        config: Configuration? = null
+    ) : this(plugins + ImplicitPluginWithRenderers(renderers), sources, request, config)
+
     /**
      * Creates a new `Pipeline` with only one plugin and one source set.
      */
     @VisibleForTesting
-    public constructor(
+    internal constructor(
         plugin: Plugin,
-        renderers: List<Renderer>,
+        renderers: List<Renderer<*>>,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
         config: Configuration? = null
@@ -78,9 +106,9 @@ public class Pipeline(
      * Creates a new `Pipeline` with only one plugin, one renderer, and one source set.
      */
     @VisibleForTesting
-    public constructor(
+    internal constructor(
         plugin: Plugin,
-        renderer: Renderer,
+        renderer: Renderer<*>,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
         config: Configuration? = null
@@ -90,9 +118,9 @@ public class Pipeline(
      * Creates a new `Pipeline` with only one plugin, one renderer, and several source set.
      */
     @VisibleForTesting
-    public constructor(
+    internal constructor(
         plugin: Plugin,
-        renderer: Renderer,
+        renderer: Renderer<*>,
         sources: List<SourceFileSet>,
         request: CodeGeneratorRequest,
         config: Configuration? = null
@@ -135,9 +163,7 @@ public class Pipeline(
      */
     private fun assembleCodegenContext(): BoundedContext {
         val builder = CodeGenerationContext.builder()
-        plugins.forEach {
-            it.applyTo(builder)
-        }
+        plugins.forEach {  it.applyTo(builder) }
         return builder.build()
     }
 
@@ -154,10 +180,7 @@ public class Pipeline(
     }
 
     private fun renderSources(codegenContext: BoundedContext) {
-        renderers.forEach { r ->
-            r.registerWith(codegenContext)
-            sources.forEach(r::renderSources)
-        }
+        plugins.forEach { it.render(conventions, codegenContext, sources) }
         sources.forEach { it.write() }
     }
 }

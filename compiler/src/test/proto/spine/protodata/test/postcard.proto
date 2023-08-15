@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package spine.protodata.test;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.test";
+option java_outer_classname = "PostcardProto";
+option java_multiple_files = true;
+
+message Postcard {
+
+    string congratulation = 1;
+
+    map<string, string> signatures = 2;
+}

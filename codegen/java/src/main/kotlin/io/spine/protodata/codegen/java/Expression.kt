@@ -38,7 +38,14 @@ import io.spine.protodata.Field.CardinalityCase.LIST
 import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
+import io.spine.protodata.type.CodeElement
+import io.spine.protodata.type.TypeNameElement
 import io.spine.string.camelCase
+import io.spine.tools.code.Java
+import io.spine.tools.code.Language
+import io.spine.tools.code.SlashAsteriskCommentLang
+import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
 private const val OF = "of"
@@ -48,18 +55,12 @@ private const val OF = "of"
  *
  * Can be an expression, a reference to a variable, an identifier, etc.
  */
-public sealed interface JavaPrintable {
-
-    /**
-     * Prints this Java code.
-     */
-    public fun toCode(): String
-}
+public sealed interface JavaElement: CodeElement<Java>
 
 /**
  * A piece of Java code which yields a value.
  */
-public sealed class Expression(private val code: String) : JavaPrintable {
+public sealed class Expression(private val code: String) : JavaElement {
 
     /**
      * Prints this Java expression.
@@ -137,7 +138,7 @@ public class ClassName
 internal constructor(
     private val packageName: String,
     private val simpleNames: List<String>
-) : JavaPrintable {
+) : JavaElement, TypeNameElement<Java> {
 
     /**
      * The canonical name of the class.
@@ -161,6 +162,13 @@ internal constructor(
     @get:JvmName("binary")
     public val binary: String
         get() = "$packageName.${simpleNames.joinToString("$")}"
+
+    @get:JvmName("javaFile")
+    public val javaFile: Path by lazy {
+        val dir = packageName.replace('.', '/')
+        val topLevelClass = simpleNames.first()
+        Path("$dir/$topLevelClass.java")
+    }
 
     /**
      * The simple name of this class.
@@ -368,7 +376,7 @@ public class MethodCall
  */
 @JvmOverloads
 constructor(
-    scope: JavaPrintable,
+    scope: JavaElement,
     name: String,
     arguments: List<Expression> = listOf(),
     generics: List<ClassName> = listOf()

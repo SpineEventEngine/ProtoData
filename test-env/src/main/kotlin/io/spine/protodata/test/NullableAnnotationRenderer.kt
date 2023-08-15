@@ -31,12 +31,13 @@ import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.test.AnnotationInsertionPoint.BEFORE_RETURN_TYPE_METHOD_FOO
 import io.spine.protodata.test.AnnotationInsertionPoint.IMPORT
 import io.spine.tools.code.Java
+import io.spine.tools.code.Language
 import kotlin.io.path.Path
 
 /**
  * A renderer that adds the `@Nullable` annotation to the return type of a method called `foo()`.
  */
-public class NullableAnnotationRenderer : Renderer(Java) {
+public class NullableAnnotationRenderer : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val file = sources.file(Path("ClassWithMethod.java"))

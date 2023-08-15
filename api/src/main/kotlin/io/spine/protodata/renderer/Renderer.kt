@@ -28,6 +28,9 @@ package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
 import io.spine.protodata.config.ConfiguredQuerying
+import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.type.TypeConventions
+import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.ContextAware
 import io.spine.server.query.QueryingClient
@@ -40,12 +43,13 @@ import io.spine.tools.code.Language
  * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
  * have a `public` no-argument constructor.
  */
-public abstract class Renderer
+public abstract class Renderer<L : Language>
 protected constructor(
-    private val supportedLanguage: Language
+    private val supportedLanguage: L
 ) : ConfiguredQuerying, ContextAware {
 
     private lateinit var protoDataContext: BoundedContext
+    private lateinit var typeConventions: TypeConventions<L, TypeNameElement<L>>
 
     /**
      * Performs required changes to the given source set.
@@ -70,6 +74,17 @@ protected constructor(
 
     public final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(protoDataContext, type, javaClass.name)
+    }
+
+    /**
+     * Obtains conventions for generating language-specific types from Protobuf types.
+     *
+     * @param N the type of the name element for the associated language
+     */
+    protected fun <N : TypeNameElement<L>> typeConventions(): TypeConventions<L, N> {
+        @Suppress("UNCHECKED_CAST")
+          // `L` is insured upon injection, we have to trust the user for providing `N`.
+        return typeConventions as TypeConventions<L, N>
     }
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
@@ -98,5 +113,14 @@ protected constructor(
 
     override fun isRegistered(): Boolean {
         return this::protoDataContext.isInitialized
+    }
+
+    /**
+     * Injects the [TypeConventions] for this renderer.
+     */
+    internal fun withTypeConventions(
+        allConventions: Set<TypeConvention<Language, TypeNameElement<Language>>>
+    ) {
+        this.typeConventions = TypeConventions.from(allConventions, supportedLanguage)
     }
 }

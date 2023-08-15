@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,26 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.given
+package io.spine.protodata.type
 
-import io.spine.protodata.cli.test.CustomField
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.server.query.select
-import io.spine.tools.code.AnyLanguage
-import kotlin.io.path.Path
+import io.spine.tools.code.Language
 
-class CustomOptionRenderer : Renderer(AnyLanguage.willDo()) {
-
-    companion object {
-        const val FILE_NAME = "custom_fields.csv"
-    }
-
-    override fun render(sources: SourceFileSet) {
-        val customFields = select<CustomField>().all()
-        sources.createFile(
-            Path(FILE_NAME),
-            customFields.joinToString(separator = ",") { it.field.value }
-        )
-    }
-}
+/**
+ * A [CodeElement] that represents a name of a data type.
+ */
+public interface TypeNameElement<L : Language> : CodeElement<L>

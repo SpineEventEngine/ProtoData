@@ -470,9 +470,18 @@ enum CallCardinality {
 // An option may be declared for a whole file, a type (message, enum, or service), for
 // a message field, a standalone `rpc`, or an enum value.
 //
+// We do not distinguish between options with different targets, e.g. message and field options.
+// Options of a certain target are placed next to the target's definition.
+//
+// See `File.option`, `MessageType.option`, `Field.option`, etc.
+//
 message Option {
 
-    // Name of the option.
+    // The short name of the option.
+    //
+    // The name includes only the name of the field (or of the extension field) without the package
+    // or the enclosing type.
+    //
     string name = 1;
 
     // The field number of the option.

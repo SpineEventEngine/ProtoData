@@ -37,7 +37,7 @@ import kotlin.text.RegexOption.DOT_MATCHES_ALL
 /**
  * An [InsertionPointPrinter] for the [AnnotationInsertionPoint].
  */
-public class AnnotationInsertionPointPrinter: InsertionPointPrinter(Java) {
+public class AnnotationInsertionPointPrinter: InsertionPointPrinter<Java>(Java) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> =
         AnnotationInsertionPoint.values().toSet()

@@ -53,9 +53,12 @@ public class Extension(internal val project: Project): CodegenSettings {
     internal val plugins: ListProperty<String> =
         factory.listProperty(String::class.java).convention(listOf())
 
+    @Suppress("DeprecatedCallableAddReplaceWith") // Not that simple ;)
+    @Deprecated("Supply Renderers via Plugins instead.")
     public override fun renderers(vararg classNames: String): Unit =
         renderers.addAll(classNames.toList())
 
+    @Deprecated("Supply Renderers via Plugins instead.")
     internal val renderers: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
 

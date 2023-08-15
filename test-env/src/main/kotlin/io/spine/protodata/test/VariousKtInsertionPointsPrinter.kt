@@ -32,8 +32,9 @@ import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Kotlin
+import io.spine.tools.code.Language
 
-public class VariousKtInsertionPointsPrinter : InsertionPointPrinter(Kotlin) {
+public class VariousKtInsertionPointsPrinter : InsertionPointPrinter<Kotlin>(Kotlin) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> =
         KotlinInsertionPoint.values().toSet()

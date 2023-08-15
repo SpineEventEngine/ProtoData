@@ -31,6 +31,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.options.NullableOption
+import com.github.ajalt.clikt.parameters.options.deprecated
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
@@ -122,7 +123,9 @@ internal class Run(version: String) : CliktCommand(
             by PluginParam.toOption().multiple()
 
     private val renderers: List<String>
-            by RendererParam.toOption().multiple(default = listOf())
+            by RendererParam.toOption().multiple(default = listOf()).deprecated(
+                "Supply Renderers via Plugins instead"
+            )
 
     private val codegenRequestFile: File
             by RequestParam.toOption().file(
@@ -210,7 +213,12 @@ internal class Run(version: String) : CliktCommand(
               - config: ${config}.
             """.ti()
         }
-        Pipeline(plugins, renderers, sources, request, config)()
+        val pipeline = if (renderers.isNotEmpty()) {
+            Pipeline(plugins, renderers, sources, request, config)
+        } else {
+            Pipeline(plugins, sources, request, config)
+        }
+        pipeline()
     }
 
     private fun loadRequest(

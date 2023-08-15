@@ -37,7 +37,7 @@ import java.nio.file.Path
 /**
  * A [Renderer] which generates Java code.
  */
-public abstract class JavaRenderer : Renderer(Java) {
+public abstract class JavaRenderer : Renderer<Java>(Java) {
 
     /**
      * Obtains the [ClassName] of the given Protobuf type.

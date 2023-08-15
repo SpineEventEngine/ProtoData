@@ -29,8 +29,9 @@ package io.spine.protodata.test
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.JavaScript
+import io.spine.tools.code.Language
 
-public class JsRenderer : Renderer(JavaScript) {
+public class JsRenderer : Renderer<JavaScript>(JavaScript) {
 
     override fun render(sources: SourceFileSet) {
         sources.forEach {

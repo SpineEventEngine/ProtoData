@@ -29,6 +29,10 @@ package io.spine.protodata.renderer
 import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
+import io.spine.protodata.TypeName
+import io.spine.protodata.renderer.SourceFileSet.Companion.from
+import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.type.TypeNameElement
 import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.util.theOnly
@@ -39,6 +43,7 @@ import java.util.*
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
 import kotlin.text.Charsets.UTF_8
+import io.spine.tools.code.Language
 
 /**
  * A mutable set of source files that participate in code generation workflow.
@@ -182,8 +187,7 @@ internal constructor(
             return file
         }
         val filtered = files.filterKeys { path.endsWith(it) }
-        return if (filtered.isEmpty()) null
-               else filtered.entries.theOnly().value
+        return if (filtered.isEmpty()) null else filtered.entries.theOnly().value
     }
 
     /**
@@ -194,6 +198,13 @@ internal constructor(
      */
     public fun findFile(path: Path): Optional<SourceFile> =
         Optional.ofNullable(find(path))
+
+    /**
+     * Starts a file lookup for the given type name.
+     */
+    public fun fileFor(typeName: TypeName): FileLookup = FileLookup(this, typeName)
+
+    public fun createFileFor(typeName: TypeName): FileCreation = FileCreation(this, typeName)
 
     /**
      * Creates a new source file at the given [path] and contains the given [code].
@@ -312,7 +323,71 @@ private fun checkTarget(targetRoot: Path) {
                 transform = { f -> "    $f" }
             )
             "Target directory `$targetRoot` must be empty. Found inside:$nl" +
-            "${ls}."
+                    "${ls}."
         }
     }
+}
+
+/**
+ * A marker interface for fluent API operation classes for creating or searching for a file.
+ */
+public sealed interface FileOperation
+
+/**
+ * Part of the fluent API for finding source files.
+ */
+public class FileLookup(
+    private val sources: SourceFileSet,
+    private val name: TypeName
+) : FileOperation {
+
+    /**
+     * Searches for a source file with for the given Proto type generated according to
+     * the given [convention].
+     */
+    public fun <L : Language, N : TypeNameElement<L>> namedUsing(
+        convention: TypeConvention<L, N>
+    ): SourceFile? {
+        val declaration = convention.declarationFor(name)
+        val path = declaration?.path
+        return path?.let { sources.find(it) }
+    }
+}
+
+/**
+ * Part of the fluent API for creating new source files.
+ */
+public class FileCreation(
+    private val sources: SourceFileSet,
+    private val name: TypeName
+) : FileOperation {
+
+    /**
+     * Attempts to create a file path for the given type name using the given [convention].
+     *
+     * If the convention does not define a declaration for the given type, returns `null`.
+     */
+    public fun <L : Language, N : TypeNameElement<L>> namedUsing(
+        convention: TypeConvention<L, N>
+    ): FileCreationWithPath? {
+        val declaration = convention.declarationFor(name)
+        val path = declaration?.path
+        return path?.let { FileCreationWithPath(sources, path) }
+    }
+}
+
+/**
+ * Part of the fluent API for creating new source files.
+ */
+public class FileCreationWithPath(
+    private val sources: SourceFileSet,
+    private val file: Path
+) : FileOperation {
+
+    /**
+     * Writes the given [code] into the provided file.
+     *
+     * @return the new source file
+     */
+    public fun withCode(code: String): SourceFile = sources.createFile(file, code)
 }

@@ -36,11 +36,8 @@ import io.kotest.matchers.string.shouldStartWith
 import io.spine.base.Time
 import io.spine.option.OptionsProto
 import io.spine.protobuf.pack
-import io.spine.protodata.cli.given.CustomOptionPlugin
-import io.spine.protodata.cli.given.CustomOptionRenderer
 import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
 import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
-import io.spine.protodata.cli.given.TestOptionProvider
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.test.ECHO_FILE

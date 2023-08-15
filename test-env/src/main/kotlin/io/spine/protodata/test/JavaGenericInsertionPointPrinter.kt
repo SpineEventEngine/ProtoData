@@ -31,9 +31,10 @@ import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
+import io.spine.tools.code.Language
 import io.spine.tools.code.Java
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter(Java) {
+public class JavaGenericInsertionPointPrinter : InsertionPointPrinter<Java>(Java) {
 
     override fun supportedInsertionPoints(): Set<InsertionPoint> =
         GenericInsertionPoint.values().toSet()

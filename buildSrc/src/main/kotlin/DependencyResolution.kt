@@ -49,6 +49,7 @@ import io.spine.internal.dependency.Okio
 import io.spine.internal.dependency.OpenTest4J
 import io.spine.internal.dependency.Plexus
 import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Slf4J
 import io.spine.internal.dependency.Truth
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.artifacts.Configuration
@@ -98,7 +99,7 @@ private fun ResolutionStrategy.forceProductionDependencies() {
         Kotlin.stdLibJdk8,
         Protobuf.GradlePlugin.lib,
         Protobuf.libs,
-        io.spine.internal.dependency.Slf4J.lib
+        Slf4J.lib
     )
 }
 

@@ -48,9 +48,9 @@ import io.spine.tools.code.Language
  * of `InsertionPointPrinter` and add it to your processing as a first `Renderer`. Note that
  * the `InsertionPointPrinter`s need to be invoked before the other `Renderers`.
  */
-public abstract class InsertionPointPrinter(
-    protected val target: Language
-) : Renderer(target) {
+public abstract class InsertionPointPrinter<L: Language>(
+    protected val target: L
+) : Renderer<L>(target) {
 
     /**
      * [InsertionPoint]s which could be added to source code by this `InsertionPointPrinter`.
