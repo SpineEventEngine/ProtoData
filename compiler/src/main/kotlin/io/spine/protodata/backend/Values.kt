@@ -28,6 +28,7 @@ package io.spine.protodata.backend
 
 import com.google.protobuf.ByteString
 import com.google.protobuf.Descriptors
+import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.BOOLEAN
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.BYTE_STRING
@@ -104,7 +105,7 @@ public object Values {
         STRING -> value { stringValue = raw as String }
         BYTE_STRING -> value { bytesValue = raw as ByteString }
         ENUM -> value {
-            val enumDescriptor = raw as Descriptors.EnumValueDescriptor
+            val enumDescriptor = raw as EnumValueDescriptor
             enumValue = EnumValue.newBuilder()
                 .setType(field.enumType.name())
                 .setConstNumber(enumDescriptor.number)
