@@ -37,7 +37,7 @@ import java.nio.file.Path
  *
  * @param T the language-specific type of the type name element.
  */
-public data class GeneratedDeclaration<L: Language, out T : TypeNameElement<L>>(
+public data class GeneratedDeclaration<L: Language, T : TypeNameElement<L>>(
     public val name: T,
     public val path: Path
 )

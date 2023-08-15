@@ -52,6 +52,10 @@ public class TypeConventions<L : Language, N : TypeNameElement<L>>(
 
     /**
      * Obtains a subset of these conventions for a specific language.
+     *
+     * @param language the target language for which the convention is defined.
+     * @param LN the specific type of the language.
+     * @param TN the type of the type name code element specific for the `LN` language.
      */
     internal fun <LN: Language, TN : TypeNameElement<LN>>
             subsetFor(language: LN): TypeConventions<LN, TN> {

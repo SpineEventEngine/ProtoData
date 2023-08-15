@@ -187,8 +187,7 @@ internal constructor(
             return file
         }
         val filtered = files.filterKeys { path.endsWith(it) }
-        return if (filtered.isEmpty()) null
-               else filtered.entries.theOnly().value
+        return if (filtered.isEmpty()) null else filtered.entries.theOnly().value
     }
 
     /**
@@ -324,10 +323,15 @@ private fun checkTarget(targetRoot: Path) {
                 transform = { f -> "    $f" }
             )
             "Target directory `$targetRoot` must be empty. Found inside:$nl" +
-            "${ls}."
+                    "${ls}."
         }
     }
 }
+
+/**
+ * A marker interface for fluent API operation classes for creating or searching for a file.
+ */
+public sealed interface FileOperation
 
 /**
  * Part of the fluent API for finding source files.
@@ -335,13 +339,13 @@ private fun checkTarget(targetRoot: Path) {
 public class FileLookup(
     private val sources: SourceFileSet,
     private val name: TypeName
-) {
+) : FileOperation {
 
     /**
      * Searches for a source file with for the given Proto type generated according to
      * the given [convention].
      */
-    public fun <L: Language, N: TypeNameElement<L>> namedUsing(
+    public fun <L : Language, N : TypeNameElement<L>> namedUsing(
         convention: TypeConvention<L, N>
     ): SourceFile? {
         val declaration = convention.declarationFor(name)
@@ -356,14 +360,14 @@ public class FileLookup(
 public class FileCreation(
     private val sources: SourceFileSet,
     private val name: TypeName
-) {
+) : FileOperation {
 
     /**
      * Attempts to create a file path for the given type name using the given [convention].
      *
      * If the convention does not define a declaration for the given type, returns `null`.
      */
-    public fun <L: Language, N: TypeNameElement<L>> namedUsing(
+    public fun <L : Language, N : TypeNameElement<L>> namedUsing(
         convention: TypeConvention<L, N>
     ): FileCreationWithPath? {
         val declaration = convention.declarationFor(name)
@@ -378,7 +382,7 @@ public class FileCreation(
 public class FileCreationWithPath(
     private val sources: SourceFileSet,
     private val file: Path
-) {
+) : FileOperation {
 
     /**
      * Writes the given [code] into the provided file.

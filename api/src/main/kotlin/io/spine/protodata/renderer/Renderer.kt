@@ -77,9 +77,13 @@ protected constructor(
 
     /**
      * Obtains conventions for generating language-specific types from Protobuf types.
+     *
+     * @param N the type of the name element for the associated language
      */
     protected fun <N : TypeNameElement<L>> typeConventions(): TypeConventions<L, N> {
-        return typeConventions.subsetFor(supportedLanguage)
+        @Suppress("UNCHECKED_CAST")
+          // `L` is insured upon injection, we have to trust the user for providing `N`.
+        return typeConventions as TypeConventions<L, N>
     }
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
@@ -114,8 +118,8 @@ protected constructor(
      * Injects the [TypeConventions] for this renderer.
      */
     internal fun withTypeConventions(
-        conventions: TypeConventions<Language, TypeNameElement<Language>>
+        allConventions: TypeConventions<Language, TypeNameElement<Language>>
     ) {
-        this.typeConventions = conventions
+        this.typeConventions = allConventions.subsetFor(supportedLanguage)
     }
 }
