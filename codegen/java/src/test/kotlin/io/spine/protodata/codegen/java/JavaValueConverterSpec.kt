@@ -31,9 +31,9 @@ import com.google.protobuf.ByteString.copyFrom
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.NullValue.NULL_VALUE
 import io.spine.protodata.Value
-import io.spine.protodata.codegen.java.given.TypesTestEnv.enumTypeName
-import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
-import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
+import io.spine.protodata.test.TypesTestEnv.enumTypeName
+import io.spine.protodata.test.TypesTestEnv.messageTypeName
+import io.spine.protodata.test.TypesTestEnv.typeSystem
 import io.spine.protodata.enumValue
 import io.spine.protodata.messageValue
 import io.spine.protodata.value

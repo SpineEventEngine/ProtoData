@@ -28,9 +28,9 @@ package io.spine.protodata.codegen.java
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.codegen.java.given.TypesTestEnv.messageTypeName
-import io.spine.protodata.codegen.java.given.TypesTestEnv.rejectionTypeName
-import io.spine.protodata.codegen.java.given.TypesTestEnv.typeSystem
+import io.spine.protodata.test.TypesTestEnv.messageTypeName
+import io.spine.protodata.test.TypesTestEnv.rejectionTypeName
+import io.spine.protodata.test.TypesTestEnv.typeSystem
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
