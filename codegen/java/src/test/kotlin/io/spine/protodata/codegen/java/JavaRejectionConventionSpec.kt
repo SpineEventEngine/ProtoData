@@ -41,7 +41,7 @@ class JavaRejectionConventionSpec {
     @Test
     fun `convert a rejection type name into a rejection throwable class`() {
         val rejections = JavaRejectionConvention(typeSystem)
-        val messages = JavaTypeConvention(typeSystem)
+        val messages = MessageTypeConvention(typeSystem)
 
         val message = messages.declarationFor(rejectionTypeName)
         message shouldNotBe null

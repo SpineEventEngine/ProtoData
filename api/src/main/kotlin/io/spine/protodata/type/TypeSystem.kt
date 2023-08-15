@@ -39,12 +39,7 @@ import io.spine.server.query.select
 /**
  * A collection of known Protobuf types.
  */
-public class TypeSystem
-
-/**
- * Creates a new `TypeSystem` from the given definition files.
- */
-public constructor(
+public class TypeSystem(
     private val files: Set<ProtobufSourceFile>
 ) {
 

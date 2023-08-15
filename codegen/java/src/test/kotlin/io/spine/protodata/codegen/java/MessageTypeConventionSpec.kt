@@ -26,24 +26,35 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.TypeName
-import io.spine.protodata.type.GeneratedDeclaration
-import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeSystem
-import io.spine.tools.code.Java
-import io.spine.tools.code.Language
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.spine.protodata.test.TypesTestEnv.enumTypeName
+import io.spine.protodata.test.TypesTestEnv.messageTypeName
+import io.spine.protodata.test.TypesTestEnv.typeSystem
+import kotlin.io.path.Path
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A convention which governs the Java message class declarations.
- */
-public class JavaTypeConvention(
-    typeSystem: TypeSystem
-) : BaseJavaTypeConvention(typeSystem) {
+@DisplayName("`MessageTypeConvention` should")
+class MessageTypeConventionSpec {
 
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<Java, ClassName> {
-        val file = typeSystem.findMessageOrEnum(name)?.second
-        check(file != null) { "Unknown type `${name.typeUrl}`." }
-        val cls = name.javaClassName(declaredIn = file)
-        return GeneratedDeclaration(cls, cls.javaFile)
+    @Test
+    fun `convert a message type name into a Java class name`() {
+        val convention = MessageTypeConvention(typeSystem)
+        val declaration = convention.declarationFor(messageTypeName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        cls.binary shouldBe "ua.acme.example.Foo"
+        path shouldBe Path("ua/acme/example/Foo.java")
+    }
+
+    @Test
+    fun `convert an enum type name into a Java class name`() {
+        val convention = MessageTypeConvention(typeSystem)
+        val declaration = convention.declarationFor(enumTypeName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        cls.binary shouldBe "ua.acme.example.Kind"
+        path shouldBe Path("ua/acme/example/Kind.java")
     }
 }

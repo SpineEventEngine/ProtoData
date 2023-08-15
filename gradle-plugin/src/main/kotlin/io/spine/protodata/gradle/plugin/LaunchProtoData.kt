@@ -70,6 +70,7 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:Internal
     public abstract val configurationFile: RegularFileProperty
 
+    @Deprecated("Supply Renderers via Plugins instead.")
     @get:Input
     internal lateinit var renderers: Provider<List<String>>
 

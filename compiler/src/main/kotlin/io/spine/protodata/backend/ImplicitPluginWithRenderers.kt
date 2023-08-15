@@ -31,7 +31,11 @@ import io.spine.protodata.renderer.Renderer
 
 /**
  * An adapter plugin for gathering renderers that do not belong to a semantically-defined plugin.
+ *
+ * This class is deprecated from the start. It only exists for backward compatibility. Users should
+ * migrate to supplying Renderers via semantically meaningful plugins.
  */
+@Deprecated("Renderers should be supplied with a `Plugin`.")
 internal class ImplicitPluginWithRenderers(
     private val renderers: List<Renderer<*>>
 ) : Plugin {
