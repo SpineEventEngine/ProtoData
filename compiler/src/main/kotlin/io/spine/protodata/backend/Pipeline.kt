@@ -77,6 +77,13 @@ public class Pipeline(
         return@lazy TypeConventions(cast)
     }
 
+    /**
+     * Creates a new `Pipeline` with the given components.
+     *
+     * This constructor is used for tests and for backward compatibility. New users should defer
+     * to the default constructor and pass renderers via plugins.
+     */
+    @VisibleForTesting
     public constructor(
         plugins: List<Plugin>,
         renderers: List<Renderer<*>>,
@@ -89,7 +96,7 @@ public class Pipeline(
      * Creates a new `Pipeline` with only one plugin and one source set.
      */
     @VisibleForTesting
-    public constructor(
+    internal constructor(
         plugin: Plugin,
         renderers: List<Renderer<*>>,
         sources: SourceFileSet,
@@ -101,7 +108,7 @@ public class Pipeline(
      * Creates a new `Pipeline` with only one plugin, one renderer, and one source set.
      */
     @VisibleForTesting
-    public constructor(
+    internal constructor(
         plugin: Plugin,
         renderer: Renderer<*>,
         sources: SourceFileSet,
@@ -113,7 +120,7 @@ public class Pipeline(
      * Creates a new `Pipeline` with only one plugin, one renderer, and several source set.
      */
     @VisibleForTesting
-    public constructor(
+    internal constructor(
         plugin: Plugin,
         renderer: Renderer<*>,
         sources: List<SourceFileSet>,

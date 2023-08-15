@@ -26,16 +26,16 @@
 
 package io.spine.protodata.backend
 
+import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 
 /**
  * An adapter plugin for gathering renderers that do not belong to a semantically-defined plugin.
  *
- * This class is deprecated from the start. It only exists for backward compatibility. Users should
- * migrate to supplying Renderers via semantically meaningful plugins.
+ * This plugin is used for testing ProtoData and for compatibility reasons.
  */
-@Deprecated("Renderers should be supplied with a `Plugin`.")
+@VisibleForTesting
 internal class ImplicitPluginWithRenderers(
     private val renderers: List<Renderer<*>>
 ) : Plugin {
