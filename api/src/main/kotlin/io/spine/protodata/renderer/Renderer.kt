@@ -81,7 +81,7 @@ protected constructor(
      *
      * @param N the type of the name element for the associated language
      */
-    protected fun <N : TypeNameElement<L>> typeConventions(): TypeConventions<L, N> {
+    protected fun <N : TypeNameElement<L>> knownTypeConventions(): TypeConventions<L, N> {
         @Suppress("UNCHECKED_CAST")
           // `L` is insured upon injection, we have to trust the user for providing `N`.
         return typeConventions as TypeConventions<L, N>
