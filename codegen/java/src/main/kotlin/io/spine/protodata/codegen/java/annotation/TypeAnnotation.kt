@@ -46,6 +46,7 @@ import java.lang.annotation.Target
  * The implementation assumes that [PrintBeforePrimaryDeclaration][io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration]
  * renderer is inserted before a reference to a renderer derived from this class.
  */
+@Suppress("TooManyFunctions") // Overriding some methods to make them final.
 public abstract class TypeAnnotation<T : Annotation>(
     protected val annotationClass: Class<T>
 ) : JavaRenderer(), Plugin {
@@ -60,13 +61,9 @@ public abstract class TypeAnnotation<T : Annotation>(
     final override fun render(sources: SourceFileSet) {
         sources.forEach { file ->
             file.at(BeforePrimaryDeclaration).add(
-                annotationText(file)
+                "@${annotationClassReference()}${annotationArguments(file)}"
             )
         }
-    }
-
-    private fun annotationText(file: SourceFile): String {
-        return "@${annotationClassReference()}${annotationArguments(file)}"
     }
 
     private fun annotationClassReference(): String {

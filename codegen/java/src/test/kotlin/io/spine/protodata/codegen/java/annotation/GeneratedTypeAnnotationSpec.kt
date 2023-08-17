@@ -140,8 +140,7 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
     private fun createPipelineWith(generatedTypeAnnotation: GeneratedTypeAnnotation) {
         Pipeline(
-            plugins = listOf(),
-            renderers = listOf(PrintBeforePrimaryDeclaration(), generatedTypeAnnotation),
+            plugins = listOf(generatedTypeAnnotation),
             sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
