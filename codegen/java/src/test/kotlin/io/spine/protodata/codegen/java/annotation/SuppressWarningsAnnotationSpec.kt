@@ -44,10 +44,6 @@ class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
     companion object {
         val emptyRequest: CodeGeneratorRequest = CodeGeneratorRequest.getDefaultInstance()
-        fun suppressionRenderers() = listOf(
-            PrintBeforePrimaryDeclaration(),
-            SuppressWarningsAnnotation()
-        )
     }
 
     private fun loadCode() = sources.first()
@@ -61,8 +57,7 @@ class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
         @Test
         fun `if no settings are passed`() {
             Pipeline(
-                plugins = listOf(),
-                renderers = suppressionRenderers(),
+                plugins = listOf(SuppressWarningsAnnotation()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest
             )()
@@ -73,8 +68,7 @@ class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
         @Test
         fun `if settings contain an empty list of suppressions`() {
             Pipeline(
-                plugins = listOf(),
-                renderers = suppressionRenderers(),
+                plugins = listOf(SuppressWarningsAnnotation()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
                 Configuration.rawValue("""
@@ -96,8 +90,7 @@ class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
         val deprecation = "deprecation"
         val stringEqualsEmptyString = "StringEqualsEmptyString"
         Pipeline(
-            plugins = listOf(),
-            renderers = suppressionRenderers(),
+            plugins = listOf(SuppressWarningsAnnotation()),
             sources = sources,
             request = emptyRequest,
             config = Configuration.rawValue("""
