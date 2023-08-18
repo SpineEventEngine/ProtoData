@@ -66,6 +66,7 @@ public object Values {
      * a `MessageValue` with no fields. Otherwise, all the present fields are converted
      * into `Value`s.
      */
+    @JvmStatic
     public fun from(message: Message): Value {
         val builder = MessageValue.newBuilder()
             .setType(message.descriptorForType.name())
