@@ -26,7 +26,6 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
 import io.spine.protodata.TypeName
@@ -35,15 +34,16 @@ import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.query.Querying
 import io.spine.string.ti
+import io.spine.tools.code.Language
 import io.spine.util.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files.walk
 import java.nio.file.Path
 import java.util.*
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
 import kotlin.text.Charsets.UTF_8
-import io.spine.tools.code.Language
 
 /**
  * A mutable set of source files that participate in code generation workflow.
@@ -97,6 +97,9 @@ internal constructor(
     internal lateinit var querying: Querying
 
     init {
+        require(inputRoot.absolutePathString() != outputRoot.absolutePathString()) {
+            "Input and output roots cannot be the same."
+        }
         val map = HashMap<Path, SourceFile>(files.size)
         this.files = files.associateByTo(map) { it.relativePath }
         this.files.values.forEach { it.attachTo(this) }
@@ -139,10 +142,6 @@ internal constructor(
             val files = setOf<SourceFile>()
             return SourceFileSet(files, target, target)
         }
-
-        @VisibleForTesting
-        public fun from(sourceAndTarget: Path): SourceFileSet =
-            from(sourceAndTarget, sourceAndTarget)
     }
 
     /**

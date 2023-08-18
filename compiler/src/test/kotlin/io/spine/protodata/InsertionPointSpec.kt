@@ -28,9 +28,6 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos
-import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.should
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.renderer.SourceFileSet
@@ -44,7 +41,6 @@ import io.spine.protodata.test.IgnoreValueAnnotator.Companion.ANNOTATION_TYPE
 import io.spine.protodata.test.KotlinInsertionPoint.FILE_END
 import io.spine.protodata.test.KotlinInsertionPoint.FILE_START
 import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
-import io.spine.protodata.test.NonVoidMethod
 import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
 import java.nio.file.Path
@@ -66,9 +62,9 @@ class InsertionPointsSpec {
     private lateinit var javaFile: Path
 
     @BeforeEach
-    fun preparePipeline(@TempDir path: Path) {
-        kotlinFile = path / "sources.kt"
-        javaFile = path / "Source.java"
+    fun preparePipeline(@TempDir input: Path, @TempDir output: Path) {
+        kotlinFile = input / "sources.kt"
+        javaFile = input / "Source.java"
         kotlinFile.createFile()
         javaFile.createFile()
         kotlinFile.writeText("""
@@ -107,7 +103,7 @@ class InsertionPointsSpec {
                 NonVoidMethodPrinter(), IgnoreValueAnnotator(),
                 CompanionFramer(), CompanionLalalaRenderer()
             ),
-            sources = listOf(SourceFileSet.from(path)),
+            sources = listOf(SourceFileSet.from(input, output)),
             request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
         )()
     }

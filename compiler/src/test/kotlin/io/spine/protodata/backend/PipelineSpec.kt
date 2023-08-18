@@ -78,6 +78,7 @@ import org.junit.jupiter.api.io.TempDir
 class PipelineSpec {
 
     private lateinit var srcRoot : Path
+    private lateinit var targetRoot : Path
     private lateinit var codegenRequestFile: Path
     private lateinit var sourceFile: Path
     private lateinit var request: CodeGeneratorRequest
@@ -88,6 +89,8 @@ class PipelineSpec {
     fun prepareSources(@TempDir sandbox: Path) {
         srcRoot = sandbox.resolve("src")
         srcRoot.toFile().mkdirs()
+        targetRoot = sandbox.resolve("target")
+        targetRoot.toFile().mkdirs()
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
         // Correctness of the Java source code is of no importance for this test suite.
@@ -103,7 +106,7 @@ class PipelineSpec {
         codegenRequestFile.writeBytes(request.toByteArray())
         renderer = UnderscorePrefixRenderer()
 
-        overwritingSourceSet = SourceFileSet.from(srcRoot)
+        overwritingSourceSet = SourceFileSet.from(srcRoot, targetRoot)
     }
 
     @CanIgnoreReturnValue
@@ -144,7 +147,7 @@ class PipelineSpec {
         Pipeline(
             plugin = TestPlugin(),
             renderer = DeletingRenderer(),
-            sources = SourceFileSet.from(srcRoot),
+            sources = SourceFileSet.from(srcRoot, targetRoot),
             request
         )()
         assertDoesNotExist(sourceFile)
@@ -161,7 +164,7 @@ class PipelineSpec {
                 JavaGenericInsertionPointPrinter(),
                 renderer
             ),
-            sources = SourceFileSet.from(srcRoot),
+            sources = SourceFileSet.from(srcRoot, targetRoot),
             request
         )()
 
@@ -186,7 +189,7 @@ class PipelineSpec {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(AnnotationInsertionPointPrinter(), NullableAnnotationRenderer()),
-            sources = listOf(SourceFileSet.from(srcRoot)),
+            sources = listOf(SourceFileSet.from(srcRoot, targetRoot)),
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
         assertTextIn(sourceFile)
@@ -203,7 +206,7 @@ class PipelineSpec {
                 JsRenderer(),
                 KtRenderer()
             ),
-            sources = SourceFileSet.from(srcRoot),
+            sources = SourceFileSet.from(srcRoot, targetRoot),
             request
         )()
         assertTextIn(jsSource).contains("Hello JavaScript")
