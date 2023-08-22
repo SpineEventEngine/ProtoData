@@ -98,7 +98,7 @@ public object Values {
     }
 
     private fun singularValue(raw: Any, field: FieldDescriptor) = when (field.javaType) {
-        INT -> value { intValue = (raw as Integer).toLong() }
+        INT -> value { intValue = (raw as Int).toLong() }
         LONG -> value { intValue = raw as Long }
         FLOAT -> value { doubleValue = (raw as Float).toDouble() }
         DOUBLE -> value { doubleValue = raw as Double }
