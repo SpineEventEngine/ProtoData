@@ -40,9 +40,6 @@ import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.tools.code.AnyLanguage
-import io.spine.tools.code.Language
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import java.nio.file.Path
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
@@ -86,7 +83,7 @@ class `ProtoData CLI logging levels should` {
         codegenRequestFile.writeBytes(request.toByteArray())
     }
 
-//    @Test
+    @Test
     fun `fail if both 'debug' and 'info' flags are set`() {
         val error = assertThrows<UsageError> {
             launchWithLoggingParams(
@@ -98,7 +95,6 @@ class `ProtoData CLI logging levels should` {
                 "Debug and info logging levels cannot be enabled at the same time."
     }
 
-
     @Test
     fun `set 'DEBUG' logging level`() {
         launchWithLoggingParams("--debug")
@@ -107,7 +103,7 @@ class `ProtoData CLI logging levels should` {
         LoggingLevelAsserter.debugEnabled shouldBe true
     }
 
-//    @Test
+    @Test
     fun `set 'INFO' logging level`() {
         launchWithLoggingParams("--info")
 
@@ -115,7 +111,7 @@ class `ProtoData CLI logging levels should` {
         LoggingLevelAsserter.debugEnabled shouldBe false
     }
 
-//    @Test
+    @Test
     fun `default to 'WARN' logging level`() {
         launchWithLoggingParams()
 
