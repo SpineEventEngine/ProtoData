@@ -59,7 +59,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/logging">spine-logging</a>
          */
-        const val logging = "2.0.0-SNAPSHOT.205"
+        const val logging = "2.0.0-SNAPSHOT.206"
 
         /**
          * The version of [Spine.testlib].
@@ -75,7 +75,7 @@ object Spine {
          * @see [Spine.CoreJava.server]
          * @see <a href="https://github.com/SpineEventEngine/core-java">core-java</a>
          */
-        const val core = "2.0.0-SNAPSHOT.155"
+        const val core = "2.0.0-SNAPSHOT.156"
 
         /**
          * The version of [Spine.modelCompiler].
@@ -89,7 +89,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/mc-java">spine-mc-java</a>
          */
-        const val mcJava = "2.0.0-SNAPSHOT.166"
+        const val mcJava = "2.0.0-SNAPSHOT.168"
 
         /**
          * The version of [Spine.baseTypes].
@@ -121,8 +121,10 @@ object Spine {
 
         /**
          * The version of [Spine.toolBase].
+         *
+         * @see <a href="https://github.com/SpineEventEngine/tool-base">spine-tool-base</a>
          */
-        const val toolBase = "2.0.0-SNAPSHOT.182"
+        const val toolBase = "2.0.0-SNAPSHOT.180"
 
         /**
          * The version of [Spine.javadocTools].
@@ -164,6 +166,8 @@ object Spine {
         const val lib = "$group:spine-logging:$version"
         const val backend = "$group:spine-logging-backend:$version"
         const val context = "$group:spine-logging-context:$version"
+        const val floggerApi = "$group:spine-flogger-api:$version"
+        const val floggerGrpcContext = "$group:spine-flogger-grpc-context:$version"
         const val smokeTest = "$group:spine-logging-smoke-test:$version"
     }
 
