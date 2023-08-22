@@ -45,6 +45,7 @@ import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
@@ -112,6 +113,7 @@ class `ProtoData CLI logging levels should` {
     }
 
     @Test
+    @Disabled("Because if running with JUL backend `INFO` is going to be ON anyway.")
     fun `default to 'WARN' logging level`() {
         launchWithLoggingParams()
 
