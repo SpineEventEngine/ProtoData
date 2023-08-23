@@ -24,21 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.protodata.type;
 
-/**
- * Dependencies on ProtoData modules.
- *
- * See [`SpineEventEngine/ProtoData`](https://github.com/SpineEventEngine/ProtoData/).
- */
-@Suppress("unused", "ConstPropertyName")
-object ProtoData {
-    const val version = "0.9.11"
-    const val group = "io.spine.protodata"
-    const val compiler = "$group:protodata-compiler:$version"
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-    const val codegenJava = "io.spine.protodata:protodata-codegen-java:$version"
+import static com.google.common.truth.Truth.assertThat;
 
-    const val pluginId = "io.spine.protodata"
-    const val pluginLib = "${Spine.group}:protodata:$version"
+@DisplayName("`TypeSystem` also should")
+class MoreTypeSystemSpec {
+
+    @Test
+    @DisplayName("construct instance with a static method")
+    void createStatic() {
+        var ts = TypeSystem.from(new FakeQuerying());
+        assertThat(ts).isNotNull();
+    }
 }

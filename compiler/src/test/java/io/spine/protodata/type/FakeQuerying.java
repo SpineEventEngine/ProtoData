@@ -24,21 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.protodata.type;
 
-/**
- * Dependencies on ProtoData modules.
- *
- * See [`SpineEventEngine/ProtoData`](https://github.com/SpineEventEngine/ProtoData/).
- */
-@Suppress("unused", "ConstPropertyName")
-object ProtoData {
-    const val version = "0.9.11"
-    const val group = "io.spine.protodata"
-    const val compiler = "$group:protodata-compiler:$version"
+import io.spine.base.EntityState;
+import io.spine.protodata.backend.CodeGenerationContext;
+import io.spine.server.query.Querying;
+import io.spine.server.query.QueryingClient;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-    const val codegenJava = "io.spine.protodata:protodata-codegen-java:$version"
+final class FakeQuerying implements Querying {
 
-    const val pluginId = "io.spine.protodata"
-    const val pluginLib = "${Spine.group}:protodata:$version"
+    @NonNull
+    @Override
+    public <P extends EntityState<?>> QueryingClient<P> select(@NonNull Class<P> type) {
+        var context = CodeGenerationContext.builder().build();
+        return new QueryingClient<>(context, type, FakeQuerying.class.getName());
+    }
 }

@@ -24,21 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.protodata.backend;
 
-/**
- * Dependencies on ProtoData modules.
- *
- * See [`SpineEventEngine/ProtoData`](https://github.com/SpineEventEngine/ProtoData/).
- */
-@Suppress("unused", "ConstPropertyName")
-object ProtoData {
-    const val version = "0.9.11"
-    const val group = "io.spine.protodata"
-    const val compiler = "$group:protodata-compiler:$version"
+import com.google.errorprone.annotations.CheckReturnValue;
 
-    const val codegenJava = "io.spine.protodata:protodata-codegen-java:$version"
-
-    const val pluginId = "io.spine.protodata"
-    const val pluginLib = "${Spine.group}:protodata:$version"
-}
+import javax.annotation.ParametersAreNonnullByDefault;

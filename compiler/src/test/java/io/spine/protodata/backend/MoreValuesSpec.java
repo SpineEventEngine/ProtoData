@@ -24,21 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.protodata.backend;
 
-/**
- * Dependencies on ProtoData modules.
- *
- * See [`SpineEventEngine/ProtoData`](https://github.com/SpineEventEngine/ProtoData/).
- */
-@Suppress("unused", "ConstPropertyName")
-object ProtoData {
-    const val version = "0.9.11"
-    const val group = "io.spine.protodata"
-    const val compiler = "$group:protodata-compiler:$version"
+import io.spine.protodata.test.Postcard;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-    const val codegenJava = "io.spine.protodata:protodata-codegen-java:$version"
+import static com.google.common.truth.Truth.assertThat;
 
-    const val pluginId = "io.spine.protodata"
-    const val pluginLib = "${Spine.group}:protodata:$version"
+@DisplayName("`Values` also should")
+class MoreValuesSpec {
+
+    @Test
+    @DisplayName("construct instance with a static method in Java")
+    void createStatic() {
+        var value = Values.from(Postcard.newBuilder()
+                            .setCongratulation("Happy retirement")
+                            .putSignatures("Lenny", "L-man")
+                            .putSignatures("Karl", "K-man")
+                            .putSignatures("Moe", "M-man")
+                            .putSignatures("Charles", "C-man")
+                            .build());
+        assertThat(value).isNotNull();
+        assertThat(value.getMessageValue()
+                        .getFieldsMap()
+                        .get("signatures")
+                        .getMapValue()
+                        .getValueCount()).isEqualTo(4);
+    }
 }

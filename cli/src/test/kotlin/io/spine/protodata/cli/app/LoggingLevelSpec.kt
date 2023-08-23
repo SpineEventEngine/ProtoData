@@ -40,14 +40,12 @@ import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.tools.code.AnyLanguage
-import io.spine.tools.code.Language
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import java.nio.file.Path
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
@@ -102,8 +100,8 @@ class `ProtoData CLI logging levels should` {
     fun `set 'DEBUG' logging level`() {
         launchWithLoggingParams("--debug")
 
-        LoggingLevelAsserter.debugEnabled shouldBe true
         LoggingLevelAsserter.infoEnabled shouldBe true
+        LoggingLevelAsserter.debugEnabled shouldBe true
     }
 
     @Test

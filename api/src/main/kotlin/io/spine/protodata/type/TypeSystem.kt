@@ -48,6 +48,7 @@ public class TypeSystem(
         /**
          * Builds a new `TypeSystem` by finding definitions via the given `Querying` instance.
          */
+        @JvmStatic
         public fun from(client: Querying): TypeSystem {
             val files = client.select<ProtobufSourceFile>().all()
             val deps = client.select<ProtobufDependency>().all().map { it.file }
