@@ -24,32 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@CheckReturnValue
+@ParametersAreNonnullByDefault
 package io.spine.protodata.backend;
 
-import io.spine.protodata.test.Postcard;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-import static com.google.common.truth.Truth.assertThat;
-
-@DisplayName("`Values` also should")
-class MoreValuesSpec {
-
-    @Test
-    @DisplayName("construct instance with a static method in Java")
-    void createStatic() {
-        var value = Values.from(Postcard.newBuilder()
-                            .setCongratulation("Happy retirement")
-                            .putSignatures("Lenny", "L-man")
-                            .putSignatures("Karl", "K-man")
-                            .putSignatures("Moe", "M-man")
-                            .putSignatures("Charles", "C-man")
-                            .build());
-        assertThat(value).isNotNull();
-        assertThat(value.getMessageValue()
-                        .getFieldsMap()
-                        .get("signatures")
-                        .getMapValue()
-                        .getValueCount()).isEqualTo(4);
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;
