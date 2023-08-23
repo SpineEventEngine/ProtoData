@@ -112,15 +112,6 @@ class `ProtoData CLI logging levels should` {
         LoggingLevelAsserter.debugEnabled shouldBe false
     }
 
-    @Test
-    @Disabled("Because if running with JUL backend `INFO` is going to be ON anyway.")
-    fun `default to 'WARN' logging level`() {
-        launchWithLoggingParams()
-
-        LoggingLevelAsserter.infoEnabled shouldBe false
-        LoggingLevelAsserter.debugEnabled shouldBe false
-    }
-
     private fun launchWithLoggingParams(vararg argv: String) {
         val params = mutableListOf(
             "-r", LoggingLevelAsserter::class.jvmName,
