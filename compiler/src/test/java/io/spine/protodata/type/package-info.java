@@ -24,21 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
-
 /**
- * Dependencies on ProtoData modules.
+ * Contains some tests for the components from the {@code :api} module.
  *
- * See [`SpineEventEngine/ProtoData`](https://github.com/SpineEventEngine/ProtoData/).
+ * <p>Tests are placed here because they depend on components from {@code :compiler}, so that
+ * no mocking is required.
  */
-@Suppress("unused", "ConstPropertyName")
-object ProtoData {
-    const val version = "0.9.11"
-    const val group = "io.spine.protodata"
-    const val compiler = "$group:protodata-compiler:$version"
 
-    const val codegenJava = "io.spine.protodata:protodata-codegen-java:$version"
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.protodata.type;
 
-    const val pluginId = "io.spine.protodata"
-    const val pluginLib = "${Spine.group}:protodata:$version"
-}
+import com.google.errorprone.annotations.CheckReturnValue;
+
+import javax.annotation.ParametersAreNonnullByDefault;

@@ -27,18 +27,15 @@
 package io.spine.internal.dependency
 
 /**
- * Spine uses own [logging library][Spine.Logging].
+ * Spine used to log with SLF4J. Now we use Flogger. Whenever a choice comes up, we recommend to
+ * use the latter.
  *
- * SLF4J was used in early versions of Spine. Then we used Flogger.
- *
- * The primary purpose of having this dependency object is for cases when SLF4J is
- * used as a logging backend (e.g. like in [Flogger.Runtime.slf4JBackend]).
+ * The primary purpose of having this dependency object is working in combination with
+ * [Flogger.Runtime.slf4JBackend].
  *
  * Some third-party libraries may clash with different versions of the library.
  * Thus, we specify this version and force it via [forceVersions].
  * Please see `DependencyResolution.kt` for details.
- *
- * @see <a href="https://https://github.com/qos-ch/slf4j/tags">SLF4J releases at GitHub</a>
  */
 @Suppress("unused", "ConstPropertyName")
 object Slf4J {
