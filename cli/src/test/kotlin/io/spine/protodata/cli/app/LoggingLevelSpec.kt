@@ -61,7 +61,7 @@ class `ProtoData CLI logging levels should` {
     fun prepareSources(@TempDir sandbox: Path) {
         srcRoot = sandbox.resolve("src")
         srcRoot.toFile().mkdirs()
-        targetRoot = sandbox.resolve("src")
+        targetRoot = sandbox.resolve("target")
         targetRoot.toFile().mkdirs()
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
@@ -119,7 +119,7 @@ class `ProtoData CLI logging levels should` {
         val params = mutableListOf(
             "-r", LoggingLevelAsserter::class.jvmName,
             "--src", srcRoot.toString(),
-            "--d", targetRoot.toString(),
+            "-d", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
             "--cv", "testing-logging-levels",
             "--cf", "plain",

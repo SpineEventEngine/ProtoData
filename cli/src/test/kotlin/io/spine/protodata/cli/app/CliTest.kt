@@ -130,7 +130,7 @@ class `Command line application should` {
             "-d", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
         )
-        val generatedFile = srcRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
+        val generatedFile = targetRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
         generatedFile.readText() shouldBe "true, true"
     }
 

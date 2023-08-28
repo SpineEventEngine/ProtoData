@@ -28,6 +28,9 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos
+import io.kotest.assertions.withClue
+import io.kotest.matchers.collections.shouldHaveAtLeastSize
+import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.renderer.SourceFileSet
@@ -43,9 +46,11 @@ import io.spine.protodata.test.KotlinInsertionPoint.FILE_START
 import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
 import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
+import java.lang.System.lineSeparator
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
+import kotlin.io.path.name
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -63,11 +68,12 @@ class InsertionPointsSpec {
 
     @BeforeEach
     fun preparePipeline(@TempDir input: Path, @TempDir output: Path) {
-        kotlinFile = input / "sources.kt"
-        javaFile = input / "Source.java"
-        kotlinFile.createFile()
-        javaFile.createFile()
-        kotlinFile.writeText("""
+        val inputKtFile = input / "sources.kt"
+        val inputJavaFile = input / "Source.java"
+
+        inputKtFile.createFile()
+        inputJavaFile.createFile()
+        inputKtFile.writeText("""
             class LabMouse {
                 companion object {
                     const val I_AM_CONSTANT: String = "!!"
@@ -79,7 +85,7 @@ class InsertionPointsSpec {
             }
             """.trimIndent()
         )
-        javaFile.writeText("""
+        inputJavaFile.writeText("""
             package com.example;
             
             public class Source {
@@ -106,6 +112,8 @@ class InsertionPointsSpec {
             sources = listOf(SourceFileSet.from(input, output)),
             request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
         )()
+        kotlinFile = output / inputKtFile.name
+        javaFile = output / inputJavaFile.name
     }
 
     @Test
@@ -120,19 +128,18 @@ class InsertionPointsSpec {
     @Test
     fun `the end of a file`() {
         val contents = kotlinFile.readLines()
-        assertThat(contents)
-            .isNotEmpty()
-        assertThat(contents.last())
-            .contains(FILE_END.label)
+        contents shouldNotHaveSize 0
+        contents.last() shouldContain FILE_END.label
     }
 
     @Test
     fun `a specific line and column`() {
         val contents = kotlinFile.readLines()
-        assertThat(contents)
-            .isNotEmpty()
-        assertThat(contents[3])
-            .contains("I_AM_CONSTANT:  /* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */ String")
+        contents shouldHaveAtLeastSize 4
+        withClue(contents.joinToString(lineSeparator())) {
+            contents[3] shouldContain
+                    "I_AM_CONSTANT:  /* ${LINE_FOUR_COL_THIRTY_THREE.codeLine} */ String"
+        }
     }
 
     @Test
