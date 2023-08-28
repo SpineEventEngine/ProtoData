@@ -145,7 +145,7 @@ internal class Run(version: String) : CliktCommand(
             by TargetRootParam.toOption().path(
                 canBeFile = false,
                 canBeSymlink = false
-            ).splitPaths()
+            ).splitPaths().required()
 
     private val classpath: List<Path>?
             by UserClasspathParam.toOption().path(
@@ -241,9 +241,6 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun checkPaths() {
-        checkUsage(sourceRoots != null || targetRoots != null) {
-            "Either source root or target root or both must be set."
-        }
         if (sourceRoots == null) {
             checkUsage(targetRoots!!.size == 1) {
                 "When not providing a source directory, only one target directory must be present."
