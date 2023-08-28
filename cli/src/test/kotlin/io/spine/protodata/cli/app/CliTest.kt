@@ -75,6 +75,9 @@ class `Command line application should` {
     private lateinit var codegenRequestFile: Path
     private lateinit var targetFile: Path
 
+    private val outputEchoFile: Path
+        get() = targetRoot.resolve(ECHO_FILE)
+
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
         targetRoot = sandbox.resolve("target")
@@ -318,9 +321,6 @@ class `Command line application should` {
             assertThrows<MissingOption>(block)
         }
     }
-
-    private val outputEchoFile: Path
-        get() = targetRoot.resolve(ECHO_FILE)
 
     private fun launchApp(vararg argv: String) = Run("42.0.0").parse(argv.toList())
 }
