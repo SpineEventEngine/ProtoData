@@ -37,11 +37,6 @@ public sealed class Parameter(
     public val name: String,
 
     /**
-     * Alternative long parameter name.
-     */
-    public val altName: String = name,
-
-    /**
      * A short name of the parameter, which conventionally comes with the `-` prefix
      * if the short name is one letter, and with `--` prefix for two or more letters.
      */

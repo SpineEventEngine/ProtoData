@@ -105,8 +105,7 @@ public object SourceRootParam : Parameter(
  */
 public object TargetRootParam : Parameter(
     name = "--target-root",
-    altName = "--destination",
-    shortName = "-d",
+    shortName = "--target",
     help = """
         The path where the processed files should be placed.
         May be the same as `${SourceRootParam.name}`. For editing files in-place, skip this option.

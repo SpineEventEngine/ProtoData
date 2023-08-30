@@ -145,7 +145,7 @@ internal class Run(version: String) : CliktCommand(
             by TargetRootParam.toOption().path(
                 canBeFile = false,
                 canBeSymlink = false
-            ).splitPaths()
+            ).splitPaths().required()
 
     private val classpath: List<Path>?
             by UserClasspathParam.toOption().path(
@@ -236,14 +236,11 @@ internal class Run(version: String) : CliktCommand(
         return sources
             ?.zip(targets)
             ?.filter { (s, _) -> s.exists() }
-            ?.map { (s, t) -> SourceFileSet.from(s, t) }
+            ?.map { (s, t) -> SourceFileSet.create(s, t) }
             ?: targets.oneSetWithNoFiles()
     }
 
     private fun checkPaths() {
-        checkUsage(sourceRoots != null || targetRoots != null) {
-            "Either source root or target root or both must be set."
-        }
         if (sourceRoots == null) {
             checkUsage(targetRoots!!.size == 1) {
                 "When not providing a source directory, only one target directory must be present."

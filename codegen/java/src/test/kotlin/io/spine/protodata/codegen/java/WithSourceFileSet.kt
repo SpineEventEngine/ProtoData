@@ -45,10 +45,12 @@ open class WithSourceFileSet protected constructor() {
 
     @BeforeEach
     fun createSourceSet(@TempDir path: Path) {
-        val targetFile = path.resolve(JAVA_FILE)
+        val sourceRoot = path.resolve("source")
+        val targetRoot = path.resolve("target")
+        val sourceFile = sourceRoot.resolve(JAVA_FILE)
         val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
-        targetFile.parent.toFile().mkdirs()
-        targetFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sources = listOf(SourceFileSet.from(path, path))
+        sourceFile.parent.toFile().mkdirs()
+        sourceFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
+        sources = listOf(SourceFileSet.create(sourceRoot, targetRoot))
     }
 }

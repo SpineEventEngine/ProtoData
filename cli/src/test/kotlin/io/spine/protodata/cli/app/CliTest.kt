@@ -55,6 +55,7 @@ import io.spine.time.toInstant
 import io.spine.type.toCompactJson
 import java.nio.file.Path
 import kotlin.io.path.createFile
+import kotlin.io.path.name
 import kotlin.io.path.pathString
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
@@ -70,19 +71,26 @@ import org.junit.jupiter.api.io.TempDir
 class `Command line application should` {
 
     private lateinit var srcRoot : Path
+    private lateinit var targetRoot : Path
     private lateinit var codegenRequestFile: Path
-    private lateinit var sourceFile: Path
+    private lateinit var targetFile: Path
+
+    private val outputEchoFile: Path
+        get() = targetRoot.resolve(ECHO_FILE)
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
+        targetRoot = sandbox.resolve("target")
+        targetRoot.toFile().mkdirs()
         srcRoot = sandbox.resolve("src")
         srcRoot.toFile().mkdirs()
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
-        sourceFile = srcRoot.resolve("SourceCode.java")
+        val sourceFile = srcRoot.resolve("SourceCode.java")
         sourceFile.writeText("""
             ${Project::class.simpleName}.getUuid() 
         """.trimIndent())
+        targetFile = targetRoot.resolve(sourceFile.name)
 
         val project = ProjectProto.getDescriptor()
         val testProto = TestProto.getDescriptor()
@@ -107,9 +115,10 @@ class `Command line application should` {
             "-p", TestPlugin::class.jvmName,
             "-r", UnderscorePrefixRenderer::class.jvmName,
             "--src", srcRoot.toString(),
+            "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString()
         )
-        sourceFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
+        targetFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
     }
 
     @Test
@@ -118,9 +127,10 @@ class `Command line application should` {
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
             "-r", DefaultOptionsCounterRenderer::class.jvmName,
             "--src", srcRoot.toString(),
+            "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
         )
-        val generatedFile = srcRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
+        val generatedFile = targetRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
         generatedFile.readText() shouldBe "true, true"
     }
 
@@ -139,10 +149,11 @@ class `Command line application should` {
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
-            srcRoot.resolve(ECHO_FILE).readText() shouldBe name
+            outputEchoFile.readText() shouldBe name
         }
 
         @Test
@@ -151,11 +162,12 @@ class `Command line application should` {
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "--cv", """{ "value": "$name" }""",
                 "--cf", "json"
             )
-            srcRoot.resolve(ECHO_FILE).readText() shouldBe name
+            outputEchoFile.readText() shouldBe name
         }
     }
 
@@ -174,10 +186,11 @@ class `Command line application should` {
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
-            srcRoot.resolve(ECHO_FILE).readText() shouldBe name
+            outputEchoFile.readText() shouldBe name
         }
 
         @Test
@@ -192,11 +205,12 @@ class `Command line application should` {
             launchApp(
                 "-r", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "--cv", json,
                 "--cf", "proto_json"
             )
-            val text = srcRoot.resolve(ECHO_FILE).readText()
+            val text = outputEchoFile.readText()
 
             text shouldStartWith time.toInstant().toString()
             text shouldEndWith "English, Adam Falkner!:Do you speak it?"
@@ -219,11 +233,12 @@ class `Command line application should` {
             launchApp(
                 "-r", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
 
-            val text = srcRoot.resolve(ECHO_FILE).readText()
+            val text = outputEchoFile.readText()
 
             text shouldStartWith time.toInstant().toString()
             text shouldEndWith "We choose to go to the Moon.:and do the other things"
@@ -241,10 +256,11 @@ class `Command line application should` {
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
-            srcRoot.resolve(ECHO_FILE).readText() shouldBe name
+            outputEchoFile.readText() shouldBe name
         }
 
         @Test
@@ -253,11 +269,12 @@ class `Command line application should` {
             launchApp(
                 "-r", PlainStringRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "--cv", plainString,
                 "--cf", "plain"
             )
-            srcRoot.resolve(ECHO_FILE).readText() shouldBe plainString
+            outputEchoFile.readText() shouldBe plainString
         }
     }
 
@@ -271,18 +288,20 @@ class `Command line application should` {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
                     "--src", srcRoot.toString(),
+                    "--target", targetRoot.toString(),
                     "-t", codegenRequestFile.toString()
                 )
             }
         }
 
         @Test
-        fun `source and target dirs are missing`() {
+        fun `target dir is missing`() {
             assertThrows<UsageError> {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
                     "-r", UnderscorePrefixRenderer::class.jvmName,
-                    "-t", codegenRequestFile.toString()
+                    "-t", codegenRequestFile.toString(),
+                    "--src", srcRoot.toString()
                 )
             }
         }

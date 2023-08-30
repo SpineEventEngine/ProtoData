@@ -48,13 +48,13 @@ class SourceFileSetSpec {
     private lateinit var existingSourceFilesAbsolute: List<Path>
 
     @BeforeEach
-    fun createSet(@TempDir tempDir: Path) {
+    fun createSet(@TempDir input: Path, @TempDir output: Path) {
         existingSourceFiles = listOf(
             Path("pkg/example/foo.txt"),
             Path("another/sample/bar.txt"),
             Path("src/main/app.kt")
         )
-        existingSourceFilesAbsolute = existingSourceFiles.map { tempDir / it }
+        existingSourceFilesAbsolute = existingSourceFiles.map { input / it }
         existingSourceFilesAbsolute.forEach {
             it.parent.toFile().mkdirs()
             it.toFile().let { textFile ->
@@ -62,7 +62,7 @@ class SourceFileSetSpec {
                 textFile.writeText("this is a non-empty file")
             }
         }
-        set = SourceFileSet.from(tempDir)
+        set = SourceFileSet.create(input, output)
     }
 
     @Test
