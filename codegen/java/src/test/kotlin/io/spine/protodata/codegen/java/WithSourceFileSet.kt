@@ -51,6 +51,6 @@ open class WithSourceFileSet protected constructor() {
         val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
         sourceFile.parent.toFile().mkdirs()
         sourceFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sources = listOf(SourceFileSet.from(sourceRoot, targetRoot))
+        sources = listOf(SourceFileSet.create(sourceRoot, targetRoot))
     }
 }

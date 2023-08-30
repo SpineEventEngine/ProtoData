@@ -236,7 +236,7 @@ internal class Run(version: String) : CliktCommand(
         return sources
             ?.zip(targets)
             ?.filter { (s, _) -> s.exists() }
-            ?.map { (s, t) -> SourceFileSet.from(s, t) }
+            ?.map { (s, t) -> SourceFileSet.create(s, t) }
             ?: targets.oneSetWithNoFiles()
     }
 

@@ -109,7 +109,7 @@ class InsertionPointsSpec {
                 NonVoidMethodPrinter(), IgnoreValueAnnotator(),
                 CompanionFramer(), CompanionLalalaRenderer()
             ),
-            sources = listOf(SourceFileSet.from(input, output)),
+            sources = listOf(SourceFileSet.create(input, output)),
             request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
         )()
         kotlinFile = output / inputKtFile.name

@@ -108,7 +108,7 @@ class PipelineSpec {
         codegenRequestFile.writeBytes(request.toByteArray())
         renderer = UnderscorePrefixRenderer()
 
-        overwritingSourceSet = SourceFileSet.from(srcRoot, targetRoot)
+        overwritingSourceSet = SourceFileSet.create(srcRoot, targetRoot)
         targetFile = targetRoot.resolve(sourceFileName)
     }
 
@@ -150,7 +150,7 @@ class PipelineSpec {
         Pipeline(
             plugin = TestPlugin(),
             renderer = DeletingRenderer(),
-            sources = SourceFileSet.from(srcRoot, targetRoot),
+            sources = SourceFileSet.create(srcRoot, targetRoot),
             request
         )()
         assertDoesNotExist(targetRoot / path)
@@ -168,7 +168,7 @@ class PipelineSpec {
                 JavaGenericInsertionPointPrinter(),
                 renderer
             ),
-            sources = SourceFileSet.from(srcRoot, targetRoot),
+            sources = SourceFileSet.create(srcRoot, targetRoot),
             request
         )()
 
@@ -194,7 +194,7 @@ class PipelineSpec {
         Pipeline(
             plugins = listOf(),
             renderers = listOf(AnnotationInsertionPointPrinter(), NullableAnnotationRenderer()),
-            sources = listOf(SourceFileSet.from(srcRoot, targetRoot)),
+            sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
         assertTextIn(targetRoot / path)
@@ -213,7 +213,7 @@ class PipelineSpec {
                 JsRenderer(),
                 KtRenderer()
             ),
-            sources = SourceFileSet.from(srcRoot, targetRoot),
+            sources = SourceFileSet.create(srcRoot, targetRoot),
             request
         )()
         assertTextIn(targetRoot / jsPath).contains("Hello JavaScript")
@@ -261,7 +261,7 @@ class PipelineSpec {
         Pipeline(
             plugin = TestPlugin(),
             renderer = InternalAccessRenderer(),
-            sources = SourceFileSet.from(srcRoot, destination),
+            sources = SourceFileSet.create(srcRoot, destination),
             request
         )()
 
@@ -280,7 +280,7 @@ class PipelineSpec {
         Pipeline(
             TestPlugin(),
             NoOpRenderer(),
-            SourceFileSet.from(srcRoot, targetRoot),
+            SourceFileSet.create(srcRoot, targetRoot),
             request
         )()
         assertExists(targetFile)
@@ -304,8 +304,8 @@ class PipelineSpec {
                 TestPlugin(),
                 NoOpRenderer(),
                 listOf(
-                    SourceFileSet.from(srcRoot, destination1),
-                    SourceFileSet.from(source2, destination2)
+                    SourceFileSet.create(srcRoot, destination1),
+                    SourceFileSet.create(source2, destination2)
                 ),
                 request
             )()
@@ -333,8 +333,8 @@ class PipelineSpec {
                 plugin = TestPlugin(),
                 renderer = PlainStringRenderer(),
                 listOf(
-                    SourceFileSet.from(srcRoot, destination1),
-                    SourceFileSet.from(source2, destination2)
+                    SourceFileSet.create(srcRoot, destination1),
+                    SourceFileSet.create(source2, destination2)
                 ),
                 request,
                 Configuration.rawValue(expectedContent, ConfigurationFormat.PLAIN)
@@ -366,8 +366,8 @@ class PipelineSpec {
                     PrependingRenderer()
                 ),
                 sources = listOf(
-                    SourceFileSet.from(srcRoot, destination1),
-                    SourceFileSet.from(source2, destination2)
+                    SourceFileSet.create(srcRoot, destination1),
+                    SourceFileSet.create(source2, destination2)
                 ),
                 request
             )()

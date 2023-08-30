@@ -62,7 +62,7 @@ class SourceFileSetSpec {
                 textFile.writeText("this is a non-empty file")
             }
         }
-        set = SourceFileSet.from(input, output)
+        set = SourceFileSet.create(input, output)
     }
 
     @Test

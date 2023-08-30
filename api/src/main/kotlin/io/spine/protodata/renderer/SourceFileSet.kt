@@ -29,7 +29,6 @@ package io.spine.protodata.renderer
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
 import io.spine.protodata.TypeName
-import io.spine.protodata.renderer.SourceFileSet.Companion.from
 import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.query.Querying
@@ -40,6 +39,7 @@ import java.nio.charset.Charset
 import java.nio.file.Files.walk
 import java.nio.file.Path
 import java.util.*
+import kotlin.DeprecationLevel.ERROR
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
@@ -48,7 +48,7 @@ import kotlin.text.Charsets.UTF_8
 /**
  * A mutable set of source files that participate in code generation workflow.
  *
- * The initial set of [files] is obtained when the source set is [loaded][from]
+ * The initial set of [files] is obtained when the source set is [loaded][create]
  * the [inputRoot] directory.
  *
  * The code generation process may [add new files][createFile] to the set, or
@@ -75,7 +75,7 @@ internal constructor(
      *
      * Paths of the files must be either absolute or relative to this directory.
      *
-     * @see from
+     * @see create
      * @see outputRoot
      */
     @get:JvmName("inputRoot")
@@ -84,7 +84,7 @@ internal constructor(
     /**
      * A directory where the source set should be placed after code generation.
      *
-     * @see from
+     * @see create
      * @see inputRoot
      */
     @get:JvmName("outputRoot")
@@ -108,6 +108,14 @@ internal constructor(
     @Internal
     public companion object {
 
+        @Deprecated(
+            "Use `create(..)` instead.",
+            replaceWith = ReplaceWith("create"),
+            level = ERROR
+        )
+        public fun from(inputRoot: Path, outputRoot: Path): SourceFileSet =
+            create(inputRoot, outputRoot)
+
         /**
          * Collects a source set from the given [input][inputRoot], assigning
          * the [output][outputRoot].
@@ -120,7 +128,7 @@ internal constructor(
          *         If different from the `sourceRoot`, the files in `sourceRoot`
          *         will not be changed.
          */
-        public fun from(inputRoot: Path, outputRoot: Path): SourceFileSet {
+        public fun create(inputRoot: Path, outputRoot: Path): SourceFileSet {
             val source = inputRoot.canonical()
             val target = outputRoot.canonical()
             if (source != target) {
