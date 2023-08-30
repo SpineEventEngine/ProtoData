@@ -119,7 +119,7 @@ class `ProtoData CLI logging levels should` {
         val params = mutableListOf(
             "-r", LoggingLevelAsserter::class.jvmName,
             "--src", srcRoot.toString(),
-            "-d", targetRoot.toString(),
+            "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
             "--cv", "testing-logging-levels",
             "--cf", "plain",
