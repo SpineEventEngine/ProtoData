@@ -115,7 +115,7 @@ class `Command line application should` {
             "-p", TestPlugin::class.jvmName,
             "-r", UnderscorePrefixRenderer::class.jvmName,
             "--src", srcRoot.toString(),
-            "--target-root", targetRoot.toString(),
+            "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString()
         )
         targetFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
@@ -127,7 +127,7 @@ class `Command line application should` {
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
             "-r", DefaultOptionsCounterRenderer::class.jvmName,
             "--src", srcRoot.toString(),
-            "--target-root", targetRoot.toString(),
+            "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
         )
         val generatedFile = targetRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
@@ -149,7 +149,7 @@ class `Command line application should` {
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
-                "--target-root", targetRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
@@ -162,7 +162,7 @@ class `Command line application should` {
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
-                "--target-root", targetRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "--cv", """{ "value": "$name" }""",
                 "--cf", "json"
@@ -186,7 +186,7 @@ class `Command line application should` {
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
-                "--target-root", targetRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
@@ -205,7 +205,7 @@ class `Command line application should` {
             launchApp(
                 "-r", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
-                "--target-root", targetRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "--cv", json,
                 "--cf", "proto_json"
@@ -233,7 +233,7 @@ class `Command line application should` {
             launchApp(
                 "-r", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
-                "--target-root", targetRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
@@ -256,7 +256,7 @@ class `Command line application should` {
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
-                "--target-root", targetRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
@@ -269,7 +269,7 @@ class `Command line application should` {
             launchApp(
                 "-r", PlainStringRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
-                "--target-root", targetRoot.toString(),
+                "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
                 "--cv", plainString,
                 "--cf", "plain"
@@ -288,7 +288,7 @@ class `Command line application should` {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
                     "--src", srcRoot.toString(),
-                    "--target-root", targetRoot.toString(),
+                    "--target", targetRoot.toString(),
                     "-t", codegenRequestFile.toString()
                 )
             }
