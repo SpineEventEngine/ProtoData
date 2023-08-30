@@ -98,7 +98,7 @@ internal constructor(
 
     init {
         require(inputRoot.absolutePathString() != outputRoot.absolutePathString()) {
-            "Input and output roots cannot be the same."
+            "Input and output roots cannot be the same, but was '${inputRoot.absolutePathString()}'"
         }
         val map = HashMap<Path, SourceFile>(files.size)
         this.files = files.associateByTo(map) { it.relativePath }
