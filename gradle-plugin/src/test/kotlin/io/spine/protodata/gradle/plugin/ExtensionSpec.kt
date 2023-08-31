@@ -74,6 +74,7 @@ class ExtensionSpec {
             .containsExactly(className)
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun `add 'Renderer' class names`() {
         val className1 = "com.acme.MyRenderer1"
