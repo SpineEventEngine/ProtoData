@@ -162,7 +162,7 @@ class `'ClassName' should` {
 
     @Test
     fun `parse from a string`() {
-        val className = ClassName("com.acme", listOf("Cls"))
+        val className = ClassName("com.acme", "Cls")
         assertCode(className.getDefaultInstance(), "com.acme.Cls.getDefaultInstance()")
     }
 

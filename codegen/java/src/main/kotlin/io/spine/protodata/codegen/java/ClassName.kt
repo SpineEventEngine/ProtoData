@@ -45,6 +45,25 @@ internal constructor(
 ) : JavaElement, TypeNameElement<Java> {
 
     /**
+     * Creates a new class name from the given package name a class name.
+     *
+     * If a class is nested inside another class, the [simpleName] parameter must contain all
+     * the names from the outermost class to the innermost one.
+     */
+    public constructor(packageName: String, vararg simpleName: String) :
+            this(packageName, simpleName.toList())
+
+    /**
+     * Obtains the class name of the given Java class.
+     */
+    public constructor(cls: Class<*>) : this(cls.`package`.name, cls.names())
+
+    /**
+     * Obtains the Java class name of the given Kotlin class.
+     */
+    public constructor(klass: KClass<*>) : this(klass.java)
+
+    /**
      * The canonical name of the class.
      *
      * This is the name by which the class is referred to in Java code.
@@ -82,16 +101,6 @@ internal constructor(
     @get:JvmName("simpleName")
     public val simpleName: String
         get() = simpleNames.last()
-
-    /**
-     * Obtains the class name of the given Java class.
-     */
-    public constructor(cls: Class<*>) : this(cls.`package`.name, cls.names())
-
-    /**
-     * Obtains the Java class name of the given Kotlin class.
-     */
-    public constructor(klass: KClass<*>) : this(klass.java)
 
     override fun toCode(): String = canonical
 
