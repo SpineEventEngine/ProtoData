@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,24 +38,9 @@ import io.spine.protodata.Field.CardinalityCase.LIST
 import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
-import io.spine.protodata.type.CodeElement
-import io.spine.protodata.type.TypeNameElement
 import io.spine.string.camelCase
-import io.spine.tools.code.Java
-import io.spine.tools.code.Language
-import io.spine.tools.code.SlashAsteriskCommentLang
-import java.nio.file.Path
-import kotlin.io.path.Path
-import kotlin.reflect.KClass
 
 private const val OF = "of"
-
-/**
- * A piece of Java code.
- *
- * Can be an expression, a reference to a variable, an identifier, etc.
- */
-public sealed interface JavaElement: CodeElement<Java>
 
 /**
  * A piece of Java code which yields a value.
@@ -129,128 +114,46 @@ public class LiteralBytes(bytes: ByteString) : Expression(
 public class Literal(value: Any) : Expression(value.toString())
 
 /**
- * A fully qualified Java class name.
+ * Constructs a call to a static method of this class.
  *
- * In Java, a class name is not a valid expression. Use one of the methods of this class to create
- * an expression from this class name.
+ * @param name the name of the method
+ * @param arguments the method arguments
+ * @param generics the method type parameters
  */
-public class ClassName
-internal constructor(
-    private val packageName: String,
-    private val simpleNames: List<String>
-) : JavaElement, TypeNameElement<Java> {
-
-    /**
-     * The canonical name of the class.
-     *
-     * This is the name by which the class is referred to in Java code.
-     *
-     * For regular Java classes, This is similar to [binary], except that in a binary name nested
-     * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
-     */
-    @get:JvmName("canonical")
-    public val canonical: String = "$packageName.${simpleNames.joinToString(".")}"
-
-    /**
-     * The binary name of the class.
-     *
-     * This is the name by which the class is referred to in Bytecode.
-     *
-     * For regular Java classes, This is similar to [canonical], except that in a binary name nested
-     * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
-     */
-    @get:JvmName("binary")
-    public val binary: String
-        get() = "$packageName.${simpleNames.joinToString("$")}"
-
-    @get:JvmName("javaFile")
-    public val javaFile: Path by lazy {
-        val dir = packageName.replace('.', '/')
-        val topLevelClass = simpleNames.first()
-        Path("$dir/$topLevelClass.java")
-    }
-
-    /**
-     * The simple name of this class.
-     *
-     * If the class is nested inside another class, the outer class name is NOT included.
-     */
-    @get:JvmName("simpleName")
-    public val simpleName: String
-        get() = simpleNames.last()
-
-    /**
-     * Obtains the class name of the given Java class.
-     */
-    public constructor(cls: Class<*>) : this(cls.`package`.name, cls.names())
-
-    /**
-     * Obtains the Java class name of the given Kotlin class.
-     */
-    public constructor(klass: KClass<*>) : this(klass.java)
-
-    /**
-     * Constructs an expression which creates a new builder for this class.
-     *
-     * Example: `ClassName("com.acme.Bird").newBuilder()` yields "`com.acme.Bird.newBuilder()`".
-     */
-    public fun newBuilder(): MethodCall =
-        call("newBuilder")
-
-    /**
-     * Constructs an expression which obtains the default instance for this class.
-     *
-     * Example: `ClassName("com.acme.Bird").getDefaultInstance()` yields
-     * "`com.acme.Bird.getDefaultInstance()`".
-     */
-    public fun getDefaultInstance(): MethodCall =
-        call("getDefaultInstance")
-
-    /**
-     * Constructs an expression which obtains the Protobuf enum value by the given number from this
-     * class.
-     *
-     * Example: `ClassName("com.acme.Bird").enumValue(1)` yields
-     * "`com.acme.Bird.forNumber(1)`".
-     */
-    public fun enumValue(number: Int): MethodCall =
-        call("forNumber", listOf(Literal(number)))
-
-    /**
-     * Constructs a call to a static method of this class.
-     *
-     * @param name the name of the method
-     * @param arguments the method arguments
-     * @param generics the method type parameters
-     */
-    @JvmOverloads
-    public fun call(
-        name: String,
-        arguments: List<Expression> = listOf(),
-        generics: List<ClassName> = listOf()
-    ): MethodCall =
-        MethodCall(this, name, arguments, generics)
-
-    override fun toCode(): String = canonical
-
-    override fun toString(): String = canonical
-}
+@JvmOverloads
+public fun ClassName.call(
+    name: String,
+    arguments: List<Expression> = listOf(),
+    generics: List<ClassName> = listOf()
+): MethodCall =
+    MethodCall(this, name, arguments, generics)
 
 /**
- * Obtains the simple name of this class including the names of the declaring classes.
+ * Constructs an expression which creates a new builder for this class.
+ *
+ * Example: `ClassName("com.acme.Bird").newBuilder()` yields "`com.acme.Bird.newBuilder()`".
  */
-private fun Class<*>.names(): List<String> {
-    if (declaringClass == null) {
-        return listOf(this.simpleName)
-    }
-    val names = mutableListOf<String>()
-    var cls: Class<*>? = this
-    do {
-        names.add(cls!!.simpleName)
-        cls = cls.declaringClass
-    } while (cls != null)
-    return names.reversed()
-}
+public fun ClassName.newBuilder(): MethodCall =
+    call("newBuilder")
+
+/**
+ * Constructs an expression which obtains the default instance for this class.
+ *
+ * Example: `ClassName("com.acme.Bird").getDefaultInstance()` yields
+ * "`com.acme.Bird.getDefaultInstance()`".
+ */
+public fun ClassName.getDefaultInstance(): MethodCall =
+    call("getDefaultInstance")
+
+/**
+ * Constructs an expression which obtains the Protobuf enum value by the given number from this
+ * class.
+ *
+ * Example: `ClassName("com.acme.Bird").enumValue(1)` yields
+ * "`com.acme.Bird.forNumber(1)`".
+ */
+public fun ClassName.enumValue(number: Int): MethodCall =
+    call("forNumber", listOf(Literal(number)))
 
 /**
  * An expression representing a reference to a Protobuf message value.
