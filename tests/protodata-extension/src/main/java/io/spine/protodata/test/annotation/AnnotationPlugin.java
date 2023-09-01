@@ -42,15 +42,17 @@ import java.util.List;
  */
 @SuppressWarnings("unused") // Accessed reflectively by ProtoData.
 public final class AnnotationPlugin implements Plugin {
-//    @Override
-//    public List<Renderer<?>> renderers() {
-//        return ImmutableList.of(
-//                new PrintFieldGetter(),
-//                new PrintMessageClass(),
-//                new AnnotationRenderer(),
-//                new GeneratedTypeAnnotation()
-//        );
-//    }
+
+    @Override
+    public List<Renderer<?>> renderers() {
+        return ImmutableList.of(
+                new PrintFieldGetter(),
+                new PrintMessageClass(),
+                new AnnotationRenderer(),
+                new GeneratedTypeAnnotation()
+        );
+    }
+
     @Override
     public Set<ViewRepository<?, ?, ?>> viewRepositories() {
         return ImmutableSet.of(new AnnotatedView.Repo());

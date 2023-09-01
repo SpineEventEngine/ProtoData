@@ -48,16 +48,6 @@ dependencies {
 }
 
 extensions.getByType<CodegenSettings>().apply {
-    renderers(
-        "io.spine.protodata.test.uuid.ClassScopePrinter",
-        "io.spine.protodata.test.uuid.UuidJavaRenderer",
-        "io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration",
-
-        "io.spine.protodata.test.annotation.PrintFieldGetter",
-        "io.spine.protodata.test.annotation.PrintMessageClass",
-        "io.spine.protodata.test.annotation.AnnotationRenderer",
-        "io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation"
-    )
     plugins(
         "io.spine.protodata.test.uuid.UuidPlugin",
         "io.spine.protodata.test.annotation.AnnotationPlugin"

@@ -46,10 +46,6 @@ dependencies {
 val protobufDir = "$projectDir/proto-gen/"
 
 protoData {
-    renderers(
-        "io.spine.protodata.test.uuid.ClassScopePrinter",
-        "io.spine.protodata.test.uuid.UuidJavaRenderer"
-    )
     plugins(
         "io.spine.protodata.test.uuid.UuidPlugin"
     )

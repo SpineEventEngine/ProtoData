@@ -42,14 +42,16 @@ import java.util.List;
  */
 @SuppressWarnings("unused") // Accessed reflectively.
 public final class UuidPlugin implements Plugin {
-//    @Override
-//    public List<Renderer<?>> renderers() {
-//        return ImmutableList.of(
-//                new ClassScopePrinter(),
-//                new UuidJavaRenderer(),
-//                new PrintBeforePrimaryDeclaration()
-//        );
-//    }
+
+    @Override
+    public List<Renderer<?>> renderers() {
+        return ImmutableList.of(
+                new ClassScopePrinter(),
+                new UuidJavaRenderer(),
+                new PrintBeforePrimaryDeclaration()
+        );
+    }
+
     @Override
     public Set<ViewRepository<?, ?, ?>> viewRepositories() {
         return ImmutableSet.of(new UuidTypeRepository());
