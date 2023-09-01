@@ -50,7 +50,7 @@ import kotlin.reflect.KClass
 /**
  * Obtains the name of the Java class which corresponds to this primitive type.
  */
-internal fun PrimitiveType.toJavaClass(): ClassName {
+public fun PrimitiveType.toJavaClass(): ClassName {
     val klass = primitiveClass()
     return ClassName(klass.javaObjectType)
 }
