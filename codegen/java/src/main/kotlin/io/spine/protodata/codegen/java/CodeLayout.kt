@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,17 +92,17 @@ internal fun TypeName.javaClassName(declaredIn: File): ClassName {
     return ClassName(packageName, nameElements)
 }
 
-internal fun File.javaPackage() =
+public fun File.javaPackage(): String =
     optionList.find("java_package", StringValue::class.java)
         ?.value
         ?: packageName
 
-private fun File.javaMultipleFiles() =
+public fun File.javaMultipleFiles(): Boolean =
     optionList.find("java_multiple_files", BoolValue::class.java)
         ?.value
         ?: false
 
-private fun File.javaOuterClassName() =
+public fun File.javaOuterClassName(): String =
     optionList.find("java_outer_classname", StringValue::class.java)
         ?.value
         ?: nameWithoutExtension().camelCase()

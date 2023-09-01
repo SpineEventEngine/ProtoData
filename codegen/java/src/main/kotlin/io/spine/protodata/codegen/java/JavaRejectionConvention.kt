@@ -52,7 +52,7 @@ public class JavaRejectionConvention(
         }
         val packageName = file.javaPackage()
         val simpleName = name.simpleName
-        val cls = ClassName(packageName, listOf(simpleName))
+        val cls = ClassName(packageName, simpleName)
         return GeneratedDeclaration(cls, cls.javaFile)
     }
 }
