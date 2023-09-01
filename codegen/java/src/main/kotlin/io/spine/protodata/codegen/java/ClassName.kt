@@ -34,9 +34,6 @@ import kotlin.reflect.KClass
 
 /**
  * A fully qualified Java class name.
- *
- * In Java, a class name is not a valid expression. Use one of the methods of this class to create
- * an expression from this class name.
  */
 public class ClassName
 internal constructor(
