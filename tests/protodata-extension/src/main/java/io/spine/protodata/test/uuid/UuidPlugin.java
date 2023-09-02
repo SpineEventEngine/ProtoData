@@ -27,17 +27,30 @@
 package io.spine.protodata.test.uuid;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import io.spine.protodata.plugin.Plugin;
 import io.spine.protodata.plugin.ViewRepository;
+import io.spine.protodata.renderer.Renderer;
 import io.spine.protodata.test.UuidType;
+import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration;
 
 import java.util.Set;
+import java.util.List;
 
 /**
  * The plugin which supplies the {@link UuidType} view.
  */
 @SuppressWarnings("unused") // Accessed reflectively.
 public final class UuidPlugin implements Plugin {
+
+    @Override
+    public List<Renderer<?>> renderers() {
+        return ImmutableList.of(
+                new ClassScopePrinter(),
+                new UuidJavaRenderer(),
+                new PrintBeforePrimaryDeclaration()
+        );
+    }
 
     @Override
     public Set<ViewRepository<?, ?, ?>> viewRepositories() {

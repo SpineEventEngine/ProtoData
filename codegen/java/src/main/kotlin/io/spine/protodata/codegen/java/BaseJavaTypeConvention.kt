@@ -29,7 +29,6 @@ package io.spine.protodata.codegen.java
 import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
-import io.spine.tools.code.Language
 
 /**
  * An abstract base for Java [TypeConvention]s.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,16 +27,31 @@
 package io.spine.protodata.test.annotation;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
+import io.spine.protodata.plugin.Plugin;
 import io.spine.protodata.plugin.Plugin;
 import io.spine.protodata.plugin.ViewRepository;
+import io.spine.protodata.renderer.Renderer;
+import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation;
 
 import java.util.Set;
+import java.util.List;
 
 /**
  * A plugin which exposes the {@code Annotated} view.
  */
 @SuppressWarnings("unused") // Accessed reflectively by ProtoData.
 public final class AnnotationPlugin implements Plugin {
+
+    @Override
+    public List<Renderer<?>> renderers() {
+        return ImmutableList.of(
+                new PrintFieldGetter(),
+                new PrintMessageClass(),
+                new AnnotationRenderer(),
+                new GeneratedTypeAnnotation()
+        );
+    }
 
     @Override
     public Set<ViewRepository<?, ?, ?>> viewRepositories() {
