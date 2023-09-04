@@ -45,7 +45,7 @@ public interface TypeConvention<L : Language, T: TypeNameElement<L>> {
      * @return the declaration generated for the given type or `null` if the declaration
      *         is not defined for the given type.
      */
-    public fun declarationFor(name: TypeName): GeneratedDeclaration<L, T>?
+    public fun declarationFor(name: TypeName): Declaration<L, T>?
 
     /**
      * The target programming language.

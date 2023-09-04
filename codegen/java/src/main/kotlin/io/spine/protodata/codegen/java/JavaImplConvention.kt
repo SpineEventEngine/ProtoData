@@ -27,14 +27,14 @@
 package io.spine.protodata.codegen.java
 
 import io.spine.protodata.TypeName
-import io.spine.protodata.type.GeneratedDeclaration
+import io.spine.protodata.type.Declaration
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
 
 /**
  * A convention which governs the Java message and enum class declarations.
  *
- * This convention defines a [GeneratedDeclaration] for all the message and enum types. If a given
+ * This convention defines a [Declaration] for all the message and enum types. If a given
  * type name is [unknown][TypeSystem.findMessageOrEnum], the [declarationFor] method
  * throws an `IllegalStateException`.
  */
@@ -42,10 +42,10 @@ public class JavaImplConvention(
     typeSystem: TypeSystem
 ) : BaseJavaTypeConvention(typeSystem) {
 
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<Java, ClassName> {
+    override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
         val file = typeSystem.findMessageOrEnum(name)?.second
         check(file != null) { "Unknown type `${name.typeUrl}`." }
         val cls = name.javaClassName(declaredIn = file)
-        return GeneratedDeclaration(cls, cls.javaFile)
+        return Declaration(cls, cls.javaFile)
     }
 }

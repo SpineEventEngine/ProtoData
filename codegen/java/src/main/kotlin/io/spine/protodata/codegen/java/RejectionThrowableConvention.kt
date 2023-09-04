@@ -28,7 +28,7 @@ package io.spine.protodata.codegen.java
 
 import io.spine.protobuf.isNotDefault
 import io.spine.protodata.TypeName
-import io.spine.protodata.type.GeneratedDeclaration
+import io.spine.protodata.type.Declaration
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
 import kotlin.DeprecationLevel.ERROR
@@ -44,7 +44,7 @@ public class RejectionThrowableConvention(
 ) : BaseJavaTypeConvention(typeSystem) {
 
     @Suppress("ReturnCount")
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<Java, ClassName>? {
+    override fun declarationFor(name: TypeName): Declaration<Java, ClassName>? {
         val declaration = typeSystem.findMessage(name) ?: return null
         val (msg, file) = declaration
         val fileName = file.path.value
@@ -56,7 +56,7 @@ public class RejectionThrowableConvention(
         val packageName = file.javaPackage()
         val simpleName = name.simpleName
         val cls = ClassName(packageName, simpleName)
-        return GeneratedDeclaration(cls, cls.javaFile)
+        return Declaration(cls, cls.javaFile)
     }
 }
 

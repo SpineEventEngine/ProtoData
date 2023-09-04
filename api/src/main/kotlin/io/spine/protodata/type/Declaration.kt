@@ -28,16 +28,25 @@ package io.spine.protodata.type
 
 import io.spine.tools.code.Language
 import java.nio.file.Path
+import kotlin.DeprecationLevel.ERROR
 
 /**
- * A generated type declaration.
+ * A type declaration that can be generated from a Protobuf type.
  *
  * @property name the name of the generated type.
  * @property path the path to the file where the declaration is placed.
  *
+ * @param L the type of the target language.
  * @param T the language-specific type of the type name element.
  */
-public data class GeneratedDeclaration<L: Language, T : TypeNameElement<L>>(
+public data class Declaration<L: Language, T : TypeNameElement<L>>(
     public val name: T,
     public val path: Path
 )
+
+@Deprecated(
+    "Use `Declaration` instead.",
+    replaceWith = ReplaceWith("Declaration", "io.spine.protodata.type.Declaration"),
+    level = ERROR
+)
+public typealias GeneratedDeclaration<L, T> = Declaration<L, T>
