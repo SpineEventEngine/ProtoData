@@ -24,20 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.type
+package io.spine.protodata.codegen.java
 
-import io.spine.tools.code.Language
-import java.nio.file.Path
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.spine.protodata.test.TypesTestEnv.enumTypeName
+import io.spine.protodata.test.TypesTestEnv.messageTypeName
+import io.spine.protodata.test.TypesTestEnv.typeSystem
+import kotlin.io.path.Path
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A generated type declaration.
- *
- * @property name the name of the generated type.
- * @property path the path to the file where the declaration is placed.
- *
- * @param T the language-specific type of the type name element.
- */
-public data class GeneratedDeclaration<L: Language, T : TypeNameElement<L>>(
-    public val name: T,
-    public val path: Path
-)
+@DisplayName("`JavaImplConvention` should")
+class JavaImplConventionSpec {
+
+    @Test
+    fun `convert a message type name into a Java class name`() {
+        val convention = JavaImplConvention(typeSystem)
+        val declaration = convention.declarationFor(messageTypeName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        cls.binary shouldBe "ua.acme.example.Foo"
+        path shouldBe Path("ua/acme/example/Foo.java")
+    }
+
+    @Test
+    fun `convert an enum type name into a Java class name`() {
+        val convention = JavaImplConvention(typeSystem)
+        val declaration = convention.declarationFor(enumTypeName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        cls.binary shouldBe "ua.acme.example.Kind"
+        path shouldBe Path("ua/acme/example/Kind.java")
+    }
+}

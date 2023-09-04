@@ -39,7 +39,7 @@ import io.spine.tools.code.Java
  */
 @Suppress("TooManyFunctions")
 public class JavaValueConverter(
-    private val typeConverter: MessageTypeConvention
+    private val typeConverter: JavaImplConvention
 ) : ValueConverter<Expression, Java>() {
 
     override fun toNull(type: Type): Expression = Null

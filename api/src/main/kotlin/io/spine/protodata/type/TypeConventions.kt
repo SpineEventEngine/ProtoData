@@ -73,7 +73,7 @@ private constructor(
     /**
      * Obtains all the possible generated declarations for the given Protobuf type.
      */
-    public fun allDeclarationsFor(type: TypeName): Set<GeneratedDeclaration<L, N>> =
+    public fun allDeclarationsFor(type: TypeName): Set<Declaration<L, N>> =
         conventions.asSequence()
             .map { it.declarationFor(type) }
             .filter { it != null }

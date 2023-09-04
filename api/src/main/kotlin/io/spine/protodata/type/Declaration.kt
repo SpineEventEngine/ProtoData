@@ -24,24 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
+package io.spine.protodata.type
 
-import io.spine.protodata.TypeName
-import io.spine.protodata.type.GeneratedDeclaration
-import io.spine.protodata.type.TypeSystem
-import io.spine.tools.code.Java
+import io.spine.tools.code.Language
+import java.nio.file.Path
+import kotlin.DeprecationLevel.ERROR
 
 /**
- * A convention which governs the Java message class declarations.
+ * A type declaration that can be generated from a Protobuf type.
+ *
+ * @property name the name of the generated type.
+ * @property path the path to the file where the declaration is placed.
+ *
+ * @param L the type of the target language.
+ * @param T the language-specific type of the type name element.
  */
-public class MessageTypeConvention(
-    typeSystem: TypeSystem
-) : BaseJavaTypeConvention(typeSystem) {
+public data class Declaration<L: Language, T : TypeNameElement<L>>(
+    public val name: T,
+    public val path: Path
+)
 
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<Java, ClassName> {
-        val file = typeSystem.findMessageOrEnum(name)?.second
-        check(file != null) { "Unknown type `${name.typeUrl}`." }
-        val cls = name.javaClassName(declaredIn = file)
-        return GeneratedDeclaration(cls, cls.javaFile)
-    }
-}
+@Deprecated(
+    "Use `Declaration` instead.",
+    replaceWith = ReplaceWith("Declaration", "io.spine.protodata.type.Declaration"),
+    level = ERROR
+)
+public typealias GeneratedDeclaration<L, T> = Declaration<L, T>

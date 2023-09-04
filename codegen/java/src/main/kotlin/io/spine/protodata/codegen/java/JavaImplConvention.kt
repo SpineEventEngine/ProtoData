@@ -26,33 +26,26 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protobuf.isNotDefault
 import io.spine.protodata.TypeName
-import io.spine.protodata.type.GeneratedDeclaration
+import io.spine.protodata.type.Declaration
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
-import io.spine.tools.code.Language
 
 /**
- * A convention which governs Java Rejection-Throwable class declarations.
+ * A convention which governs the Java message and enum class declarations.
+ *
+ * This convention defines a [Declaration] for all the message and enum types. If a given
+ * type name is [unknown][TypeSystem.findMessageOrEnum], the [declarationFor] method
+ * throws an `IllegalStateException`.
  */
-public class JavaRejectionConvention(
+public class JavaImplConvention(
     typeSystem: TypeSystem
 ) : BaseJavaTypeConvention(typeSystem) {
 
-    @Suppress("ReturnCount")
-    override fun declarationFor(name: TypeName): GeneratedDeclaration<Java, ClassName>? {
-        val declaration = typeSystem.findMessage(name) ?: return null
-        val (msg, file) = declaration
-        val fileName = file.path.value
-        if (!fileName.endsWith("rejections.proto")
-            || msg.declaredIn.isNotDefault()
-        ) {
-            return null
-        }
-        val packageName = file.javaPackage()
-        val simpleName = name.simpleName
-        val cls = ClassName(packageName, simpleName)
-        return GeneratedDeclaration(cls, cls.javaFile)
+    override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
+        val file = typeSystem.findMessageOrEnum(name)?.second
+        check(file != null) { "Unknown type `${name.typeUrl}`." }
+        val cls = name.javaClassName(declaredIn = file)
+        return Declaration(cls, cls.javaFile)
     }
 }
