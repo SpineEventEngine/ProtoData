@@ -35,6 +35,7 @@ import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
 import io.spine.server.query.Querying
 import io.spine.server.query.select
+import kotlin.DeprecationLevel.ERROR
 
 /**
  * A collection of known Protobuf types.
@@ -45,11 +46,21 @@ public class TypeSystem(
 
     public companion object {
 
+        @Deprecated(
+            "Use `serving(..)` instead.",
+            replaceWith = ReplaceWith("serving"),
+            level = ERROR
+        )
+        @JvmStatic
+        public fun from(client: Querying): TypeSystem =
+            serving(client)
+
         /**
-         * Builds a new `TypeSystem` by finding definitions via the given `Querying` instance.
+         * Builds a new `TypeSystem` by finding definitions via
+         * the given [client][Querying] instance.
          */
         @JvmStatic
-        public fun from(client: Querying): TypeSystem {
+        public fun serving(client: Querying): TypeSystem {
             val files = client.select<ProtobufSourceFile>().all()
             val deps = client.select<ProtobufDependency>().all().map { it.file }
             return TypeSystem(files + deps)
