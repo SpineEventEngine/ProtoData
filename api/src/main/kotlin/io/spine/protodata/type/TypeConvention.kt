@@ -36,6 +36,14 @@ public interface TypeConvention<L : Language, T: TypeNameElement<L>> {
 
     /**
      * Given a Protobuf type name, obtains the primary declaration generated from this Proto type.
+     *
+     * Not all Protobuf types are necessarily converted into declarations. Some conventions may
+     * define generated declarations for only a portion of the Protobuf types. For others, this
+     * method will return `null`.
+     *
+     * @param name the name of the type to define the declaration for.
+     * @return the declaration generated for the given type or `null` if the declaration
+     *         is not defined for the given type.
      */
     public fun declarationFor(name: TypeName): GeneratedDeclaration<L, T>?
 
