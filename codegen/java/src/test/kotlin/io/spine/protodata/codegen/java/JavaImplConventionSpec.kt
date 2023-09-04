@@ -35,12 +35,12 @@ import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`MessageTypeConvention` should")
-class MessageTypeConventionSpec {
+@DisplayName("`JavaImplConvention` should")
+class JavaImplConventionSpec {
 
     @Test
     fun `convert a message type name into a Java class name`() {
-        val convention = MessageTypeConvention(typeSystem)
+        val convention = JavaImplConvention(typeSystem)
         val declaration = convention.declarationFor(messageTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
@@ -50,7 +50,7 @@ class MessageTypeConventionSpec {
 
     @Test
     fun `convert an enum type name into a Java class name`() {
-        val convention = MessageTypeConvention(typeSystem)
+        val convention = JavaImplConvention(typeSystem)
         val declaration = convention.declarationFor(enumTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration

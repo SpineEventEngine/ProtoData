@@ -32,9 +32,13 @@ import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
 
 /**
- * A convention which governs the Java message class declarations.
+ * A convention which governs the Java message and enum class declarations.
+ *
+ * This convention defines a [GeneratedDeclaration] for all the message and enum types. If a given
+ * type name is [unknown][TypeSystem.findMessageOrEnum], the [declarationFor] method
+ * throws an `IllegalStateException`.
  */
-public class MessageTypeConvention(
+public class JavaImplConvention(
     typeSystem: TypeSystem
 ) : BaseJavaTypeConvention(typeSystem) {
 
