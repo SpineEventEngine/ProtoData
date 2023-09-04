@@ -35,12 +35,12 @@ import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`JavaRejectionConvention` should")
-class JavaRejectionConventionSpec {
+@DisplayName("`RejectionThrowableConvention` should")
+class RejectionThrowableConventionSpec {
 
     @Test
     fun `convert a rejection type name into a rejection throwable class`() {
-        val rejections = JavaRejectionConvention(typeSystem)
+        val rejections = RejectionThrowableConvention(typeSystem)
         val messages = JavaImplConvention(typeSystem)
 
         val message = messages.declarationFor(rejectionTypeName)
@@ -59,7 +59,7 @@ class JavaRejectionConventionSpec {
 
     @Test
     fun `not convert a regular message name to a rejection throwables class`() {
-        val convention = JavaRejectionConvention(typeSystem)
+        val convention = RejectionThrowableConvention(typeSystem)
         val declaration = convention.declarationFor(messageTypeName)
         declaration shouldBe null
     }

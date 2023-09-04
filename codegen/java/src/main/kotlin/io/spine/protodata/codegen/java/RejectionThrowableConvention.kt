@@ -31,7 +31,7 @@ import io.spine.protodata.TypeName
 import io.spine.protodata.type.GeneratedDeclaration
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
-import io.spine.tools.code.Language
+import kotlin.DeprecationLevel.ERROR
 
 /**
  * A convention which governs Java Rejection-Throwable class declarations.
@@ -39,7 +39,7 @@ import io.spine.tools.code.Language
  * The convention only defines a declaration for rejection message types. Any other types are
  * undefined and thus result in the [declarationFor] method returning `null`.
  */
-public class JavaRejectionConvention(
+public class RejectionThrowableConvention(
     typeSystem: TypeSystem
 ) : BaseJavaTypeConvention(typeSystem) {
 
@@ -59,3 +59,13 @@ public class JavaRejectionConvention(
         return GeneratedDeclaration(cls, cls.javaFile)
     }
 }
+
+@Deprecated(
+    "Use `RejectionThrowableConvention` instead.",
+    replaceWith = ReplaceWith(
+        "RejectionThrowableConvention",
+        "io.spine.protodata.codegen.java.RejectionThrowableConvention"
+    ),
+    level = ERROR
+)
+public typealias JavaRejectionConvention = RejectionThrowableConvention
