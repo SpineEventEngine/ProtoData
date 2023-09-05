@@ -24,12 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.test
+
+import io.spine.protodata.renderer.InsertionPoint
+import io.spine.text.Text
+import io.spine.text.TextCoordinates
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * An insertion point that can never be added to a file.
  */
-val protoDataVersion: String by extra("0.11.5")
+public object NonExistingPoint : InsertionPoint {
+
+    override val label: String = "NonExistingPoint"
+
+    override fun locate(text: Text): Set<TextCoordinates> = emptySet()
+}

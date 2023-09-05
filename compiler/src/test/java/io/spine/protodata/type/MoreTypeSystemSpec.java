@@ -37,7 +37,7 @@ class MoreTypeSystemSpec {
     @Test
     @DisplayName("construct instance with a static method")
     void createStatic() {
-        var ts = TypeSystem.from(new FakeQuerying());
+        var ts = TypeSystem.serving(new FakeQuerying());
         assertThat(ts).isNotNull();
     }
 }

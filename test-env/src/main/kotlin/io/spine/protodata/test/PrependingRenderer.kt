@@ -26,14 +26,22 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.test.GenericInsertionPoint.FILE_START
 import io.spine.tools.code.Java
 import io.spine.tools.code.Language
 import io.spine.util.theOnly
 import kotlin.io.path.name
 
-public class PrependingRenderer : Renderer<Java>(Java) {
+/**
+ * A renderer that writes preset text into a given insertion point.
+ */
+public class PrependingRenderer(
+    private val insertionPoint: InsertionPoint = FILE_START,
+    private val inline: Boolean = false
+) : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val files = sources.filter {
@@ -44,8 +52,14 @@ public class PrependingRenderer : Renderer<Java>(Java) {
         }
         if (files.isNotEmpty()) {
             val file = files.theOnly()
-            file.at(GenericInsertionPoint.FILE_START)
-                .add("Hello from ${this.javaClass.name}")
+            val content = "Hello from ${this.javaClass.name}"
+            if (inline) {
+                file.atInline(insertionPoint)
+                    .add(content)
+            } else {
+                file.at(insertionPoint)
+                    .add(content)
+            }
         }
     }
 }

@@ -26,7 +26,6 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.flogger.StackSize.FULL
 import com.google.protobuf.Empty
 import io.spine.annotation.Internal
 import io.spine.logging.WithLogging
