@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,33 +27,15 @@
 package io.spine.protodata.test
 
 import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
-import io.spine.tools.code.Java
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter<Java>(Java) {
+/**
+ * An insertion point that can never be added to a file.
+ */
+public object NonExistingPoint : InsertionPoint {
 
-    override fun supportedInsertionPoints(): Set<InsertionPoint> =
-        GenericInsertionPoint.values().toSet()
-}
+    override val label: String = "NonExistingPoint"
 
-public enum class GenericInsertionPoint : NonRepeatingInsertionPoint {
-
-    FILE_START {
-        override fun locateOccurrence(text: Text): TextCoordinates = startOfFile()
-    },
-    FILE_MIDDLE {
-        override fun locateOccurrence(text: Text): TextCoordinates = atLine(text.lines().size / 2)
-    },
-    FILE_END {
-        override fun locateOccurrence(text: Text): TextCoordinates = endOfFile()
-    },
-    OUTSIDE_FILE {
-        override fun locateOccurrence(text: Text): TextCoordinates = nowhere()
-    };
-
-    override val label: String
-        get() = name.lowercase()
+    override fun locate(text: Text): Set<TextCoordinates> = emptySet()
 }

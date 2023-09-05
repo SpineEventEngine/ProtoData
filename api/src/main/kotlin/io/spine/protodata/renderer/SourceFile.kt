@@ -145,7 +145,7 @@ private constructor(
     public fun atInline(insertionPoint: InsertionPoint): SourceAtPoint {
         val points = sources.querying.select<InsertedPoints>()
             .findById(filePath { value = relativePath.toString() })
-        val point = points!!.pointList.firstOrNull { it.label == insertionPoint.label }
+        val point = points?.pointList?.firstOrNull { it.label == insertionPoint.label }
         return if (point != null) {
             SpecificPoint(this@SourceFile, point)
         } else {
