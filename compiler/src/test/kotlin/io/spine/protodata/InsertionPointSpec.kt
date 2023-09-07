@@ -34,6 +34,7 @@ import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.renderer.SourceFileSetMarker
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.CompanionFramer
@@ -46,6 +47,7 @@ import io.spine.protodata.test.KotlinInsertionPoint.FILE_START
 import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
 import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
+import io.spine.tools.code.AnyLanguage
 import java.lang.System.lineSeparator
 import java.nio.file.Path
 import kotlin.io.path.createFile
@@ -109,7 +111,7 @@ class InsertionPointsSpec {
                 NonVoidMethodPrinter(), IgnoreValueAnnotator(),
                 CompanionFramer(), CompanionLalalaRenderer()
             ),
-            sources = listOf(SourceFileSet.create(input, output)),
+            sources = listOf(SourceFileSet.create(SourceFileSetMarker(AnyLanguage), input, output)),
             request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
         )()
         kotlinFile = output / inputKtFile.name

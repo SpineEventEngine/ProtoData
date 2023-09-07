@@ -34,6 +34,7 @@ import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.ContextAware
 import io.spine.server.query.QueryingClient
+import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language
 
 /**
@@ -60,6 +61,9 @@ protected constructor(
         render(relevantFiles)
         sources.mergeBack(relevantFiles)
     }
+
+    public open fun supports(marker: SourceFileSetMarker): Boolean =
+        supportedLanguage == AnyLanguage || supportedLanguage == marker.language
 
     /**
      * Makes changes to the given source set.
