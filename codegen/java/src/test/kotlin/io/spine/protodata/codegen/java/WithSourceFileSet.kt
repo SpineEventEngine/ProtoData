@@ -27,6 +27,8 @@
 package io.spine.protodata.codegen.java
 
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.renderer.SourceFileSetMarker
+import io.spine.tools.code.AnyLanguage
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.writeText
@@ -51,6 +53,7 @@ open class WithSourceFileSet protected constructor() {
         val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
         sourceFile.parent.toFile().mkdirs()
         sourceFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sources = listOf(SourceFileSet.create(sourceRoot, targetRoot))
+        val marker  = SourceFileSetMarker(AnyLanguage)
+        sources = listOf(SourceFileSet.create(marker, sourceRoot, targetRoot))
     }
 }

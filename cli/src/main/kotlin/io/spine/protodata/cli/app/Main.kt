@@ -333,7 +333,7 @@ internal class Run(version: String) : CliktCommand(
  * Creates a list that contain a single, empty source set.
  */
 private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet> =
-    listOf(SourceFileSet.empty(first()))
+    listOf(SourceFileSet.empty(SourceFileSetMarker(AnyLanguage), first()))
 
 /**
  * Throws an [UsageError] with the result of calling [lazyMessage] if the [condition] isn't met.

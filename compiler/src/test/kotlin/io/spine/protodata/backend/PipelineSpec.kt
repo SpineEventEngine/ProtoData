@@ -64,6 +64,7 @@ import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
 import io.spine.tools.code.AnyLanguage
+import io.spine.tools.code.Java
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
@@ -82,7 +83,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("`Pipeline` should")
 class PipelineSpec {
 
-    private val marker = SourceFileSetMarker(AnyLanguage)
+    private val marker = SourceFileSetMarker(Java)
     private lateinit var srcRoot : Path
     private lateinit var targetRoot : Path
     private lateinit var codegenRequestFile: Path
