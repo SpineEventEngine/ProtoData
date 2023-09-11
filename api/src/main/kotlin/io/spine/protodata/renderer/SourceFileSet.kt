@@ -130,9 +130,7 @@ internal constructor(
         ): SourceFileSet {
             val source = inputRoot.canonical()
             val target = outputRoot.canonical()
-            if (source != target) {
-                checkTarget(target)
-            }
+            checkTarget(target)
             val files = walk(source)
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read(source.relativize(it), source) }
