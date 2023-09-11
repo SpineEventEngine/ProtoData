@@ -90,15 +90,16 @@ class PipelineSpec {
     private lateinit var targetFile: Path
     private lateinit var request: CodeGeneratorRequest
     private lateinit var renderer: UnderscorePrefixRenderer
-    private lateinit var sourceFileSet: SourceFileSet
+    private val sourceFileSet: SourceFileSet
+        get() = SourceFileSet.create(marker, srcRoot, targetRoot)
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
-        srcRoot = sandbox.resolve("src")
+        srcRoot = sandbox / "src"
         srcRoot.toFile().mkdirs()
-        targetRoot = sandbox.resolve("target")
+        targetRoot = sandbox / "target"
         targetRoot.toFile().mkdirs()
-        codegenRequestFile = sandbox.resolve("code-gen-request.bin")
+        codegenRequestFile = sandbox / "code-gen-request.bin"
 
         // Correctness of the Java source code is of no importance for this test suite.
         val sourceFileName = "SourceCode.java"
@@ -114,13 +115,12 @@ class PipelineSpec {
         codegenRequestFile.writeBytes(request.toByteArray())
         renderer = UnderscorePrefixRenderer()
 
-        sourceFileSet = SourceFileSet.create(marker, srcRoot, targetRoot)
-        targetFile = targetRoot.resolve(sourceFileName)
+        targetFile = targetRoot / sourceFileName
     }
 
     @CanIgnoreReturnValue
     private fun write(path: String, code: String) {
-        val file = srcRoot.resolve(path)
+        val file = srcRoot / path
         file.parent.toFile().mkdirs()
         file.writeText(code)
     }
@@ -144,7 +144,7 @@ class PipelineSpec {
             sources = sourceFileSet,
             request
         )()
-        val newClass = targetRoot.resolve("spine/protodata/test/JourneyInternal.java")
+        val newClass = targetRoot / "spine/protodata/test/JourneyInternal.java"
         assertExists(newClass)
         assertTextIn(newClass).contains("class JourneyInternal")
     }
@@ -204,7 +204,7 @@ class PipelineSpec {
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
 
-    @Test
+     @Test
     fun `write into inline insertion points`() {
         val path = "ClassWithMethod.java"
         write(path, """
@@ -304,12 +304,12 @@ class PipelineSpec {
         )()
 
         val path = "spine/protodata/test/JourneyInternal.java"
-        val newClass = destination.resolve(path)
+        val newClass = destination / path
 
         assertExists(newClass)
         assertTextIn(newClass).contains("class JourneyInternal")
 
-        val newClassInSourceRoot = srcRoot.resolve(path)
+        val newClassInSourceRoot = srcRoot / path
         assertDoesNotExist(newClassInSourceRoot)
     }
 
@@ -348,14 +348,14 @@ class PipelineSpec {
                 request
             )()
 
-            assertExists(destination1.resolve(targetFile.name))
-            assertExists(destination2.resolve(secondSourceFile.name))
+            assertExists(destination1 / targetFile.name)
+            assertExists(destination2 / secondSourceFile.name)
 
-            assertTextIn(destination2.resolve(secondSourceFile.name))
+            assertTextIn(destination2 / secondSourceFile.name)
                 .isEqualTo(secondSourceFile.readText())
 
-            assertDoesNotExist(destination1.resolve(secondSourceFile.name))
-            assertDoesNotExist(destination2.resolve(targetFile.name))
+            assertDoesNotExist(destination1 / secondSourceFile.name)
+            assertDoesNotExist(destination2 / targetFile.name)
         }
 
         @Test
@@ -378,8 +378,8 @@ class PipelineSpec {
                 Configuration.rawValue(expectedContent, ConfigurationFormat.PLAIN)
             )()
 
-            val firstFile = destination1.resolve(ECHO_FILE)
-            val secondFile = destination2.resolve(ECHO_FILE)
+            val firstFile = destination1 / ECHO_FILE
+            val secondFile = destination2 / ECHO_FILE
             assertExists(firstFile)
             assertExists(secondFile)
 
@@ -410,9 +410,9 @@ class PipelineSpec {
                 request
             )()
 
-            assertDoesNotExist(destination2.resolve(existingFilePath))
+            assertDoesNotExist(destination2 / existingFilePath)
 
-            val writtenFile = destination1.resolve(existingFilePath)
+            val writtenFile = destination1 / existingFilePath
             assertExists(writtenFile)
             assertTextIn(writtenFile).contains(expectedContent)
         }
