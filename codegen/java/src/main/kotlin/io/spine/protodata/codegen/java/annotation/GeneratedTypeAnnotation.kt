@@ -141,4 +141,15 @@ public open class GeneratedTypeAnnotation(
             return dateTime.toString()
         }
     }
+
+    /**
+     * Creates a plugin with this renderer as the only element.
+     */
+    public fun toPlugin(): Plugin = Plugin(this)
+
+    /**
+     * A plugin which adds [@Generated][Generated] to the list of type annotations.
+     */
+    public class Plugin(renderer: GeneratedTypeAnnotation = GeneratedTypeAnnotation()) :
+        TypeAnnotationPlugin(listOf(renderer))
 }

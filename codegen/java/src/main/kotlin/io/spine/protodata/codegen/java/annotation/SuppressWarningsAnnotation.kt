@@ -92,4 +92,9 @@ public class SuppressWarningsAnnotation :
     override fun checkAnnotationClass() {
         // Do nothing.
     }
+
+    /**
+     * A plugin for suppressing warnings in the generated code.
+     */
+    public class Plugin: TypeAnnotationPlugin(listOf(SuppressWarningsAnnotation()))
 }
