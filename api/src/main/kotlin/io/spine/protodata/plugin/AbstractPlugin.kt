@@ -24,12 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.plugin
+
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.type.TypeConvention
+
 /**
- * The version of the ProtoData to publish.
+ * A default abstract implementation of the [Plugin] interface.
  *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * This class is intended to be extended by the plugins which do not need to override
+ * the methods of the [Plugin] interface. That's why the methods of this class are `final`.
  */
-val protoDataVersion: String by extra("0.11.6")
+public abstract class AbstractPlugin(
+    private val renderers: Iterable<Renderer<*>> = listOf(),
+    private val typeConventions: Set<TypeConvention<*, *>> = setOf(),
+    private val views: Set<Class<out View<*, *, *>>> = setOf(),
+    private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
+    private val policies: Set<Policy<*>> = setOf(),
+): Plugin {
+
+    final override fun renderers(): List<Renderer<*>> = renderers.toList()
+
+    final override fun viewRepositories(): Set<ViewRepository<*, *, *>> = viewRepositories
+
+    final override fun views(): Set<Class<out View<*, *, *>>> = views
+
+    final override fun policies(): Set<Policy<*>> = policies
+
+    final override fun typeConventions(): Set<TypeConvention<*, *>> = typeConventions
+}

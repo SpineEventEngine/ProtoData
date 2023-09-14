@@ -27,16 +27,8 @@ package io.spine.protodata.codegen.java.annotation
 
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
-import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.plugin.Policy
-import io.spine.protodata.plugin.View
-import io.spine.protodata.plugin.ViewRepository
-import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.TypeConvention
-import io.spine.server.BoundedContextBuilder
 import java.lang.annotation.ElementType.TYPE
 import java.lang.annotation.Target
 
@@ -49,7 +41,7 @@ import java.lang.annotation.Target
 @Suppress("TooManyFunctions") // Overriding some methods to make them final.
 public abstract class TypeAnnotation<T : Annotation>(
     protected val annotationClass: Class<T>
-) : JavaRenderer(), Plugin {
+) : JavaRenderer() {
 
     init {
         @Suppress("LeakingThis")
@@ -59,12 +51,21 @@ public abstract class TypeAnnotation<T : Annotation>(
     }
 
     final override fun render(sources: SourceFileSet) {
-        sources.forEach { file ->
-            file.at(BeforePrimaryDeclaration).add(
-                "@${annotationClassReference()}${annotationArguments(file)}"
-            )
-        }
+        sources.filter { shouldAnnotate(it) }
+            .forEach { file ->
+                file.at(BeforePrimaryDeclaration).add(
+                    "@${annotationClassReference()}${annotationArguments(file)}"
+                )
+            }
     }
+
+    /**
+     * A callback for implementing classes to tell if the given file should be annotated.
+     *
+     * Default implementation always returns `true`.
+     */
+    @Suppress("FunctionOnlyReturningConstant", "UNUSED_PARAMETER")
+    protected fun shouldAnnotate(file: SourceFile): Boolean = true
 
     private fun annotationClassReference(): String {
         val qualifiedName = annotationClass.name
@@ -109,34 +110,5 @@ public abstract class TypeAnnotation<T : Annotation>(
         require(targets.value.contains(TYPE)) {
             "Targets of `${annotationClass.name}` do not include ${TYPE.name}."
         }
-    }
-
-    /**
-     * Provides the reference to `this` as the renderer.
-     */
-    final override fun renderers(): List<Renderer<*>> {
-        return listOf(PrintBeforePrimaryDeclaration(), this)
-    }
-
-    // The following methods are final to prevent overriding by the child classes.
-
-    final override fun viewRepositories(): Set<ViewRepository<*, *, *>> {
-        return super.viewRepositories()
-    }
-
-    final override fun views(): Set<Class<out View<*, *, *>>> {
-        return super.views()
-    }
-
-    final override fun policies(): Set<Policy<*>> {
-        return super.policies()
-    }
-
-    final override fun extend(context: BoundedContextBuilder) {
-        super.extend(context)
-    }
-
-    final override fun typeConventions(): Set<TypeConvention<*, *>> {
-        return super<Plugin>.typeConventions()
     }
 }

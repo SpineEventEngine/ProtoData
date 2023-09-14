@@ -24,12 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.codegen.java.annotation
+
+import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
+import io.spine.protodata.plugin.AbstractPlugin
+import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.plugin.Policy
+import io.spine.protodata.plugin.View
+import io.spine.protodata.plugin.ViewRepository
+import io.spine.protodata.type.TypeConvention
+
 /**
- * The version of the ProtoData to publish.
+ * An abstract base for plugins that generate code for type annotations.
  *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Extending classes must provide a list of renderers for the supported annotations, and
+ * a parameterless constructor to satisfy the [Plugin] instantiation mechanism.
  */
-val protoDataVersion: String by extra("0.11.6")
+public abstract class TypeAnnotationPlugin(
+    renderers: Iterable<TypeAnnotation<*>>,
+    typeConventions: Set<TypeConvention<*, *>> = setOf(),
+    views: Set<Class<out View<*, *, *>>> = setOf(),
+    viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
+    policies: Set<Policy<*>> = setOf(),
+) : AbstractPlugin(
+    listOf(PrintBeforePrimaryDeclaration()) + renderers,
+    typeConventions, views, viewRepositories, policies
+)
