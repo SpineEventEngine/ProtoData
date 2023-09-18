@@ -84,8 +84,8 @@ import org.junit.jupiter.api.io.TempDir
 class PipelineSpec {
 
     private val marker = SourceFileSetMarker(Java)
-    private lateinit var srcRoot : Path
-    private lateinit var targetRoot : Path
+    private lateinit var srcRoot: Path
+    private lateinit var targetRoot: Path
     private lateinit var codegenRequestFile: Path
     private lateinit var targetFile: Path
     private lateinit var request: CodeGeneratorRequest
@@ -204,7 +204,7 @@ class PipelineSpec {
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
 
-     @Test
+    @Test
     fun `write into inline insertion points`() {
         val path = "ClassWithMethod.java"
         write(path, """
@@ -449,7 +449,7 @@ class PipelineSpec {
                 request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
-            error.message shouldContain(viewClass.name)
+            error.message shouldContain viewClass.name
         }
     }
 }
