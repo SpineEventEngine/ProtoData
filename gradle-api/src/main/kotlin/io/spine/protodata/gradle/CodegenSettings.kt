@@ -39,12 +39,6 @@ public interface CodegenSettings {
 
     /**
      * Passes given names of Java classes to ProtoData as
-     * the `io.spine.protodata.renderer.Renderer` classes.
-     */
-    public fun renderers(vararg classNames: String)
-
-    /**
-     * Passes given names of Java classes to ProtoData as
      * the `io.spine.protodata.option.OptionsProvider` classes.
      */
     public fun optionProviders(vararg classNames: String)

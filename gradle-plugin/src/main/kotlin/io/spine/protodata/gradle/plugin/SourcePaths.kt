@@ -24,16 +24,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata.gradle.plugin
 
-public sealed interface SourceGenerator {
+import io.spine.protodata.renderer.Default
+import io.spine.protodata.renderer.SourceGenerator
+import io.spine.tools.code.Language
+import java.io.File
+import org.gradle.api.Named
 
-    public val name: String
-        get() = javaClass.simpleName.lowercase()
+public data class SourcePaths(
+    public var source: String? = null,
+    public var target: String? = null,
+    public var language: String? = null,
+    public var generatorName: String = Default.name
+) : Named {
+
+    public constructor(
+        source: File,
+        target: File,
+        language: Language,
+        generator: SourceGenerator
+    ) : this(
+        source.absolutePath,
+        target.absolutePath,
+        language::class.qualifiedName,
+        generator.name
+    )
+
+    internal fun checkAllSet() {
+        require(target.isNullOrBlank()) { missingMessage("target path") }
+        require(language.isNullOrBlank()) { missingMessage("language") }
+    }
+
+    override fun getName(): String = generatorName
+
+    private fun missingMessage(propName: String) = "Source file set `$name` requires the $propName."
 }
-
-public object Default : SourceGenerator
-
-public class Custom(
-    override val name: String
-) : SourceGenerator

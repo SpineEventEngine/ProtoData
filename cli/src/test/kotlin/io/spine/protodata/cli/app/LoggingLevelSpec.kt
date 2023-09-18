@@ -39,6 +39,7 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
+import io.spine.protodata.test.pathsForJava
 import io.spine.tools.code.AnyLanguage
 import java.nio.file.Path
 import kotlin.io.path.writeBytes
@@ -118,8 +119,7 @@ class `ProtoData CLI logging levels should` {
     private fun launchWithLoggingParams(vararg argv: String) {
         val params = mutableListOf(
             "-r", LoggingLevelAsserter::class.jvmName,
-            "--src", srcRoot.toString(),
-            "--target", targetRoot.toString(),
+            "--paths", pathsForJava(srcRoot, targetRoot),
             "-t", codegenRequestFile.toString(),
             "--cv", "testing-logging-levels",
             "--cf", "plain",

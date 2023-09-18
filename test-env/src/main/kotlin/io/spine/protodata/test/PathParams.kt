@@ -24,16 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata.test
 
-public sealed interface SourceGenerator {
+import java.io.File
 
-    public val name: String
-        get() = javaClass.simpleName.lowercase()
+
+public fun paths(label: String, src: Any, target: Any): String {
+    val ps = File.pathSeparator
+    return label + ps + src + ps + target
 }
 
-public object Default : SourceGenerator
-
-public class Custom(
-    override val name: String
-) : SourceGenerator
+public fun pathsForJava(src: Any, target: Any): String =
+    paths("java", src, target)

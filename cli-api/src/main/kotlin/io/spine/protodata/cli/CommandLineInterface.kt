@@ -117,6 +117,18 @@ public object TargetRootParam : Parameter(
         """
 )
 
+
+/**
+ * The source and target paths.
+ */
+public object PathsParam : Parameter(
+    name = "--paths",
+    shortName = "-P",
+    help = """
+        
+        """
+) // TODO add help msg and doc.
+
 /**
  * The command-line parameter for composing the user-defined classpath.
  */
