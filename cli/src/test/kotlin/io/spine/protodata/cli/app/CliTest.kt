@@ -293,7 +293,7 @@ class `Command line application should` {
                     "-p", TestPlugin::class.jvmName,
                     "-r", UnderscorePrefixRenderer::class.jvmName,
                     "-t", codegenRequestFile.toString(),
-                    "-paths", pathsForJava(srcRoot, "")
+                    "--paths", pathsForJava(srcRoot, "")
                 )
             }
         }
