@@ -166,14 +166,6 @@ private fun SourcePaths.toCliParam(): String {
     return parts.joinToString(pathSeparator)
 }
 
-private fun Provider<List<Directory>>.absoluteDirs() = takeIf { it.isPresent }
-    ?.get()
-    ?.map { it.asFile.absoluteFile }
-    ?: listOf()
-
-private fun Provider<List<Directory>>.absolutePaths(): String =
-    absoluteDirs().joinToString(pathSeparator)
-
 /**
  * Tells if the request file for this task exists.
  *

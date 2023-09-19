@@ -34,4 +34,7 @@ public data class SourceFileSetMarker(
 ) {
     public constructor(language: Language, generatorName: String)
             : this(language, Custom(generatorName))
+
+    override fun toString(): String =
+        "${language.name}(${generator.name})"
 }

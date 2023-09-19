@@ -191,7 +191,10 @@ public class Extension(internal val project: Project): CodegenSettings {
         compileDir(sourceSet, targetBaseDirProperty)
 
     @Deprecated("Use `paths` instead.")
-    private fun compileDir(sourceSet: SourceSet, base: DirectoryProperty): Provider<List<Directory>> {
+    private fun compileDir(
+        sourceSet: SourceSet,
+        base: DirectoryProperty
+    ): Provider<List<Directory>> {
         val sourceSetDir = base.dir(sourceSet.name)
         return sourceSetDir.map { root: Directory ->
             subDirs.map { root.dir(it) }

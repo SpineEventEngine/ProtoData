@@ -120,7 +120,7 @@ internal class Run(version: String) : CliktCommand(
 ), WithLogging {
 
     private val pathSplitter = Splitter.on(pathSeparator)
-    private val labelRegex = Regex("([\\w.]+)(\\((\\w+)\\))?")
+    private val labelRegex = Regex("(?<lang>[\\w.]+)(\\((?<generator>\\w+)\\))?")
 
     private fun Parameter.toOption(completionCandidates: CompletionCandidates? = null) = option(
         name, shortName,
@@ -257,9 +257,11 @@ internal class Run(version: String) : CliktCommand(
     private fun loadLabel(label: String): SourceFileSetMarker {
         val match = labelRegex.matchEntire(label)
         require(match != null) { "Could not load source label: `$label`." }
-        val language = match.groupValues[1].toLanguage()
-        val generator = if (match.groupValues.size > 2) {
-            Custom(match.groupValues[3])
+        val language = match.groups["lang"]!!.value.toLanguage()
+        val generatorMatch = match.groups["generator"]
+        val generator = if (generatorMatch != null) {
+            val rawGeneratorName = generatorMatch.value
+            Custom(rawGeneratorName)
         } else {
             Default
         }
