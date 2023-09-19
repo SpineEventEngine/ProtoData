@@ -44,8 +44,7 @@ repositories {
 }
 
 protoData {
-    renderers("io.spine.protodata.test.NoOpRenderer")
-    plugins("io.spine.protodata.test.TestPlugin")
+    plugins("io.spine.protodata.test.TestPlugin", "io.spine.protodata.test.NoOpPlugin")
 }
 
 dependencies {
