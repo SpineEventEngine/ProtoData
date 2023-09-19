@@ -31,7 +31,6 @@ import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeConventions
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
@@ -48,16 +47,23 @@ import kotlin.reflect.KClass
  * Users may want to define bespoke [views][View] and [policies][Policy] based on the Protobuf
  * compiler events. To do so, define your handlers and events and expose the components via
  * [Plugin.viewRepositories], [Plugin.views], and [Plugin.policies] properties.
+ *
+ * Implementing classes must provide a parameterless constructor so that ProtoData can instantiate
+ * a plugin via its fully-qualified class name.
  */
 public interface Plugin {
 
     /**
-     * Obtains the [views][View] added by this plugin represented via their
-     * [repositories][ViewRepository].
+     * Obtains the [renderers][Renderer] added by this plugin.
      *
-     * A [View] may not have a need for repository. In such case, use [Plugin.views] instead.
+     * The renderers are guaranteed to be called in the order of their declaration in the plugin.
      */
-    public fun viewRepositories(): Set<ViewRepository<*, *, *>> = setOf()
+    public fun renderers(): List<Renderer<*>> = listOf()
+
+    /**
+     * Obtains the [type conventions][TypeConvention] used by this plugin.
+     */
+    public fun typeConventions(): Set<TypeConvention<*, *>> = setOf()
 
     /**
      * Obtains the [views][View] added by this plugin represented via their classes.
@@ -66,6 +72,14 @@ public interface Plugin {
      * [Plugin.viewRepositories] instead.
      */
     public fun views(): Set<Class<out View<*, *, *>>> = setOf()
+
+    /**
+     * Obtains the [views][View] added by this plugin represented via their
+     * [repositories][ViewRepository].
+     *
+     * A [View] may not have a need for repository. In such case, use [Plugin.views] instead.
+     */
+    public fun viewRepositories(): Set<ViewRepository<*, *, *>> = setOf()
 
     /**
      * Obtains the [policies][Policy] added by this plugin.
@@ -89,18 +103,6 @@ public interface Plugin {
      * @param context The `BoundedContextBuilder` to extend.
      */
     public fun extend(context: BoundedContextBuilder) {}
-
-    /**
-     * Obtains the [renderers][Renderer] added by this plugin.
-     *
-     * The renderers are guaranteed to be called in the order of their declaration in the plugin.
-     */
-    public fun renderers(): List<Renderer<*>> = listOf()
-
-    /**
-     * Obtains the [type conventions][TypeConvention] used by this plugin.
-     */
-    public fun typeConventions(): Set<TypeConvention<*, *>> = setOf()
 }
 
 /**
