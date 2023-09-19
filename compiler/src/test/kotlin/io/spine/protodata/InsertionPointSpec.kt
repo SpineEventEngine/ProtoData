@@ -48,6 +48,8 @@ import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
 import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
 import io.spine.tools.code.AnyLanguage
+import io.spine.tools.code.Java
+import io.spine.tools.code.Kotlin
 import java.lang.System.lineSeparator
 import java.nio.file.Path
 import kotlin.io.path.createFile
@@ -70,12 +72,11 @@ class InsertionPointsSpec {
 
     @BeforeEach
     fun preparePipeline(@TempDir input: Path, @TempDir output: Path) {
-        val inputKtFile = input / "sources.kt"
-        val inputJavaFile = input / "Source.java"
-
-        inputKtFile.createFile()
-        inputJavaFile.createFile()
-        inputKtFile.writeText("""
+        val kt = "kt"
+        val java = "jj"
+        val inputKtFile = input / "$kt/sources.kt"
+        val inputJavaFile = input / "$java/Source.java"
+        inputKtFile.create("""
             class LabMouse {
                 companion object {
                     const val I_AM_CONSTANT: String = "!!"
@@ -87,7 +88,7 @@ class InsertionPointsSpec {
             }
             """.trimIndent()
         )
-        inputJavaFile.writeText("""
+        inputJavaFile.create("""
             package com.example;
             
             public class Source {
@@ -104,6 +105,8 @@ class InsertionPointsSpec {
             }
             """.trimIndent()
         )
+        val javaSet = SourceFileSet.create(SourceFileSetMarker(Java), input / java, output / java)
+        val ktSet = SourceFileSet.create(SourceFileSetMarker(Kotlin), input / kt, output / kt)
         Pipeline(
             plugins = listOf(),
             renderers = listOf(
@@ -111,11 +114,11 @@ class InsertionPointsSpec {
                 NonVoidMethodPrinter(), IgnoreValueAnnotator(),
                 CompanionFramer(), CompanionLalalaRenderer()
             ),
-            sources = listOf(SourceFileSet.create(SourceFileSetMarker(AnyLanguage), input, output)),
+            sources = listOf(javaSet, ktSet),
             request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
         )()
-        kotlinFile = output / inputKtFile.name
-        javaFile = output / inputJavaFile.name
+        kotlinFile = output / kt / inputKtFile.name
+        javaFile = output / java / inputJavaFile.name
     }
 
     @Test
@@ -156,4 +159,10 @@ class InsertionPointsSpec {
         val lines = kotlinFile.readLines()
         lines[2] shouldContain Regex("$LALALA\\s+companion.+$LALALA\\s+object", DOT_MATCHES_ALL)
     }
+}
+
+private fun Path.create(content: String) {
+    parent.toFile().mkdirs()
+    createFile()
+    writeText(content)
 }

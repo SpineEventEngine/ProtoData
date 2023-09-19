@@ -26,12 +26,15 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodeGeneratorRequestFile.DEFAULT_DIRECTORY
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.renderer.Custom
 import io.spine.protodata.renderer.Default
 import io.spine.tools.code.Java
+import io.spine.tools.code.Kotlin
 import io.spine.tools.fs.DirectoryName.generated
 import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
@@ -83,29 +86,30 @@ public class Extension(internal val project: Project): CodegenSettings {
     internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
         requestFilesDirProperty.file(CodeGeneratorRequestFile.name(forSourceSet))
 
-    public val paths: NamedDomainObjectContainer<SourcePaths> =
-        project.objects.domainObjectContainer(SourcePaths::class) {
-            name -> SourcePaths(generatorName = name)
-        }
+    public val paths: Multimap<String, SourcePaths> = HashMultimap.create()
 
-    internal fun pathsOrCompat(): Set<SourcePaths> {
-        if (paths.isNotEmpty()) {
-            return paths
+    internal fun pathsOrCompat(sourceSet: SourceSet): Set<SourcePaths> {
+        if (!paths.isEmpty) {
+            return paths[sourceSet.name].toSet()
         }
-        return project.sourceSets.asSequence().flatMap {
-            val srcRoots = sourceDirs(it).get()
-            val targetRoots = targetDirs(it).get()
-            srcRoots.zip(targetRoots)
-        }.map { (src, target) ->
-            val pathSuffix = src.asFile.toPath().name
-            val generatorName = if (pathSuffix == "java") Default else Custom(pathSuffix)
-            SourcePaths(
-                src.asFile,
-                target.asFile,
-                Java,
-                generatorName
-            )
-        }.toSet()
+        val srcRoots = sourceDirs(sourceSet).get()
+        val targetRoots = targetDirs(sourceSet).get()
+        return srcRoots.zip(targetRoots)
+            .map { (src, target) ->
+                val pathSuffix = src.asFile.toPath().name
+                val lang = if (pathSuffix == "kotlin") Kotlin else Java
+                val generatorName = if (pathSuffix.equals(lang.name, ignoreCase = true)) {
+                    Default
+                } else {
+                    Custom(pathSuffix)
+                }
+                SourcePaths(
+                    src.asFile,
+                    target.asFile,
+                    lang,
+                    generatorName
+                )
+            }.toSet()
     }
 
     public companion object {

@@ -287,18 +287,6 @@ class `Command line application should` {
         }
 
         @Test
-        fun `target dir is missing`() {
-            assertThrows<UsageError> {
-                launchApp(
-                    "-p", TestPlugin::class.jvmName,
-                    "-r", UnderscorePrefixRenderer::class.jvmName,
-                    "-t", codegenRequestFile.toString(),
-                    "--paths", pathsForJava(srcRoot, "")
-                )
-            }
-        }
-
-        @Test
         fun `code generator request file is missing`() {
             assertMissingOption {
                 launchApp(

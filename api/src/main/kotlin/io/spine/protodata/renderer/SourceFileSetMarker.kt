@@ -30,10 +30,8 @@ import io.spine.tools.code.Language
 
 public data class SourceFileSetMarker(
     public val language: Language,
-    public val generator: SourceGenerator
+    public val generator: SourceGenerator = Default
 ) {
-    public constructor(language: Language) : this(language, Default)
-
     public constructor(language: Language, generatorName: String)
             : this(language, Custom(generatorName))
 }

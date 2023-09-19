@@ -172,7 +172,7 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
         protoDataConfig = protoDataRawArtifact
         userClasspathConfig = userClasspath
         project.afterEvaluate {
-            paths = ext.pathsOrCompat()
+            paths = ext.pathsOrCompat(sourceSet)
             compileCommandLine()
 
             val java: SourceDirectorySet = sourceSet.java

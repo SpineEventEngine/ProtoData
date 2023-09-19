@@ -63,8 +63,9 @@ import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
-import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Java
+import io.spine.tools.code.JavaScript
+import io.spine.tools.code.Kotlin
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
@@ -241,21 +242,33 @@ class PipelineSpec {
 
     @Test
     fun `use different renderers for different files`() {
-        val jsPath = "test/source.js"
-        val ktPath = "corp/acme/test/Source.kt"
+        val js = "js"
+        val kt = "kt"
+        val jsPath = "$js/test/source.js"
+        val ktPath = "$kt/corp/acme/test/Source.kt"
         write(jsPath, "alert('Hello')")
         write(ktPath, "println(\"Hello\")")
+        val jsSet = SourceFileSet.create(
+            SourceFileSetMarker(JavaScript),
+            srcRoot / js,
+            targetRoot / js
+        )
+        val ktSet = SourceFileSet.create(
+            SourceFileSetMarker(Kotlin),
+            srcRoot / kt,
+            targetRoot / kt
+        )
         Pipeline(
-            plugin = TestPlugin(),
+            plugins = listOf(TestPlugin()),
             renderers = listOf(
                 JsRenderer(),
                 KtRenderer()
             ),
-            sources = sourceFileSet,
+            sources = listOf(jsSet, ktSet),
             request
         )()
-        assertTextIn(targetRoot / jsPath).contains("Hello JavaScript")
-        assertTextIn(targetRoot / ktPath).contains("Hello Kotlin")
+        textIn(targetRoot / jsPath) shouldContain "Hello JavaScript"
+        textIn(targetRoot / ktPath) shouldContain "Hello Kotlin"
     }
 
     @Test

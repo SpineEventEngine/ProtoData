@@ -30,7 +30,9 @@ import io.spine.protodata.File
 import io.spine.protodata.FilePath
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
+import io.spine.protodata.renderer.Default
 import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFileSetMarker
 import io.spine.tools.code.Java
 import java.nio.file.Path
 
@@ -46,6 +48,9 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
         val file = findFile(declaredIn)
         return type.javaClassName(file)
     }
+
+    override fun supports(marker: SourceFileSetMarker): Boolean =
+        marker.language == Java && marker.generator == Default
 
     /**
      * Obtains the path the `.java` file generated from the given type.

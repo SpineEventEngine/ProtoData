@@ -70,21 +70,19 @@ public final class UuidJavaRenderer extends JavaRenderer {
      */
     @Override
     protected void render(SourceFileSet sources) {
+        System.err.println("000000000000000");
+        System.err.println("UuidJavaRenderer");
+        System.err.println("000000000000000");
         Set<UuidType> uuidTypes = select(UuidType.class).all();
         for (UuidType type : uuidTypes) {
+            System.err.println(type.getName().getSimpleName());
+            System.err.println("--=----=-==-=-=-=-=-=-==-==-=-=-==-");
             TypeName typeName = type.getName();
             FilePath file = type.getDeclaredIn();
             ClassName className = classNameOf(typeName, file);
             InsertionPoint classScope = new ClassScope(typeName);
             ImmutableList<String> lines = METHOD_FORMAT.format(className, UUID.class.getName());
             Path javaFilePath = javaFileOf(typeName, file);
-
-            // If there are no Java files, we deal with another language.
-            // Have this workaround until we get access to the `sourceRoot` property.
-            if (sources.findFile(javaFilePath).isEmpty()) {
-                continue;
-            }
-
             sources.file(javaFilePath)
                    .at(classScope)
                    .withExtraIndentation(INDENT_LEVEL)
