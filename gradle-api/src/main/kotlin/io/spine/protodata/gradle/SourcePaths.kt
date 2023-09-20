@@ -24,13 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle.plugin
+package io.spine.protodata.gradle
 
-import io.spine.protodata.renderer.DefaultGenerator
-import io.spine.protodata.renderer.SourceGeneratorName
+import io.spine.annotation.Internal
 import io.spine.tools.code.Language
 import java.io.File
-import org.gradle.api.Named
 
 /**
  * The paths to source and target dirs that constitute a single source file set.
@@ -42,7 +40,7 @@ public data class SourcePaths(
     public var source: String? = null,
     public var target: String? = null,
     public var language: String? = null,
-    public var generatorName: String = DefaultGenerator.name
+    public var generatorName: String = ""
 ) {
 
     /**
@@ -52,18 +50,19 @@ public data class SourcePaths(
         source: File,
         target: File,
         language: Language,
-        generator: SourceGeneratorName
+        generator: String
     ) : this(
         source.absolutePath,
         target.absolutePath,
         language::class.qualifiedName,
-        generator.name
+        generator
     )
 
     /**
      * Ensures that all the necessary properties are present.
      */
-    internal fun checkAllSet() {
+    @Internal
+    public fun checkAllSet() {
         require(!target.isNullOrBlank()) { missingMessage("target path") }
         require(!language.isNullOrBlank()) { missingMessage("language") }
     }

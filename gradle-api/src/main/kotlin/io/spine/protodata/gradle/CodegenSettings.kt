@@ -26,6 +26,8 @@
 
 package io.spine.protodata.gradle
 
+import com.google.common.collect.Multimap
+
 /**
  * Configures code generation process performed by ProtoData.
  */
@@ -68,4 +70,24 @@ public interface CodegenSettings {
      * By default, points at the `$projectDir/generated/` directory.
      */
     public var targetBaseDir: Any
+
+    /**
+     * `SourcePaths` to run ProtoData on.
+     *
+     * The keys to the multimap are the scopes, i.e. Gradle's source set names,
+     * such as `main` and `test`.
+     *
+     */
+    public val paths: Multimap<String, SourcePaths>
+
+    /**
+     * Creates a new [SourcePaths] for the given scope.
+     *
+     * @see paths
+     */
+    public fun pathsFor(scope: String, configAction: SourcePaths.() -> Unit) {
+        val p = SourcePaths()
+        configAction(p)
+        paths.put(scope, p)
+    }
 }

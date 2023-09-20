@@ -81,7 +81,7 @@ internal constructor(
      * @see outputRoot
      */
     @get:JvmName("inputRoot")
-    public val inputRoot: Path,
+    public val inputRoot: Path?,
 
     /**
      * A directory where the source set should be placed after code generation.
@@ -99,8 +99,9 @@ internal constructor(
     internal lateinit var querying: Querying
 
     init {
-        require(inputRoot.absolutePathString() != outputRoot.absolutePathString()) {
-            "Input and output roots cannot be the same, but was '${inputRoot.absolutePathString()}'"
+        require(inputRoot?.absolutePathString() != outputRoot.absolutePathString()) {
+            "Input and output roots cannot be the same, " +
+                    "but was '${inputRoot!!.absolutePathString()}'"
         }
         val map = HashMap<Path, SourceFile>(files.size)
         this.files = files.associateByTo(map) { it.relativePath }
@@ -144,7 +145,7 @@ internal constructor(
         public fun empty(label: SourceFileSetLabel, target: Path): SourceFileSet {
             checkTarget(target)
             val files = setOf<SourceFile>()
-            return SourceFileSet(label, files, target, target)
+            return SourceFileSet(label, files, null, target)
         }
     }
 
@@ -245,9 +246,8 @@ internal constructor(
             it.rm(rootDir = outputRoot)
         }
         outputRoot.toFile().mkdirs()
-        val forceWriteFiles = inputRoot != outputRoot
         files.values.forEach {
-            it.write(outputRoot, charset, forceWriteFiles)
+            it.write(outputRoot, charset)
         }
     }
 

@@ -69,9 +69,7 @@ private constructor(
     /**
      * The FS path to the file relative to the source root.
      */
-    public val relativePath: Path,
-
-    private var changed: Boolean = false
+    public val relativePath: Path
 ) {
 
     private lateinit var sources: SourceFileSet
@@ -109,7 +107,7 @@ private constructor(
          *         the source code.
          */
         internal fun fromCode(relativePath: Path, code: String): SourceFile =
-            SourceFile(code, relativePath, changed = true)
+            SourceFile(code, relativePath)
     }
 
     /**
@@ -178,7 +176,6 @@ private constructor(
      */
     public fun overwrite(newCode: String) {
         this.code = newCode
-        this.changed = true
     }
 
     /**
@@ -215,15 +212,12 @@ private constructor(
     internal fun write(
         baseDir: Path,
         charset: Charset = Charsets.UTF_8,
-        forceWrite: Boolean = false
     ) {
-        if (changed || forceWrite) {
-            val targetPath = baseDir / relativePath
-            targetPath.toFile()
-                .parentFile
-                .mkdirs()
-            targetPath.writeText(code, charset, WRITE, TRUNCATE_EXISTING, CREATE)
-        }
+        val targetPath = baseDir / relativePath
+        targetPath.toFile()
+            .parentFile
+            .mkdirs()
+        targetPath.writeText(code, charset, WRITE, TRUNCATE_EXISTING, CREATE)
     }
 
     /**

@@ -31,8 +31,7 @@ import com.google.common.collect.Multimap
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodeGeneratorRequestFile.DEFAULT_DIRECTORY
 import io.spine.protodata.gradle.CodegenSettings
-import io.spine.protodata.renderer.CustomGenerator
-import io.spine.protodata.renderer.DefaultGenerator
+import io.spine.protodata.gradle.SourcePaths
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.fs.DirectoryName.generated
@@ -84,13 +83,7 @@ public class Extension(internal val project: Project): CodegenSettings {
     internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
         requestFilesDirProperty.file(CodeGeneratorRequestFile.name(forSourceSet))
 
-    /**
-     * [SourcePaths] to run ProtoData on.
-     *
-     * The keys to the multimap are the scopes, i.e. Gradle's source set names,
-     * such as `main` and `test`.
-     */
-    public val paths: Multimap<String, SourcePaths> = HashMultimap.create()
+    override val paths: Multimap<String, SourcePaths> = HashMultimap.create()
 
     /**
      * Obtains the source configured paths.
@@ -110,9 +103,9 @@ public class Extension(internal val project: Project): CodegenSettings {
                 val pathSuffix = src.asFile.toPath().name
                 val lang = if (pathSuffix == "kotlin") Kotlin else Java
                 val generatorName = if (pathSuffix.equals(lang.name, ignoreCase = true)) {
-                    DefaultGenerator
+                    ""
                 } else {
-                    CustomGenerator(pathSuffix)
+                    pathSuffix
                 }
                 SourcePaths(
                     src.asFile,

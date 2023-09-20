@@ -230,20 +230,26 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun createSourceFileSets(): List<SourceFileSet> {
-        val pathPairs = paths.map { pathSplitter.splitToList(it) }
-        val existingPaths = pathPairs.filter {
+        val rawPaths = paths.map { pathSplitter.splitToList(it) }
+        val existingPaths = rawPaths.filter {
             val srcPath = it[1]
             srcPath.isNotBlank() && Path(srcPath).exists()
         }.toList()
         if (existingPaths.isEmpty()) {
+            logger.atInfo().log {
+                "No existing source paths supplied."
+            }
             require(paths.size == 1) { "Expected exactly one target path, but was ${paths}." }
-            val (rawLabel, _, rawTarget) = pathPairs.first()
+            val (rawLabel, _, rawTarget) = rawPaths.first()
             val label = loadLabel(rawLabel)
             val targetPath = Path(rawTarget)
             return listOf(SourceFileSet.empty(label, targetPath))
         }
         return existingPaths.map {
             val (rawLabel, rawSrc, rawTarget) = it
+            logger.atInfo().log {
+                "Source file set: label: `$rawLabel`; source: `$rawSrc`; target: `$rawTarget`."
+            }
             val sourceLabel = loadLabel(rawLabel)
             val srcPath = Path(rawSrc)
             val targetPath = Path(rawTarget)
