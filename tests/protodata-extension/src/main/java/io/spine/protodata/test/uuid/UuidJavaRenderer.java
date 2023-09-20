@@ -70,13 +70,8 @@ public final class UuidJavaRenderer extends JavaRenderer {
      */
     @Override
     protected void render(SourceFileSet sources) {
-        System.err.println("000000000000000");
-        System.err.println("UuidJavaRenderer");
-        System.err.println("000000000000000");
         Set<UuidType> uuidTypes = select(UuidType.class).all();
         for (UuidType type : uuidTypes) {
-            System.err.println(type.getName().getSimpleName());
-            System.err.println("--=----=-==-=-=-=-=-=-==-==-=-=-==-");
             TypeName typeName = type.getName();
             FilePath file = type.getDeclaredIn();
             ClassName className = classNameOf(typeName, file);
