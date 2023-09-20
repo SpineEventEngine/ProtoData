@@ -40,7 +40,6 @@ import java.nio.charset.Charset
 import java.nio.file.Files.walk
 import java.nio.file.Path
 import java.util.*
-import kotlin.DeprecationLevel.ERROR
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
@@ -69,7 +68,7 @@ import kotlin.text.Charsets.UTF_8
 @Suppress("TooManyFunctions") // All part of the public API.
 public class SourceFileSet
 internal constructor(
-    public val marker: SourceFileSetMarker,
+    public val label: SourceFileSetLabel,
 
     files: Set<SourceFile>,
 
@@ -124,7 +123,7 @@ internal constructor(
          *         will not be changed.
          */
         public fun create(
-            marker: SourceFileSetMarker,
+            label: SourceFileSetLabel,
             inputRoot: Path,
             outputRoot: Path
         ): SourceFileSet {
@@ -135,17 +134,17 @@ internal constructor(
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read(source.relativize(it), source) }
                 .collect(toImmutableSet())
-            return SourceFileSet(marker, files, source, target)
+            return SourceFileSet(label, files, source, target)
         }
 
         /**
          * Creates an empty source set which can be appended with new files and
          * written to the given target directory.
          */
-        public fun empty(marker: SourceFileSetMarker, target: Path): SourceFileSet {
+        public fun empty(label: SourceFileSetLabel, target: Path): SourceFileSet {
             checkTarget(target)
             val files = setOf<SourceFile>()
-            return SourceFileSet(marker, files, target, target)
+            return SourceFileSet(label, files, target, target)
         }
     }
 
@@ -298,7 +297,7 @@ internal constructor(
  * matching the given [predicate].
  */
 internal fun SourceFileSet.subsetWhere(predicate: (SourceFile) -> Boolean) =
-    SourceFileSet(this.marker, this.filter(predicate).toSet(), inputRoot, outputRoot)
+    SourceFileSet(this.label, this.filter(predicate).toSet(), inputRoot, outputRoot)
 
 /**
  * Obtains absolute [normalized][normalize] version of this path.

@@ -65,7 +65,7 @@ import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.CustomGenerator
 import io.spine.protodata.renderer.DefaultGenerator
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.renderer.SourceFileSetMarker
+import io.spine.protodata.renderer.SourceFileSetLabel
 import io.spine.string.Separator.Companion.nl
 import io.spine.string.pi
 import io.spine.string.ti
@@ -251,7 +251,7 @@ internal class Run(version: String) : CliktCommand(
         }
     }
 
-    private fun loadLabel(label: String): SourceFileSetMarker {
+    private fun loadLabel(label: String): SourceFileSetLabel {
         val match = labelRegex.matchEntire(label)
         require(match != null) { "Could not load source label: `$label`." }
         val language = match.groups["lang"]!!.value.toLanguage()
@@ -262,7 +262,7 @@ internal class Run(version: String) : CliktCommand(
         } else {
             DefaultGenerator
         }
-        val sourceLabel = SourceFileSetMarker(language, generator)
+        val sourceLabel = SourceFileSetLabel(language, generator)
         return sourceLabel
     }
 

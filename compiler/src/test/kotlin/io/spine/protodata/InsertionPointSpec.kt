@@ -34,7 +34,7 @@ import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.renderer.SourceFileSetMarker
+import io.spine.protodata.renderer.SourceFileSetLabel
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.CompanionFramer
@@ -47,7 +47,6 @@ import io.spine.protodata.test.KotlinInsertionPoint.FILE_START
 import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
 import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
-import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import java.lang.System.lineSeparator
@@ -105,8 +104,8 @@ class InsertionPointsSpec {
             }
             """.trimIndent()
         )
-        val javaSet = SourceFileSet.create(SourceFileSetMarker(Java), input / java, output / java)
-        val ktSet = SourceFileSet.create(SourceFileSetMarker(Kotlin), input / kt, output / kt)
+        val javaSet = SourceFileSet.create(SourceFileSetLabel(Java), input / java, output / java)
+        val ktSet = SourceFileSet.create(SourceFileSetLabel(Kotlin), input / kt, output / kt)
         Pipeline(
             plugins = listOf(),
             renderers = listOf(

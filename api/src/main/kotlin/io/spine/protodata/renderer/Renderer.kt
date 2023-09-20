@@ -71,8 +71,8 @@ protected constructor(
      * Note that, even if a source file set is supported, the renderer will still only receive
      * a portion of it with the file that match the [language filter][Language.matches].
      */
-    public open fun supports(marker: SourceFileSetMarker): Boolean =
-        supportedLanguage == AnyLanguage || supportedLanguage == marker.language
+    public open fun supports(label: SourceFileSetLabel): Boolean =
+        supportedLanguage == AnyLanguage || supportedLanguage == label.language
 
     /**
      * Makes changes to the given source set.

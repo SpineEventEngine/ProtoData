@@ -37,7 +37,7 @@ import io.spine.protodata.ConfigurationError
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.renderer.SourceFileSetMarker
+import io.spine.protodata.renderer.SourceFileSetLabel
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.AnnotationInsertionPointPrinter
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
@@ -84,7 +84,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("`Pipeline` should")
 class PipelineSpec {
 
-    private val marker = SourceFileSetMarker(Java)
+    private val label = SourceFileSetLabel(Java)
     private lateinit var srcRoot: Path
     private lateinit var targetRoot: Path
     private lateinit var codegenRequestFile: Path
@@ -92,7 +92,7 @@ class PipelineSpec {
     private lateinit var request: CodeGeneratorRequest
     private lateinit var renderer: UnderscorePrefixRenderer
     private val sourceFileSet: SourceFileSet
-        get() = SourceFileSet.create(marker, srcRoot, targetRoot)
+        get() = SourceFileSet.create(label, srcRoot, targetRoot)
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
@@ -249,12 +249,12 @@ class PipelineSpec {
         write(jsPath, "alert('Hello')")
         write(ktPath, "println(\"Hello\")")
         val jsSet = SourceFileSet.create(
-            SourceFileSetMarker(JavaScript),
+            SourceFileSetLabel(JavaScript),
             srcRoot / js,
             targetRoot / js
         )
         val ktSet = SourceFileSet.create(
-            SourceFileSetMarker(Kotlin),
+            SourceFileSetLabel(Kotlin),
             srcRoot / kt,
             targetRoot / kt
         )
@@ -312,7 +312,7 @@ class PipelineSpec {
         Pipeline(
             plugin = TestPlugin(),
             renderer = InternalAccessRenderer(),
-            sources = SourceFileSet.create(marker, srcRoot, destination),
+            sources = SourceFileSet.create(label, srcRoot, destination),
             request
         )()
 
@@ -355,8 +355,8 @@ class PipelineSpec {
                 TestPlugin(),
                 NoOpRenderer(),
                 listOf(
-                    SourceFileSet.create(marker, srcRoot, destination1),
-                    SourceFileSet.create(marker, source2, destination2)
+                    SourceFileSet.create(label, srcRoot, destination1),
+                    SourceFileSet.create(label, source2, destination2)
                 ),
                 request
             )()
@@ -384,8 +384,8 @@ class PipelineSpec {
                 plugin = TestPlugin(),
                 renderer = PlainStringRenderer(),
                 listOf(
-                    SourceFileSet.create(marker, srcRoot, destination1),
-                    SourceFileSet.create(marker, source2, destination2)
+                    SourceFileSet.create(label, srcRoot, destination1),
+                    SourceFileSet.create(label, source2, destination2)
                 ),
                 request,
                 Configuration.rawValue(expectedContent, ConfigurationFormat.PLAIN)
@@ -417,8 +417,8 @@ class PipelineSpec {
                     PrependingRenderer()
                 ),
                 sources = listOf(
-                    SourceFileSet.create(marker, srcRoot, destination1),
-                    SourceFileSet.create(marker, source2, destination2)
+                    SourceFileSet.create(label, srcRoot, destination1),
+                    SourceFileSet.create(label, source2, destination2)
                 ),
                 request
             )()

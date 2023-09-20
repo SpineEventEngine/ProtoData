@@ -28,10 +28,20 @@ package io.spine.protodata.renderer
 
 import io.spine.tools.code.Language
 
-public data class SourceFileSetMarker(
+/**
+ * A label for a source file set.
+ *
+ * The label marks the programming language that the files use and the name of the generator that
+ * created the files.
+ */
+public data class SourceFileSetLabel(
     public val language: Language,
     public val generator: SourceGeneratorName = DefaultGenerator
 ) {
+
+    /**
+     * Creates a new `SourceFileSetLabel` with the given language and a custom generator name.
+     */
     public constructor(language: Language, generatorName: String)
             : this(language, CustomGenerator(generatorName))
 
