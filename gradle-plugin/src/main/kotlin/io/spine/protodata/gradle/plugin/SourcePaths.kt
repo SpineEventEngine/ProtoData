@@ -32,13 +32,22 @@ import io.spine.tools.code.Language
 import java.io.File
 import org.gradle.api.Named
 
+/**
+ * The paths to source and target dirs that constitute a single source file set.
+ *
+ * This is a part of the Gradle plugin's DSL for configuring ProtoData. Additional `SourcePaths`
+ * instances may be created for ProtoData to pick up.
+ */
 public data class SourcePaths(
     public var source: String? = null,
     public var target: String? = null,
     public var language: String? = null,
     public var generatorName: String = DefaultGenerator.name
-) : Named {
+) {
 
+    /**
+     * Creates new `SourcePaths` from the given directories, language and generator name.
+     */
     public constructor(
         source: File,
         target: File,
@@ -51,12 +60,13 @@ public data class SourcePaths(
         generator.name
     )
 
+    /**
+     * Ensures that all the necessary properties are present.
+     */
     internal fun checkAllSet() {
         require(!target.isNullOrBlank()) { missingMessage("target path") }
         require(!language.isNullOrBlank()) { missingMessage("language") }
     }
 
-    override fun getName(): String = generatorName
-
-    private fun missingMessage(propName: String) = "Source file set `$name` requires the $propName."
+    private fun missingMessage(propName: String) = "Source file set requires the $propName."
 }

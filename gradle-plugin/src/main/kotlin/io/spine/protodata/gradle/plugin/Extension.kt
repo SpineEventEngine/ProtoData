@@ -37,6 +37,7 @@ import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.fs.DirectoryName.generated
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
+import kotlin.DeprecationLevel.ERROR
 import kotlin.io.path.name
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
@@ -83,8 +84,21 @@ public class Extension(internal val project: Project): CodegenSettings {
     internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
         requestFilesDirProperty.file(CodeGeneratorRequestFile.name(forSourceSet))
 
+    /**
+     * [SourcePaths] to run ProtoData on.
+     *
+     * The keys to the multimap are the scopes, i.e. Gradle's source set names,
+     * such as `main` and `test`.
+     */
     public val paths: Multimap<String, SourcePaths> = HashMultimap.create()
 
+    /**
+     * Obtains the source configured paths.
+     *
+     * If the deprecated [subDirs] and [targetBaseDir] are used, constructs [SourcePaths] instances
+     * from the present data for backward compatibility. However, in this compatibility mode,
+     * only Java and Kotlin source file sets can be constructed.
+     */
     internal fun pathsOrCompat(sourceSet: SourceSet): Set<SourcePaths> {
         if (!paths.isEmpty) {
             return paths[sourceSet.name].toSet()
@@ -159,7 +173,7 @@ public class Extension(internal val project: Project): CodegenSettings {
     private val subDirProperty: ListProperty<String> =
         factory.listProperty<String>().convention(defaultSubdirectories)
 
-    @Deprecated("Use `paths` instead.")
+    @Deprecated("Use `paths` instead.", level = ERROR)
     public override var targetBaseDir: Any
         get() = targetBaseDirProperty.get()
         set(value) = targetBaseDirProperty.set(project.file(value))
