@@ -26,22 +26,20 @@
 
 package io.spine.protodata.cli.app
 
-import io.spine.tools.code.AnyLanguage
-import io.spine.tools.code.Java
-import io.spine.tools.code.JavaScript
-import io.spine.tools.code.Kotlin
+import io.spine.protodata.cli.knownLanguages
 import io.spine.tools.code.Language
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
 
-private val knownLanguages: Map<String, Language> = setOf(
-    Java,
-    Kotlin,
-    JavaScript,
-    AnyLanguage
-).associateBy { it.name.lowercase() }
-
+/**
+ * Parses a [Language] from this string.
+ *
+ * If the string represents a [well-known language name][knownLanguages], uses that language.
+ * Otherwise, attempts to use this string as a class name and load an instance of that class.
+ * If the class represents a Kotlin `object`, loads the instance of the object. Otherwise, calls
+ * the no-argument constructor.
+ */
 internal fun String.toLanguage(): Language {
     require(this.isNotBlank()) { "Expected a language name of class, but got `$this`." }
     return toKnownLanguage() ?: loadLanguage()
@@ -49,17 +47,12 @@ internal fun String.toLanguage(): Language {
 
 private fun String.toKnownLanguage(): Language? {
     val key = lowercase()
-    return if (key in knownLanguages) {
-        knownLanguages.getValue(key)
-    } else {
-        null
-    }
+    return knownLanguages[key]
 }
 
 private fun String.loadLanguage(): Language {
     val cls = languageClass()
     return cls.objectInstance ?: cls.instantiate()
-
 }
 
 private fun String.languageClass(): KClass<Language> {
