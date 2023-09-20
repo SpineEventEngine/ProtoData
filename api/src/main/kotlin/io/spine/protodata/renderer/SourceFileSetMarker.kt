@@ -30,10 +30,10 @@ import io.spine.tools.code.Language
 
 public data class SourceFileSetMarker(
     public val language: Language,
-    public val generator: SourceGenerator = Default
+    public val generator: SourceGeneratorName = DefaultGenerator
 ) {
     public constructor(language: Language, generatorName: String)
-            : this(language, Custom(generatorName))
+            : this(language, CustomGenerator(generatorName))
 
     override fun toString(): String =
         "${language.name}(${generator.name})"

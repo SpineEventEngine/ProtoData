@@ -32,7 +32,7 @@ import io.spine.protodata.cli.PathsParam
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RequestParam
 import io.spine.protodata.cli.UserClasspathParam
-import io.spine.protodata.renderer.Default
+import io.spine.protodata.renderer.DefaultGenerator
 import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File
 import java.io.File.pathSeparator
@@ -176,7 +176,7 @@ public abstract class LaunchProtoData : JavaExec() {
 
 private fun SourcePaths.toCliParam(): String {
     checkAllSet()
-    val label = if (generatorName != Default.name) {
+    val label = if (generatorName != DefaultGenerator.name) {
         "$language($generatorName)"
     } else {
         language

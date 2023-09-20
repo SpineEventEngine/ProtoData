@@ -30,7 +30,7 @@ import io.spine.protodata.File
 import io.spine.protodata.FilePath
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
-import io.spine.protodata.renderer.Default
+import io.spine.protodata.renderer.DefaultGenerator
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSetMarker
 import io.spine.tools.code.Java
@@ -49,8 +49,12 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
         return type.javaClassName(file)
     }
 
+    /**
+     * A `JavaRenderer` supports only the default Java sources, i.e. the source files generated
+     * by the vanilla Protobuf compiler for the given Proto definitions.
+     */
     override fun supports(marker: SourceFileSetMarker): Boolean =
-        marker.language == Java && marker.generator == Default
+        marker.language == Java && marker.generator == DefaultGenerator
 
     /**
      * Obtains the path the `.java` file generated from the given type.

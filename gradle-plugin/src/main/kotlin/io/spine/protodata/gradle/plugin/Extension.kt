@@ -31,15 +31,13 @@ import com.google.common.collect.Multimap
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodeGeneratorRequestFile.DEFAULT_DIRECTORY
 import io.spine.protodata.gradle.CodegenSettings
-import io.spine.protodata.renderer.Custom
-import io.spine.protodata.renderer.Default
+import io.spine.protodata.renderer.CustomGenerator
+import io.spine.protodata.renderer.DefaultGenerator
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.fs.DirectoryName.generated
-import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import kotlin.io.path.name
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -47,7 +45,6 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
-import org.gradle.kotlin.dsl.domainObjectContainer
 import org.gradle.kotlin.dsl.listProperty
 
 /**
@@ -99,9 +96,9 @@ public class Extension(internal val project: Project): CodegenSettings {
                 val pathSuffix = src.asFile.toPath().name
                 val lang = if (pathSuffix == "kotlin") Kotlin else Java
                 val generatorName = if (pathSuffix.equals(lang.name, ignoreCase = true)) {
-                    Default
+                    DefaultGenerator
                 } else {
-                    Custom(pathSuffix)
+                    CustomGenerator(pathSuffix)
                 }
                 SourcePaths(
                     src.asFile,

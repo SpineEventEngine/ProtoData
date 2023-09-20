@@ -26,8 +26,8 @@
 
 package io.spine.protodata.gradle.plugin
 
-import io.spine.protodata.renderer.Default
-import io.spine.protodata.renderer.SourceGenerator
+import io.spine.protodata.renderer.DefaultGenerator
+import io.spine.protodata.renderer.SourceGeneratorName
 import io.spine.tools.code.Language
 import java.io.File
 import org.gradle.api.Named
@@ -36,14 +36,14 @@ public data class SourcePaths(
     public var source: String? = null,
     public var target: String? = null,
     public var language: String? = null,
-    public var generatorName: String = Default.name
+    public var generatorName: String = DefaultGenerator.name
 ) : Named {
 
     public constructor(
         source: File,
         target: File,
         language: Language,
-        generator: SourceGenerator
+        generator: SourceGeneratorName
     ) : this(
         source.absolutePath,
         target.absolutePath,
