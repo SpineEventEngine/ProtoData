@@ -28,6 +28,9 @@ package io.spine.protodata.test
 
 import io.spine.protodata.plugin.AbstractPlugin
 
+/**
+ * A plugin with the [NoOpRenderer].
+ */
 public class NoOpPlugin : AbstractPlugin(
     renderers = listOf(NoOpRenderer())
 )

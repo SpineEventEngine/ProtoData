@@ -28,6 +28,9 @@ package io.spine.protodata.test
 
 import io.spine.protodata.plugin.AbstractPlugin
 
+/**
+ * A plugin with the [UnderscorePrefixRenderer].
+ */
 public class UnderscorePrefixPlugin : AbstractPlugin(
     renderers = listOf(UnderscorePrefixRenderer())
 )
