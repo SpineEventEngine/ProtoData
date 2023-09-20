@@ -48,6 +48,8 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.SourceSet
 
 /**
@@ -74,7 +76,7 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:Input
     internal lateinit var optionProviders: Provider<List<String>>
 
-    @get:Input
+    @get:Internal
     internal lateinit var paths: Set<SourcePaths>
 
     @get:InputFiles
@@ -85,6 +87,25 @@ public abstract class LaunchProtoData : JavaExec() {
      */
     @get:InputFiles
     internal lateinit var protoDataConfig: Configuration
+
+    @Suppress("unused") // Used by Gradle for incremental compilation.
+    @get:InputFiles
+    @get:Optional
+    internal val sources: Set<Directory>
+        get() = paths.asSequence()
+            .map { it.source }
+            .filter { it != null }
+            .map { project.layout.projectDirectory.dir(it!!) }
+            .toSet()
+
+    @Suppress("unused") // Used by Gradle for incremental compilation.
+    @get:OutputDirectories
+    internal val targets: Set<Directory>
+        get() = paths.asSequence()
+            .map { it.target }
+            .filter { it != null }
+            .map { project.layout.projectDirectory.dir(it!!) }
+            .toSet()
 
     /**
      * Configures the CLI command for this task.
@@ -154,7 +175,7 @@ public abstract class LaunchProtoData : JavaExec() {
 }
 
 private fun SourcePaths.toCliParam(): String {
-//    checkAllSet()
+    checkAllSet()
     val label = if (generatorName != Default.name) {
         "$language($generatorName)"
     } else {

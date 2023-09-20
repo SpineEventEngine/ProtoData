@@ -52,8 +52,8 @@ public data class SourcePaths(
     )
 
     internal fun checkAllSet() {
-        require(target.isNullOrBlank()) { missingMessage("target path") }
-        require(language.isNullOrBlank()) { missingMessage("language") }
+        require(!target.isNullOrBlank()) { missingMessage("target path") }
+        require(!language.isNullOrBlank()) { missingMessage("language") }
     }
 
     override fun getName(): String = generatorName
