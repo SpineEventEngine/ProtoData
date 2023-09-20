@@ -28,11 +28,18 @@ package io.spine.protodata.test
 
 import java.io.File
 
-
+/**
+ * Constructs a `--path` CLI param with the given parts.
+ *
+ * See the CLI help message for the format details.
+ */
 public fun paths(label: String, src: Any, target: Any): String {
     val ps = File.pathSeparator
     return label + ps + src + ps + target
 }
 
+/**
+ * Constructs a `--path` CLI param with the Java language and the given source and target paths.
+ */
 public fun pathsForJava(src: Any, target: Any): String =
     paths("java", src, target)
