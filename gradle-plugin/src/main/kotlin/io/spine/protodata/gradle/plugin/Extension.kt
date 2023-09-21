@@ -128,9 +128,7 @@ public class Extension(internal val project: Project): CodegenSettings {
             "kotlin",
             "grpc",
             "js",
-            "dart",
-            "spine",
-            "protodata"
+            "dart"
         )
     }
 
