@@ -37,9 +37,9 @@ import io.spine.tools.code.Language
  * The well-known languages processed by ProtoData.
  */
 @Internal
-public val knownLanguages: Map<String, Language> = setOf(
-    Java,
-    Kotlin,
-    JavaScript,
-    AnyLanguage
-).associateBy { it.name.lowercase() }
+public val knownLanguages: Map<String, Language> = mapOf(
+    Java.name.lowercase() to Java,
+    Kotlin.name.lowercase() to Kotlin,
+    JavaScript.name.lowercase() to JavaScript,
+    "any" to AnyLanguage
+)
