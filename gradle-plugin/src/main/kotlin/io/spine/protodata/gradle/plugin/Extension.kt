@@ -101,7 +101,7 @@ public class Extension(internal val project: Project): CodegenSettings {
         return srcRoots.zip(targetRoots)
             .map { (src, target) ->
                 val pathSuffix = src.asFile.toPath().name
-                val lang = if (pathSuffix == "kotlin") Kotlin else Java
+                val lang = if (pathSuffix.equals(Kotlin.name, ignoreCase = true)) Kotlin else Java
                 val generatorName = if (pathSuffix.equals(lang.name, ignoreCase = true)) {
                     ""
                 } else {
