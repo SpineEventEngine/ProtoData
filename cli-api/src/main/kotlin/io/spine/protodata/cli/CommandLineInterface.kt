@@ -101,7 +101,7 @@ public object PathsParam : Parameter(
           2. The source path. Must be an absolute path where the code files are located. If there
              are no code files, i.e. ProtoData should generate all the code from scratch, this part
              may be left blank. 
-          2. The target path. Must be an absolute path where the code files should be placed after
+          3. The target path. Must be an absolute path where the code files should be placed after
              processing. This path must either lead to an empty directory, or not lead to any
              existing FS object.
              
