@@ -63,9 +63,9 @@ public data class SourcePaths(
      */
     @Internal
     public fun checkAllSet() {
-        require(!target.isNullOrBlank()) { missingMessage("target path") }
+        require(!target.isNullOrBlank()) { missingMessage("target") }
         require(!language.isNullOrBlank()) { missingMessage("language") }
     }
 
-    private fun missingMessage(propName: String) = "Source file set requires the $propName."
+    private fun missingMessage(propName: String) = "Source file set requires the `$propName`."
 }
