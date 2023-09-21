@@ -31,8 +31,12 @@ import io.spine.tools.code.Language
 /**
  * A label for a source file set.
  *
- * The label marks the programming language that the files use and the name of the generator that
- * created the files.
+ * The label consists of the programming language that the files use and the name of the code
+ * generator that created the files.
+ *
+ * A label signifies the type of code structures found in the source files. This helps renderers
+ * that process those sources to know what to expect from the source file set before ever checking
+ * the contents of the files themselves.
  */
 public data class SourceFileSetLabel(
     public val language: Language,

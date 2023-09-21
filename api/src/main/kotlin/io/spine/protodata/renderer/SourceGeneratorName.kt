@@ -59,8 +59,8 @@ public object DefaultGenerator : SourceGeneratorName
  *
  * Conventionally, the name of the generator should coincide with the name of the directory where
  * the generated files are placed. Users should follow this convention where possible, yet diverge
- * when necessary. For example, Java gRPC stubs should be labelled with the `grpc` name. However,
- * files generated for Dart should be labelled with the name `dart`, not `lib`.
+ * when necessary. For example, Java gRPC stubs should be marked with the `grpc` name. However,
+ * files generated for Dart should be marked with the name `dart`, not `lib`.
  */
 public class CustomGenerator(
     override val name: String

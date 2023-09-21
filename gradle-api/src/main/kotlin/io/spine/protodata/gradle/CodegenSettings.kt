@@ -74,9 +74,7 @@ public interface CodegenSettings {
     /**
      * `SourcePaths` to run ProtoData on.
      *
-     * The keys to the multimap are the scopes, i.e. Gradle's source set names,
-     * such as `main` and `test`.
-     *
+     * The keys to the multimap are the Gradle's source set names, such as `main` and `test`.
      */
     public val paths: Multimap<String, SourcePaths>
 
