@@ -91,6 +91,9 @@ public class Extension(internal val project: Project): CodegenSettings {
      * If the deprecated [subDirs] and [targetBaseDir] are used, constructs [SourcePaths] instances
      * from the present data for backward compatibility. However, in this compatibility mode,
      * only Java and Kotlin source file sets can be constructed.
+     *
+     * This method exists for backward compatibility reasons only. Once the old way of providing
+     * source set paths is no longer available, we remove it and simply query [paths] instead.
      */
     internal fun pathsOrCompat(sourceSet: SourceSet): Set<SourcePaths> {
         if (!paths.isEmpty) {
