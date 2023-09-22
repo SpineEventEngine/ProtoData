@@ -27,6 +27,7 @@
 package io.spine.protodata.gradle
 
 import com.google.common.collect.Multimap
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 
 /**
@@ -78,6 +79,15 @@ public interface CodegenSettings {
      * The keys to the multimap are the Gradle's source set names, such as `main` and `test`.
      */
     public val paths: Multimap<String, SourcePaths>
+
+    /**
+     * Configures a particular launch of ProtoData for the given source set.
+     *
+     * @param sourceSet the source set for which ProtoData is launched.
+     * @param configure the block configuring the launch.
+     */
+    public fun launchFor(sourceSet: Provider<SourceSet>, configure: Launch.() -> Unit): Unit =
+        launchFor(sourceSet.get().name, configure)
 
     /**
      * Configures a particular launch of ProtoData for the given source set.

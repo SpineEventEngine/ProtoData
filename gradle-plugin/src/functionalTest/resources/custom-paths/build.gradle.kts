@@ -63,7 +63,7 @@ protoData {
         }
     }
 
-    launchFor(sourceSets.test.get()) {
+    launchFor(sourceSets.test) {
         sourceFileSet {
             source = "$buildDir/generated-proto/test/kotlin"
             target = "$buildDir/footest"
