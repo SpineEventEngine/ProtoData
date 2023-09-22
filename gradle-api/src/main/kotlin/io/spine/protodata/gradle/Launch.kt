@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,50 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.gradle.standardToSpineSdk
+package io.spine.protodata.gradle
 
-buildscript {
-    standardSpineSdkRepositories()
-}
+/**
+ * A DSL component configuring a particular ProtoData launch.
+ *
+ * ProtoData is launched separately for each Gradle source set. This part of the DSL configures
+ * the source paths that are used by ProtoData in the given launch.
+ */
+public class Launch
+internal constructor(
+    private val sourceSetName: String,
+    private val settings: CodegenSettings
+) {
 
-plugins {
-    java
-    id("com.google.protobuf")
-    id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
-}
-
-repositories {
-    mavenLocal() // Must come first for `protodata-test-env`.
-    standardToSpineSdk()
-}
-
-dependencies {
-    protoData("io.spine.protodata:protodata-test-env:+")
-}
-
-protobuf {
-    protoc {
-        artifact = io.spine.internal.dependency.Protobuf.compiler
-    }
-}
-
-protoData {
-    plugins("io.spine.protodata.test.TestPlugin", "io.spine.protodata.test.UnderscorePrefixPlugin")
-
-    launchFor("main") {
-        sourceFileSet {
-            source = "$buildDir/generated/source/proto/main/java"
-            target = "$buildDir/foomain"
-            language = "java"
-        }
-    }
-
-    launchFor(sourceSets.test.get()) {
-        sourceFileSet {
-            source = "$buildDir/generated-proto/test/kotlin"
-            target = "$buildDir/footest"
-            language = "java"
-        }
+    /**
+     * Adds the configured [SourcePaths] to the launch.
+     *
+     * @param configure the code block configuring the paths.
+     */
+    public fun sourceFileSet(configure: SourcePaths.() -> Unit) {
+        val paths = SourcePaths()
+        configure(paths)
+        settings.paths.put(sourceSetName, paths)
     }
 }

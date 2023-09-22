@@ -27,6 +27,7 @@
 package io.spine.protodata.gradle
 
 import com.google.common.collect.Multimap
+import org.gradle.api.tasks.SourceSet
 
 /**
  * Configures code generation process performed by ProtoData.
@@ -79,13 +80,22 @@ public interface CodegenSettings {
     public val paths: Multimap<String, SourcePaths>
 
     /**
-     * Creates a new [SourcePaths] for the given scope.
+     * Configures a particular launch of ProtoData for the given source set.
      *
-     * @see paths
+     * @param sourceSet the source set for which ProtoData is launched.
+     * @param configure the block configuring the launch.
      */
-    public fun pathsFor(scope: String, configAction: SourcePaths.() -> Unit) {
-        val p = SourcePaths()
-        configAction(p)
-        paths.put(scope, p)
+    public fun launchFor(sourceSet: SourceSet, configure: Launch.() -> Unit): Unit =
+        launchFor(sourceSet.name, configure)
+
+    /**
+     * Configures a particular launch of ProtoData for the source set with the given name.
+     *
+     * @param sourceSetName the name of the source set for which ProtoData is launched.
+     * @param configure the block configuring the launch.
+     */
+    public fun launchFor(sourceSetName: String, configure: Launch.() -> Unit) {
+        val l = Launch(sourceSetName, this)
+        configure(l)
     }
 }
