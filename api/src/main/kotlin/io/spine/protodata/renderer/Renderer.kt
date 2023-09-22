@@ -34,6 +34,7 @@ import io.spine.protodata.type.TypeNameElement
 import io.spine.server.BoundedContext
 import io.spine.server.ContextAware
 import io.spine.server.query.QueryingClient
+import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language
 
 /**
@@ -62,10 +63,22 @@ protected constructor(
     }
 
     /**
+     * Checks if this renderer supports a given source file set.
+     *
+     * By default, a renderer supports all source sets of the [supportedLanguage]. A renderer that
+     * supports [AnyLanguage] also supports any source file set.
+     *
+     * Note that, even if a source file set is supported, the renderer will still only receive
+     * a portion of it with the file that match the [language filter][Language.matches].
+     */
+    public open fun supports(label: SourceFileSetLabel): Boolean =
+        supportedLanguage == AnyLanguage || supportedLanguage == label.language
+
+    /**
      * Makes changes to the given source set.
      *
-     * The source set is guaranteed to consist only of the files, containing the code in
-     * the [supportedLanguage].
+     * The source set is guaranteed to be [supported][supports] and to consist only of the files
+     * containing the code in the [supportedLanguage].
      *
      * This method may be called several times, if ProtoData is called with multiple source and
      * target directories.

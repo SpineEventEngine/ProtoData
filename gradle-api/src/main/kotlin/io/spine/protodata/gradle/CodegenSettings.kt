@@ -26,6 +26,10 @@
 
 package io.spine.protodata.gradle
 
+import com.google.common.collect.Multimap
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.SourceSet
+
 /**
  * Configures code generation process performed by ProtoData.
  */
@@ -36,12 +40,6 @@ public interface CodegenSettings {
      * the `io.spine.protodata.plugin.Plugin` classes.
      */
     public fun plugins(vararg classNames: String)
-
-    /**
-     * Passes given names of Java classes to ProtoData as
-     * the `io.spine.protodata.renderer.Renderer` classes.
-     */
-    public fun renderers(vararg classNames: String)
 
     /**
      * Passes given names of Java classes to ProtoData as
@@ -74,4 +72,40 @@ public interface CodegenSettings {
      * By default, points at the `$projectDir/generated/` directory.
      */
     public var targetBaseDir: Any
+
+    /**
+     * `SourcePaths` to run ProtoData on.
+     *
+     * The keys to the multimap are the Gradle's source set names, such as `main` and `test`.
+     */
+    public val paths: Multimap<String, SourcePaths>
+
+    /**
+     * Configures a particular launch of ProtoData for the given source set.
+     *
+     * @param sourceSet the source set for which ProtoData is launched.
+     * @param configure the block configuring the launch.
+     */
+    public fun launchFor(sourceSet: Provider<SourceSet>, configure: Launch.() -> Unit): Unit =
+        launchFor(sourceSet.get().name, configure)
+
+    /**
+     * Configures a particular launch of ProtoData for the given source set.
+     *
+     * @param sourceSet the source set for which ProtoData is launched.
+     * @param configure the block configuring the launch.
+     */
+    public fun launchFor(sourceSet: SourceSet, configure: Launch.() -> Unit): Unit =
+        launchFor(sourceSet.name, configure)
+
+    /**
+     * Configures a particular launch of ProtoData for the source set with the given name.
+     *
+     * @param sourceSetName the name of the source set for which ProtoData is launched.
+     * @param configure the block configuring the launch.
+     */
+    public fun launchFor(sourceSetName: String, configure: Launch.() -> Unit) {
+        val l = Launch(sourceSetName, this)
+        configure(l)
+    }
 }

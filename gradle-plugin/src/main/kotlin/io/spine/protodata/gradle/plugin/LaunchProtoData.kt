@@ -28,13 +28,14 @@ package io.spine.protodata.gradle.plugin
 
 import io.spine.protodata.CLI_APP_CLASS
 import io.spine.protodata.cli.ConfigFileParam
+import io.spine.protodata.cli.PathsParam
 import io.spine.protodata.cli.PluginParam
-import io.spine.protodata.cli.RendererParam
 import io.spine.protodata.cli.RequestParam
-import io.spine.protodata.cli.SourceRootParam
-import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
+import io.spine.protodata.gradle.SourcePaths
+import io.spine.protodata.renderer.DefaultGenerator
 import io.spine.tools.gradle.protobuf.containsProtoFiles
+import java.io.File
 import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Task
@@ -70,25 +71,14 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:Internal
     public abstract val configurationFile: RegularFileProperty
 
-    @Deprecated("Supply Renderers via Plugins instead.")
-    @get:Input
-    internal lateinit var renderers: Provider<List<String>>
-
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
 
     @get:Input
     internal lateinit var optionProviders: Provider<List<String>>
 
-    /**
-     * The paths to the directories with the generated source code.
-     *
-     * May not be available, if `protoc` built-ins were turned off, resulting in no source code
-     * being generated. In such a mode `protoc` worked only generating descriptor set files.
-     */
-    @get:InputFiles
-    @get:Optional
-    internal lateinit var sources: Provider<List<Directory>>
+    @get:Internal
+    internal lateinit var paths: Set<SourcePaths>
 
     @get:InputFiles
     internal lateinit var userClasspathConfig: Configuration
@@ -99,11 +89,24 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:InputFiles
     internal lateinit var protoDataConfig: Configuration
 
-    /**
-     * The paths to the directories where the source code processed by ProtoData should go.
-     */
+    @Suppress("unused") // Used by Gradle for incremental compilation.
+    @get:InputFiles
+    @get:Optional
+    internal val sources: Set<Directory>
+        get() = paths.asSequence()
+            .map { it.source }
+            .filter { it != null }
+            .map { project.layout.projectDirectory.dir(it!!) }
+            .toSet()
+
+    @Suppress("unused") // Used by Gradle for incremental compilation.
     @get:OutputDirectories
-    internal lateinit var targets: Provider<List<Directory>>
+    internal val targets: Set<Directory>
+        get() = paths.asSequence()
+            .map { it.target }
+            .filter { it != null }
+            .map { project.layout.projectDirectory.dir(it!!) }
+            .toSet()
 
     /**
      * Configures the CLI command for this task.
@@ -116,20 +119,12 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield(PluginParam.name)
                 yield(it)
             }
-            renderers.get().forEach {
-                yield(RendererParam.name)
-                yield(it)
-            }
             yield(RequestParam.name)
             yield(project.file(requestFile).absolutePath)
-
-            if (sources.isPresent) {
-                yield(SourceRootParam.name)
-                yield(sources.absolutePaths())
+            paths.forEach {
+                yield(PathsParam.name)
+                yield(it.toCliParam())
             }
-
-            yield(TargetRootParam.name)
-            yield(targets.absolutePaths())
 
             val userCp = userClasspathConfig.asPath
             if (userCp.isNotEmpty()) {
@@ -161,8 +156,8 @@ public abstract class LaunchProtoData : JavaExec() {
     private inner class CleanAction : Action<Task> {
 
         override fun execute(t: Task) {
-            val sourceDirs = sources.absoluteDirs()
-            val targetDirs = targets.absoluteDirs()
+            val sourceDirs = paths.map { File(it.source!!) }
+            val targetDirs = paths.map { File(it.target!!) }
 
             if (sourceDirs.isEmpty()) {
                 return
@@ -180,13 +175,18 @@ public abstract class LaunchProtoData : JavaExec() {
     }
 }
 
-private fun Provider<List<Directory>>.absoluteDirs() = takeIf { it.isPresent }
-    ?.get()
-    ?.map { it.asFile.absoluteFile }
-    ?: listOf()
-
-private fun Provider<List<Directory>>.absolutePaths(): String =
-    absoluteDirs().joinToString(pathSeparator)
+private fun SourcePaths.toCliParam(): String {
+    checkAllSet()
+    val label = if (generatorName != DefaultGenerator.name && generatorName.isNotBlank()) {
+        "$language($generatorName)"
+    } else {
+        language
+    }
+    val sourcePath = source ?: ""
+    val targetPath = target!!
+    val parts = listOf(label, sourcePath, targetPath)
+    return parts.joinToString(pathSeparator)
+}
 
 /**
  * Tells if the request file for this task exists.

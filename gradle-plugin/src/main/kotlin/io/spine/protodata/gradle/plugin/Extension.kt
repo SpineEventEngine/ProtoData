@@ -26,11 +26,18 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodeGeneratorRequestFile.DEFAULT_DIRECTORY
 import io.spine.protodata.gradle.CodegenSettings
+import io.spine.protodata.gradle.SourcePaths
+import io.spine.tools.code.Java
+import io.spine.tools.code.Kotlin
 import io.spine.tools.fs.DirectoryName.generated
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
+import kotlin.DeprecationLevel.ERROR
+import kotlin.io.path.name
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -52,11 +59,6 @@ public class Extension(internal val project: Project): CodegenSettings {
 
     internal val plugins: ListProperty<String> =
         factory.listProperty(String::class.java).convention(listOf())
-
-    @Suppress("DeprecatedCallableAddReplaceWith") // Not that simple ;)
-    @Deprecated("Supply Renderers via Plugins instead.")
-    public override fun renderers(vararg classNames: String): Unit =
-        renderers.addAll(classNames.toList())
 
     @Deprecated("Supply Renderers via Plugins instead.")
     internal val renderers: ListProperty<String> =
@@ -81,66 +83,40 @@ public class Extension(internal val project: Project): CodegenSettings {
     internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
         requestFilesDirProperty.file(CodeGeneratorRequestFile.name(forSourceSet))
 
-    /**
-     * Synthetic property for providing the source directories for the given
-     * source set under [Project.generatedSourceProtoDir].
-     *
-     * @see sourceDirs
-     */
-    private val srcBaseDirProperty: DirectoryProperty = with(project) {
-        objects.directoryProperty().convention(provider {
-            layout.projectDirectory.dir(generatedSourceProtoDir.toString())
-        })
-    }
+    override val paths: Multimap<String, SourcePaths> = HashMultimap.create()
 
     /**
-     * Allows to configure the subdirectories under the generated source set.
+     * Obtains the source configured paths.
      *
-     * Defaults to [defaultSubdirectories].
+     * If the deprecated [subDirs] and [targetBaseDir] are used, constructs [SourcePaths] instances
+     * from the present data for backward compatibility. However, in this compatibility mode,
+     * only Java and Kotlin source file sets can be constructed.
+     *
+     * This method exists for backward compatibility reasons only. Once the old way of providing
+     * source set paths is no longer available, we remove it and simply query [paths] instead.
      */
-    public override var subDirs: List<String>
-        get() = subDirProperty.get()
-        set(value) {
-            if (value.isNotEmpty()) {
-                subDirProperty.set(value)
-            }
+    internal fun pathsOrCompat(sourceSet: SourceSet): Set<SourcePaths> {
+        if (!paths.isEmpty) {
+            return paths[sourceSet.name].toSet()
         }
-
-    private val subDirProperty: ListProperty<String> =
-        factory.listProperty<String>().convention(defaultSubdirectories)
-
-    public override var targetBaseDir: Any
-        get() = targetBaseDirProperty.get()
-        set(value) = targetBaseDirProperty.set(project.file(value))
-
-    private val targetBaseDirProperty: DirectoryProperty = with(project) {
-        objects.directoryProperty().convention(
-            layout.projectDirectory.dir(generated.name)
-        )
-    }
-
-    /**
-     * Obtains the source directories for the given source set.
-     */
-    internal fun sourceDirs(sourceSet: SourceSet): Provider<List<Directory>> =
-        compileDir(sourceSet, srcBaseDirProperty)
-
-    /**
-     * Obtains the target directories for code generation.
-     *
-     * @see targetBaseDir for the rules for the target dir construction
-     */
-    internal fun targetDirs(sourceSet: SourceSet): Provider<List<Directory>> =
-        compileDir(sourceSet, targetBaseDirProperty)
-
-    private fun compileDir(
-        sourceSet: SourceSet,
-        base: DirectoryProperty
-    ): Provider<List<Directory>> {
-        val sourceSetDir = base.dir(sourceSet.name)
-        return sourceSetDir.map { root: Directory ->
-            subDirs.map { root.dir(it) }
-        }
+        val srcRoots = sourceDirs(sourceSet).get()
+        val targetRoots = targetDirs(sourceSet).get()
+        return srcRoots.zip(targetRoots)
+            .map { (src, target) ->
+                val pathSuffix = src.asFile.toPath().name
+                val lang = if (pathSuffix.equals(Kotlin.name, ignoreCase = true)) Kotlin else Java
+                val generatorName = if (pathSuffix.equals(lang.name, ignoreCase = true)) {
+                    ""
+                } else {
+                    pathSuffix
+                }
+                SourcePaths(
+                    src.asFile,
+                    target.asFile,
+                    lang,
+                    generatorName
+                )
+            }.toSet()
     }
 
     public companion object {
@@ -155,9 +131,78 @@ public class Extension(internal val project: Project): CodegenSettings {
             "kotlin",
             "grpc",
             "js",
-            "dart",
-            "spine",
-            "protodata"
+            "dart"
         )
+    }
+
+    /**
+     * Synthetic property for providing the source directories for the given
+     * source set under [Project.generatedSourceProtoDir].
+     *
+     * @see sourceDirs
+     */
+    @Deprecated("Use `paths` instead.")
+    private val srcBaseDirProperty: DirectoryProperty = with(project) {
+        objects.directoryProperty().convention(provider {
+            layout.projectDirectory.dir(generatedSourceProtoDir.toString())
+        })
+    }
+
+    /**
+     * Allows to configure the subdirectories under the generated source set.
+     *
+     * Defaults to [defaultSubdirectories].
+     */
+    @Deprecated("Use `paths` instead.")
+    public override var subDirs: List<String>
+        get() = subDirProperty.get()
+        set(value) {
+            if (value.isNotEmpty()) {
+                subDirProperty.set(value)
+            }
+
+        }
+
+    @Deprecated("Use `paths` instead.")
+    private val subDirProperty: ListProperty<String> =
+        factory.listProperty<String>().convention(defaultSubdirectories)
+
+    @Deprecated("Use `paths` instead.", level = ERROR)
+    public override var targetBaseDir: Any
+        get() = targetBaseDirProperty.get()
+        set(value) = targetBaseDirProperty.set(project.file(value))
+
+    @Deprecated("Use `paths` instead.")
+    private val targetBaseDirProperty: DirectoryProperty = with(project) {
+        objects.directoryProperty().convention(
+            layout.projectDirectory.dir(generated.name)
+        )
+    }
+
+    /**
+     * Obtains the source directories for the given source set.
+     */
+    @Deprecated("Use `paths` instead.")
+    internal fun sourceDirs(sourceSet: SourceSet): Provider<List<Directory>> =
+        compileDir(sourceSet, srcBaseDirProperty)
+
+    /**
+     * Obtains the target directories for code generation.
+     *
+     * @see targetBaseDir for the rules for the target dir construction
+     */
+    @Deprecated("Use `paths` instead.")
+    internal fun targetDirs(sourceSet: SourceSet): Provider<List<Directory>> =
+        compileDir(sourceSet, targetBaseDirProperty)
+
+    @Deprecated("Use `paths` instead.")
+    private fun compileDir(
+        sourceSet: SourceSet,
+        base: DirectoryProperty
+    ): Provider<List<Directory>> {
+        val sourceSetDir = base.dir(sourceSet.name)
+        return sourceSetDir.map { root: Directory ->
+            subDirs.map { root.dir(it) }
+        }
     }
 }

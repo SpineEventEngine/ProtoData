@@ -26,6 +26,7 @@
 
 package io.spine.protodata.gradle.plugin
 
+import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.gradle.Names.GRADLE_PLUGIN_ID
 import io.spine.testing.SlowTest
@@ -161,6 +162,19 @@ class PluginSpec {
         val generatedGrpcDir = generatedMainDir.resolve("grpc")
         assertExists(generatedGrpcDir)
         assertExists(generatedGrpcDir.resolve(serviceClass))
+    }
+
+    @Test
+    fun `launch with custom paths`() {
+        createProject("custom-paths")
+        launchAndExpectResult(SUCCESS)
+
+        val files = projectDir.walk().filter {
+            !it.path.contains("buildSrc") && !it.path.contains(".gradle")
+        }.toList()
+        withClue(files) {
+            projectDir.resolve("build/foomain/io/spine/protodata/test/Test.java").exists() shouldBe true
+        }
     }
 
     private fun createEmptyProject() {

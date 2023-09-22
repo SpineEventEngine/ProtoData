@@ -74,16 +74,6 @@ class ExtensionSpec {
             .containsExactly(className)
     }
 
-    @Suppress("DEPRECATION")
-    @Test
-    fun `add 'Renderer' class names`() {
-        val className1 = "com.acme.MyRenderer1"
-        val className2 = "com.acme.MyRenderer2"
-        extension.renderers(className1, className2)
-        assertThat(extension.renderers.get())
-            .containsExactly(className1, className2)
-    }
-
     @Test
     fun `add 'OptionProvider' class names`() {
         val className = "com.acme.MyOptions"
@@ -98,22 +88,4 @@ class ExtensionSpec {
         extension.requestFilesDir = path
         extension.requestFilesDirProperty.get().asFile shouldBe project.projectDir.resolve(path)
     }
-
-    @Test
-    fun `produce target directory`() {
-        val basePath = "my/path"
-        val expected = listOf("foo", "bar")
-
-        extension.targetBaseDir = basePath
-        extension.subDirs = expected
-
-        val sourceSet = project.sourceSets.getByName(MAIN_SOURCE_SET_NAME)
-        val targetDirs = extension.targetDirs(sourceSet).get()
-
-        val mainDir = project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME
-        targetDirs[0].toPath() shouldBe mainDir / expected[0]
-        targetDirs[1].toPath() shouldBe mainDir / expected[1]
-    }
 }
-
-private fun Directory.toPath() = asFile.toPath()

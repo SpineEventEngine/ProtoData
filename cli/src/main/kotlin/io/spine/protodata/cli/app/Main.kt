@@ -39,6 +39,7 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
+import com.google.common.base.Splitter
 import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.code.proto.FileSet
@@ -54,15 +55,17 @@ import io.spine.protodata.cli.ConfigValueParam
 import io.spine.protodata.cli.DebugLoggingParam
 import io.spine.protodata.cli.InfoLoggingParam
 import io.spine.protodata.cli.Parameter
+import io.spine.protodata.cli.PathsParam
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RendererParam
 import io.spine.protodata.cli.RequestParam
-import io.spine.protodata.cli.SourceRootParam
-import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
+import io.spine.protodata.renderer.CustomGenerator
+import io.spine.protodata.renderer.DefaultGenerator
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.renderer.SourceFileSetLabel
 import io.spine.string.Separator.Companion.nl
 import io.spine.string.pi
 import io.spine.string.ti
@@ -70,6 +73,7 @@ import io.spine.tools.code.manifest.Version
 import java.io.File
 import java.io.File.pathSeparator
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.system.exitProcess
 
@@ -111,6 +115,10 @@ internal class Run(version: String) : CliktCommand(
     epilog = "https://github.com/SpineEventEngine/ProtoData/",
     printHelpOnEmptyArgs = true
 ), WithLogging {
+
+    private val pathSplitter = Splitter.on(pathSeparator)
+    private val labelRegex = Regex("(?<lang>[\\w.]+)(\\((?<generator>\\w+)\\))?")
+
     private fun Parameter.toOption(completionCandidates: CompletionCandidates? = null) = option(
         name, shortName,
         help = help,
@@ -135,17 +143,9 @@ internal class Run(version: String) : CliktCommand(
                 mustBeReadable = true
             ).required()
 
-    private val sourceRoots: List<Path>?
-            by SourceRootParam.toOption().path(
-                canBeFile = false,
-                canBeSymlink = false
-            ).splitPaths()
-
-    private val targetRoots: List<Path>?
-            by TargetRootParam.toOption().path(
-                canBeFile = false,
-                canBeSymlink = false
-            ).splitPaths().required()
+    private val paths: List<String>
+            by PathsParam.toOption()
+                .multiple(required = true)
 
     private val classpath: List<Path>?
             by UserClasspathParam.toOption().path(
@@ -230,28 +230,46 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun createSourceFileSets(): List<SourceFileSet> {
-        checkPaths()
-        val sources = sourceRoots
-        val targets = (targetRoots ?: sources)!!
-        return sources
-            ?.zip(targets)
-            ?.filter { (s, _) -> s.exists() }
-            ?.map { (s, t) -> SourceFileSet.create(s, t) }
-            ?: targets.oneSetWithNoFiles()
+        val rawPaths = paths.map { pathSplitter.splitToList(it) }
+        val existingPaths = rawPaths.filter {
+            val srcPath = it[1]
+            srcPath.isNotBlank() && Path(srcPath).exists()
+        }.toList()
+        if (existingPaths.isEmpty()) {
+            logger.atInfo().log {
+                "No existing source paths supplied."
+            }
+            require(paths.size == 1) { "Expected exactly one target path, but was ${paths}." }
+            val (rawLabel, _, rawTarget) = rawPaths.first()
+            val label = loadLabel(rawLabel)
+            val targetPath = Path(rawTarget)
+            return listOf(SourceFileSet.empty(label, targetPath))
+        }
+        return existingPaths.map {
+            val (rawLabel, rawSrc, rawTarget) = it
+            logger.atInfo().log {
+                "Source file set: label: `$rawLabel`; source: `$rawSrc`; target: `$rawTarget`."
+            }
+            val sourceLabel = loadLabel(rawLabel)
+            val srcPath = Path(rawSrc)
+            val targetPath = Path(rawTarget)
+            SourceFileSet.create(sourceLabel, srcPath, targetPath)
+        }
     }
 
-    private fun checkPaths() {
-        if (sourceRoots == null) {
-            checkUsage(targetRoots!!.size == 1) {
-                "When not providing a source directory, only one target directory must be present."
-            }
+    private fun loadLabel(label: String): SourceFileSetLabel {
+        val match = labelRegex.matchEntire(label)
+        require(match != null) { "Could not load source label: `$label`." }
+        val language = match.groups["lang"]!!.value.toLanguage()
+        val generatorMatch = match.groups["generator"]
+        val generator = if (generatorMatch != null) {
+            val rawGeneratorName = generatorMatch.value
+            CustomGenerator(rawGeneratorName)
+        } else {
+            DefaultGenerator
         }
-        if (sourceRoots != null && targetRoots != null) {
-            checkUsage(sourceRoots!!.size == targetRoots!!.size) {
-                "Mismatched amount of directories. Given ${sourceRoots!!.size} sources " +
-                        "and ${targetRoots!!.size} targets."
-            }
-        }
+        val sourceLabel = SourceFileSetLabel(language, generator)
+        return sourceLabel
     }
 
     private fun loadPlugins() = load(PluginBuilder(), plugins)
@@ -326,12 +344,6 @@ internal class Run(version: String) : CliktCommand(
      */
     private fun printError(message: String?) = echo(message, trailingNewline = true, err = true)
 }
-
-/**
- * Creates a list that contain a single, empty source set.
- */
-private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet> =
-    listOf(SourceFileSet.empty(first()))
 
 /**
  * Throws an [UsageError] with the result of calling [lazyMessage] if the [condition] isn't met.

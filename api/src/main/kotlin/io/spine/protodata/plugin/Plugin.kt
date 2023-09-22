@@ -157,7 +157,9 @@ public fun Plugin.render(
     renderers().forEach { r ->
         r.registerWith(codegenContext)
         r.withTypeConventions(conventionSet)
-        sources.forEach(r::renderSources)
+        sources.asSequence()
+            .filter { r.supports(it.label) }
+            .forEach { r.renderSources(it) }
     }
 }
 

@@ -166,16 +166,19 @@ private fun Project.createTasks(ext: Extension) {
 private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): LaunchProtoData {
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
-        renderers = ext.renderers
         plugins = ext.plugins
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)
         protoDataConfig = protoDataRawArtifact
         userClasspathConfig = userClasspath
         project.afterEvaluate {
-            sources = ext.sourceDirs(sourceSet)
-            targets = ext.targetDirs(sourceSet)
+            paths = ext.pathsOrCompat(sourceSet)
             compileCommandLine()
+
+            val java: SourceDirectorySet = sourceSet.java
+            paths.map { it.target!! }.forEach { targetPath ->
+                java.srcDir(targetPath)
+            }
         }
         setPreLaunchCleanup()
         onlyIf {
@@ -189,6 +192,7 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
         javaCompileFor(sourceSet)?.dependsOn(launchTask)
         kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
     }
+
     return result
 }
 
@@ -319,30 +323,7 @@ private fun GenerateProtoTask.excludeProtocOutput() {
 
     // Add the filtered directories back to the Java source set.
     java.srcDirs(newSourceDirectories)
-
-    // Add copied files to the Java source set.
-    java.srcDir(generatedDir("java"))
-    java.srcDir(generatedDir("kotlin"))
 }
-
-/**
- * Obtains the `generated` directory for the source set of the task.
- *
- * If [language] is specified returns the subdirectory for this language.
- */
-private fun GenerateProtoTask.generatedDir(language: String = ""): File {
-    val path = "${project.targetBaseDir}/${sourceSet.name}/$language"
-    return File(path)
-}
-
-/**
- * Obtains the name of the directory where ProtoData places generated files.
- */
-private val Project.targetBaseDir: String
-    get() {
-        val ext = extensions.getByType(CodegenSettings::class.java)
-        return ext.targetBaseDir.toString()
-    }
 
 /**
  * Makes a [LaunchProtoData], if it exists for the given [sourceSet], depend on
@@ -399,4 +380,3 @@ private fun Project.configureIdea() {
  */
 private fun File.residesIn(directory: File): Boolean =
     canonicalFile.startsWith(directory.absolutePath)
-

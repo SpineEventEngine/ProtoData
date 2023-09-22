@@ -24,37 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.standardToSpineSdk
-
-buildscript {
-    standardSpineSdkRepositories()
-}
-
-plugins {
-    `java-library`
-    kotlin("jvm")
-    id("com.google.protobuf")
-    id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
-}
-
-repositories {
-    mavenLocal() // Must come first for `protodata-test-env`.
-    standardToSpineSdk()
-}
-
-protoData {
-    plugins("io.spine.protodata.test.TestPlugin", "io.spine.protodata.test.NoOpPlugin")
-}
-
-dependencies {
-    protoData("io.spine.protodata:protodata-test-env:+")
-    Protobuf.libs.forEach { implementation(it) }
-}
-
-protobuf {
-    protoc {
-        artifact = io.spine.internal.dependency.Protobuf.compiler
+pluginManagement {
+    repositories {
+        mavenLocal()
     }
 }

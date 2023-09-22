@@ -25,7 +25,6 @@
  */
 
 import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
 import io.spine.internal.gradle.standardToSpineSdk
 
 buildscript {
@@ -33,8 +32,7 @@ buildscript {
 }
 
 plugins {
-    `java-library`
-    kotlin("jvm")
+    java
     id("com.google.protobuf")
     id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
 }
@@ -44,17 +42,32 @@ repositories {
     standardToSpineSdk()
 }
 
-protoData {
-    plugins("io.spine.protodata.test.TestPlugin", "io.spine.protodata.test.NoOpPlugin")
-}
-
 dependencies {
     protoData("io.spine.protodata:protodata-test-env:+")
-    Protobuf.libs.forEach { implementation(it) }
 }
 
 protobuf {
     protoc {
         artifact = io.spine.internal.dependency.Protobuf.compiler
+    }
+}
+
+protoData {
+    plugins("io.spine.protodata.test.TestPlugin", "io.spine.protodata.test.UnderscorePrefixPlugin")
+
+    launchFor("main") {
+        sourceFileSet {
+            source = "$buildDir/generated/source/proto/main/java"
+            target = "$buildDir/foomain"
+            language = "java"
+        }
+    }
+
+    launchFor(sourceSets.test) {
+        sourceFileSet {
+            source = "$buildDir/generated-proto/test/kotlin"
+            target = "$buildDir/footest"
+            language = "java"
+        }
     }
 }

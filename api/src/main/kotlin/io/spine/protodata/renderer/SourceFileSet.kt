@@ -29,6 +29,7 @@ package io.spine.protodata.renderer
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
 import io.spine.protodata.TypeName
+import io.spine.protodata.renderer.SourceFileSet.Companion.create
 import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeNameElement
 import io.spine.server.query.Querying
@@ -39,7 +40,6 @@ import java.nio.charset.Charset
 import java.nio.file.Files.walk
 import java.nio.file.Path
 import java.util.*
-import kotlin.DeprecationLevel.ERROR
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
@@ -68,6 +68,8 @@ import kotlin.text.Charsets.UTF_8
 @Suppress("TooManyFunctions") // All part of the public API.
 public class SourceFileSet
 internal constructor(
+    public val label: SourceFileSetLabel,
+
     files: Set<SourceFile>,
 
     /**
@@ -79,7 +81,7 @@ internal constructor(
      * @see outputRoot
      */
     @get:JvmName("inputRoot")
-    public val inputRoot: Path,
+    public val inputRoot: Path?,
 
     /**
      * A directory where the source set should be placed after code generation.
@@ -97,8 +99,9 @@ internal constructor(
     internal lateinit var querying: Querying
 
     init {
-        require(inputRoot.absolutePathString() != outputRoot.absolutePathString()) {
-            "Input and output roots cannot be the same, but was '${inputRoot.absolutePathString()}'"
+        require(inputRoot?.absolutePathString() != outputRoot.absolutePathString()) {
+            "Input and output roots cannot be the same, " +
+                    "but was '${inputRoot!!.absolutePathString()}'"
         }
         val map = HashMap<Path, SourceFile>(files.size)
         this.files = files.associateByTo(map) { it.relativePath }
@@ -107,14 +110,6 @@ internal constructor(
 
     @Internal
     public companion object {
-
-        @Deprecated(
-            "Use `create(..)` instead.",
-            replaceWith = ReplaceWith("create"),
-            level = ERROR
-        )
-        public fun from(inputRoot: Path, outputRoot: Path): SourceFileSet =
-            create(inputRoot, outputRoot)
 
         /**
          * Collects a source set from the given [input][inputRoot], assigning
@@ -128,27 +123,29 @@ internal constructor(
          *         If different from the `sourceRoot`, the files in `sourceRoot`
          *         will not be changed.
          */
-        public fun create(inputRoot: Path, outputRoot: Path): SourceFileSet {
+        public fun create(
+            label: SourceFileSetLabel,
+            inputRoot: Path,
+            outputRoot: Path
+        ): SourceFileSet {
             val source = inputRoot.canonical()
             val target = outputRoot.canonical()
-            if (source != target) {
-                checkTarget(target)
-            }
+            checkTarget(target)
             val files = walk(source)
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read(source.relativize(it), source) }
                 .collect(toImmutableSet())
-            return SourceFileSet(files, source, target)
+            return SourceFileSet(label, files, source, target)
         }
 
         /**
          * Creates an empty source set which can be appended with new files and
          * written to the given target directory.
          */
-        public fun empty(target: Path): SourceFileSet {
+        public fun empty(label: SourceFileSetLabel, target: Path): SourceFileSet {
             checkTarget(target)
             val files = setOf<SourceFile>()
-            return SourceFileSet(files, target, target)
+            return SourceFileSet(label, files, null, target)
         }
     }
 
@@ -249,9 +246,8 @@ internal constructor(
             it.rm(rootDir = outputRoot)
         }
         outputRoot.toFile().mkdirs()
-        val forceWriteFiles = inputRoot != outputRoot
         files.values.forEach {
-            it.write(outputRoot, charset, forceWriteFiles)
+            it.write(outputRoot, charset)
         }
     }
 
@@ -301,7 +297,7 @@ internal constructor(
  * matching the given [predicate].
  */
 internal fun SourceFileSet.subsetWhere(predicate: (SourceFile) -> Boolean) =
-    SourceFileSet(this.filter(predicate).toSet(), inputRoot, outputRoot)
+    SourceFileSet(this.label, this.filter(predicate).toSet(), inputRoot, outputRoot)
 
 /**
  * Obtains absolute [normalized][normalize] version of this path.

@@ -49,10 +49,12 @@ import io.spine.protodata.test.ProtoEchoRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.protodata.test.echo
+import io.spine.protodata.test.pathsForJava
 import io.spine.time.LocalDates
 import io.spine.time.Month.SEPTEMBER
 import io.spine.time.toInstant
 import io.spine.type.toCompactJson
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.name
@@ -114,8 +116,7 @@ class `Command line application should` {
         launchApp(
             "-p", TestPlugin::class.jvmName,
             "-r", UnderscorePrefixRenderer::class.jvmName,
-            "--src", srcRoot.toString(),
-            "--target", targetRoot.toString(),
+            "--paths", pathsForJava(srcRoot, targetRoot),
             "-t", codegenRequestFile.toString()
         )
         targetFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
@@ -126,8 +127,7 @@ class `Command line application should` {
         launchApp(
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
             "-r", DefaultOptionsCounterRenderer::class.jvmName,
-            "--src", srcRoot.toString(),
-            "--target", targetRoot.toString(),
+            "--paths", pathsForJava(srcRoot, targetRoot),
             "-t", codegenRequestFile.toString(),
         )
         val generatedFile = targetRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
@@ -148,8 +148,7 @@ class `Command line application should` {
 
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
+                "--paths", pathsForJava(srcRoot, targetRoot),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
@@ -161,8 +160,7 @@ class `Command line application should` {
             val name = "Mr. World"
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
+                "--paths", pathsForJava(srcRoot, targetRoot),
                 "-t", codegenRequestFile.toString(),
                 "--cv", """{ "value": "$name" }""",
                 "--cf", "json"
@@ -185,8 +183,7 @@ class `Command line application should` {
 
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
+                "--paths", pathsForJava(srcRoot, targetRoot),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
@@ -204,8 +201,7 @@ class `Command line application should` {
             }.toCompactJson()
             launchApp(
                 "-r", ProtoEchoRenderer::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
+                "--paths", pathsForJava(srcRoot, targetRoot),
                 "-t", codegenRequestFile.toString(),
                 "--cv", json,
                 "--cf", "proto_json"
@@ -232,8 +228,7 @@ class `Command line application should` {
 
             launchApp(
                 "-r", ProtoEchoRenderer::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
+                "--paths", pathsForJava(srcRoot, targetRoot),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
@@ -255,8 +250,7 @@ class `Command line application should` {
             """.trimIndent())
             launchApp(
                 "-r", EchoRenderer::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
+                "--paths", pathsForJava(srcRoot, targetRoot),
                 "-t", codegenRequestFile.toString(),
                 "-c", configFile.pathString
             )
@@ -268,8 +262,7 @@ class `Command line application should` {
             val plainString = "dont.mail.me:42@example.org"
             launchApp(
                 "-r", PlainStringRenderer::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
+                "--paths", pathsForJava(srcRoot, targetRoot),
                 "-t", codegenRequestFile.toString(),
                 "--cv", plainString,
                 "--cf", "plain"
@@ -287,21 +280,8 @@ class `Command line application should` {
             assertMissingOption {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
-                    "--src", srcRoot.toString(),
-                    "--target", targetRoot.toString(),
+                    "--paths", pathsForJava(srcRoot, targetRoot),
                     "-t", codegenRequestFile.toString()
-                )
-            }
-        }
-
-        @Test
-        fun `target dir is missing`() {
-            assertThrows<UsageError> {
-                launchApp(
-                    "-p", TestPlugin::class.jvmName,
-                    "-r", UnderscorePrefixRenderer::class.jvmName,
-                    "-t", codegenRequestFile.toString(),
-                    "--src", srcRoot.toString()
                 )
             }
         }
@@ -312,7 +292,7 @@ class `Command line application should` {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
                     "-r", UnderscorePrefixRenderer::class.jvmName,
-                    "--src", srcRoot.toString()
+                    "--paths", pathsForJava(srcRoot, targetRoot)
                 )
             }
         }
