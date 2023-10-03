@@ -37,7 +37,6 @@ import io.spine.protodata.type.TypeConvention
  */
 public abstract class AbstractPlugin(
     private val renderers: Iterable<Renderer<*>> = listOf(),
-    private val typeConventions: Set<TypeConvention<*, *>> = setOf(),
     private val views: Set<Class<out View<*, *, *>>> = setOf(),
     private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
     private val policies: Set<Policy<*>> = setOf(),
