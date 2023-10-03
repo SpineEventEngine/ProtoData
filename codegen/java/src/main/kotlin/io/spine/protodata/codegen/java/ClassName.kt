@@ -53,7 +53,7 @@ internal constructor(
     /**
      * Obtains the class name of the given Java class.
      */
-    public constructor(cls: Class<*>) : this(cls.`package`.name, cls.names())
+    public constructor(cls: Class<*>) : this(cls.`package`.name, cls.nestedName())
 
     /**
      * Obtains the Java class name of the given Kotlin class.
@@ -102,12 +102,28 @@ internal constructor(
     override fun toCode(): String = canonical
 
     override fun toString(): String = canonical
+
+    override fun hashCode(): Int = canonical.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ClassName) return false
+        return canonical == other.canonical
+    }
 }
 
 /**
- * Obtains the simple name of this class including the names of the declaring classes.
+ * Obtains a name of a class taking into account nesting hierarchy.
+ *
+ * The receiver class may be nested inside another class, which may be nested inside
+ * another class, and so on.
+ *
+ * The returned list contains simple names of the classes, starting from the outermost to
+ * the innermost, which is the receiver of this extension function.
+ *
+ * If the class is not nested, the returned list contains only a simple name of the class.
  */
-private fun Class<*>.names(): List<String> {
+private fun Class<*>.nestedName(): List<String> {
     if (declaringClass == null) {
         return listOf(this.simpleName)
     }
