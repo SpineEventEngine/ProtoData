@@ -38,8 +38,8 @@ import io.spine.tools.code.Language
  * A `Renderer` takes an existing [SourceFileSet] and modifies it, changing the contents of existing
  * source files, creating new ones, or deleting unwanted files.
  *
- * Instances of `Renderer`s are created via reflection. It is required that the concrete classes
- * have a `public` no-argument constructor.
+ * Instances of `Renderer`s are usually created by
+ * the [Plugin.renderers()][io.spine.protodata.plugin.Plugin.renderers] method.
  */
 public abstract class Renderer<L : Language>
 protected constructor(
