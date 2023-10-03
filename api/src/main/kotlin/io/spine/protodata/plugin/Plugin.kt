@@ -31,12 +31,10 @@ import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeNameElement
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
-import io.spine.tools.code.Language
 import kotlin.reflect.KClass
 
 /**
@@ -151,13 +149,13 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
  */
 @Internal
 public fun Plugin.render(
-    conventionSet: Set<TypeConvention<Language, TypeNameElement<Language>>>,
     codegenContext: BoundedContext,
+    typeSystem: TypeSystem,
     sources: Iterable<SourceFileSet>
 ) {
     renderers().forEach { r ->
         r.registerWith(codegenContext)
-        r.withTypeConventions(conventionSet)
+        r.withTypeSystem(typeSystem)
         sources.forEach(r::renderSources)
     }
 }

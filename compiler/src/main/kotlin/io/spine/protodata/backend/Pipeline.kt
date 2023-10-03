@@ -68,20 +68,17 @@ public class Pipeline(
     private val sources: List<SourceFileSet>,
     private val request: CodeGeneratorRequest,
     private val config: Configuration? = null
-) : Querying {
+) {
 
     private lateinit var codegenContext: BoundedContext
 
     private val typeSystem: TypeSystem by lazy {
-        TypeSystem.serving(this)
-    }
-
-    private val conventions: Set<TypeConvention<Language, TypeNameElement<Language>>> by lazy {
-        @Suppress("UNCHECKED_CAST") // Cast to most abstract possible types.
-        plugins
-            .asSequence()
-            .flatMap { it.typeConventions(typeSystem) }
-            .toSet() as Set<TypeConvention<Language, TypeNameElement<Language>>>
+        val client = object : Querying {
+            override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
+                return QueryingClient(codegenContext, type, javaClass.name)
+            }
+        }
+        TypeSystem.serving(client)
     }
 
     /**
@@ -161,7 +158,7 @@ public class Pipeline(
                 val compiler = ProtobufCompilerContext()
                 compiler.use {
                     emitEvents(configuration, compiler)
-                    renderSources(codegenContext)
+                    renderSources()
                 }
             }
         }
@@ -188,12 +185,8 @@ public class Pipeline(
         compiler.emitted(events)
     }
 
-    private fun renderSources(codegenContext: BoundedContext) {
-        plugins.forEach { it.render(conventions, codegenContext, sources) }
+    private fun renderSources() {
+        plugins.forEach { it.render(codegenContext, typeSystem, sources) }
         sources.forEach { it.write() }
-    }
-
-    override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
-        return QueryingClient(codegenContext, type, javaClass.name)
     }
 }

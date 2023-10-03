@@ -28,9 +28,7 @@ package io.spine.protodata.renderer
 
 import io.spine.base.EntityState
 import io.spine.protodata.config.ConfiguredQuerying
-import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeConventions
-import io.spine.protodata.type.TypeNameElement
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.ContextAware
 import io.spine.server.query.QueryingClient
@@ -49,7 +47,7 @@ protected constructor(
 ) : ConfiguredQuerying, ContextAware {
 
     private lateinit var codegenContext: BoundedContext
-    private lateinit var typeConventions: TypeConventions<L, TypeNameElement<L>>
+    private lateinit var typeSystem: TypeSystem
 
     /**
      * Performs required changes to the given source set.
@@ -74,17 +72,6 @@ protected constructor(
 
     public final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(codegenContext, type, javaClass.name)
-    }
-
-    /**
-     * Obtains conventions for generating language-specific types from Protobuf types.
-     *
-     * @param N the type of the name element for the associated language
-     */
-    protected fun <N : TypeNameElement<L>> knownTypeConventions(): TypeConventions<L, N> {
-        @Suppress("UNCHECKED_CAST")
-          // `L` is insured upon injection, we have to trust the user for providing `N`.
-        return typeConventions as TypeConventions<L, N>
     }
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
@@ -115,12 +102,7 @@ protected constructor(
         return this::codegenContext.isInitialized
     }
 
-    /**
-     * Injects the [TypeConventions] for this renderer.
-     */
-    internal fun withTypeConventions(
-        allConventions: Set<TypeConvention<Language, TypeNameElement<Language>>>
-    ) {
-        this.typeConventions = TypeConventions.from(allConventions, language)
+    internal fun withTypeSystem(typeSystem: TypeSystem) {
+        this.typeSystem = typeSystem
     }
 }
