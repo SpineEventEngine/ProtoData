@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
@@ -58,11 +57,6 @@ public interface Plugin {
      * The renderers are guaranteed to be called in the order of their declaration in the plugin.
      */
     public fun renderers(): List<Renderer<*>> = listOf()
-
-    /**
-     * Obtains the [type conventions][TypeConvention] used by this plugin.
-     */
-    public fun typeConventions(typeSystem: TypeSystem): Set<TypeConvention<*, *>> = setOf()
 
     /**
      * Obtains the [views][View] added by this plugin represented via their classes.

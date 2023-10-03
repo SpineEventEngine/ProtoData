@@ -28,7 +28,6 @@ package io.spine.protodata.plugin
 
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeSystem
 
 /**
  * A default abstract implementation of the [Plugin] interface.
@@ -51,7 +50,4 @@ public abstract class AbstractPlugin(
     final override fun views(): Set<Class<out View<*, *, *>>> = views
 
     final override fun policies(): Set<Policy<*>> = policies
-
-    final override fun typeConventions(typeSystem: TypeSystem): Set<TypeConvention<*, *>> =
-        typeConventions
 }
