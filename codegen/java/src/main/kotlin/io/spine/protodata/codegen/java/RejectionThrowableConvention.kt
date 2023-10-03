@@ -48,8 +48,8 @@ public class RejectionThrowableConvention(
         val declaration = typeSystem.findMessage(name) ?: return null
         val (msg, file) = declaration
         val fileName = file.path.value
-        if (!fileName.endsWith("rejections.proto")
-            || msg.declaredIn.isNotDefault()
+        if (!fileName.endsWith("rejections.proto") // Not a rejection message.
+            || msg.declaredIn.isNotDefault()       // Not a top-level message.
         ) {
             return null
         }
