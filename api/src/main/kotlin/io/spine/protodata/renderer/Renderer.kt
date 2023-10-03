@@ -45,7 +45,7 @@ import io.spine.tools.code.Language
  */
 public abstract class Renderer<L : Language>
 protected constructor(
-    private val supportedLanguage: L
+    private val language: L
 ) : ConfiguredQuerying, ContextAware {
 
     private lateinit var codegenContext: BoundedContext
@@ -55,7 +55,7 @@ protected constructor(
      * Performs required changes to the given source set.
      */
     public fun renderSources(sources: SourceFileSet) {
-        val relevantFiles = sources.subsetWhere { supportedLanguage.matches(it.relativePath) }
+        val relevantFiles = sources.subsetWhere { language.matches(it.relativePath) }
         relevantFiles.prepareForQueries(this)
         render(relevantFiles)
         sources.mergeBack(relevantFiles)
@@ -65,7 +65,7 @@ protected constructor(
      * Makes changes to the given source set.
      *
      * The source set is guaranteed to consist only of the files, containing the code in
-     * the [supportedLanguage].
+     * the [language].
      *
      * This method may be called several times, if ProtoData is called with multiple source and
      * target directories.
@@ -121,6 +121,6 @@ protected constructor(
     internal fun withTypeConventions(
         allConventions: Set<TypeConvention<Language, TypeNameElement<Language>>>
     ) {
-        this.typeConventions = TypeConventions.from(allConventions, supportedLanguage)
+        this.typeConventions = TypeConventions.from(allConventions, language)
     }
 }
