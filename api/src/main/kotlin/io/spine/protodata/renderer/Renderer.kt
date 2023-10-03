@@ -48,7 +48,7 @@ protected constructor(
     private val supportedLanguage: L
 ) : ConfiguredQuerying, ContextAware {
 
-    private lateinit var protoDataContext: BoundedContext
+    private lateinit var codegenContext: BoundedContext
     private lateinit var typeConventions: TypeConventions<L, TypeNameElement<L>>
 
     /**
@@ -73,7 +73,7 @@ protected constructor(
     protected abstract fun render(sources: SourceFileSet)
 
     public final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
-        return QueryingClient(protoDataContext, type, javaClass.name)
+        return QueryingClient(codegenContext, type, javaClass.name)
     }
 
     /**
@@ -98,21 +98,21 @@ protected constructor(
      *
      * @see 
      */
-    public override fun registerWith(protoDataContext: BoundedContext) {
+    public override fun registerWith(codegenContext: BoundedContext) {
         if (isRegistered) {
-            check(this.protoDataContext == protoDataContext) {
+            check(this.codegenContext == codegenContext) {
                 "Unable to register the renderer `$this` with" +
-                        " `${protoDataContext.name().value}`." +
+                        " `${codegenContext.name().value}`." +
                         " The renderer is already registered with" +
-                        " `${this.protoDataContext.name().value}`."
+                        " `${this.codegenContext.name().value}`."
             }
             return
         }
-        this.protoDataContext = protoDataContext
+        this.codegenContext = codegenContext
     }
 
     override fun isRegistered(): Boolean {
-        return this::protoDataContext.isInitialized
+        return this::codegenContext.isInitialized
     }
 
     /**
