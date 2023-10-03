@@ -64,8 +64,8 @@ public abstract class TypeAnnotation<T : Annotation>(
      *
      * Default implementation always returns `true`.
      */
-    @Suppress("FunctionOnlyReturningConstant", "UNUSED_PARAMETER")
-    protected fun shouldAnnotate(file: SourceFile): Boolean = true
+    @Suppress("FunctionOnlyReturningConstant")
+    protected open fun shouldAnnotate(file: SourceFile): Boolean = true
 
     private fun annotationClassReference(): String {
         val qualifiedName = annotationClass.name
