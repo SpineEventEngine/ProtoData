@@ -29,6 +29,7 @@ package io.spine.protodata.backend
 import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
+import io.spine.base.EntityState
 import io.spine.environment.DefaultMode
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.config.Configuration
@@ -38,10 +39,12 @@ import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeConventions
 import io.spine.protodata.type.TypeNameElement
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
+import io.spine.server.query.Querying
+import io.spine.server.query.QueryingClient
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
@@ -65,13 +68,19 @@ public class Pipeline(
     private val sources: List<SourceFileSet>,
     private val request: CodeGeneratorRequest,
     private val config: Configuration? = null
-) {
+) : Querying {
+
+    private lateinit var codegenContext: BoundedContext
+
+    private val typeSystem: TypeSystem by lazy {
+        TypeSystem.serving(this)
+    }
 
     private val conventions: Set<TypeConvention<Language, TypeNameElement<Language>>> by lazy {
         @Suppress("UNCHECKED_CAST") // Cast to most abstract possible types.
         plugins
             .asSequence()
-            .flatMap { it.typeConventions() }
+            .flatMap { it.typeConventions(typeSystem) }
             .toSet() as Set<TypeConvention<Language, TypeNameElement<Language>>>
     }
 
@@ -145,14 +154,14 @@ public class Pipeline(
         under<DefaultMode> {
             use(Delivery.direct())
         }
-        val codegen = assembleCodegenContext()
-        codegen.use {
+        codegenContext = assembleCodegenContext()
+        codegenContext.use {
             val configuration = ConfigurationContext()
             configuration.use {
                 val compiler = ProtobufCompilerContext()
                 compiler.use {
                     emitEvents(configuration, compiler)
-                    renderSources(codegen)
+                    renderSources(codegenContext)
                 }
             }
         }
@@ -182,5 +191,9 @@ public class Pipeline(
     private fun renderSources(codegenContext: BoundedContext) {
         plugins.forEach { it.render(conventions, codegenContext, sources) }
         sources.forEach { it.write() }
+    }
+
+    override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
+        return QueryingClient(codegenContext, type, javaClass.name)
     }
 }

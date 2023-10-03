@@ -32,6 +32,7 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.type.TypeConvention
 import io.spine.protodata.type.TypeNameElement
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
@@ -63,7 +64,7 @@ public interface Plugin {
     /**
      * Obtains the [type conventions][TypeConvention] used by this plugin.
      */
-    public fun typeConventions(): Set<TypeConvention<*, *>> = setOf()
+    public fun typeConventions(typeSystem: TypeSystem): Set<TypeConvention<*, *>> = setOf()
 
     /**
      * Obtains the [views][View] added by this plugin represented via their classes.
