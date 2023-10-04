@@ -64,7 +64,7 @@ public abstract class ValueConverter<L: Language, C: CodeElement<L>> {
             ENUM_VALUE -> toEnum(value)
             LIST_VALUE -> toList(value)
             MAP_VALUE -> toMap(value)
-            else -> throw IllegalArgumentException("Empty value")
+            else -> throw IllegalArgumentException("Unsupported value kind: `${value.kindCase}`.")
         }
 
     /**
