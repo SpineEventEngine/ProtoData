@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
 
-import static io.spine.tools.code.CommonLanguages.java;
+import static io.spine.tools.code.Java;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -43,7 +43,7 @@ import static java.util.stream.Collectors.toSet;
 public final class PrintFieldGetter extends InsertionPointPrinter {
 
     public PrintFieldGetter() {
-        super(java());
+        super(Java.lang());
     }
 
     @NonNull
