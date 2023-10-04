@@ -73,7 +73,6 @@ subprojects {
                     Validation.runtime,
                     Spine.Logging.lib,
                     Spine.Logging.backend,
-                    Spine.Logging.floggerApi,
                     Spine.reflect,
                     ProtoData.compiler,
                     ProtoData.codegenJava,
