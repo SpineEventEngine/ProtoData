@@ -30,8 +30,11 @@ import io.spine.protodata.EnumType
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoDeclaration
+import io.spine.protodata.ProtoDeclarationName
 import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.Service
+import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
 import io.spine.server.query.Querying
 import io.spine.server.query.select
@@ -45,15 +48,6 @@ public class TypeSystem(
 ) {
 
     public companion object {
-
-        @Deprecated(
-            "Use `serving(..)` instead.",
-            replaceWith = ReplaceWith("serving"),
-            level = ERROR
-        )
-        @JvmStatic
-        public fun from(client: Querying): TypeSystem =
-            serving(client)
 
         /**
          * Builds a new `TypeSystem` by finding definitions via
@@ -85,8 +79,14 @@ public class TypeSystem(
     public fun findMessageOrEnum(name: TypeName): Pair<ProtoDeclaration, File>? =
         findMessage(name) ?: findEnum(name)
 
+    /**
+     * Looks up a service by its name.
+     */
+    public fun findService(name: ServiceName): Pair<Service, File>? =
+        find(name) { it.serviceMap }
+
     private fun <T> find(
-        name: TypeName,
+        name: ProtoDeclarationName,
         mapSelector: (ProtobufSourceFile) -> Map<String, T>
     ): Pair<T, File>? {
         val typeUrl = name.typeUrl

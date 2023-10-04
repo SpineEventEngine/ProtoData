@@ -31,9 +31,12 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.spine.protodata.EnumType
 import io.spine.protodata.MessageType
+import io.spine.protodata.Service
+import io.spine.protodata.serviceName
 import io.spine.protodata.test.TypesTestEnv.enumTypeName
 import io.spine.protodata.test.TypesTestEnv.messageTypeName
 import io.spine.protodata.test.TypesTestEnv.protoFile
+import io.spine.protodata.test.TypesTestEnv.serviceName
 import io.spine.protodata.test.TypesTestEnv.typeSystem
 import io.spine.protodata.typeName
 import org.junit.jupiter.api.DisplayName
@@ -66,12 +69,17 @@ class TypeSystemSpec {
         }
 
         @Test
-        fun `any type by name`() {
+        fun `enum or message type by name`() {
             val (enumType, _) = typeSystem.findMessageOrEnum(enumTypeName)!!
             enumType.shouldBeInstanceOf<EnumType>()
 
             val (messageType, _) = typeSystem.findMessageOrEnum(messageTypeName)!!
             messageType.shouldBeInstanceOf<MessageType>()
+        }
+
+        fun `service by name`() {
+            val (service, _) = typeSystem.findService(serviceName)!!
+            service.shouldBeInstanceOf<Service>()
         }
     }
 
@@ -97,6 +105,15 @@ class TypeSystemSpec {
                 packageName = "com.acme"
             })
             declaration shouldBe null
+        }
+
+        @Test
+        fun `service by unknown name`() {
+            val service = typeSystem.findService(serviceName {
+                simpleName = "ThisServiceIsUnknown"
+                packageName = "com.acme"
+            })
+            service shouldBe null
         }
     }
 }
