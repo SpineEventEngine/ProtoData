@@ -42,16 +42,17 @@ import io.spine.tools.code.Language
 
 /**
  * A factory of language-specific code, that represents a Protobuf value.
+ *
+ * @param L the programming language served by this converter.
+ * @param C the type of the code elements produced by this converter.
  */
 @Suppress("TooManyFunctions")
-public abstract class ValueConverter<V: CodeElement<L>, L: Language> {
+public abstract class ValueConverter<L: Language, C: CodeElement<L>> {
 
     /**
      * Converts the given Protobuf value into a language-specific code expression.
-     *
-     * @see ValueConverter
      */
-    public fun valueToCode(value: Value): V =
+    public fun valueToCode(value: Value): C =
         when (value.kindCase) {
             NULL_VALUE -> toNull(value.type)
             BOOL_VALUE -> toBool(value)
@@ -69,50 +70,50 @@ public abstract class ValueConverter<V: CodeElement<L>, L: Language> {
     /**
      * Converts the `null` value of the given type into a language-specific `null` representation.
      */
-    protected abstract fun toNull(type: Type): V
+    protected abstract fun toNull(type: Type): C
 
     /**
      * Converts the given `bool` value into a language-specific `bool` representation.
      */
-    protected abstract fun toBool(value: Value): V
+    protected abstract fun toBool(value: Value): C
 
     /**
      * Converts the given `double` value into a language-specific `double` representation.
      */
-    protected abstract fun toDouble(value: Value): V
+    protected abstract fun toDouble(value: Value): C
 
     /**
      * Converts the given `int` value into a language-specific `int` representation.
      */
-    protected abstract fun toInt(value: Value): V
+    protected abstract fun toInt(value: Value): C
 
     /**
      * Converts the given `string` value into a language-specific `string` representation.
      */
-    protected abstract fun toString(value: Value): V
+    protected abstract fun toString(value: Value): C
 
     /**
      * Converts the given `bytes` value into a language-specific syte string representation.
      */
-    protected abstract fun toBytes(value: Value): V
+    protected abstract fun toBytes(value: Value): C
 
     /**
      * Converts the given message value into a language-specific message representation.
      */
-    protected abstract fun toMessage(value: Value): V
+    protected abstract fun toMessage(value: Value): C
 
     /**
      * Converts the given enum constant into a language-specific enum representation.
      */
-    protected abstract fun toEnum(value: Value): V
+    protected abstract fun toEnum(value: Value): C
 
     /**
      * Converts the given list into a language-specific representation of a list of values.
      */
-    protected abstract fun toList(value: Value): V
+    protected abstract fun toList(value: Value): C
 
     /**
      * Converts the given map into a language-specific map.
      */
-    protected abstract fun toMap(value: Value): V
+    protected abstract fun toMap(value: Value): C
 }
