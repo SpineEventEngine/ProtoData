@@ -26,26 +26,35 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.TypeName
-import io.spine.protodata.type.Declaration
-import io.spine.protodata.type.TypeSystem
-import io.spine.tools.code.Java
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.spine.protodata.test.TypesTestEnv.enumTypeName
+import io.spine.protodata.test.TypesTestEnv.messageTypeName
+import io.spine.protodata.test.TypesTestEnv.typeSystem
+import kotlin.io.path.Path
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A convention which governs the Java message and enum class declarations.
- *
- * This convention defines a [Declaration] for all the message and enum types. If a given
- * type name is [unknown][TypeSystem.findMessageOrEnum], the [declarationFor] method
- * throws an `IllegalStateException`.
- */
-public class JavaImplConvention(
-    typeSystem: TypeSystem
-) : BaseJavaTypeConvention(typeSystem) {
+@DisplayName("`JavaImplConvention` should")
+class MessageOrEnumConventionSpec {
 
-    override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
-        val file = typeSystem.findMessageOrEnum(name)?.second
-        check(file != null) { "Unknown type `${name.typeUrl}`." }
-        val cls = name.javaClassName(declaredIn = file)
-        return Declaration(cls, cls.javaFile)
+    @Test
+    fun `convert a message type name into a Java class name`() {
+        val convention = MessageOrEnumConvention(typeSystem)
+        val declaration = convention.declarationFor(messageTypeName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        cls.binary shouldBe "ua.acme.example.Foo"
+        path shouldBe Path("ua/acme/example/Foo.java")
+    }
+
+    @Test
+    fun `convert an enum type name into a Java class name`() {
+        val convention = MessageOrEnumConvention(typeSystem)
+        val declaration = convention.declarationFor(enumTypeName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        cls.binary shouldBe "ua.acme.example.Kind"
+        path shouldBe Path("ua/acme/example/Kind.java")
     }
 }
