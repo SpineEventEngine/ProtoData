@@ -39,7 +39,7 @@ import io.spine.tools.code.Java
  */
 @Suppress("TooManyFunctions")
 public class JavaValueConverter(
-    private val typeConverter: MessageOrEnumConvention
+    private val convention: MessageOrEnumConvention
 ) : ValueConverter<Java, Expression>() {
 
     override fun toNull(type: Type): Expression = Null
@@ -57,7 +57,7 @@ public class JavaValueConverter(
     override fun toMessage(value: Value): Expression {
         val messageValue = value.messageValue
         val type = messageValue.type
-        val className = typeConverter.declarationFor(type).name
+        val className = convention.declarationFor(type).name
         return if (messageValue.fieldsMap.isEmpty()) {
             className.getDefaultInstance()
         } else {
@@ -72,7 +72,7 @@ public class JavaValueConverter(
     override fun toEnum(value: Value): MethodCall {
         val enumValue = value.enumValue
         val type = enumValue.type
-        val enumClassName = typeConverter.declarationFor(type).name
+        val enumClassName = convention.declarationFor(type).name
         return enumClassName.enumValue(enumValue.constNumber)
     }
 
@@ -96,8 +96,8 @@ public class JavaValueConverter(
     }
 
     private fun Type.toClass(): ClassName = when (kindCase) {
-        MESSAGE -> typeConverter.declarationFor(message).name
-        ENUMERATION -> typeConverter.declarationFor(enumeration).name
+        MESSAGE -> convention.declarationFor(message).name
+        ENUMERATION -> convention.declarationFor(enumeration).name
         PRIMITIVE -> primitive.toJavaClass()
         else -> error("Expected a valid type.")
     }
