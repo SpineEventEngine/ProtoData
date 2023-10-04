@@ -29,11 +29,11 @@ package io.spine.protodata.test.annotation;
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.protodata.renderer.InsertionPointPrinter;
 import io.spine.protodata.test.Annotated;
+import io.spine.tools.code.Java;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
 
-import static io.spine.tools.code.Java;
 import static java.util.stream.Collectors.toSet;
 
 /**
