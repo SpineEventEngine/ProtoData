@@ -71,13 +71,13 @@ public class TypeSystem(
      * Looks up a message type by its name.
      */
     public fun findMessage(name: TypeName): Pair<MessageType, File>? =
-        findIn(name) { it.typeMap }
+        find(name) { it.typeMap }
 
     /**
      * Looks up an enum type by its name.
      */
     public fun findEnum(name: TypeName): Pair<EnumType, File>? =
-        findIn(name) { it.enumTypeMap }
+        find(name) { it.enumTypeMap }
 
     /**
      * Looks up a message or enum type by its name.
@@ -85,7 +85,7 @@ public class TypeSystem(
     public fun findMessageOrEnum(name: TypeName): Pair<ProtoDeclaration, File>? =
         findMessage(name) ?: findEnum(name)
 
-    private fun <T> findIn(
+    private fun <T> find(
         name: TypeName,
         mapSelector: (ProtobufSourceFile) -> Map<String, T>
     ): Pair<T, File>? {
