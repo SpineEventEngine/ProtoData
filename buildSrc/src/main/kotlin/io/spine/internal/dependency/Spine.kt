@@ -59,7 +59,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/logging">spine-logging</a>
          */
-        const val logging = "2.0.0-SNAPSHOT.209"
+        const val logging = "2.0.0-SNAPSHOT.225"
 
         /**
          * The version of [Spine.testlib].
@@ -75,7 +75,7 @@ object Spine {
          * @see [Spine.CoreJava.server]
          * @see <a href="https://github.com/SpineEventEngine/core-java">core-java</a>
          */
-        const val core = "2.0.0-SNAPSHOT.157"
+        const val core = "2.0.0-SNAPSHOT.159"
 
         /**
          * The version of [Spine.modelCompiler].
@@ -103,7 +103,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/time">spine-time</a>
          */
-        const val time = "2.0.0-SNAPSHOT.133"
+        const val time = "2.0.0-SNAPSHOT.134"
 
         /**
          * The version of [Spine.change].
@@ -165,8 +165,20 @@ object Spine {
         const val version = ArtifactVersion.logging
         const val lib = "$group:spine-logging:$version"
         const val backend = "$group:spine-logging-backend:$version"
+        const val log4j2Backend = "$group:spine-logging-log4j2-backend:$version"
         const val context = "$group:spine-logging-context:$version"
+        const val grpcContext = "$group:spine-logging-grpc-context:$version"
+
+        @Deprecated(
+            message = "Please use `Logging.lib` instead.",
+            replaceWith = ReplaceWith("lib")
+        )
         const val floggerApi = "$group:spine-flogger-api:$version"
+
+        @Deprecated(
+            message = "Please use `grpcContext` instead.",
+            replaceWith = ReplaceWith("grpcContext")
+        )
         const val floggerGrpcContext = "$group:spine-flogger-grpc-context:$version"
         const val smokeTest = "$group:spine-logging-smoke-test:$version"
     }
