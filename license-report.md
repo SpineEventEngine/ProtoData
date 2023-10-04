@@ -934,7 +934,7 @@
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Wed Oct 04 12:22:23 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Oct 04 20:13:44 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -1886,7 +1886,7 @@ This report was generated on **Wed Oct 04 12:22:23 WEST 2023** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Wed Oct 04 12:22:24 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Oct 04 20:13:44 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -2813,7 +2813,7 @@ This report was generated on **Wed Oct 04 12:22:24 WEST 2023** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Wed Oct 04 12:22:24 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Oct 04 20:13:45 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -3751,7 +3751,7 @@ This report was generated on **Wed Oct 04 12:22:24 WEST 2023** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Wed Oct 04 12:22:25 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Oct 04 20:13:45 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -4689,7 +4689,7 @@ This report was generated on **Wed Oct 04 12:22:25 WEST 2023** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Wed Oct 04 12:22:26 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Oct 04 20:13:46 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -4744,7 +4744,7 @@ This report was generated on **Wed Oct 04 12:22:26 WEST 2023** using [Gradle-Lic
      * **Project URL:** [http://github.com/square/javapoet/](http://github.com/square/javapoet/)
      * **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : io.spine.validation. **Name** : spine-validation-java-runtime. **Version** : 2.0.0-SNAPSHOT.99.**No license information found**
+1.  **Group** : io.spine.validation. **Name** : spine-validation-java-runtime. **Version** : 2.0.0-SNAPSHOT.104.**No license information found**
 1.  **Group** : javax.annotation. **Name** : javax.annotation-api. **Version** : 1.3.2.
      * **Project URL:** [http://jcp.org/en/jsr/detail?id=250](http://jcp.org/en/jsr/detail?id=250)
      * **License:** [CDDL + GPLv2 with classpath exception](https://github.com/javaee/javax.annotation/blob/master/LICENSE)
@@ -4785,7 +4785,7 @@ This report was generated on **Wed Oct 04 12:22:26 WEST 2023** using [Gradle-Lic
      * **Project URL:** [https://kotlinlang.org/](https://kotlinlang.org/)
      * **License:** [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-1.  **Group** : org.ow2.asm. **Name** : asm. **Version** : 9.2.
+1.  **Group** : org.ow2.asm. **Name** : asm. **Version** : 9.4.
      * **Project URL:** [http://asm.ow2.io/](http://asm.ow2.io/)
      * **License:** [BSD-3-Clause](https://asm.ow2.io/license.html)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -5138,7 +5138,6 @@ This report was generated on **Wed Oct 04 12:22:26 WEST 2023** using [Gradle-Lic
      * **License:** [Apache 2.0](https://opensource.org/licenses/Apache-2.0)
 
 1.  **Group** : io.spine.validation. **Name** : spine-validation-java-runtime. **Version** : 2.0.0-SNAPSHOT.104.**No license information found**
-1.  **Group** : io.spine.validation. **Name** : spine-validation-java-runtime. **Version** : 2.0.0-SNAPSHOT.99.**No license information found**
 1.  **Group** : jakarta.activation. **Name** : jakarta.activation-api. **Version** : 1.2.1.
      * **Project URL:** [https://www.eclipse.org](https://www.eclipse.org)
      * **License:** [EDL 1.0](http://www.eclipse.org/org/documents/edl-v10.php)
@@ -5469,6 +5468,11 @@ This report was generated on **Wed Oct 04 12:22:26 WEST 2023** using [Gradle-Lic
      * **License:** [BSD-3-Clause](https://asm.ow2.io/license.html)
      * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+1.  **Group** : org.ow2.asm. **Name** : asm. **Version** : 9.4.
+     * **Project URL:** [http://asm.ow2.io/](http://asm.ow2.io/)
+     * **License:** [BSD-3-Clause](https://asm.ow2.io/license.html)
+     * **License:** [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
 1.  **Group** : org.ow2.asm. **Name** : asm. **Version** : 9.5.
      * **Project URL:** [http://asm.ow2.io/](http://asm.ow2.io/)
      * **License:** [BSD-3-Clause](https://asm.ow2.io/license.html)
@@ -5500,7 +5504,7 @@ This report was generated on **Wed Oct 04 12:22:26 WEST 2023** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Wed Oct 04 12:22:26 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Oct 04 20:13:46 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -6602,7 +6606,7 @@ This report was generated on **Wed Oct 04 12:22:26 WEST 2023** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Wed Oct 04 12:22:27 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Oct 04 20:13:47 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -7371,7 +7375,7 @@ This report was generated on **Wed Oct 04 12:22:27 WEST 2023** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Wed Oct 04 12:22:27 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Oct 04 20:13:47 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -8314,4 +8318,4 @@ This report was generated on **Wed Oct 04 12:22:27 WEST 2023** using [Gradle-Lic
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Wed Oct 04 12:22:27 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Wed Oct 04 20:13:47 WEST 2023** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
