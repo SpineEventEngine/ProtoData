@@ -28,33 +28,21 @@ package io.spine.protodata.codegen.java
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.test.TypesTestEnv.enumTypeName
-import io.spine.protodata.test.TypesTestEnv.messageTypeName
-import io.spine.protodata.test.TypesTestEnv.typeSystem
+import io.spine.protodata.test.TypesTestEnv
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`MessageOrEnumConvention` should")
-class MessageOrEnumConventionSpec {
+@DisplayName("`MessageOrBuilderConvention` should")
+class MessageOrBuilderConventionSpec {
 
     @Test
     fun `convert a message type name into a Java class name`() {
-        val convention = MessageOrEnumConvention(typeSystem)
-        val declaration = convention.declarationFor(messageTypeName)
+        val convention = MessageOrBuilderConvention(TypesTestEnv.typeSystem)
+        val declaration = convention.declarationFor(TypesTestEnv.messageTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Foo"
-        path shouldBe Path("ua/acme/example/Foo.java")
-    }
-
-    @Test
-    fun `convert an enum type name into a Java class name`() {
-        val convention = MessageOrEnumConvention(typeSystem)
-        val declaration = convention.declarationFor(enumTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Kind"
-        path shouldBe Path("ua/acme/example/Kind.java")
+        cls.binary shouldBe "ua.acme.example.FooOrBuilder"
+        path shouldBe Path("ua/acme/example/FooOrBuilder.java")
     }
 }
