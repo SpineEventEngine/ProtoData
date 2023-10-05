@@ -31,6 +31,11 @@ import io.spine.tools.code.Language
 
 /**
  * The scheme by which the Protobuf type names are converted into language-specific type names.
+ *
+ * @param L the type of the target programming language.
+ * @param T the type of the programming language element in the target language.
+ *
+ * @property language a programming language for which the convention is defined.
  */
 public interface TypeConvention<L : Language, T: TypeNameElement<L>> {
 

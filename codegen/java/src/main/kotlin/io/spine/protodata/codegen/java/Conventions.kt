@@ -32,9 +32,7 @@ import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
 
 /**
- * A convention which governs the Java message and enum class declarations.
- *
- * This convention defines a [Declaration] for all the message and enum types.
+ * This convention defines a declarations of message or enum types declared in Protobuf.
  *
  * @throws IllegalStateException if the type name is unknown.
  */
@@ -49,7 +47,7 @@ public class MessageOrEnumConvention(ts: TypeSystem) : BaseJavaTypeConvention(ts
 }
 
 /**
- * A convention which governs declarations of interfaces extending
+ * This convention governs declarations of interfaces extending
  * [MessageOrBuilder][com.google.protobuf.MessageOrBuilder] which are generated along
  * with corresponding message classes.
  *

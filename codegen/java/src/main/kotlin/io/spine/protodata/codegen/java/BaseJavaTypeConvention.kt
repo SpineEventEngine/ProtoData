@@ -32,6 +32,8 @@ import io.spine.tools.code.Java
 
 /**
  * An abstract base for Java [TypeConvention]s.
+ *
+ * @property typeSystem the type system which is used to resolve types.
  */
 public abstract class BaseJavaTypeConvention(
     protected val typeSystem: TypeSystem
