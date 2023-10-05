@@ -177,8 +177,8 @@ public class Pipeline(
         configuration: ConfigurationContext,
         compiler: ProtobufCompilerContext
     ) {
-        if (config != null) {
-            val event = config.produceEvent()
+        config?.let {
+            val event = it.produceEvent()
             configuration.emitted(event)
         }
         val events = CompilerEvents.parse(request)
