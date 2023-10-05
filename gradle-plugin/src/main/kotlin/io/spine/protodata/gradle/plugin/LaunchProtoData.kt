@@ -70,10 +70,6 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:Internal
     public abstract val configurationFile: RegularFileProperty
 
-    @Deprecated("Supply Renderers via Plugins instead.")
-    @get:Input
-    internal lateinit var renderers: Provider<List<String>>
-
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
 
@@ -114,10 +110,6 @@ public abstract class LaunchProtoData : JavaExec() {
         val command = sequence {
             plugins.get().forEach {
                 yield(PluginParam.name)
-                yield(it)
-            }
-            renderers.get().forEach {
-                yield(RendererParam.name)
                 yield(it)
             }
             yield(RequestParam.name)
