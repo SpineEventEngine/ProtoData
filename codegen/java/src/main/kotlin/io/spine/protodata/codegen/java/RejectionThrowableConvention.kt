@@ -59,13 +59,3 @@ public class RejectionThrowableConvention(
         return Declaration(cls, cls.javaFile)
     }
 }
-
-@Deprecated(
-    "Use `RejectionThrowableConvention` instead.",
-    replaceWith = ReplaceWith(
-        "RejectionThrowableConvention",
-        "io.spine.protodata.codegen.java.RejectionThrowableConvention"
-    ),
-    level = ERROR
-)
-public typealias JavaRejectionConvention = RejectionThrowableConvention
