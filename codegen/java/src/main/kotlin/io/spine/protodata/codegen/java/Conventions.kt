@@ -34,18 +34,32 @@ import io.spine.tools.code.Java
 /**
  * A convention which governs the Java message and enum class declarations.
  *
- * This convention defines a [Declaration] for all the message and enum types. If a given
- * type name is [unknown][TypeSystem.findMessageOrEnum], the [declarationFor] method
- * throws an `IllegalStateException`.
+ * This convention defines a [Declaration] for all the message and enum types.
+ *
+ * @throws IllegalStateException if the type name is unknown.
  */
-public class MessageOrEnumConvention(
-    typeSystem: TypeSystem
-) : BaseJavaTypeConvention(typeSystem) {
+public class MessageOrEnumConvention(ts: TypeSystem) : BaseJavaTypeConvention(ts) {
 
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
         val file = typeSystem.findMessageOrEnum(name)?.second
         check(file != null) { "Unknown type `${name.typeUrl}`." }
         val cls = name.javaClassName(declaredIn = file)
         return Declaration(cls, cls.javaFile)
+    }
+}
+
+/**
+ * A convention which governs declarations of interfaces extending
+ * [MessageOrBuilder][com.google.protobuf.MessageOrBuilder] which are generated along
+ * with corresponding message classes.
+ *
+ * @throws IllegalStateException if the type name is unknown.
+ */
+public class MessageOrBuilderConvention(ts: TypeSystem) : BaseJavaTypeConvention(ts) {
+
+    override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
+        val decl = MessageOrEnumConvention(typeSystem).declarationFor(name)
+        val messageOrBuilder = decl.name.withSuffix("OrBuilder")
+        return Declaration(messageOrBuilder, messageOrBuilder.javaFile)
     }
 }
