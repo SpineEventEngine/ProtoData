@@ -24,26 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
+import java.nio.file.Path
+import kotlin.io.path.Path
 
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.test.TypesTestEnv
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import toSourcePath
-
-@DisplayName("`MessageOrBuilderConvention` should")
-class MessageOrBuilderConventionSpec {
-
-    @Test
-    fun `convert a message type name into a Java class name`() {
-        val convention = MessageOrBuilderConvention(TypesTestEnv.typeSystem)
-        val declaration = convention.declarationFor(TypesTestEnv.messageTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        val expectedClassName = "ua.acme.example.FooOrBuilder"
-        cls.binary shouldBe expectedClassName
-        path shouldBe expectedClassName.toSourcePath()
-    }
-}
+/**
+ * Obtains a Java file path, assuming this string is a fully-qualified class name.
+ */
+internal fun String.toSourcePath(): Path = Path(replace(".", "//") + ".java")

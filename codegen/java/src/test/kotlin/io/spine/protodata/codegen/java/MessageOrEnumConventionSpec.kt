@@ -31,9 +31,9 @@ import io.kotest.matchers.shouldNotBe
 import io.spine.protodata.test.TypesTestEnv.enumTypeName
 import io.spine.protodata.test.TypesTestEnv.messageTypeName
 import io.spine.protodata.test.TypesTestEnv.typeSystem
-import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import toSourcePath
 
 @DisplayName("`MessageOrEnumConvention` should")
 class MessageOrEnumConventionSpec {
@@ -44,8 +44,9 @@ class MessageOrEnumConventionSpec {
         val declaration = convention.declarationFor(messageTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Foo"
-        path shouldBe Path("ua/acme/example/Foo.java")
+        val expectedClassName = "ua.acme.example.Foo"
+        cls.binary shouldBe expectedClassName
+        path shouldBe expectedClassName.toSourcePath()
     }
 
     @Test
@@ -54,7 +55,8 @@ class MessageOrEnumConventionSpec {
         val declaration = convention.declarationFor(enumTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
-        cls.binary shouldBe "ua.acme.example.Kind"
-        path shouldBe Path("ua/acme/example/Kind.java")
+        val expectedClassName = "ua.acme.example.Kind"
+        cls.binary shouldBe expectedClassName
+        path shouldBe expectedClassName.toSourcePath()
     }
 }
