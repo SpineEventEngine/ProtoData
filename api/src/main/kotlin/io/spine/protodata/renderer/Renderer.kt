@@ -64,7 +64,7 @@ protected constructor(
      * Makes changes to the given source set.
      *
      * The source set is guaranteed to consist only of the files, containing the code in
-     * the [language].
+     * the supported programming [language].
      *
      * This method may be called several times, if ProtoData is called with multiple source and
      * target directories.
