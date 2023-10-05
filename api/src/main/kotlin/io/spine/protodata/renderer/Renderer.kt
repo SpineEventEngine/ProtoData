@@ -26,6 +26,7 @@
 
 package io.spine.protodata.renderer
 
+import io.spine.annotation.Internal
 import io.spine.base.EntityState
 import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.protodata.type.TypeSystem
@@ -79,12 +80,15 @@ protected constructor(
     final override fun configIsPresent(): Boolean = super.configIsPresent()
 
     /**
-     * Injects the context of the ProtoData application.
+     * Injects the `Code Generation` context into this renderer.
+     *
+     * The reference to the context is needed to query the state of entities.
      *
      * This method is `public` but is essentially `internal` to ProtoData SDK.
      *
-     * @see 
-     */
+     * @see [select]
+      */
+    @Internal
     public override fun registerWith(codegenContext: BoundedContext) {
         if (isRegistered) {
             check(this.codegenContext == codegenContext) {
@@ -98,6 +102,7 @@ protected constructor(
         this.codegenContext = codegenContext
     }
 
+    @Internal
     override fun isRegistered(): Boolean {
         return this::codegenContext.isInitialized
     }
