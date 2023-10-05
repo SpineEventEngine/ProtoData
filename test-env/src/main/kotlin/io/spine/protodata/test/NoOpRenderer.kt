@@ -26,14 +26,16 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.plugin.AbstractPlugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.AnyLanguage
-import io.spine.tools.code.Language
 
 public class NoOpRenderer : Renderer<AnyLanguage>(AnyLanguage) {
 
     override fun render(sources: SourceFileSet) {
         // Do nothing.
     }
+
+    public class Plugin : AbstractPlugin(listOf(NoOpRenderer()))
 }
