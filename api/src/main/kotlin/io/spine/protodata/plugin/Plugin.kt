@@ -149,7 +149,7 @@ public fun Plugin.render(
 ) {
     renderers().forEach { r ->
         r.registerWith(codegenContext)
-        r.withTypeSystem(typeSystem)
+        r.injectTypeSystem(typeSystem)
         sources.forEach(r::renderSources)
     }
 }

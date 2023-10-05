@@ -102,7 +102,7 @@ protected constructor(
         return this::codegenContext.isInitialized
     }
 
-    internal fun withTypeSystem(typeSystem: TypeSystem) {
-        this.typeSystem = typeSystem
+    internal fun injectTypeSystem(ts: TypeSystem) {
+        typeSystem = ts
     }
 }
