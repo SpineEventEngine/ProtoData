@@ -99,6 +99,15 @@ internal constructor(
     public val simpleName: String
         get() = simpleNames.last()
 
+    /**
+     * Obtains a new `ClassName` with the given suffix appended to the last simple name.
+     */
+    public fun withSuffix(suffix: String): ClassName {
+        val newLast = simpleNames.last() + suffix
+        val newSimpleNames = simpleNames.dropLast(1) + newLast
+        return ClassName(packageName, newSimpleNames)
+    }
+
     override fun toCode(): String = canonical
 
     override fun toString(): String = canonical
