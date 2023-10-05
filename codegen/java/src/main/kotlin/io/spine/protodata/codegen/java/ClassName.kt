@@ -53,7 +53,7 @@ internal constructor(
     /**
      * Obtains the class name of the given Java class.
      */
-    public constructor(cls: Class<*>) : this(cls.`package`.name, cls.nestedName())
+    public constructor(cls: Class<*>) : this(cls.`package`.name, cls.nestedNames())
 
     /**
      * Obtains the Java class name of the given Kotlin class.
@@ -132,7 +132,7 @@ internal constructor(
  *
  * If the class is not nested, the returned list contains only a simple name of the class.
  */
-private fun Class<*>.nestedName(): List<String> {
+private fun Class<*>.nestedNames(): List<String> {
     if (declaringClass == null) {
         return listOf(this.simpleName)
     }
