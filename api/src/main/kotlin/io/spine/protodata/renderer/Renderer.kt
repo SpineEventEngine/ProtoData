@@ -48,7 +48,13 @@ protected constructor(
 ) : ConfiguredQuerying, ContextAware {
 
     private lateinit var codegenContext: BoundedContext
-    private lateinit var typeSystem: TypeSystem
+    private lateinit var _typeSystem: TypeSystem
+
+    /**
+     * The type system with the Protobuf types defined in the current context.
+     */
+    protected val typeSystem: TypeSystem
+        get() = _typeSystem
 
     /**
      * Performs required changes to the given source set.
@@ -107,7 +113,12 @@ protected constructor(
         return this::codegenContext.isInitialized
     }
 
+    /**
+     * Injects an instance of `TypeSystem` for this renderer to use e.g. for
+     * creating a [TypeConvention][io.spine.protodata.type.TypeConvention] which
+     * depends on the type system.
+     */
     internal fun injectTypeSystem(ts: TypeSystem) {
-        typeSystem = ts
+        _typeSystem = ts
     }
 }
