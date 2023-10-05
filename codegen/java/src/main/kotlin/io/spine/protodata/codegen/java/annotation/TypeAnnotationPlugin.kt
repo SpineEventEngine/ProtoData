@@ -32,7 +32,6 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.Policy
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
-import io.spine.protodata.type.TypeConvention
 
 /**
  * An abstract base for plugins that generate code for type annotations.
@@ -42,11 +41,10 @@ import io.spine.protodata.type.TypeConvention
  */
 public abstract class TypeAnnotationPlugin(
     renderers: Iterable<TypeAnnotation<*>>,
-    typeConventions: Set<TypeConvention<*, *>> = setOf(),
     views: Set<Class<out View<*, *, *>>> = setOf(),
     viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
     policies: Set<Policy<*>> = setOf(),
 ) : AbstractPlugin(
     listOf(PrintBeforePrimaryDeclaration()) + renderers,
-    typeConventions, views, viewRepositories, policies
+    views, viewRepositories, policies
 )

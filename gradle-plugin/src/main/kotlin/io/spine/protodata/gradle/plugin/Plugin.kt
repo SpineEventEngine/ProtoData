@@ -166,7 +166,6 @@ private fun Project.createTasks(ext: Extension) {
 private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): LaunchProtoData {
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
-        renderers = ext.renderers
         plugins = ext.plugins
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)

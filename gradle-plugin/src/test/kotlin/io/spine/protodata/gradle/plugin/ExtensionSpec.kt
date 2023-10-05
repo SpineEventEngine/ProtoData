@@ -74,16 +74,6 @@ class ExtensionSpec {
             .containsExactly(className)
     }
 
-    @Suppress("DEPRECATION")
-    @Test
-    fun `add 'Renderer' class names`() {
-        val className1 = "com.acme.MyRenderer1"
-        val className2 = "com.acme.MyRenderer2"
-        extension.renderers(className1, className2)
-        assertThat(extension.renderers.get())
-            .containsExactly(className1, className2)
-    }
-
     @Test
     fun `add 'OptionProvider' class names`() {
         val className = "com.acme.MyOptions"

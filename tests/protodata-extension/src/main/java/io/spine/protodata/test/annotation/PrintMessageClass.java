@@ -28,11 +28,11 @@ package io.spine.protodata.test.annotation;
 
 import io.spine.protodata.renderer.InsertionPoint;
 import io.spine.protodata.renderer.InsertionPointPrinter;
+import io.spine.tools.code.Java;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
 
-import static io.spine.tools.code.CommonLanguages.java;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.toSet;
 public final class PrintMessageClass extends InsertionPointPrinter {
 
     public PrintMessageClass() {
-        super(java());
+        super(Java.lang());
     }
 
     @NonNull

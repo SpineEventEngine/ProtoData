@@ -67,6 +67,7 @@ subprojects {
         forceVersions()
         all {
             resolutionStrategy {
+                @Suppress("DEPRECATION") // We still depend on `floggerApi`.
                 force(
                     Spine.base,
                     Spine.toolBase,

@@ -24,28 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
-
-import io.spine.protodata.TypeName
-import io.spine.protodata.type.Declaration
-import io.spine.protodata.type.TypeSystem
-import io.spine.tools.code.Java
+import java.nio.file.Path
+import kotlin.io.path.Path
 
 /**
- * A convention which governs the Java message and enum class declarations.
- *
- * This convention defines a [Declaration] for all the message and enum types. If a given
- * type name is [unknown][TypeSystem.findMessageOrEnum], the [declarationFor] method
- * throws an `IllegalStateException`.
+ * Obtains a Java file path, assuming this string is a fully-qualified class name.
  */
-public class JavaImplConvention(
-    typeSystem: TypeSystem
-) : BaseJavaTypeConvention(typeSystem) {
-
-    override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
-        val file = typeSystem.findMessageOrEnum(name)?.second
-        check(file != null) { "Unknown type `${name.typeUrl}`." }
-        val cls = name.javaClassName(declaredIn = file)
-        return Declaration(cls, cls.javaFile)
-    }
-}
+internal fun String.toSourcePath(): Path = Path(replace(".", "//") + ".java")

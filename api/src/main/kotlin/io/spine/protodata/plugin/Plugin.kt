@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,10 @@ import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeNameElement
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
-import io.spine.tools.code.Language
 import kotlin.reflect.KClass
 
 /**
@@ -59,11 +57,6 @@ public interface Plugin {
      * The renderers are guaranteed to be called in the order of their declaration in the plugin.
      */
     public fun renderers(): List<Renderer<*>> = listOf()
-
-    /**
-     * Obtains the [type conventions][TypeConvention] used by this plugin.
-     */
-    public fun typeConventions(): Set<TypeConvention<*, *>> = setOf()
 
     /**
      * Obtains the [views][View] added by this plugin represented via their classes.
@@ -150,13 +143,13 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
  */
 @Internal
 public fun Plugin.render(
-    conventionSet: Set<TypeConvention<Language, TypeNameElement<Language>>>,
     codegenContext: BoundedContext,
+    typeSystem: TypeSystem,
     sources: Iterable<SourceFileSet>
 ) {
     renderers().forEach { r ->
         r.registerWith(codegenContext)
-        r.withTypeConventions(conventionSet)
+        r.injectTypeSystem(typeSystem)
         sources.forEach(r::renderSources)
     }
 }

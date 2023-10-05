@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.11.7</version>
+<version>0.12.0</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -86,7 +86,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-logging</artifactId>
-    <version>2.0.0-SNAPSHOT.209</version>
+    <version>2.0.0-SNAPSHOT.226</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -98,13 +98,19 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-server</artifactId>
-    <version>2.0.0-SNAPSHOT.157</version>
+    <version>2.0.0-SNAPSHOT.159</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-text</artifactId>
     <version>2.0.0-SNAPSHOT.5</version>
+    <scope>compile</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.spine.tools</groupId>
+    <artifactId>spine-tool-base</artifactId>
+    <version>2.0.0-SNAPSHOT.186</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -140,7 +146,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-logging-backend</artifactId>
-    <version>2.0.0-SNAPSHOT.209</version>
+    <version>2.0.0-SNAPSHOT.226</version>
     <scope>runtime</scope>
   </dependency>
   <dependency>
@@ -164,19 +170,19 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-testlib</artifactId>
-    <version>2.0.0-SNAPSHOT.183</version>
+    <version>2.0.0-SNAPSHOT.186</version>
     <scope>test</scope>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-testutil-server</artifactId>
-    <version>2.0.0-SNAPSHOT.156</version>
+    <version>2.0.0-SNAPSHOT.159</version>
     <scope>test</scope>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-testutil-time</artifactId>
-    <version>2.0.0-SNAPSHOT.133</version>
+    <version>2.0.0-SNAPSHOT.134</version>
     <scope>test</scope>
   </dependency>
   <dependency>
@@ -267,16 +273,11 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-base</artifactId>
-    <version>2.0.0-SNAPSHOT.183</version>
+    <version>2.0.0-SNAPSHOT.186</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-testlib</artifactId>
-    <version>2.0.0-SNAPSHOT.184</version>
-  </dependency>
-  <dependency>
-    <groupId>io.spine.tools</groupId>
-    <artifactId>spine-tool-base</artifactId>
     <version>2.0.0-SNAPSHOT.184</version>
   </dependency>
   <dependency>

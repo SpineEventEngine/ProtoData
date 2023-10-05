@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test
 @DisplayName("`JavaValueConverter` should convert values into")
 class JavaValueConverterSpec {
 
-    private val converter = JavaValueConverter(JavaImplConvention(typeSystem))
+    private val converter = JavaValueConverter(MessageOrEnumConvention(typeSystem))
 
     @Test
     fun nulls() {

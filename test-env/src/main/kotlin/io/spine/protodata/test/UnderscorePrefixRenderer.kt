@@ -26,11 +26,11 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.plugin.AbstractPlugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.query.select
 import io.spine.tools.code.Java
-import io.spine.tools.code.Language
 
 /**
  * A test [Renderer] which prepends underscore before an [InternalType] in all source files.
@@ -47,4 +47,6 @@ public class UnderscorePrefixRenderer : Renderer<Java>(Java) {
             }
         }
     }
+
+    public class Plugin : AbstractPlugin(listOf(UnderscorePrefixRenderer()))
 }

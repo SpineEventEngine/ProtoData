@@ -26,36 +26,38 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protobuf.isNotDefault
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.Declaration
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
-import kotlin.DeprecationLevel.ERROR
 
 /**
- * A convention which governs Java Rejection-Throwable class declarations.
+ * This convention defines a declarations of message or enum types declared in Protobuf.
  *
- * The convention only defines a declaration for rejection message types. Any other types are
- * undefined and thus result in the [declarationFor] method returning `null`.
+ * @throws IllegalStateException if the type name is unknown.
  */
-public class RejectionThrowableConvention(
-    typeSystem: TypeSystem
-) : BaseJavaTypeConvention(typeSystem) {
+public class MessageOrEnumConvention(ts: TypeSystem) : BaseJavaTypeConvention(ts) {
 
-    @Suppress("ReturnCount")
-    override fun declarationFor(name: TypeName): Declaration<Java, ClassName>? {
-        val declaration = typeSystem.findMessage(name) ?: return null
-        val (msg, file) = declaration
-        val fileName = file.path.value
-        if (!fileName.endsWith("rejections.proto") // Not a rejection message.
-            || msg.declaredIn.isNotDefault()       // Not a top-level message.
-        ) {
-            return null
-        }
-        val packageName = file.javaPackage()
-        val simpleName = name.simpleName
-        val cls = ClassName(packageName, simpleName)
+    override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
+        val file = typeSystem.findMessageOrEnum(name)?.second
+        check(file != null) { "Unknown type `${name.typeUrl}`." }
+        val cls = name.javaClassName(declaredIn = file)
         return Declaration(cls, cls.javaFile)
+    }
+}
+
+/**
+ * This convention governs declarations of interfaces extending
+ * [MessageOrBuilder][com.google.protobuf.MessageOrBuilder] which are generated along
+ * with corresponding message classes.
+ *
+ * @throws IllegalStateException if the type name is unknown.
+ */
+public class MessageOrBuilderConvention(ts: TypeSystem) : BaseJavaTypeConvention(ts) {
+
+    override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
+        val decl = MessageOrEnumConvention(typeSystem).declarationFor(name)
+        val messageOrBuilder = decl.name.withSuffix("OrBuilder")
+        return Declaration(messageOrBuilder, messageOrBuilder.javaFile)
     }
 }

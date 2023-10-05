@@ -42,6 +42,8 @@ import io.spine.protodata.MessageType
 import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_STRING
+import io.spine.protodata.Service
+import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.constantName
@@ -52,6 +54,8 @@ import io.spine.protodata.filePath
 import io.spine.protodata.messageType
 import io.spine.protodata.option
 import io.spine.protodata.protobufSourceFile
+import io.spine.protodata.service
+import io.spine.protodata.serviceName
 import io.spine.protodata.type
 import io.spine.protodata.typeName
 import io.spine.protodata.enumType as newEnumType
@@ -142,12 +146,22 @@ public object TypesTestEnv {
         constant.add(undefinedConstant)
         constant.add(enumConstant)
     }
+    public val serviceName: ServiceName = serviceName {
+        simpleName = "FooService"
+        packageName = "bar.baz"
+        typeUrlPrefix = "service.spine.io"
+    }
+    public val service: Service = service {
+        file = filePath
+        name = serviceName
+    }
     public val typeSystem: TypeSystem = run {
         val definitions = protobufSourceFile {
             filePath = TypesTestEnv.filePath
             file = protoFile
             type.put(messageTypeName.typeUrl, messageType)
             enumType.put(enumTypeName.typeUrl, TypesTestEnv.enumType)
+            service.put(serviceName.typeUrl, TypesTestEnv.service)
         }
         val rejections = protobufSourceFile {
             filePath = rejectionsFilePath

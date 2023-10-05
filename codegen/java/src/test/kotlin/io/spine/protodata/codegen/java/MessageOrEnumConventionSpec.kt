@@ -28,39 +28,35 @@ package io.spine.protodata.codegen.java
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.spine.protodata.test.TypesTestEnv.enumTypeName
 import io.spine.protodata.test.TypesTestEnv.messageTypeName
-import io.spine.protodata.test.TypesTestEnv.rejectionTypeName
 import io.spine.protodata.test.TypesTestEnv.typeSystem
-import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import toSourcePath
 
-@DisplayName("`RejectionThrowableConvention` should")
-class RejectionThrowableConventionSpec {
+@DisplayName("`MessageOrEnumConvention` should")
+class MessageOrEnumConventionSpec {
 
     @Test
-    fun `convert a rejection type name into a rejection throwable class`() {
-        val rejections = RejectionThrowableConvention(typeSystem)
-        val messages = MessageOrEnumConvention(typeSystem)
-
-        val message = messages.declarationFor(rejectionTypeName)
-        message shouldNotBe null
-        val throwable = rejections.declarationFor(rejectionTypeName)
-        throwable shouldNotBe null
-
-        val (messageClass, messagePath) = message
-        messageClass.binary shouldBe "ua.acme.example.CartoonRejections\$CannotDrawCartoon"
-        messagePath shouldBe Path("ua/acme/example/CartoonRejections.java")
-
-        val (throwableClass, throwablePath) = throwable!!
-        throwableClass.binary shouldBe "ua.acme.example.CannotDrawCartoon"
-        throwablePath shouldBe Path("ua/acme/example/CannotDrawCartoon.java")
+    fun `convert a message type name into a Java class name`() {
+        val convention = MessageOrEnumConvention(typeSystem)
+        val declaration = convention.declarationFor(messageTypeName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        val expectedClassName = "ua.acme.example.Foo"
+        cls.binary shouldBe expectedClassName
+        path shouldBe expectedClassName.toSourcePath()
     }
 
     @Test
-    fun `not convert a regular message name to a rejection throwables class`() {
-        val convention = RejectionThrowableConvention(typeSystem)
-        val declaration = convention.declarationFor(messageTypeName)
-        declaration shouldBe null
+    fun `convert an enum type name into a Java class name`() {
+        val convention = MessageOrEnumConvention(typeSystem)
+        val declaration = convention.declarationFor(enumTypeName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        val expectedClassName = "ua.acme.example.Kind"
+        cls.binary shouldBe expectedClassName
+        path shouldBe expectedClassName.toSourcePath()
     }
 }
