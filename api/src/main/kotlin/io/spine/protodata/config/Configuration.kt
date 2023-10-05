@@ -30,6 +30,8 @@ import io.spine.annotation.Internal
 import io.spine.base.EventMessage
 import io.spine.protodata.config.event.FileConfigDiscovered
 import io.spine.protodata.config.event.RawConfigDiscovered
+import io.spine.protodata.config.event.fileConfigDiscovered
+import io.spine.protodata.config.event.rawConfigDiscovered
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
@@ -44,7 +46,7 @@ public sealed class Configuration {
     /**
      * Constructs an event which contains the value of the configuration.
      *
-     * The event belongs to the [io.spine.protodata.ConfigurationContext].
+     * The event belongs to [ConfigurationContext][io.spine.protodata.backend.ConfigurationContext].
      */
     public abstract fun produceEvent(): EventMessage
 
@@ -70,13 +72,13 @@ public sealed class Configuration {
  */
 private class File(private val file: Path) : Configuration() {
 
-    override fun produceEvent() = FileConfigDiscovered.newBuilder()
-        .setFile(file.toConfigFile())
-        .build()
+    override fun produceEvent(): FileConfigDiscovered = fileConfigDiscovered {
+        file = this@File.file.toConfigFile()
+    }
 
-    private fun Path.toConfigFile() = ConfigFile.newBuilder()
-        .setPath(absolutePathString())
-        .build()
+    private fun Path.toConfigFile() = configFile {
+        path = absolutePathString()
+    }
 }
 
 /**
@@ -89,12 +91,12 @@ private class Raw(
     private val format: ConfigurationFormat
 ) : Configuration() {
 
-    override fun produceEvent() = RawConfigDiscovered.newBuilder()
-        .setConfig(config())
-        .build()
+    override fun produceEvent(): RawConfigDiscovered = rawConfigDiscovered {
+        config = config()
+    }
 
-    private fun config() = RawConfig.newBuilder()
-        .setFormat(format)
-        .setValue(value)
-        .build()
+    private fun config() = rawConfig {
+        format = this@Raw.format
+        value = this@Raw.value
+    }
 }
