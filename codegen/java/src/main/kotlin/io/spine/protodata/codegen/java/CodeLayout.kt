@@ -36,6 +36,7 @@ import io.spine.protodata.MessageType
 import io.spine.protodata.TypeName
 import io.spine.string.camelCase
 import io.spine.protodata.find
+import io.spine.protodata.nameWithoutExtension
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -92,27 +93,32 @@ internal fun TypeName.javaClassName(declaredIn: File): ClassName {
     return ClassName(packageName, nameElements)
 }
 
+/**
+ * Obtains a name of a Java package for the code generated from this Protobuf file.
+ *
+ * @return A value of the `java_package` option, if it is set.
+ *         Otherwise, returns the package name of the file.
+ */
 public fun File.javaPackage(): String =
     optionList.find("java_package", StringValue::class.java)
         ?.value
         ?: packageName
 
+/**
+ * Obtains a value of `java_multiple_files` option set for this file.
+ */
 public fun File.javaMultipleFiles(): Boolean =
     optionList.find("java_multiple_files", BoolValue::class.java)
         ?.value
         ?: false
 
+/**
+ * Obtains a name of the Java outer class generated for this Protobuf file.
+ *
+ * @return A value of `java_outer_classname` option, if it set for this file.
+ */
 public fun File.javaOuterClassName(): String =
     optionList.find("java_outer_classname", StringValue::class.java)
         ?.value
         ?: nameWithoutExtension().camelCase()
 
-private fun File.nameWithoutExtension(): String {
-    val name = path.value.split("/").last()
-    val index = name.indexOf(".")
-    return if (index > 0) {
-        name.substring(0, index)
-    } else {
-        name
-    }
-}
