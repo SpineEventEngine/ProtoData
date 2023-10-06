@@ -100,17 +100,6 @@ public interface Plugin {
 }
 
 /**
- * Applies the given plugin to the receiver bounded context.
- */
-@Deprecated(
-    "Use `Plugin.applyTo(BoundedContextBuilder)` instead.",
-    ReplaceWith("this.applyTo(context)")
-)
-public fun BoundedContextBuilder.apply(plugin: Plugin) {
-    plugin.applyTo(this)
-}
-
-/**
  * Applies the receiver plugin to the given bounded context.
  *
  * The function populates the [context] with the views, repositories, and other features
