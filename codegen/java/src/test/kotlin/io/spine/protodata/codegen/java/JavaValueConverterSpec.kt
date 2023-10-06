@@ -41,7 +41,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @DisplayName("`JavaValueConverter` should convert values into")
-class JavaValueConverterSpec {
+internal class JavaValueConverterSpec {
 
     private val converter = JavaValueConverter(MessageOrEnumConvention(typeSystem))
 
@@ -87,7 +87,7 @@ class JavaValueConverterSpec {
     fun `empty message`() {
         val emptyMessage = messageValue { type = messageTypeName }
         val value = value { messageValue = emptyMessage }
-        checkCode(value, "ua.acme.example.Foo.getDefaultInstance()")
+        checkCode(value, "dev.acme.example.Foo.getDefaultInstance()")
     }
 
     @Test
@@ -97,7 +97,7 @@ class JavaValueConverterSpec {
             fields.put("bar", value { stringValue = "hello there" })
         }
         val value = value { messageValue = message }
-        checkCode(value, "ua.acme.example.Foo.newBuilder().setBar(\"hello there\").build()")
+        checkCode(value, "dev.acme.example.Foo.newBuilder().setBar(\"hello there\").build()")
     }
 
     @Test
@@ -109,7 +109,7 @@ class JavaValueConverterSpec {
         val value = value {
             enumValue = enumVal
         }
-        checkCode(value, "ua.acme.example.Kind.forNumber(1)")
+        checkCode(value, "dev.acme.example.Kind.forNumber(1)")
     }
 
     private fun checkCode(value: Value, expectedCode: String) {

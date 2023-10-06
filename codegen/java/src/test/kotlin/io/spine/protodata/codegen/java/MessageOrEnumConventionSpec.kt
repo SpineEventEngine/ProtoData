@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test
 import toSourcePath
 
 @DisplayName("`MessageOrEnumConvention` should")
-class MessageOrEnumConventionSpec {
+internal class MessageOrEnumConventionSpec {
 
     @Test
     fun `convert a message type name into a Java class name`() {
@@ -44,7 +44,7 @@ class MessageOrEnumConventionSpec {
         val declaration = convention.declarationFor(messageTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
-        val expectedClassName = "ua.acme.example.Foo"
+        val expectedClassName = "dev.acme.example.Foo"
         cls.binary shouldBe expectedClassName
         path shouldBe expectedClassName.toSourcePath()
     }
@@ -55,7 +55,7 @@ class MessageOrEnumConventionSpec {
         val declaration = convention.declarationFor(enumTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
-        val expectedClassName = "ua.acme.example.Kind"
+        val expectedClassName = "dev.acme.example.Kind"
         cls.binary shouldBe expectedClassName
         path shouldBe expectedClassName.toSourcePath()
     }

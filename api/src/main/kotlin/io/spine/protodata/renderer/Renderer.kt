@@ -115,7 +115,7 @@ protected constructor(
 
     /**
      * Injects an instance of `TypeSystem` for this renderer to use e.g. for
-     * creating a [TypeConvention][io.spine.protodata.type.TypeConvention] which
+     * creating a [Convention][io.spine.protodata.type.Convention] which
      * depends on the type system.
      */
     internal fun injectTypeSystem(ts: TypeSystem) {

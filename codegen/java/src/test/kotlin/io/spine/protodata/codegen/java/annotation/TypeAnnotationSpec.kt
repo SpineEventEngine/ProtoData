@@ -36,7 +36,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
 @DisplayName("`ClassAnnotationRenderer` should")
-class TypeAnnotationSpec {
+internal class TypeAnnotationSpec {
 
     @Test
     fun `reject annotation class without targets`() {

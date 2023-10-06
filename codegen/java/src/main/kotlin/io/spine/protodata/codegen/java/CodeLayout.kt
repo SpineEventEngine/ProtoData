@@ -33,6 +33,7 @@ import com.google.protobuf.StringValue
 import io.spine.protodata.EnumType
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
+import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
 import io.spine.string.camelCase
 import io.spine.protodata.find
@@ -77,21 +78,43 @@ public fun EnumType.javaClassName(declaredIn: File): ClassName =
     name.javaClassName(declaredIn)
 
 /**
- * Obtains the full name of the Java class, generated from the Protobuf type with this name.
+ * Obtains a Java class name for the given Protobuf declaration.
  *
- * @return name of the Java class.
+ * @param declaredIn
+ *        the Protobuf file where the declaration is declared.
+ * @param block
+ *        of code which adds the name elements to the class name.
  */
-internal fun TypeName.javaClassName(declaredIn: File): ClassName {
+private fun composeJavaClassName(
+    declaredIn: File,
+    block: MutableList<String>.() -> Unit
+): ClassName {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val nameElements = mutableListOf<String>()
     if (!javaMultipleFiles) {
         nameElements.add(declaredIn.javaOuterClassName())
     }
-    nameElements.addAll(nestingTypeNameList)
-    nameElements.add(simpleName)
+    block(nameElements)
     return ClassName(packageName, nameElements)
 }
+
+/**
+ * Obtains a fully-qualified Java class, generated for the Protobuf type with this name.
+ */
+internal fun TypeName.javaClassName(declaredIn: File): ClassName =
+    composeJavaClassName(declaredIn) {
+        addAll(nestingTypeNameList)
+        add(simpleName)
+    }
+
+/**
+ * Obtains a fully-qualified Java class, generated for the gRPC service with this name.
+ */
+internal fun ServiceName.javaClassName(declaredIn: File): ClassName =
+    composeJavaClassName(declaredIn) {
+        add(simpleName + "Grpc")
+    }
 
 /**
  * Obtains a name of a Java package for the code generated from this Protobuf file.

@@ -28,12 +28,12 @@ package io.spine.protodata.renderer.given
 
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.Declaration
-import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.type.Convention
 import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language
 import kotlin.io.path.Path
 
-object PlainTextConvention : TypeConvention<Language, PlainTextName> {
+object PlainTextConvention : Convention<Language, TypeName, PlainTextName> {
 
     override fun declarationFor(name: TypeName): Declaration<Language, PlainTextName> {
         val generatedName = PlainTextName(name.simpleName)

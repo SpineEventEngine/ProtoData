@@ -27,7 +27,6 @@
 package io.spine.protodata.plugin
 
 import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.type.TypeConvention
 
 /**
  * A default abstract implementation of the [Plugin] interface.

@@ -38,7 +38,7 @@ internal const val JAVA_FILE = "java/org/example/Test.java"
 /**
  * A base for test cases that require a source file set with a Java file to run.
  */
-open class WithSourceFileSet protected constructor() {
+internal open class WithSourceFileSet protected constructor() {
 
     protected lateinit var sources: List<SourceFileSet>
         private set

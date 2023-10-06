@@ -24,37 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
+package io.spine.protodata.type
 
-import io.spine.protobuf.isNotDefault
+import io.spine.protodata.ProtoDeclarationName
 import io.spine.protodata.TypeName
-import io.spine.protodata.type.Declaration
-import io.spine.protodata.type.TypeSystem
-import io.spine.tools.code.Java
+import io.spine.tools.code.Language
 
 /**
- * A convention which governs Java Rejection-Throwable class declarations.
+ * The scheme by which the Protobuf type names are converted into language-specific type names.
  *
- * The convention only defines a declaration for rejection message types. Any other types are
- * undefined and thus result in the [declarationFor] method returning `null`.
+ * @param L the type of the target programming language.
+ * @param T the type of the programming language element in the target language.
+ *
+ * @property language a programming language for which the convention is defined.
  */
-public class RejectionThrowableConvention(
-    typeSystem: TypeSystem
-) : BaseJavaConvention<TypeName>(typeSystem) {
+public interface Convention<L : Language, N: ProtoDeclarationName, T: NameElement<L>> {
 
-    @Suppress("ReturnCount")
-    override fun declarationFor(name: TypeName): Declaration<Java, ClassName>? {
-        val declaration = typeSystem.findMessage(name) ?: return null
-        val (msg, file) = declaration
-        val fileName = file.path.value
-        if (!fileName.endsWith("rejections.proto") // Not a rejection message.
-            || msg.declaredIn.isNotDefault()       // Not a top-level message.
-        ) {
-            return null
-        }
-        val packageName = file.javaPackage()
-        val simpleName = name.simpleName
-        val cls = ClassName(packageName, simpleName)
-        return Declaration(cls, cls.javaFile)
-    }
+    /**
+     * Given a Protobuf type name, obtains the primary declaration generated from this Proto type.
+     *
+     * Not all Protobuf types are necessarily converted into declarations. Some conventions may
+     * define generated declarations for only a portion of the Protobuf types. For others, this
+     * method will return `null`.
+     *
+     * @param name
+     *         the name of the type to define the declaration for.
+     * @return the declaration generated for the given type or `null` if the declaration
+     *         is not defined for the given type.
+     */
+    public fun declarationFor(name: N): Declaration<L, T>?
+
+    /**
+     * The target programming language.
+     */
+    public val language: L
 }

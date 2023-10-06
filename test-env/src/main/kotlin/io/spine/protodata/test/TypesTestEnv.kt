@@ -77,7 +77,7 @@ public object TypesTestEnv {
         name = "java_package"
         number = JAVA_PACKAGE_FIELD_NUMBER
         type = type { primitive = TYPE_STRING }
-        value = StringValue.of("ua.acme.example").pack()
+        value = StringValue.of("dev.acme.example").pack()
     }
     public val outerClassnameOption: Option = option {
         name = "java_outer_classname"

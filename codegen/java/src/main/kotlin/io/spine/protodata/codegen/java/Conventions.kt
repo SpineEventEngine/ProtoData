@@ -26,6 +26,7 @@
 
 package io.spine.protodata.codegen.java
 
+import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.Declaration
 import io.spine.protodata.type.TypeSystem
@@ -36,7 +37,7 @@ import io.spine.tools.code.Java
  *
  * @throws IllegalStateException if the type name is unknown.
  */
-public class MessageOrEnumConvention(ts: TypeSystem) : BaseJavaTypeConvention(ts) {
+public class MessageOrEnumConvention(ts: TypeSystem) : BaseJavaConvention<TypeName>(ts) {
 
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
         val file = typeSystem.findMessageOrEnum(name)?.second
@@ -53,11 +54,29 @@ public class MessageOrEnumConvention(ts: TypeSystem) : BaseJavaTypeConvention(ts
  *
  * @throws IllegalStateException if the type name is unknown.
  */
-public class MessageOrBuilderConvention(ts: TypeSystem) : BaseJavaTypeConvention(ts) {
+public class MessageOrBuilderConvention(ts: TypeSystem) : BaseJavaConvention<TypeName>(ts) {
 
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
         val decl = MessageOrEnumConvention(typeSystem).declarationFor(name)
         val messageOrBuilder = decl.name.withSuffix("OrBuilder")
         return Declaration(messageOrBuilder, messageOrBuilder.javaFile)
+    }
+}
+
+/**
+ * This convention governs declarations of generated gRPC stubs.
+ *
+ * In the context of API level annotations, putting an annotation on a root gRPC-generated
+ * class effectively puts it on all the nested classes.
+ */
+public class GrpcConvention(ts: TypeSystem) : BaseJavaConvention<ServiceName>(ts) {
+
+    override fun declarationFor(name: ServiceName): Declaration<Java, ClassName> {
+        val pair = typeSystem.findService(name)
+        val file = pair?.second
+        check(file != null) { "Unknown service `${name.typeUrl}`." }
+        val service = pair.first
+        val cls = service.name.javaClassName(declaredIn = file)
+        return Declaration(cls, cls.javaFile)
     }
 }

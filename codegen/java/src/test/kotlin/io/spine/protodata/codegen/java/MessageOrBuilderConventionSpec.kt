@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test
 import toSourcePath
 
 @DisplayName("`MessageOrBuilderConvention` should")
-class MessageOrBuilderConventionSpec {
+internal class MessageOrBuilderConventionSpec {
 
     @Test
     fun `convert a message type name into a Java class name`() {
@@ -42,7 +42,7 @@ class MessageOrBuilderConventionSpec {
         val declaration = convention.declarationFor(TypesTestEnv.messageTypeName)
         declaration shouldNotBe null
         val (cls, path) = declaration
-        val expectedClassName = "ua.acme.example.FooOrBuilder"
+        val expectedClassName = "dev.acme.example.FooOrBuilder"
         cls.binary shouldBe expectedClassName
         path shouldBe expectedClassName.toSourcePath()
     }

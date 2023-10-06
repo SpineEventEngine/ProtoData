@@ -28,9 +28,9 @@ package io.spine.protodata.renderer
 
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
-import io.spine.protodata.TypeName
-import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeNameElement
+import io.spine.protodata.ProtoDeclarationName
+import io.spine.protodata.type.Convention
+import io.spine.protodata.type.NameElement
 import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.tools.code.Language
@@ -209,9 +209,11 @@ internal constructor(
     /**
      * Starts a file lookup for the given type name.
      */
-    public fun fileFor(typeName: TypeName): FileLookup = FileLookup(this, typeName)
+    public fun <N : ProtoDeclarationName> fileFor(name: N): FileLookup<N> =
+        FileLookup(this, name)
 
-    public fun createFileFor(typeName: TypeName): FileCreation = FileCreation(this, typeName)
+    public fun <N : ProtoDeclarationName> createFileFor(name: N): FileCreation<N> =
+        FileCreation(this, name)
 
     /**
      * Creates a new source file at the given [path] and contains the given [code].
@@ -343,17 +345,17 @@ public sealed interface FileOperation
 /**
  * Part of the fluent API for finding source files.
  */
-public class FileLookup(
+public class FileLookup<N: ProtoDeclarationName>(
     private val sources: SourceFileSet,
-    private val name: TypeName
+    private val name: N
 ) : FileOperation {
 
     /**
      * Searches for a source file with for the given Proto type generated according to
      * the given [convention].
      */
-    public fun <L : Language, N : TypeNameElement<L>> namedUsing(
-        convention: TypeConvention<L, N>
+    public fun <L : Language, T : NameElement<L>> namedUsing(
+        convention: Convention<L, N, T>
     ): SourceFile? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
@@ -364,9 +366,9 @@ public class FileLookup(
 /**
  * Part of the fluent API for creating new source files.
  */
-public class FileCreation(
+public class FileCreation<N: ProtoDeclarationName>(
     private val sources: SourceFileSet,
-    private val name: TypeName
+    private val name: N
 ) : FileOperation {
 
     /**
@@ -374,8 +376,8 @@ public class FileCreation(
      *
      * If the convention does not define a declaration for the given type, returns `null`.
      */
-    public fun <L : Language, N : TypeNameElement<L>> namedUsing(
-        convention: TypeConvention<L, N>
+    public fun <L : Language, T : NameElement<L>> namedUsing(
+        convention: Convention<L, N, T>
     ): FileCreationWithPath? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path

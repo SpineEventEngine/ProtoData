@@ -98,7 +98,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      *   1. The class is annotated with [@Target][Target].
      *   2. The annotation has [TYPE] as one of the targets.
      *
-     * If one of these criteria is not met, [IllegalArgumentException] will be thrown.
+     * @throws IllegalArgumentException if the criteria are not met.
      */
     internal open fun checkAnnotationClass() {
         val targetClass = Target::class.java

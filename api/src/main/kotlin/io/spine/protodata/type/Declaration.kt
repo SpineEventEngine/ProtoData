@@ -38,7 +38,7 @@ import java.nio.file.Path
  * @param L the type of the target language.
  * @param T the language-specific type of the type name element.
  */
-public data class Declaration<L: Language, T : TypeNameElement<L>>(
+public data class Declaration<L: Language, T : NameElement<L>>(
     public val name: T,
     public val path: Path
 )

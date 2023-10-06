@@ -93,7 +93,8 @@ public interface Plugin {
      * [FileExited][io.spine.protodata.event.FileExited] events to perform actions on
      * the whole content of a proto file.
      *
-     * @param context The `BoundedContextBuilder` to extend.
+     * @param context
+     *         the `BoundedContextBuilder` to extend.
      */
     public fun extend(context: BoundedContextBuilder) {}
 }

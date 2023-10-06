@@ -26,18 +26,19 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.type.TypeConvention
+import io.spine.protodata.ProtoDeclarationName
+import io.spine.protodata.type.Convention
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
 
 /**
- * An abstract base for Java [TypeConvention]s.
+ * An abstract base for Java [Convention]s.
  *
  * @property typeSystem the type system which is used to resolve types.
  */
-public abstract class BaseJavaTypeConvention(
+public abstract class BaseJavaConvention<N: ProtoDeclarationName>(
     protected val typeSystem: TypeSystem
-) : TypeConvention<Java, ClassName> {
+) : Convention<Java, N, ClassName> {
 
     final override val language: Java = Java
 }

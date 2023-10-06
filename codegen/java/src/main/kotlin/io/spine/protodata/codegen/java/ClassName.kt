@@ -26,20 +26,22 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.type.TypeNameElement
+import io.spine.protodata.ServiceName
+import io.spine.protodata.codegen.java.file.javaPackage
+import io.spine.protodata.type.NameElement
 import io.spine.tools.code.Java
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
 /**
- * A fully qualified Java class name.
+ * A fully-qualified Java class name.
  */
 public class ClassName
 internal constructor(
     private val packageName: String,
     private val simpleNames: List<String>
-) : JavaElement, TypeNameElement<Java> {
+) : NameElement<Java>, JavaElement {
 
     /**
      * Creates a new class name from the given package name a class name.
