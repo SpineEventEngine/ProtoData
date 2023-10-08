@@ -34,6 +34,7 @@ import io.spine.tools.code.Language
  * The scheme by which the Protobuf type names are converted into language-specific type names.
  *
  * @param L the type of the target programming language.
+ * @param N the type of the Protobuf declaration, such as message, enum, or service.
  * @param T the type of the programming language element in the target language.
  *
  * @property language a programming language for which the convention is defined.
