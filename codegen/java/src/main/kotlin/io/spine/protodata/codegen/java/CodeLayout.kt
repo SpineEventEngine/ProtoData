@@ -83,7 +83,7 @@ public fun EnumType.javaClassName(declaredIn: File): ClassName =
  * @param declaredIn
  *        the Protobuf file where the declaration is declared.
  * @param block
- *        of code which adds the name elements to the class name.
+ *        the block of code which adds the name elements to the class name.
  */
 private fun composeJavaClassName(
     declaredIn: File,
