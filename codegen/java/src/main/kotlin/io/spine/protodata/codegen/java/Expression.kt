@@ -304,7 +304,7 @@ public class MethodCall
 ) {
 
     /**
-     * Creates a new, non-generic, method call with the given [arguments].
+     * Creates a new, non-generified, method call with the given [arguments].
      *
      * @param scope
      *         the scope of the method invocation: an instance receiving the method call, or
