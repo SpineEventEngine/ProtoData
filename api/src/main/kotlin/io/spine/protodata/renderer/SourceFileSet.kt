@@ -377,6 +377,8 @@ public class FileCreation<N: ProtoDeclarationName>(
      * Attempts to create a file path for the given type name using the given [convention].
      *
      * If the convention does not define a declaration for the given type, returns `null`.
+     *
+     * @param N the type of the Protobuf declaration name such as message, enum, or a service.
      */
     public fun <L : Language, T : NameElement<L>> namedUsing(
         convention: Convention<L, N, T>
