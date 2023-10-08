@@ -344,6 +344,8 @@ public sealed interface FileOperation
 
 /**
  * Part of the fluent API for finding source files.
+ *
+ * @param N the type of the Protobuf declaration name such as message, enum, or a service.
  */
 public class FileLookup<N: ProtoDeclarationName>(
     private val sources: SourceFileSet,
