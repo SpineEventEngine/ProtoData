@@ -233,6 +233,22 @@ internal constructor(
     override fun toString(): String {
         return "FieldAccess[$message#${name.value}]"
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FieldAccess) return false
+        if (!super.equals(other)) return false
+
+        if (message != other.message) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + message.hashCode()
+        return result
+    }
 }
 
 /**

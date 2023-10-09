@@ -37,8 +37,8 @@ import io.spine.string.camelCase
  * Abstract base for field access conventions.
  */
 public abstract class FieldConventions(
-    public val name: FieldName,
-    public val cardinality: Field.CardinalityCase = SINGLE
+    protected val name: FieldName,
+    protected val cardinality: Field.CardinalityCase = SINGLE
 ) {
     protected val getterName: String
         get() = when (cardinality) {
@@ -74,4 +74,20 @@ public abstract class FieldConventions(
 
     private fun prefixed(prefix: String): String =
         "$prefix${name.value.camelCase()}"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FieldConventions) return false
+
+        if (name != other.name) return false
+        if (cardinality != other.cardinality) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + cardinality.hashCode()
+        return result
+    }
 }
