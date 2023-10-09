@@ -65,27 +65,53 @@ public class MessageOrBuilderConvention(ts: TypeSystem) : BaseJavaConvention<Typ
 }
 
 /**
- * This convention governs declarations of generated gRPC stubs.
+ * Abstract base for conventions which govern generated code for protobuf services.
  *
- * In the context of API level annotations, putting an annotation on a root gRPC-generated
- * class effectively puts it on all the nested classes.
+ * @see <a href="https://protobuf.dev/reference/java/java-generated/#service">Protobuf Services</a>
  */
-public class GrpcServiceConvention(ts: TypeSystem) : BaseJavaConvention<ServiceName>(ts) {
+public abstract class AbstractServiceConvention(ts: TypeSystem) :
+    BaseJavaConvention<ServiceName>(ts) {
 
     override fun declarationFor(name: ServiceName): Declaration<Java, ClassName> {
         val pair = typeSystem.findService(name)
         val file = pair?.second
         check(file != null) { "Unknown service `${name.typeUrl}`." }
         val service = pair.first
-        val cls = service.name.javaClassName(declaredIn = file)
+        val cls = javaClassName(service.name, declaredIn = file)
         return Declaration(cls, cls.javaFile)
     }
 
     /**
-     * Obtains a fully-qualified Java class, generated for the gRPC service with this name.
+     * Calculates a class name for the given service declared in the given file.
      */
-    private fun ServiceName.javaClassName(declaredIn: File): ClassName =
+    protected abstract fun javaClassName(name: ServiceName, declaredIn: File): ClassName
+}
+
+/**
+ * This convention governs declarations of generated gRPC stubs.
+ *
+ * In the context of API level annotations, putting an annotation on a root gRPC-generated
+ * class effectively puts it on all the nested classes.
+ */
+public class GrpcServiceConvention(ts: TypeSystem) : AbstractServiceConvention(ts) {
+
+    protected override fun javaClassName(name: ServiceName, declaredIn: File): ClassName =
         composeJavaClassName(declaredIn) {
-            add(simpleName + "Grpc")
+            add(name.simpleName + "Grpc")
+        }
+}
+
+/**
+ * This convention governs declarations of
+ * [generic](https://protobuf.dev/reference/java/java-generated/#service)
+ * Protobuf service stubs.
+ *
+ * @see <a href="https://protobuf.dev/reference/java/java-generated/#service">Protobuf Services</a>
+ */
+public class GenericServiceConvention(ts: TypeSystem): AbstractServiceConvention(ts) {
+
+    override fun javaClassName(name: ServiceName, declaredIn: File): ClassName =
+        composeJavaClassName(declaredIn) {
+            add(name.simpleName)
         }
 }
