@@ -31,7 +31,6 @@ import io.spine.protodata.TypeName
 import io.spine.protodata.type.Declaration
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
-import kotlin.DeprecationLevel.ERROR
 
 /**
  * A convention which governs Java Rejection-Throwable class declarations.
@@ -41,7 +40,7 @@ import kotlin.DeprecationLevel.ERROR
  */
 public class RejectionThrowableConvention(
     typeSystem: TypeSystem
-) : BaseJavaTypeConvention(typeSystem) {
+) : BaseJavaConvention<TypeName>(typeSystem) {
 
     @Suppress("ReturnCount")
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName>? {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,31 +26,19 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.renderer.SourceFileSet
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption
-import kotlin.io.path.writeText
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.io.TempDir
-
-internal const val JAVA_FILE = "java/org/example/Test.java"
+import io.spine.protodata.ProtoDeclarationName
+import io.spine.protodata.type.Convention
+import io.spine.protodata.type.TypeSystem
+import io.spine.tools.code.Java
 
 /**
- * A base for test cases that require a source file set with a Java file to run.
+ * An abstract base for Java [Convention]s.
+ *
+ * @property typeSystem the type system which is used to resolve types.
  */
-internal open class WithSourceFileSet protected constructor() {
+public abstract class BaseJavaConvention<N: ProtoDeclarationName>(
+    protected val typeSystem: TypeSystem
+) : Convention<Java, N, ClassName> {
 
-    protected lateinit var sources: List<SourceFileSet>
-        private set
-
-    @BeforeEach
-    fun createSourceSet(@TempDir path: Path) {
-        val sourceRoot = path.resolve("source")
-        val targetRoot = path.resolve("target")
-        val sourceFile = sourceRoot.resolve(JAVA_FILE)
-        val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
-        sourceFile.parent.toFile().mkdirs()
-        sourceFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
-        sources = listOf(SourceFileSet.create(sourceRoot, targetRoot))
-    }
+    final override val language: Java = Java
 }

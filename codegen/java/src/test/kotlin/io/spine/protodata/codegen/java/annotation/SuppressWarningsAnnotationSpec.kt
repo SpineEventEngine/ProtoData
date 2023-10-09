@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("`SuppressRenderer` should")
-class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
+internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
     companion object {
         val emptyRequest: CodeGeneratorRequest = CodeGeneratorRequest.getDefaultInstance()

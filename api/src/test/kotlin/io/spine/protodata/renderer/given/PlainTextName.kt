@@ -26,12 +26,12 @@
 
 package io.spine.protodata.renderer.given
 
-import io.spine.protodata.type.TypeNameElement
+import io.spine.protodata.type.NameElement
 import io.spine.tools.code.Language
 
 class PlainTextName(
     private val name: String
-) : TypeNameElement<Language> {
+) : NameElement<Language> {
 
     override fun toCode(): String = name
 }

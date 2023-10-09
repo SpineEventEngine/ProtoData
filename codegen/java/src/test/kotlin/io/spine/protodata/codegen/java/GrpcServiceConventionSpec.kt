@@ -24,36 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.type
+package io.spine.protodata.codegen.java
 
-import io.spine.protodata.TypeName
-import io.spine.tools.code.Language
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.spine.protodata.test.TypesTestEnv.serviceName
+import io.spine.protodata.test.TypesTestEnv.typeSystem
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import toSourcePath
 
-/**
- * The scheme by which the Protobuf type names are converted into language-specific type names.
- *
- * @param L the type of the target programming language.
- * @param T the type of the programming language element in the target language.
- *
- * @property language a programming language for which the convention is defined.
- */
-public interface TypeConvention<L : Language, T: TypeNameElement<L>> {
+@DisplayName("`GrpcServiceConvention` should")
+internal class GrpcServiceConventionSpec {
 
-    /**
-     * Given a Protobuf type name, obtains the primary declaration generated from this Proto type.
-     *
-     * Not all Protobuf types are necessarily converted into declarations. Some conventions may
-     * define generated declarations for only a portion of the Protobuf types. For others, this
-     * method will return `null`.
-     *
-     * @param name the name of the type to define the declaration for.
-     * @return the declaration generated for the given type or `null` if the declaration
-     *         is not defined for the given type.
-     */
-    public fun declarationFor(name: TypeName): Declaration<L, T>?
-
-    /**
-     * The target programming language.
-     */
-    public val language: L
+    @Test
+    fun `convert a service name into a Java class name`() {
+        val convention = GrpcServiceConvention(typeSystem)
+        val declaration = convention.declarationFor(serviceName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        val expectedClassName = "dev.acme.example.${serviceName.simpleName}Grpc"
+        cls.binary shouldBe expectedClassName
+        path shouldBe expectedClassName.toSourcePath()
+    }
 }

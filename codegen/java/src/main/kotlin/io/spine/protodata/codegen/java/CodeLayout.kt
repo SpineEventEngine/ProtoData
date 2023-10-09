@@ -34,8 +34,9 @@ import io.spine.protodata.EnumType
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.TypeName
-import io.spine.string.camelCase
 import io.spine.protodata.find
+import io.spine.protodata.nameWithoutExtension
+import io.spine.string.camelCase
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -76,43 +77,68 @@ public fun EnumType.javaClassName(declaredIn: File): ClassName =
     name.javaClassName(declaredIn)
 
 /**
- * Obtains the full name of the Java class, generated from the Protobuf type with this name.
+ * Obtains a Java class name for a Protobuf declaration.
  *
- * @return name of the Java class.
+ * The function calculates the package name taking into account values of
+ * `java_package_name` and `java_multiple_files` options that may present in the file.
+ *
+ * @param declaredIn
+ *        the Protobuf file where the declaration resides in.
+ * @param block
+ *        the block of code which adds the name elements to the class name.
+ *
+ * @see File.javaPackage
+ * @see File.javaMultipleFiles
  */
-internal fun TypeName.javaClassName(declaredIn: File): ClassName {
+internal fun composeJavaClassName(
+    declaredIn: File,
+    block: MutableList<String>.() -> Unit
+): ClassName {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val nameElements = mutableListOf<String>()
     if (!javaMultipleFiles) {
         nameElements.add(declaredIn.javaOuterClassName())
     }
-    nameElements.addAll(nestingTypeNameList)
-    nameElements.add(simpleName)
+    block(nameElements)
     return ClassName(packageName, nameElements)
 }
 
+/**
+ * Obtains a fully-qualified Java class, generated for the Protobuf type with this name.
+ */
+internal fun TypeName.javaClassName(declaredIn: File): ClassName =
+    composeJavaClassName(declaredIn) {
+        addAll(nestingTypeNameList)
+        add(simpleName)
+    }
+
+/**
+ * Obtains a name of a Java package for the code generated from this Protobuf file.
+ *
+ * @return A value of the `java_package` option, if it is set.
+ *         Otherwise, returns the package name of the file.
+ */
 public fun File.javaPackage(): String =
     optionList.find("java_package", StringValue::class.java)
         ?.value
         ?: packageName
 
+/**
+ * Obtains a value of `java_multiple_files` option set for this file.
+ */
 public fun File.javaMultipleFiles(): Boolean =
     optionList.find("java_multiple_files", BoolValue::class.java)
         ?.value
         ?: false
 
+/**
+ * Obtains a name of the Java outer class generated for this Protobuf file.
+ *
+ * @return A value of `java_outer_classname` option, if it set for this file.
+ */
 public fun File.javaOuterClassName(): String =
     optionList.find("java_outer_classname", StringValue::class.java)
         ?.value
         ?: nameWithoutExtension().camelCase()
 
-private fun File.nameWithoutExtension(): String {
-    val name = path.value.split("/").last()
-    val index = name.indexOf(".")
-    return if (index > 0) {
-        name.substring(0, index)
-    } else {
-        name
-    }
-}

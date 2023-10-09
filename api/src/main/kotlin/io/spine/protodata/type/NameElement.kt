@@ -29,6 +29,9 @@ package io.spine.protodata.type
 import io.spine.tools.code.Language
 
 /**
- * A [CodeElement] that represents a name of a data type.
+ * A [CodeElement] that represents a name of a language-specific type.
+ *
+ * In Java, it would be a fully-qualified class name, in Kotlin — it could be a class name,
+ * an object name, or a function name.
  */
-public interface TypeNameElement<L : Language> : CodeElement<L>
+public interface NameElement<L : Language> : CodeElement<L>

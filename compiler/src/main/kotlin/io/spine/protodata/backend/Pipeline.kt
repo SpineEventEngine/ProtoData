@@ -38,8 +38,6 @@ import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeNameElement
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
@@ -48,7 +46,6 @@ import io.spine.server.query.QueryingClient
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
-import io.spine.tools.code.Language
 
 /**
  * A pipeline which processes the Protobuf files.

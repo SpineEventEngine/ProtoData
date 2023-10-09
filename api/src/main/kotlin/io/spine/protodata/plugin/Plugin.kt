@@ -93,20 +93,10 @@ public interface Plugin {
      * [FileExited][io.spine.protodata.event.FileExited] events to perform actions on
      * the whole content of a proto file.
      *
-     * @param context The `BoundedContextBuilder` to extend.
+     * @param context
+     *         the `BoundedContextBuilder` to extend.
      */
     public fun extend(context: BoundedContextBuilder) {}
-}
-
-/**
- * Applies the given plugin to the receiver bounded context.
- */
-@Deprecated(
-    "Use `Plugin.applyTo(BoundedContextBuilder)` instead.",
-    ReplaceWith("this.applyTo(context)")
-)
-public fun BoundedContextBuilder.apply(plugin: Plugin) {
-    plugin.applyTo(this)
 }
 
 /**

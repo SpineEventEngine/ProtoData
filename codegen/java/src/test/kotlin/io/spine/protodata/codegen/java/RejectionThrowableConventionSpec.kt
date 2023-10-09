@@ -36,7 +36,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @DisplayName("`RejectionThrowableConvention` should")
-class RejectionThrowableConventionSpec {
+internal class RejectionThrowableConventionSpec {
 
     @Test
     fun `convert a rejection type name into a rejection throwable class`() {
@@ -49,16 +49,16 @@ class RejectionThrowableConventionSpec {
         throwable shouldNotBe null
 
         val (messageClass, messagePath) = message
-        messageClass.binary shouldBe "ua.acme.example.CartoonRejections\$CannotDrawCartoon"
-        messagePath shouldBe Path("ua/acme/example/CartoonRejections.java")
+        messageClass.binary shouldBe "dev.acme.example.CartoonRejections\$CannotDrawCartoon"
+        messagePath shouldBe Path("dev/acme/example/CartoonRejections.java")
 
         val (throwableClass, throwablePath) = throwable!!
-        throwableClass.binary shouldBe "ua.acme.example.CannotDrawCartoon"
-        throwablePath shouldBe Path("ua/acme/example/CannotDrawCartoon.java")
+        throwableClass.binary shouldBe "dev.acme.example.CannotDrawCartoon"
+        throwablePath shouldBe Path("dev/acme/example/CannotDrawCartoon.java")
     }
 
     @Test
-    fun `not convert a regular message name to a rejection throwables class`() {
+    fun `not convert a regular message name to a rejection throwable class`() {
         val convention = RejectionThrowableConvention(typeSystem)
         val declaration = convention.declarationFor(messageTypeName)
         declaration shouldBe null

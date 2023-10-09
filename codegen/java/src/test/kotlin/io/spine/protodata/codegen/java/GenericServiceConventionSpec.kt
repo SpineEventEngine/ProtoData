@@ -26,18 +26,24 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.type.TypeConvention
-import io.spine.protodata.type.TypeSystem
-import io.spine.tools.code.Java
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.spine.protodata.test.TypesTestEnv
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import toSourcePath
 
-/**
- * An abstract base for Java [TypeConvention]s.
- *
- * @property typeSystem the type system which is used to resolve types.
- */
-public abstract class BaseJavaTypeConvention(
-    protected val typeSystem: TypeSystem
-) : TypeConvention<Java, ClassName> {
+@DisplayName("`GenericServiceConvention` should")
+internal class GenericServiceConventionSpec {
 
-    final override val language: Java = Java
+    @Test
+    fun `convert a service name into a Java class name`() {
+        val convention = GenericServiceConvention(TypesTestEnv.typeSystem)
+        val declaration = convention.declarationFor(TypesTestEnv.serviceName)
+        declaration shouldNotBe null
+        val (cls, path) = declaration
+        val expectedClassName = "dev.acme.example.${TypesTestEnv.serviceName.simpleName}"
+        cls.binary shouldBe expectedClassName
+        path shouldBe expectedClassName.toSourcePath()
+    }
 }

@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("Java-related AST extensions should")
-class JavaCodegenSpec {
+internal class JavaCodegenSpec {
 
     @Nested
     inner class `Obtain Java class name from` {

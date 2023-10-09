@@ -38,6 +38,7 @@ import io.spine.protodata.Field.CardinalityCase.LIST
 import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
+import io.spine.protodata.fieldName
 import io.spine.string.camelCase
 
 private const val OF = "of"
@@ -116,9 +117,12 @@ public class Literal(value: Any) : Expression(value.toString())
 /**
  * Constructs a call to a static method of this class.
  *
- * @param name the name of the method
- * @param arguments the method arguments
- * @param generics the method type parameters
+ * @param name
+ *         the name of the method.
+ * @param arguments
+ *         the method arguments.
+ * @param generics
+ *         the method type parameters.
  */
 @JvmOverloads
 public fun ClassName.call(
@@ -170,7 +174,7 @@ public class MessageReference(label: String) : Expression(label) {
      * Obtains a [FieldAccess] to the field of this message with the given [fieldName].
      */
     public fun field(fieldName: String, cardinality: CardinalityCase): FieldAccess =
-        FieldAccess(this, fieldName(fieldName), cardinality)
+        FieldAccess(this, fieldName, cardinality)
 }
 
 /**
@@ -186,6 +190,15 @@ internal constructor(
 ) {
 
     /**
+     * Constructs a field access for the given [message] and [name].
+     */
+    internal constructor(
+        message: Expression,
+        name: String,
+        cardinality: CardinalityCase = SINGLE
+    ) : this(message, fieldName { value = name }, cardinality)
+
+    /**
      * A getter expression for the associated field.
      */
     public val getter: MethodCall
@@ -195,31 +208,31 @@ internal constructor(
      * Constructs a setter expression for the associated field.
      */
     public fun setter(value: Expression): MethodCall =
-        MethodCall(message, setterName, listOf(value))
+        MethodCall(message, setterName, value)
 
     /**
      * Constructs an `addField(..)` expression for the associated field.
      */
     public fun add(value: Expression): MethodCall =
-        MethodCall(message, addName, listOf(value))
+        MethodCall(message, addName, value)
 
     /**
      * Constructs an `addAllField(..)` expression for the associated field.
      */
     public fun addAll(value: Expression): MethodCall =
-        MethodCall(message, addAllName, listOf(value))
+        MethodCall(message, addAllName, value)
 
     /**
      * Constructs an `putField(..)` expression for the associated field.
      */
     public fun put(key: Expression, value: Expression): MethodCall =
-        MethodCall(message, putName, listOf(key, value))
+        MethodCall(message, putName, key, value)
 
     /**
      * Constructs an `putAllField(..)` expression for the associated field.
      */
     public fun putAll(value: Expression): MethodCall =
-        MethodCall(message, putAllName, listOf(value))
+        MethodCall(message, putAllName, value)
 
     private val getterName: String
         get() = when (cardinality) {
@@ -271,14 +284,17 @@ public class MethodCall
 /**
  * Creates a new `MethodCall`.
  *
- * @param scope the scope of the method invocation: an instance receiving the method call or
- *              the name of the class declaring a static method
- * @param name the name of the method
- * @param arguments list of the arguments passed to the method
- * @param generics the list of the type arguments passed to the method
+ * @param scope
+ *         the scope of the method invocation: an instance receiving the method call, or
+ *         the name of the class declaring a static method.
+ * @param name
+ *         the name of the method.
+ * @param arguments
+ *         the list of the arguments passed to the method.
+ * @param generics
+ *         the list of the type arguments passed to the method.
  */
-@JvmOverloads
-constructor(
+@JvmOverloads constructor(
     scope: JavaElement,
     name: String,
     arguments: List<Expression> = listOf(),
@@ -286,6 +302,23 @@ constructor(
 ) : Expression(
     "${scope.toCode()}.${generics.genericTypes()}$name(${arguments.formatParams()})"
 ) {
+
+    /**
+     * Creates a new, non-generified, method call with the given [arguments].
+     *
+     * @param scope
+     *         the scope of the method invocation: an instance receiving the method call, or
+     *         the name of the class declaring a static method.
+     * @param name
+     *         the name of the method.
+     * @param arguments
+     *         the list of the arguments passed to the method.
+     */
+    public constructor(
+        scope: JavaElement,
+        name: String,
+        vararg arguments: Expression
+    ) : this(scope, name, arguments.toList())
 
     /**
      * Constructs an expression of calling another method on the result of this method call.
@@ -312,7 +345,7 @@ constructor(
     public fun chainAddAll(name: String, value: Expression): MethodCall =
         fieldAccess(name).addAll(value)
 
-    private fun fieldAccess(name: String) = FieldAccess(this, fieldName(name))
+    private fun fieldAccess(name: String) = FieldAccess(this, name)
 
     /**
      * Constructs an expression chaining a call of the `build()` method.
@@ -381,8 +414,3 @@ private fun List<ClassName>.genericTypes() =
  */
 private fun List<Expression>.formatParams() =
     joinToString { it.toCode() }
-
-/**
- * Creates new instance of [FieldName] for the given [value].
- */
-private fun fieldName(value: String) = FieldName.newBuilder().setValue(value).build()

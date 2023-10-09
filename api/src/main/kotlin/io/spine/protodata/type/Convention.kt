@@ -26,19 +26,37 @@
 
 package io.spine.protodata.type
 
+import io.spine.protodata.ProtoDeclarationName
+import io.spine.protodata.TypeName
 import io.spine.tools.code.Language
-import java.nio.file.Path
 
 /**
- * A type declaration that can be generated from a Protobuf type.
+ * The scheme by which the Protobuf type names are converted into language-specific type names.
  *
- * @property name the name of the generated type.
- * @property path the path to the file where the declaration is placed.
+ * @param L the type of the target programming language.
+ * @param N the type of the Protobuf declaration, such as message, enum, or service.
+ * @param T the type of the programming language element in the target language.
  *
- * @param L the type of the target language.
- * @param T the language-specific type of the type name element.
+ * @property language a programming language for which the convention is defined.
  */
-public data class Declaration<L: Language, T : NameElement<L>>(
-    public val name: T,
-    public val path: Path
-)
+public interface Convention<L : Language, N: ProtoDeclarationName, T: NameElement<L>> {
+
+    /**
+     * Given a Protobuf type name, obtains the primary declaration generated from this Proto type.
+     *
+     * Not all Protobuf types are necessarily converted into declarations. Some conventions may
+     * define generated declarations for only a portion of the Protobuf types. For others, this
+     * method will return `null`.
+     *
+     * @param name
+     *         the name of the type to define the declaration for.
+     * @return the declaration generated for the given type or `null` if the declaration
+     *         is not defined for the given type.
+     */
+    public fun declarationFor(name: N): Declaration<L, T>?
+
+    /**
+     * The target programming language.
+     */
+    public val language: L
+}
