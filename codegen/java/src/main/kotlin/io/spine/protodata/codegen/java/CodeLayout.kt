@@ -33,11 +33,10 @@ import com.google.protobuf.StringValue
 import io.spine.protodata.EnumType
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
-import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
-import io.spine.string.camelCase
 import io.spine.protodata.find
 import io.spine.protodata.nameWithoutExtension
+import io.spine.string.camelCase
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -78,14 +77,20 @@ public fun EnumType.javaClassName(declaredIn: File): ClassName =
     name.javaClassName(declaredIn)
 
 /**
- * Obtains a Java class name for the given Protobuf declaration.
+ * Obtains a Java class name for a Protobuf declaration.
+ *
+ * The function calculates the package name taking into account values of
+ * `java_package_name` and `java_multiple_files` options that may present in the file.
  *
  * @param declaredIn
  *        the Protobuf file where the declaration resides in.
  * @param block
  *        the block of code which adds the name elements to the class name.
+ *
+ * @see File.javaPackage
+ * @see File.javaMultipleFiles
  */
-private fun composeJavaClassName(
+internal fun composeJavaClassName(
     declaredIn: File,
     block: MutableList<String>.() -> Unit
 ): ClassName {
@@ -106,14 +111,6 @@ internal fun TypeName.javaClassName(declaredIn: File): ClassName =
     composeJavaClassName(declaredIn) {
         addAll(nestingTypeNameList)
         add(simpleName)
-    }
-
-/**
- * Obtains a fully-qualified Java class, generated for the gRPC service with this name.
- */
-internal fun ServiceName.javaClassName(declaredIn: File): ClassName =
-    composeJavaClassName(declaredIn) {
-        add(simpleName + "Grpc")
     }
 
 /**

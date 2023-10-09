@@ -34,12 +34,12 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import toSourcePath
 
-@DisplayName("`GrpcConvention` should")
-internal class GrpcConventionSpec {
+@DisplayName("`GrpcServiceConvention` should")
+internal class GrpcServiceConventionSpec {
 
     @Test
     fun `convert a message type name into a Java class name`() {
-        val convention = GrpcConvention(typeSystem)
+        val convention = GrpcServiceConvention(typeSystem)
         val declaration = convention.declarationFor(serviceName)
         declaration shouldNotBe null
         val (cls, path) = declaration

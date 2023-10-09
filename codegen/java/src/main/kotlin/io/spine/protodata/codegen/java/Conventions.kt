@@ -26,6 +26,7 @@
 
 package io.spine.protodata.codegen.java
 
+import io.spine.protodata.File
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.Declaration
@@ -69,7 +70,7 @@ public class MessageOrBuilderConvention(ts: TypeSystem) : BaseJavaConvention<Typ
  * In the context of API level annotations, putting an annotation on a root gRPC-generated
  * class effectively puts it on all the nested classes.
  */
-public class GrpcConvention(ts: TypeSystem) : BaseJavaConvention<ServiceName>(ts) {
+public class GrpcServiceConvention(ts: TypeSystem) : BaseJavaConvention<ServiceName>(ts) {
 
     override fun declarationFor(name: ServiceName): Declaration<Java, ClassName> {
         val pair = typeSystem.findService(name)
@@ -79,4 +80,12 @@ public class GrpcConvention(ts: TypeSystem) : BaseJavaConvention<ServiceName>(ts
         val cls = service.name.javaClassName(declaredIn = file)
         return Declaration(cls, cls.javaFile)
     }
+
+    /**
+     * Obtains a fully-qualified Java class, generated for the gRPC service with this name.
+     */
+    private fun ServiceName.javaClassName(declaredIn: File): ClassName =
+        composeJavaClassName(declaredIn) {
+            add(simpleName + "Grpc")
+        }
 }
