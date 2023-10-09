@@ -90,7 +90,7 @@ public abstract class AbstractServiceConvention(ts: TypeSystem) :
 /**
  * This convention governs declarations of generated gRPC stubs.
  *
- * In the context of API level annotations, putting an annotation on a root gRPC-generated
+ * In the context of API-level annotations, putting an annotation on a root gRPC-generated
  * class effectively puts it on all the nested classes.
  */
 public class GrpcServiceConvention(ts: TypeSystem) : AbstractServiceConvention(ts) {
