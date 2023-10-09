@@ -90,23 +90,11 @@ public interface NonRepeatingInsertionPoint : InsertionPoint {
     public fun locateOccurrence(text: Text): TextCoordinates
 }
 
-private val START_OF_FILE = textCoordinates {
-    wholeLine = 0
-}
-
-internal val END_OF_FILE = textCoordinates {
-    endOfText = Empty.getDefaultInstance()
-}
-
-private val NOWHERE = textCoordinates {
-    nowhere = Empty.getDefaultInstance()
-}
-
 /**
  * A factory of [TextCoordinates] instances.
  *
- * This interface serves as a trait for the [InsertionPoint] type. The methods it provides are meant
- * to be used by the authors of custom insertion points.
+ * This interface serves as a trait for the [InsertionPoint] type.
+ * The methods it provides are meant to be used by the authors of custom insertion points.
  */
 @Internal
 public sealed interface CoordinatesFactory {
@@ -131,22 +119,37 @@ public sealed interface CoordinatesFactory {
         wholeLine = line
     }
 
-    /**
-     * Obtains coordinates pointing at the beginning of the first line in the text.
-     */
-    public fun startOfFile(): TextCoordinates = START_OF_FILE
+    public companion object {
 
-    /**
-     * Obtains coordinates pointing at the point after the last line in the text.
-     */
-    public fun endOfFile(): TextCoordinates = END_OF_FILE
+        /**
+         * Obtains coordinates pointing at the beginning of the first line in the text.
+         */
+        @get:JvmName("startOfFile")
+        @get:JvmStatic
+        public val startOfFile: TextCoordinates = textCoordinates {
+            wholeLine = 0
+        }
 
-    /**
-     * Obtains coordinates that do not point at anywhere in the text.
-     *
-     * The insertion point will NOT be placed in the file at question.
-     */
-    public fun nowhere(): TextCoordinates = NOWHERE
+        /**
+         * Obtains coordinates pointing at the point after the last line in the text.
+         */
+        @get:JvmName("endOfFile")
+        @get:JvmStatic
+        public val endOfFile: TextCoordinates = textCoordinates {
+            endOfText = Empty.getDefaultInstance()
+        }
+
+        /**
+         * Obtains coordinates that do not point at anywhere in the text.
+         *
+         * The insertion point will NOT be placed in the file at question.
+         */
+        @get:JvmName("nowhere")
+        @get:JvmStatic
+        public val nowhere: TextCoordinates = textCoordinates {
+            nowhere = Empty.getDefaultInstance()
+        }
+    }
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.startOfFile
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
@@ -43,10 +45,10 @@ public class VariousKtInsertionPointsPrinter : InsertionPointPrinter<Kotlin>(Kot
 public enum class KotlinInsertionPoint : NonRepeatingInsertionPoint {
 
     FILE_START {
-        override fun locateOccurrence(text: Text): TextCoordinates = startOfFile()
+        override fun locateOccurrence(text: Text): TextCoordinates = startOfFile
     },
     FILE_END {
-        override fun locateOccurrence(text: Text): TextCoordinates = endOfFile()
+        override fun locateOccurrence(text: Text): TextCoordinates = endOfFile
     },
     LINE_FOUR_COL_THIRTY_THREE {
         override fun locateOccurrence(text: Text): TextCoordinates = at(3, 33)

@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.string.Strings.camelCase;
 import static java.lang.String.format;
+import static io.spine.protodata.renderer.CoordinatesFactory.nowhere;
 
 /**
  * An insertion point at the line right before a getter method of the given field.

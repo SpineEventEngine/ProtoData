@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,39 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.renderer
 
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.startOfFile
-import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.renderer.NonRepeatingInsertionPoint
-import io.spine.text.Text
-import io.spine.text.TextCoordinates
-import io.spine.tools.code.Java
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter<Java>(Java) {
+@DisplayName("`CoordinatesFactory` should")
+internal class CoordinatesFactorySpec {
 
-    override fun supportedInsertionPoints(): Set<InsertionPoint> =
-        GenericInsertionPoint.values().toSet()
-}
-
-public enum class GenericInsertionPoint : NonRepeatingInsertionPoint {
-
-    FILE_START {
-        override fun locateOccurrence(text: Text): TextCoordinates = startOfFile
-    },
-    FILE_MIDDLE {
-        override fun locateOccurrence(text: Text): TextCoordinates = atLine(text.lines().size / 2)
-    },
-    FILE_END {
-        override fun locateOccurrence(text: Text): TextCoordinates = endOfFile
-    },
-    OUTSIDE_FILE {
-        override fun locateOccurrence(text: Text): TextCoordinates = nowhere
-    };
-
-    override val label: String
-        get() = name.lowercase()
+    @Test
+    fun `provide same instances for constant coordinates`() {
+        startOfFile shouldBeSameInstanceAs startOfFile
+        endOfFile shouldBeSameInstanceAs endOfFile
+        nowhere shouldBeSameInstanceAs nowhere
+    }
 }
