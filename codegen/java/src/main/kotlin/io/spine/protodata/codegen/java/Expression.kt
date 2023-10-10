@@ -34,14 +34,10 @@ import com.google.protobuf.ByteString
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.Field
 import io.spine.protodata.Field.CardinalityCase
-import io.spine.protodata.Field.CardinalityCase.LIST
-import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
 import io.spine.protodata.FieldName
+import io.spine.protodata.codegen.java.MethodCall.Companion.OF
 import io.spine.protodata.fieldName
-import io.spine.string.camelCase
-
-private const val OF = "of"
 
 /**
  * A piece of Java code which yields a value.
@@ -185,9 +181,9 @@ public class MessageReference(label: String) : Expression(label) {
 public class FieldAccess
 internal constructor(
     private val message: Expression,
-    private val name: FieldName,
-    private val cardinality: CardinalityCase = SINGLE
-) {
+    name: FieldName,
+    cardinality: CardinalityCase = SINGLE
+) : FieldConventions(name, cardinality) {
 
     /**
      * Constructs a field access for the given [message] and [name].
@@ -234,43 +230,24 @@ internal constructor(
     public fun putAll(value: Expression): MethodCall =
         MethodCall(message, putAllName, value)
 
-    private val getterName: String
-        get() = when (cardinality) {
-            LIST -> getListName
-            MAP -> getMapName
-            else -> prefixed("get")
-        }
-
-    private val getListName: String
-        get() = "get${name.value.camelCase()}List"
-
-    private val getMapName: String
-        get() = "get${name.value.camelCase()}Map"
-
-    private val setterName: String
-        get() = when (cardinality) {
-            LIST -> addAllName
-            MAP -> putAllName
-            else -> prefixed("set")
-        }
-
-    private val addName: String
-        get() = prefixed("add")
-
-    private val addAllName: String
-        get() = prefixed("addAll")
-
-    private val putName: String
-        get() = prefixed("put")
-
-    private val putAllName: String
-        get() = prefixed("putAll")
-
-    private fun prefixed(prefix: String) =
-        "$prefix${name.value.camelCase()}"
-
     override fun toString(): String {
         return "FieldAccess[$message#${name.value}]"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FieldAccess) return false
+        if (!super.equals(other)) return false
+
+        if (message != other.message) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + message.hashCode()
+        return result
     }
 }
 
@@ -352,6 +329,10 @@ public class MethodCall
      */
     public fun chainBuild(): MethodCall =
         chain("build")
+
+    internal companion object {
+        internal const val OF = "of"
+    }
 }
 
 /**
@@ -407,7 +388,7 @@ public fun mapExpression(
  * Formats these class names as type arguments, including the angle brackets.
  */
 private fun List<ClassName>.genericTypes() =
-    if (isNotEmpty()) "<${joinToString()}>" else ""
+    if (isEmpty()) "" else "<${joinToString()}>"
 
 /**
  * Formats these expressions as method parameters, not including the brackets.

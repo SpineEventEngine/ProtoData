@@ -27,11 +27,25 @@
 package io.spine.protodata.codegen.java
 
 import io.spine.protodata.File
+import io.spine.protodata.ProtoDeclarationName
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
+import io.spine.protodata.type.Convention
 import io.spine.protodata.type.Declaration
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
+
+/**
+ * An abstract base for Java [Convention]s.
+ *
+ * @property typeSystem the type system which is used to resolve types.
+ */
+public abstract class BaseJavaConvention<N: ProtoDeclarationName>(
+    protected val typeSystem: TypeSystem
+) : Convention<Java, N, ClassName> {
+
+    final override val language: Java = Java
+}
 
 /**
  * This convention defines a declarations of message or enum types declared in Protobuf.

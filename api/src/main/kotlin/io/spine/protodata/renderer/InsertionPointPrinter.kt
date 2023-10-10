@@ -29,6 +29,7 @@ package io.spine.protodata.renderer
 import io.spine.core.userId
 import io.spine.protodata.event.insertionPointPrinted
 import io.spine.protodata.filePath
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
 import io.spine.server.integration.ThirdPartyContext
 import io.spine.text.TextCoordinates
 import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
@@ -96,7 +97,7 @@ public abstract class InsertionPointPrinter<L: Language>(
         correctedLineNumbers.forEach {
             lines.add(it, comment)
         }
-        if (END_OF_FILE in coordinates) {
+        if (endOfFile in coordinates) {
             lines.add(comment)
         }
         reportPoint(file, point.label, comment)

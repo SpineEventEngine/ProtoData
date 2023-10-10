@@ -24,21 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
+package io.spine.protodata.renderer
 
-import io.spine.protodata.ProtoDeclarationName
-import io.spine.protodata.type.Convention
-import io.spine.protodata.type.TypeSystem
-import io.spine.tools.code.Java
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.startOfFile
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * An abstract base for Java [Convention]s.
- *
- * @property typeSystem the type system which is used to resolve types.
- */
-public abstract class BaseJavaConvention<N: ProtoDeclarationName>(
-    protected val typeSystem: TypeSystem
-) : Convention<Java, N, ClassName> {
+@DisplayName("`CoordinatesFactory` should")
+internal class CoordinatesFactorySpec {
 
-    final override val language: Java = Java
+    @Test
+    fun `provide same instances for constant coordinates`() {
+        startOfFile shouldBeSameInstanceAs startOfFile
+        endOfFile shouldBeSameInstanceAs endOfFile
+        nowhere shouldBeSameInstanceAs nowhere
+    }
 }

@@ -26,6 +26,7 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
@@ -78,7 +79,7 @@ public enum class AnnotationInsertionPoint : NonRepeatingInsertionPoint {
                 .find { (_, line) ->
                     line.matches(Regex(".*\\sfoo\\(\\)\\s\\{.*", DOT_MATCHES_ALL))
                 }
-                ?: return nowhere()
+                ?: return nowhere
             val matching = Regex("\\s([\\w.]*\\.)?(\\w+)\\sfoo\\(\\)\\s\\{").find(line)!!
             val matchedClass = matching.groupValues[2]
             val columnIndex = line.lastIndexOf(matchedClass)

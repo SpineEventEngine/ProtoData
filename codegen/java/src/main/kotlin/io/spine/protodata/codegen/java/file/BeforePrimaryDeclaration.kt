@@ -27,11 +27,11 @@
 package io.spine.protodata.codegen.java.file
 
 import io.spine.logging.WithLogging
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.string.Separator
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
-import java.lang.System.lineSeparator
 
 /**
  * A pattern matching a top-level Java declaration.
@@ -82,6 +82,6 @@ internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint, WithLoggi
             "Could not find the primary declaration in the code:$nl" +
                     lines.joinToString(separator = nl)
         }
-        return nowhere()
+        return nowhere
     }
 }
