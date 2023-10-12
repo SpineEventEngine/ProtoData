@@ -26,7 +26,7 @@
 
 @CheckReturnValue
 @ParametersAreNonnullByDefault
-@JvmLoggingDomain("ProtoData")
+@JvmLoggingDomain(Constants.LOGGING_DOMAIN)
 package io.spine.protodata;
 
 import com.google.errorprone.annotations.CheckReturnValue;
