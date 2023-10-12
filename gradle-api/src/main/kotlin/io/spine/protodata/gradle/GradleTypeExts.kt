@@ -38,7 +38,9 @@ internal val SourceSet.capitalizedName: String
     get() = name.replaceFirstChar { it.uppercase() }
 
 /**
- * Adds [LOGGING_PREFIX] before this string.
+ * Logs the given message if the `DEBUG` level is enabled.
+ *
+ * The message will get the [LOGGING_PREFIX].
  */
 private fun String.withPrefix(): String = "$LOGGING_PREFIX$this"
 
@@ -49,7 +51,7 @@ public fun Logger.debug(message: () -> String) {
 }
 
 /**
- * Logs the given message if the `INFO` level is enabled.
+ * Logs the given message if the `ERROR` level is enabled.
  *
  * The message will get the [LOGGING_PREFIX].
  */
