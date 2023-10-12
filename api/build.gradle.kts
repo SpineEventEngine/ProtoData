@@ -42,7 +42,6 @@ dependencies {
     }
 
     api(Spine.Logging.lib)
-    runtimeOnly(Spine.Logging.backend)
     implementation(Spine.reflect)
 
     with(Jackson) {
