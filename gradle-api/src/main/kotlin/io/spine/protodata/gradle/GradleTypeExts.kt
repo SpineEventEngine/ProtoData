@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,49 @@
 
 package io.spine.protodata.gradle
 
+import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.SourceSet
+
+import io.spine.protodata.Constants.LOGGING_PREFIX
 
 /**
  * Obtains the name of this source set with the first letter capitalized.
  */
 internal val SourceSet.capitalizedName: String
     get() = name.replaceFirstChar { it.uppercase() }
+
+/**
+ * Logs the given message if the `DEBUG` level is enabled.
+ *
+ * The message will get the [LOGGING_PREFIX].
+ */
+public fun Logger.debug(message: () -> String) {
+    if (isDebugEnabled) {
+        debug(message().withPrefix())
+    }
+}
+
+/**
+ * Logs the given message if the `ERROR` level is enabled.
+ *
+ * The message will get the [LOGGING_PREFIX].
+ */
+public fun Logger.error(message: () -> String) {
+    if (isErrorEnabled) {
+        error(message().withPrefix())
+    }
+}
+
+/**
+ * Logs the given message if the `INFO` level is enabled.
+ *
+ * The message will get the [LOGGING_PREFIX].
+ */
+public fun Logger.info(message: () -> String) {
+    if (isInfoEnabled) {
+        info(message().withPrefix())
+    }
+}
+
+private fun String.withPrefix(): String = "$LOGGING_PREFIX$this"
+

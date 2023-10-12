@@ -24,12 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-@JvmLoggingDomain(Constants.LOGGING_DOMAIN)
-package io.spine.protodata;
+package io.spine.protodata.gradle
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.logging.JvmLoggingDomain;
+import org.gradle.api.tasks.JavaExec
 
-import javax.annotation.ParametersAreNonnullByDefault;
+/**
+ * Settings for remote debugging of a Java process started by a [JavaExec] task.
+ */
+public data class RemoteDebugSettings(
+    public val host: String = "127.0.0.1",
+    public val port: Int = 8000,
+    public val suspend: Boolean = false
+) {
+    /**
+     * The address at which the remote debugging is available.
+     */
+    public val address: String = "$host:$port"
+
+    /**
+     * Obtains JVM argument string for initiating remote debugging.
+     */
+    public fun toJvmArg(): String =
+        "-agentlib:jdwp=transport=dt_socket,server=y," +
+                "suspend=${if (suspend) "y" else "n"},address=$address"
+}

@@ -30,7 +30,7 @@ import com.google.common.annotations.VisibleForTesting
 import io.spine.base.Time
 import io.spine.base.Time.currentTime
 import io.spine.base.Time.currentTimeZone
-import io.spine.protodata.CLI_APP_CLASS
+import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.renderer.SourceFile
 import io.spine.time.toInstant
 import java.time.OffsetDateTime
