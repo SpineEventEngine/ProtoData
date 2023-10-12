@@ -42,8 +42,6 @@ internal val SourceSet.capitalizedName: String
  *
  * The message will get the [LOGGING_PREFIX].
  */
-private fun String.withPrefix(): String = "$LOGGING_PREFIX$this"
-
 public fun Logger.debug(message: () -> String) {
     if (isDebugEnabled) {
         debug(message().withPrefix())
@@ -71,3 +69,6 @@ public fun Logger.info(message: () -> String) {
         info(message().withPrefix())
     }
 }
+
+private fun String.withPrefix(): String = "$LOGGING_PREFIX$this"
+
