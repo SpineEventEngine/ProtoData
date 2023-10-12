@@ -26,14 +26,16 @@
 
 package io.spine.protodata.gradle.plugin
 
-import io.spine.protodata.CLI_APP_CLASS
+import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.cli.ConfigFileParam
 import io.spine.protodata.cli.PluginParam
-import io.spine.protodata.cli.RendererParam
 import io.spine.protodata.cli.RequestParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
+import io.spine.protodata.gradle.RemoteDebugSettings
+import io.spine.protodata.gradle.error
+import io.spine.protodata.gradle.info
 import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File.pathSeparator
 import org.gradle.api.Action
@@ -42,6 +44,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -96,6 +99,13 @@ public abstract class LaunchProtoData : JavaExec() {
     internal lateinit var protoDataConfig: Configuration
 
     /**
+     * Settings for remote debugging.
+     */
+    @get:Input
+    @get:Optional
+    public abstract val remoteDebug: Property<RemoteDebugSettings>
+
+    /**
      * The paths to the directories where the source code processed by ProtoData should go.
      */
     @get:OutputDirectories
@@ -107,6 +117,8 @@ public abstract class LaunchProtoData : JavaExec() {
      * This method *must* be called after all the configuration is done for the task.
      */
     internal fun compileCommandLine() {
+        addJvmArgs()
+
         val command = sequence {
             plugins.get().forEach {
                 yield(PluginParam.name)
@@ -134,13 +146,22 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield(project.file(configurationFile).absolutePath)
             }
         }.asIterable()
-        if (logger.isInfoEnabled) {
-            logger.info("ProtoData command for `${path}`: ${command.joinToString(separator = " ")}")
-        }
+        logger.info { "ProtoData command for `${path}`: ${command.joinToString(separator = " ")}" }
         classpath(protoDataConfig)
         classpath(userClasspathConfig)
         mainClass.set(CLI_APP_CLASS)
         args(command)
+    }
+
+    private fun addJvmArgs() {
+        if (remoteDebug.isPresent) {
+            val settings = remoteDebug.get()
+            jvmArgs(settings.toJvmArg())
+            logger.info {
+                "Remote debugging is enabled for `${path}` at `${settings.address}`" +
+                        " with suspend `${settings.suspend}`."
+            }
+        }
     }
 
     internal fun setPreLaunchCleanup() {
@@ -165,7 +186,7 @@ public abstract class LaunchProtoData : JavaExec() {
                 .map { it.second }
                 .filter { it.exists() && it.list()!!.isNotEmpty() }
                 .forEach {
-                    logger.info("Cleaning target directory `$it`.")
+                    logger.info { "Cleaning target directory `$it`." }
                     project.delete(it)
                 }
         }
@@ -189,11 +210,11 @@ private fun Provider<List<Directory>>.absolutePaths(): String =
 internal fun LaunchProtoData.checkRequestFile(sourceSet: SourceSet): Boolean {
     val requestFile = requestFile.get().asFile
     if (!requestFile.exists() && sourceSet.containsProtoFiles()) {
-        project.logger.error(
+        logger.error {
             "Unable to locate the request file `$requestFile` which should have been created" +
                     " because the source set `${sourceSet.name}` contains `.proto` files." +
                     " The task `${name}` was skipped because the absence of the request file."
-        )
+        }
     }
     return requestFile.exists()
 }
