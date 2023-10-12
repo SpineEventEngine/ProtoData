@@ -24,9 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata;
 
-/**
- * The name of the main class of the ProtoData command-line application.
- */
-public const val CLI_APP_CLASS: String = "io.spine.protodata.cli.app.MainKt"
+public final class Constants {
+
+    /**
+     * The logging domain for operations performed by Spine Logging.
+     */
+    public static final String LOGGING_DOMAIN = "ProtoData";
+
+    /**
+     * The prefix for logging operations performed by loggers other than Spine Logging.
+     */
+    public static final String LOGGING_PREFIX = '[' + LOGGING_DOMAIN + "] ";
+
+    /**
+     * The name of the main class of the ProtoData command-line application.
+     */
+    public static final String CLI_APP_CLASS = "io.spine.protodata.cli.app.MainKt";
+
+    /**
+     * Prevents instantiation of this utility class.
+     */
+    private Constants() {
+    }
+}

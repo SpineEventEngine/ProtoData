@@ -30,12 +30,11 @@ import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.Time
-import io.spine.protodata.CLI_APP_CLASS
+import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
 import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.currentDateTime
-import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration
 import io.spine.protodata.renderer.SourceFile
 import io.spine.time.testing.FrozenMadHatterParty
 import io.spine.time.toTimestamp
