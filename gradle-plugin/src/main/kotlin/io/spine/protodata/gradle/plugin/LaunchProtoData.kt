@@ -99,13 +99,6 @@ public abstract class LaunchProtoData : JavaExec() {
     internal lateinit var protoDataConfig: Configuration
 
     /**
-     * Settings for remote debugging.
-     */
-    @get:Input
-    @get:Optional
-    public abstract val remoteDebug: Property<RemoteDebugSettings>
-
-    /**
      * The paths to the directories where the source code processed by ProtoData should go.
      */
     @get:OutputDirectories
