@@ -33,7 +33,6 @@ import io.spine.protodata.cli.RequestParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
-import io.spine.protodata.gradle.RemoteDebugSettings
 import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
 import io.spine.tools.gradle.protobuf.containsProtoFiles
@@ -44,7 +43,6 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -110,8 +108,6 @@ public abstract class LaunchProtoData : JavaExec() {
      * This method *must* be called after all the configuration is done for the task.
      */
     internal fun compileCommandLine() {
-        addJvmArgs()
-
         val command = sequence {
             plugins.get().forEach {
                 yield(PluginParam.name)
@@ -144,17 +140,6 @@ public abstract class LaunchProtoData : JavaExec() {
         classpath(userClasspathConfig)
         mainClass.set(CLI_APP_CLASS)
         args(command)
-    }
-
-    private fun addJvmArgs() {
-        if (remoteDebug.isPresent) {
-            val settings = remoteDebug.get()
-            jvmArgs(settings.toJvmArg())
-            logger.info {
-                "Remote debugging is enabled for `${path}` at `${settings.address}`" +
-                        " with suspend `${settings.suspend}`."
-            }
-        }
     }
 
     internal fun setPreLaunchCleanup() {
