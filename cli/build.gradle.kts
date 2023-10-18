@@ -41,7 +41,7 @@ dependencies {
     implementation(Clikt.lib)
 
     implementation(Spine.Logging.lib)
-    runtimeOnly(Spine.Logging.backend)
+    runtimeOnly(Spine.Logging.middleware)
 
     implementation(project(":cli-api"))
     implementation(project(":api"))
