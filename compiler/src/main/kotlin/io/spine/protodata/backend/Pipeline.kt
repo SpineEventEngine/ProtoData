@@ -51,7 +51,7 @@ import io.spine.server.under
  * A pipeline which processes the Protobuf files.
  *
  * A pipeline consists of the `Code Generation` context, which receives Protobuf compiler events,
- * and one or more [Renderer]s. A pipeline runs on a single source set.
+ * and one or more [Renderer]s.
  *
  * The pipeline starts by building the `Code Generation` bounded context with the supplied
  * [Plugin]s. Then, the Protobuf compiler events are emitted and the subscribers in
