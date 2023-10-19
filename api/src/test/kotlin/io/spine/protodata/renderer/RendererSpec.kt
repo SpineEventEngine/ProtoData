@@ -71,14 +71,24 @@ internal class RendererSpec {
 
     companion object {
 
+        /**
+         * An instance of [CodeGenerationContext] to be used for
+         * [creating][createTypeSystem] a [typeSystem].
+         *
+         * We do not pass any custom entity classes or repositories to the context builder,
+         * as we do not need them in tests.
+         */
         private val context = CodeGenerationContext.builder().build()
 
         val typeSystem = createTypeSystem()
 
+        /**
+         * Creates an instance of [TypeSystem] for testing.
+         */
         fun createTypeSystem() = TypeSystem.serving(object : Querying {
 
             override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> =
-                QueryingClient(context, type, this::class.java.name)
+                QueryingClient(context, type, this::javaClass.name)
         })
     }
 }
