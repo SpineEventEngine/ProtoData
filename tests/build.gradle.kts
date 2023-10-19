@@ -66,6 +66,9 @@ subprojects {
     configurations {
         forceVersions()
         all {
+            exclude(group = "io.spine", module = "spine-flogger-api")
+            exclude(group = "io.spine", module = "spine-logging-backend")
+
             resolutionStrategy {
                 @Suppress("DEPRECATION") // We still depend on `floggerApi`.
                 force(
@@ -73,7 +76,7 @@ subprojects {
                     Spine.toolBase,
                     Validation.runtime,
                     Spine.Logging.lib,
-                    Spine.Logging.backend,
+                    Spine.Logging.middleware,
                     Spine.Logging.floggerApi,
                     Spine.reflect,
                     ProtoData.compiler,

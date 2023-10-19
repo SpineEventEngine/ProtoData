@@ -59,7 +59,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/logging">spine-logging</a>
          */
-        const val logging = "2.0.0-SNAPSHOT.227"
+        const val logging = "2.0.0-SNAPSHOT.233"
 
         /**
          * The version of [Spine.testlib].
@@ -75,7 +75,7 @@ object Spine {
          * @see [Spine.CoreJava.server]
          * @see <a href="https://github.com/SpineEventEngine/core-java">core-java</a>
          */
-        const val core = "2.0.0-SNAPSHOT.159"
+        const val core = "2.0.0-SNAPSHOT.160"
 
         /**
          * The version of [Spine.modelCompiler].
@@ -103,7 +103,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/time">spine-time</a>
          */
-        const val time = "2.0.0-SNAPSHOT.134"
+        const val time = "2.0.0-SNAPSHOT.135"
 
         /**
          * The version of [Spine.change].
@@ -165,6 +165,7 @@ object Spine {
         const val version = ArtifactVersion.logging
         const val lib = "$group:spine-logging:$version"
         const val backend = "$group:spine-logging-backend:$version"
+        const val middleware = "$group:spine-logging-middleware:$version"
         const val log4j2Backend = "$group:spine-logging-log4j2-backend:$version"
         const val context = "$group:spine-logging-context:$version"
         const val grpcContext = "$group:spine-logging-grpc-context:$version"

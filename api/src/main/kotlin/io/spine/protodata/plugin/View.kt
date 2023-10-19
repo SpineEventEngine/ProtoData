@@ -100,7 +100,8 @@ import kotlin.reflect.KClass
  * @param M the type of the view's state; must be a Protobuf message implementing [EntityState].
  * @param B the type of the view's state builder; must match `<M>`.
  */
-public open class View<I, M : EntityState<I>, B : ValidatingBuilder<M>> : Projection<I, M, B>()
+public open class View<I : Any, M : EntityState<I>, B : ValidatingBuilder<M>> :
+    Projection<I, M, B>()
 
 /**
  * A repository responsible for a certain type of [View]s.
@@ -114,7 +115,7 @@ public open class View<I, M : EntityState<I>, B : ValidatingBuilder<M>> : Projec
  * If no customization is required from a `ViewRepository`, users should prefer
  * [ViewRepository.default] to creating custom repository types.
  */
-public open class ViewRepository<I, V : View<I, S, *>, S : EntityState<I>>
+public open class ViewRepository<I : Any, V : View<I, S, *>, S : EntityState<I>>
     : ProjectionRepository<I, V, S>() {
 
     public companion object {

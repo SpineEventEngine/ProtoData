@@ -44,8 +44,15 @@ import io.spine.tools.code.Language
  */
 public abstract class Renderer<L : Language>
 protected constructor(
-    private val language: L
+    protected val language: L
 ) : ConfiguredQuerying, ContextAware {
+
+    /**
+     * Creates a new instance of `Renderer` with the given [language] and [typeSystem].
+     */
+    protected constructor(language: L, typeSystem: TypeSystem) : this(language) {
+        injectTypeSystem(typeSystem)
+    }
 
     private lateinit var codegenContext: BoundedContext
     private lateinit var _typeSystem: TypeSystem
@@ -78,7 +85,7 @@ protected constructor(
     protected abstract fun render(sources: SourceFileSet)
 
     public final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
-        return QueryingClient(codegenContext, type, javaClass.name)
+        return QueryingClient(codegenContext, type, this::class.qualifiedName!!)
     }
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
