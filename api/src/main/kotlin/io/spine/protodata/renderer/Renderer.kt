@@ -36,8 +36,9 @@ import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
 
 /**
- * A `Renderer` takes an existing [SourceFileSet] and modifies it, changing the contents of existing
- * source files, creating new ones, or deleting unwanted files.
+ * A `Renderer` takes an existing [SourceFileSet] and modifies it,
+ * changing the contents of existing source files, creating new ones, or
+ * deleting unwanted files.
  *
  * Instances of `Renderer`s are usually created by
  * the [Plugin.renderers()][io.spine.protodata.plugin.Plugin.renderers] method.
@@ -47,21 +48,22 @@ protected constructor(
     protected val language: L
 ) : ConfiguredQuerying, ContextAware {
 
-    /**
-     * Creates a new instance of `Renderer` with the given [language] and [typeSystem].
-     */
-    protected constructor(language: L, typeSystem: TypeSystem) : this(language) {
-        injectTypeSystem(typeSystem)
-    }
-
     private lateinit var codegenContext: BoundedContext
     private lateinit var _typeSystem: TypeSystem
 
     /**
-     * The type system with the Protobuf types defined in the current context.
+     * A type system with the Protobuf types defined in the current code generation pipeline.
+     *
+     * Is `null` if the type system is not yet available to this renderer.
+     *
+     * This property is guaranteed to be non-`null` in [renderSources].
      */
-    protected val typeSystem: TypeSystem
-        get() = _typeSystem
+    protected val typeSystem: TypeSystem?
+        get() = if (this::_typeSystem.isInitialized) {
+            _typeSystem
+        } else {
+            null
+        }
 
     /**
      * Performs required changes to the given source set.
@@ -98,9 +100,11 @@ protected constructor(
      * The reference to the context is needed to query the state of entities.
      *
      * This method is `public` but is essentially `internal` to ProtoData SDK.
+     * It is not supposed to be called by authors of [Renderer]s directly.
      *
      * @see [select]
-      */
+     * @see [io.spine.protodata.backend.Pipeline]
+     */
     @Internal
     public override fun registerWith(codegenContext: BoundedContext) {
         if (isRegistered) {
@@ -124,8 +128,26 @@ protected constructor(
      * Injects an instance of `TypeSystem` for this renderer to use e.g. for
      * creating a [Convention][io.spine.protodata.type.Convention] which
      * depends on the type system.
+     *
+     * This method is `public` but is essentially `internal` to ProtoData SDK.
+     * It is not supposed to be called by authors of [Renderer]s directly.
+     * Usually the type system is injected by the [Pipeline][io.spine.protodata.backend.Pipeline].
+     *
+     * Repeated calls to this method with the same instance of `TypeSystem` are allowed.
+     *
+     * @throws IllegalStateException
+     *          if the method is called with a different instance of `TypeSystem` than
+     *          already injected.
+     * @see [io.spine.protodata.backend.Pipeline]
      */
-    internal fun injectTypeSystem(ts: TypeSystem) {
+    @Internal
+    public fun injectTypeSystem(ts: TypeSystem) {
+        if(this::_typeSystem.isInitialized) {
+            check(_typeSystem == ts) {
+                "Unable to inject the type system (`$ts`) into the renderer `$this`." +
+                        " The type system is already injected (`$_typeSystem`)."
+            }
+        }
         _typeSystem = ts
     }
 }
