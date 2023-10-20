@@ -29,6 +29,7 @@ package io.spine.protodata.test
 import com.google.protobuf.StringValue
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.config.configAs
+import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.time.toInstant
@@ -39,9 +40,33 @@ import kotlin.io.path.Path
 public const val ECHO_FILE: String = "name.txt"
 
 /**
+ * A test environment renderer that is also a [Plugin] and can be added to a `Pipeline` directly.
+ *
+ * This abstract base is a convenience for adding a `Renderer` into a `Pipeline`
+ * without creating an instance of
+ * [ImplicitPluginWithRenderers][io.spine.protodata.backend.ImplicitPluginWithRenderers]
+ * with only one renderer.
+ *
+ * A more realistic use case is a `Renderer` that is a part of a `Plugin`.
+ * This is why we do not make this class a part of the production code.
+ *
+ * @param L the language served by the `Renderer`.
+ */
+public abstract class SoloRenderer<L : Language>(language: L) : Renderer<L>(language), Plugin {
+
+    override fun renderers(): List<Renderer<*>> = listOf(this)
+}
+
+/**
+ * Abstract base for stub renders that need to be added to a stub pipeline in tests.
+ */
+public abstract class StubSoloRenderer : SoloRenderer<AnyLanguage>(AnyLanguage), Plugin
+
+
+/**
  * A renderer that writes the contents of its Java-class-style configuration into a file.
  */
-public class EchoRenderer : Renderer<AnyLanguage>(AnyLanguage) {
+public class EchoRenderer : StubSoloRenderer() {
 
     override fun render(sources: SourceFileSet) {
         val name = configAs<Name>()
@@ -52,7 +77,7 @@ public class EchoRenderer : Renderer<AnyLanguage>(AnyLanguage) {
 /**
  * A renderer that writes the contents of its Protobuf-style configuration into a file.
  */
-public class ProtoEchoRenderer : Renderer<Language>(AnyLanguage) {
+public class ProtoEchoRenderer : StubSoloRenderer() {
 
     override fun render(sources: SourceFileSet) {
         val echo = configAs<Echo>()
@@ -74,7 +99,7 @@ public class ProtoEchoRenderer : Renderer<Language>(AnyLanguage) {
 /**
  * A renderer that writes the contents of its plain string configuration into a file.
  */
-public class PlainStringRenderer : Renderer<Language>(AnyLanguage) {
+public class PlainStringRenderer : StubSoloRenderer() {
 
     override fun render(sources: SourceFileSet) {
         val echo = configAs<String>()

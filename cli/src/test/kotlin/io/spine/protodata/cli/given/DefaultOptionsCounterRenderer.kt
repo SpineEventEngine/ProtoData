@@ -27,14 +27,12 @@
 package io.spine.protodata.cli.given
 
 import io.spine.protodata.cli.test.DefaultOptionsCounter
-import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.test.StubSoloRenderer
 import io.spine.server.query.select
-import io.spine.tools.code.Language
-import io.spine.tools.code.AnyLanguage
 import kotlin.io.path.Path
 
-class DefaultOptionsCounterRenderer : Renderer<AnyLanguage>(AnyLanguage) {
+class DefaultOptionsCounterRenderer : StubSoloRenderer() {
 
     companion object {
         const val FILE_NAME = "default_opts_counted.txt"

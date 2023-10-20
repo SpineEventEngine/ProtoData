@@ -35,17 +35,15 @@ import io.spine.logging.WithLogging
 import io.spine.option.OptionsProto
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
-import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
-import io.spine.tools.code.AnyLanguage
+import io.spine.protodata.test.StubSoloRenderer
 import java.nio.file.Path
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
@@ -117,7 +115,7 @@ class `ProtoData CLI logging levels should` {
 
     private fun launchWithLoggingParams(vararg argv: String) {
         val params = mutableListOf(
-            "-r", LoggingLevelAsserter::class.jvmName,
+            "-p", LoggingLevelAsserter::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
@@ -132,7 +130,7 @@ class `ProtoData CLI logging levels should` {
 /**
  * A pseudo-renderer which asserts that the logging levels are set correctly.
  */
-class LoggingLevelAsserter: Renderer<AnyLanguage>(AnyLanguage), WithLogging {
+class LoggingLevelAsserter: StubSoloRenderer(), WithLogging {
 
     override fun render(sources: SourceFileSet) {
         debugEnabled = logger.at(Level.DEBUG).isEnabled()

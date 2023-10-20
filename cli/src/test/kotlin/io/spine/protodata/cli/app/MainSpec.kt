@@ -63,12 +63,14 @@ import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
-class `Command line application should` {
+@DisplayName("ProtoData command-line application should")
+class MainSpec {
 
     private lateinit var srcRoot : Path
     private lateinit var targetRoot : Path
@@ -113,7 +115,7 @@ class `Command line application should` {
     fun `render enhanced code`() {
         launchApp(
             "-p", TestPlugin::class.jvmName,
-            "-r", UnderscorePrefixRenderer::class.jvmName,
+            "-p", UnderscorePrefixRenderer::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString()
@@ -125,7 +127,7 @@ class `Command line application should` {
     fun `provide Spine options by default`() {
         launchApp(
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
-            "-r", DefaultOptionsCounterRenderer::class.jvmName,
+            "-p", DefaultOptionsCounterRenderer::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
@@ -147,7 +149,7 @@ class `Command line application should` {
             """.trimIndent())
 
             launchApp(
-                "-r", EchoRenderer::class.jvmName,
+                "-p", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -160,7 +162,7 @@ class `Command line application should` {
         fun `configuration value`() {
             val name = "Mr. World"
             launchApp(
-                "-r", EchoRenderer::class.jvmName,
+                "-p", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -184,7 +186,7 @@ class `Command line application should` {
             """.trimIndent())
 
             launchApp(
-                "-r", EchoRenderer::class.jvmName,
+                "-p", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -203,7 +205,7 @@ class `Command line application should` {
                 when_ = time
             }.toCompactJson()
             launchApp(
-                "-r", ProtoEchoRenderer::class.jvmName,
+                "-p", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -231,7 +233,7 @@ class `Command line application should` {
             configFile.writeBytes(bytes)
 
             launchApp(
-                "-r", ProtoEchoRenderer::class.jvmName,
+                "-p", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -254,7 +256,7 @@ class `Command line application should` {
                 value: $name
             """.trimIndent())
             launchApp(
-                "-r", EchoRenderer::class.jvmName,
+                "-p", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -267,7 +269,7 @@ class `Command line application should` {
         fun `plain string`() {
             val plainString = "dont.mail.me:42@example.org"
             launchApp(
-                "-r", PlainStringRenderer::class.jvmName,
+                "-p", PlainStringRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -299,7 +301,7 @@ class `Command line application should` {
             assertThrows<UsageError> {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
-                    "-r", UnderscorePrefixRenderer::class.jvmName,
+                    "-p", UnderscorePrefixRenderer::class.jvmName,
                     "-t", codegenRequestFile.toString(),
                     "--src", srcRoot.toString()
                 )
@@ -311,7 +313,7 @@ class `Command line application should` {
             assertMissingOption {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
-                    "-r", UnderscorePrefixRenderer::class.jvmName,
+                    "-p", UnderscorePrefixRenderer::class.jvmName,
                     "--src", srcRoot.toString()
                 )
             }

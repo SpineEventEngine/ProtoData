@@ -26,6 +26,7 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodeGeneratorRequestFile.DEFAULT_DIRECTORY
 import io.spine.protodata.gradle.CodegenSettings
@@ -45,23 +46,25 @@ import org.gradle.kotlin.dsl.listProperty
  */
 public class Extension(internal val project: Project): CodegenSettings {
 
-    public override fun plugins(vararg classNames: String): Unit =
-        plugins.addAll(classNames.toList())
-
     private val factory = project.objects
 
-    internal val plugins: ListProperty<String> =
-        factory.listProperty(String::class.java).convention(listOf())
+    public override fun plugins(vararg classNames: String): Unit =
+        plugins.addAll(classNames.toList())
 
     public override fun optionProviders(vararg classNames: String): Unit =
         optionProviders.addAll(classNames.toList())
 
-    internal val optionProviders: ListProperty<String> =
-        factory.listProperty<String>().convention(listOf())
-
     public override var requestFilesDir: Any
         get() = requestFilesDirProperty.get()
         set(value) = requestFilesDirProperty.set(project.file(value))
+
+    @VisibleForTesting
+    public val plugins: ListProperty<String> =
+        factory.listProperty<String>().convention(listOf())
+
+    @VisibleForTesting
+    public val optionProviders: ListProperty<String> =
+        factory.listProperty<String>().convention(listOf())
 
     internal val requestFilesDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(

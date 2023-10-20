@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,6 @@ import io.spine.protodata.config.ConfigurationFormat.PLAIN
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import io.spine.protodata.config.ConfigurationFormat.YAML
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.Renderer
-import java.io.File.pathSeparator
 
 /**
  * The command-line parameter for specifying ProtoData plugins used in
@@ -52,26 +50,12 @@ public object PluginParam : Parameter(
 )
 
 /**
- * The command-line parameter for specifying renderers used in
- * the code generation process.
- */
-public object RendererParam : Parameter(
-    name = "--renderer",
-    shortName = "-r",
-    help = """
-        The name of a Java class, a subtype of `${Renderer::class.qualifiedName}`.
-        There can only be multiple renderers. To pass more than one value, type:
-           `<...> ${dash.r} com.foo.MyJavaRenderer ${dash.r} com.foo.MyKotlinRenderer`.
-        """
-)
-
-/**
  * The command-line parameter for specifying the path to the file with
  * serialized [CodeGeneratorRequest].
  */
 public object RequestParam : Parameter(
     name = "--request",
-    shortName = "-t", // "-r" is already taken.
+    shortName = "-t", // "-r" was already taken, now it's available. Shall we rename?
     help = "The path to the binary file containing a serialized instance of " +
             "`${CodeGeneratorRequest.getDescriptor().name}`."
 )
@@ -124,11 +108,11 @@ public object UserClasspathParam : Parameter(
     name = "--user-classpath",
     shortName = "--ucp",
     help = """
-        The user classpath which contains all `${ddash.renderer}` classes, user-defined policies,
-        views, events, etc., as well as all their dependencies, which are not included as a part of
-        the ProtoData library. This option may be omitted if the classes are already present in
-        the ProtoData classpath. May be one path to a JAR, a ZIP, or a directory. Or, may be many
-        paths separated by the system-dependent path separator (`$ps`).
+        The user classpath which contains all `${ddash.plugin}` classes, as well as all
+        their dependencies, which are not included as a part of the ProtoData library. 
+        This option may be omitted if the classes are already present in the ProtoData classpath. 
+        May be one path to a JAR, a ZIP, or a directory. 
+        Or, may be many paths separated by the system-dependent path separator (`$ps`).
         """
 )
 
@@ -208,22 +192,16 @@ public object DebugLoggingParam : Parameter(
 @Suppress("ClassName") // for better readability
 private object dash {
     val p = lazy { PluginParam.shortName }
-    val r = lazy { RendererParam.shortName }
     val src = lazy { SourceRootParam.shortName }
 }
 
 /**
- * Abbreviations for long plugin names to be used in `help` texts.
+ * Abbreviations for long (double-dash) parameter names to be used in `help` texts.
  */
 @Suppress("ClassName", "SpellCheckingInspection") // for better readability in `help` texts.
 private object ddash {
     val tr = lazy { TargetRootParam.name }
     val confVal = lazy { ConfigValueParam.name }
     val confFmt = lazy { ConfigFormatParam.name }
-    val renderer = lazy { RendererParam.name }
+    val plugin = lazy { PluginParam.name }
 }
-
-/**
- * Abbreviation for using inside strings.
- */
-private val ps = pathSeparator

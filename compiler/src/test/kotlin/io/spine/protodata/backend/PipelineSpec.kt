@@ -31,8 +31,6 @@ import com.google.common.truth.Truth.assertThat
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
-import io.kotest.assertions.shouldFail
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ConfigurationError
@@ -64,7 +62,6 @@ import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
-import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
@@ -127,9 +124,8 @@ class PipelineSpec {
     @Test
     fun `render enhanced code`() {
         Pipeline(
-            plugin = TestPlugin(),
-            renderer = renderer,
-            sources = overwritingSourceSet,
+            plugins = listOf(TestPlugin(), renderer),
+            sources = listOf(overwritingSourceSet),
             request
         )()
         assertTextIn(targetFile).isEqualTo("_Journey worth taking")
@@ -138,9 +134,8 @@ class PipelineSpec {
     @Test
     fun `generate new files`() {
         Pipeline(
-            plugin = TestPlugin(),
-            renderer = InternalAccessRenderer(),
-            sources = overwritingSourceSet,
+            plugins = listOf(TestPlugin(), InternalAccessRenderer()),
+            sources = listOf(overwritingSourceSet),
             request
         )()
         val newClass = targetRoot.resolve("spine/protodata/test/JourneyInternal.java")
@@ -153,9 +148,8 @@ class PipelineSpec {
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, "foo bar")
         Pipeline(
-            plugin = TestPlugin(),
-            renderer = DeletingRenderer(),
-            sources = SourceFileSet.create(srcRoot, targetRoot),
+            plugins = listOf(TestPlugin(), DeletingRenderer()),
+            sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request
         )()
         assertDoesNotExist(targetRoot / path)
@@ -214,8 +208,12 @@ class PipelineSpec {
             }
         """.trimIndent())
         Pipeline(
-            plugins = listOf(),
-            renderers = listOf(AnnotationInsertionPointPrinter(), NullableAnnotationRenderer()),
+            plugins = listOf(ImplicitPluginWithRenderers(
+                renderers = listOf(
+                    AnnotationInsertionPointPrinter(),
+                    NullableAnnotationRenderer()
+                )
+            )),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = CodeGeneratorRequest.getDefaultInstance()
         )()
@@ -296,9 +294,8 @@ class PipelineSpec {
     @Test
     fun `write code into different destination`(@TempDir destination: Path) {
         Pipeline(
-            plugin = TestPlugin(),
-            renderer = InternalAccessRenderer(),
-            sources = SourceFileSet.create(srcRoot, destination),
+            plugins = listOf(TestPlugin(), InternalAccessRenderer()),
+            sources = listOf(SourceFileSet.create(srcRoot, destination)),
             request
         )()
 
@@ -315,9 +312,8 @@ class PipelineSpec {
     @Test
     fun `copy all sources into the new destination`() {
         Pipeline(
-            TestPlugin(),
-            NoOpRenderer(),
-            SourceFileSet.create(srcRoot, targetRoot),
+            plugins = listOf(TestPlugin(), NoOpRenderer()),
+            sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request
         )()
         assertExists(targetFile)
@@ -338,8 +334,10 @@ class PipelineSpec {
             secondSourceFile.createFile().writeText("foo bar")
 
             Pipeline(
-                TestPlugin(),
-                NoOpRenderer(),
+                plugins = listOf(
+                    TestPlugin(),
+                    NoOpRenderer()
+                ),
                 listOf(
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
@@ -367,9 +365,11 @@ class PipelineSpec {
 
             val expectedContent = "123456789"
             Pipeline(
-                plugin = TestPlugin(),
-                renderer = PlainStringRenderer(),
-                listOf(
+                plugins = listOf(
+                    TestPlugin(),
+                    PlainStringRenderer()
+                ),
+                sources = listOf(
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
@@ -397,10 +397,12 @@ class PipelineSpec {
             write(existingFilePath, expectedContent)
 
             Pipeline(
-                plugins = listOf(TestPlugin()),
-                renderers = listOf(
-                    JavaGenericInsertionPointPrinter(),
-                    PrependingRenderer()
+                plugins = listOf(
+                    TestPlugin(),
+                    ImplicitPluginWithRenderers(listOf(
+                            JavaGenericInsertionPointPrinter(),
+                            PrependingRenderer()
+                    ))
                 ),
                 sources = listOf(
                     SourceFileSet.create(srcRoot, destination1),
@@ -424,9 +426,8 @@ class PipelineSpec {
         fun `a policy handles too many events at once`() {
             val policy = GreedyPolicy()
             val pipeline = Pipeline(
-                plugin = DocilePlugin(policies = setOf(policy)),
-                renderer = renderer,
-                sources = overwritingSourceSet,
+                plugins = listOf(DocilePlugin(policies = setOf(policy)), renderer),
+                sources = listOf(overwritingSourceSet),
                 request
             )
             val error = assertThrows<IllegalStateException> { pipeline() }
@@ -439,12 +440,14 @@ class PipelineSpec {
         fun `view is already registered`() {
             val viewClass = DeletedTypeView::class.java
             val pipeline = Pipeline(
-                plugin = DocilePlugin(
-                    views = setOf(viewClass),
-                    viewRepositories = setOf(DeletedTypeRepository())
+                plugins = listOf(
+                    DocilePlugin(
+                        views = setOf(viewClass),
+                        viewRepositories = setOf(DeletedTypeRepository())
+                    ),
+                    renderer
                 ),
-                renderer = renderer,
-                sources = overwritingSourceSet,
+                sources = listOf(overwritingSourceSet),
                 request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }

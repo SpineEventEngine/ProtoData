@@ -27,18 +27,16 @@
 package io.spine.protodata.test
 
 import io.spine.protodata.qualifiedName
-import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.query.select
 import io.spine.tools.code.Java
-import io.spine.tools.code.Language
 import java.io.File
 import kotlin.io.path.Path
 
 /**
  * Creates a new package-private class for each [InternalType].
  */
-public class InternalAccessRenderer : Renderer<Java>(Java) {
+public class InternalAccessRenderer : SoloRenderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val internalTypes = select<InternalType>().all()

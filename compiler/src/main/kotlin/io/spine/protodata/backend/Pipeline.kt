@@ -79,21 +79,6 @@ public class Pipeline(
     }
 
     /**
-     * Creates a new `Pipeline` with the given components.
-     *
-     * This constructor is used for tests and for backward compatibility. New users should defer
-     * to the default constructor and pass renderers via plugins.
-     */
-    @VisibleForTesting
-    public constructor(
-        plugins: List<Plugin>,
-        renderers: List<Renderer<*>>,
-        sources: List<SourceFileSet>,
-        request: CodeGeneratorRequest,
-        config: Configuration? = null
-    ) : this(plugins + ImplicitPluginWithRenderers(renderers), sources, request, config)
-
-    /**
      * Creates a new `Pipeline` with only one plugin and one source set.
      */
     @VisibleForTesting
@@ -103,31 +88,12 @@ public class Pipeline(
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
         config: Configuration? = null
-    ): this(listOf(plugin), renderers, listOf(sources), request, config)
-
-    /**
-     * Creates a new `Pipeline` with only one plugin, one renderer, and one source set.
-     */
-    @VisibleForTesting
-    internal constructor(
-        plugin: Plugin,
-        renderer: Renderer<*>,
-        sources: SourceFileSet,
-        request: CodeGeneratorRequest,
-        config: Configuration? = null
-    ): this(listOf(plugin), listOf(renderer), listOf(sources), request, config)
-
-    /**
-     * Creates a new `Pipeline` with only one plugin, one renderer, and several source set.
-     */
-    @VisibleForTesting
-    internal constructor(
-        plugin: Plugin,
-        renderer: Renderer<*>,
-        sources: List<SourceFileSet>,
-        request: CodeGeneratorRequest,
-        config: Configuration? = null
-    ): this(listOf(plugin), listOf(renderer), sources, request, config)
+    ) : this(
+        listOf(plugin, ImplicitPluginWithRenderers(renderers)),
+        listOf(sources),
+        request,
+        config
+    )
 
     init {
         under<DefaultMode> {
