@@ -28,7 +28,7 @@ package io.spine.protodata.backend.event
 
 import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.BoolValue
-import com.google.protobuf.DescriptorProtos
+import com.google.protobuf.DescriptorProtos.FileOptions
 import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS
 import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
 import com.google.protobuf.Message
@@ -71,6 +71,11 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
+/**
+ * Tests for the [CompilerEvents] class basing on the `doctor.proto`.
+ *
+ * See the file at `test-env/src/main/proto/spine/protodata/test/doctor.proto`.
+ */
 @DisplayName("`CompilerEvents` should")
 class CompilerEventsSpec {
 
@@ -80,48 +85,53 @@ class CompilerEventsSpec {
 
     @BeforeEach
     fun parseEvents() {
-        val allTheTypes = KnownTypes.instance()
+        // Gather files of all known types to simplify resolving dependencies.
+        val allDependencyFiles = KnownTypes.instance()
             .asTypeSet()
             .messageTypes()
             .map { it.descriptor().file.toProto() }
 
         val request = codeGeneratorRequest {
             fileToGenerate += DoctorProto.getDescriptor().fullName
-            protoFile.addAll(allTheTypes)
+            protoFile.addAll(allDependencyFiles)
         }
         events = CompilerEvents.parse(request).toList()
     }
 
     @Nested
-    @DisplayName("produce")
-    inner class Produce {
+    inner class `produce file events` {
 
         @Test
-        fun `file events`() = assertEmits(
-            FileEntered::class,
+        fun `events in order`() = assertEmits(
+            FileEntered::class, // Starts with the file.
+            FileOptionDiscovered::class, // Now come options.
             FileOptionDiscovered::class,
             FileOptionDiscovered::class,
-            FileExited::class
+            FileOptionDiscovered::class,
+            FileExited::class // Ends with the file.
         )
 
         @Test
-        fun `standard file option events`() {
-            val event = events.findMultipleFilesOptionEvent()
-
-            event shouldNotBe null
-            event.option<BoolValue>().value shouldBe true
+        fun `for standard file option`() = with(events) {
+            findJavaPackageEvent().option<StringValue>().value shouldBe "io.spine.protodata.test"
+            findOuterClassNameEvent().option<StringValue>().value shouldBe "DoctorProto"
+            findMultipleFilesEvent().option<BoolValue>().value shouldBe true
         }
 
         @Test
-        fun `custom file option events`() {
+        fun `for custom file option`() {
             val event = events.findTypeUrlPrefixEvent()
 
             event shouldNotBe null
             event.option<StringValue>().value shouldBe "type.spine.io"
         }
+    }
+
+    @Nested
+    inner class `produce type events` {
 
         @Test
-        fun `type events`() = assertEmits(
+        fun `in order`() = assertEmits(
             FileEntered::class,
 
             TypeEntered::class,
@@ -131,77 +141,81 @@ class CompilerEventsSpec {
         )
 
         @Test
-        fun `field events`() = assertEmits(
-            FileEntered::class,
-            TypeEntered::class,
-
-            FieldEntered::class,
-            FieldOptionDiscovered::class,
-            FieldExited::class,
-
-            TypeExited::class,
-            FileExited::class
-        )
-
-        @Test
-        fun `custom field option events`() {
-            val event = events.findRequiredFieldOptionEvent()
-
-            event shouldNotBe null
-            event.option<BoolValue>().value shouldBe true
-        }
-
-        @Test
-        fun `'oneof' events`() = assertEmits(
-            FileEntered::class,
-            TypeEntered::class,
-
-            OneofGroupEntered::class,
-            FieldEntered::class,
-            FieldOptionDiscovered::class,
-            FieldExited::class,
-            OneofGroupExited::class,
-
-            TypeExited::class,
-            FileExited::class
-        )
-
-        @Test
-        fun `enum events`() = assertEmits(
-            FileEntered::class,
-            EnumEntered::class,
-            EnumConstantEntered::class,
-            EnumConstantExited::class,
-            EnumConstantEntered::class,
-            EnumConstantExited::class,
-            EnumConstantEntered::class,
-            EnumConstantExited::class,
-            EnumExited::class
-        )
-
-        @Test
-        fun `nested type events`() = assertEmits(
+        fun `matching nesting of types`() = assertEmits(
             TypeEntered::class,
             TypeEntered::class,
             TypeExited::class,
             TypeExited::class
         )
+    }
+
+    @Nested
+    inner class `produce field events` {
 
         @Test
-        fun `service events`() = assertEmits(
-            ServiceEntered::class,
-            RpcEntered::class,
-            RpcOptionDiscovered::class,
-            RpcExited::class,
-            ServiceExited::class
+        fun `in order`() = assertEmits(
+            FileEntered::class,
+            TypeEntered::class,
+
+            FieldEntered::class,
+            FieldOptionDiscovered::class,
+            FieldExited::class,
+
+            TypeExited::class,
+            FileExited::class
         )
+
+        @Test
+        fun `for custom field option`() {
+            val event = events.findRequiredFieldOptionEvent()
+
+            event shouldNotBe null
+            event.option<BoolValue>().value shouldBe true
+        }
     }
+
+    @Test
+    fun `produce 'oneof' events`() = assertEmits(
+        FileEntered::class,
+        TypeEntered::class,
+
+        OneofGroupEntered::class,
+        FieldEntered::class,
+        FieldOptionDiscovered::class,
+        FieldExited::class,
+        OneofGroupExited::class,
+
+        TypeExited::class,
+        FileExited::class
+    )
+
+    @Test
+    fun `produce enum events`() = assertEmits(
+        FileEntered::class,
+        EnumEntered::class,
+        EnumConstantEntered::class,
+        EnumConstantExited::class,
+        EnumConstantEntered::class,
+        EnumConstantExited::class,
+        EnumConstantEntered::class,
+        EnumConstantExited::class,
+        EnumExited::class
+    )
+
+    @Test
+    fun `produce service events`() = assertEmits(
+        ServiceEntered::class,
+        RpcEntered::class,
+        RpcOptionDiscovered::class,
+        RpcExited::class,
+        ServiceExited::class
+    )
 
     @Test
     fun `include 'rpc' options`() {
         val event = emitted<RpcOptionDiscovered>()
 
-        event.option.name shouldBe  "idempotency_level"
+        event.option.name shouldBe "idempotency_level"
         event.option.value.unpackGuessingType() shouldBe enumValue {
             name = NO_SIDE_EFFECTS.name
             number = NO_SIDE_EFFECTS_VALUE
@@ -238,11 +252,11 @@ class CompilerEventsSpec {
 
     @Test
     fun `parse repeated values of custom options`() = assertEmits(
-        TypeEntered::class,
-        FieldEntered::class,
-        FieldOptionDiscovered::class,
-        FieldOptionDiscovered::class,
-        FieldOptionDiscovered::class,
+        TypeEntered::class, // message Word
+        FieldEntered::class, // string test
+        FieldOptionDiscovered::class, // (rhyme)
+        FieldOptionDiscovered::class, // (rhyme)
+        FieldOptionDiscovered::class, // (rhyme)
         FieldExited::class,
         TypeExited::class,
     )
@@ -279,16 +293,24 @@ private inline fun <reified T : Message> FieldOptionDiscovered?.option() : T {
     return this!!.option.value.unpack(T::class.java)
 }
 
-private fun List<EventMessage>.findMultipleFilesOptionEvent() : FileOptionDiscovered? = find {
+private fun List<EventMessage>.findTypeUrlPrefixEvent(): FileOptionDiscovered? = find {
+    it is FileOptionDiscovered && it.option.number == OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
+} as FileOptionDiscovered?
+
+private fun List<EventMessage>.findJavaPackageEvent(): FileOptionDiscovered? = find {
+    it is FileOptionDiscovered && it.option.number == FileOptions.JAVA_PACKAGE_FIELD_NUMBER
+}  as FileOptionDiscovered?
+
+private fun List<EventMessage>.findOuterClassNameEvent(): FileOptionDiscovered? = find {
+    it is FileOptionDiscovered && it.option.number == FileOptions.JAVA_OUTER_CLASSNAME_FIELD_NUMBER
+}  as FileOptionDiscovered?
+
+private fun List<EventMessage>.findMultipleFilesEvent() : FileOptionDiscovered? = find {
     it is FileOptionDiscovered && it.isJavaMultipleFilesField()
 } as FileOptionDiscovered?
 
 private fun FileOptionDiscovered.isJavaMultipleFilesField() =
-    option.number == DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
-
-private fun List<EventMessage>.findTypeUrlPrefixEvent(): FileOptionDiscovered? = find {
-    it is FileOptionDiscovered && it.option.number == OptionsProto.TYPE_URL_PREFIX_FIELD_NUMBER
-} as FileOptionDiscovered?
+    option.number == FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
 
 private fun List<EventMessage>.findRequiredFieldOptionEvent(): FieldOptionDiscovered? = find {
     it is FieldOptionDiscovered && it.option.number == OptionsProto.REQUIRED_FIELD_NUMBER
