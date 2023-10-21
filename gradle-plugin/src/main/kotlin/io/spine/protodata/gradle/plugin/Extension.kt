@@ -28,7 +28,7 @@ package io.spine.protodata.gradle.plugin
 
 import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
-import io.spine.protodata.gradle.CodeGeneratorRequestFile.DEFAULT_DIRECTORY
+import io.spine.protodata.gradle.CodeGeneratorRequestFile.defaultDirectory
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.tools.fs.DirectoryName.generated
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
@@ -68,7 +68,7 @@ public class Extension(internal val project: Project): CodegenSettings {
 
     internal val requestFilesDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(
-            layout.buildDirectory.dir(DEFAULT_DIRECTORY)
+            layout.buildDirectory.dir(defaultDirectory)
         )
     }
 

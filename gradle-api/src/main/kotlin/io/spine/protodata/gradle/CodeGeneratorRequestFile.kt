@@ -37,7 +37,15 @@ public object CodeGeneratorRequestFile {
      * The default name of the subdirectory of the `build` directory where code generation
      * request files are placed.
      */
-    public const val DEFAULT_DIRECTORY: String = "protodata/requests"
+    @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
+    public const val defaultDirectory: String = "protodata/requests"
+
+    /**
+     * The default name of the subdirectory of the `build` directory where code generation
+     * request files are placed.
+     */
+    @Deprecated("Use `defaultDirectory` instead.", ReplaceWith("defaultDirectory"))
+    public const val DEFAULT_DIRECTORY: String = defaultDirectory
 
     /**
      * Obtains the name of the file with the code generation request for the given source set.
