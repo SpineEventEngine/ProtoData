@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@
  */
 
 package io.spine.protodata.cli
+
+import java.io.File.pathSeparator
 
 /**
  * A parameter passed to the ProtoData command-line application.
@@ -52,11 +54,7 @@ public sealed class Parameter(
     /**
      * Description of the parameter with the usage instructions.
      */
-    public val help: String
-
-    init {
-        this.help = help.trimIndent()
-    }
+    public val help: String = help.trimIndent()
 
     final override fun hashCode(): Int = name.hashCode()
 
@@ -70,5 +68,13 @@ public sealed class Parameter(
         if (name != other.name) return false
         if (shortName != other.shortName) return false
         return help == other.help
+    }
+
+    internal companion object {
+
+        /**
+         * The abbreviation for [pathSeparator] for using inside help texts.
+         */
+        val ps: String = pathSeparator
     }
 }

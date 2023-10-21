@@ -31,7 +31,6 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.options.NullableOption
-import com.github.ajalt.clikt.parameters.options.deprecated
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
@@ -55,7 +54,6 @@ import io.spine.protodata.cli.DebugLoggingParam
 import io.spine.protodata.cli.InfoLoggingParam
 import io.spine.protodata.cli.Parameter
 import io.spine.protodata.cli.PluginParam
-import io.spine.protodata.cli.RendererParam
 import io.spine.protodata.cli.RequestParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
@@ -121,11 +119,6 @@ internal class Run(version: String) : CliktCommand(
 
     private val plugins: List<String>
             by PluginParam.toOption().multiple()
-
-    private val renderers: List<String>
-            by RendererParam.toOption().multiple(default = listOf()).deprecated(
-                "Supply Renderers via Plugins instead"
-            )
 
     private val codegenRequestFile: File
             by RequestParam.toOption().file(
@@ -198,7 +191,6 @@ internal class Run(version: String) : CliktCommand(
     private fun doRun() {
         val sources = createSourceFileSets()
         val plugins = loadPlugins()
-        val renderers = loadRenderers()
         val registry = createRegistry()
         val request = loadRequest(registry)
         val config = resolveConfig()
@@ -206,18 +198,13 @@ internal class Run(version: String) : CliktCommand(
         logger.atDebug().log { """
             Starting code generation with the following arguments:
               - plugins: ${plugins.joinToString()}
-              - renderers: ${renderers.joinToString()}
               - request
                   - files to generate: ${request.fileToGenerateList.joinToString()}
                   - parameter: ${request.parameter}
               - config: ${config}.
             """.ti()
         }
-        val pipeline = if (renderers.isNotEmpty()) {
-            Pipeline(plugins, renderers, sources, request, config)
-        } else {
-            Pipeline(plugins, sources, request, config)
-        }
+        val pipeline = Pipeline(plugins, sources, request, config)
         pipeline()
     }
 
@@ -255,8 +242,6 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun loadPlugins() = load(PluginBuilder(), plugins)
-
-    private fun loadRenderers() = load(RendererBuilder(), renderers)
 
     private fun createRegistry(): ExtensionRegistry {
         val registry = OptionsProvider.registryWithAllOptions()

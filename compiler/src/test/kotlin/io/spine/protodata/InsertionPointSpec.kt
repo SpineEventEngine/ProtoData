@@ -32,6 +32,7 @@ import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldHaveAtLeastSize
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.string.shouldContain
+import io.spine.protodata.backend.ImplicitPluginWithRenderers
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
@@ -103,12 +104,15 @@ class InsertionPointsSpec {
             """.trimIndent()
         )
         Pipeline(
-            plugins = listOf(),
-            renderers = listOf(
-                VariousKtInsertionPointsPrinter(), CatOutOfTheBoxEmancipator(),
-                NonVoidMethodPrinter(), IgnoreValueAnnotator(),
-                CompanionFramer(), CompanionLalalaRenderer()
-            ),
+            plugins = listOf(ImplicitPluginWithRenderers(
+                renderers = listOf(
+                    VariousKtInsertionPointsPrinter(),
+                    CatOutOfTheBoxEmancipator(),
+                    NonVoidMethodPrinter(),
+                    IgnoreValueAnnotator(),
+                    CompanionFramer(),
+                    CompanionLalalaRenderer())
+            )),
             sources = listOf(SourceFileSet.create(input, output)),
             request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
         )()
