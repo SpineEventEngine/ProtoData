@@ -98,6 +98,11 @@ class CompilerEventsSpec {
         events = CompilerEvents.parse(request).toList()
     }
 
+    @Test
+    fun `not have duplicate events`() {
+        events.distinct() shouldContainExactly events
+    }
+
     @Nested
     inner class `produce file events` {
 
