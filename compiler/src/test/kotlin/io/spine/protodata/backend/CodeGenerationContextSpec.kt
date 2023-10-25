@@ -36,6 +36,7 @@ import com.google.protobuf.TimestampProto
 import com.google.protobuf.WrappersProto
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.collections.containExactly
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.should
@@ -55,6 +56,7 @@ import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.PhDProto
 import io.spine.protodata.test.XtraOptsProto
+import io.spine.server.BoundedContext
 import io.spine.testing.server.blackbox.BlackBox
 import io.spine.time.TimeProto
 import io.spine.util.theOnly
@@ -67,16 +69,26 @@ import org.junit.jupiter.api.Test
 @DisplayName("`Code Generation` context should")
 class CodeGenerationContextSpec {
 
-    @Test
-    fun `contain 'ProtobufSourceFile' view`() {
-        val ctx = CodeGenerationContext.builder().build()
-        assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileView::class.java))
-    }
+    @Nested
+    @DisplayName("provide")
+    inner class ViewTypes {
 
-    @Test
-    fun `contain 'ProtobufDependency' file view`() {
-        val ctx = CodeGenerationContext.builder().build()
-        assertTrue(ctx.hasEntitiesOfType(DependencyView::class.java))
+        private lateinit var ctx: BoundedContext
+
+        @BeforeEach
+        fun setUp() {
+            ctx = CodeGenerationContext.builder().build()
+        }
+
+        @Test
+        fun `'ProtobufSourceFile' view`() = assertTrue(
+            ctx.hasEntitiesOfType(ProtoSourceFileView::class.java)
+        )
+
+        @Test
+        fun `'ProtobufDependency' file view`() = assertTrue(
+            ctx.hasEntitiesOfType(DependencyView::class.java)
+        )
     }
 
     @Nested
@@ -107,8 +119,9 @@ class CodeGenerationContextSpec {
                 protoFile.addAll(dependencies)
                 fileToGenerate.addAll(filesToGenerate)
             }
+            val events = CompilerEvents.parse(set)
             ProtobufCompilerContext().use {
-                it.emitted(CompilerEvents.parse(set))
+                it.emitted(events)
             }
         }
 
@@ -117,8 +130,8 @@ class CodeGenerationContextSpec {
             val assertSourceFile = ctx.assertEntity(
                 DoctorProto.getDescriptor().path(), ProtoSourceFileView::class.java
             )
-            assertSourceFile
-                .exists()
+            assertSourceFile.exists()
+
             val actual = assertSourceFile.actual()!!.state() as ProtobufSourceFile
 
             val types = actual.typeMap
@@ -154,8 +167,14 @@ class CodeGenerationContextSpec {
                 protoFile.addAll(dependencies)
                 fileToGenerate.addAll(dependencies.map { it.name })
             }
+            val events = CompilerEvents.parse(set)
+
+            // Ensure no duplicates in the list of events.
+            val eventList = events.toList()
+            eventList.distinct() shouldContainExactly eventList
+
             ProtobufCompilerContext().use {
-                it.emitted(CompilerEvents.parse(set))
+                it.emitted(events)
             }
             val thirdPartyFiles = dependencies.filter { it.name !in filesToGenerate }
             val recordsOfDependencies = thirdPartyFiles
