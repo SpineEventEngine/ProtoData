@@ -28,12 +28,15 @@ package io.spine.protodata
 
 import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldHaveAtLeastSize
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.ImplicitPluginWithRenderers
 import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.renderer.InsertionPointsContext
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
@@ -56,6 +59,7 @@ import kotlin.io.path.readLines
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -114,19 +118,22 @@ class InsertionPointsSpec {
                     CompanionLalalaRenderer())
             )),
             sources = listOf(SourceFileSet.create(input, output)),
-            request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
+            request = CodeGeneratorRequest.getDefaultInstance(),
         )()
         kotlinFile = output / inputKtFile.name
         javaFile = output / inputJavaFile.name
     }
 
+    @AfterEach
+    fun closeContext() {
+        InsertionPointsContext.close()
+    }
+
     @Test
     fun `the start of a file`() {
         val contents = kotlinFile.readLines()
-        assertThat(contents)
-            .isNotEmpty()
-        assertThat(contents[0])
-            .contains(FILE_START.label)
+        contents.shouldNotBeEmpty()
+        contents[0] shouldContain FILE_START.label
     }
 
     @Test

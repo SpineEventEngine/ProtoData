@@ -26,19 +26,22 @@
 
 package io.spine.protodata.backend.event
 
-import com.google.protobuf.Descriptors
+import com.google.protobuf.Descriptors.MethodDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.File
-import io.spine.protodata.Service
 import io.spine.protodata.ServiceName
 import io.spine.protodata.backend.Documentation
-import io.spine.protodata.event.RpcEntered
-import io.spine.protodata.event.RpcExited
-import io.spine.protodata.event.RpcOptionDiscovered
 import io.spine.protodata.event.ServiceEntered
 import io.spine.protodata.event.ServiceExited
-import io.spine.protodata.event.ServiceOptionDiscovered
+import io.spine.protodata.event.rpcEntered
+import io.spine.protodata.event.rpcExited
+import io.spine.protodata.event.rpcOptionDiscovered
+import io.spine.protodata.event.serviceEntered
+import io.spine.protodata.event.serviceExited
+import io.spine.protodata.event.serviceOptionDiscovered
 import io.spine.protodata.name
+import io.spine.protodata.service
 
 /**
  * Produces events for a service.
@@ -55,64 +58,65 @@ internal class ServiceCompilerEvents(
      * Then go the events regarding the RPC methods. At last, closes with an [ServiceExited] event.
      */
     internal suspend fun SequenceScope<EventMessage>.produceServiceEvents(
-        descriptor: Descriptors.ServiceDescriptor
+        descriptor: ServiceDescriptor
     ) {
         val path = file.path
         val serviceName = descriptor.name()
-        val service = Service.newBuilder()
-            .setName(serviceName)
-            .setDoc(documentation.forService(descriptor))
-            .setFile(path)
-            .build()
         yield(
-            ServiceEntered.newBuilder()
-                .setFile(path)
-                .setService(service)
-                .build()
+            serviceEntered {
+                file = path
+                service = service {
+                    name = serviceName
+                    doc = documentation.forService(descriptor)
+                    file = path
+                }
+            }
         )
         produceOptionEvents(descriptor.options) {
-            ServiceOptionDiscovered.newBuilder()
-                .setFile(path)
-                .setService(serviceName)
-                .setOption(it)
-                .build()
+            serviceOptionDiscovered {
+                file = path
+                service = serviceName
+                option = it
+            }
         }
-        descriptor.methods.forEach { produceRpcEvents(serviceName, it) }
+        descriptor.methods.forEach {
+            produceRpcEvents(serviceName, it)
+        }
         yield(
-            ServiceExited.newBuilder()
-                .setFile(path)
-                .setService(serviceName)
-                .build()
+            serviceExited {
+                file = path
+                service = serviceName
+            }
         )
     }
 
     private suspend fun SequenceScope<EventMessage>.produceRpcEvents(
-        service: ServiceName,
-        descriptor: Descriptors.MethodDescriptor
+        serviceName: ServiceName,
+        desc: MethodDescriptor
     ) {
         val path = file.path
-        val rpc = buildRpc(descriptor, service, documentation)
+        val theRpc = buildRpc(desc, serviceName, documentation)
         yield(
-            RpcEntered.newBuilder()
-                .setFile(path)
-                .setService(service)
-                .setRpc(rpc)
-                .build()
+            rpcEntered {
+                file = path
+                service = serviceName
+                rpc = theRpc
+            }
         )
-        produceOptionEvents(descriptor.options) {
-            RpcOptionDiscovered.newBuilder()
-                .setFile(path)
-                .setService(service)
-                .setRpc(rpc.name)
-                .setOption(it)
-                .build()
+        produceOptionEvents(desc.options) {
+            rpcOptionDiscovered {
+                file = path
+                service = serviceName
+                rpc = theRpc.name
+                option = it
+            }
         }
         yield(
-            RpcExited.newBuilder()
-                .setFile(path)
-                .setService(service)
-                .setRpc(rpc.name)
-                .build()
+            rpcExited {
+                file = path
+                service = serviceName
+                rpc = theRpc.name
+            }
         )
     }
 }

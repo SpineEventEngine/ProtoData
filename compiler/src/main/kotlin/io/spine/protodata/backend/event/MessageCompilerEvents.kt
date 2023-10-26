@@ -26,23 +26,31 @@
 
 package io.spine.protodata.backend.event
 
-import com.google.protobuf.Descriptors
+import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.File
-import io.spine.protodata.OneofGroup
 import io.spine.protodata.TypeName
 import io.spine.protodata.backend.Documentation
 import io.spine.protodata.event.FieldEntered
 import io.spine.protodata.event.FieldExited
-import io.spine.protodata.event.FieldOptionDiscovered
 import io.spine.protodata.event.OneofGroupEntered
 import io.spine.protodata.event.OneofGroupExited
-import io.spine.protodata.event.OneofOptionDiscovered
 import io.spine.protodata.event.TypeEntered
 import io.spine.protodata.event.TypeExited
-import io.spine.protodata.event.TypeOptionDiscovered
+import io.spine.protodata.event.fieldEntered
+import io.spine.protodata.event.fieldExited
+import io.spine.protodata.event.fieldOptionDiscovered
+import io.spine.protodata.event.oneofGroupEntered
+import io.spine.protodata.event.oneofGroupExited
+import io.spine.protodata.event.oneofOptionDiscovered
+import io.spine.protodata.event.typeEntered
+import io.spine.protodata.event.typeExited
+import io.spine.protodata.event.typeOptionDiscovered
 import io.spine.protodata.messageType
 import io.spine.protodata.name
+import io.spine.protodata.oneofGroup
 
 /**
  * Produces events for a message.
@@ -59,57 +67,59 @@ internal class MessageCompilerEvents(
      * the events regarding the fields. At last, closes with an [TypeExited] event.
      */
     internal suspend fun SequenceScope<EventMessage>.produceMessageEvents(
-        descriptor: Descriptors.Descriptor,
+        desc: Descriptor,
         nestedIn: TypeName? = null
     ) {
-        val typeName = descriptor.name()
+        val typeName = desc.name()
         val path = file.path
-        val type = messageType {
+        val messageType = messageType {
             name = typeName
             file = path
             if (nestedIn != null) {
                 declaredIn = nestedIn
             }
-            doc = documentation.forMessage(descriptor)
-            nestedMessages.addAll(descriptor.nestedTypes.map { it.name() })
-            nestedEnums.addAll(descriptor.enumTypes.map { it.name() })
+            doc = documentation.forMessage(desc)
+            nestedMessages.addAll(desc.nestedTypes.map { it.name() })
+            nestedEnums.addAll(desc.enumTypes.map { it.name() })
         }
         yield(
-            TypeEntered.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .build()
+            typeEntered {
+                file = path
+                type = messageType
+            }
         )
-        produceOptionEvents(descriptor.options) {
-            TypeOptionDiscovered.newBuilder()
-                .setFile(path)
-                .setType(typeName)
-                .setOption(it)
-                .build()
+        produceOptionEvents(desc.options) {
+            typeOptionDiscovered {
+                file = path
+                type = typeName
+                option = it
+            }
         }
 
-        descriptor.realOneofs.forEach { produceOneofEvents(typeName, it) }
+        desc.realOneofs.forEach {
+            produceOneofEvents(typeName, it)
+        }
 
-        descriptor.fields
+        desc.fields
             .filter { it.realContainingOneof == null }
             .forEach { produceFieldEvents(typeName, it) }
 
-        descriptor.nestedTypes.forEach {
-            produceMessageEvents(nestedIn = typeName, descriptor = it)
+        desc.nestedTypes.forEach {
+            produceMessageEvents(nestedIn = typeName, desc = it)
         }
 
         val enums = EnumCompilerEvents(file, documentation)
-        descriptor.enumTypes.forEach {
+        desc.enumTypes.forEach {
             enums.apply {
-                produceEnumEvents(nestedIn = typeName, descriptor = it)
+                produceEnumEvents(nestedIn = typeName, desc = it)
             }
         }
 
         yield(
-            TypeExited.newBuilder()
-                .setFile(path)
-                .setType(typeName)
-                .build()
+            typeExited {
+                file = path
+                type = typeName
+            }
         )
     }
 
@@ -120,37 +130,39 @@ internal class MessageCompilerEvents(
      * Then go the events regarding the fields. At last, closes with an [OneofGroupExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
-        type: TypeName,
-        descriptor: Descriptors.OneofDescriptor
+        typeName: TypeName,
+        desc: OneofDescriptor
     ) {
-        val oneofName = descriptor.name()
-        val oneofGroup = OneofGroup.newBuilder()
-            .setName(oneofName)
-            .setDoc(documentation.forOneof(descriptor))
-            .build()
+        val oneofName = desc.name()
+        val oneofGroup = oneofGroup {
+            name = oneofName
+            doc = documentation.forOneof(desc)
+        }
         val path = file.path
         yield(
-            OneofGroupEntered.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .setGroup(oneofGroup)
-                .build()
+            oneofGroupEntered {
+                file = path
+                type = typeName
+                group = oneofGroup
+            }
         )
-        produceOptionEvents(descriptor.options) {
-            OneofOptionDiscovered.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .setGroup(oneofName)
-                .setOption(it)
-                .build()
+        produceOptionEvents(desc.options) {
+            oneofOptionDiscovered {
+                file = path
+                type = typeName
+                group = oneofName
+                option = it
+            }
         }
-        descriptor.fields.forEach { produceFieldEvents(type, it) }
+        desc.fields.forEach {
+            produceFieldEvents(typeName, it)
+        }
         yield(
-            OneofGroupExited.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .setGroup(oneofName)
-                .build()
+            oneofGroupExited {
+                file = path
+                type = typeName
+                group = oneofName
+            }
         )
     }
 
@@ -161,33 +173,33 @@ internal class MessageCompilerEvents(
      * closes with an [FieldExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
-        type: TypeName,
-        descriptor: Descriptors.FieldDescriptor
+        typeName: TypeName,
+        desc: FieldDescriptor
     ) {
-        val fieldName = descriptor.name()
-        val field = buildField(descriptor, type, documentation)
+        val fieldName = desc.name()
+        val theField = buildField(desc, typeName, documentation)
         val path = file.path
         yield(
-            FieldEntered.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .setField(field)
-                .build()
+            fieldEntered {
+                file = path
+                type = typeName
+                field = theField
+            }
         )
-        produceOptionEvents(descriptor.options) {
-            FieldOptionDiscovered.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .setField(fieldName)
-                .setOption(it)
-                .build()
+        produceOptionEvents(desc.options) {
+            fieldOptionDiscovered {
+                file = path
+                type = typeName
+                field = fieldName
+                option = it
+            }
         }
         yield(
-            FieldExited.newBuilder()
-                .setFile(path)
-                .setType(type)
-                .setField(fieldName)
-                .build()
+            fieldExited {
+                file = path
+                type = typeName
+                field = fieldName
+            }
         )
     }
 }
