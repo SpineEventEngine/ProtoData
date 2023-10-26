@@ -68,9 +68,11 @@ private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     return protobufSourceFile {
         filePath = path
         file = toFileWithOptions()
-        type.putAll(definitions.messageTypes().associateByUrl())
-        enumType.putAll(definitions.enumTypes().associateByUrl())
-        service.putAll(definitions.services().associateByUrl())
+        with(definitions) {
+            type.putAll(messageTypes().associateByUrl())
+            enumType.putAll(enumTypes().associateByUrl())
+            service.putAll(services().associateByUrl())
+        }
     }
 }
 
