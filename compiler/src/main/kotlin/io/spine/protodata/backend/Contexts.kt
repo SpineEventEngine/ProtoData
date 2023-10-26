@@ -26,10 +26,12 @@
 
 package io.spine.protodata.backend
 
+import com.google.common.annotations.VisibleForTesting
 import io.spine.base.EventMessage
 import io.spine.core.userId
 import io.spine.protodata.InsertionPointsView
 import io.spine.protodata.plugin.ViewRepository
+import io.spine.server.BoundedContext
 import io.spine.server.BoundedContext.singleTenant
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.integration.ThirdPartyContext
@@ -49,6 +51,16 @@ public object CodeGenerationContext {
         add(ViewRepository.default(InsertionPointsView::class.java))
         add(ConfigView.Repo())
     }
+
+    /**
+     * Creates a new instance of the `Code Generation` bounded context with
+     * only the default repositories.
+     *
+     * @see builder
+     */
+    @JvmStatic
+    @VisibleForTesting
+    public fun newInstance(): BoundedContext = builder().build()
 }
 
 /**

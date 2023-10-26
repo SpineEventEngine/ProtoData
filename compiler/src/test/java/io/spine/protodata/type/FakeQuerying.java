@@ -27,17 +27,22 @@
 package io.spine.protodata.type;
 
 import io.spine.base.EntityState;
-import io.spine.protodata.backend.CodeGenerationContext;
+import io.spine.server.BoundedContext;
 import io.spine.server.query.Querying;
 import io.spine.server.query.QueryingClient;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class FakeQuerying implements Querying {
 
+    private final BoundedContext context;
+
+    FakeQuerying(BoundedContext context) {
+        this.context = context;
+    }
+
     @NonNull
     @Override
     public <P extends EntityState<?>> QueryingClient<P> select(@NonNull Class<P> type) {
-        var context = CodeGenerationContext.builder().build();
         return new QueryingClient<>(context, type, FakeQuerying.class.getName());
     }
 }

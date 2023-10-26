@@ -101,11 +101,6 @@ public class Pipeline(
             use(InMemoryStorageFactory.newInstance())
             use(InMemoryTransportFactory.newInstance())
         }
-
-        under<Tests> {
-            use(InMemoryStorageFactory.newInstance())
-            use(InMemoryTransportFactory.newInstance())
-        }
     }
 
     /**
@@ -118,10 +113,6 @@ public class Pipeline(
      */
     public operator fun invoke() {
         under<DefaultMode> {
-            use(Delivery.direct())
-        }
-
-        under<Tests> {
             use(Delivery.direct())
         }
 

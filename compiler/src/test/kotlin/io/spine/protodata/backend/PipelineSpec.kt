@@ -93,9 +93,6 @@ class PipelineSpec {
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
-        ServerEnvironment.instance().reset()
-        ModelTests.dropAllModels()
-
         srcRoot = sandbox.resolve("src")
         srcRoot.toFile().mkdirs()
         targetRoot = sandbox.resolve("target")
@@ -118,12 +115,6 @@ class PipelineSpec {
 
         overwritingSourceSet = SourceFileSet.create(srcRoot, targetRoot)
         targetFile = targetRoot.resolve(sourceFileName)
-    }
-
-    @AfterEach
-    fun cleanup() {
-        ServerEnvironment.instance().reset()
-        ModelTests.dropAllModels()
     }
 
     @CanIgnoreReturnValue

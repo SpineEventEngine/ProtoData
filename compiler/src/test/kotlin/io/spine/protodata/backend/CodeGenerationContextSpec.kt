@@ -79,7 +79,7 @@ class CodeGenerationContextSpec {
 
         @BeforeEach
         fun setUp() {
-            ctx = CodeGenerationContext.builder().build()
+            ctx = CodeGenerationContext.newInstance()
         }
 
         @AfterEach
@@ -222,19 +222,18 @@ class CodeGenerationContextSpec {
                 }
             }
 
-            // Reset the environment to avoid double-dispatching of events in the first context.
-            //ServerEnvironment.instance().reset()
-
             // Second context
             createCodegenBlackBox().run {
-                emitCompilerEventsForDependencyFiles()
+                use {
+                    emitCompilerEventsForDependencyFiles()
 
-                protoSourceFiles = thirdPartyFiles.map {
-                    assertEntity<ProtoSourceFileView, _>(
-                        it.toFilePath()
-                    ).run {
-                        exists()
-                        actual()!!.state() as ProtobufSourceFile
+                    protoSourceFiles = thirdPartyFiles.map {
+                        assertEntity<ProtoSourceFileView, _>(
+                            it.toFilePath()
+                        ).run {
+                            exists()
+                            actual()!!.state() as ProtobufSourceFile
+                        }
                     }
                 }
             }

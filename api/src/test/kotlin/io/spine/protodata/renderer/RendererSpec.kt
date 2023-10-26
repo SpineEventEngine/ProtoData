@@ -30,9 +30,11 @@ import io.kotest.matchers.shouldBe
 import io.spine.base.EntityState
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.type.TypeSystem
+import io.spine.server.BoundedContext
 import io.spine.server.query.Querying
 import io.spine.server.query.QueryingClient
 import io.spine.tools.code.AnyLanguage
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -42,12 +44,29 @@ import org.junit.jupiter.api.assertThrows
 @DisplayName("`Renderer` should")
 internal class RendererSpec {
 
+    /**
+     * An instance of `"Code Generation"` context to be used for
+     * [creating][createTypeSystem] a [typeSystem].
+     *
+     * We do not pass any custom entity classes or repositories to the context builder,
+     * as we do not need them in tests.
+     */
+    private lateinit var context: BoundedContext
+
     private lateinit var renderer: StubRenderer
+    private lateinit var typeSystem: TypeSystem
 
     @BeforeEach
-    fun initRenderer() {
+    fun initEnvironment() {
+        context = CodeGenerationContext.newInstance()
+        typeSystem = createTypeSystem(context)
         renderer = StubRenderer()
         renderer.injectTypeSystem(typeSystem)
+    }
+
+    @AfterEach
+    fun closeContext() {
+        context.close()
     }
 
     @Test
@@ -65,28 +84,16 @@ internal class RendererSpec {
     @Test
     fun `prevent injecting another type system`() {
         assertThrows<IllegalStateException> {
-            renderer.injectTypeSystem(createTypeSystem())
+            renderer.injectTypeSystem(createTypeSystem(context))
         }
     }
 
     companion object {
 
         /**
-         * An instance of [CodeGenerationContext] to be used for
-         * [creating][createTypeSystem] a [typeSystem].
-         *
-         * We do not pass any custom entity classes or repositories to the context builder,
-         * as we do not need them in tests.
-         */
-        private val context = CodeGenerationContext.builder().build()
-
-        val typeSystem = createTypeSystem()
-
-        /**
          * Creates an instance of [TypeSystem] for testing.
          */
-        fun createTypeSystem() = TypeSystem.serving(object : Querying {
-
+        fun createTypeSystem(context: BoundedContext) = TypeSystem.serving(object : Querying {
             override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> =
                 QueryingClient(context, type, this::javaClass.name)
         })
