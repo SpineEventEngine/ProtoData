@@ -60,8 +60,10 @@ import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
+import io.spine.server.ServerEnvironment
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
+import io.spine.testing.server.model.ModelTests
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
@@ -69,6 +71,7 @@ import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -90,6 +93,9 @@ class PipelineSpec {
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
+        ServerEnvironment.instance().reset()
+        ModelTests.dropAllModels()
+
         srcRoot = sandbox.resolve("src")
         srcRoot.toFile().mkdirs()
         targetRoot = sandbox.resolve("target")
@@ -112,6 +118,12 @@ class PipelineSpec {
 
         overwritingSourceSet = SourceFileSet.create(srcRoot, targetRoot)
         targetFile = targetRoot.resolve(sourceFileName)
+    }
+
+    @AfterEach
+    fun cleanup() {
+        ServerEnvironment.instance().reset()
+        ModelTests.dropAllModels()
     }
 
     @CanIgnoreReturnValue
