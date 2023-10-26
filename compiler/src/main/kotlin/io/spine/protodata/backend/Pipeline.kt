@@ -31,6 +31,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.base.EntityState
 import io.spine.environment.DefaultMode
+import io.spine.environment.Tests
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.plugin.Plugin
@@ -100,6 +101,11 @@ public class Pipeline(
             use(InMemoryStorageFactory.newInstance())
             use(InMemoryTransportFactory.newInstance())
         }
+
+        under<Tests> {
+            use(InMemoryStorageFactory.newInstance())
+            use(InMemoryTransportFactory.newInstance())
+        }
     }
 
     /**
@@ -114,6 +120,11 @@ public class Pipeline(
         under<DefaultMode> {
             use(Delivery.direct())
         }
+
+        under<Tests> {
+            use(Delivery.direct())
+        }
+
         codegenContext = assembleCodegenContext()
         codegenContext.use {
             val configuration = ConfigurationContext()
