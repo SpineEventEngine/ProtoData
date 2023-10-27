@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("Protobuf compiler plugin")
-class PluginSpec {
+class ProtocPluginSpec {
 
     private lateinit var requestFile: File
 
