@@ -50,7 +50,7 @@ repositories {
  * Please keep this value in sync. with `io.spine.internal.dependency.Jackson.version`.
  * It's not a requirement, but would be good in terms of consistency.
  */
-val jacksonVersion = "2.13.4"
+val jacksonVersion = "2.15.3"
 
 val googleAuthToolVersion = "2.1.2"
 val licenseReportVersion = "2.1"
@@ -70,7 +70,7 @@ val kotlinVersion = "1.8.22"
  * Always use the same version as the one specified in [io.spine.internal.dependency.Guava].
  * Otherwise, when testing Gradle plugins, clashes may occur.
  */
-val guavaVersion = "32.1.2-jre"
+val guavaVersion = "32.1.3-jre"
 
 /**
  * The version of ErrorProne Gradle plugin.
