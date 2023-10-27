@@ -26,8 +26,6 @@
 
 package io.spine.protodata
 
-import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.compiler.PluginProtos
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldHaveAtLeastSize

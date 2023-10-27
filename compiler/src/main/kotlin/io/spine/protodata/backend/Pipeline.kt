@@ -36,6 +36,7 @@ import io.spine.protodata.config.Configuration
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
+import io.spine.protodata.renderer.InsertionPointsContext
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.type.TypeSystem
@@ -46,6 +47,7 @@ import io.spine.server.query.QueryingClient
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
+
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -64,7 +66,12 @@ public class Pipeline(
     private val plugins: List<Plugin>,
     private val sources: List<SourceFileSet>,
     private val request: CodeGeneratorRequest,
-    private val config: Configuration? = null
+    private val config: Configuration? = null,
+    /**
+     * The ID of the pipeline to be used for distinguishing contexts when
+     * two or more pipelines are executed in the same JVM.
+     */
+    public val id: String = generateId()
 ) {
 
     private lateinit var codegenContext: BoundedContext
@@ -87,12 +94,14 @@ public class Pipeline(
         renderers: List<Renderer<*>>,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
-        config: Configuration? = null
+        config: Configuration? = null,
+        id: String = generateId()
     ) : this(
         listOf(plugin, ImplicitPluginWithRenderers(renderers)),
         listOf(sources),
         request,
-        config
+        config,
+        id
     )
 
     init {
@@ -125,6 +134,7 @@ public class Pipeline(
                     renderSources()
                 }
             }
+            InsertionPointsContext.close()
         }
     }
 
@@ -152,5 +162,9 @@ public class Pipeline(
     private fun renderSources() {
         plugins.forEach { it.render(codegenContext, typeSystem, sources) }
         sources.forEach { it.write() }
+    }
+
+    internal companion object {
+        fun generateId(): String = SecureRandomString.generate()
     }
 }

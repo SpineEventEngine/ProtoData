@@ -34,6 +34,7 @@ import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ConfigurationError
+import io.spine.protodata.backend.Pipeline.Companion.generateId
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.SourceFileSet
@@ -60,10 +61,8 @@ import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
-import io.spine.server.ServerEnvironment
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
-import io.spine.testing.server.model.ModelTests
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
@@ -71,7 +70,6 @@ import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -129,7 +127,7 @@ class PipelineSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), renderer),
             sources = listOf(overwritingSourceSet),
-            request
+            request,
         )()
         assertTextIn(targetFile).isEqualTo("_Journey worth taking")
     }
@@ -139,7 +137,7 @@ class PipelineSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), InternalAccessRenderer()),
             sources = listOf(overwritingSourceSet),
-            request
+            request,
         )()
         val newClass = targetRoot.resolve("spine/protodata/test/JourneyInternal.java")
         assertExists(newClass)
@@ -171,7 +169,8 @@ class PipelineSpec {
                 renderer
             ),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            request = request,
+            id = generateId()
         )()
 
         assertTextIn(targetRoot / path).run {
@@ -195,7 +194,8 @@ class PipelineSpec {
                 renderer
             ),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            request = request,
+            id = generateId()
         )()
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
@@ -218,7 +218,8 @@ class PipelineSpec {
                 )
             )),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request = CodeGeneratorRequest.getDefaultInstance()
+            request = CodeGeneratorRequest.getDefaultInstance(),
+            id = generateId()
         )()
         assertTextIn(targetRoot / path)
             .contains("@Nullable String")

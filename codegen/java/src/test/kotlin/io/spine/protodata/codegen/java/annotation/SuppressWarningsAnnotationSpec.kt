@@ -70,7 +70,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
-                Configuration.rawValue("""
+                config = Configuration.rawValue("""
                     {"warnings": {"value": []}} 
                 """.trimIndent(), PROTO_JSON)
             )()
