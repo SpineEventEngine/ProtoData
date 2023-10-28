@@ -36,10 +36,8 @@ import io.spine.protodata.config.Configuration
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
-import io.spine.protodata.renderer.InsertionPointsContext
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
@@ -111,29 +109,26 @@ public class Pipeline(
         under<DefaultMode> {
             use(Delivery.direct())
         }
-
         codegenContext = assembleCodegenContext()
         codegenContext.use {
-            val configuration = ConfigurationContext()
-            configuration.use {
-                val compiler = ProtobufCompilerContext()
-                compiler.use {
+            ConfigurationContext(id).use { configuration ->
+                ProtobufCompilerContext(id).use { compiler ->
                     emitEvents(configuration, compiler)
                     renderSources()
                 }
             }
-            InsertionPointsContext.close()
         }
     }
 
     /**
      * Assembles the `Code Generation` context by applying given [plugins].
      */
-    private fun assembleCodegenContext(): CodegenContext {
-        return CodeGenerationContext(id) {
-            plugins.forEach {  it.applyTo(this) }
+    private fun assembleCodegenContext(): CodegenContext =
+        CodeGenerationContext(id) {
+            plugins.forEach {
+                it.applyTo(this)
+            }
         }
-    }
 
     private fun emitEvents(
         configuration: ConfigurationContext,

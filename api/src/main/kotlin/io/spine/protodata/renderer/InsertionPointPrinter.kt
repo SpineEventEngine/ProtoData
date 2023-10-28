@@ -26,14 +26,10 @@
 
 package io.spine.protodata.renderer
 
-import com.google.common.annotations.VisibleForTesting
-import io.spine.base.EventMessage
 import io.spine.core.userId
 import io.spine.protodata.event.insertionPointPrinted
 import io.spine.protodata.filePath
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
-import io.spine.protodata.renderer.InsertionPointsContext.close
-import io.spine.server.integration.ThirdPartyContext
 import io.spine.text.TextCoordinates
 import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
 import io.spine.text.TextCoordinates.KindCase.INLINE
@@ -156,39 +152,6 @@ public abstract class InsertionPointPrinter<L: Language>(
 
     private companion object {
         val actorId = userId { value = InsertionPointPrinter::class.qualifiedName!! }
-    }
-}
-
-/**
- * A holder of `InsertionPoints` [ThirdPartyContext] instance, which is used to emit events
- * about the insertion points.
- *
- * The primary purpose of this object is to allow [closing][close] the context after the tests.
- */
-public object InsertionPointsContext {
-
-    private val actorId = userId { value = InsertionPointPrinter::class.qualifiedName!! }
-
-    private var instance: ThirdPartyContext? = null
-
-    private fun instance(): ThirdPartyContext {
-        if (instance == null) {
-            instance = ThirdPartyContext.singleTenant("Insertion Points")
-        }
-        return instance!!
-    }
-
-    internal fun emittedEvent(event: EventMessage) {
-        instance().emittedEvent(event, actorId)
-    }
-
-    /**
-     * Closes the context.
-     */
-    @VisibleForTesting
-    public fun close() {
-        instance?.close()
-        instance = null
     }
 }
 

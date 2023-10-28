@@ -52,18 +52,21 @@ import org.junit.jupiter.api.Test
 class ConfigurationContextSpec {
 
     private lateinit var context: BoundedContext
-    private lateinit var subscriber: TestSubscriber
+    private lateinit var subscriber: RecordingDispatcher
+    private lateinit var configurationContext: ConfigurationContext
 
     @BeforeEach
     fun prepareReceiverContext() {
-        subscriber = TestSubscriber()
+        subscriber = RecordingDispatcher()
         context = BoundedContextBuilder.assumingTests()
             .addEventDispatcher(subscriber)
             .build()
+        configurationContext = ConfigurationContext(SecureRandomString.generate())
     }
 
     @AfterEach
     fun closeContext() {
+        configurationContext.close()
         context.close()
     }
 
@@ -91,14 +94,17 @@ class ConfigurationContextSpec {
     }
 
     private fun checkEvent(event: EventMessage) {
-        ConfigurationContext().use {
+        configurationContext.use {
             it.emitted(event)
         }
         subscriber.receivedEvents shouldContainExactly listOf(event)
     }
 }
 
-private class TestSubscriber : EventDispatcher {
+/**
+ * Remembers [external events][externalEventClasses] dispatched to it.
+ */
+private class RecordingDispatcher : EventDispatcher {
 
     val receivedEvents = mutableListOf<EventMessage>()
 
@@ -109,8 +115,10 @@ private class TestSubscriber : EventDispatcher {
         return successfulOutcome(envelope.messageId())
     }
 
-    override fun externalEventClasses(): ImmutableSet<EventClass> =
-        EventClass.setOf(FileConfigDiscovered::class.java, RawConfigDiscovered::class.java)
+    override fun externalEventClasses(): ImmutableSet<EventClass> = EventClass.setOf(
+        FileConfigDiscovered::class.java,
+        RawConfigDiscovered::class.java
+    )
 
     override fun domesticEventClasses(): ImmutableSet<EventClass> =
         EventClass.emptySet()

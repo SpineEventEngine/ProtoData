@@ -119,9 +119,9 @@ public class CodeGenerationContext(
  *
  * This context can emit events which are visible to the `Code Generation` context.
  */
-internal sealed class ExternalContext(name: String) : AutoCloseable {
+internal sealed class ExternalContext(pipelineId: String, name: String) : AutoCloseable {
 
-    private val context = ThirdPartyContext.singleTenant(name)
+    private val context = ThirdPartyContext.singleTenant("$name-$pipelineId")
     private val actor = userId { value = name }
 
     /**
@@ -139,16 +139,21 @@ internal sealed class ExternalContext(name: String) : AutoCloseable {
     fun emitted(singleEvent: EventMessage) =
         emitted(sequenceOf(singleEvent))
 
-    override fun close() =
-        context.close()
+    override fun close() {
+        if (context.isOpen) {
+            context.close()
+        }
+    }
 }
 
 /**
  * The `Protobuf Compiler` third-party bounded context.
  */
-internal class ProtobufCompilerContext : ExternalContext("Protobuf Compiler")
+internal class ProtobufCompilerContext(pipelineId: String) :
+    ExternalContext(pipelineId, "Protobuf Compiler")
 
 /**
  * The `ProtoData Configuration` third-party bounded context.
  */
-internal class ConfigurationContext : ExternalContext("ProtoData Configuration")
+internal class ConfigurationContext(pipelineId: String) :
+    ExternalContext(pipelineId, "ProtoData Configuration")

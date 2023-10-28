@@ -125,18 +125,18 @@ class CodeGenerationContextSpec {
             fileToGenerate.addAll(filesToGenerate)
         }
 
-        fun createCodegenBlackBox(): Pair<CodegenContext, BlackBox> {
+        fun createCodegenBlackBox(pipelineId: String): Pair<CodegenContext, BlackBox> {
             var blackBox: BlackBox? = null
-            val context = CodeGenerationContext(SecureRandomString.generate()) {
+            val context = CodeGenerationContext(pipelineId) {
                 blackBox = BlackBox.from(this)
             }
 
             return Pair(context, blackBox!!)
         }
 
-        fun emitCompilerEvents() {
+        fun emitCompilerEvents(pipelineId: String) {
             val events = CompilerEvents.parse(codeGeneratorRequest)
-            ProtobufCompilerContext().use {
+            ProtobufCompilerContext(pipelineId).use {
                 it.emitted(events)
             }
         }
@@ -147,13 +147,15 @@ class CodeGenerationContextSpec {
 
         private lateinit var codegen: CodegenContext
         private lateinit var ctx: BlackBox
+        private lateinit var pipelineId: String
 
         @BeforeEach
         fun buildViews() {
-            val pair = createCodegenBlackBox()
+            pipelineId = SecureRandomString.generate()
+            val pair = createCodegenBlackBox(pipelineId)
             codegen = pair.first
             ctx = pair.second
-            emitCompilerEvents()
+            emitCompilerEvents(pipelineId)
         }
 
         @AfterEach
@@ -217,15 +219,17 @@ class CodeGenerationContextSpec {
 
         private lateinit var dependencyFiles: List<ProtobufSourceFile>
         private lateinit var protoSourceFiles: List<ProtobufSourceFile>
+        private lateinit var pipelineId: String
 
         @BeforeEach
         fun buildViews() {
+            pipelineId = SecureRandomString.generate()
             // First context
 
-            createCodegenBlackBox().run {
+            createCodegenBlackBox(pipelineId).run {
                 val (context, blackbox) = this
                 context.use {
-                    emitCompilerEvents()
+                    emitCompilerEvents(pipelineId)
                     dependencyFiles = thirdPartyFiles.map {
                         blackbox.assertEntity<DependencyView, _>(
                             it.toFilePath()
@@ -238,10 +242,10 @@ class CodeGenerationContextSpec {
             }
 
             // Second context
-            createCodegenBlackBox().run {
+            createCodegenBlackBox(pipelineId).run {
                 val (context, blackbox) = this
                 context.use {
-                    emitCompilerEventsForDependencyFiles()
+                    emitCompilerEventsForDependencyFiles(pipelineId)
 
                     protoSourceFiles = thirdPartyFiles.map {
                         blackbox.assertEntity<ProtoSourceFileView, _>(
@@ -255,7 +259,7 @@ class CodeGenerationContextSpec {
             }
         }
 
-        private fun emitCompilerEventsForDependencyFiles() {
+        private fun emitCompilerEventsForDependencyFiles(pipelineId: String) {
             val set = codeGeneratorRequest {
                 protoFile.addAll(dependencies)
                 fileToGenerate.addAll(dependencies.map { it.name })
@@ -265,7 +269,7 @@ class CodeGenerationContextSpec {
             val eventList = events.toList()
             eventList.distinct() shouldContainExactly eventList
 
-            ProtobufCompilerContext().use {
+            ProtobufCompilerContext(pipelineId).use {
                 it.emitted(events)
             }
         }

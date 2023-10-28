@@ -26,9 +26,18 @@
 
 package io.spine.protodata
 
+/**
+ * An object which can be registered with a [CodegenContext].
+ */
 public interface ContextAware {
 
+    /**
+     * Registers this object with the given [context].
+     */
     public fun registerWith(context: CodegenContext)
 
+    /**
+     * Tells if this object is registered with a [CodegenContext].
+     */
     public fun isRegistered(): Boolean
 }

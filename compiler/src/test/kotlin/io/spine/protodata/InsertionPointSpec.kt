@@ -34,7 +34,6 @@ import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.ImplicitPluginWithRenderers
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.renderer.InsertionPointsContext
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
@@ -120,11 +119,6 @@ class InsertionPointsSpec {
         )()
         kotlinFile = output / inputKtFile.name
         javaFile = output / inputJavaFile.name
-    }
-
-    @AfterEach
-    fun closeContext() {
-        InsertionPointsContext.close()
     }
 
     @Test
