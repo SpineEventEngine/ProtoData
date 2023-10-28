@@ -108,8 +108,11 @@ public class CodeGenerationContext(
          * only the default repositories.
          */
         @JvmStatic
+        @JvmOverloads
         @VisibleForTesting
-        public fun newInstance(pipelineId: String): CodeGenerationContext =
+        public fun newInstance(
+            pipelineId: String = Pipeline.generateId()
+        ): CodeGenerationContext =
             CodeGenerationContext(pipelineId)
     }
 }

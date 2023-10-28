@@ -61,7 +61,7 @@ class ConfigurationContextSpec {
         context = BoundedContextBuilder.assumingTests()
             .addEventDispatcher(subscriber)
             .build()
-        configurationContext = ConfigurationContext(SecureRandomString.generate())
+        configurationContext = ConfigurationContext(Pipeline.generateId())
     }
 
     @AfterEach

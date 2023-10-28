@@ -147,7 +147,14 @@ public class Pipeline(
         sources.forEach { it.write() }
     }
 
-    internal companion object {
-        fun generateId(): String = SecureRandomString.generate()
+    public companion object {
+
+        /**
+         * Generates a random ID for the pipeline.
+         *
+         * The generated ID is guaranteed to be unique for the current JVM.
+         */
+        @JvmStatic
+        public fun generateId(): String = SecureRandomString.generate()
     }
 }

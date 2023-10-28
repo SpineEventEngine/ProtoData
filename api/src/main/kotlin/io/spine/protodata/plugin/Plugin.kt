@@ -142,7 +142,7 @@ public fun Plugin.render(
     }
 }
 
-public fun Plugin.checkNoViewRepoDuplication(repos: MutableList<ViewRepository<*, *, *>>) {
+private fun Plugin.checkNoViewRepoDuplication(repos: MutableList<ViewRepository<*, *, *>>) {
     val repeatedView = repos.map { it.entityClass() }
         .groupingBy { it }
         .eachCount()

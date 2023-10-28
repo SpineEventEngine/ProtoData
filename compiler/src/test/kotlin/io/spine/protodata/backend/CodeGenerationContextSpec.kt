@@ -81,7 +81,7 @@ class CodeGenerationContextSpec {
 
         @BeforeEach
         fun setUp() {
-            ctx = CodeGenerationContext.newInstance(SecureRandomString.generate(20))
+            ctx = CodeGenerationContext.newInstance()
         }
 
         @AfterEach
@@ -151,7 +151,7 @@ class CodeGenerationContextSpec {
 
         @BeforeEach
         fun buildViews() {
-            pipelineId = SecureRandomString.generate()
+            pipelineId = Pipeline.generateId()
             val pair = createCodegenBlackBox(pipelineId)
             codegen = pair.first
             ctx = pair.second
@@ -223,7 +223,7 @@ class CodeGenerationContextSpec {
 
         @BeforeEach
         fun buildViews() {
-            pipelineId = SecureRandomString.generate()
+            pipelineId = Pipeline.generateId()
             // First context
 
             createCodegenBlackBox(pipelineId).run {

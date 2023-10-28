@@ -30,7 +30,6 @@ import io.kotest.matchers.shouldBe
 import io.spine.base.EntityState
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.backend.CodeGenerationContext
-import io.spine.protodata.backend.SecureRandomString
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.query.Querying
@@ -60,7 +59,7 @@ internal class RendererSpec {
 
     @BeforeEach
     fun initEnvironment() {
-        context = CodeGenerationContext.newInstance(SecureRandomString.generate())
+        context = CodeGenerationContext.newInstance()
         typeSystem = context.typeSystem
         renderer = StubRenderer()
         renderer.registerWith(context)
@@ -85,7 +84,7 @@ internal class RendererSpec {
 
     @Test
     fun `prevent injecting another type system`() {
-        val anotherContext = CodeGenerationContext.newInstance(SecureRandomString.generate())
+        val anotherContext = CodeGenerationContext.newInstance()
         anotherContext.use {
             assertThrows<IllegalStateException> {
                 renderer.registerWith(it)
