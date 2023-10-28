@@ -31,7 +31,7 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 /**
- * Generates a random URL-safe base64-encoded string of the given length.
+ * Generates a random URL-safe base64-encoded string.
  *
  * @see <a href="https://neilmadden.blog/2018/08/30/moving-away-from-uuids/">
  *     Moving away from UUIDs</a>
@@ -39,7 +39,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
  * @see <a href="https://github.com/nikbucher/j-nanoid">j-nanoid</a>
  */
 @OptIn(ExperimentalEncodingApi::class)
-internal object SecureRandomString {
+public object SecureRandomString {
 
     private const val DEFAULT_SIZE = 20
 
@@ -52,7 +52,7 @@ internal object SecureRandomString {
     }
 
     @JvmOverloads
-    fun generate(size: Int = DEFAULT_SIZE): String {
+    public fun generate(size: Int = DEFAULT_SIZE): String {
         val buffer = ByteArray(size)
         random.nextBytes(buffer)
         return encoder.encode(buffer)

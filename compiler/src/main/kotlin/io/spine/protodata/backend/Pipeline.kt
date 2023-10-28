@@ -29,8 +29,8 @@ package io.spine.protodata.backend
 import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
-import io.spine.base.EntityState
 import io.spine.environment.DefaultMode
+import io.spine.protodata.CodegenContext
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.plugin.Plugin
@@ -39,11 +39,8 @@ import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.InsertionPointsContext
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
-import io.spine.server.query.Querying
-import io.spine.server.query.QueryingClient
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
@@ -74,16 +71,7 @@ public class Pipeline(
     public val id: String = generateId()
 ) {
 
-    private lateinit var codegenContext: BoundedContext
-
-    private val typeSystem: TypeSystem by lazy {
-        val client = object : Querying {
-            override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
-                return QueryingClient(codegenContext, type, javaClass.name)
-            }
-        }
-        TypeSystem.serving(client)
-    }
+    private lateinit var codegenContext: CodegenContext
 
     /**
      * Creates a new `Pipeline` with only one plugin and one source set.
@@ -141,10 +129,10 @@ public class Pipeline(
     /**
      * Assembles the `Code Generation` context by applying given [plugins].
      */
-    private fun assembleCodegenContext(): BoundedContext {
-        val builder = CodeGenerationContext.builder()
-        plugins.forEach {  it.applyTo(builder) }
-        return builder.build()
+    private fun assembleCodegenContext(): CodegenContext {
+        return CodeGenerationContext(id) {
+            plugins.forEach {  it.applyTo(this) }
+        }
     }
 
     private fun emitEvents(
@@ -160,7 +148,7 @@ public class Pipeline(
     }
 
     private fun renderSources() {
-        plugins.forEach { it.render(codegenContext, typeSystem, sources) }
+        plugins.forEach { it.render(codegenContext, sources) }
         sources.forEach { it.write() }
     }
 

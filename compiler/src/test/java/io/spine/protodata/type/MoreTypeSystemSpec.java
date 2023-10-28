@@ -38,7 +38,7 @@ class MoreTypeSystemSpec {
     @Test
     @DisplayName("construct instance with a static method")
     void createStatic() throws Exception {
-        try (var context = CodeGenerationContext.newInstance()) {
+        try (var context = CodeGenerationContext.newInstance("foo-bar")) {
             var ts = TypeSystem.serving(new FakeQuerying(context));
             assertThat(ts).isNotNull();
         }

@@ -24,25 +24,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.type;
+package io.spine.protodata
 
-import io.spine.base.EntityState;
-import io.spine.protodata.CodegenContext;
-import io.spine.server.query.Querying;
-import io.spine.server.query.QueryingClient;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import com.google.common.annotations.VisibleForTesting
+import io.spine.protodata.type.TypeSystem
+import io.spine.server.entity.Entity
+import io.spine.server.integration.ThirdPartyContext
+import io.spine.server.query.Querying
 
-final class FakeQuerying implements Querying {
+/**
+ * A context of code generation.
+ */
+public interface CodegenContext: Querying, AutoCloseable {
 
-    private final CodegenContext context;
+    /**
+     * The type system containing all the types available for code generation.
+     */
+    public val typeSystem: TypeSystem
 
-    FakeQuerying(CodegenContext context) {
-        this.context = context;
-    }
+    /**
+     * The `Insertion Points` context which generates events when [InsertedPoint]s are
+     * added to the code.
+     */
+    public val insertionPointsContext: ThirdPartyContext
 
-    @NonNull
-    @Override
-    public <P extends EntityState<?>> QueryingClient<P> select(@NonNull Class<P> type) {
-        return context.select(type);
-    }
+    /**
+     * A test-only method which checks if the context has entities of the given type.
+     */
+    @VisibleForTesting
+    public fun <E: Entity<*, *>> hasEntitiesOfType(cls: Class<E>): Boolean
 }

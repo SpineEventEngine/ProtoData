@@ -27,11 +27,11 @@
 package io.spine.protodata.plugin
 
 import io.spine.annotation.Internal
+import io.spine.protodata.CodegenContext
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.type.TypeSystem
-import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
 import kotlin.reflect.KClass
@@ -133,18 +133,16 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
  */
 @Internal
 public fun Plugin.render(
-    codegenContext: BoundedContext,
-    typeSystem: TypeSystem,
+    codegenContext: CodegenContext,
     sources: Iterable<SourceFileSet>
 ) {
     renderers().forEach { r ->
         r.registerWith(codegenContext)
-        r.injectTypeSystem(typeSystem)
         sources.forEach(r::renderSources)
     }
 }
 
-private fun Plugin.checkNoViewRepoDuplication(repos: MutableList<ViewRepository<*, *, *>>) {
+public fun Plugin.checkNoViewRepoDuplication(repos: MutableList<ViewRepository<*, *, *>>) {
     val repeatedView = repos.map { it.entityClass() }
         .groupingBy { it }
         .eachCount()

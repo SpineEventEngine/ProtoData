@@ -24,25 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.type;
+package io.spine.protodata
 
-import io.spine.base.EntityState;
-import io.spine.protodata.CodegenContext;
-import io.spine.server.query.Querying;
-import io.spine.server.query.QueryingClient;
-import org.checkerframework.checker.nullness.qual.NonNull;
+public interface ContextAware {
 
-final class FakeQuerying implements Querying {
+    public fun registerWith(context: CodegenContext)
 
-    private final CodegenContext context;
-
-    FakeQuerying(CodegenContext context) {
-        this.context = context;
-    }
-
-    @NonNull
-    @Override
-    public <P extends EntityState<?>> QueryingClient<P> select(@NonNull Class<P> type) {
-        return context.select(type);
-    }
+    public fun isRegistered(): Boolean
 }

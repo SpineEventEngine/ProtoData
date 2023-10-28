@@ -35,6 +35,7 @@ import com.google.protobuf.StringValue
 import com.google.protobuf.TimestampProto
 import com.google.protobuf.WrappersProto
 import com.google.protobuf.compiler.codeGeneratorRequest
+import com.google.rpc.Code
 import io.kotest.matchers.collections.containExactly
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
@@ -45,6 +46,7 @@ import io.kotest.matchers.string.shouldContain
 import io.spine.option.OptionsProto
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
+import io.spine.protodata.CodegenContext
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.ProtobufSourceFile
@@ -75,11 +77,11 @@ class CodeGenerationContextSpec {
     @DisplayName("provide")
     inner class ViewTypes {
 
-        private lateinit var ctx: BoundedContext
+        private lateinit var ctx: CodegenContext
 
         @BeforeEach
         fun setUp() {
-            ctx = CodeGenerationContext.newInstance()
+            ctx = CodeGenerationContext.newInstance(SecureRandomString.generate(20))
         }
 
         @AfterEach
@@ -123,7 +125,14 @@ class CodeGenerationContextSpec {
             fileToGenerate.addAll(filesToGenerate)
         }
 
-        fun createCodegenBlackBox(): BlackBox = BlackBox.from(CodeGenerationContext.builder())
+        fun createCodegenBlackBox(): Pair<CodegenContext, BlackBox> {
+            var blackBox: BlackBox? = null
+            val context = CodeGenerationContext(SecureRandomString.generate()) {
+                blackBox = BlackBox.from(this)
+            }
+
+            return Pair(context, blackBox!!)
+        }
 
         fun emitCompilerEvents() {
             val events = CompilerEvents.parse(codeGeneratorRequest)
@@ -136,16 +145,20 @@ class CodeGenerationContextSpec {
     @Nested
     inner class `construct views based on a descriptor set` {
 
+        private lateinit var codegen: CodegenContext
         private lateinit var ctx: BlackBox
 
         @BeforeEach
         fun buildViews() {
-            ctx = createCodegenBlackBox()
+            val pair = createCodegenBlackBox()
+            codegen = pair.first
+            ctx = pair.second
             emitCompilerEvents()
         }
 
         @AfterEach
         fun closeContext() {
+            codegen.close()
             ctx.close()
         }
 
@@ -208,11 +221,13 @@ class CodeGenerationContextSpec {
         @BeforeEach
         fun buildViews() {
             // First context
+
             createCodegenBlackBox().run {
-                use {
+                val (context, blackbox) = this
+                context.use {
                     emitCompilerEvents()
                     dependencyFiles = thirdPartyFiles.map {
-                        assertEntity<DependencyView, _>(
+                        blackbox.assertEntity<DependencyView, _>(
                             it.toFilePath()
                         ).run {
                             exists()
@@ -224,11 +239,12 @@ class CodeGenerationContextSpec {
 
             // Second context
             createCodegenBlackBox().run {
-                use {
+                val (context, blackbox) = this
+                context.use {
                     emitCompilerEventsForDependencyFiles()
 
                     protoSourceFiles = thirdPartyFiles.map {
-                        assertEntity<ProtoSourceFileView, _>(
+                        blackbox.assertEntity<ProtoSourceFileView, _>(
                             it.toFilePath()
                         ).run {
                             exists()

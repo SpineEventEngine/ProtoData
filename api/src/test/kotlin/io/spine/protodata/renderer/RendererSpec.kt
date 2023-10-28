@@ -28,7 +28,9 @@ package io.spine.protodata.renderer
 
 import io.kotest.matchers.shouldBe
 import io.spine.base.EntityState
+import io.spine.protodata.CodegenContext
 import io.spine.protodata.backend.CodeGenerationContext
+import io.spine.protodata.backend.SecureRandomString
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.query.Querying
@@ -51,17 +53,17 @@ internal class RendererSpec {
      * We do not pass any custom entity classes or repositories to the context builder,
      * as we do not need them in tests.
      */
-    private lateinit var context: BoundedContext
+    private lateinit var context: CodegenContext
 
     private lateinit var renderer: StubRenderer
     private lateinit var typeSystem: TypeSystem
 
     @BeforeEach
     fun initEnvironment() {
-        context = CodeGenerationContext.newInstance()
-        typeSystem = createTypeSystem(context)
+        context = CodeGenerationContext.newInstance(SecureRandomString.generate())
+        typeSystem = context.typeSystem
         renderer = StubRenderer()
-        renderer.injectTypeSystem(typeSystem)
+        renderer.registerWith(context)
     }
 
     @AfterEach
@@ -77,14 +79,17 @@ internal class RendererSpec {
     @Test
     fun `allow repeated injection of the same type system`() {
         assertDoesNotThrow {
-            renderer.injectTypeSystem(typeSystem)
+            renderer.registerWith(context)
         }
     }
 
     @Test
     fun `prevent injecting another type system`() {
-        assertThrows<IllegalStateException> {
-            renderer.injectTypeSystem(createTypeSystem(context))
+        val anotherContext = CodeGenerationContext.newInstance(SecureRandomString.generate())
+        anotherContext.use {
+            assertThrows<IllegalStateException> {
+                renderer.registerWith(it)
+            }
         }
     }
 

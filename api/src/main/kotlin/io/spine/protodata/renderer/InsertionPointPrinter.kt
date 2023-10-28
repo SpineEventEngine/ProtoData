@@ -148,7 +148,14 @@ public abstract class InsertionPointPrinter<L: Language>(
             label = pointLabel
             representationInCode = comment
         }
-        InsertionPointsContext.emittedEvent(event)
+        check(context != null) {
+            "Insertion point printer `$this` is not registered with a `CodegenContext`."
+        }
+        context?.insertionPointsContext?.emittedEvent(event, actorId)
+    }
+
+    private companion object {
+        val actorId = userId { value = InsertionPointPrinter::class.qualifiedName!! }
     }
 }
 

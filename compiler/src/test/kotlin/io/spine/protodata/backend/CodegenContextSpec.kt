@@ -79,7 +79,7 @@ import org.junit.jupiter.api.io.TempDir
 
 @Suppress("TooManyFunctions") // This class has many test cases.
 @DisplayName("`Pipeline` should")
-class PipelineSpec {
+class CodegenContextSpec {
 
     private lateinit var srcRoot : Path
     private lateinit var targetRoot : Path

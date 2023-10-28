@@ -27,40 +27,91 @@
 package io.spine.protodata.backend
 
 import com.google.common.annotations.VisibleForTesting
+import io.spine.base.EntityState
 import io.spine.base.EventMessage
 import io.spine.core.userId
+import io.spine.protodata.CodegenContext
 import io.spine.protodata.InsertionPointsView
 import io.spine.protodata.plugin.ViewRepository
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContext.singleTenant
 import io.spine.server.BoundedContextBuilder
+import io.spine.server.entity.Entity
 import io.spine.server.integration.ThirdPartyContext
+import io.spine.server.query.QueryingClient
+import kotlin.reflect.jvm.jvmName
 
 /**
  * A factory for the `Code Generation` bounded context.
  */
-public object CodeGenerationContext {
+public class CodeGenerationContext(
+    /**
+     * The ID of a pipeline which is used to create the context.
+     */
+    private val pipelineId: String,
 
     /**
-     * Creates a builder of the bounded context.
+     * An optional setup function for the context.
      */
-    @JvmStatic
-    public fun builder(): BoundedContextBuilder = singleTenant("Code Generation").apply {
-        add(ViewRepository.default(ProtoSourceFileView::class.java))
-        add(ViewRepository.default(DependencyView::class.java))
-        add(ViewRepository.default(InsertionPointsView::class.java))
-        add(ConfigView.Repo())
+    setup: BoundedContextBuilder.() -> Unit = { }
+) : CodegenContext {
+
+    private val context: BoundedContext
+
+    init {
+        val builder = singleTenant("Code Generation-$pipelineId").apply {
+            add(ViewRepository.default(ProtoSourceFileView::class.java))
+            add(ViewRepository.default(DependencyView::class.java))
+            add(ViewRepository.default(InsertionPointsView::class.java))
+            add(ConfigView.Repo())
+        }
+        builder.setup()
+        context = builder.build()
+    }
+
+    override val typeSystem: TypeSystem by lazy {
+        TypeSystem.serving(this)
     }
 
     /**
-     * Creates a new instance of the `Code Generation` bounded context with
-     * only the default repositories.
+     * Lazy initializer for [insertionPointsContext] property.
      *
-     * @see builder
+     * We have the initializer as a separate property to avoid unnecessary creation
+     * of `ThirdPartyContext` instance, if [insertionPointsContext] was never called.
+     *
+     * @see [close]
      */
-    @JvmStatic
-    @VisibleForTesting
-    public fun newInstance(): BoundedContext = builder().build()
+    private val pointsLazy = lazy {
+        ThirdPartyContext.singleTenant("Insertion Points-$pipelineId")
+    }
+
+    override val insertionPointsContext: ThirdPartyContext by pointsLazy
+
+    override fun <E : Entity<*, *>> hasEntitiesOfType(cls: Class<E>): Boolean =
+        context.hasEntitiesOfType(cls)
+
+    override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> =
+        QueryingClient(context, type, this::class.jvmName)
+
+    override fun close() {
+        if (pointsLazy.isInitialized()) {
+            insertionPointsContext.close()
+        }
+        context.close()
+    }
+
+    public companion object {
+
+        /**
+         * Creates a new instance of the `Code Generation` bounded context with
+         * only the default repositories.
+         */
+        @JvmStatic
+        @VisibleForTesting
+        public fun newInstance(pipelineId: String): CodeGenerationContext =
+            CodeGenerationContext(pipelineId)
+    }
 }
 
 /**
