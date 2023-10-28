@@ -127,7 +127,7 @@ class CodegenContextSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), renderer),
             sources = listOf(overwritingSourceSet),
-            request,
+            request
         )()
         assertTextIn(targetFile).isEqualTo("_Journey worth taking")
     }
@@ -137,7 +137,7 @@ class CodegenContextSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), InternalAccessRenderer()),
             sources = listOf(overwritingSourceSet),
-            request,
+            request
         )()
         val newClass = targetRoot.resolve("spine/protodata/test/JourneyInternal.java")
         assertExists(newClass)
@@ -169,8 +169,7 @@ class CodegenContextSpec {
                 renderer
             ),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request = request,
-            id = generateId()
+            request
         )()
 
         assertTextIn(targetRoot / path).run {
@@ -194,8 +193,7 @@ class CodegenContextSpec {
                 renderer
             ),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request = request,
-            id = generateId()
+            request
         )()
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
@@ -219,7 +217,6 @@ class CodegenContextSpec {
             )),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = CodeGeneratorRequest.getDefaultInstance(),
-            id = generateId()
         )()
         assertTextIn(targetRoot / path)
             .contains("@Nullable String")
@@ -378,7 +375,7 @@ class CodegenContextSpec {
                     SourceFileSet.create(source2, destination2)
                 ),
                 request,
-                Configuration.rawValue(expectedContent, ConfigurationFormat.PLAIN)
+                config = Configuration.rawValue(expectedContent, ConfigurationFormat.PLAIN)
             )()
 
             val firstFile = destination1.resolve(ECHO_FILE)
