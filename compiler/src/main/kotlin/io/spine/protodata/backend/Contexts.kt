@@ -46,6 +46,12 @@ import kotlin.reflect.jvm.jvmName
  * The `Code Generation` context is responsible for "hosting" custom views, repositories,
  * and other components of a `BoundedContext` that a user-defined plugin can
  * [add][io.spine.protodata.plugin.Plugin.extend] to a code generation [Pipeline].
+ *
+ * Views that are available in this context by default are:
+ *  * [ProtoSourceFileView] — the view on the source files of the Protobuf model.
+ *  * [DependencyView] — the view on the dependencies of the Protobuf model.
+ *  * [InsertionPointsView] — the view on the insertion points defined in the current [Pipeline].
+ *  * [ConfigView] — the view on the user data configuration.
  */
 public class CodeGenerationContext(
     /**
