@@ -47,7 +47,7 @@ import kotlin.reflect.KClass
  * [Plugin.viewRepositories], [Plugin.views], and [Plugin.policies] properties.
  *
  * Implementing classes must provide a parameterless constructor so that ProtoData can instantiate
- * a plugin via its fully-qualified class name.
+ * a plugin via its fully qualified class name.
  */
 public interface Plugin {
 

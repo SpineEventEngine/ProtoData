@@ -43,7 +43,9 @@ import io.spine.server.query.QueryingClient
 import kotlin.reflect.jvm.jvmName
 
 /**
- * A factory for the `Code Generation` bounded context.
+ * The `Code Generation` context is responsible for "hosting" custom views, repositories,
+ * and other components of a `BoundedContext` that a user-defined plugin can
+ * [add][io.spine.protodata.plugin.Plugin.extend] to a code generation [Pipeline].
  */
 public class CodeGenerationContext(
     /**
@@ -58,7 +60,7 @@ public class CodeGenerationContext(
 ) : CodegenContext {
 
     /**
-     * Obtains the underlying instance of the `Code Generation` bounded context.
+     * The underlying instance of the `Code Generation` bounded context.
      */
     internal val context: BoundedContext
 
