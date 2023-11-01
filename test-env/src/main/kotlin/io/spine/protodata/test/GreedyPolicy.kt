@@ -39,8 +39,9 @@ import io.spine.server.model.Nothing
 public class GreedyPolicy : Policy<TypeEntered>() {
 
     @React
-    override fun whenever(@External event: TypeEntered): Just<Nothing> {
-        return Just(nothing())
+    override fun whenever(@External event: TypeEntered): Iterable<Nothing> {
+        val just = Just(nothing())
+        return just as Iterable<Nothing>
     }
 
     @React
