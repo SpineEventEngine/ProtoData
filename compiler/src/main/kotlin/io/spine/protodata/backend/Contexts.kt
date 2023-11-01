@@ -57,7 +57,10 @@ public class CodeGenerationContext(
     setup: BoundedContextBuilder.() -> Unit = { }
 ) : CodegenContext {
 
-    private val context: BoundedContext
+    /**
+     * Obtains the underlying instance of the `Code Generation` bounded context.
+     */
+    internal val context: BoundedContext
 
     init {
         val builder = singleTenant("Code Generation-$pipelineId").apply {
@@ -94,11 +97,13 @@ public class CodeGenerationContext(
     override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> =
         QueryingClient(context, type, this::class.jvmName)
 
+    override fun isOpen(): Boolean = context.isOpen
+
     override fun close() {
         if (pointsLazy.isInitialized()) {
-            insertionPointsContext.close()
+            insertionPointsContext.closeIfOpen()
         }
-        context.close()
+        context.closeIfOpen()
     }
 
     public companion object {
