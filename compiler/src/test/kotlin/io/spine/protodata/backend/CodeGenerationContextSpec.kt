@@ -35,7 +35,6 @@ import com.google.protobuf.StringValue
 import com.google.protobuf.TimestampProto
 import com.google.protobuf.WrappersProto
 import com.google.protobuf.compiler.codeGeneratorRequest
-import com.google.rpc.Code
 import io.kotest.matchers.collections.containExactly
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
@@ -58,7 +57,6 @@ import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.PhDProto
 import io.spine.protodata.test.XtraOptsProto
-import io.spine.server.BoundedContext
 import io.spine.testing.server.blackbox.BlackBox
 import io.spine.testing.server.blackbox.assertEntity
 import io.spine.time.TimeProto
@@ -126,12 +124,9 @@ class CodeGenerationContextSpec {
         }
 
         fun createCodegenBlackBox(pipelineId: String): Pair<CodegenContext, BlackBox> {
-            var blackBox: BlackBox? = null
-            val context = CodeGenerationContext(pipelineId) {
-                blackBox = BlackBox.from(this)
-            }
-
-            return Pair(context, blackBox!!)
+            val context = CodeGenerationContext(pipelineId)
+            val blackBox = BlackBox.from(context.context)
+            return Pair(context, blackBox)
         }
 
         fun emitCompilerEvents(pipelineId: String) {

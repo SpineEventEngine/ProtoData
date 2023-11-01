@@ -28,6 +28,7 @@ package io.spine.protodata
 
 import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.type.TypeSystem
+import io.spine.server.Closeable
 import io.spine.server.entity.Entity
 import io.spine.server.integration.ThirdPartyContext
 import io.spine.server.query.Querying
@@ -35,7 +36,7 @@ import io.spine.server.query.Querying
 /**
  * A context of code generation.
  */
-public interface CodegenContext: Querying, AutoCloseable {
+public interface CodegenContext: Querying, Closeable {
 
     /**
      * The type system containing all the types available for code generation.
