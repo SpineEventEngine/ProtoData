@@ -63,9 +63,25 @@ public class Pipeline(
      * two or more pipelines are executed in the same JVM.
      */
     public val id: String = generateId(),
+
+    /**
+     * The code generation plugins to be applied to the pipeline.
+     */
     private val plugins: List<Plugin>,
+
+    /**
+     * The source sets to be processed by the pipeline.
+     */
     private val sources: List<SourceFileSet>,
+
+    /**
+     * The Protobuf compiler request.
+     */
     private val request: CodeGeneratorRequest,
+
+    /**
+     * The configuration of the pipeline.
+     */
     private val config: Configuration? = null
 ) {
 
