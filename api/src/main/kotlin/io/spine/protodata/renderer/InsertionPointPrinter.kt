@@ -147,7 +147,7 @@ public abstract class InsertionPointPrinter<L: Language>(
         check(context != null) {
             "Insertion point printer `$this` is not registered with a `CodegenContext`."
         }
-        context?.insertionPointsContext?.emittedEvent(event, actorId)
+        context!!.insertionPointsContext.emittedEvent(event, actorId)
     }
 
     private companion object {
