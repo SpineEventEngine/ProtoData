@@ -96,7 +96,7 @@ import kotlin.reflect.KClass
  * Views have repositories which are responsible for storing states and for delivering correct
  * events to the correct views. See [ViewRepository] for more.
  *
- * @param I the type of the ID of the view; can be a Protobuf message, a String, an int, or a long.
+ * @param I the type of the view ID; can be a Protobuf message, a String, an int, or a long.
  * @param M the type of the view's state; must be a Protobuf message implementing [EntityState].
  * @param B the type of the view's state builder; must match `<M>`.
  */

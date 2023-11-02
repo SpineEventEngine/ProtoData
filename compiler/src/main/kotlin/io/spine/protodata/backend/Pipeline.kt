@@ -58,15 +58,15 @@ import io.spine.server.under
  */
 @Internal
 public class Pipeline(
-    private val plugins: List<Plugin>,
-    private val sources: List<SourceFileSet>,
-    private val request: CodeGeneratorRequest,
-    private val config: Configuration? = null,
     /**
      * The ID of the pipeline to be used for distinguishing contexts when
      * two or more pipelines are executed in the same JVM.
      */
-    public val id: String = generateId()
+    public val id: String = generateId(),
+    private val plugins: List<Plugin>,
+    private val sources: List<SourceFileSet>,
+    private val request: CodeGeneratorRequest,
+    private val config: Configuration? = null
 ) {
 
     private lateinit var codegenContext: CodegenContext
@@ -83,11 +83,11 @@ public class Pipeline(
         config: Configuration? = null,
         id: String = generateId()
     ) : this(
+        id,
         listOf(plugin, ImplicitPluginWithRenderers(renderers)),
         listOf(sources),
         request,
-        config,
-        id
+        config
     )
 
     init {

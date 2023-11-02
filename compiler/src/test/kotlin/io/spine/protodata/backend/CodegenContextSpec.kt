@@ -34,7 +34,6 @@ import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.backend.Pipeline.Companion.generateId
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.SourceFileSet
@@ -127,7 +126,7 @@ class CodegenContextSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), renderer),
             sources = listOf(overwritingSourceSet),
-            request
+            request = request
         )()
         assertTextIn(targetFile).isEqualTo("_Journey worth taking")
     }
@@ -137,7 +136,7 @@ class CodegenContextSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), InternalAccessRenderer()),
             sources = listOf(overwritingSourceSet),
-            request
+            request = request
         )()
         val newClass = targetRoot.resolve("spine/protodata/test/JourneyInternal.java")
         assertExists(newClass)
@@ -151,7 +150,7 @@ class CodegenContextSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), DeletingRenderer()),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request
+            request = request
         )()
         assertDoesNotExist(targetRoot / path)
     }
@@ -297,7 +296,7 @@ class CodegenContextSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), InternalAccessRenderer()),
             sources = listOf(SourceFileSet.create(srcRoot, destination)),
-            request
+            request = request
         )()
 
         val path = "spine/protodata/test/JourneyInternal.java"
@@ -315,7 +314,7 @@ class CodegenContextSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), NoOpRenderer()),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request
+            request = request
         )()
         assertExists(targetFile)
     }
@@ -339,11 +338,11 @@ class CodegenContextSpec {
                     TestPlugin(),
                     NoOpRenderer()
                 ),
-                listOf(
+                sources = listOf(
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request
+                request = request
             )()
 
             assertExists(destination1.resolve(targetFile.name))
@@ -374,7 +373,7 @@ class CodegenContextSpec {
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request,
+                request = request,
                 config = Configuration.rawValue(expectedContent, ConfigurationFormat.PLAIN)
             )()
 
@@ -409,7 +408,7 @@ class CodegenContextSpec {
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request
+                request = request
             )()
 
             assertDoesNotExist(destination2.resolve(existingFilePath))
@@ -429,7 +428,7 @@ class CodegenContextSpec {
             val pipeline = Pipeline(
                 plugins = listOf(DocilePlugin(policies = setOf(policy)), renderer),
                 sources = listOf(overwritingSourceSet),
-                request
+                request = request
             )
             val error = assertThrows<IllegalStateException> { pipeline() }
             assertThat(error)
@@ -449,7 +448,7 @@ class CodegenContextSpec {
                     renderer
                 ),
                 sources = listOf(overwritingSourceSet),
-                request
+                request = request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
             error.message shouldContain(viewClass.name)
