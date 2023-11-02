@@ -26,6 +26,7 @@
 
 package io.spine.protodata.backend.event
 
+import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FileDescriptor
@@ -49,6 +50,7 @@ import io.spine.protodata.copy
 import io.spine.protodata.enumConstant
 import io.spine.protodata.field
 import io.spine.protodata.file
+import io.spine.protodata.filePath
 import io.spine.protodata.name
 import io.spine.protodata.path
 import io.spine.protodata.rpc
@@ -201,4 +203,11 @@ internal fun FileDescriptor.toFile(): File = file {
     path = path()
     packageName = `package`
     syntax = this@toFile.syntaxVersion()
+}
+
+/**
+ * Obtains the file path from this file descriptor.
+ */
+internal fun FileDescriptorProto.toFilePath() = filePath {
+    value = name
 }

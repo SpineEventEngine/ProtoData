@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,28 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
-
-import io.spine.core.External
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.plugin.Policy
-import io.spine.server.event.Just
-import io.spine.server.event.React
-import io.spine.server.model.Nothing
+package io.spine.protodata
 
 /**
- * A greedy policy reacts to more than one event.
+ * An object which can be registered with a [CodegenContext].
  */
-public class GreedyPolicy : Policy<TypeEntered>() {
+public interface ContextAware {
 
-    @React
-    override fun whenever(@External event: TypeEntered): Iterable<Nothing> {
-        val just = Just(nothing())
-        return just as Iterable<Nothing>
-    }
+    /**
+     * Registers this object with the given [context].
+     */
+    public fun registerWith(context: CodegenContext)
 
-    @React
-    internal fun on(@Suppress("UNUSED_PARAMETER") e: ProjectCreated): Just<Nothing> {
-        return Just(nothing())
-    }
+    /**
+     * Tells if this object is registered with a [CodegenContext].
+     */
+    public fun isRegistered(): Boolean
 }

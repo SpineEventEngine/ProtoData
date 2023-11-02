@@ -29,8 +29,8 @@ package io.spine.protodata.backend
 import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
-import io.spine.base.EntityState
 import io.spine.environment.DefaultMode
+import io.spine.protodata.CodegenContext
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.plugin.Plugin
@@ -38,14 +38,11 @@ import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.TypeSystem
-import io.spine.server.BoundedContext
 import io.spine.server.delivery.Delivery
-import io.spine.server.query.Querying
-import io.spine.server.query.QueryingClient
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
+
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -61,22 +58,34 @@ import io.spine.server.under
  */
 @Internal
 public class Pipeline(
+    /**
+     * The ID of the pipeline to be used for distinguishing contexts when
+     * two or more pipelines are executed in the same JVM.
+     */
+    public val id: String = generateId(),
+
+    /**
+     * The code generation plugins to be applied to the pipeline.
+     */
     private val plugins: List<Plugin>,
+
+    /**
+     * The source sets to be processed by the pipeline.
+     */
     private val sources: List<SourceFileSet>,
+
+    /**
+     * The Protobuf compiler request.
+     */
     private val request: CodeGeneratorRequest,
+
+    /**
+     * The configuration of the pipeline.
+     */
     private val config: Configuration? = null
 ) {
 
-    private lateinit var codegenContext: BoundedContext
-
-    private val typeSystem: TypeSystem by lazy {
-        val client = object : Querying {
-            override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
-                return QueryingClient(codegenContext, type, javaClass.name)
-            }
-        }
-        TypeSystem.serving(client)
-    }
+    private lateinit var codegenContext: CodegenContext
 
     /**
      * Creates a new `Pipeline` with only one plugin and one source set.
@@ -87,8 +96,10 @@ public class Pipeline(
         renderers: List<Renderer<*>>,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
-        config: Configuration? = null
+        config: Configuration? = null,
+        id: String = generateId()
     ) : this(
+        id,
         listOf(plugin, ImplicitPluginWithRenderers(renderers)),
         listOf(sources),
         request,
@@ -116,10 +127,8 @@ public class Pipeline(
         }
         codegenContext = assembleCodegenContext()
         codegenContext.use {
-            val configuration = ConfigurationContext()
-            configuration.use {
-                val compiler = ProtobufCompilerContext()
-                compiler.use {
+            ConfigurationContext(id).use { configuration ->
+                ProtobufCompilerContext(id).use { compiler ->
                     emitEvents(configuration, compiler)
                     renderSources()
                 }
@@ -130,11 +139,12 @@ public class Pipeline(
     /**
      * Assembles the `Code Generation` context by applying given [plugins].
      */
-    private fun assembleCodegenContext(): BoundedContext {
-        val builder = CodeGenerationContext.builder()
-        plugins.forEach {  it.applyTo(builder) }
-        return builder.build()
-    }
+    private fun assembleCodegenContext(): CodegenContext =
+        CodeGenerationContext(id) {
+            plugins.forEach {
+                it.applyTo(this)
+            }
+        }
 
     private fun emitEvents(
         configuration: ConfigurationContext,
@@ -149,7 +159,18 @@ public class Pipeline(
     }
 
     private fun renderSources() {
-        plugins.forEach { it.render(codegenContext, typeSystem, sources) }
+        plugins.forEach { it.render(codegenContext, sources) }
         sources.forEach { it.write() }
+    }
+
+    public companion object {
+
+        /**
+         * Generates a random ID for the pipeline.
+         *
+         * The generated ID is guaranteed to be unique for the current JVM.
+         */
+        @JvmStatic
+        public fun generateId(): String = SecureRandomString.generate()
     }
 }

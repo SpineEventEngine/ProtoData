@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,28 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.backend
 
-import io.spine.core.External
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.plugin.Policy
-import io.spine.server.event.Just
-import io.spine.server.event.React
-import io.spine.server.model.Nothing
+import java.security.SecureRandom
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 /**
- * A greedy policy reacts to more than one event.
+ * Generates a random URL-safe base64-encoded string.
+ *
+ * @see <a href="https://neilmadden.blog/2018/08/30/moving-away-from-uuids/">
+ *     Moving away from UUIDs</a>
+ * @see <a href="https://github.com/LableOrg/java-uniqueid>java-uniqueid">java-uniqueid</a>
+ * @see <a href="https://github.com/nikbucher/j-nanoid">j-nanoid</a>
  */
-public class GreedyPolicy : Policy<TypeEntered>() {
+@OptIn(ExperimentalEncodingApi::class)
+internal object SecureRandomString {
 
-    @React
-    override fun whenever(@External event: TypeEntered): Iterable<Nothing> {
-        val just = Just(nothing())
-        return just as Iterable<Nothing>
+    private const val DEFAULT_SIZE = 20
+
+    private val random: SecureRandom by lazy {
+        SecureRandom()
     }
 
-    @React
-    internal fun on(@Suppress("UNUSED_PARAMETER") e: ProjectCreated): Just<Nothing> {
-        return Just(nothing())
+    private val encoder: Base64 by lazy {
+        Base64.UrlSafe
+    }
+
+    fun generate(size: Int = DEFAULT_SIZE): String {
+        val buffer = ByteArray(size)
+        random.nextBytes(buffer)
+        return encoder.encode(buffer)
     }
 }

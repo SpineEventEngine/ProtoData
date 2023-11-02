@@ -26,6 +26,7 @@
 
 package io.spine.protodata.type;
 
+import io.spine.protodata.backend.CodeGenerationContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,9 @@ class MoreTypeSystemSpec {
     @Test
     @DisplayName("construct instance with a static method")
     void createStatic() {
-        var ts = TypeSystem.serving(new FakeQuerying());
-        assertThat(ts).isNotNull();
+        try (var context = CodeGenerationContext.newInstance()) {
+            var ts = TypeSystem.serving(new FakeQuerying(context));
+            assertThat(ts).isNotNull();
+        }
     }
 }

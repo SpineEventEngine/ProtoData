@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,28 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.backend
 
-import io.spine.core.External
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.plugin.Policy
-import io.spine.server.event.Just
-import io.spine.server.event.React
-import io.spine.server.model.Nothing
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A greedy policy reacts to more than one event.
- */
-public class GreedyPolicy : Policy<TypeEntered>() {
+@DisplayName("`SecureRandomString` should")
+internal class SecureRandomStringSpec {
 
-    @React
-    override fun whenever(@External event: TypeEntered): Iterable<Nothing> {
-        val just = Just(nothing())
-        return just as Iterable<Nothing>
-    }
-
-    @React
-    internal fun on(@Suppress("UNUSED_PARAMETER") e: ProjectCreated): Just<Nothing> {
-        return Just(nothing())
+    @Test
+    fun `generate unique values`() {
+        val generated = sequence {
+            repeat(10_000) {
+                yield(SecureRandomString.generate())
+            }
+        }
+        val list = generated.toList()
+        
+        list.distinct().size shouldBe list.size
     }
 }

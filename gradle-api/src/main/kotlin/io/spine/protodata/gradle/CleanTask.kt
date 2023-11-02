@@ -33,6 +33,7 @@ import org.gradle.api.tasks.SourceSet
  */
 public object CleanTask {
 
+    @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
     private const val prefix = "cleanProtoData"
 
     /**

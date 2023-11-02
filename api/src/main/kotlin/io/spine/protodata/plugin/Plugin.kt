@@ -27,11 +27,11 @@
 package io.spine.protodata.plugin
 
 import io.spine.annotation.Internal
+import io.spine.protodata.CodegenContext
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.type.TypeSystem
-import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
 import kotlin.reflect.KClass
@@ -47,7 +47,7 @@ import kotlin.reflect.KClass
  * [Plugin.viewRepositories], [Plugin.views], and [Plugin.policies] properties.
  *
  * Implementing classes must provide a parameterless constructor so that ProtoData can instantiate
- * a plugin via its fully-qualified class name.
+ * a plugin via its fully qualified class name.
  */
 public interface Plugin {
 
@@ -133,13 +133,11 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
  */
 @Internal
 public fun Plugin.render(
-    codegenContext: BoundedContext,
-    typeSystem: TypeSystem,
+    codegenContext: CodegenContext,
     sources: Iterable<SourceFileSet>
 ) {
     renderers().forEach { r ->
         r.registerWith(codegenContext)
-        r.injectTypeSystem(typeSystem)
         sources.forEach(r::renderSources)
     }
 }

@@ -78,7 +78,7 @@ import org.junit.jupiter.api.io.TempDir
 
 @Suppress("TooManyFunctions") // This class has many test cases.
 @DisplayName("`Pipeline` should")
-class PipelineSpec {
+class CodegenContextSpec {
 
     private lateinit var srcRoot : Path
     private lateinit var targetRoot : Path
@@ -126,7 +126,7 @@ class PipelineSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), renderer),
             sources = listOf(overwritingSourceSet),
-            request
+            request = request
         )()
         assertTextIn(targetFile).isEqualTo("_Journey worth taking")
     }
@@ -136,7 +136,7 @@ class PipelineSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), InternalAccessRenderer()),
             sources = listOf(overwritingSourceSet),
-            request
+            request = request
         )()
         val newClass = targetRoot.resolve("spine/protodata/test/JourneyInternal.java")
         assertExists(newClass)
@@ -150,7 +150,7 @@ class PipelineSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), DeletingRenderer()),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request
+            request = request
         )()
         assertDoesNotExist(targetRoot / path)
     }
@@ -215,7 +215,7 @@ class PipelineSpec {
                 )
             )),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request = CodeGeneratorRequest.getDefaultInstance()
+            request = CodeGeneratorRequest.getDefaultInstance(),
         )()
         assertTextIn(targetRoot / path)
             .contains("@Nullable String")
@@ -296,7 +296,7 @@ class PipelineSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), InternalAccessRenderer()),
             sources = listOf(SourceFileSet.create(srcRoot, destination)),
-            request
+            request = request
         )()
 
         val path = "spine/protodata/test/JourneyInternal.java"
@@ -314,7 +314,7 @@ class PipelineSpec {
         Pipeline(
             plugins = listOf(TestPlugin(), NoOpRenderer()),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request
+            request = request
         )()
         assertExists(targetFile)
     }
@@ -338,11 +338,11 @@ class PipelineSpec {
                     TestPlugin(),
                     NoOpRenderer()
                 ),
-                listOf(
+                sources = listOf(
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request
+                request = request
             )()
 
             assertExists(destination1.resolve(targetFile.name))
@@ -373,8 +373,8 @@ class PipelineSpec {
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request,
-                Configuration.rawValue(expectedContent, ConfigurationFormat.PLAIN)
+                request = request,
+                config = Configuration.rawValue(expectedContent, ConfigurationFormat.PLAIN)
             )()
 
             val firstFile = destination1.resolve(ECHO_FILE)
@@ -408,7 +408,7 @@ class PipelineSpec {
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request
+                request = request
             )()
 
             assertDoesNotExist(destination2.resolve(existingFilePath))
@@ -428,7 +428,7 @@ class PipelineSpec {
             val pipeline = Pipeline(
                 plugins = listOf(DocilePlugin(policies = setOf(policy)), renderer),
                 sources = listOf(overwritingSourceSet),
-                request
+                request = request
             )
             val error = assertThrows<IllegalStateException> { pipeline() }
             assertThat(error)
@@ -448,7 +448,7 @@ class PipelineSpec {
                     renderer
                 ),
                 sources = listOf(overwritingSourceSet),
-                request
+                request = request
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
             error.message shouldContain(viewClass.name)

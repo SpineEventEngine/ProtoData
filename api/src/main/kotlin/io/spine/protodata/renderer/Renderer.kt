@@ -28,10 +28,10 @@ package io.spine.protodata.renderer
 
 import io.spine.annotation.Internal
 import io.spine.base.EntityState
+import io.spine.protodata.CodegenContext
+import io.spine.protodata.ContextAware
 import io.spine.protodata.config.ConfiguredQuerying
 import io.spine.protodata.type.TypeSystem
-import io.spine.server.BoundedContext
-import io.spine.server.ContextAware
 import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
 
@@ -48,8 +48,14 @@ protected constructor(
     protected val language: L
 ) : ConfiguredQuerying, ContextAware {
 
-    private lateinit var codegenContext: BoundedContext
-    private lateinit var _typeSystem: TypeSystem
+    private lateinit var _context: CodegenContext
+
+    protected val context: CodegenContext?
+        get() = if (this::_context.isInitialized) {
+            _context
+        } else {
+            null
+        }
 
     /**
      * A type system with the Protobuf types defined in the current code generation pipeline.
@@ -59,11 +65,7 @@ protected constructor(
      * This property is guaranteed to be non-`null` in [renderSources].
      */
     protected val typeSystem: TypeSystem?
-        get() = if (this::_typeSystem.isInitialized) {
-            _typeSystem
-        } else {
-            null
-        }
+        get() = context?.typeSystem
 
     /**
      * Performs required changes to the given source set.
@@ -86,9 +88,8 @@ protected constructor(
      */
     protected abstract fun render(sources: SourceFileSet)
 
-    public final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
-        return QueryingClient(codegenContext, type, this::class.qualifiedName!!)
-    }
+    public final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> =
+        _context.select(type)
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
 
@@ -106,48 +107,21 @@ protected constructor(
      * @see [io.spine.protodata.backend.Pipeline]
      */
     @Internal
-    public override fun registerWith(codegenContext: BoundedContext) {
-        if (isRegistered) {
-            check(this.codegenContext == codegenContext) {
+    public override fun registerWith(context: CodegenContext) {
+        if (isRegistered()) {
+            check(_context == context) {
                 "Unable to register the renderer `$this` with" +
-                        " `${codegenContext.name().value}`." +
+                        " `${context}`." +
                         " The renderer is already registered with" +
-                        " `${this.codegenContext.name().value}`."
+                        " `${this._context}`."
             }
             return
         }
-        this.codegenContext = codegenContext
+        _context = context
     }
 
     @Internal
     override fun isRegistered(): Boolean {
-        return this::codegenContext.isInitialized
-    }
-
-    /**
-     * Injects an instance of `TypeSystem` for this renderer to use e.g. for
-     * creating a [Convention][io.spine.protodata.type.Convention] which
-     * depends on the type system.
-     *
-     * This method is `public` but is essentially `internal` to ProtoData SDK.
-     * It is not supposed to be called by authors of [Renderer]s directly.
-     * Usually the type system is injected by the [Pipeline][io.spine.protodata.backend.Pipeline].
-     *
-     * Repeated calls to this method with the same instance of `TypeSystem` are allowed.
-     *
-     * @throws IllegalStateException
-     *          if the method is called with a different instance of `TypeSystem` than
-     *          already injected.
-     * @see [io.spine.protodata.backend.Pipeline]
-     */
-    @Internal
-    public fun injectTypeSystem(ts: TypeSystem) {
-        if(this::_typeSystem.isInitialized) {
-            check(_typeSystem == ts) {
-                "Unable to inject the type system (`$ts`) into the renderer `$this`." +
-                        " The type system is already injected (`$_typeSystem`)."
-            }
-        }
-        _typeSystem = ts
+        return this::_context.isInitialized
     }
 }

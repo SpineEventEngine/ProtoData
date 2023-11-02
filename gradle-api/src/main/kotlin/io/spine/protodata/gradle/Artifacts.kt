@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ package io.spine.protodata.gradle
 /**
  * Constants for locating ProtoData in Maven repositories.
  */
+@Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
 public object Artifacts {
 
     /**
@@ -78,7 +79,5 @@ public data class ProtocPluginArtifact(val version: String) {
     /**
      * Obtains Maven artifact coordinates.
      */
-    override fun toString(): String {
-        return coordinates
-    }
+    override fun toString(): String = coordinates
 }

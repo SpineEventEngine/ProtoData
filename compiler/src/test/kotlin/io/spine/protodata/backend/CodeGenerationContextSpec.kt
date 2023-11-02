@@ -36,6 +36,7 @@ import com.google.protobuf.TimestampProto
 import com.google.protobuf.WrappersProto
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.collections.containExactly
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.should
@@ -44,20 +45,23 @@ import io.kotest.matchers.string.shouldContain
 import io.spine.option.OptionsProto
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
+import io.spine.protodata.CodegenContext
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
 import io.spine.protodata.backend.event.CompilerEvents
-import io.spine.protodata.filePath
+import io.spine.protodata.backend.event.toFilePath
 import io.spine.protodata.option
 import io.spine.protodata.path
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.PhDProto
 import io.spine.protodata.test.XtraOptsProto
 import io.spine.testing.server.blackbox.BlackBox
+import io.spine.testing.server.blackbox.assertEntity
 import io.spine.time.TimeProto
 import io.spine.util.theOnly
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -67,23 +71,36 @@ import org.junit.jupiter.api.Test
 @DisplayName("`Code Generation` context should")
 class CodeGenerationContextSpec {
 
-    @Test
-    fun `contain 'ProtobufSourceFile' view`() {
-        val ctx = CodeGenerationContext.builder().build()
-        assertTrue(ctx.hasEntitiesOfType(ProtoSourceFileView::class.java))
-    }
-
-    @Test
-    fun `contain 'ProtobufDependency' file view`() {
-        val ctx = CodeGenerationContext.builder().build()
-        assertTrue(ctx.hasEntitiesOfType(DependencyView::class.java))
-    }
-
     @Nested
-    inner class `construct views based on a descriptor set` {
+    @DisplayName("provide")
+    inner class ViewTypes {
 
-        private lateinit var ctx: BlackBox
-        private val dependencies = listOf(
+        private lateinit var ctx: CodegenContext
+
+        @BeforeEach
+        fun setUp() {
+            ctx = CodeGenerationContext.newInstance()
+        }
+
+        @AfterEach
+        fun closeContext() {
+            ctx.close()
+        }
+
+        @Test
+        fun `'ProtobufSourceFile' view`() = assertTrue(
+            ctx.hasEntitiesOfType(ProtoSourceFileView::class.java)
+        )
+
+        @Test
+        fun `'ProtobufDependency' file view`() = assertTrue(
+            ctx.hasEntitiesOfType(DependencyView::class.java)
+        )
+    }
+
+    companion object Fixtures {
+
+        val dependencies = listOf(
             AnyProto.getDescriptor(),
             DescriptorProtos.getDescriptor(),
             DoctorProto.getDescriptor(),
@@ -95,30 +112,60 @@ class CodeGenerationContextSpec {
             WrappersProto.getDescriptor(),
             XtraOptsProto.getDescriptor(),
         ).map { it.toProto() }
-        private val filesToGenerate = setOf(
+
+        val filesToGenerate = setOf(
             DoctorProto.getDescriptor().name,
             PhDProto.getDescriptor().name
         )
 
+        private val codeGeneratorRequest = codeGeneratorRequest {
+            protoFile.addAll(dependencies)
+            fileToGenerate.addAll(filesToGenerate)
+        }
+
+        fun createCodegenBlackBox(pipelineId: String): Pair<CodegenContext, BlackBox> {
+            val context = CodeGenerationContext(pipelineId)
+            val blackBox = BlackBox.from(context.context)
+            return Pair(context, blackBox)
+        }
+
+        fun emitCompilerEvents(pipelineId: String) {
+            val events = CompilerEvents.parse(codeGeneratorRequest)
+            ProtobufCompilerContext(pipelineId).use {
+                it.emitted(events)
+            }
+        }
+    }
+
+    @Nested
+    inner class `construct views based on a descriptor set` {
+
+        private lateinit var codegen: CodegenContext
+        private lateinit var ctx: BlackBox
+        private lateinit var pipelineId: String
+
         @BeforeEach
         fun buildViews() {
-            ctx = BlackBox.from(CodeGenerationContext.builder())
-            val set = codeGeneratorRequest {
-                protoFile.addAll(dependencies)
-                fileToGenerate.addAll(filesToGenerate)
-            }
-            ProtobufCompilerContext().use {
-                it.emitted(CompilerEvents.parse(set))
-            }
+            pipelineId = Pipeline.generateId()
+            val pair = createCodegenBlackBox(pipelineId)
+            codegen = pair.first
+            ctx = pair.second
+            emitCompilerEvents(pipelineId)
+        }
+
+        @AfterEach
+        fun closeContext() {
+            codegen.close()
+            ctx.close()
         }
 
         @Test
         fun `with files marked for generation`() {
-            val assertSourceFile = ctx.assertEntity(
-                DoctorProto.getDescriptor().path(), ProtoSourceFileView::class.java
+            val assertSourceFile = ctx.assertEntity<ProtoSourceFileView, _>(
+                DoctorProto.getDescriptor().path()
             )
-            assertSourceFile
-                .exists()
+            assertSourceFile.exists()
+
             val actual = assertSourceFile.actual()!!.state() as ProtobufSourceFile
 
             val types = actual.typeMap
@@ -143,50 +190,13 @@ class CodeGenerationContextSpec {
                 AnyProto.getDescriptor().path(),
                 DependencyView::class.java
             )
-            assertSourceFile
-                .exists()
-        }
-
-        @Test
-        fun `exactly the same way for dependencies and for files to generate`() {
-            val secondContext = BlackBox.from(CodeGenerationContext.builder())
-            val set = codeGeneratorRequest {
-                protoFile.addAll(dependencies)
-                fileToGenerate.addAll(dependencies.map { it.name })
-            }
-            ProtobufCompilerContext().use {
-                it.emitted(CompilerEvents.parse(set))
-            }
-            val thirdPartyFiles = dependencies.filter { it.name !in filesToGenerate }
-            val recordsOfDependencies = thirdPartyFiles
-                .map {
-                    val assertEntity = ctx.assertEntity(
-                        filePath { value = it.name },
-                        DependencyView::class.java
-                    )
-                    assertEntity.exists()
-                    assertEntity.actual()!!.state()
-                }.map { state -> (state as ProtobufDependency).file }
-            val recordsOfFilesToGenerate = thirdPartyFiles
-                .map {
-                    val assertEntity = secondContext.assertEntity(
-                        filePath { value = it.name },
-                        ProtoSourceFileView::class.java
-                    )
-                    assertEntity.exists()
-                    assertEntity
-                        .actual()!!.state() as ProtobufSourceFile
-                }
-            assertThat(recordsOfDependencies)
-                .ignoringRepeatedFieldOrder()
-                .containsExactlyElementsIn(recordsOfFilesToGenerate)
+            assertSourceFile.exists()
         }
 
         @Test
         fun `with respect for custom options among the source files`() {
-            val phdFile = ctx.assertEntity(
-                PhDProto.getDescriptor().path(),
-                ProtoSourceFileView::class.java
+            val phdFile = ctx.assertEntity<ProtoSourceFileView, _>(
+                PhDProto.getDescriptor().path()
             ).actual()!!.state() as ProtobufSourceFile
             val paperType = phdFile.typeMap.values.find { it.name.simpleName == "Paper" }!!
             val keywordsField = paperType.fieldList.find { it.name.value == "keywords" }!!
@@ -194,6 +204,76 @@ class CodeGenerationContextSpec {
             val option = keywordsField.optionList.theOnly()
             option.name shouldBe "xtra_option"
             option.value.unpack(StringValue::class.java).value shouldContain "please"
+        }
+    }
+    
+    @Nested
+    inner class `construct views` {
+
+        private val thirdPartyFiles = dependencies.filter { it.name !in filesToGenerate }
+
+        private lateinit var dependencyFiles: List<ProtobufSourceFile>
+        private lateinit var protoSourceFiles: List<ProtobufSourceFile>
+        private lateinit var pipelineId: String
+
+        @BeforeEach
+        fun buildViews() {
+            pipelineId = Pipeline.generateId()
+            // First context
+
+            createCodegenBlackBox(pipelineId).run {
+                val (context, blackbox) = this
+                context.use {
+                    emitCompilerEvents(pipelineId)
+                    dependencyFiles = thirdPartyFiles.map {
+                        blackbox.assertEntity<DependencyView, _>(
+                            it.toFilePath()
+                        ).run {
+                            exists()
+                            actual()!!.state()
+                        }
+                    }.map { state -> (state as ProtobufDependency).file }
+                }
+            }
+
+            // Second context
+            createCodegenBlackBox(pipelineId).run {
+                val (context, blackbox) = this
+                context.use {
+                    emitCompilerEventsForDependencyFiles(pipelineId)
+
+                    protoSourceFiles = thirdPartyFiles.map {
+                        blackbox.assertEntity<ProtoSourceFileView, _>(
+                            it.toFilePath()
+                        ).run {
+                            exists()
+                            actual()!!.state() as ProtobufSourceFile
+                        }
+                    }
+                }
+            }
+        }
+
+        private fun emitCompilerEventsForDependencyFiles(pipelineId: String) {
+            val set = codeGeneratorRequest {
+                protoFile.addAll(dependencies)
+                fileToGenerate.addAll(dependencies.map { it.name })
+            }
+            val events = CompilerEvents.parse(set)
+
+            val eventList = events.toList()
+            eventList.distinct() shouldContainExactly eventList
+
+            ProtobufCompilerContext(pipelineId).use {
+                it.emitted(events)
+            }
+        }
+
+        @Test
+        fun `exactly the same way for dependencies and for files to generate`() {
+            assertThat(dependencyFiles)
+                .ignoringRepeatedFieldOrder()
+                .containsExactlyElementsIn(protoSourceFiles)
         }
     }
 }

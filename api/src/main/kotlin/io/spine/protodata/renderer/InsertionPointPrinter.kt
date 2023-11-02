@@ -30,7 +30,6 @@ import io.spine.core.userId
 import io.spine.protodata.event.insertionPointPrinted
 import io.spine.protodata.filePath
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
-import io.spine.server.integration.ThirdPartyContext
 import io.spine.text.TextCoordinates
 import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
 import io.spine.text.TextCoordinates.KindCase.INLINE
@@ -145,13 +144,16 @@ public abstract class InsertionPointPrinter<L: Language>(
             label = pointLabel
             representationInCode = comment
         }
-        InsertionPointPrinterContext.emittedEvent(event, actorId)
+        check(context != null) {
+            "Insertion point printer `$this` is not registered with a `CodegenContext`."
+        }
+        context!!.insertionPointsContext.emittedEvent(event, actorId)
+    }
+
+    private companion object {
+        val actorId = userId { value = InsertionPointPrinter::class.qualifiedName!! }
     }
 }
-
-private val actorId = userId { value = InsertionPointPrinter::class.qualifiedName!! }
-
-private val InsertionPointPrinterContext = ThirdPartyContext.singleTenant("Insertion points")
 
 private fun List<String>.checkLineNumber(index: Int) {
     if (index < 0 || index >= size) {

@@ -284,19 +284,6 @@ class MainSpec {
     inner class `Fail if` {
 
         @Test
-        @Disabled("Until command line option substitution for missing --renderer is introduced")
-        fun `renderer is missing`() {
-            assertMissingOption {
-                launchApp(
-                    "-p", TestPlugin::class.jvmName,
-                    "--src", srcRoot.toString(),
-                    "--target", targetRoot.toString(),
-                    "-t", codegenRequestFile.toString()
-                )
-            }
-        }
-
-        @Test
         fun `target dir is missing`() {
             assertThrows<UsageError> {
                 launchApp(

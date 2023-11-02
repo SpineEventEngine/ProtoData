@@ -204,7 +204,12 @@ internal class Run(version: String) : CliktCommand(
               - config: ${config}.
             """.ti()
         }
-        val pipeline = Pipeline(plugins, sources, request, config)
+        val pipeline = Pipeline(
+            plugins = plugins,
+            sources = sources,
+            request = request,
+            config = config
+        )
         pipeline()
     }
 

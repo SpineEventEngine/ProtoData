@@ -26,10 +26,10 @@
 
 package io.spine.protodata
 
-import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.compiler.PluginProtos
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldHaveAtLeastSize
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.ImplicitPluginWithRenderers
@@ -114,7 +114,7 @@ class InsertionPointsSpec {
                     CompanionLalalaRenderer())
             )),
             sources = listOf(SourceFileSet.create(input, output)),
-            request = PluginProtos.CodeGeneratorRequest.getDefaultInstance(),
+            request = CodeGeneratorRequest.getDefaultInstance(),
         )()
         kotlinFile = output / inputKtFile.name
         javaFile = output / inputJavaFile.name
@@ -123,10 +123,8 @@ class InsertionPointsSpec {
     @Test
     fun `the start of a file`() {
         val contents = kotlinFile.readLines()
-        assertThat(contents)
-            .isNotEmpty()
-        assertThat(contents[0])
-            .contains(FILE_START.label)
+        contents.shouldNotBeEmpty()
+        contents[0] shouldContain FILE_START.label
     }
 
     @Test

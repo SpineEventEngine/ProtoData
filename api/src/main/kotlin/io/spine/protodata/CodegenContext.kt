@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,28 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata
 
-import io.spine.core.External
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.plugin.Policy
-import io.spine.server.event.Just
-import io.spine.server.event.React
-import io.spine.server.model.Nothing
+import com.google.common.annotations.VisibleForTesting
+import io.spine.protodata.type.TypeSystem
+import io.spine.server.Closeable
+import io.spine.server.entity.Entity
+import io.spine.server.integration.ThirdPartyContext
+import io.spine.server.query.Querying
 
 /**
- * A greedy policy reacts to more than one event.
+ * A context of code generation.
  */
-public class GreedyPolicy : Policy<TypeEntered>() {
+public interface CodegenContext: Querying, Closeable {
 
-    @React
-    override fun whenever(@External event: TypeEntered): Iterable<Nothing> {
-        val just = Just(nothing())
-        return just as Iterable<Nothing>
-    }
+    /**
+     * The type system containing all the types available for code generation.
+     */
+    public val typeSystem: TypeSystem
 
-    @React
-    internal fun on(@Suppress("UNUSED_PARAMETER") e: ProjectCreated): Just<Nothing> {
-        return Just(nothing())
-    }
+    /**
+     * The `Insertion Points` context which generates events when
+     * [InsertionPoint][io.spine.protodata.renderer.InsertionPoint]s are added to the code.
+     */
+    public val insertionPointsContext: ThirdPartyContext
+
+    /**
+     * A test-only method which checks if the context has entities of the given type.
+     */
+    @VisibleForTesting
+    public fun <E: Entity<*, *>> hasEntitiesOfType(cls: Class<E>): Boolean
 }
