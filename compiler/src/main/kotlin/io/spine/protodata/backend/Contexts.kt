@@ -68,7 +68,7 @@ public class CodeGenerationContext(
     /**
      * The underlying instance of the `Code Generation` bounded context.
      */
-    internal val context: BoundedContext
+    public val context: BoundedContext
 
     init {
         val builder = singleTenant("Code Generation-$pipelineId").apply {
