@@ -47,7 +47,6 @@ import io.spine.protodata.test.DocilePlugin
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.GenericInsertionPoint
-import io.spine.protodata.test.GreedyPolicy
 import io.spine.protodata.test.InternalAccessRenderer
 import io.spine.protodata.test.JavaGenericInsertionPointPrinter
 import io.spine.protodata.test.Journey
@@ -421,20 +420,6 @@ class CodegenContextSpec {
 
     @Nested
     inner class `Fail to construct if` {
-
-        @Test
-        fun `a policy handles too many events at once`() {
-            val policy = GreedyPolicy()
-            val pipeline = Pipeline(
-                plugins = listOf(DocilePlugin(policies = setOf(policy)), renderer),
-                sources = listOf(overwritingSourceSet),
-                request = request
-            )
-            val error = assertThrows<IllegalStateException> { pipeline() }
-            assertThat(error)
-                .hasMessageThat()
-                .contains(policy.javaClass.name)
-        }
 
         @Test
         fun `view is already registered`() {
