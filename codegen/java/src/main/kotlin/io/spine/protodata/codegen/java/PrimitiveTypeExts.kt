@@ -48,7 +48,7 @@ import io.spine.protodata.PrimitiveType.UNRECOGNIZED
 import kotlin.reflect.KClass
 
 /**
- * Obtains the name of the Java class which corresponds to this primitive type.
+ * Obtains the name of the Java class corresponding to this primitive type.
  */
 public fun PrimitiveType.toJavaClass(): ClassName {
     val klass = primitiveClass()
