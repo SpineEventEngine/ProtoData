@@ -36,11 +36,13 @@ import io.spine.server.event.Policy
  * A policy converts one event into zero to many other events.
  *
  * As a rule of thumb, a policy should read:
+ * ```markdown
  * Whenever <something happens>, then <something else must happen>.
- *
+ * ```
  * For example:
+ * ```markdown
  * Whenever a field option is discovered, a validation rule must be added.
- *
+ * ```
  * To implement the policy, declare a method which reacts to an event with an event:
  * ```kotlin
  * class MyPolicy : Policy<FieldOptionDiscovered>() {
@@ -62,7 +64,7 @@ import io.spine.server.event.Policy
  * The `whenever` method accepts a single event and produces an `Iterable` of events. In case if
  * you need to return a single event, use [Just].
  * If there are a few events, see the descendants of [io.spine.server.tuple.Tuple].
- * If there can be a few alternative events, see the  descendants of [io.spine.server.tuple.Either].
+ * If there can be a few alternative events, see the descendants of [io.spine.server.tuple.Either].
  * In case if one of the options doing nothing at all, use [io.spine.server.model.Nothing] as one
  * of the event types.
  * Finally, if there are multiple events of the same type, use a typed list,
