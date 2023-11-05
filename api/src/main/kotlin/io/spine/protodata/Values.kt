@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:JvmName("Values")
+
 package io.spine.protodata
 
 import com.google.protobuf.ByteString
@@ -40,101 +42,80 @@ import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.MESSAGE
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.STRING
 import com.google.protobuf.MapEntry
 import com.google.protobuf.Message
-import io.spine.protobuf.isNotDefault
+import io.spine.protodata.MapValueKt.entry
 import io.spine.protodata.NullValue.NULL_VALUE
 
 /**
- * A factory of `Value`s.
+ * Converts this message to a [Value] instance.
+ *
+ * If the message is equal to the default instance, it will be represented by
+ * a `MessageValue` with no fields. Otherwise, all the present fields are converted
+ * into `Value`s.
  */
-public object Values {
-
-    private val NULL = value { nullValue = NULL_VALUE }
-
-    /**
-     * Converts the given message into a value.
-     *
-     * If the message is equal to the default instance, it will be represented by
-     * a `MessageValue` with no fields. Otherwise, all the present fields are converted
-     * into `Value`s.
-     */
-    @JvmStatic
-    public fun from(message: Message): Value {
-        val builder = MessageValue.newBuilder()
-            .setType(message.descriptorForType.name())
-        if (message.isNotDefault()) {
-            populate(builder, message)
-        }
-        return value {
-            messageValue = builder.build()
+public fun Message.toValue(): Value = value {
+    messageValue = messageValue {
+        type = descriptorForType.name()
+        allFields.forEach { (k, v) ->
+            fields.put(k.name, k.toValue(v))
         }
     }
+}
 
-    private fun populate(value: MessageValue.Builder, source: Message) {
-        source.allFields.forEach { (k, v) ->
-            value.putFields(k.name, fromField(k, v))
+/**
+ * Constructs a [Value] instance which corresponds to the raw value of the field.
+ */
+private fun FieldDescriptor.toValue(raw: Any): Value = when {
+    isMapField -> fromMap(raw)
+    isRepeated -> fromList(raw)
+    else -> singularValue(raw)
+}
+
+private fun FieldDescriptor.singularValue(raw: Any) = when (javaType) {
+    INT -> value { intValue = (raw as Int).toLong() }
+    LONG -> value { intValue = raw as Long }
+    FLOAT -> value { doubleValue = (raw as Float).toDouble() }
+    DOUBLE -> value { doubleValue = raw as Double }
+    BOOLEAN -> value { boolValue = raw as Boolean }
+    STRING -> value { stringValue = raw as String }
+    BYTE_STRING -> value { bytesValue = raw as ByteString }
+    ENUM -> value {
+        val enumDescriptor = raw as EnumValueDescriptor
+        enumValue = EnumValue.newBuilder()
+            .setType(enumType.name())
+            .setConstNumber(enumDescriptor.number)
+            .build()
+    }
+    MESSAGE -> (raw as Message).toValue()
+    else -> NULL
+}
+
+private fun FieldDescriptor.fromMap(rawValue: Any): Value {
+    val syntheticEntry = messageType.fields
+    val keyType = syntheticEntry[0]
+    val valueType = syntheticEntry[1]
+    @Suppress("UNCHECKED_CAST")
+    val entries = rawValue as List<MapEntry<*, *>>
+    return value {
+        mapValue = mapValue {
+            value.addAll(entries.map {
+                val keyValue = keyType.toValue(it.key!!)
+                val wrappedValue = valueType.toValue(it.value!!)
+                entry {
+                    key = keyValue
+                    value = wrappedValue
+                }
+            })
         }
     }
+}
 
-    private fun fromField(
-        field: FieldDescriptor,
-        value: Any
-    ): Value {
-        return if (field.isMapField) {
-            fromMap(field, value)
-        } else if (field.isRepeated) {
-            fromList(field, value)
-        } else {
-            singularValue(value, field)
-        }
+private fun FieldDescriptor.fromList(raw: Any): Value = value {
+    val list = raw as List<*>
+    listValue = listValue {
+        values.addAll(list.map { entry -> singularValue(entry!!) })
     }
+}
 
-    private fun singularValue(raw: Any, field: FieldDescriptor) = when (field.javaType) {
-        INT -> value { intValue = (raw as Int).toLong() }
-        LONG -> value { intValue = raw as Long }
-        FLOAT -> value { doubleValue = (raw as Float).toDouble() }
-        DOUBLE -> value { doubleValue = raw as Double }
-        BOOLEAN -> value { boolValue = raw as Boolean }
-        STRING -> value { stringValue = raw as String }
-        BYTE_STRING -> value { bytesValue = raw as ByteString }
-        ENUM -> value {
-            val enumDescriptor = raw as EnumValueDescriptor
-            enumValue = EnumValue.newBuilder()
-                .setType(field.enumType.name())
-                .setConstNumber(enumDescriptor.number)
-                .build()
-        }
-
-        MESSAGE -> from(raw as Message)
-        else -> NULL
-    }
-
-    private fun fromMap(field: FieldDescriptor, rawValue: Any): Value {
-        val syntheticEntry = field.messageType
-            .fields
-        val keyType = syntheticEntry[0]
-        val valueType = syntheticEntry[1]
-        @Suppress("UNCHECKED_CAST")
-        val entries = rawValue as List<MapEntry<*, *>>
-        return value {
-            this.mapValue = mapValue {
-                value.addAll(entries.map {
-                    val key = fromField(keyType, it.key!!)
-                    val packedValue: Value = fromField(valueType, it.value!!)
-                    MapValue.Entry.newBuilder()
-                        .setKey(key)
-                        .setValue(packedValue)
-                        .build()
-                })
-            }
-        }
-    }
-
-    private fun fromList(field: FieldDescriptor, value: Any): Value {
-        val list = value as List<*>
-        return value {
-            listValue = listValue {
-                values.addAll(list.map { entry -> singularValue(entry!!, field) })
-            }
-        }
-    }
+private val NULL by lazy {
+    value { nullValue = NULL_VALUE }
 }

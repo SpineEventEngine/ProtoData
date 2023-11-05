@@ -31,6 +31,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.spine.protodata.Values.toValue;
 
 @DisplayName("`Values` also should")
 class ValuesJavaSpec {
@@ -38,7 +39,7 @@ class ValuesJavaSpec {
     @Test
     @DisplayName("construct instance with a static method in Java")
     void createStatic() {
-        var value = Values.from(
+        var value = toValue(
                 Postcard.newBuilder()
                         .setCongratulation("Happy retirement")
                         .putSignatures("Lenny", "L-man")

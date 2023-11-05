@@ -41,7 +41,7 @@ class ValuesSpec {
 
     @Test
     fun `convert a simple message to a Value`() {
-        val v = Values.from(Time.currentTime())
+        val v = Time.currentTime().toValue()
         v.messageValue.apply {
             type.simpleName shouldBe "Timestamp"
             fieldsMap shouldHaveKey "seconds"
@@ -51,7 +51,7 @@ class ValuesSpec {
 
     @Test
     fun `convert a repeated field`() {
-        val v = Values.from(fieldMask { paths.addAll(listOf("foo", "bar", "baz")) })
+        val v = fieldMask { paths.addAll(listOf("foo", "bar", "baz")) }.toValue()
         v.messageValue.type.qualifiedName() shouldBe FieldMask.getDescriptor().fullName
         v.messageValue.fieldsMap shouldHaveKey "paths"
         val list = v.messageValue.fieldsMap["paths"]!!.listValue
@@ -62,11 +62,11 @@ class ValuesSpec {
 
     @Test
     fun `convert a map field`() {
-        val v = Values.from(postcard {
+        val v = postcard {
             congratulation = "Happy birthday!"
             signatures.put("John", "JD")
             signatures.put("Alan", "Big Al")
-        })
+        }.toValue()
         v.messageValue.fieldsMap shouldHaveKey "signatures"
         val map = v.messageValue.fieldsMap["signatures"]!!.mapValue
         map.valueList[0].key.stringValue shouldBe "John"
