@@ -26,6 +26,7 @@
 
 import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.ProtoData
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 buildscript {
     dependencies {
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
-        classpath(io.spine.internal.dependency.Kotlin.gradlePluginLib)
+        classpath(Kotlin.gradlePluginLib)
     }
 }
 
@@ -70,14 +71,13 @@ subprojects {
             exclude(group = "io.spine", module = "spine-logging-backend")
 
             resolutionStrategy {
-                @Suppress("DEPRECATION") // We still depend on `floggerApi`.
+                @Suppress("DEPRECATION") // To force `Kotlin.stdLibJdk7`.
                 force(
+                    Kotlin.stdLibJdk7,
                     Spine.base,
                     Spine.toolBase,
                     Validation.runtime,
                     Spine.Logging.lib,
-                    Spine.Logging.middleware,
-                    Spine.Logging.floggerApi,
                     Spine.reflect,
                     ProtoData.compiler,
                     ProtoData.codegenJava,
