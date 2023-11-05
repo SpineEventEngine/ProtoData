@@ -32,11 +32,11 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 
-@DisplayName("`TypeSystem` also should")
-class MoreTypeSystemSpec {
+@DisplayName("`TypeSystem` Java API should")
+class TypeSystemJavaSpec {
 
     @Test
-    @DisplayName("construct instance with a static method")
+    @DisplayName("create an instance with a static method")
     void createStatic() {
         try (var context = CodeGenerationContext.newInstance()) {
             var ts = TypeSystem.serving(new FakeQuerying(context));

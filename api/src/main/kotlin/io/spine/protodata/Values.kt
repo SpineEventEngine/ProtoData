@@ -80,10 +80,10 @@ private fun FieldDescriptor.singularValue(raw: Any) = when (javaType) {
     BYTE_STRING -> value { bytesValue = raw as ByteString }
     ENUM -> value {
         val enumDescriptor = raw as EnumValueDescriptor
-        enumValue = EnumValue.newBuilder()
-            .setType(enumType.name())
-            .setConstNumber(enumDescriptor.number)
-            .build()
+        enumValue = enumValue {
+            type = enumType.name()
+            constNumber = enumDescriptor.number
+        }
     }
     MESSAGE -> (raw as Message).toValue()
     else -> NULL
@@ -97,15 +97,18 @@ private fun FieldDescriptor.fromMap(rawValue: Any): Value {
     val entries = rawValue as List<MapEntry<*, *>>
     return value {
         mapValue = mapValue {
-            value.addAll(entries.map {
-                val keyValue = keyType.toValue(it.key!!)
-                val wrappedValue = valueType.toValue(it.value!!)
-                entry {
-                    key = keyValue
-                    value = wrappedValue
-                }
-            })
+            value.addAll(entries.toMapValueEntries(keyType, valueType))
         }
+    }
+}
+
+private fun List<MapEntry<*, *>>.toMapValueEntries(
+    keyType: FieldDescriptor,
+    valueType: FieldDescriptor
+): Iterable<MapValue.Entry> = map {
+    entry {
+        key = keyType.toValue(it.key)
+        value = valueType.toValue(it.value)
     }
 }
 
