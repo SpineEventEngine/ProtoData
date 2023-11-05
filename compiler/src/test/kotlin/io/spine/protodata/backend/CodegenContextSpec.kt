@@ -95,7 +95,7 @@ class CodegenContextSpec {
         targetRoot.toFile().mkdirs()
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
-        // Correctness of the Java source code is of no importance for this test suite.
+        // The correctness of the Java source code is of no importance for this test suite.
         val sourceFileName = "SourceCode.java"
         write(sourceFileName, """
             ${Journey::class.simpleName} worth taking

@@ -24,23 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.type;
+package io.spine.protodata;
 
-import io.spine.protodata.backend.CodeGenerationContext;
+import io.spine.protodata.test.Postcard;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.spine.protodata.Values.toValue;
 
-@DisplayName("`TypeSystem` also should")
-class MoreTypeSystemSpec {
+@DisplayName("`Values` Java API should")
+class ValuesJavaSpec {
 
     @Test
-    @DisplayName("construct instance with a static method")
+    @DisplayName("convert a `Message` into a `Value` via a static method")
     void createStatic() {
-        try (var context = CodeGenerationContext.newInstance()) {
-            var ts = TypeSystem.serving(new FakeQuerying(context));
-            assertThat(ts).isNotNull();
-        }
+        var value = toValue(
+                Postcard.newBuilder()
+                        .setCongratulation("Happy retirement")
+                        .putSignatures("Lenny", "L-man")
+                        .putSignatures("Karl", "K-man")
+                        .putSignatures("Moe", "M-man")
+                        .putSignatures("Charles", "C-man")
+                        .build()
+        );
+        assertThat(value).isNotNull();
+        assertThat(value.getMessageValue()
+                        .getFieldsMap()
+                        .get("signatures")
+                        .getMapValue()
+                        .getValueCount()).isEqualTo(4);
     }
 }

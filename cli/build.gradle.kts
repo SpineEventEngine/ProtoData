@@ -38,16 +38,18 @@ plugins {
 }
 
 dependencies {
-    implementation(Clikt.lib)
+    listOf(
+        kotlin("reflect"),
+        Clikt.lib,
+        Spine.Logging.lib,
+    ).forEach { implementation(it) }
 
-    implementation(Spine.Logging.lib)
-    runtimeOnly(Spine.Logging.middleware)
-
-    implementation(project(":cli-api"))
-    implementation(project(":api"))
-    implementation(project(":compiler"))
-    implementation(project(":codegen-java"))
-    implementation(kotlin("reflect"))
+    listOf(
+        ":cli-api",
+        ":api",
+        ":compiler",
+        ":codegen-java"
+    ).forEach { implementation(project(it)) }
 
     testImplementation(project(":test-env"))
 }

@@ -24,32 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend;
+package io.spine.protodata.type;
 
-import io.spine.protodata.test.Postcard;
+import io.spine.protodata.backend.CodeGenerationContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 
-@DisplayName("`Values` also should")
-class MoreValuesSpec {
+@DisplayName("`TypeSystem` Java API should")
+class TypeSystemJavaSpec {
 
     @Test
-    @DisplayName("construct instance with a static method in Java")
+    @DisplayName("create an instance with a static method")
     void createStatic() {
-        var value = Values.from(Postcard.newBuilder()
-                            .setCongratulation("Happy retirement")
-                            .putSignatures("Lenny", "L-man")
-                            .putSignatures("Karl", "K-man")
-                            .putSignatures("Moe", "M-man")
-                            .putSignatures("Charles", "C-man")
-                            .build());
-        assertThat(value).isNotNull();
-        assertThat(value.getMessageValue()
-                        .getFieldsMap()
-                        .get("signatures")
-                        .getMapValue()
-                        .getValueCount()).isEqualTo(4);
+        try (var context = CodeGenerationContext.newInstance()) {
+            var ts = TypeSystem.serving(new FakeQuerying(context));
+            assertThat(ts).isNotNull();
+        }
     }
 }

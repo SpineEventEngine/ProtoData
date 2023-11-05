@@ -25,7 +25,9 @@
  */
 
 import com.google.protobuf.gradle.protobuf
+import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.ProtoData
@@ -36,6 +38,7 @@ import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+@Suppress("RemoveRedundantQualifierName")
 buildscript {
     dependencies {
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
@@ -43,7 +46,6 @@ buildscript {
     }
 }
 
-@Suppress("RemoveRedundantQualifierName")
 plugins {
     java
     kotlin("jvm") apply false
@@ -70,14 +72,14 @@ subprojects {
             exclude(group = "io.spine", module = "spine-logging-backend")
 
             resolutionStrategy {
-                @Suppress("DEPRECATION") // We still depend on `floggerApi`.
+                @Suppress("DEPRECATION") // To force `Kotlin.stdLibJdk7`.
                 force(
+                    Kotlin.stdLibJdk7,
+                    Grpc.api,
                     Spine.base,
                     Spine.toolBase,
                     Validation.runtime,
                     Spine.Logging.lib,
-                    Spine.Logging.middleware,
-                    Spine.Logging.floggerApi,
                     Spine.reflect,
                     ProtoData.compiler,
                     ProtoData.codegenJava,

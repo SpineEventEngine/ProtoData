@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata
 
 import com.google.protobuf.FieldMask
 import com.google.protobuf.fieldMask
@@ -32,8 +32,6 @@ import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.maps.shouldHaveKey
 import io.kotest.matchers.shouldBe
 import io.spine.base.Time
-import io.spine.protodata.qualifiedName
-import io.spine.protodata.value
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import io.spine.protodata.test.postcard
@@ -43,7 +41,7 @@ class ValuesSpec {
 
     @Test
     fun `convert a simple message to a Value`() {
-        val v = Values.from(Time.currentTime())
+        val v = Time.currentTime().toValue()
         v.messageValue.apply {
             type.simpleName shouldBe "Timestamp"
             fieldsMap shouldHaveKey "seconds"
@@ -53,7 +51,7 @@ class ValuesSpec {
 
     @Test
     fun `convert a repeated field`() {
-        val v = Values.from(fieldMask { paths.addAll(listOf("foo", "bar", "baz")) })
+        val v = fieldMask { paths.addAll(listOf("foo", "bar", "baz")) }.toValue()
         v.messageValue.type.qualifiedName() shouldBe FieldMask.getDescriptor().fullName
         v.messageValue.fieldsMap shouldHaveKey "paths"
         val list = v.messageValue.fieldsMap["paths"]!!.listValue
@@ -64,11 +62,11 @@ class ValuesSpec {
 
     @Test
     fun `convert a map field`() {
-        val v = Values.from(postcard {
+        val v = postcard {
             congratulation = "Happy birthday!"
             signatures.put("John", "JD")
             signatures.put("Alan", "Big Al")
-        })
+        }.toValue()
         v.messageValue.fieldsMap shouldHaveKey "signatures"
         val map = v.messageValue.fieldsMap["signatures"]!!.mapValue
         map.valueList[0].key.stringValue shouldBe "John"
