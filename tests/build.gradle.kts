@@ -25,6 +25,7 @@
  */
 
 import com.google.protobuf.gradle.protobuf
+import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Protobuf
@@ -37,14 +38,14 @@ import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+@Suppress("RemoveRedundantQualifierName")
 buildscript {
     dependencies {
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
-        classpath(Kotlin.gradlePluginLib)
+        classpath(io.spine.internal.dependency.Kotlin.gradlePluginLib)
     }
 }
 
-@Suppress("RemoveRedundantQualifierName")
 plugins {
     java
     kotlin("jvm") apply false
@@ -74,6 +75,7 @@ subprojects {
                 @Suppress("DEPRECATION") // To force `Kotlin.stdLibJdk7`.
                 force(
                     Kotlin.stdLibJdk7,
+                    Grpc.api,
                     Spine.base,
                     Spine.toolBase,
                     Validation.runtime,
