@@ -33,11 +33,11 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.protodata.Values.toValue;
 
-@DisplayName("`Values` also should")
+@DisplayName("`Values` Java API should")
 class ValuesJavaSpec {
 
     @Test
-    @DisplayName("construct instance with a static method in Java")
+    @DisplayName("convert a `Message` into a `Value` via a static method")
     void createStatic() {
         var value = toValue(
                 Postcard.newBuilder()
