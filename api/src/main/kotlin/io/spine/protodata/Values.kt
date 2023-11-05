@@ -24,10 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata
 
 import com.google.protobuf.ByteString
-import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.BOOLEAN
@@ -42,15 +41,7 @@ import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.STRING
 import com.google.protobuf.MapEntry
 import com.google.protobuf.Message
 import io.spine.protobuf.isNotDefault
-import io.spine.protodata.EnumValue
-import io.spine.protodata.MapValue
-import io.spine.protodata.MessageValue
 import io.spine.protodata.NullValue.NULL_VALUE
-import io.spine.protodata.Value
-import io.spine.protodata.listValue
-import io.spine.protodata.mapValue
-import io.spine.protodata.name
-import io.spine.protodata.value
 
 /**
  * A factory of `Value`s.

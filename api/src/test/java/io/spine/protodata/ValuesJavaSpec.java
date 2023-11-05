@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend;
+package io.spine.protodata;
 
 import io.spine.protodata.test.Postcard;
 import org.junit.jupiter.api.DisplayName;
@@ -33,18 +33,20 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 
 @DisplayName("`Values` also should")
-class MoreValuesSpec {
+class ValuesJavaSpec {
 
     @Test
     @DisplayName("construct instance with a static method in Java")
     void createStatic() {
-        var value = Values.from(Postcard.newBuilder()
-                            .setCongratulation("Happy retirement")
-                            .putSignatures("Lenny", "L-man")
-                            .putSignatures("Karl", "K-man")
-                            .putSignatures("Moe", "M-man")
-                            .putSignatures("Charles", "C-man")
-                            .build());
+        var value = Values.from(
+                Postcard.newBuilder()
+                        .setCongratulation("Happy retirement")
+                        .putSignatures("Lenny", "L-man")
+                        .putSignatures("Karl", "K-man")
+                        .putSignatures("Moe", "M-man")
+                        .putSignatures("Charles", "C-man")
+                        .build()
+        );
         assertThat(value).isNotNull();
         assertThat(value.getMessageValue()
                         .getFieldsMap()

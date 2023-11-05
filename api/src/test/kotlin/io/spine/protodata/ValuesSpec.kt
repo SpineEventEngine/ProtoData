@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata
 
 import com.google.protobuf.FieldMask
 import com.google.protobuf.fieldMask
@@ -32,8 +32,6 @@ import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.maps.shouldHaveKey
 import io.kotest.matchers.shouldBe
 import io.spine.base.Time
-import io.spine.protodata.qualifiedName
-import io.spine.protodata.value
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import io.spine.protodata.test.postcard

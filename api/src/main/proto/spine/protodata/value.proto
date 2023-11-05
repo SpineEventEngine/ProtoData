@@ -11,19 +11,19 @@ option java_multiple_files = true;
 
 import "spine/protodata/ast.proto";
 
-// This file contains definitions which describe Protobuf message, enum, and scalar values without
-// referring to the value types at compile time.
+// This file contains definitions which describe Protobuf message, enum, and scalar
+// values without referring to the value types at compile time.
 //
-// These definitions are built to encompass any value which can be represented in a typed fashion
-// in Protobuf.
+// These definitions are built to encompass any value which can be represented in
+// a typed fashion in Protobuf.
 //
 // These definitions are inspired by the `google/protobuf/struct.proto`.
 //
-// Unlike types defined in `struct.proto`, these definitions keep strict typing at runtime. Values
-// are bound to their precise types.
+// Unlike types defined in `struct.proto`, these definitions keep strict typing at runtime.
+// Values are bound to their precise types.
 //
-// Also, unlike `struct.proto`, these definitions do not have special treatment when converting
-// to JSON. Consider using Google's types when JSON printing is required.
+// Also, unlike `struct.proto`, these definitions do not have special treatment
+// when converting to JSON. Consider using Google's types when JSON printing is required.
 
 // `Value` represents a dynamically typed value which can be either `null`, a `bool`, a number,
 // a string, a byte string, a recursive message value, an enum value, a list, or a map of values.
