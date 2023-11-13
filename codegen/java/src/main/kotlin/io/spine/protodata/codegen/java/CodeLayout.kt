@@ -105,7 +105,7 @@ internal fun composeJavaClassName(
 }
 
 /**
- * Obtains a fully-qualified Java class, generated for the Protobuf type with this name.
+ * Obtains a fully qualified Java class, generated for the Protobuf type with this name.
  */
 internal fun TypeName.javaClassName(declaredIn: File): ClassName =
     composeJavaClassName(declaredIn) {
