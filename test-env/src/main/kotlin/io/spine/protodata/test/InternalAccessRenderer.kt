@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class InternalAccessRenderer : SoloRenderer<Java>(Java) {
     override fun render(sources: SourceFileSet) {
         val internalTypes = select<InternalType>().all()
         internalTypes.forEach { internalType ->
-            val path = internalType.name.qualifiedName().replace('.', File.separatorChar)
+            val path = internalType.name.qualifiedName.replace('.', File.separatorChar)
             sources.createFile(Path("${path}Internal.java"),
                 """
                 class ${internalType.name.simpleName}Internal {

@@ -133,7 +133,7 @@ private class DefinitionFactory(
         name = typeName
         file = path
         doc = documentation.forMessage(this@asMessage)
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
         if (containingType != null) {
             declaredIn = containingType.name()
         }
@@ -147,14 +147,14 @@ private class DefinitionFactory(
         val groupName = name()
         name = groupName
         field.addAll(listFields(fields, typeName))
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
         doc = documentation.forOneof(this@asOneof)
     }
 
     private fun EnumDescriptor.asEnum() = enumType {
         val typeName = name()
         name = typeName
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
         file = path
         constant.addAll(values.map { it.buildConstantWithOptions(typeName, documentation) })
         if (containingType != null) {
@@ -168,7 +168,7 @@ private class DefinitionFactory(
         name = serviceName
         file = path
         rpc.addAll(methods.map { it.buildRpcWithOptions(serviceName, documentation) })
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
         doc = documentation.forService(this@asService)
     }
 

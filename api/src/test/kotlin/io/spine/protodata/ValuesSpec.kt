@@ -52,7 +52,7 @@ class ValuesSpec {
     @Test
     fun `convert a repeated field`() {
         val v = fieldMask { paths.addAll(listOf("foo", "bar", "baz")) }.toValue()
-        v.messageValue.type.qualifiedName() shouldBe FieldMask.getDescriptor().fullName
+        v.messageValue.type.qualifiedName shouldBe FieldMask.getDescriptor().fullName
         v.messageValue.fieldsMap shouldHaveKey "paths"
         val list = v.messageValue.fieldsMap["paths"]!!.listValue
         list.valuesList[0].stringValue shouldBe "foo"

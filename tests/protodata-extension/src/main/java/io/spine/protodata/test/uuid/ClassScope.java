@@ -35,7 +35,7 @@ import io.spine.text.Text;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.protodata.Ast.qualifiedName;
+import static io.spine.protodata.Ast.getQualifiedName;
 import static io.spine.protodata.renderer.CoordinatesFactory.nowhere;
 import static java.lang.String.format;
 
@@ -70,7 +70,7 @@ final class ClassScope implements NonRepeatingInsertionPoint {
      */
     @Override
     public TextCoordinates locateOccurrence(Text text) {
-        String pattern = format(NATIVE_INSERTION_POINT_FMT, qualifiedName(typeName));
+        String pattern = format(NATIVE_INSERTION_POINT_FMT, getQualifiedName(typeName));
         List<String> lines = text.lines();
         for (int lineNumber = 0; lineNumber < lines.size(); lineNumber++) {
             String line = lines.get(lineNumber);

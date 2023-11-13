@@ -67,8 +67,8 @@ internal fun FieldDescriptor.buildFieldWithOptions(
     val field = buildField(this, declaringType, documentation)
     return field.copy {
         // There are several similar expressions in this file. Sadly, they have no common
-        // compile-time type which would allow us to extract the duplicates into a function.
-        option.addAll(listOptions(options))
+        // compile-time type that would allow us to extract the duplicates into a function.
+        option.addAll(options.toList())
     }
 }
 
@@ -124,7 +124,7 @@ internal fun EnumValueDescriptor.buildConstantWithOptions(
 ): EnumConstant {
     val constant = buildConstant(this, declaringType, documentation)
     return constant.copy {
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
     }
 }
 
@@ -158,7 +158,7 @@ internal fun MethodDescriptor.buildRpcWithOptions(
 ): Rpc {
     val rpc = buildRpc(this, declaringService, documentation)
     return rpc.copy {
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
     }
 }
 
@@ -175,7 +175,7 @@ internal fun buildRpc(
     documentation: Documentation
 ) = rpc {
     name = desc.name()
-    cardinality = desc.cardinality()
+    cardinality = desc.cardinality
     requestType = desc.inputType.name()
     responseType = desc.outputType.name()
     doc = documentation.forRpc(desc)
@@ -190,7 +190,7 @@ internal fun buildRpc(
 internal fun FileDescriptor.toFileWithOptions(): File {
     val file = toFile()
     return file.copy {
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
     }
 }
 

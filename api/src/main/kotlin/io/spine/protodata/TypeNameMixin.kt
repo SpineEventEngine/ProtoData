@@ -36,5 +36,5 @@ import io.spine.annotation.Internal
 public interface TypeNameMixin : ProtoDeclarationName, TypeNameOrBuilder {
 
     override val typeUrl: String
-        get() = "$typeUrlPrefix/${qualifiedName()}"
+        get() = "$typeUrlPrefix/$qualifiedName"
 }
