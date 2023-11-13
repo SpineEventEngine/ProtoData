@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -204,3 +204,10 @@ public fun MethodDescriptor.cardinality(): CallCardinality =
         isClientStreaming && isServerStreaming -> BIDIRECTIONAL_STREAMING
         else -> error("Unable to determine cardinality of method: `$fullName`.")
     }
+
+/**
+ * Tells if this type is `google.protobuf.Any`.
+ */
+public fun Type.isAny(): Boolean = (hasMessage()
+        && message.packageName.equals("google.protobuf"))
+        && message.simpleName.equals("Any")
