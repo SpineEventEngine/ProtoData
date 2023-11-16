@@ -88,7 +88,26 @@ protected constructor(
      */
     protected abstract fun render(sources: SourceFileSet)
 
-    public final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> =
+    /**
+     * Creates a [QueryingClient] for obtaining entity states of the given type.
+     *
+     * @param S
+     *         the type of the entity state.
+     * @param type
+     *         the class of the entity state.
+     */
+    public inline fun <reified S : EntityState<*>> select(): QueryingClient<S> =
+        select(S::class.java)
+
+    /**
+     * Creates a [QueryingClient] for querying entity states of the given type.
+     *
+     * @param S
+     *         the type of the entity state.
+     * @param type
+     *         the class of the entity state.
+     */
+    public final override fun <S : EntityState<*>> select(type: Class<S>): QueryingClient<S> =
         _context.select(type)
 
     final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
