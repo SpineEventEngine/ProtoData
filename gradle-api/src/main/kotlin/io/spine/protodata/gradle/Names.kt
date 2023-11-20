@@ -34,7 +34,7 @@ public object Names {
     /**
      * The ID of the Protobuf Gradle Plugin.
      */
-    public const val PROTOBUF_PLUGIN: String = "com.google.protobuf"
+    public const val PROTOBUF_GRADLE_PLUGIN_ID: String = "com.google.protobuf"
 
     /**
      * The name of the `protoc` plugin exposed by ProtoData.

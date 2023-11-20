@@ -37,7 +37,7 @@ import io.spine.protodata.gradle.CleanTask
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
-import io.spine.protodata.gradle.Names.PROTOBUF_PLUGIN
+import io.spine.protodata.gradle.Names.PROTOBUF_GRADLE_PLUGIN_ID
 import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
@@ -216,7 +216,7 @@ private fun Project.createCleanTask(sourceSet: SourceSet, ext: Extension) {
 
 private fun Project.configureWithProtobufPlugin(protoDataVersion: String, ext: Extension) {
     val protocPlugin = ProtocPluginArtifact(protoDataVersion)
-    pluginManager.withPlugin(PROTOBUF_PLUGIN) {
+    pluginManager.withPlugin(PROTOBUF_GRADLE_PLUGIN_ID) {
         configureProtobufPlugin(protocPlugin, ext)
     }
 }
