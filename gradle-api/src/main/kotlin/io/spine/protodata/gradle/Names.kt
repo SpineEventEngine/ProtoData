@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,11 @@ package io.spine.protodata.gradle
 public object Names {
 
     /**
+     * The ID of the Protobuf Gradle Plugin.
+     */
+    public const val PROTOBUF_PLUGIN: String = "com.google.protobuf"
+
+    /**
      * The name of the `protoc` plugin exposed by ProtoData.
      */
     public const val PROTODATA_PROTOC_PLUGIN: String = "protodata"
@@ -45,4 +50,15 @@ public object Names {
      * The name of the Gradle extension added by ProtoData Gradle plugin.
      */
     public const val EXTENSION_NAME: String = "protoData"
+
+    /**
+     * The name of the Gradle Configuration created by ProtoData Gradle plugin for holding
+     * user-defined classpath.
+     */
+    public const val USER_CLASSPATH_CONFIGURATION: String = "protoData"
+
+    /**
+     * The name of the configuration containing to ProtoData `fat-cli` artifact.
+     */
+    public const val PROTO_DATA_RAW_ARTIFACT: String = "protoDataRawArtifact"
 }
