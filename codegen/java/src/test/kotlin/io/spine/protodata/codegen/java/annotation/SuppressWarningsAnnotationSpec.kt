@@ -30,7 +30,7 @@ import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
-import io.spine.protodata.codegen.java.WithSourceProtoFileSetHeaderHeader
+import io.spine.protodata.codegen.java.WithSourceFileSet
 import io.spine.protodata.config.Configuration
 import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
 import kotlin.io.path.Path
@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("`SuppressRenderer` should")
-internal class SuppressWarningsAnnotationSpec : WithSourceProtoFileSetHeaderHeader() {
+internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
     companion object {
         val emptyRequest: CodeGeneratorRequest = CodeGeneratorRequest.getDefaultInstance()

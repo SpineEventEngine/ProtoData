@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ internal const val JAVA_FILE = "java/org/example/Test.java"
 /**
  * A base for test cases that require a source file set with a Java file to run.
  */
-internal open class WithSourceProtoFileSetHeaderHeader protected constructor() {
+internal open class WithSourceFileSet protected constructor() {
 
     protected lateinit var sources: List<SourceFileSet>
         private set
