@@ -55,7 +55,7 @@ message FilePath {
 message ProtoFileHeader {
 
     // Path to the file in a file system.
-    FilePath path = 1;
+    FilePath file = 1;
 
     // Name of the Protobuf package to which the declarations of the file belong.
     string package_name = 2;

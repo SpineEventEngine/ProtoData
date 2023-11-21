@@ -86,13 +86,13 @@ public object TypesTestEnv {
         value = StringValue.of("CartoonRejections").pack()
     }
     public val header: ProtoFileHeader = protoFileHeader {
-        path = filePath
+        file = filePath
         packageName = "acme.example"
         option.add(multipleFilesOption)
         option.add(javaPackageOption)
     }
     public val rejectionsProtoHeader: ProtoFileHeader = protoFileHeader {
-        path = rejectionsFilePath
+        file = rejectionsFilePath
         packageName = "acme.example"
         option.add(javaPackageOption)
         option.add(outerClassnameOption)

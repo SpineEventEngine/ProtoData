@@ -47,7 +47,7 @@ import io.spine.protodata.service
  * Produces events for a service.
  */
 internal class ServiceCompilerEvents(
-    private val file: ProtoFileHeader,
+    private val header: ProtoFileHeader,
     private val documentation: Documentation
 ) {
 
@@ -60,7 +60,7 @@ internal class ServiceCompilerEvents(
     internal suspend fun SequenceScope<EventMessage>.produceServiceEvents(
         descriptor: ServiceDescriptor
     ) {
-        val path = file.path
+        val path = header.file
         val serviceName = descriptor.name()
         yield(
             serviceEntered {
@@ -94,7 +94,7 @@ internal class ServiceCompilerEvents(
         serviceName: ServiceName,
         desc: MethodDescriptor
     ) {
-        val path = file.path
+        val path = header.file
         val theRpc = buildRpc(desc, serviceName, documentation)
         yield(
             rpcEntered {

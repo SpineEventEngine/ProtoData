@@ -53,7 +53,7 @@ import io.spine.protodata.asType
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.backend.event.toFilePath
 import io.spine.protodata.option
-import io.spine.protodata.path
+import io.spine.protodata.file
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.PhDProto
 import io.spine.protodata.test.XtraOptsProto
@@ -162,7 +162,7 @@ class CodeGenerationContextSpec {
         @Test
         fun `with files marked for generation`() {
             val assertSourceFile = ctx.assertEntity<ProtoSourceFileView, _>(
-                DoctorProto.getDescriptor().path()
+                DoctorProto.getDescriptor().file()
             )
             assertSourceFile.exists()
 
@@ -187,7 +187,7 @@ class CodeGenerationContextSpec {
         @Test
         fun `with dependencies`() {
             val assertSourceFile = ctx.assertEntity(
-                AnyProto.getDescriptor().path(),
+                AnyProto.getDescriptor().file(),
                 DependencyView::class.java
             )
             assertSourceFile.exists()
@@ -196,7 +196,7 @@ class CodeGenerationContextSpec {
         @Test
         fun `with respect for custom options among the source files`() {
             val phdFile = ctx.assertEntity<ProtoSourceFileView, _>(
-                PhDProto.getDescriptor().path()
+                PhDProto.getDescriptor().file()
             ).actual()!!.state() as ProtobufSourceFile
             val paperType = phdFile.typeMap.values.find { it.name.simpleName == "Paper" }!!
             val keywordsField = paperType.fieldList.find { it.name.value == "keywords" }!!

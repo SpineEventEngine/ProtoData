@@ -45,14 +45,14 @@ public class RejectionThrowableConvention(
     @Suppress("ReturnCount")
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName>? {
         val declaration = typeSystem.findMessage(name) ?: return null
-        val (msg, file) = declaration
-        val fileName = file.path.value
+        val (msg, header) = declaration
+        val fileName = header.file.value
         if (!fileName.endsWith("rejections.proto") // Not a rejection message.
             || msg.declaredIn.isNotDefault()       // Not a top-level message.
         ) {
             return null
         }
-        val packageName = file.javaPackage()
+        val packageName = header.javaPackage()
         val simpleName = name.simpleName
         val cls = ClassName(packageName, simpleName)
         return Declaration(cls, cls.javaFile)

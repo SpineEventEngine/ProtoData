@@ -50,7 +50,7 @@ import io.spine.protodata.name
  * Produces events for an enum.
  */
 internal class EnumCompilerEvents(
-    private val file: ProtoFileHeader,
+    private val header: ProtoFileHeader,
     private val documentation: Documentation
 ) {
 
@@ -67,7 +67,7 @@ internal class EnumCompilerEvents(
         nestedIn: TypeName? = null
     ) {
         val typeName = desc.name()
-        val path = file.path
+        val path = header.file
         val type = enumType {
             name = typeName
             file = path
@@ -114,7 +114,7 @@ internal class EnumCompilerEvents(
             value = desc.name
         }
         val theConstant = buildConstant(desc, typeName, documentation)
-        val path = file.path
+        val path = header.file
         yield(
             enumConstantEntered {
                 file = path

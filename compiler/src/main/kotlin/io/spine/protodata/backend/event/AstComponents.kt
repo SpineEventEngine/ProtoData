@@ -51,7 +51,7 @@ import io.spine.protodata.enumConstant
 import io.spine.protodata.field
 import io.spine.protodata.filePath
 import io.spine.protodata.name
-import io.spine.protodata.path
+import io.spine.protodata.file
 import io.spine.protodata.protoFileHeader
 import io.spine.protodata.rpc
 
@@ -200,7 +200,7 @@ internal fun FileDescriptor.toFileWithOptions(): ProtoFileHeader {
  * @see toFileWithOptions
  */
 internal fun FileDescriptor.toHeader(): ProtoFileHeader = protoFileHeader {
-    path = path()
+    file = file()
     packageName = `package`
     syntax = this@toHeader.syntaxVersion()
 }

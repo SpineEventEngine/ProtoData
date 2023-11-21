@@ -56,7 +56,7 @@ import io.spine.protodata.oneofGroup
  * Produces events for a message.
  */
 internal class MessageCompilerEvents(
-    private val file: ProtoFileHeader,
+    private val header: ProtoFileHeader,
     private val documentation: Documentation
 ) {
 
@@ -71,7 +71,7 @@ internal class MessageCompilerEvents(
         nestedIn: TypeName? = null
     ) {
         val typeName = desc.name()
-        val path = file.path
+        val path = header.file
         val messageType = messageType {
             name = typeName
             file = path
@@ -108,7 +108,7 @@ internal class MessageCompilerEvents(
             produceMessageEvents(nestedIn = typeName, desc = it)
         }
 
-        val enums = EnumCompilerEvents(file, documentation)
+        val enums = EnumCompilerEvents(header, documentation)
         desc.enumTypes.forEach {
             enums.apply {
                 produceEnumEvents(nestedIn = typeName, desc = it)
@@ -138,7 +138,7 @@ internal class MessageCompilerEvents(
             name = oneofName
             doc = documentation.forOneof(desc)
         }
-        val path = file.path
+        val path = header.file
         yield(
             oneofGroupEntered {
                 file = path
@@ -178,7 +178,7 @@ internal class MessageCompilerEvents(
     ) {
         val fieldName = desc.name()
         val theField = buildField(desc, typeName, documentation)
-        val path = file.path
+        val path = header.file
         yield(
             fieldEntered {
                 file = path

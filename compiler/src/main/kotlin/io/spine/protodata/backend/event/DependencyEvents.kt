@@ -45,7 +45,7 @@ import io.spine.protodata.event.dependencyDiscovered
 import io.spine.protodata.messageType
 import io.spine.protodata.name
 import io.spine.protodata.oneofGroup
-import io.spine.protodata.path
+import io.spine.protodata.file
 import io.spine.protodata.protobufSourceFile
 import io.spine.protodata.service
 
@@ -56,13 +56,13 @@ import io.spine.protodata.service
  */
 internal fun discoverDependencies(fileDescriptor: FileDescriptor) =
     dependencyDiscovered {
-        val id = fileDescriptor.path()
+        val id = fileDescriptor.file()
         path = id
         file = fileDescriptor.toPbSourceFile()
     }
 
 private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
-    val path = path()
+    val path = file()
     val doc = Documentation.fromFile(this)
     val definitions = DefinitionFactory(this, path, doc)
     return protobufSourceFile {
