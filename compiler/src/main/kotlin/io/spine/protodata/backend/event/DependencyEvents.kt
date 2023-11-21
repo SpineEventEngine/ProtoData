@@ -67,7 +67,7 @@ private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     val definitions = DefinitionFactory(this, path, doc)
     return protobufSourceFile {
         filePath = path
-        file = toFileWithOptions()
+        header = toFileWithOptions()
         with(definitions) {
             type.putAll(messageTypes().associateByUrl())
             enumType.putAll(enumTypes().associateByUrl())

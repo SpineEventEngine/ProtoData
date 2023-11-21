@@ -94,6 +94,6 @@ public class TypeSystem(
         }
         val types = file?.let(mapSelector)
         val type = types?.get(typeUrl)
-        return if (type != null) type to file.file else null
+        return if (type != null) type to file.header else null
     }
 }

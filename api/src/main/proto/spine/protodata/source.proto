@@ -46,11 +46,11 @@ message ProtobufSourceFile {
 
     // The relative path to the file.
     //
-    // Must be the same as `file.path`.
+    // Must be the same as `header.file`.
     //
     FilePath file_path = 1;
 
-    ProtoFileHeader file = 2;
+    ProtoFileHeader header = 2;
 
     // All the message types in this source files.
     //

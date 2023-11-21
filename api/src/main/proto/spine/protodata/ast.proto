@@ -50,7 +50,8 @@ message FilePath {
     string value = 1;
 }
 
-// A Protobuf source file.
+// A header of the Protobuf source code file which provides basic information about the file,
+// such as file-wide options applied to the file.
 message ProtoFileHeader {
 
     // Path to the file in a file system.

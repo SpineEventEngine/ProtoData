@@ -43,7 +43,7 @@ message FileEntered {
 
     FilePath path = 1;
 
-    ProtoFileHeader file = 2;
+    ProtoFileHeader header = 2;
 }
 
 // Emitted when a file-level option is found.

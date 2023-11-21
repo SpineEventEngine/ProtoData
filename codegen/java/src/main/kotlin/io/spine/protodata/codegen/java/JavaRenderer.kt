@@ -61,5 +61,5 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
     private fun findFile(path: FilePath): ProtoFileHeader =
         select(ProtobufSourceFile::class.java)
             .findById(path)!!
-            .file
+            .header
 }

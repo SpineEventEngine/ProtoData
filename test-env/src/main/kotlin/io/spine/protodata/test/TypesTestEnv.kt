@@ -85,25 +85,25 @@ public object TypesTestEnv {
         type = type { primitive = TYPE_STRING }
         value = StringValue.of("CartoonRejections").pack()
     }
-    public val protoFile: ProtoFileHeader = protoFileHeader {
+    public val header: ProtoFileHeader = protoFileHeader {
         path = filePath
         packageName = "acme.example"
         option.add(multipleFilesOption)
         option.add(javaPackageOption)
     }
-    public val rejectionsProtoFile: ProtoFileHeader = protoFileHeader {
+    public val rejectionsProtoHeader: ProtoFileHeader = protoFileHeader {
         path = rejectionsFilePath
         packageName = "acme.example"
         option.add(javaPackageOption)
         option.add(outerClassnameOption)
     }
     public val messageTypeName: TypeName = typeName {
-        packageName = protoFile.packageName
+        packageName = header.packageName
         simpleName = "Foo"
         typeUrlPrefix = "type.spine.io"
     }
     public val rejectionTypeName: TypeName = typeName {
-        packageName = rejectionsProtoFile.packageName
+        packageName = rejectionsProtoHeader.packageName
         simpleName = "CannotDrawCartoon"
         typeUrlPrefix = "type.spine.io"
     }
@@ -128,7 +128,7 @@ public object TypesTestEnv {
         field.add(idField)
     }
     public val enumTypeName: TypeName = typeName {
-        packageName = protoFile.packageName
+        packageName = header.packageName
         typeUrlPrefix = messageTypeName.typeUrlPrefix
         simpleName = "Kind"
     }
@@ -158,14 +158,14 @@ public object TypesTestEnv {
     public val typeSystem: TypeSystem = run {
         val definitions = protobufSourceFile {
             filePath = TypesTestEnv.filePath
-            file = protoFile
+            header = this@run.header
             type.put(messageTypeName.typeUrl, messageType)
             enumType.put(enumTypeName.typeUrl, TypesTestEnv.enumType)
             service.put(serviceName.typeUrl, TypesTestEnv.service)
         }
         val rejections = protobufSourceFile {
             filePath = rejectionsFilePath
-            file = rejectionsProtoFile
+            header = rejectionsProtoHeader
             type.put(rejectionTypeName.typeUrl, rejectionType)
         }
         TypeSystem(setOf(definitions, rejections))

@@ -30,7 +30,6 @@ import com.google.protobuf.StringValue
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.find
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.server.query.select
 import io.spine.tools.code.Java
 import kotlin.io.path.Path
 import kotlin.io.path.div
@@ -44,7 +43,7 @@ public class DeletingRenderer : SoloRenderer<Java>(Java) {
         val types = select<DeletedType>().all()
         types.forEach {
             val source = select<ProtobufSourceFile>().findById(it.type.file)
-            val javaPackage = source!!.file.optionList
+            val javaPackage = source!!.header.optionList
                 .find("java_package", StringValue::class.java)!!.value
             val simpleName = it.type.name.simpleName
             val javaFileDir = Path(javaPackage.replace('.', '/'))
