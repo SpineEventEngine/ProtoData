@@ -38,15 +38,14 @@ option java_multiple_files = true;
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 
-// A path to a file in a file system.
+// A file path on a file system.
 //
-// The Protobuf compiler only works with the Unix-style file separators (`/`), regardless of
-// the operating system. This value holds this exact format of the path.
+// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
+// the current operating system. This value holds this exact format of the path.
 //
 message FilePath {
 
-    // The path to the file, separating directories with slash (`/`) disregarding
-    // the current operating system.
+    // The path to the file, separating directories with slash (`/`) symbol.
     string value = 1;
 }
 
@@ -98,8 +97,8 @@ message TypeName {
     //     }
     // }
     // ```
-    // `Fuzzy` is the `simple_name` of this type. And [`Project`, `Deadline`] are the nesting type
-    // names.
+    // `Fuzzy` is the `simple_name` of this type. And [`Project`, `Deadline`] are
+    // the nesting type names.
     //
     repeated string nesting_type_name = 2;
 
@@ -108,12 +107,12 @@ message TypeName {
 
     // The prefix of the type's URL.
     //
-    // A type URL has the following structure: "<type URL prefix>/<package>.<short name>". For more
-    // info, see the definition of `google.protobuf.Any.type_url`.
+    // A type URL has the following structure: "<type URL prefix>/<package>.<short name>".
+    // For more info, please see the definition of `google.protobuf.Any.type_url`.
     //
-    // Must not include a training slash ("/").
+    // Must not include a trailing slash ("/").
     //
-    string type_url_prefix = 4;
+    string type_url_prefix = 4 [(pattern).regex = "^.*[^/]$"];
 }
 
 // A Protobuf message type.
