@@ -1,5 +1,5 @@
  /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,251 +38,329 @@ option java_multiple_files = true;
 import "spine/protodata/ast.proto";
 import "spine/protodata/source.proto";
 
+option (every_is).java_type = "io.spine.protodata.FileAware";
+
 // Emitted when processing of a file begins.
 message FileEntered {
 
+    // The file processing of which is started.
     File file = 1;
 
+    // The header of the file.
     ProtoFileHeader header = 2;
 }
 
 // Emitted when a file-level option is found.
 message FileOptionDiscovered {
+    option (is).java_type = "io.spine.protodata.OptionAware";
 
+    // The file option of which was found.
     File file = 1;
 
+    // The discovered option.
     Option option = 2;
 }
 
 // Emitted when a file is completely discovered, including all the types, etc.
 message FileExited {
 
+    // The file processing of which is finished.
     File file = 1;
 }
 
 // Emitted when processing reaches a message type.
 message TypeEntered {
 
+    // The file in which the type is defined.
     File file = 1;
 
+    // The type processing of which is started.
     MessageType type = 2;
 }
 
 // Emitted when a message-level option is found.
 message TypeOptionDiscovered {
+    option (is).java_type = "io.spine.protodata.OptionAware";
 
+    // The file in which the type is defined.
     File file = 1;
 
+    // The type in which the option is discovered.
     TypeName type = 2;
 
+    // The discovered option.
     Option option = 3;
 }
 
 // Emitted when a message type is completely discovered, including all the fields, etc.
 message TypeExited {
 
+    // The file in which the type is defined.
     File file = 1;
 
+    // The type processing of which is finished.
     TypeName type = 2;
 }
 
 // Emitted when processing reaches a `oneof` group.
 message OneofGroupEntered {
 
+    // The file in which the `oneof` group is defined.
     File file = 1;
 
+    // The type in which the `oneof` group is defined.
     TypeName type = 2;
 
+    // The `oneof` group processing of which is started.
     OneofGroup group = 3;
 }
 
 // Emitted when a `oneof`-level option is found.
 message OneofOptionDiscovered {
+    option (is).java_type = "io.spine.protodata.OptionAware";
 
+    // The file in which the `oneof` group is defined.
     File file = 1;
 
+    // The type in which the `oneof` group is defined.
     TypeName type = 2;
 
+    // The `oneof` group in which the option is discovered.
     OneofName group = 3;
 
+    // The discovered option.
     Option option = 4;
 }
 
 // Emitted when a `oneof`-group is completely discovered, including all the options and fields.
 message OneofGroupExited {
 
+    // The file in which the `oneof` group is defined.
     File file = 1;
 
+    // The type in which the `oneof` group is defined.
     TypeName type = 2;
 
+    // The `oneof` group processing of which is finished.
     OneofName group = 3;
 }
 
 // Emitted when processing reaches a field.
 message FieldEntered {
 
+    // The file in which the field is defined.
     File file = 1;
 
+    // The type in which the field is defined.
     TypeName type = 2;
 
+    // The field processing of which is started.
     Field field = 3;
 }
 
 // Emitted when a field-level option is found.
 message FieldOptionDiscovered {
+    option (is).java_type = "io.spine.protodata.OptionAware";
 
+    // The file in which the field is defined.
     File file = 1;
 
+    // The type in which the field is defined.
     TypeName type = 2;
 
+    // The field in which the option is discovered.
     FieldName field = 3;
 
+    // The option discovered.
     Option option = 4;
 }
 
 // Emitted when a field is completely discovered including the options.
 message FieldExited {
 
+    // The file in which the field is defined.
     File file = 1;
 
+    // The type in which the field is defined.
     TypeName type = 2;
 
+    // The field processing of which is finished.
     FieldName field = 3;
 }
 
 // Emitted when processing reaches an enum type.
 message EnumEntered {
 
+    // The file in which the enum is defined.
     File file = 1;
 
+    // The type of the enum.
     EnumType type = 2;
 }
 
 // Emitted when an enum-level option is found.
 message EnumOptionDiscovered {
+    option (is).java_type = "io.spine.protodata.OptionAware";
 
+    // The file in which the enum is defined.
     File file = 1;
 
+    // The type name of the enum.
     TypeName type = 2;
 
+    // The option discovered.
     Option option = 3;
 }
 
 // Emitted when processing reaches an enum constant a.k.a. enum value.
 message EnumConstantEntered {
 
+    // The file in which the enum is defined.
     File file = 1;
 
+    // The type name of the enum.
     TypeName type = 2;
 
+    // The enum constant processing of which is started.
     EnumConstant constant = 3;
 }
 
 // Emitted when an enum constant-level option is found.
 message EnumConstantOptionDiscovered {
+    option (is).java_type = "io.spine.protodata.OptionAware";
 
+    // The file in which the enum is defined.
     File file = 1;
 
+    // The type name of the enum.
     TypeName type = 2;
 
+    // The enum constant in which the option is discovered.
     ConstantName constant = 3;
 
+    // The option discovered.
     Option option = 4;
 }
 
 // Emitted when an enum constant is completely discovered.
 message EnumConstantExited {
 
+    // The file in which the enum is defined.
     File file = 1;
 
+    // The type name of the enum.
     TypeName type = 2;
 
+    // The enum constant processing of which is finished.
     ConstantName constant = 3;
 }
 
 // Emitted when an enum type is completely discovered, including all the constants, etc.
 message EnumExited {
 
+    // The file in which the enum is defined.
     File file = 1;
 
+    // The type of the enum.
     TypeName type = 2;
 }
 
 // Emitted when the processing reaches a service.
 message ServiceEntered {
 
+    // The file in which the service is defined.
     File file = 1;
 
+    // The service processing of which is started.
     Service service = 2;
 }
 
 // Emitted when an service-level option is found.
 message ServiceOptionDiscovered {
+    option (is).java_type = "io.spine.protodata.OptionAware";
 
+    // The file in which the service is defined.
     File file = 1;
 
+    // The name of the service in which the option is discovered.
     ServiceName service = 2;
 
+    // The discovered option.
     Option option = 3;
 }
 
 // Emitted when a service is completely discovered, including all the option and RPCs.
 message ServiceExited {
 
+    // The file in which the service is defined.
     File file = 1;
 
+    // The name of the service processing of which is finished.
     ServiceName service = 2;
 }
 
 // Emitted when the processing reaches a remote procedure call.
 message RpcEntered {
 
+    // The file in which the RPC is defined.
     File file = 1;
 
+    // The name of the service in which the RPC is defined.
     ServiceName service = 2;
 
+    // The RPC processing of which is started.
     Rpc rpc = 3;
 }
 
 // Emitted when an RPC-level option is found.
 message RpcOptionDiscovered {
+    option (is).java_type = "io.spine.protodata.OptionAware";
 
+    // The file in which the RPC is defined.
     File file = 1;
 
+    // The name of the service in which the RPC is defined.
     ServiceName service = 2;
 
+    // The RPC in which the option is discovered.
     RpcName rpc = 3;
 
+    // The discovered option.
     Option option = 4;
 }
 
 // Emitted when an RPC is completely discovered.
 message RpcExited {
 
+    // The file in which the RPC is defined.
     File file = 1;
 
+    // The name of the service in which the RPC is defined.
     ServiceName service = 2;
 
+    // The RPC processing of which is finished.
     RpcName rpc = 3;
 }
 
 // Emitted when the Protobuf compiler discovers a dependency file.
 //
-// The order of files reported by events of this type is unspecified. Users should not rely on any
-// particular order.
+// The order of files reported by events of this type is unspecified.
+// Users should not rely on any particular order.
 //
-// Each file is only reported by one event, even if the file is imported into
+// Each dependency file is only reported by one event.
 //
 // `DependencyDiscovered` events always precede all other Protobuf compiler events, i.e.
 // the first `FileEntered` will always be emitted after the last `DependencyDiscovered`.
 //
-// Normally, no code should be generated for dependencies. However, they can be used for additional
-// info when generating code for the module's own types.
+// Normally, no code should be generated for dependencies.
+// However, they can be used for additional info when generating code for the module's own types.
 //
 message DependencyDiscovered {
 
-    File path = 1;
+    // The file of the dependency.
+    File file = 1;
 
+    // The source file of the dependency.
     ProtobufSourceFile source = 2;
 }
 

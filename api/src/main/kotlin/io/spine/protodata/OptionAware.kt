@@ -24,25 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
-
-import io.spine.core.External
-import io.spine.core.Subscribe
-import io.spine.protodata.File
-import io.spine.protodata.ProtobufDependency
-import io.spine.protodata.event.DependencyDiscovered
-import io.spine.protodata.plugin.View
-import io.spine.server.entity.alter
+package io.spine.protodata
 
 /**
- * A view of a dependency Proto file.
+ * An interface for objects which have an [Option] or are associated in an option.
  */
-internal class DependencyView :
-    View<File, ProtobufDependency, ProtobufDependency.Builder>() {
-
-    @Subscribe
-    internal fun on(@External e: DependencyDiscovered) = alter {
-        file = e.file
-        source = e.source
-    }
+public interface OptionAware {
+    public val option: Option
 }

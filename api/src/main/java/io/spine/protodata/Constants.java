@@ -26,6 +26,9 @@
 
 package io.spine.protodata;
 
+/**
+ * Main constants of the ProtoData SDK.
+ */
 public final class Constants {
 
     /**
@@ -39,7 +42,7 @@ public final class Constants {
     public static final String LOGGING_PREFIX = '[' + LOGGING_DOMAIN + "] ";
 
     /**
-     * The name of the main class of the ProtoData command-line application.
+     * The name of the ProtoData command-line application main class.
      */
     public static final String CLI_APP_CLASS = "io.spine.protodata.cli.app.MainKt";
 
