@@ -48,7 +48,7 @@ message ProtobufSourceFile {
     //
     // Must be the same as `header.file`.
     //
-    FilePath file = 1;
+    File file = 1;
 
     ProtoFileHeader header = 2;
 
@@ -89,7 +89,7 @@ message ProtobufDependency {
     //
     // Must be the same as `file.file_path`.
     //
-    FilePath file_path = 1;
+    File file = 1;
 
     ProtobufSourceFile source = 2;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,9 +51,9 @@ import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
 import io.spine.protodata.backend.event.CompilerEvents
-import io.spine.protodata.backend.event.toFilePath
-import io.spine.protodata.option
+import io.spine.protodata.backend.event.toFile
 import io.spine.protodata.file
+import io.spine.protodata.option
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.PhDProto
 import io.spine.protodata.test.XtraOptsProto
@@ -227,7 +227,7 @@ class CodeGenerationContextSpec {
                     emitCompilerEvents(pipelineId)
                     dependencyFiles = thirdPartyFiles.map {
                         blackbox.assertEntity<DependencyView, _>(
-                            it.toFilePath()
+                            it.toFile()
                         ).run {
                             exists()
                             actual()!!.state()
@@ -244,7 +244,7 @@ class CodeGenerationContextSpec {
 
                     protoSourceFiles = thirdPartyFiles.map {
                         blackbox.assertEntity<ProtoSourceFileView, _>(
-                            it.toFilePath()
+                            it.toFile()
                         ).run {
                             exists()
                             actual()!!.state() as ProtobufSourceFile

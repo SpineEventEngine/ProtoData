@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,8 @@ public final class ClassScopePrinter extends InsertionPointPrinter<Java> {
     @Override
     protected Set<InsertionPoint> supportedInsertionPoints() {
         return select(UuidType.class).all()
-                                     .stream()
-                                     .map(type -> new ClassScope(type.getName()))
-                                     .collect(toSet());
+                .stream()
+                .map(type -> new ClassScope(type.getName()))
+                .collect(toSet());
     }
 }

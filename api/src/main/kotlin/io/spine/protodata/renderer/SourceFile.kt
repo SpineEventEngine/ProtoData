@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ package io.spine.protodata.renderer
 
 import com.google.common.base.Splitter
 import io.spine.protodata.InsertedPoints
-import io.spine.protodata.filePath
+import io.spine.protodata.file
 import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
@@ -144,7 +144,7 @@ private constructor(
      */
     public fun atInline(insertionPoint: InsertionPoint): SourceAtPoint {
         val points = sources.querying.select<InsertedPoints>()
-            .findById(filePath { value = relativePath.toString() })
+            .findById(file { path = relativePath.toString() })
         val point = points?.pointList?.firstOrNull { it.label == insertionPoint.label }
         return if (point != null) {
             SpecificPoint(this@SourceFile, point)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.FilePath
+import io.spine.protodata.File
 import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
@@ -42,7 +42,7 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
     /**
      * Obtains the [ClassName] of the given Protobuf type.
      */
-    protected fun classNameOf(type: TypeName, declaredIn: FilePath): ClassName {
+    protected fun classNameOf(type: TypeName, declaredIn: File): ClassName {
         val file = findFile(declaredIn)
         return type.javaClassName(file)
     }
@@ -53,12 +53,12 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
      * The path is relative to the generated source root. This path is useful for finding source
      * files in a [SourceSet][io.spine.protodata.renderer.SourceFileSet].
      */
-    protected fun javaFileOf(type: TypeName, declaredIn: FilePath): Path {
+    protected fun javaFileOf(type: TypeName, declaredIn: File): Path {
         val file = findFile(declaredIn)
         return type.javaFile(file)
     }
 
-    private fun findFile(path: FilePath): ProtoFileHeader =
+    private fun findFile(path: File): ProtoFileHeader =
         select(ProtobufSourceFile::class.java)
             .findById(path)!!
             .header

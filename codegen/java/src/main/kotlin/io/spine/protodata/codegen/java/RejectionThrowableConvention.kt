@@ -46,7 +46,7 @@ public class RejectionThrowableConvention(
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName>? {
         val declaration = typeSystem.findMessage(name) ?: return null
         val (msg, header) = declaration
-        val fileName = header.file.value
+        val fileName = header.file.path
         if (!fileName.endsWith("rejections.proto") // Not a rejection message.
             || msg.declaredIn.isNotDefault()       // Not a top-level message.
         ) {

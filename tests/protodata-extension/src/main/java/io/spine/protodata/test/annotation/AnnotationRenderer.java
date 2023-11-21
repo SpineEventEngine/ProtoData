@@ -51,7 +51,7 @@ public final class AnnotationRenderer extends JavaRenderer {
          if (!sources.inputRoot().endsWith("java")) {
              return;
          }
-        Set<Annotated> annotatedFields = select(Annotated.class).all();
+        var annotatedFields = select(Annotated.class).all();
         annotatedFields.forEach(field -> renderFor(field, sources));
 
         sources.forEach(file -> {
@@ -64,10 +64,9 @@ public final class AnnotationRenderer extends JavaRenderer {
     }
 
     private void renderFor(Annotated field, SourceFileSet sourceSet) {
-        FieldId id = field.getId();
-        FieldGetter getter = new FieldGetter(id);
-        Path path = javaFileOf(id.getType(), id.getFile());
-
+        var id = field.getId();
+        var getter = new FieldGetter(id);
+        var path = javaFileOf(id.getType(), id.getFile());
         sourceSet.file(path)
                  .at(getter)
                  .withExtraIndentation(INDENT_LEVEL)

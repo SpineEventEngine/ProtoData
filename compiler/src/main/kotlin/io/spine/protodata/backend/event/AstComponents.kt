@@ -49,9 +49,8 @@ import io.spine.protodata.constantName
 import io.spine.protodata.copy
 import io.spine.protodata.enumConstant
 import io.spine.protodata.field
-import io.spine.protodata.filePath
-import io.spine.protodata.name
 import io.spine.protodata.file
+import io.spine.protodata.name
 import io.spine.protodata.protoFileHeader
 import io.spine.protodata.rpc
 
@@ -208,6 +207,6 @@ internal fun FileDescriptor.toHeader(): ProtoFileHeader = protoFileHeader {
 /**
  * Obtains the file path from this file descriptor.
  */
-internal fun FileDescriptorProto.toFilePath() = filePath {
-    value = name
+internal fun FileDescriptorProto.toFile() = file {
+    path = name
 }

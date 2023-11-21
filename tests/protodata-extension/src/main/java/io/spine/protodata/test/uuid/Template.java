@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,9 +67,9 @@ final class Template {
      * @return formatted code lines
      */
     ImmutableList<String> format(Object... positionalArgs) {
-        String formatted = String.format(code, positionalArgs);
-        ImmutableList<String> lines = NEW_LINE_SPLITTER.splitToStream(formatted)
-                                                       .collect(toImmutableList());
+        var formatted = String.format(code, positionalArgs);
+        var lines = NEW_LINE_SPLITTER.splitToStream(formatted)
+                                     .collect(toImmutableList());
         return lines;
     }
 }

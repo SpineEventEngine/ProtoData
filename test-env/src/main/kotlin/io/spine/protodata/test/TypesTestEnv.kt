@@ -36,36 +36,36 @@ import io.spine.protobuf.pack
 import io.spine.protodata.EnumConstant
 import io.spine.protodata.EnumType
 import io.spine.protodata.Field
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.FilePath
+import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_STRING
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.Service
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
-import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.constantName
 import io.spine.protodata.enumConstant
 import io.spine.protodata.fieldName
-import io.spine.protodata.protoFileHeader
-import io.spine.protodata.filePath
+import io.spine.protodata.file
 import io.spine.protodata.messageType
 import io.spine.protodata.option
+import io.spine.protodata.protoFileHeader
 import io.spine.protodata.protobufSourceFile
 import io.spine.protodata.service
 import io.spine.protodata.serviceName
 import io.spine.protodata.type
+import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.typeName
 import io.spine.protodata.enumType as newEnumType
 import io.spine.protodata.field as newField
 
 public object TypesTestEnv {
 
-    public val protoSourceFile: FilePath = filePath { value = "acme/example/foo.proto" }
-    public val rejectionsFile: FilePath = filePath {
-        value = "acme/example/cartoon_rejections.proto"
+    public val protoSourceFile: File = file { path = "acme/example/foo.proto" }
+    public val rejectionsFile: File = file {
+        path = "acme/example/cartoon_rejections.proto"
     }
     public val multipleFilesOption: Option = option {
         name = "java_multiple_files"
@@ -157,7 +157,7 @@ public object TypesTestEnv {
     }
     public val typeSystem: TypeSystem = run {
         val definitions = protobufSourceFile {
-            file = TypesTestEnv.protoSourceFile
+            file = protoSourceFile
             header = this@run.header
             type.put(messageTypeName.typeUrl, messageType)
             enumType.put(enumTypeName.typeUrl, TypesTestEnv.enumType)

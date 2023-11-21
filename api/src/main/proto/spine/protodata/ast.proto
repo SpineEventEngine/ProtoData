@@ -43,10 +43,10 @@ import "google/protobuf/empty.proto";
 // The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
 // the current operating system. This value holds this exact format of the path.
 //
-message FilePath {
+message File {
 
     // The path to the file, separating directories with slash (`/`) symbol.
-    string value = 1;
+    string path = 1;
 }
 
 // A header of the Protobuf source code file which provides basic information about the file,
@@ -54,7 +54,7 @@ message FilePath {
 message ProtoFileHeader {
 
     // Path to the file in a file system.
-    FilePath file = 1;
+    File file = 1;
 
     // Name of the Protobuf package to which the declarations of the file belong.
     string package_name = 2;
@@ -139,7 +139,7 @@ message MessageType {
     repeated Option option = 4;
 
     // Path to the file which declares this type.
-    FilePath file = 5;
+    File file = 5;
 
     // Name of the message type which hosts the declaration of this type.
     TypeName declared_in = 6;
@@ -170,7 +170,7 @@ message EnumType {
     repeated Option option = 2;
 
     // Path to the file which declares this type.
-    FilePath file = 3;
+    File file = 3;
 
     // The enum constants, a.k.a. values.
     //
@@ -413,7 +413,7 @@ message Service {
     Doc doc = 4;
 
     // Path to the file which declares this service.
-    FilePath file = 5;
+    File file = 5;
 }
 
 // A name of an RPC method.

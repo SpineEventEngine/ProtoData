@@ -33,7 +33,7 @@ import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.protodata.EnumType
-import io.spine.protodata.FilePath
+import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoDeclaration
 import io.spine.protodata.ProtobufSourceFile
@@ -42,10 +42,10 @@ import io.spine.protodata.TypeName
 import io.spine.protodata.backend.Documentation
 import io.spine.protodata.enumType
 import io.spine.protodata.event.dependencyDiscovered
+import io.spine.protodata.file
 import io.spine.protodata.messageType
 import io.spine.protodata.name
 import io.spine.protodata.oneofGroup
-import io.spine.protodata.file
 import io.spine.protodata.protobufSourceFile
 import io.spine.protodata.service
 
@@ -87,7 +87,7 @@ private fun <T : ProtoDeclaration> Sequence<T>.associateByUrl() =
  */
 private class DefinitionFactory(
     private val file: FileDescriptor,
-    private val path: FilePath,
+    private val path: File,
     private val documentation: Documentation,
 ) {
 

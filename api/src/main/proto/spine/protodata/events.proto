@@ -41,7 +41,7 @@ import "spine/protodata/source.proto";
 // Emitted when processing of a file begins.
 message FileEntered {
 
-    FilePath file = 1;
+    File file = 1;
 
     ProtoFileHeader header = 2;
 }
@@ -49,7 +49,7 @@ message FileEntered {
 // Emitted when a file-level option is found.
 message FileOptionDiscovered {
 
-    FilePath file = 1;
+    File file = 1;
 
     Option option = 2;
 }
@@ -57,13 +57,13 @@ message FileOptionDiscovered {
 // Emitted when a file is completely discovered, including all the types, etc.
 message FileExited {
 
-    FilePath file = 1;
+    File file = 1;
 }
 
 // Emitted when processing reaches a message type.
 message TypeEntered {
 
-    FilePath file = 1;
+    File file = 1;
 
     MessageType type = 2;
 }
@@ -71,7 +71,7 @@ message TypeEntered {
 // Emitted when a message-level option is found.
 message TypeOptionDiscovered {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -81,7 +81,7 @@ message TypeOptionDiscovered {
 // Emitted when a message type is completely discovered, including all the fields, etc.
 message TypeExited {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 }
@@ -89,7 +89,7 @@ message TypeExited {
 // Emitted when processing reaches a `oneof` group.
 message OneofGroupEntered {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -99,7 +99,7 @@ message OneofGroupEntered {
 // Emitted when a `oneof`-level option is found.
 message OneofOptionDiscovered {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -111,7 +111,7 @@ message OneofOptionDiscovered {
 // Emitted when a `oneof`-group is completely discovered, including all the options and fields.
 message OneofGroupExited {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -121,7 +121,7 @@ message OneofGroupExited {
 // Emitted when processing reaches a field.
 message FieldEntered {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -131,7 +131,7 @@ message FieldEntered {
 // Emitted when a field-level option is found.
 message FieldOptionDiscovered {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -143,7 +143,7 @@ message FieldOptionDiscovered {
 // Emitted when a field is completely discovered including the options.
 message FieldExited {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -153,7 +153,7 @@ message FieldExited {
 // Emitted when processing reaches an enum type.
 message EnumEntered {
 
-    FilePath file = 1;
+    File file = 1;
 
     EnumType type = 2;
 }
@@ -161,7 +161,7 @@ message EnumEntered {
 // Emitted when an enum-level option is found.
 message EnumOptionDiscovered {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -171,7 +171,7 @@ message EnumOptionDiscovered {
 // Emitted when processing reaches an enum constant a.k.a. enum value.
 message EnumConstantEntered {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -181,7 +181,7 @@ message EnumConstantEntered {
 // Emitted when an enum constant-level option is found.
 message EnumConstantOptionDiscovered {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -193,7 +193,7 @@ message EnumConstantOptionDiscovered {
 // Emitted when an enum constant is completely discovered.
 message EnumConstantExited {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 
@@ -203,7 +203,7 @@ message EnumConstantExited {
 // Emitted when an enum type is completely discovered, including all the constants, etc.
 message EnumExited {
 
-    FilePath file = 1;
+    File file = 1;
 
     TypeName type = 2;
 }
@@ -211,7 +211,7 @@ message EnumExited {
 // Emitted when the processing reaches a service.
 message ServiceEntered {
 
-    FilePath file = 1;
+    File file = 1;
 
     Service service = 2;
 }
@@ -219,7 +219,7 @@ message ServiceEntered {
 // Emitted when an service-level option is found.
 message ServiceOptionDiscovered {
 
-    FilePath file = 1;
+    File file = 1;
 
     ServiceName service = 2;
 
@@ -229,7 +229,7 @@ message ServiceOptionDiscovered {
 // Emitted when a service is completely discovered, including all the option and RPCs.
 message ServiceExited {
 
-    FilePath file = 1;
+    File file = 1;
 
     ServiceName service = 2;
 }
@@ -237,7 +237,7 @@ message ServiceExited {
 // Emitted when the processing reaches a remote procedure call.
 message RpcEntered {
 
-    FilePath file = 1;
+    File file = 1;
 
     ServiceName service = 2;
 
@@ -247,7 +247,7 @@ message RpcEntered {
 // Emitted when an RPC-level option is found.
 message RpcOptionDiscovered {
 
-    FilePath file = 1;
+    File file = 1;
 
     ServiceName service = 2;
 
@@ -259,7 +259,7 @@ message RpcOptionDiscovered {
 // Emitted when an RPC is completely discovered.
 message RpcExited {
 
-    FilePath file = 1;
+    File file = 1;
 
     ServiceName service = 2;
 
@@ -281,7 +281,7 @@ message RpcExited {
 //
 message DependencyDiscovered {
 
-    FilePath path = 1;
+    File path = 1;
 
     ProtobufSourceFile source = 2;
 }
@@ -293,7 +293,7 @@ message InsertionPointPrinted {
     //
     // This path is relative to the source file set which contains the file.
     //
-    FilePath file = 1;
+    File file = 1;
 
     // The insertion point label.
     //

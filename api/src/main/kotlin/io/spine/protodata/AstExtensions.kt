@@ -48,7 +48,7 @@ import io.spine.protodata.CallCardinality.UNARY
  * Obtains a name of this Protobuf file without the extension.
  */
 public fun ProtoFileHeader.nameWithoutExtension(): String {
-    val name = file.value.split("/").last()
+    val name = file.path.split("/").last()
     val index = name.indexOf(".")
     return if (index > 0) {
         name.substring(0, index)
@@ -190,7 +190,7 @@ public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
 /**
  * Obtains the relative path to this file as a [FilePath].
  */
-public fun FileDescriptor.file(): FilePath = filePath { value = name }
+public fun FileDescriptor.file(): File = file { path = name }
 
 /**
  * Obtains the name of this service as a [ServiceName].
