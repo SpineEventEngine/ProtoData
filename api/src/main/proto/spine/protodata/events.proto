@@ -41,7 +41,7 @@ import "spine/protodata/source.proto";
 // Emitted when processing of a file begins.
 message FileEntered {
 
-    FilePath path = 1;
+    FilePath file = 1;
 
     ProtoFileHeader header = 2;
 }
@@ -283,7 +283,7 @@ message DependencyDiscovered {
 
     FilePath path = 1;
 
-    ProtobufSourceFile file = 2;
+    ProtobufSourceFile source = 2;
 }
 
 // Emitted when an insertion point printer adds an insertion point to a code file.

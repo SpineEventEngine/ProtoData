@@ -55,7 +55,7 @@ public class TypeSystem(
         @JvmStatic
         public fun serving(client: Querying): TypeSystem {
             val files = client.select<ProtobufSourceFile>().all()
-            val deps = client.select<ProtobufDependency>().all().map { it.file }
+            val deps = client.select<ProtobufDependency>().all().map { it.source }
             return TypeSystem(files + deps)
         }
     }

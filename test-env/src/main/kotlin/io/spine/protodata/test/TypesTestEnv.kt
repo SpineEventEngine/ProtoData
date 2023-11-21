@@ -63,8 +63,8 @@ import io.spine.protodata.field as newField
 
 public object TypesTestEnv {
 
-    public val filePath: FilePath = filePath { value = "acme/example/foo.proto" }
-    public val rejectionsFilePath: FilePath = filePath {
+    public val protoSourceFile: FilePath = filePath { value = "acme/example/foo.proto" }
+    public val rejectionsFile: FilePath = filePath {
         value = "acme/example/cartoon_rejections.proto"
     }
     public val multipleFilesOption: Option = option {
@@ -86,13 +86,13 @@ public object TypesTestEnv {
         value = StringValue.of("CartoonRejections").pack()
     }
     public val header: ProtoFileHeader = protoFileHeader {
-        file = filePath
+        file = protoSourceFile
         packageName = "acme.example"
         option.add(multipleFilesOption)
         option.add(javaPackageOption)
     }
     public val rejectionsProtoHeader: ProtoFileHeader = protoFileHeader {
-        file = rejectionsFilePath
+        file = rejectionsFile
         packageName = "acme.example"
         option.add(javaPackageOption)
         option.add(outerClassnameOption)
@@ -118,12 +118,12 @@ public object TypesTestEnv {
         single = Empty.getDefaultInstance()
     }
     public val messageType: MessageType = messageType {
-        file = filePath
+        file = protoSourceFile
         name = messageTypeName
         field.add(stringField)
     }
     public val rejectionType: MessageType = messageType {
-        file = rejectionsFilePath
+        file = rejectionsFile
         name = rejectionTypeName
         field.add(idField)
     }
@@ -141,7 +141,7 @@ public object TypesTestEnv {
         number = 1
     }
     public val enumType: EnumType = newEnumType {
-        file = filePath
+        file = protoSourceFile
         name = enumTypeName
         constant.add(undefinedConstant)
         constant.add(enumConstant)
@@ -152,19 +152,19 @@ public object TypesTestEnv {
         typeUrlPrefix = "service.spine.io"
     }
     public val service: Service = service {
-        file = filePath
+        file = protoSourceFile
         name = serviceName
     }
     public val typeSystem: TypeSystem = run {
         val definitions = protobufSourceFile {
-            filePath = TypesTestEnv.filePath
+            file = TypesTestEnv.protoSourceFile
             header = this@run.header
             type.put(messageTypeName.typeUrl, messageType)
             enumType.put(enumTypeName.typeUrl, TypesTestEnv.enumType)
             service.put(serviceName.typeUrl, TypesTestEnv.service)
         }
         val rejections = protobufSourceFile {
-            filePath = rejectionsFilePath
+            file = rejectionsFile
             header = rejectionsProtoHeader
             type.put(rejectionTypeName.typeUrl, rejectionType)
         }

@@ -43,6 +43,6 @@ internal class DependencyView :
     @Subscribe
     internal fun on(@External e: DependencyDiscovered) = alter {
         filePath = e.path
-        file = e.file
+        source = e.source
     }
 }

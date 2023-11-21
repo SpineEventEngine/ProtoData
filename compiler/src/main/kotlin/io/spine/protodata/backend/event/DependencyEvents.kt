@@ -58,7 +58,7 @@ internal fun discoverDependencies(fileDescriptor: FileDescriptor) =
     dependencyDiscovered {
         val id = fileDescriptor.file()
         path = id
-        file = fileDescriptor.toPbSourceFile()
+        source = fileDescriptor.toPbSourceFile()
     }
 
 private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
@@ -66,7 +66,7 @@ private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     val doc = Documentation.fromFile(this)
     val definitions = DefinitionFactory(this, path, doc)
     return protobufSourceFile {
-        filePath = path
+        file = path
         header = toFileWithOptions()
         with(definitions) {
             type.putAll(messageTypes().associateByUrl())

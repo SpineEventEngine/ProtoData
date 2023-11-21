@@ -91,5 +91,5 @@ message ProtobufDependency {
     //
     FilePath file_path = 1;
 
-    ProtobufSourceFile file = 2;
+    ProtobufSourceFile source = 2;
 }

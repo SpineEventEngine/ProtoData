@@ -232,7 +232,7 @@ class CodeGenerationContextSpec {
                             exists()
                             actual()!!.state()
                         }
-                    }.map { state -> (state as ProtobufDependency).file }
+                    }.map { state -> (state as ProtobufDependency).source }
                 }
             }
 

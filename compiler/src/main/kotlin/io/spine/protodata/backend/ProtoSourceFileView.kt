@@ -67,7 +67,7 @@ internal class ProtoSourceFileView
 
     @Subscribe
     fun on(@External e: FileEntered) = alter {
-        filePath = e.path
+        file = e.file
         header = e.header
     }
 
