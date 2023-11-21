@@ -36,7 +36,7 @@ import io.spine.protodata.EnumConstant
 import io.spine.protodata.Field
 import io.spine.protodata.FieldKt
 import io.spine.protodata.FieldKt.ofMap
-import io.spine.protodata.File
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.Rpc
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
@@ -49,10 +49,10 @@ import io.spine.protodata.constantName
 import io.spine.protodata.copy
 import io.spine.protodata.enumConstant
 import io.spine.protodata.field
-import io.spine.protodata.file
 import io.spine.protodata.filePath
 import io.spine.protodata.name
 import io.spine.protodata.path
+import io.spine.protodata.protoFileHeader
 import io.spine.protodata.rpc
 
 /**
@@ -187,7 +187,7 @@ internal fun buildRpc(
  *
  * @see toFile
  */
-internal fun FileDescriptor.toFileWithOptions(): File {
+internal fun FileDescriptor.toFileWithOptions(): ProtoFileHeader {
     val file = toFile()
     return file.copy {
         option.addAll(options.toList())
@@ -199,7 +199,7 @@ internal fun FileDescriptor.toFileWithOptions(): File {
  *
  * @see toFileWithOptions
  */
-internal fun FileDescriptor.toFile(): File = file {
+internal fun FileDescriptor.toFile(): ProtoFileHeader = protoFileHeader {
     path = path()
     packageName = `package`
     syntax = this@toFile.syntaxVersion()

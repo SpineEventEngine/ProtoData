@@ -36,7 +36,7 @@ import io.spine.protobuf.pack
 import io.spine.protodata.EnumConstant
 import io.spine.protodata.EnumType
 import io.spine.protodata.Field
-import io.spine.protodata.File
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.FilePath
 import io.spine.protodata.MessageType
 import io.spine.protodata.Option
@@ -49,7 +49,7 @@ import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.constantName
 import io.spine.protodata.enumConstant
 import io.spine.protodata.fieldName
-import io.spine.protodata.file
+import io.spine.protodata.protoFileHeader
 import io.spine.protodata.filePath
 import io.spine.protodata.messageType
 import io.spine.protodata.option
@@ -85,13 +85,13 @@ public object TypesTestEnv {
         type = type { primitive = TYPE_STRING }
         value = StringValue.of("CartoonRejections").pack()
     }
-    public val protoFile: File = file {
+    public val protoFile: ProtoFileHeader = protoFileHeader {
         path = filePath
         packageName = "acme.example"
         option.add(multipleFilesOption)
         option.add(javaPackageOption)
     }
-    public val rejectionsProtoFile: File = file {
+    public val rejectionsProtoFile: ProtoFileHeader = protoFileHeader {
         path = rejectionsFilePath
         packageName = "acme.example"
         option.add(javaPackageOption)

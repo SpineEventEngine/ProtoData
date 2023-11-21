@@ -31,8 +31,8 @@ package io.spine.protodata.codegen.java
 import com.google.protobuf.BoolValue
 import com.google.protobuf.StringValue
 import io.spine.protodata.EnumType
-import io.spine.protodata.File
 import io.spine.protodata.MessageType
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.TypeName
 import io.spine.protodata.find
 import io.spine.protodata.nameWithoutExtension
@@ -45,10 +45,10 @@ import kotlin.io.path.Path
  *
  * The class which represents this message might not be the top level class of the Java file.
  */
-public fun MessageType.javaFile(declaredIn: File): Path =
+public fun MessageType.javaFile(declaredIn: ProtoFileHeader): Path =
     name.javaFile(declaredIn)
 
-internal fun TypeName.javaFile(declaredIn: File): Path {
+internal fun TypeName.javaFile(declaredIn: ProtoFileHeader): Path {
     val packageName = declaredIn.javaPackage()
     val javaMultipleFiles = declaredIn.javaMultipleFiles()
     val topLevelClassName = when {
@@ -65,7 +65,7 @@ internal fun TypeName.javaFile(declaredIn: File): Path {
  *
  * @return name of the class generated from this message.
  */
-public fun MessageType.javaClassName(declaredIn: File): ClassName =
+public fun MessageType.javaClassName(declaredIn: ProtoFileHeader): ClassName =
     name.javaClassName(declaredIn)
 
 /**
@@ -73,7 +73,7 @@ public fun MessageType.javaClassName(declaredIn: File): ClassName =
  *
  * @return name of the enum class generated from this enum.
  */
-public fun EnumType.javaClassName(declaredIn: File): ClassName =
+public fun EnumType.javaClassName(declaredIn: ProtoFileHeader): ClassName =
     name.javaClassName(declaredIn)
 
 /**
@@ -87,11 +87,11 @@ public fun EnumType.javaClassName(declaredIn: File): ClassName =
  * @param block
  *        the block of code which adds the name elements to the class name.
  *
- * @see File.javaPackage
- * @see File.javaMultipleFiles
+ * @see ProtoFileHeader.javaPackage
+ * @see ProtoFileHeader.javaMultipleFiles
  */
 internal fun composeJavaClassName(
-    declaredIn: File,
+    declaredIn: ProtoFileHeader,
     block: MutableList<String>.() -> Unit
 ): ClassName {
     val packageName = declaredIn.javaPackage()
@@ -107,7 +107,7 @@ internal fun composeJavaClassName(
 /**
  * Obtains a fully qualified Java class, generated for the Protobuf type with this name.
  */
-internal fun TypeName.javaClassName(declaredIn: File): ClassName =
+internal fun TypeName.javaClassName(declaredIn: ProtoFileHeader): ClassName =
     composeJavaClassName(declaredIn) {
         addAll(nestingTypeNameList)
         add(simpleName)
@@ -119,7 +119,7 @@ internal fun TypeName.javaClassName(declaredIn: File): ClassName =
  * @return A value of the `java_package` option, if it is set.
  *         Otherwise, returns the package name of the file.
  */
-public fun File.javaPackage(): String =
+public fun ProtoFileHeader.javaPackage(): String =
     optionList.find("java_package", StringValue::class.java)
         ?.value
         ?: packageName
@@ -127,7 +127,7 @@ public fun File.javaPackage(): String =
 /**
  * Obtains a value of `java_multiple_files` option set for this file.
  */
-public fun File.javaMultipleFiles(): Boolean =
+public fun ProtoFileHeader.javaMultipleFiles(): Boolean =
     optionList.find("java_multiple_files", BoolValue::class.java)
         ?.value
         ?: false
@@ -137,7 +137,7 @@ public fun File.javaMultipleFiles(): Boolean =
  *
  * @return A value of `java_outer_classname` option, if it set for this file.
  */
-public fun File.javaOuterClassName(): String =
+public fun ProtoFileHeader.javaOuterClassName(): String =
     optionList.find("java_outer_classname", StringValue::class.java)
         ?.value
         ?: nameWithoutExtension().camelCase()

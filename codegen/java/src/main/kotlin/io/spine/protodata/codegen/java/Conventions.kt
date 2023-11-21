@@ -26,7 +26,7 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.File
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ProtoDeclarationName
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
@@ -98,7 +98,7 @@ public abstract class AbstractServiceConvention(ts: TypeSystem) :
     /**
      * Calculates a class name for the given service declared in the given file.
      */
-    protected abstract fun javaClassName(name: ServiceName, declaredIn: File): ClassName
+    protected abstract fun javaClassName(name: ServiceName, declaredIn: ProtoFileHeader): ClassName
 }
 
 /**
@@ -109,7 +109,10 @@ public abstract class AbstractServiceConvention(ts: TypeSystem) :
  */
 public class GrpcServiceConvention(ts: TypeSystem) : AbstractServiceConvention(ts) {
 
-    protected override fun javaClassName(name: ServiceName, declaredIn: File): ClassName =
+    protected override fun javaClassName(
+        name: ServiceName,
+        declaredIn: ProtoFileHeader
+    ): ClassName =
         composeJavaClassName(declaredIn) {
             add(name.simpleName + "Grpc")
         }
@@ -124,7 +127,7 @@ public class GrpcServiceConvention(ts: TypeSystem) : AbstractServiceConvention(t
  */
 public class GenericServiceConvention(ts: TypeSystem): AbstractServiceConvention(ts) {
 
-    override fun javaClassName(name: ServiceName, declaredIn: File): ClassName =
+    override fun javaClassName(name: ServiceName, declaredIn: ProtoFileHeader): ClassName =
         composeJavaClassName(declaredIn) {
             add(name.simpleName)
         }

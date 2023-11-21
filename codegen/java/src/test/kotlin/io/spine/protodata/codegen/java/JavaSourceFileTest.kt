@@ -46,7 +46,7 @@ private const val PACKAGE = "example"
 private val PERSON_NAME = typeName(PACKAGE, "PersonName")
 private val ACCOUNT_TYPE = typeName(PACKAGE, "AccountType")
 
-internal class `'SourceFile' with Java should` : WithSourceFileSet() {
+internal class `'SourceFile' with Java should` : WithSourceProtoFileSetHeaderHeader() {
 
     private lateinit var file: SourceFile
 

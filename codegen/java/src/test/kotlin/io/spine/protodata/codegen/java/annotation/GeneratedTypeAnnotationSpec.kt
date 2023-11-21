@@ -33,7 +33,7 @@ import io.spine.base.Time
 import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
-import io.spine.protodata.codegen.java.WithSourceFileSet
+import io.spine.protodata.codegen.java.WithSourceProtoFileSetHeaderHeader
 import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.currentDateTime
 import io.spine.protodata.renderer.SourceFile
 import io.spine.time.testing.FrozenMadHatterParty
@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("`GeneratedTypeAnnotation` renderer should")
-internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
+internal class GeneratedTypeAnnotationSpec : WithSourceProtoFileSetHeaderHeader() {
 
     @Test
     fun `add the annotation, assuming 'PROTODATA_CLI' as the default generator`() {

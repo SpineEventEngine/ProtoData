@@ -30,7 +30,7 @@ import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.File
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.TypeName
 import io.spine.protodata.backend.Documentation
 import io.spine.protodata.event.FieldEntered
@@ -56,7 +56,7 @@ import io.spine.protodata.oneofGroup
  * Produces events for a message.
  */
 internal class MessageCompilerEvents(
-    private val file: File,
+    private val file: ProtoFileHeader,
     private val documentation: Documentation
 ) {
 

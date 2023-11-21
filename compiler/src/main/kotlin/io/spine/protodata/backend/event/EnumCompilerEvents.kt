@@ -29,7 +29,7 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.File
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.TypeName
 import io.spine.protodata.backend.Documentation
 import io.spine.protodata.constantName
@@ -50,15 +50,17 @@ import io.spine.protodata.name
  * Produces events for an enum.
  */
 internal class EnumCompilerEvents(
-    private val file: File,
+    private val file: ProtoFileHeader,
     private val documentation: Documentation
 ) {
 
     /**
      * Yields compiler events for the given enum type.
      *
-     * Opens with an [EnumEntered] event. Then go the events regarding the type metadata. Then go
-     * the events regarding the enum constants. At last, closes with an [EnumExited] event.
+     * Opens with an [EnumEntered] event.
+     * Then the events regarding the type metadata go.
+     * Then go the events regarding the enum constants.
+     * At last, closes with an [EnumExited] event.
      */
     internal suspend fun SequenceScope<EventMessage>.produceEnumEvents(
         desc: EnumDescriptor,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,19 +38,20 @@ option java_multiple_files = true;
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 
-// A path in a file system.
+// A path to a file in a file system.
+//
+// The Protobuf compiler only works with the Unix-style file separators (`/`), regardless of
+// the operating system. This value holds this exact format of the path.
+//
 message FilePath {
 
-    // The relative path from the Protobuf source directory to a file.
-    //
-    // The Protobuf compiler only works with the Unix-style file separators (`/`), regardless of
-    // the operating system. This value holds this exact format of the path.
-    //
+    // The path to the file, separating directories with slash (`/`) disregarding
+    // the current operating system.
     string value = 1;
 }
 
 // A Protobuf source file.
-message File {
+message ProtoFileHeader {
 
     // Path to the file in a file system.
     FilePath path = 1;

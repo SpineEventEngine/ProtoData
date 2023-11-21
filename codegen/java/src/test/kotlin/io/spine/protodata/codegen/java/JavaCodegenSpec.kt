@@ -34,7 +34,7 @@ import io.spine.protodata.codegen.java.file.javaMultipleFiles
 import io.spine.protodata.codegen.java.file.javaOuterClassName
 import io.spine.protodata.codegen.java.file.javaPackage
 import io.spine.protodata.enumType
-import io.spine.protodata.file
+import io.spine.protodata.protoFileHeader
 import io.spine.protodata.messageType
 import io.spine.protodata.typeName
 import java.io.File.separatorChar
@@ -45,8 +45,8 @@ import org.junit.jupiter.api.Test
 @DisplayName("Java-related AST extensions should")
 internal class JavaCodegenSpec {
 
-    @Nested
-    inner class `Obtain Java class name from` {
+    @Nested inner class
+    `Obtain Java class name from` {
 
         @Test
         fun `top-level message`() {
@@ -94,8 +94,8 @@ internal class JavaCodegenSpec {
         }
     }
 
-    @Nested
-    inner class `Obtain Java file declaring generated class from` {
+    @Nested inner class
+    `Obtain Java file declaring generated class from` {
 
         @Test
         fun `top-level message`() {
@@ -132,14 +132,14 @@ internal class JavaCodegenSpec {
     }
 }
 
-private fun protoSingleFile(outerClassName: Option? = null) = file {
+private fun protoSingleFile(outerClassName: Option? = null) = protoFileHeader {
     option.apply {
         add(javaPackage)
         outerClassName?.let { add(it) }
     }
 }
 
-private fun protoMultipleFiles(outerClassName: Option? = null) = file {
+private fun protoMultipleFiles(outerClassName: Option? = null) = protoFileHeader {
     option.apply {
         add(javaPackage)
         add(javaMultipleFiles)

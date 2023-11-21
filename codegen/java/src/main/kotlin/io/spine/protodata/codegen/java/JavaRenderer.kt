@@ -26,8 +26,8 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.File
 import io.spine.protodata.FilePath
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
 import io.spine.protodata.renderer.Renderer
@@ -58,7 +58,7 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
         return type.javaFile(file)
     }
 
-    private fun findFile(path: FilePath): File =
+    private fun findFile(path: FilePath): ProtoFileHeader =
         select(ProtobufSourceFile::class.java)
             .findById(path)!!
             .file
