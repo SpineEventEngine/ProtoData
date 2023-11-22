@@ -226,6 +226,12 @@ public val MethodDescriptor.cardinality: CallCardinality
     }
 
 /**
+ * Tells if this type is a Protobuf primitive type.
+ */
+public val Type.isPrimitive: Boolean
+    get() = hasPrimitive()
+
+/**
  * Tells if this type represents a Protobuf message.
  */
 public val Type.isMessage: Boolean
