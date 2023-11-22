@@ -52,9 +52,9 @@ internal class JavaCodegenSpec {
         fun `top-level message`() {
             val typeName = "Anvil"
             val type = messageType(typeName)
-            val file = protoMultipleFiles()
+            val header = protoMultipleFiles()
 
-            val className = type.javaClassName(accordingTo = file)
+            val className = type.javaClassName(accordingTo = header)
 
             className.binary shouldBe "$JAVA_PACKAGE_NAME.$typeName"
         }
@@ -64,9 +64,9 @@ internal class JavaCodegenSpec {
             val nestingType = "RedDynamite"
             val typeName = "Fuse"
             val type = nestedMessageType(typeName, nestingType)
-            val file = protoMultipleFiles()
+            val header = protoMultipleFiles()
 
-            val className = type.javaClassName(accordingTo = file)
+            val className = type.javaClassName(accordingTo = header)
 
             className.binary shouldBe "$JAVA_PACKAGE_NAME.$nestingType$$typeName"
         }
@@ -75,9 +75,9 @@ internal class JavaCodegenSpec {
         fun `message with Java outer class name`() {
             val typeName = "Fuse"
             val type = messageType(typeName)
-            val file = protoSingleFile(outerClassName = javaOuterClassName)
+            val header = protoSingleFile(outerClassName = javaOuterClassName)
 
-            val className = type.javaClassName(accordingTo = file)
+            val className = type.javaClassName(accordingTo = header)
 
             className.binary shouldBe "${JAVA_PACKAGE_NAME}.${OUTER_CLASS_NAME}$${typeName}"
         }
@@ -86,9 +86,9 @@ internal class JavaCodegenSpec {
         fun enum() {
             val typeName = "ExplosiveType"
             val type = enumTypeNamed(typeName)
-            val file = protoMultipleFiles()
+            val header = protoMultipleFiles()
 
-            val className = type.javaClassName(accordingTo = file)
+            val className = type.javaClassName(accordingTo = header)
 
             className.binary shouldBe "$JAVA_PACKAGE_NAME.$typeName"
         }
@@ -101,9 +101,9 @@ internal class JavaCodegenSpec {
         fun `top-level message`() {
             val typeName = "Anvil"
             val type = messageType(typeName)
-            val file = protoMultipleFiles()
+            val header = protoMultipleFiles()
 
-            val className = type.javaFile(accordingTo = file)
+            val className = type.javaFile(accordingTo = header)
 
             className.toString() shouldBe "$packageNameAsPath$typeName.java"
         }
@@ -113,9 +113,9 @@ internal class JavaCodegenSpec {
             val firstNesting = "RedDynamite"
             val typeName = "Fuse"
             val type = withDeeperNesting(typeName, firstNesting)
-            val file = protoMultipleFiles()
+            val header = protoMultipleFiles()
 
-            val className = type.javaFile(accordingTo = file)
+            val className = type.javaFile(accordingTo = header)
 
             className.toString() shouldBe "$packageNameAsPath$firstNesting.java"
         }
@@ -123,9 +123,9 @@ internal class JavaCodegenSpec {
         @Test
         fun `message with Java outer class name`() {
             val type = messageType("Fuse")
-            val file = protoSingleFile(outerClassName = javaOuterClassName)
+            val header = protoSingleFile(outerClassName = javaOuterClassName)
 
-            val className = type.javaFile(accordingTo = file)
+            val className = type.javaFile(accordingTo = header)
 
             className.toString() shouldBe "$packageNameAsPath$OUTER_CLASS_NAME.java"
         }
