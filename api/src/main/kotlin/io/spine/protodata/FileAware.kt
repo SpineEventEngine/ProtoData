@@ -24,42 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
-
-import io.spine.protodata.File
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.TypeName
-import io.spine.protodata.renderer.Renderer
-import io.spine.tools.code.Java
-import java.nio.file.Path
+package io.spine.protodata
 
 /**
- * A [Renderer] which generates Java code.
+ * An interface for objects which are aware of the file they are associated with.
  */
-public abstract class JavaRenderer : Renderer<Java>(Java) {
-
-    /**
-     * Obtains the [ClassName] of the given Protobuf type.
-     */
-    protected fun classNameOf(type: TypeName, declaredIn: File): ClassName {
-        val header = findHeader(declaredIn)
-        return type.javaClassName(header)
-    }
-
-    /**
-     * Obtains the path the `.java` file generated from the given type.
-     *
-     * The path is relative to the generated source root. This path is useful for finding source
-     * files in a [SourceSet][io.spine.protodata.renderer.SourceFileSet].
-     */
-    protected fun javaFileOf(type: TypeName, declaredIn: File): Path {
-        val header = findHeader(declaredIn)
-        return type.javaFile(header)
-    }
-
-    private fun findHeader(path: File): ProtoFileHeader =
-        select(ProtobufSourceFile::class.java)
-            .findById(path)!!
-            .header
+public interface FileAware {
+    public val file: File
 }

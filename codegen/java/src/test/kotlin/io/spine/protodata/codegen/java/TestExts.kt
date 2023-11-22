@@ -28,6 +28,6 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 
 /**
- * Obtains a Java file path, assuming this string is a fully-qualified class name.
+ * Obtains a Java file path, assuming this string is a fully qualified class name.
  */
 internal fun String.toSourcePath(): Path = Path(replace(".", "//") + ".java")

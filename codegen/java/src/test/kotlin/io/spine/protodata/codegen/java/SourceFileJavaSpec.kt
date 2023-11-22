@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.codeLine
 import kotlin.io.path.Path
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -46,7 +47,8 @@ private const val PACKAGE = "example"
 private val PERSON_NAME = typeName(PACKAGE, "PersonName")
 private val ACCOUNT_TYPE = typeName(PACKAGE, "AccountType")
 
-internal class `'SourceFile' with Java should` : WithSourceFileSet() {
+@DisplayName("`SourceFile` with Java should")
+internal class SourceFileJavaSpec : WithSourceFileSet() {
 
     private lateinit var file: SourceFile
 

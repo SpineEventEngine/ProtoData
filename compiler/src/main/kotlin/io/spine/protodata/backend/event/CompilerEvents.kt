@@ -69,7 +69,7 @@ private class ProtoFileEvents(
     private val fileDescriptor: FileDescriptor
 ) {
 
-    private val file = fileDescriptor.toFile()
+    private val header = fileDescriptor.toHeaderWithoutOptions()
 
     private val documentation = Documentation.fromFile(fileDescriptor)
 
@@ -82,31 +82,31 @@ private class ProtoFileEvents(
     suspend fun SequenceScope<EventMessage>.produceFileEvents() {
         yield(
             FileEntered.newBuilder()
-                .setPath(file.path)
-                .setFile(file)
+                .setFile(header.file)
+                .setHeader(header)
                 .build()
         )
         produceOptionEvents(fileDescriptor.options) {
             FileOptionDiscovered.newBuilder()
-                .setFile(file.path)
+                .setFile(header.file)
                 .setOption(it)
                 .build()
         }
-        val messageEvents = MessageCompilerEvents(file, documentation)
+        val messageEvents = MessageCompilerEvents(header, documentation)
         fileDescriptor.messageTypes.forEach {
             messageEvents.apply { produceMessageEvents(it) }
         }
-        val enumEvents = EnumCompilerEvents(file, documentation)
+        val enumEvents = EnumCompilerEvents(header, documentation)
         fileDescriptor.enumTypes.forEach {
             enumEvents.apply { produceEnumEvents(it) }
         }
-        val serviceEvents = ServiceCompilerEvents(file, documentation)
+        val serviceEvents = ServiceCompilerEvents(header, documentation)
         fileDescriptor.services.forEach {
             serviceEvents.apply { produceServiceEvents(it) }
         }
         yield(
             FileExited.newBuilder()
-                .setFile(file.path)
+                .setFile(header.file)
                 .build()
         )
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,9 +46,11 @@ import io.spine.protodata.CallCardinality.UNARY
 
 /**
  * Obtains a name of this Protobuf file without the extension.
+ *
+ * @receiver the header of the Protobuf file of interest.
  */
-public fun File.nameWithoutExtension(): String {
-    val name = path.value.split("/").last()
+public fun ProtoFileHeader.nameWithoutExtension(): String {
+    val name = file.path.split("/").last()
     val index = name.indexOf(".")
     return if (index > 0) {
         name.substring(0, index)
@@ -60,19 +62,27 @@ public fun File.nameWithoutExtension(): String {
 /**
  * Obtains the package and the name of the type.
  */
-public fun MessageType.qualifiedName(): String = name.qualifiedName()
+public val MessageType.qualifiedName: String
+    get() = name.qualifiedName
 
 /**
  * Obtains the fully qualified name from this `TypeName`.
  */
-public fun TypeNameOrBuilder.qualifiedName(): String {
-    val names = buildList<String> {
-        add(packageName)
-        addAll(nestingTypeNameList)
-        add(simpleName)
+public val TypeNameOrBuilder.qualifiedName: String
+    get() {
+        val names = buildList<String> {
+            add(packageName)
+            addAll(nestingTypeNameList)
+            add(simpleName)
+        }
+        return names.filter { it.isNotEmpty() }.joinToString(separator = ".")
     }
-    return names.filter { it.isNotEmpty() }.joinToString(separator = ".")
-}
+
+/**
+ * Tells if this field is a Protobuf message.
+ */
+public val Field.isMessage: Boolean
+    get() = type.hasMessage()
 
 /**
  * Shows if this field is a `map`.
@@ -80,7 +90,8 @@ public fun TypeNameOrBuilder.qualifiedName(): String {
  * If the field is a `map`, the `Field.type` contains the type of the value, and
  * the `Field.map.key_type` contains the type the map key.
  */
-public fun Field.isMap(): Boolean = hasMap()
+public val Field.isMap: Boolean
+    get() = hasMap()
 
 /**
  * Shows if this field is a list.
@@ -89,21 +100,30 @@ public fun Field.isMap(): Boolean = hasMap()
  * treated as a repeated field for serialization reasons. We use the term "list" for repeated fields
  * which are not maps.
  */
-public fun Field.isList(): Boolean = hasList()
+public val Field.isList: Boolean
+    get() = hasList()
 
 /**
  * Shows if this field repeated.
  *
  * Can be declared in Protobuf either as a `map` or a `repeated` field.
  */
-public fun Field.isRepeated(): Boolean = isMap() || isList()
+public val Field.isRepeated: Boolean
+    get() = isMap || isList
 
 /**
  * Shows if this field is a part of a `oneof` group.
  *
  * If the field is a part of a `oneof`, the `Field.oneof_name` contains the name of that `oneof`.
  */
-public fun Field.isPartOfOneof(): Boolean = hasOneofName()
+public val Field.isPartOfOneof: Boolean
+    get() = hasOneofName()
+
+/**
+ * The field name containing a qualified name of the declaring type.
+ */
+public val Field.qualifiedName: String
+    get() = "${declaringType.qualifiedName}.${name.value}"
 
 /**
  * Looks up an option value by the [optionName].
@@ -128,9 +148,11 @@ public fun Descriptor.name(): TypeName = buildTypeName(name, file, containingTyp
  */
 public fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containingType)
 
-private fun buildTypeName(simpleName: String,
-                          file: FileDescriptor,
-                          containingDeclaration: Descriptor?): TypeName {
+private fun buildTypeName(
+    simpleName: String,
+    file: FileDescriptor,
+    containingDeclaration: Descriptor?
+): TypeName {
     val nestingNames = mutableListOf<String>()
     var parent = containingDeclaration
     while (parent != null) {
@@ -170,7 +192,7 @@ public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
 /**
  * Obtains the relative path to this file as a [FilePath].
  */
-public fun FileDescriptor.path(): FilePath = filePath { value = name }
+public fun FileDescriptor.file(): File = file { path = name }
 
 /**
  * Obtains the name of this service as a [ServiceName].
@@ -196,11 +218,31 @@ public fun PrimitiveType.asType(): Type = type { primitive = this@asType }
  *
  * The cardinality determines how many messages may flow from the client to the server and back.
  */
-public fun MethodDescriptor.cardinality(): CallCardinality =
-    when {
+public val MethodDescriptor.cardinality: CallCardinality
+    get() = when {
         !isClientStreaming && !isServerStreaming -> UNARY
         !isClientStreaming && isServerStreaming -> SERVER_STREAMING
         isClientStreaming && !isServerStreaming -> CLIENT_STREAMING
         isClientStreaming && isServerStreaming -> BIDIRECTIONAL_STREAMING
         else -> error("Unable to determine cardinality of method: `$fullName`.")
     }
+
+/**
+ * Tells if this type is a Protobuf primitive type.
+ */
+public val Type.isPrimitive: Boolean
+    get() = hasPrimitive()
+
+/**
+ * Tells if this type represents a Protobuf message.
+ */
+public val Type.isMessage: Boolean
+    get() = hasMessage()
+
+/**
+ * Tells if this type is `google.protobuf.Any`.
+ */
+public val Type.isAny: Boolean
+    get() = isMessage
+            && message.packageName.equals("google.protobuf")
+            && message.simpleName.equals("Any")

@@ -30,11 +30,14 @@ import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.BOOL
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.BYTES
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.DOUBLE
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.FIXED32
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.FIXED64
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.FLOAT
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.GROUP
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.INT32
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.INT64
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.MESSAGE
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.SFIXED32
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.SFIXED64
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.SINT32
@@ -43,7 +46,7 @@ import com.google.protobuf.Descriptors.FieldDescriptor.Type.STRING
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT32
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT64
 import com.google.protobuf.Descriptors.FileDescriptor
-import io.spine.protodata.File.SyntaxVersion
+import io.spine.protodata.ProtoFileHeader.SyntaxVersion
 import io.spine.protodata.PrimitiveType
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_BYTES
@@ -70,9 +73,9 @@ import io.spine.protodata.name
  */
 internal fun FieldDescriptor.type(): Type {
     return when (type) {
-        FieldDescriptor.Type.ENUM -> enum(this)
-        FieldDescriptor.Type.MESSAGE -> message(this)
-        FieldDescriptor.Type.GROUP -> error("Cannot process field `$fullName` of type `$type`.")
+        ENUM -> enum(this)
+        MESSAGE -> message(this)
+        GROUP -> error("Cannot process the field `$fullName` of type `$type`.")
         else -> primitiveType().asType()
     }
 }
@@ -105,14 +108,14 @@ internal fun FieldDescriptor.primitiveType(): PrimitiveType =
 /**
  * Obtains the type of the given [field] as an enum type.
  */
-internal fun enum(field: FieldDescriptor): Type = type {
+private fun enum(field: FieldDescriptor): Type = type {
     enumeration = field.enumType.name()
 }
 
 /**
- * Obtains the type of the given [field] as message type.
+ * Obtains the type of the given [field] as a message type.
  */
-internal fun message(field: FieldDescriptor): Type = type {
+private fun message(field: FieldDescriptor): Type = type {
     message = field.messageType.name()
 }
 

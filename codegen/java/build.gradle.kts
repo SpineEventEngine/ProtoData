@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,16 +52,6 @@ protobuf {
                 from(task.outputs)
                 duplicatesStrategy = INCLUDE
             }
-        }
-    }
-}
-
-// For some reason, `validation-runtime` dependency appears on both compile and runtime classpaths.
-// This expression explicitly excludes this dependency from the list.
-modelCompiler {
-    java {
-        codegen {
-            validation { skipValidation() }
         }
     }
 }

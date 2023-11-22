@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ class AstExtensionsSpec {
                 .setList(Empty.getDefaultInstance())
                 .buildPartial()
 
-            field.isRepeated() shouldBe true
+            field.isRepeated shouldBe true
         }
 
         @Test
@@ -71,7 +71,7 @@ class AstExtensionsSpec {
                     .build())
                 .buildPartial()
 
-            field.isRepeated() shouldBe true
+            field.isRepeated shouldBe true
         }
 
         @Test
@@ -80,7 +80,7 @@ class AstExtensionsSpec {
                 .setSingle(Empty.getDefaultInstance())
                 .buildPartial()
 
-            field.isRepeated() shouldBe false
+            field.isRepeated shouldBe false
         }
     }
 
@@ -91,28 +91,28 @@ class AstExtensionsSpec {
         fun unary() {
             val method = method("who")
 
-            method.cardinality() shouldBe UNARY
+            method.cardinality shouldBe UNARY
         }
 
         @Test
         fun `server streaming`() {
             val method = method("where_are_you")
 
-            method.cardinality() shouldBe SERVER_STREAMING
+            method.cardinality shouldBe SERVER_STREAMING
         }
 
         @Test
         fun `client streaming`() {
             val method = method("rescue_call")
 
-            method.cardinality() shouldBe CLIENT_STREAMING
+            method.cardinality shouldBe CLIENT_STREAMING
         }
 
         @Test
         fun `bidirectional streaming`() {
             val method = method("which_actor")
 
-            method.cardinality() shouldBe BIDIRECTIONAL_STREAMING
+            method.cardinality shouldBe BIDIRECTIONAL_STREAMING
         }
 
         private fun method(name: String): Descriptors.MethodDescriptor {
@@ -128,21 +128,21 @@ class AstExtensionsSpec {
         fun `for a top-level message`() {
             val name = TopLevelMessage.getDescriptor().name()
 
-            name.qualifiedName() shouldBe "spine.protodata.test.TopLevelMessage"
+            name.qualifiedName shouldBe "spine.protodata.test.TopLevelMessage"
         }
 
         @Test
         fun `for a top-level enum`() {
             val name = TopLevelEnum.getDescriptor().name()
 
-            name.qualifiedName() shouldBe "spine.protodata.test.TopLevelEnum"
+            name.qualifiedName shouldBe "spine.protodata.test.TopLevelEnum"
         }
 
         @Test
         fun `for a nested message`() {
             val name = NestedMessage.VeryNestedMessage.getDescriptor().name()
 
-            name.qualifiedName() shouldBe
+            name.qualifiedName shouldBe
                     "spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage"
         }
 
@@ -150,7 +150,7 @@ class AstExtensionsSpec {
         fun `for a nested enum`() {
             val name = NestedEnum.getDescriptor().name()
 
-            name.qualifiedName() shouldBe "spine.protodata.test.TopLevelMessage.NestedEnum"
+            name.qualifiedName shouldBe "spine.protodata.test.TopLevelMessage.NestedEnum"
         }
 
         @Test
@@ -164,7 +164,7 @@ class AstExtensionsSpec {
         fun `for a nested message without a package`() {
             val name = LocalMessage.getDescriptor().name()
 
-            name.qualifiedName() shouldBe "GlobalMessage.LocalMessage"
+            name.qualifiedName shouldBe "GlobalMessage.LocalMessage"
         }
     }
 }

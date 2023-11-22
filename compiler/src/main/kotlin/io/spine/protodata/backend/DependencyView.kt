@@ -28,7 +28,7 @@ package io.spine.protodata.backend
 
 import io.spine.core.External
 import io.spine.core.Subscribe
-import io.spine.protodata.FilePath
+import io.spine.protodata.File
 import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.event.DependencyDiscovered
 import io.spine.protodata.plugin.View
@@ -38,11 +38,11 @@ import io.spine.server.entity.alter
  * A view of a dependency Proto file.
  */
 internal class DependencyView :
-    View<FilePath, ProtobufDependency, ProtobufDependency.Builder>() {
+    View<File, ProtobufDependency, ProtobufDependency.Builder>() {
 
     @Subscribe
     internal fun on(@External e: DependencyDiscovered) = alter {
-        filePath = e.path
         file = e.file
+        source = e.source
     }
 }

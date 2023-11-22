@@ -36,7 +36,7 @@ import io.spine.protodata.EnumConstant
 import io.spine.protodata.Field
 import io.spine.protodata.FieldKt
 import io.spine.protodata.FieldKt.ofMap
-import io.spine.protodata.File
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.Rpc
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
@@ -50,9 +50,8 @@ import io.spine.protodata.copy
 import io.spine.protodata.enumConstant
 import io.spine.protodata.field
 import io.spine.protodata.file
-import io.spine.protodata.filePath
 import io.spine.protodata.name
-import io.spine.protodata.path
+import io.spine.protodata.protoFileHeader
 import io.spine.protodata.rpc
 
 /**
@@ -67,8 +66,8 @@ internal fun FieldDescriptor.buildFieldWithOptions(
     val field = buildField(this, declaringType, documentation)
     return field.copy {
         // There are several similar expressions in this file. Sadly, they have no common
-        // compile-time type which would allow us to extract the duplicates into a function.
-        option.addAll(listOptions(options))
+        // compile-time type that would allow us to extract the duplicates into a function.
+        option.addAll(options.toList())
     }
 }
 
@@ -124,7 +123,7 @@ internal fun EnumValueDescriptor.buildConstantWithOptions(
 ): EnumConstant {
     val constant = buildConstant(this, declaringType, documentation)
     return constant.copy {
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
     }
 }
 
@@ -158,7 +157,7 @@ internal fun MethodDescriptor.buildRpcWithOptions(
 ): Rpc {
     val rpc = buildRpc(this, declaringService, documentation)
     return rpc.copy {
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
     }
 }
 
@@ -175,7 +174,7 @@ internal fun buildRpc(
     documentation: Documentation
 ) = rpc {
     name = desc.name()
-    cardinality = desc.cardinality()
+    cardinality = desc.cardinality
     requestType = desc.inputType.name()
     responseType = desc.outputType.name()
     doc = documentation.forRpc(desc)
@@ -185,29 +184,29 @@ internal fun buildRpc(
 /**
  * Extracts metadata from this file descriptor, including file options.
  *
- * @see toFile
+ * @see toHeaderWithoutOptions
  */
-internal fun FileDescriptor.toFileWithOptions(): File {
-    val file = toFile()
+internal fun FileDescriptor.toHeader(): ProtoFileHeader {
+    val file = toHeaderWithoutOptions()
     return file.copy {
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
     }
 }
 
 /**
  * Extracts metadata from this file descriptor, excluding file options.
  *
- * @see toFileWithOptions
+ * @see toHeader
  */
-internal fun FileDescriptor.toFile(): File = file {
-    path = path()
+internal fun FileDescriptor.toHeaderWithoutOptions(): ProtoFileHeader = protoFileHeader {
+    file = file()
     packageName = `package`
-    syntax = this@toFile.syntaxVersion()
+    syntax = this@toHeaderWithoutOptions.syntaxVersion()
 }
 
 /**
  * Obtains the file path from this file descriptor.
  */
-internal fun FileDescriptorProto.toFilePath() = filePath {
-    value = name
+internal fun FileDescriptorProto.toFile() = file {
+    path = name
 }

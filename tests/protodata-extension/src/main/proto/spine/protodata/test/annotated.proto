@@ -23,7 +23,7 @@ message Annotated {
 
 message FieldId {
 
-    spine.protodata.FilePath file = 1;
+    spine.protodata.File file = 1;
 
     spine.protodata.TypeName type = 2;
 

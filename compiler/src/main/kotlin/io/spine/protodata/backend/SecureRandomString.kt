@@ -39,7 +39,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
  * @see <a href="https://github.com/nikbucher/j-nanoid">j-nanoid</a>
  */
 @OptIn(ExperimentalEncodingApi::class)
-internal object SecureRandomString {
+public object SecureRandomString {
 
     private const val DEFAULT_SIZE = 20
 
@@ -51,7 +51,7 @@ internal object SecureRandomString {
         Base64.UrlSafe
     }
 
-    fun generate(size: Int = DEFAULT_SIZE): String {
+    public fun generate(size: Int = DEFAULT_SIZE): String {
         val buffer = ByteArray(size)
         random.nextBytes(buffer)
         return encoder.encode(buffer)

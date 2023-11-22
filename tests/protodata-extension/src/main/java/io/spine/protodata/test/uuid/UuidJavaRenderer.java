@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
 package io.spine.protodata.test.uuid;
 
 import com.google.common.collect.ImmutableList;
-import io.spine.protodata.FilePath;
+import io.spine.protodata.File;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.codegen.java.ClassName;
 import io.spine.protodata.codegen.java.JavaRenderer;
@@ -72,12 +72,12 @@ public final class UuidJavaRenderer extends JavaRenderer {
     protected void render(SourceFileSet sources) {
         Set<UuidType> uuidTypes = select(UuidType.class).all();
         for (UuidType type : uuidTypes) {
-            TypeName typeName = type.getName();
-            FilePath file = type.getDeclaredIn();
-            ClassName className = classNameOf(typeName, file);
-            InsertionPoint classScope = new ClassScope(typeName);
-            ImmutableList<String> lines = METHOD_FORMAT.format(className, UUID.class.getName());
-            Path javaFilePath = javaFileOf(typeName, file);
+            var typeName = type.getName();
+            var file = type.getDeclaredIn();
+            var className = classNameOf(typeName, file);
+            var classScope = new ClassScope(typeName);
+            var lines = METHOD_FORMAT.format(className, UUID.class.getName());
+            var javaFilePath = javaFileOf(typeName, file);
 
             // If there are no Java files, we deal with another language.
             // Have this workaround until we get access to the `sourceRoot` property.

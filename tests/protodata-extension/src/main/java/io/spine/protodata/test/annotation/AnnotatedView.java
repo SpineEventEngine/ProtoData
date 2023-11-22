@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ final class AnnotatedView extends View<FieldId, Annotated, Annotated.Builder> {
     @Subscribe
     void on(@External @Where(field = "option.name", equals = OPTION_NAME)
                     FieldOptionDiscovered event) {
-        StringValue value = unpack(event.getOption().getValue(), StringValue.class);
+        var value = unpack(event.getOption().getValue(), StringValue.class);
         builder().setJavaAnnotation(value.getValue());
     }
 

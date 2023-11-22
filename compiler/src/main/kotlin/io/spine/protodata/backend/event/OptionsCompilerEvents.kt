@@ -55,10 +55,10 @@ internal suspend fun SequenceScope<EventMessage>.produceOptionEvents(
 }
 
 /**
- * Parses the given `options` message into a list of [Option]s.
+ * Parses this `options` message into a list of [Option]s.
  */
-internal fun listOptions(options: ExtendableMessage<*>): List<Option> =
-    parseOptions(options).toList()
+internal fun ExtendableMessage<*>.toList(): List<Option> =
+    parseOptions(this).toList()
 
 private fun parseOptions(options: ExtendableMessage<*>): Sequence<Option> =
     sequence {

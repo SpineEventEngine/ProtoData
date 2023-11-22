@@ -35,7 +35,7 @@ import io.spine.server.entity.alter
 /**
  * A view of insertion points added to a single code file.
  */
-public class InsertionPointsView : View<FilePath, InsertedPoints, InsertedPoints.Builder>() {
+public class InsertionPointsView : View<File, InsertedPoints, InsertedPoints.Builder>() {
 
     @Subscribe
     internal fun on(@External e: InsertionPointPrinted) = alter {

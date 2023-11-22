@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,22 +38,26 @@ option java_multiple_files = true;
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 
-// A path in a file system.
-message FilePath {
-
-    // The relative path from the Protobuf source directory to a file.
-    //
-    // The Protobuf compiler only works with the Unix-style file separators (`/`), regardless of
-    // the operating system. This value holds this exact format of the path.
-    //
-    string value = 1;
-}
-
-// A Protobuf source file.
+// Represents a file in an arbitrary OS.
+//
+// In most cases it is going to be a relative path.
+// In some cases it may be an absolute path.
+//
+// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
+// the current operating system. This value holds this exact format of the path.
+//
 message File {
 
+    // The path to the file, separating directories with slash (`/`) symbol.
+    string path = 1;
+}
+
+// A header of the Protobuf source code file which provides basic information about the file,
+// such as file-wide options applied to the file.
+message ProtoFileHeader {
+
     // Path to the file in a file system.
-    FilePath path = 1;
+    File file = 1;
 
     // Name of the Protobuf package to which the declarations of the file belong.
     string package_name = 2;
@@ -96,8 +100,8 @@ message TypeName {
     //     }
     // }
     // ```
-    // `Fuzzy` is the `simple_name` of this type. And [`Project`, `Deadline`] are the nesting type
-    // names.
+    // `Fuzzy` is the `simple_name` of this type. And [`Project`, `Deadline`] are
+    // the nesting type names.
     //
     repeated string nesting_type_name = 2;
 
@@ -106,12 +110,12 @@ message TypeName {
 
     // The prefix of the type's URL.
     //
-    // A type URL has the following structure: "<type URL prefix>/<package>.<short name>". For more
-    // info, see the definition of `google.protobuf.Any.type_url`.
+    // A type URL has the following structure: "<type URL prefix>/<package>.<short name>".
+    // For more info, please see the definition of `google.protobuf.Any.type_url`.
     //
-    // Must not include a training slash ("/").
+    // Must not include a trailing slash ("/").
     //
-    string type_url_prefix = 4;
+    string type_url_prefix = 4 [(pattern).regex = "^.*[^/]$"];
 }
 
 // A Protobuf message type.
@@ -138,7 +142,7 @@ message MessageType {
     repeated Option option = 4;
 
     // Path to the file which declares this type.
-    FilePath file = 5;
+    File file = 5;
 
     // Name of the message type which hosts the declaration of this type.
     TypeName declared_in = 6;
@@ -169,7 +173,7 @@ message EnumType {
     repeated Option option = 2;
 
     // Path to the file which declares this type.
-    FilePath file = 3;
+    File file = 3;
 
     // The enum constants, a.k.a. values.
     //
@@ -412,7 +416,7 @@ message Service {
     Doc doc = 4;
 
     // Path to the file which declares this service.
-    FilePath file = 5;
+    File file = 5;
 }
 
 // A name of an RPC method.
@@ -513,11 +517,11 @@ message Doc {
     // The comment placed beneath above the declaration without any empty lines.
     string trailing_comment = 2;
 
-    // Comments placed above the declaration separated by at least one empty line from
-    // the declaration.
+    // Comments placed above the declaration separated by at least
+    // one empty line from the declaration.
     //
-    // This can often be a general comment, related not to the declaration itself, but rather to
-    // its context.
+    // This can often be a general comment, related not to the declaration itself,
+    // but rather to its context.
     //
     repeated string detached_comment = 3;
 }

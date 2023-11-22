@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ import io.spine.protodata.codegen.java.file.javaMultipleFiles
 import io.spine.protodata.codegen.java.file.javaOuterClassName
 import io.spine.protodata.codegen.java.file.javaPackage
 import io.spine.protodata.enumType
-import io.spine.protodata.file
 import io.spine.protodata.messageType
+import io.spine.protodata.protoFileHeader
 import io.spine.protodata.typeName
 import java.io.File.separatorChar
 import org.junit.jupiter.api.DisplayName
@@ -45,16 +45,16 @@ import org.junit.jupiter.api.Test
 @DisplayName("Java-related AST extensions should")
 internal class JavaCodegenSpec {
 
-    @Nested
-    inner class `Obtain Java class name from` {
+    @Nested inner class
+    `Obtain Java class name from` {
 
         @Test
         fun `top-level message`() {
             val typeName = "Anvil"
             val type = messageType(typeName)
-            val file = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
-            val className = type.javaClassName(declaredIn = file)
+            val className = type.javaClassName(accordingTo = header)
 
             className.binary shouldBe "$JAVA_PACKAGE_NAME.$typeName"
         }
@@ -64,9 +64,9 @@ internal class JavaCodegenSpec {
             val nestingType = "RedDynamite"
             val typeName = "Fuse"
             val type = nestedMessageType(typeName, nestingType)
-            val file = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
-            val className = type.javaClassName(declaredIn = file)
+            val className = type.javaClassName(accordingTo = header)
 
             className.binary shouldBe "$JAVA_PACKAGE_NAME.$nestingType$$typeName"
         }
@@ -75,9 +75,9 @@ internal class JavaCodegenSpec {
         fun `message with Java outer class name`() {
             val typeName = "Fuse"
             val type = messageType(typeName)
-            val file = protoSingleFile(outerClassName = javaOuterClassName)
+            val header = headerSingleFile(outerClassName = javaOuterClassName)
 
-            val className = type.javaClassName(declaredIn = file)
+            val className = type.javaClassName(accordingTo = header)
 
             className.binary shouldBe "${JAVA_PACKAGE_NAME}.${OUTER_CLASS_NAME}$${typeName}"
         }
@@ -86,24 +86,24 @@ internal class JavaCodegenSpec {
         fun enum() {
             val typeName = "ExplosiveType"
             val type = enumTypeNamed(typeName)
-            val file = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
-            val className = type.javaClassName(declaredIn = file)
+            val className = type.javaClassName(accordingTo = header)
 
             className.binary shouldBe "$JAVA_PACKAGE_NAME.$typeName"
         }
     }
 
-    @Nested
-    inner class `Obtain Java file declaring generated class from` {
+    @Nested inner class
+    `Obtain Java file declaring generated class from` {
 
         @Test
         fun `top-level message`() {
             val typeName = "Anvil"
             val type = messageType(typeName)
-            val file = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
-            val className = type.javaFile(declaredIn = file)
+            val className = type.javaFile(accordingTo = header)
 
             className.toString() shouldBe "$packageNameAsPath$typeName.java"
         }
@@ -113,9 +113,9 @@ internal class JavaCodegenSpec {
             val firstNesting = "RedDynamite"
             val typeName = "Fuse"
             val type = withDeeperNesting(typeName, firstNesting)
-            val file = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
-            val className = type.javaFile(declaredIn = file)
+            val className = type.javaFile(accordingTo = header)
 
             className.toString() shouldBe "$packageNameAsPath$firstNesting.java"
         }
@@ -123,23 +123,23 @@ internal class JavaCodegenSpec {
         @Test
         fun `message with Java outer class name`() {
             val type = messageType("Fuse")
-            val file = protoSingleFile(outerClassName = javaOuterClassName)
+            val header = headerSingleFile(outerClassName = javaOuterClassName)
 
-            val className = type.javaFile(declaredIn = file)
+            val className = type.javaFile(accordingTo = header)
 
             className.toString() shouldBe "$packageNameAsPath$OUTER_CLASS_NAME.java"
         }
     }
 }
 
-private fun protoSingleFile(outerClassName: Option? = null) = file {
+private fun headerSingleFile(outerClassName: Option? = null) = protoFileHeader {
     option.apply {
         add(javaPackage)
         outerClassName?.let { add(it) }
     }
 }
 
-private fun protoMultipleFiles(outerClassName: Option? = null) = file {
+private fun headerMultipleFiles(outerClassName: Option? = null) = protoFileHeader {
     option.apply {
         add(javaPackage)
         add(javaMultipleFiles)

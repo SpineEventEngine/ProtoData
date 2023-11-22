@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,10 @@ import io.spine.protodata.gradle.CleanTask
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
+import io.spine.protodata.gradle.Names.PROTOBUF_GRADLE_PLUGIN_ID
 import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
+import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
+import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
@@ -105,13 +108,15 @@ public class Plugin : GradlePlugin<Project> {
     }
 }
 
-private const val PROTO_DATA_RAW_ARTIFACT = "protoDataRawArtifact"
-
 /**
  * The name of the Gradle Configuration created by ProtoData Gradle plugin for holding
  * user-defined classpath.
  */
-public const val USER_CLASSPATH_CONFIGURATION_NAME: String = "protoData"
+@Deprecated(
+    "Use `Names.USER_CLASSPATH_CONFIGURATION` instead.",
+    ReplaceWith("Names.USER_CLASSPATH_CONFIGURATION")
+)
+public const val USER_CLASSPATH_CONFIGURATION_NAME: String = USER_CLASSPATH_CONFIGURATION
 
 private fun Project.createExtension(): Extension {
     val extension = Extension(this)
@@ -130,7 +135,7 @@ private fun Project.createConfigurations(protoDataVersion: String) {
     val cliDependency = Artifacts.fatCli(protoDataVersion)
     dependencies.add(artifactConfig.name, cliDependency)
 
-    configurations.create(USER_CLASSPATH_CONFIGURATION_NAME) {
+    configurations.create(USER_CLASSPATH_CONFIGURATION) {
         it.exclude(group = Artifacts.group, module = Artifacts.compiler)
     }
 }
@@ -139,7 +144,7 @@ private val Project.protoDataRawArtifact: Configuration
     get() = configurations.getByName(PROTO_DATA_RAW_ARTIFACT)
 
 private val Project.userClasspath: Configuration
-    get() = configurations.getByName(USER_CLASSPATH_CONFIGURATION_NAME)
+    get() = configurations.getByName(USER_CLASSPATH_CONFIGURATION)
 
 /**
  * Creates [LaunchProtoData] and `clean` task for all source sets of this project
@@ -209,14 +214,9 @@ private fun Project.createCleanTask(sourceSet: SourceSet, ext: Extension) {
     }
 }
 
-/**
- * The ID of the Protobuf Gradle Plugin.
- */
-private const val PROTOBUF_PLUGIN = "com.google.protobuf"
-
 private fun Project.configureWithProtobufPlugin(protoDataVersion: String, ext: Extension) {
     val protocPlugin = ProtocPluginArtifact(protoDataVersion)
-    pluginManager.withPlugin(PROTOBUF_PLUGIN) {
+    pluginManager.withPlugin(PROTOBUF_GRADLE_PLUGIN_ID) {
         configureProtobufPlugin(protocPlugin, ext)
     }
 }
@@ -285,8 +285,8 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
  *
  * The current Protobuf support of Kotlin is based on Java codegen. Therefore,
  * it's likely that Java would be enabled in the project for Kotlin proto
- * code to be generated. Though, it may change someday and Kotlin support of Protobuf would be
- * self-sufficient. This method assumes such case when it checks the presence of
+ * code to be generated. Though, it may change someday, and Kotlin support for Protobuf would be
+ * self-sufficient. This method assumes such a case when it checks the presence of
  * Kotlin compilation tasks.
  */
 private fun Project.hasJavaOrKotlin(): Boolean {
@@ -385,6 +385,7 @@ private fun Project.configureIdea() {
             val protocOutput = file(generatedSourceProtoDir)
             val idea = extensions.getByType<IdeaModel>()
             with(idea.module) {
+                excludeDirs.add(protocOutput)
                 sourceDirs = filterSources(sourceDirs, protocOutput)
                 testSources.filter { !it.residesIn(protocOutput) }
                 generatedSourceDirs = filterSources(generatedSourceDirs, protocOutput)

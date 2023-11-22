@@ -56,12 +56,12 @@ import org.gradle.api.tasks.SourceSet
 /**
  * A task which executes a single ProtoData command.
  *
- * This class is public to allow users find ProtoData tasks by their type. This is useful
- * to configure task dependencies, enable and disable individual tasks, add conditions
- * via `onlyIf { }`, etc.
+ * This class is public to allow users to find ProtoData tasks by their type.
+ * This is useful to configure task dependencies, enable and disable individual tasks,
+ * add conditions via `onlyIf { }`, etc.
  *
  * Users should NOT change the CLI command, user directory, etc. directly.
- * Please refer to the `protoData { }` extension to configure ProtoData.
+ * Please refer to the `protoData { }` extension configuring ProtoData.
  */
 public abstract class LaunchProtoData : JavaExec() {
 

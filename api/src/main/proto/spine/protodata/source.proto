@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,13 +44,14 @@ import "spine/protodata/ast.proto";
 message ProtobufSourceFile {
     option (entity).kind = VIEW;
 
-    // The relative path to the file.
-    //
-    // Must be the same as `file.path`.
-    //
-    FilePath file_path = 1;
+    // The path to the file.
+    File file = 1;
 
-    File file = 2;
+    // The header of the Protobuf file.
+    //
+    // The `file` field of the header must be equal to the `file` field of this message type.
+    //
+    ProtoFileHeader header = 2;
 
     // All the message types in this source files.
     //
@@ -89,7 +90,7 @@ message ProtobufDependency {
     //
     // Must be the same as `file.file_path`.
     //
-    FilePath file_path = 1;
+    File file = 1;
 
-    ProtobufSourceFile file = 2;
+    ProtobufSourceFile source = 2;
 }

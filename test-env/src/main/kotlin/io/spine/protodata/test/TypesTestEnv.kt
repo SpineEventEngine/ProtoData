@@ -37,35 +37,35 @@ import io.spine.protodata.EnumConstant
 import io.spine.protodata.EnumType
 import io.spine.protodata.Field
 import io.spine.protodata.File
-import io.spine.protodata.FilePath
 import io.spine.protodata.MessageType
 import io.spine.protodata.Option
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_STRING
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.Service
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
-import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.constantName
 import io.spine.protodata.enumConstant
 import io.spine.protodata.fieldName
 import io.spine.protodata.file
-import io.spine.protodata.filePath
 import io.spine.protodata.messageType
 import io.spine.protodata.option
+import io.spine.protodata.protoFileHeader
 import io.spine.protodata.protobufSourceFile
 import io.spine.protodata.service
 import io.spine.protodata.serviceName
 import io.spine.protodata.type
+import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.typeName
 import io.spine.protodata.enumType as newEnumType
 import io.spine.protodata.field as newField
 
 public object TypesTestEnv {
 
-    public val filePath: FilePath = filePath { value = "acme/example/foo.proto" }
-    public val rejectionsFilePath: FilePath = filePath {
-        value = "acme/example/cartoon_rejections.proto"
+    public val protoSourceFile: File = file { path = "acme/example/foo.proto" }
+    public val rejectionsFile: File = file {
+        path = "acme/example/cartoon_rejections.proto"
     }
     public val multipleFilesOption: Option = option {
         name = "java_multiple_files"
@@ -85,25 +85,25 @@ public object TypesTestEnv {
         type = type { primitive = TYPE_STRING }
         value = StringValue.of("CartoonRejections").pack()
     }
-    public val protoFile: File = file {
-        path = filePath
+    public val header: ProtoFileHeader = protoFileHeader {
+        file = protoSourceFile
         packageName = "acme.example"
         option.add(multipleFilesOption)
         option.add(javaPackageOption)
     }
-    public val rejectionsProtoFile: File = file {
-        path = rejectionsFilePath
+    public val rejectionsProtoHeader: ProtoFileHeader = protoFileHeader {
+        file = rejectionsFile
         packageName = "acme.example"
         option.add(javaPackageOption)
         option.add(outerClassnameOption)
     }
     public val messageTypeName: TypeName = typeName {
-        packageName = protoFile.packageName
+        packageName = header.packageName
         simpleName = "Foo"
         typeUrlPrefix = "type.spine.io"
     }
     public val rejectionTypeName: TypeName = typeName {
-        packageName = rejectionsProtoFile.packageName
+        packageName = rejectionsProtoHeader.packageName
         simpleName = "CannotDrawCartoon"
         typeUrlPrefix = "type.spine.io"
     }
@@ -118,17 +118,17 @@ public object TypesTestEnv {
         single = Empty.getDefaultInstance()
     }
     public val messageType: MessageType = messageType {
-        file = filePath
+        file = protoSourceFile
         name = messageTypeName
         field.add(stringField)
     }
     public val rejectionType: MessageType = messageType {
-        file = rejectionsFilePath
+        file = rejectionsFile
         name = rejectionTypeName
         field.add(idField)
     }
     public val enumTypeName: TypeName = typeName {
-        packageName = protoFile.packageName
+        packageName = header.packageName
         typeUrlPrefix = messageTypeName.typeUrlPrefix
         simpleName = "Kind"
     }
@@ -141,7 +141,7 @@ public object TypesTestEnv {
         number = 1
     }
     public val enumType: EnumType = newEnumType {
-        file = filePath
+        file = protoSourceFile
         name = enumTypeName
         constant.add(undefinedConstant)
         constant.add(enumConstant)
@@ -152,20 +152,20 @@ public object TypesTestEnv {
         typeUrlPrefix = "service.spine.io"
     }
     public val service: Service = service {
-        file = filePath
+        file = protoSourceFile
         name = serviceName
     }
     public val typeSystem: TypeSystem = run {
         val definitions = protobufSourceFile {
-            filePath = TypesTestEnv.filePath
-            file = protoFile
+            file = protoSourceFile
+            header = this@run.header
             type.put(messageTypeName.typeUrl, messageType)
             enumType.put(enumTypeName.typeUrl, TypesTestEnv.enumType)
             service.put(serviceName.typeUrl, TypesTestEnv.service)
         }
         val rejections = protobufSourceFile {
-            filePath = rejectionsFilePath
-            file = rejectionsProtoFile
+            file = rejectionsFile
+            header = rejectionsProtoHeader
             type.put(rejectionTypeName.typeUrl, rejectionType)
         }
         TypeSystem(setOf(definitions, rejections))

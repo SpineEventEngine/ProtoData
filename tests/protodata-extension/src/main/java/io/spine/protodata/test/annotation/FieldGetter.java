@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,10 +63,10 @@ final class FieldGetter implements NonRepeatingInsertionPoint {
     @NonNull
     @Override
     public TextCoordinates locateOccurrence(Text text) {
-        String fieldName = camelCase(field.getField().getValue());
-        String getterName = "get" + fieldName;
-        Pattern pattern = Pattern.compile("public .+ " + getterName);
-        List<String> lines = text.lines();
+        var fieldName = camelCase(field.getField().getValue());
+        var getterName = "get" + fieldName;
+        var pattern = Pattern.compile("public .+ " + getterName);
+        var lines = text.lines();
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             if (pattern.matcher(line).find()) {

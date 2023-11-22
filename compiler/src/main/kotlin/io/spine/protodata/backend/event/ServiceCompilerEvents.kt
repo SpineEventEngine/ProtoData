@@ -29,7 +29,7 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.File
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ServiceName
 import io.spine.protodata.backend.Documentation
 import io.spine.protodata.event.ServiceEntered
@@ -47,7 +47,7 @@ import io.spine.protodata.service
  * Produces events for a service.
  */
 internal class ServiceCompilerEvents(
-    private val file: File,
+    private val header: ProtoFileHeader,
     private val documentation: Documentation
 ) {
 
@@ -60,7 +60,7 @@ internal class ServiceCompilerEvents(
     internal suspend fun SequenceScope<EventMessage>.produceServiceEvents(
         descriptor: ServiceDescriptor
     ) {
-        val path = file.path
+        val path = header.file
         val serviceName = descriptor.name()
         yield(
             serviceEntered {
@@ -94,7 +94,7 @@ internal class ServiceCompilerEvents(
         serviceName: ServiceName,
         desc: MethodDescriptor
     ) {
-        val path = file.path
+        val path = header.file
         val theRpc = buildRpc(desc, serviceName, documentation)
         yield(
             rpcEntered {

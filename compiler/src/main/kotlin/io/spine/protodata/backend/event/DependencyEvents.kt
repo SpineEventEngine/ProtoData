@@ -33,7 +33,7 @@ import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.protodata.EnumType
-import io.spine.protodata.FilePath
+import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoDeclaration
 import io.spine.protodata.ProtobufSourceFile
@@ -42,10 +42,10 @@ import io.spine.protodata.TypeName
 import io.spine.protodata.backend.Documentation
 import io.spine.protodata.enumType
 import io.spine.protodata.event.dependencyDiscovered
+import io.spine.protodata.file
 import io.spine.protodata.messageType
 import io.spine.protodata.name
 import io.spine.protodata.oneofGroup
-import io.spine.protodata.path
 import io.spine.protodata.protobufSourceFile
 import io.spine.protodata.service
 
@@ -56,18 +56,18 @@ import io.spine.protodata.service
  */
 internal fun discoverDependencies(fileDescriptor: FileDescriptor) =
     dependencyDiscovered {
-        val id = fileDescriptor.path()
-        path = id
-        file = fileDescriptor.toPbSourceFile()
+        val id = fileDescriptor.file()
+        file = id
+        source = fileDescriptor.toPbSourceFile()
     }
 
 private fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
-    val path = path()
+    val path = file()
     val doc = Documentation.fromFile(this)
     val definitions = DefinitionFactory(this, path, doc)
     return protobufSourceFile {
-        filePath = path
-        file = toFileWithOptions()
+        file = path
+        header = toHeader()
         with(definitions) {
             type.putAll(messageTypes().associateByUrl())
             enumType.putAll(enumTypes().associateByUrl())
@@ -87,7 +87,7 @@ private fun <T : ProtoDeclaration> Sequence<T>.associateByUrl() =
  */
 private class DefinitionFactory(
     private val file: FileDescriptor,
-    private val path: FilePath,
+    private val path: File,
     private val documentation: Documentation,
 ) {
 
@@ -133,7 +133,7 @@ private class DefinitionFactory(
         name = typeName
         file = path
         doc = documentation.forMessage(this@asMessage)
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
         if (containingType != null) {
             declaredIn = containingType.name()
         }
@@ -147,14 +147,14 @@ private class DefinitionFactory(
         val groupName = name()
         name = groupName
         field.addAll(listFields(fields, typeName))
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
         doc = documentation.forOneof(this@asOneof)
     }
 
     private fun EnumDescriptor.asEnum() = enumType {
         val typeName = name()
         name = typeName
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
         file = path
         constant.addAll(values.map { it.buildConstantWithOptions(typeName, documentation) })
         if (containingType != null) {
@@ -168,7 +168,7 @@ private class DefinitionFactory(
         name = serviceName
         file = path
         rpc.addAll(methods.map { it.buildRpcWithOptions(serviceName, documentation) })
-        option.addAll(listOptions(options))
+        option.addAll(options.toList())
         doc = documentation.forService(this@asService)
     }
 

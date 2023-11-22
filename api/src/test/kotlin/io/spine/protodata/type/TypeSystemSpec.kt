@@ -35,7 +35,7 @@ import io.spine.protodata.Service
 import io.spine.protodata.serviceName
 import io.spine.protodata.test.TypesTestEnv.enumTypeName
 import io.spine.protodata.test.TypesTestEnv.messageTypeName
-import io.spine.protodata.test.TypesTestEnv.protoFile
+import io.spine.protodata.test.TypesTestEnv.header
 import io.spine.protodata.test.TypesTestEnv.serviceName
 import io.spine.protodata.test.TypesTestEnv.typeSystem
 import io.spine.protodata.typeName
@@ -55,7 +55,7 @@ class TypeSystemSpec {
             file shouldNotBe null
 
             messageType.name shouldBe messageTypeName
-            file shouldBe protoFile
+            file shouldBe header
         }
 
         @Test
@@ -65,7 +65,7 @@ class TypeSystemSpec {
             file shouldNotBe null
 
             enumType.name shouldBe enumTypeName
-            file shouldBe protoFile
+            file shouldBe header
         }
 
         @Test

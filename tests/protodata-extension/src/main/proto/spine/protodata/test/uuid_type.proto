@@ -20,5 +20,5 @@ message UuidType {
     protodata.TypeName name = 1;
 
     // The file where the type is declared.
-    protodata.FilePath declared_in = 2;
+    protodata.File declared_in = 2;
 }

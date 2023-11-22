@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import io.spine.core.Subscribe
 import io.spine.protodata.EnumType
 import io.spine.protodata.Field
 import io.spine.protodata.FieldName
-import io.spine.protodata.FilePath
+import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.OneofGroup
 import io.spine.protodata.OneofName
@@ -63,17 +63,17 @@ import io.spine.server.entity.alter
  * A view which collects information about a Protobuf source file.
  */
 internal class ProtoSourceFileView
-    : View<FilePath, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
+    : View<File, ProtobufSourceFile, ProtobufSourceFile.Builder>() {
 
     @Subscribe
     fun on(@External e: FileEntered) = alter {
-        filePath = e.file.path
         file = e.file
+        header = e.header
     }
 
     @Subscribe
     fun on(@External e: FileOptionDiscovered) = alter {
-        fileBuilder.addOption(e.option)
+        headerBuilder.addOption(e.option)
     }
 
     @Subscribe
@@ -99,7 +99,7 @@ internal class ProtoSourceFileView
 
     @Subscribe
     fun on(@External e: FieldEntered) = modifyType(e.type) {
-        if (e.field.isPartOfOneof()) {
+        if (e.field.isPartOfOneof) {
             val oneof = findOneof(e.field.oneofName)
             oneof.addField(e.field)
         } else {

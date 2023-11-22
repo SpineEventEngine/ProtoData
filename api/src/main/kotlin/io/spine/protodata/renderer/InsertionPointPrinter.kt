@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ package io.spine.protodata.renderer
 
 import io.spine.core.userId
 import io.spine.protodata.event.insertionPointPrinted
-import io.spine.protodata.filePath
+import io.spine.protodata.file
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
 import io.spine.text.TextCoordinates
 import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
@@ -140,7 +140,7 @@ public abstract class InsertionPointPrinter<L: Language>(
 
     private fun reportPoint(sourceFile: SourceFile, pointLabel: String, comment: String) {
         val event = insertionPointPrinted {
-            file = filePath { value = sourceFile.relativePath.toString() }
+            file = file { path = sourceFile.relativePath.toString() }
             label = pointLabel
             representationInCode = comment
         }
