@@ -28,9 +28,9 @@ package io.spine.protodata.test
 
 import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.server.query.select
 import io.spine.tools.code.Java
 import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.Path
 
 /**
@@ -41,8 +41,9 @@ public class InternalAccessRenderer : SoloRenderer<Java>(Java) {
     override fun render(sources: SourceFileSet) {
         val internalTypes = select<InternalType>().all()
         internalTypes.forEach { internalType ->
-            val path = internalType.name.qualifiedName.replace('.', File.separatorChar)
-            sources.createFile(Path("${path}Internal.java"),
+            val path = internalType.toPath()
+            sources.createFile(
+                path,
                 """
                 class ${internalType.name.simpleName}Internal {
                     // Here goes case specific code.
@@ -52,3 +53,11 @@ public class InternalAccessRenderer : SoloRenderer<Java>(Java) {
         }
     }
 }
+
+private fun InternalType.toPath(): Path {
+    val path = qualifiedName.replace('.', File.separatorChar)
+    return Path("${path}Internal.java")
+}
+
+private val InternalType.qualifiedName: String
+    get() = name.qualifiedName
