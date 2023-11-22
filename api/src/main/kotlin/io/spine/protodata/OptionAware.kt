@@ -27,7 +27,9 @@
 package io.spine.protodata
 
 /**
- * An interface for objects which have an [Option] or are associated in an option.
+ * An interface for objects which are associated in an [Option] instance.
+ *
+ * For example, an event on a proto field may refer to a field option and as such is option-aware.
  */
 public interface OptionAware {
     public val option: Option
