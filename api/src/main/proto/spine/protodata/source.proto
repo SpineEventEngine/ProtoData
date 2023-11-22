@@ -44,13 +44,13 @@ import "spine/protodata/ast.proto";
 message ProtobufSourceFile {
     option (entity).kind = VIEW;
 
-    // The relative path to the file.
-    //
-    // Must be the same as `header.file`.
-    //
+    // The path to the file.
     File file = 1;
 
-    // A header of the Protobuf file.
+    // The header of the Protobuf file.
+    //
+    // The `file` field of the header must be equal to the `file` field of this message type.
+    //
     ProtoFileHeader header = 2;
 
     // All the message types in this source files.

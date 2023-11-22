@@ -47,6 +47,9 @@ message FileEntered {
     File file = 1;
 
     // The header of the file.
+    //
+    // The `file` field of the header must be equal to the `file` field of this event.
+    //
     ProtoFileHeader header = 2;
 }
 

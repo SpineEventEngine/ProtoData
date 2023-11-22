@@ -517,11 +517,11 @@ message Doc {
     // The comment placed beneath above the declaration without any empty lines.
     string trailing_comment = 2;
 
-    // Comments placed above the declaration separated by at least one empty line from
-    // the declaration.
+    // Comments placed above the declaration separated by at least
+    // one empty line from the declaration.
     //
-    // This can often be a general comment, related not to the declaration itself, but rather to
-    // its context.
+    // This can often be a general comment, related not to the declaration itself,
+    // but rather to its context.
     //
     repeated string detached_comment = 3;
 }
