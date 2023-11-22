@@ -69,7 +69,7 @@ private class ProtoFileEvents(
     private val fileDescriptor: FileDescriptor
 ) {
 
-    private val header = fileDescriptor.toHeader()
+    private val header = fileDescriptor.toHeaderWithoutOptions()
 
     private val documentation = Documentation.fromFile(fileDescriptor)
 

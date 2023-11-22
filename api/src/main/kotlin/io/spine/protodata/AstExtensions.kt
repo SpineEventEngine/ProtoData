@@ -118,7 +118,7 @@ public val Field.isPartOfOneof: Boolean
     get() = hasOneofName()
 
 /**
- * Obtains the name of the field which includes a qualified name of the type which declares it.
+ * The field name containing a qualified name of the declaring type.
  */
 public val Field.qualifiedName: String
     get() = "${declaringType.qualifiedName}.${name.value}"

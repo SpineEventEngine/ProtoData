@@ -54,7 +54,7 @@ message FileEntered {
 message FileOptionDiscovered {
     option (is).java_type = "io.spine.protodata.OptionAware";
 
-    // The file option of which was found.
+    // The file, option of which was found.
     File file = 1;
 
     // The discovered option.
@@ -184,7 +184,7 @@ message FieldExited {
     // The type in which the field is defined.
     TypeName type = 2;
 
-    // The field processing of which is finished.
+    // The processed field.
     FieldName field = 3;
 }
 
@@ -208,7 +208,7 @@ message EnumOptionDiscovered {
     // The type name of the enum.
     TypeName type = 2;
 
-    // The option discovered.
+    // The discovered option.
     Option option = 3;
 }
 
@@ -238,7 +238,7 @@ message EnumConstantOptionDiscovered {
     // The enum constant in which the option is discovered.
     ConstantName constant = 3;
 
-    // The option discovered.
+    // The discovered option.
     Option option = 4;
 }
 

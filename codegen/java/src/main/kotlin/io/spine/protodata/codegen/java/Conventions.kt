@@ -26,8 +26,8 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ProtoDeclarationName
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ServiceName
 import io.spine.protodata.TypeName
 import io.spine.protodata.type.Convention
@@ -55,9 +55,9 @@ public abstract class BaseJavaConvention<N: ProtoDeclarationName>(
 public class MessageOrEnumConvention(ts: TypeSystem) : BaseJavaConvention<TypeName>(ts) {
 
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
-        val file = typeSystem.findMessageOrEnum(name)?.second
-        check(file != null) { "Unknown type `${name.typeUrl}`." }
-        val cls = name.javaClassName(declaredIn = file)
+        val header = typeSystem.findMessageOrEnum(name)?.second
+        check(header != null) { "Unknown type `${name.typeUrl}`." }
+        val cls = name.javaClassName(accordingTo = header)
         return Declaration(cls, cls.javaFile)
     }
 }
@@ -88,17 +88,17 @@ public abstract class AbstractServiceConvention(ts: TypeSystem) :
 
     override fun declarationFor(name: ServiceName): Declaration<Java, ClassName> {
         val pair = typeSystem.findService(name)
-        val file = pair?.second
-        check(file != null) { "Unknown service `${name.typeUrl}`." }
+        val header = pair?.second
+        check(header != null) { "Unknown service `${name.typeUrl}`." }
         val service = pair.first
-        val cls = javaClassName(service.name, declaredIn = file)
+        val cls = javaClassName(service.name, accordingTo = header)
         return Declaration(cls, cls.javaFile)
     }
 
     /**
      * Calculates a class name for the given service declared in the given file.
      */
-    protected abstract fun javaClassName(name: ServiceName, declaredIn: ProtoFileHeader): ClassName
+    protected abstract fun javaClassName(name: ServiceName, accordingTo: ProtoFileHeader): ClassName
 }
 
 /**
@@ -111,9 +111,9 @@ public class GrpcServiceConvention(ts: TypeSystem) : AbstractServiceConvention(t
 
     protected override fun javaClassName(
         name: ServiceName,
-        declaredIn: ProtoFileHeader
+        accordingTo: ProtoFileHeader
     ): ClassName =
-        composeJavaClassName(declaredIn) {
+        composeJavaClassName(accordingTo) {
             add(name.simpleName + "Grpc")
         }
 }
@@ -127,8 +127,8 @@ public class GrpcServiceConvention(ts: TypeSystem) : AbstractServiceConvention(t
  */
 public class GenericServiceConvention(ts: TypeSystem): AbstractServiceConvention(ts) {
 
-    override fun javaClassName(name: ServiceName, declaredIn: ProtoFileHeader): ClassName =
-        composeJavaClassName(declaredIn) {
+    override fun javaClassName(name: ServiceName, accordingTo: ProtoFileHeader): ClassName =
+        composeJavaClassName(accordingTo) {
             add(name.simpleName)
         }
 }

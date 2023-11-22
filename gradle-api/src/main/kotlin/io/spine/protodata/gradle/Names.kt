@@ -58,7 +58,7 @@ public object Names {
     public const val USER_CLASSPATH_CONFIGURATION: String = "protoData"
 
     /**
-     * The name of the configuration containing to ProtoData `fat-cli` artifact.
+     * The name of the configuration containing ProtoData `fat-cli` artifact.
      */
     public const val PROTO_DATA_RAW_ARTIFACT: String = "protoDataRawArtifact"
 }

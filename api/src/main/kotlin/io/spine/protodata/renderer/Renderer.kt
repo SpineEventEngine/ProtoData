@@ -93,14 +93,12 @@ protected constructor(
      *
      * @param S
      *         the type of the entity state.
-     * @param type
-     *         the class of the entity state.
      */
     public inline fun <reified S : EntityState<*>> select(): QueryingClient<S> =
         select(S::class.java)
 
     /**
-     * Creates a [QueryingClient] for querying entity states of the given type.
+     * Creates a [QueryingClient] for obtaining entity states of the given type.
      *
      * @param S
      *         the type of the entity state.

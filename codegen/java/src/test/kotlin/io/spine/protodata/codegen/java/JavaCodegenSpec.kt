@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ import io.spine.protodata.codegen.java.file.javaMultipleFiles
 import io.spine.protodata.codegen.java.file.javaOuterClassName
 import io.spine.protodata.codegen.java.file.javaPackage
 import io.spine.protodata.enumType
-import io.spine.protodata.protoFileHeader
 import io.spine.protodata.messageType
+import io.spine.protodata.protoFileHeader
 import io.spine.protodata.typeName
 import java.io.File.separatorChar
 import org.junit.jupiter.api.DisplayName
@@ -54,7 +54,7 @@ internal class JavaCodegenSpec {
             val type = messageType(typeName)
             val file = protoMultipleFiles()
 
-            val className = type.javaClassName(declaredIn = file)
+            val className = type.javaClassName(accordingTo = file)
 
             className.binary shouldBe "$JAVA_PACKAGE_NAME.$typeName"
         }
@@ -66,7 +66,7 @@ internal class JavaCodegenSpec {
             val type = nestedMessageType(typeName, nestingType)
             val file = protoMultipleFiles()
 
-            val className = type.javaClassName(declaredIn = file)
+            val className = type.javaClassName(accordingTo = file)
 
             className.binary shouldBe "$JAVA_PACKAGE_NAME.$nestingType$$typeName"
         }
@@ -77,7 +77,7 @@ internal class JavaCodegenSpec {
             val type = messageType(typeName)
             val file = protoSingleFile(outerClassName = javaOuterClassName)
 
-            val className = type.javaClassName(declaredIn = file)
+            val className = type.javaClassName(accordingTo = file)
 
             className.binary shouldBe "${JAVA_PACKAGE_NAME}.${OUTER_CLASS_NAME}$${typeName}"
         }
@@ -88,7 +88,7 @@ internal class JavaCodegenSpec {
             val type = enumTypeNamed(typeName)
             val file = protoMultipleFiles()
 
-            val className = type.javaClassName(declaredIn = file)
+            val className = type.javaClassName(accordingTo = file)
 
             className.binary shouldBe "$JAVA_PACKAGE_NAME.$typeName"
         }
@@ -103,7 +103,7 @@ internal class JavaCodegenSpec {
             val type = messageType(typeName)
             val file = protoMultipleFiles()
 
-            val className = type.javaFile(declaredIn = file)
+            val className = type.javaFile(accordingTo = file)
 
             className.toString() shouldBe "$packageNameAsPath$typeName.java"
         }
@@ -115,7 +115,7 @@ internal class JavaCodegenSpec {
             val type = withDeeperNesting(typeName, firstNesting)
             val file = protoMultipleFiles()
 
-            val className = type.javaFile(declaredIn = file)
+            val className = type.javaFile(accordingTo = file)
 
             className.toString() shouldBe "$packageNameAsPath$firstNesting.java"
         }
@@ -125,7 +125,7 @@ internal class JavaCodegenSpec {
             val type = messageType("Fuse")
             val file = protoSingleFile(outerClassName = javaOuterClassName)
 
-            val className = type.javaFile(declaredIn = file)
+            val className = type.javaFile(accordingTo = file)
 
             className.toString() shouldBe "$packageNameAsPath$OUTER_CLASS_NAME.java"
         }

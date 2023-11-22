@@ -38,7 +38,10 @@ option java_multiple_files = true;
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 
-// A file path on a file system.
+// Represents a file in an arbitrary OS.
+//
+// In most cases it is going to be a relative path.
+// In some cases it may be an absolute path.
 //
 // The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
 // the current operating system. This value holds this exact format of the path.

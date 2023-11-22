@@ -45,14 +45,14 @@ import kotlin.io.path.Path
  *
  * The class which represents this message might not be the top level class of the Java file.
  */
-public fun MessageType.javaFile(declaredIn: ProtoFileHeader): Path =
-    name.javaFile(declaredIn)
+public fun MessageType.javaFile(accordingTo: ProtoFileHeader): Path =
+    name.javaFile(accordingTo)
 
-internal fun TypeName.javaFile(declaredIn: ProtoFileHeader): Path {
-    val packageName = declaredIn.javaPackage()
-    val javaMultipleFiles = declaredIn.javaMultipleFiles()
+internal fun TypeName.javaFile(accordingTo: ProtoFileHeader): Path {
+    val packageName = accordingTo.javaPackage()
+    val javaMultipleFiles = accordingTo.javaMultipleFiles()
     val topLevelClassName = when {
-        !javaMultipleFiles -> declaredIn.javaOuterClassName()
+        !javaMultipleFiles -> accordingTo.javaOuterClassName()
         nestingTypeNameList.isNotEmpty() -> nestingTypeNameList.first()
         else -> simpleName
     }
@@ -65,16 +65,16 @@ internal fun TypeName.javaFile(declaredIn: ProtoFileHeader): Path {
  *
  * @return name of the class generated from this message.
  */
-public fun MessageType.javaClassName(declaredIn: ProtoFileHeader): ClassName =
-    name.javaClassName(declaredIn)
+public fun MessageType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
+    name.javaClassName(accordingTo)
 
 /**
  * Obtains the full name of the Java enum, generated from this Protobuf enum.
  *
  * @return name of the enum class generated from this enum.
  */
-public fun EnumType.javaClassName(declaredIn: ProtoFileHeader): ClassName =
-    name.javaClassName(declaredIn)
+public fun EnumType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
+    name.javaClassName(accordingTo)
 
 /**
  * Obtains a Java class name for a Protobuf declaration.
@@ -82,8 +82,8 @@ public fun EnumType.javaClassName(declaredIn: ProtoFileHeader): ClassName =
  * The function calculates the package name taking into account values of
  * `java_package_name` and `java_multiple_files` options that may present in the file.
  *
- * @param declaredIn
- *        the Protobuf file where the declaration resides in.
+ * @param accordingTo
+ *        the header of the Protobuf file where the declaration resides in.
  * @param block
  *        the block of code which adds the name elements to the class name.
  *
@@ -91,14 +91,14 @@ public fun EnumType.javaClassName(declaredIn: ProtoFileHeader): ClassName =
  * @see ProtoFileHeader.javaMultipleFiles
  */
 internal fun composeJavaClassName(
-    declaredIn: ProtoFileHeader,
+    accordingTo: ProtoFileHeader,
     block: MutableList<String>.() -> Unit
 ): ClassName {
-    val packageName = declaredIn.javaPackage()
-    val javaMultipleFiles = declaredIn.javaMultipleFiles()
+    val packageName = accordingTo.javaPackage()
+    val javaMultipleFiles = accordingTo.javaMultipleFiles()
     val nameElements = mutableListOf<String>()
     if (!javaMultipleFiles) {
-        nameElements.add(declaredIn.javaOuterClassName())
+        nameElements.add(accordingTo.javaOuterClassName())
     }
     block(nameElements)
     return ClassName(packageName, nameElements)
@@ -107,8 +107,8 @@ internal fun composeJavaClassName(
 /**
  * Obtains a fully qualified Java class, generated for the Protobuf type with this name.
  */
-internal fun TypeName.javaClassName(declaredIn: ProtoFileHeader): ClassName =
-    composeJavaClassName(declaredIn) {
+internal fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
+    composeJavaClassName(accordingTo) {
         addAll(nestingTypeNameList)
         add(simpleName)
     }

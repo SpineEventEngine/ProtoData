@@ -43,8 +43,8 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
      * Obtains the [ClassName] of the given Protobuf type.
      */
     protected fun classNameOf(type: TypeName, declaredIn: File): ClassName {
-        val file = findFile(declaredIn)
-        return type.javaClassName(file)
+        val header = findHeader(declaredIn)
+        return type.javaClassName(header)
     }
 
     /**
@@ -54,11 +54,11 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
      * files in a [SourceSet][io.spine.protodata.renderer.SourceFileSet].
      */
     protected fun javaFileOf(type: TypeName, declaredIn: File): Path {
-        val file = findFile(declaredIn)
-        return type.javaFile(file)
+        val header = findHeader(declaredIn)
+        return type.javaFile(header)
     }
 
-    private fun findFile(path: File): ProtoFileHeader =
+    private fun findHeader(path: File): ProtoFileHeader =
         select(ProtobufSourceFile::class.java)
             .findById(path)!!
             .header
