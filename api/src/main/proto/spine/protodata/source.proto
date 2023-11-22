@@ -50,6 +50,7 @@ message ProtobufSourceFile {
     //
     File file = 1;
 
+    // A header of the Protobuf file.
     ProtoFileHeader header = 2;
 
     // All the message types in this source files.
