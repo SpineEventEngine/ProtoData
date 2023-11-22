@@ -52,7 +52,7 @@ internal class JavaCodegenSpec {
         fun `top-level message`() {
             val typeName = "Anvil"
             val type = messageType(typeName)
-            val header = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
             val className = type.javaClassName(accordingTo = header)
 
@@ -64,7 +64,7 @@ internal class JavaCodegenSpec {
             val nestingType = "RedDynamite"
             val typeName = "Fuse"
             val type = nestedMessageType(typeName, nestingType)
-            val header = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
             val className = type.javaClassName(accordingTo = header)
 
@@ -75,7 +75,7 @@ internal class JavaCodegenSpec {
         fun `message with Java outer class name`() {
             val typeName = "Fuse"
             val type = messageType(typeName)
-            val header = protoSingleFile(outerClassName = javaOuterClassName)
+            val header = headerSingleFile(outerClassName = javaOuterClassName)
 
             val className = type.javaClassName(accordingTo = header)
 
@@ -86,7 +86,7 @@ internal class JavaCodegenSpec {
         fun enum() {
             val typeName = "ExplosiveType"
             val type = enumTypeNamed(typeName)
-            val header = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
             val className = type.javaClassName(accordingTo = header)
 
@@ -101,7 +101,7 @@ internal class JavaCodegenSpec {
         fun `top-level message`() {
             val typeName = "Anvil"
             val type = messageType(typeName)
-            val header = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
             val className = type.javaFile(accordingTo = header)
 
@@ -113,7 +113,7 @@ internal class JavaCodegenSpec {
             val firstNesting = "RedDynamite"
             val typeName = "Fuse"
             val type = withDeeperNesting(typeName, firstNesting)
-            val header = protoMultipleFiles()
+            val header = headerMultipleFiles()
 
             val className = type.javaFile(accordingTo = header)
 
@@ -123,7 +123,7 @@ internal class JavaCodegenSpec {
         @Test
         fun `message with Java outer class name`() {
             val type = messageType("Fuse")
-            val header = protoSingleFile(outerClassName = javaOuterClassName)
+            val header = headerSingleFile(outerClassName = javaOuterClassName)
 
             val className = type.javaFile(accordingTo = header)
 
@@ -132,14 +132,14 @@ internal class JavaCodegenSpec {
     }
 }
 
-private fun protoSingleFile(outerClassName: Option? = null) = protoFileHeader {
+private fun headerSingleFile(outerClassName: Option? = null) = protoFileHeader {
     option.apply {
         add(javaPackage)
         outerClassName?.let { add(it) }
     }
 }
 
-private fun protoMultipleFiles(outerClassName: Option? = null) = protoFileHeader {
+private fun headerMultipleFiles(outerClassName: Option? = null) = protoFileHeader {
     option.apply {
         add(javaPackage)
         add(javaMultipleFiles)
