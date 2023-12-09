@@ -96,9 +96,9 @@ public val Field.isMap: Boolean
 /**
  * Shows if this field is a list.
  *
- * In Protobuf `repeated` keyword denotes a sequence of values for a field. However, a map is also
- * treated as a repeated field for serialization reasons. We use the term "list" for repeated fields
- * which are not maps.
+ * In Protobuf `repeated` keyword denotes a sequence of values for a field.
+ * However, a map is also treated as a repeated field for serialization reasons.
+ * We use the term "list" for repeated fields which are not maps.
  */
 public val Field.isList: Boolean
     get() = hasList()
@@ -128,8 +128,8 @@ public val Field.qualifiedName: String
 /**
  * Looks up an option value by the [optionName].
  *
- * If the option has a Protobuf primitive type, [cls] must be the wrapper type. For example,
- * an `Int32Value` for `int32`, `StringValue` for `string`, etc.
+ * If the option has a Protobuf primitive type, [cls] must be the wrapper type.
+ * For example, an `Int32Value` for `int32`, `StringValue` for `string`, etc.
  *
  * @return the value of the option or a `null` if the option is not found.
  */
@@ -190,7 +190,7 @@ public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
 public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
 
 /**
- * Obtains the relative path to this file as a [FilePath].
+ * Obtains the relative path to this file as a [File].
  */
 public fun FileDescriptor.file(): File = file { path = name }
 
