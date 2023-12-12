@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import io.spine.text.TextCoordinates
  * an unwanted match.
  */
 private val pattern = Regex("((class)|(@?interface)|(enum))\\s+")
+
 /**
  * An insertion point located just before the primary declaration of a Java file.
  *
