@@ -77,7 +77,7 @@ internal constructor(
         val sourceLines = file.lines()
         val updatedLines = ArrayList(sourceLines)
         val pointMarker = point.codeLine
-        val newCode = lines.linesToCode(indent, indentLevel)
+        val newCode = lines.indent(indent, indentLevel)
         val newLines = lineSplitter().splitToList(newCode)
         var alreadyInsertedCount = 0
         sourceLines.forEachIndexed { index, line ->
@@ -97,13 +97,17 @@ internal constructor(
 /**
  * Joins these lines of code into a code block, accounting for extra indent.
  *
- * @param indent
- *         the number of spaces for each indentation.
- * @param indentLevel
+ * @param step
+ *         the indentation of each level.
+ * @param level
  *         the number of levels of indentation to add.
+ *
+ * @see <a href="https://github.com/SpineEventEngine/base/issues/809">Issue #809 in `base`</a>
  */
 @VisibleForTesting
-internal fun Iterable<String>.linesToCode(indent: Indent, indentLevel: Int): String =
-    joinToString(Separator.nl()) {
-        indent.atLevel(indentLevel) + it
+internal fun Iterable<String>.indent(step: Indent, level: Int): String {
+    val indentation = step.atLevel(level)
+    return joinToString(Separator.nl()) {
+        indentation + it
     }
+}

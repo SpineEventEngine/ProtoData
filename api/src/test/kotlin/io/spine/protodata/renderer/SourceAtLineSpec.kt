@@ -44,13 +44,13 @@ internal class SourceAtLineSpec {
             line 3
         """.ti().lines()
 
-        source.linesToCode(Indent(size = 2), 2) shouldBe """
+        source.indent(Indent(size = 2), level = 2) shouldBe """
             |    line 1
             |    line 2
             |    line 3
         """.tm()
 
-        source.linesToCode(Indent(size = 3), 0) shouldBe """
+        source.indent(Indent(size = 3), level = 0) shouldBe """
             |line 1
             |line 2
             |line 3
