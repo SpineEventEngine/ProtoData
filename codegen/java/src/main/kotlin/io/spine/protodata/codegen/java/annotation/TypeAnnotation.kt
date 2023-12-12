@@ -65,6 +65,7 @@ public abstract class TypeAnnotation<T : Annotation>(
 
     /**
      * Specifies whether to annotate a given file using the caller's implementation.
+     *
      * By default, checks whether the target file already includes the annotation.
      *
      * If a [Repeatable] annotation is attached to the annotation class,
@@ -73,11 +74,8 @@ public abstract class TypeAnnotation<T : Annotation>(
      * If file does not contain a [BeforePrimaryDeclaration] insertion point,
      * it returns `false`.
      *
-     * If the insertion point exists, it inspects the presence
-     * of the annotation.
-     *
-     * If the annotation already exists, it returns `false` and won't apply duplicate annotation.
-     * Otherwise, it will apply the annotation and returns `true`.
+     * If the insertion point exists, it checks the presence of the annotation.
+     * If the annotation already exists, it returns `false`, `true` otherwise.
      */
     @Suppress("ReturnCount") // Cannot go lower here.
     protected open fun shouldAnnotate(file: SourceFile): Boolean {
