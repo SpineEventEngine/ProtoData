@@ -32,6 +32,7 @@ import io.spine.base.Time.currentTime
 import io.spine.base.Time.currentTimeZone
 import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.renderer.SourceFile
+import io.spine.string.Separator
 import io.spine.time.toInstant
 import java.time.OffsetDateTime
 import javax.annotation.processing.Generated
@@ -87,7 +88,7 @@ public open class GeneratedTypeAnnotation(
     private fun multiLineArguments(file: SourceFile): String {
         val date = date()
         val comments = renderComments(file)
-        val nl = System.lineSeparator()
+        val nl = Separator.nl()
         val params = buildList {
             fun String.enter() {
                 if (isNotBlank()) this@buildList.add(this@enter)

@@ -24,28 +24,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.protodata.renderer
+
+import io.kotest.matchers.shouldBe
+import io.spine.string.Indent
+import io.spine.string.Separator
+import io.spine.string.ti
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+
+@DisplayName("`SourceAtLine` should")
+internal class SourceAtLineSpec {
+
+    @Test
+    fun `indent lines`() {
+        val source = """
+            line 1
+            line 2
+            line 3
+        """.ti().lines()
+
+        source.indent(Indent(size = 2), level = 2) shouldBe """
+            |    line 1
+            |    line 2
+            |    line 3
+        """.tm()
+
+        source.indent(Indent(size = 3), level = 0) shouldBe """
+            |line 1
+            |line 2
+            |line 3
+        """.tm()
+    }
+}
 
 /**
- * [J2ObjC](https://developers.google.com/j2objc) is a transitive dependency,
- * which we don't use directly. This object is used for forcing the version.
+ * The same as [trimMargin] but with system-dependent line separator, for
+ * compatibility with Windows.
+ *
+ * This should be migrated to `io.spine.string` package, once it is
+ * [available](https://github.com/SpineEventEngine/base/issues/808).
  */
-@Suppress("unused", "ConstPropertyName")
-object J2ObjC {
-    /**
-     * See [J2ObjC releases](https://github.com/google/j2objc/releases).
-     *
-     * `1.3` was the latest version available from Maven Central.
-     * Now `2.8` is the latest version available.
-     * As [HttpClient]
-     * [migrated](https://github.com/googleapis/google-http-java-client/releases/tag/v1.43.3) to v2,
-     * we set the latest v2 version as well.
-     *
-     * @see <a href="https://search.maven.org/artifact/com.google.j2objc/j2objc-annotations">
-     *     J2ObjC on Maven Central</a>
-     */
-    private const val version = "2.8"
-    const val annotations = "com.google.j2objc:j2objc-annotations:${version}"
-    @Deprecated("Please use `annotations` instead.", ReplaceWith("annotations"))
-    const val lib = annotations
-}
+private fun String.tm() = trimMargin().replace(Separator.LF.value, Separator.nl())
