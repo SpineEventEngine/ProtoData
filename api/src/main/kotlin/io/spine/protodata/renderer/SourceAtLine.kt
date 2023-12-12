@@ -26,7 +26,9 @@
 
 package io.spine.protodata.renderer
 
-import io.spine.string.Indent.Companion.defaultJavaIndent
+import com.google.common.annotations.VisibleForTesting
+import io.spine.string.Indent
+import io.spine.string.Separator
 import io.spine.string.atLevel
 import io.spine.text.TextFactory.lineSplitter
 
@@ -38,7 +40,8 @@ import io.spine.text.TextFactory.lineSplitter
 public class SourceAtLine
 internal constructor(
     private val file: SourceFile,
-    private val point: InsertionPoint
+    private val point: InsertionPoint,
+    private val indent: Indent = Indent(4)
 ) {
 
     private var indentLevel: Int = 0
@@ -46,7 +49,7 @@ internal constructor(
     /**
      * Specifies extra indentation to be added to inserted code lines
      *
-     * Each unit adds four spaces.
+     * Each unit adds the number of spaces specified by the [indent] property.
      */
     public fun withExtraIndentation(level: Int): SourceAtLine {
         require(level >= 0) { "Indentation level cannot be negative." }
@@ -73,7 +76,7 @@ internal constructor(
         val sourceLines = file.lines()
         val updatedLines = ArrayList(sourceLines)
         val pointMarker = point.codeLine
-        val newCode = lines.linesToCode(indentLevel)
+        val newCode = lines.linesToCode(indent, indentLevel)
         val newLines = lineSplitter().splitToList(newCode)
         var alreadyInsertedCount = 0
         sourceLines.forEachIndexed { index, line ->
@@ -93,13 +96,13 @@ internal constructor(
 /**
  * Joins these lines of code into a code block, accounting for extra indent.
  *
- * For the sake of simplicity, we do not attempt to select the right indentation format for each
- * case (programming languages, spaces VS tabs, etc.) and just use four spaces. We inform
- * the API users about the indentation at [SourceAtLine.withExtraIndentation].
- * For custom use cases, users may add their own indentation formatted according to
- * their preference.
+ * @param indent
+ *         the number of spaces for each indentation.
+ * @param indentLevel
+ *         the number of levels of indentation to add.
  */
-private fun Iterable<String>.linesToCode(indentLevel: Int): String =
-    joinToString(System.lineSeparator()) {
-        defaultJavaIndent.atLevel(indentLevel) + it
+@VisibleForTesting
+internal fun Iterable<String>.linesToCode(indent: Indent, indentLevel: Int): String =
+    joinToString(Separator.nl()) {
+        indent.atLevel(indentLevel) + it
     }
