@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import io.kotest.matchers.shouldBe
 import io.spine.string.Indent
+import io.spine.string.ti
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -40,7 +41,7 @@ internal class SourceAtLineSpec {
             line 1
             line 2
             line 3
-        """.trimIndent().lines()
+        """.ti().lines()
 
         source.linesToCode(Indent(size = 2), 2) shouldBe """
             |    line 1
