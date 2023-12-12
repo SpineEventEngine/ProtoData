@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import io.kotest.matchers.shouldBe
 import io.spine.string.Indent
+import io.spine.string.Separator
 import io.spine.string.ti
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -47,12 +48,21 @@ internal class SourceAtLineSpec {
             |    line 1
             |    line 2
             |    line 3
-        """.trimMargin()
+        """.tm()
 
         source.linesToCode(Indent(size = 3), 0) shouldBe """
             |line 1
             |line 2
             |line 3
-        """.trimMargin()
+        """.tm()
     }
 }
+
+/**
+ * The same as [trimMargin] but with system-dependent line separator, for
+ * compatibility with Windows.
+ *
+ * This should be migrated to `io.spine.string` package, once it is
+ * [available](https://github.com/SpineEventEngine/base/issues/808).
+ */
+private fun String.tm() = trimMargin().replace(Separator.LF.value, Separator.nl())
