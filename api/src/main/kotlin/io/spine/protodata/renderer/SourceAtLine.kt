@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import com.google.common.annotations.VisibleForTesting
 import io.spine.string.Indent
+import io.spine.string.Indent.Companion.DEFAULT_JAVA_INDENT_SIZE
 import io.spine.string.Separator
 import io.spine.string.atLevel
 import io.spine.text.TextFactory.lineSplitter
@@ -41,7 +42,7 @@ public class SourceAtLine
 internal constructor(
     private val file: SourceFile,
     private val point: InsertionPoint,
-    private val indent: Indent = Indent(4)
+    private val indent: Indent = Indent(DEFAULT_JAVA_INDENT_SIZE)
 ) {
 
     private var indentLevel: Int = 0

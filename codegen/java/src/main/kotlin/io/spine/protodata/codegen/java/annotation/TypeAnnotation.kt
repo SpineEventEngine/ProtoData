@@ -27,6 +27,7 @@ package io.spine.protodata.codegen.java.annotation
 
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
 import java.lang.annotation.ElementType.TYPE
@@ -46,26 +47,55 @@ public abstract class TypeAnnotation<T : Annotation>(
     init {
         @Suppress("LeakingThis")
             // In a controlled environment, we're disabling this check for one child class.
-            // Should be fine while the method is internal and not protected/public.
+            // Should be fine while the method is `internal` and not `protected` or `public`.
         checkAnnotationClass()
     }
 
     final override fun render(sources: SourceFileSet) {
         sources.filter { shouldAnnotate(it) }
             .forEach { file ->
-                file.at(BeforePrimaryDeclaration).add(
-                    "@${annotationClassReference()}${annotationArguments(file)}"
-                )
+                val annotationCode = annotationCode(file)
+                val line = file.at(BeforePrimaryDeclaration)
+                line.add(annotationCode)
             }
     }
 
+    private fun annotationCode(file: SourceFile): String =
+        "@${annotationClassReference()}${annotationArguments(file)}"
+
     /**
-     * A callback for implementing classes to tell if the given file should be annotated.
+     * Specifies whether to annotate a given file using the caller's implementation.
+     * By default, checks whether the target file already includes the annotation.
      *
-     * Default implementation always returns `true`.
+     * If a [Repeatable] annotation is attached to the annotation class,
+     * it always applies the annotation and returns `true`.
+     *
+     * If file does not contain a [BeforePrimaryDeclaration] insertion point,
+     * it returns `false`.
+     *
+     * If the insertion point exists, it inspects the presence
+     * of the annotation.
+     *
+     * If the annotation already exists, it returns `false` and won't apply duplicate annotation.
+     * Otherwise, it will apply the annotation and returns `true`.
      */
-    @Suppress("FunctionOnlyReturningConstant")
-    protected open fun shouldAnnotate(file: SourceFile): Boolean = true
+    @Suppress("ReturnCount") // Cannot go lower here.
+    protected open fun shouldAnnotate(file: SourceFile): Boolean {
+        val coordinates = BeforePrimaryDeclaration.locateOccurrence(file.text())
+        if (coordinates == nowhere) {
+            return false
+        }
+        if (annotationClass.isRepeatable) {
+            return true
+        }
+        val lineNumber = coordinates.wholeLine
+        val lines = file.lines()
+        // Subtract 1 because the insertion point refers to the line of
+        // a Java type declaration, starting with `class`, `interface`, or `enum`.
+        val line = lines[lineNumber - 1]
+        val annotationClass = annotationClassReference()
+        return !line.contains(annotationClass)
+    }
 
     private fun annotationClassReference(): String {
         val qualifiedName = annotationClass.name
@@ -112,3 +142,6 @@ public abstract class TypeAnnotation<T : Annotation>(
         }
     }
 }
+
+private val <T: Annotation> Class<T>.isRepeatable: Boolean
+    get() = isAnnotationPresent(Repeatable::class.java)

@@ -26,11 +26,15 @@
 
 package io.spine.protodata.codegen.java.annotation
 
+import com.google.common.annotations.VisibleForTesting
 import given.annotation.NoTargetsAnnotation
 import given.annotation.NoTypeTargetAnnotation
+import given.annotation.Schedule
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.renderer.SourceFile
-import java.lang.IllegalArgumentException
+import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -58,10 +62,113 @@ internal class TypeAnnotationSpec {
             StubAnnotation(SuppressWarnings::class.java)
         }
     }
+
+    @Nested inner class
+    `for non-repeatable annotation` {
+
+        @Test
+        fun `do not annotate if it already present`() {
+            val annotation = StubAnnotation(SuppressWarnings::class.java)
+            annotation.shouldAnnotate(fileWithAnnotation) shouldBe false
+        }
+
+        @Test
+        fun `annotate if is not present`() {
+            val annotation = StubAnnotation(SuppressWarnings::class.java)
+            annotation.shouldAnnotate(fileWithoutAnnotation) shouldBe true
+        }
+    }
+
+    @Nested inner class
+    `for repeatable annotation` {
+
+        @Test
+        fun `annotate if already present`() {
+            val annotation = StubAnnotation(Schedule::class.java)
+            annotation.shouldAnnotate(fileWithRepeatableAnnotation) shouldBe true
+        }
+
+        @Test
+        fun `annotate if absent`() {
+            val annotation = StubAnnotation(Schedule::class.java)
+            annotation.shouldAnnotate(fileWithoutAnnotation) shouldBe true
+        }
+    }
+
+    @Test
+    fun `reject files without 'BeforePrimaryDeclaration' insertion point`() {
+        val annotation = StubAnnotation(Schedule::class.java)
+        annotation.shouldAnnotate(fileWithoutInsertionPoint) shouldBe false
+    }
 }
 
 private class StubAnnotation<T : Annotation>(annotationClass: Class<T>) :
     TypeAnnotation<T>(annotationClass) {
 
     override fun renderAnnotationArguments(file: SourceFile): String = ""
+
+    /**
+     * Opens access for tests.
+     */
+    @VisibleForTesting
+    public override fun shouldAnnotate(file: SourceFile): Boolean = super.shouldAnnotate(file)
 }
+
+/**
+ * A stable path to the Java source code file.
+ */
+private val path = Paths.get("given", "java", "code", "TheClassToAnnotate.java")
+
+/**
+ * A source file with a non-repeatable annotation.
+ */
+private val fileWithAnnotation: SourceFile = SourceFile.fromCode(
+    code = """
+        package given.java.code;
+        
+        /* INSERT:'BeforePrimaryDeclaration' */
+
+        @SuppressWarnings("SomeWarning")
+        public class TheClassToAnnotate {
+          // Empty by design. 
+        }
+    """.trimIndent(),
+    relativePath = path
+)
+
+private val fileWithoutAnnotation: SourceFile = SourceFile.fromCode(
+    code = """
+        package given.java.code;
+        
+        /* INSERT:'BeforePrimaryDeclaration' */
+
+        public class TheClassToAnnotate {
+          // Empty by design. 
+        }
+    """.trimIndent(),
+    relativePath = path
+)
+
+private val fileWithRepeatableAnnotation: SourceFile = SourceFile.fromCode(
+    code = """
+        package given.java.code;
+        
+        /* INSERT:'BeforePrimaryDeclaration' */
+
+        @Schedule
+        public class TheClassToAnnotate {
+          // Empty by design. 
+        }
+    """.trimIndent(),
+    relativePath = path
+)
+
+private val fileWithoutInsertionPoint: SourceFile = SourceFile.fromCode(
+    code = """
+        /**
+         * A Java file without {@code BeforePrimaryDeclaration} insertion point.
+         */
+        package given.java.code;
+    """.trimIndent(),
+    relativePath = Paths.get("given", "java", "code", "package-info.java")
+)

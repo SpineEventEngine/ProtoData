@@ -26,6 +26,7 @@
 
 package io.spine.protodata.renderer
 
+import com.google.common.annotations.VisibleForTesting
 import com.google.common.base.Splitter
 import io.spine.protodata.InsertedPoints
 import io.spine.protodata.file
@@ -108,7 +109,8 @@ private constructor(
          * @param code
          *         the source code.
          */
-        internal fun fromCode(relativePath: Path, code: String): SourceFile =
+        @VisibleForTesting
+        public fun fromCode(relativePath: Path, code: String): SourceFile =
             SourceFile(code, relativePath, changed = true)
     }
 

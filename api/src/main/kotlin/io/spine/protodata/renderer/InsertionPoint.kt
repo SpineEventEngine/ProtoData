@@ -73,6 +73,12 @@ public interface InsertionPoint : CoordinatesFactory, WithLogging {
  */
 public interface NonRepeatingInsertionPoint : InsertionPoint {
 
+    /**
+     * Locates the site where the insertion point should be added.
+     *
+     * The returned set always have one element. If the insertion point is not found,
+     * the set contains [nowhere][CoordinatesFactory.nowhere].
+     */
     override fun locate(text: Text): Set<TextCoordinates> =
         setOf(locateOccurrence(text))
 
