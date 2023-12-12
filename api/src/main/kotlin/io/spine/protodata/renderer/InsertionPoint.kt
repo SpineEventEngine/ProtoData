@@ -76,24 +76,31 @@ public interface NonRepeatingInsertionPoint : InsertionPoint {
     /**
      * Locates the site where the insertion point should be added.
      *
-     * The returned set always have one element. If the insertion point is not found,
-     * the set contains [nowhere][CoordinatesFactory.nowhere].
-     */
-    override fun locate(text: Text): Set<TextCoordinates> =
-        setOf(locateOccurrence(text))
-
-    /**
-     * Locates the site where the insertion point should be added.
-     *
      * This insertion point should only appear once in a file.
+     *
+     * If the insertion point is not found, implementation must return
+     * [nowhere][CoordinatesFactory.nowhere].
      *
      * @param text
      *         the existing code.
-     * @return the coordinates in the text where the insertion point should be added
+     * @return the coordinates in the text where the insertion point should be added, or
+     *         [nowhere][CoordinatesFactory.nowhere] if the insertion point is not found.
      * @see SourceFile.at
      * @see SourceFile.atInline
      */
     public fun locateOccurrence(text: Text): TextCoordinates
+
+    /**
+     * Locates the site where the insertion point should be added.
+     *
+     * The default implementation returns a set with one element obtained from [locateOccurrence].
+     * Implementing classes should avoid overriding the default implementation, to preserve
+     * the semantic of non-repeating offered by this interface.
+     *
+     * @see locateOccurrence
+     */
+    override fun locate(text: Text): Set<TextCoordinates> =
+        setOf(locateOccurrence(text))
 }
 
 /**
