@@ -35,8 +35,8 @@ import io.spine.protodata.Service
 import io.spine.protodata.serviceName
 import io.spine.protodata.test.TypesTestEnv.enumTypeName
 import io.spine.protodata.test.TypesTestEnv.messageTypeName
-import io.spine.protodata.test.TypesTestEnv.header
-import io.spine.protodata.test.TypesTestEnv.serviceName
+import io.spine.protodata.test.TypesTestEnv.multipleFilesHeader
+import io.spine.protodata.test.TypesTestEnv.serviceNameMultiple
 import io.spine.protodata.test.TypesTestEnv.typeSystem
 import io.spine.protodata.typeName
 import org.junit.jupiter.api.DisplayName
@@ -55,7 +55,7 @@ class TypeSystemSpec {
             file shouldNotBe null
 
             messageType.name shouldBe messageTypeName
-            file shouldBe header
+            file shouldBe multipleFilesHeader
         }
 
         @Test
@@ -65,7 +65,7 @@ class TypeSystemSpec {
             file shouldNotBe null
 
             enumType.name shouldBe enumTypeName
-            file shouldBe header
+            file shouldBe multipleFilesHeader
         }
 
         @Test
@@ -78,7 +78,7 @@ class TypeSystemSpec {
         }
 
         fun `service by name`() {
-            val (service, _) = typeSystem.findService(serviceName)!!
+            val (service, _) = typeSystem.findService(serviceNameMultiple)!!
             service.shouldBeInstanceOf<Service>()
         }
     }

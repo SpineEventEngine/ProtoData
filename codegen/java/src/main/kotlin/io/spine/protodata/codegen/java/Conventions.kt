@@ -112,10 +112,10 @@ public class GrpcServiceConvention(ts: TypeSystem) : AbstractServiceConvention(t
     protected override fun javaClassName(
         name: ServiceName,
         accordingTo: ProtoFileHeader
-    ): ClassName =
-        composeJavaClassName(accordingTo) {
-            add(name.simpleName + "Grpc")
-        }
+    ): ClassName {
+        val packageName = accordingTo.javaPackage()
+        return ClassName(packageName, name.simpleName + "Grpc")
+    }
 }
 
 /**

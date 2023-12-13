@@ -28,7 +28,8 @@ package io.spine.protodata.codegen.java
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.test.TypesTestEnv
+import io.spine.protodata.test.TypesTestEnv.serviceNameMultiple
+import io.spine.protodata.test.TypesTestEnv.typeSystem
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import toSourcePath
@@ -38,11 +39,11 @@ internal class GenericServiceConventionSpec {
 
     @Test
     fun `convert a service name into a Java class name`() {
-        val convention = GenericServiceConvention(TypesTestEnv.typeSystem)
-        val declaration = convention.declarationFor(TypesTestEnv.serviceName)
+        val convention = GenericServiceConvention(typeSystem)
+        val declaration = convention.declarationFor(serviceNameMultiple)
         declaration shouldNotBe null
         val (cls, path) = declaration
-        val expectedClassName = "dev.acme.example.${TypesTestEnv.serviceName.simpleName}"
+        val expectedClassName = "dev.acme.example.${serviceNameMultiple.simpleName}"
         cls.binary shouldBe expectedClassName
         path shouldBe expectedClassName.toSourcePath()
     }
