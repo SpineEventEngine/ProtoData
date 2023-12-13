@@ -63,7 +63,8 @@ import io.spine.protodata.field as newField
 
 public object TypesTestEnv {
 
-    public val protoSourceFile: File = file { path = "acme/example/foo.proto" }
+    public val protoSourceMultiple: File = file { path = "acme/example/multiple.proto" }
+    public val protoSourceSingle: File = file { path = "acme/example/single.proto" }
     public val rejectionsFile: File = file {
         path = "acme/example/cartoon_rejections.proto"
     }
@@ -85,10 +86,15 @@ public object TypesTestEnv {
         type = type { primitive = TYPE_STRING }
         value = StringValue.of("CartoonRejections").pack()
     }
-    public val header: ProtoFileHeader = protoFileHeader {
-        file = protoSourceFile
+    public val multipleFilesHeader: ProtoFileHeader = protoFileHeader {
+        file = protoSourceMultiple
         packageName = "acme.example"
         option.add(multipleFilesOption)
+        option.add(javaPackageOption)
+    }
+    public val singleFileHeader: ProtoFileHeader = protoFileHeader {
+        file = protoSourceSingle
+        packageName = "acme.example"
         option.add(javaPackageOption)
     }
     public val rejectionsProtoHeader: ProtoFileHeader = protoFileHeader {
@@ -98,7 +104,7 @@ public object TypesTestEnv {
         option.add(outerClassnameOption)
     }
     public val messageTypeName: TypeName = typeName {
-        packageName = header.packageName
+        packageName = multipleFilesHeader.packageName
         simpleName = "Foo"
         typeUrlPrefix = "type.spine.io"
     }
@@ -118,7 +124,7 @@ public object TypesTestEnv {
         single = Empty.getDefaultInstance()
     }
     public val messageType: MessageType = messageType {
-        file = protoSourceFile
+        file = protoSourceMultiple
         name = messageTypeName
         field.add(stringField)
     }
@@ -128,7 +134,7 @@ public object TypesTestEnv {
         field.add(idField)
     }
     public val enumTypeName: TypeName = typeName {
-        packageName = header.packageName
+        packageName = multipleFilesHeader.packageName
         typeUrlPrefix = messageTypeName.typeUrlPrefix
         simpleName = "Kind"
     }
@@ -141,33 +147,51 @@ public object TypesTestEnv {
         number = 1
     }
     public val enumType: EnumType = newEnumType {
-        file = protoSourceFile
+        file = protoSourceMultiple
         name = enumTypeName
         constant.add(undefinedConstant)
         constant.add(enumConstant)
     }
-    public val serviceName: ServiceName = serviceName {
-        simpleName = "FooService"
-        packageName = "bar.baz"
+    public val serviceNameMultiple: ServiceName = serviceName {
+        simpleName = "ServiceFromSourceWithMultipleFilesTrue"
+        packageName = "multiple.file.sample"
         typeUrlPrefix = "service.spine.io"
     }
-    public val service: Service = service {
-        file = protoSourceFile
-        name = serviceName
+    public val serviceNameSingle: ServiceName = serviceName {
+        simpleName = "ServiceFromSourceWithMultipleFilesFalse"
+        packageName = "single.file.sample"
+        typeUrlPrefix = "service.spine.io"
+    }
+    public val serviceFromMultiple: Service = service {
+        file = protoSourceMultiple
+        name = serviceNameMultiple
+    }
+    public val serviceFromSingle: Service = service {
+        file = protoSourceSingle
+        name = serviceNameSingle
     }
     public val typeSystem: TypeSystem = run {
-        val definitions = protobufSourceFile {
-            file = protoSourceFile
-            header = this@run.header
+        val multipleFilesProto = protobufSourceFile {
+            file = protoSourceMultiple
+            header = multipleFilesHeader
             type.put(messageTypeName.typeUrl, messageType)
             enumType.put(enumTypeName.typeUrl, TypesTestEnv.enumType)
-            service.put(serviceName.typeUrl, TypesTestEnv.service)
+            service.put(serviceNameMultiple.typeUrl, serviceFromMultiple)
+        }
+        val singleFileProto = protobufSourceFile {
+            file = protoSourceSingle
+            header = singleFileHeader
+            service.put(serviceNameSingle.typeUrl, serviceFromSingle)
         }
         val rejections = protobufSourceFile {
             file = rejectionsFile
             header = rejectionsProtoHeader
             type.put(rejectionTypeName.typeUrl, rejectionType)
         }
-        TypeSystem(setOf(definitions, rejections))
+        TypeSystem(setOf(
+            multipleFilesProto,
+            singleFileProto,
+            rejections
+        ))
     }
 }

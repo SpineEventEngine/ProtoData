@@ -28,23 +28,49 @@ package io.spine.protodata.codegen.java
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.test.TypesTestEnv.serviceName
+import io.kotest.matchers.string.shouldEndWith
+import io.spine.protodata.test.TypesTestEnv.serviceNameMultiple
+import io.spine.protodata.test.TypesTestEnv.serviceNameSingle
 import io.spine.protodata.test.TypesTestEnv.typeSystem
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import toSourcePath
 
 @DisplayName("`GrpcServiceConvention` should")
 internal class GrpcServiceConventionSpec {
 
-    @Test
-    fun `convert a service name into a Java class name`() {
-        val convention = GrpcServiceConvention(typeSystem)
-        val declaration = convention.declarationFor(serviceName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        val expectedClassName = "dev.acme.example.${serviceName.simpleName}Grpc"
-        cls.binary shouldBe expectedClassName
-        path shouldBe expectedClassName.toSourcePath()
+    private lateinit var convention: GrpcServiceConvention
+
+    @BeforeEach
+    fun createConvention() {
+        convention = GrpcServiceConvention(typeSystem)
+    }
+
+    @Nested inner class
+    `convert a service name into a Java class name` {
+
+        @Test
+        fun `when '(java_multiple_files = true)'`() {
+            val declaration = convention.declarationFor(serviceNameMultiple)
+            declaration shouldNotBe null
+            val (cls, path) = declaration
+            val expectedClassName = "dev.acme.example.${serviceNameMultiple.simpleName}Grpc"
+            cls.binary shouldBe expectedClassName
+            path shouldBe expectedClassName.toSourcePath()
+            path.toString() shouldEndWith "Grpc.java"
+        }
+
+        @Test
+        fun `when '(java_multiple_files = false)'`() {
+            val declaration = convention.declarationFor(serviceNameSingle)
+            declaration shouldNotBe null
+            val (cls, path) = declaration
+            val expectedClassName = "dev.acme.example.${serviceNameSingle.simpleName}Grpc"
+            cls.binary shouldBe expectedClassName
+            path shouldBe expectedClassName.toSourcePath()
+            path.toString() shouldEndWith "Grpc.java"
+        }
     }
 }
