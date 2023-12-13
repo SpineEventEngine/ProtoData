@@ -153,12 +153,12 @@ public object TypesTestEnv {
         constant.add(enumConstant)
     }
     public val serviceNameMultiple: ServiceName = serviceName {
-        simpleName = "ServiceFromMultipleFiles"
+        simpleName = "ServiceFromSourceWithMultipleFilesTrue"
         packageName = "multiple.file.sample"
         typeUrlPrefix = "service.spine.io"
     }
     public val serviceNameSingle: ServiceName = serviceName {
-        simpleName = "ServiceFromSingleFile"
+        simpleName = "ServiceFromSourceWithMultipleFilesFalse"
         packageName = "single.file.sample"
         typeUrlPrefix = "service.spine.io"
     }
