@@ -26,28 +26,22 @@
 
 package io.spine.protodata.codegen.java
 
-import io.spine.protodata.ServiceName
-import io.spine.protodata.codegen.java.file.javaPackage
-import io.spine.protodata.type.NameElement
-import io.spine.tools.code.Java
-import java.nio.file.Path
-import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
 /**
- * A fully-qualified Java class name.
+ * A fully qualified Java class name.
  */
 public class ClassName
 internal constructor(
-    private val packageName: String,
-    private val simpleNames: List<String>
-) : NameElement<Java>, JavaElement {
+    packageName: String,
+    simpleNames: List<String>
+) : ClassOrEnumName(packageName, simpleNames) {
 
     /**
      * Creates a new class name from the given package name a class name.
      *
-     * If a class is nested inside another class, the [simpleName] parameter must contain all
-     * the names from the outermost class to the innermost one.
+     * If a class is nested inside another class, the [simpleName] parameter must
+     * contain all the names from the outermost class to the innermost one.
      */
     public constructor(packageName: String, vararg simpleName: String) :
             this(packageName, simpleName.toList())
@@ -55,7 +49,7 @@ internal constructor(
     /**
      * Obtains the class name of the given Java class.
      */
-    public constructor(cls: Class<*>) : this(cls.`package`.name, cls.nestedNames())
+    public constructor(cls: Class<*>) : this(cls.`package`?.name ?: "", cls.nestedNames())
 
     /**
      * Obtains the Java class name of the given Kotlin class.
@@ -63,43 +57,17 @@ internal constructor(
     public constructor(klass: KClass<*>) : this(klass.java)
 
     /**
-     * The canonical name of the class.
-     *
-     * This is the name by which the class is referred to in Java code.
-     *
-     * For regular Java classes, This is similar to [binary], except that in a binary name nested
-     * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
-     */
-    @get:JvmName("canonical")
-    public val canonical: String = "$packageName.${simpleNames.joinToString(".")}"
-
-    /**
      * The binary name of the class.
      *
      * This is the name by which the class is referred to in Bytecode.
      *
-     * For regular Java classes, This is similar to [canonical], except that in a binary name nested
-     * classes are separated by the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
+     * For regular Java classes, This is similar to [canonical], except that
+     * in a binary name nested classes are separated by the dollar (`$`) sign,
+     * and in canonical — by the dot (`.`) sign.
      */
     @get:JvmName("binary")
     public val binary: String
-        get() = "$packageName.${simpleNames.joinToString("$")}"
-
-    @get:JvmName("javaFile")
-    public val javaFile: Path by lazy {
-        val dir = packageName.replace('.', '/')
-        val topLevelClass = simpleNames.first()
-        Path("$dir/$topLevelClass.java")
-    }
-
-    /**
-     * The simple name of this class.
-     *
-     * If the class is nested inside another class, the outer class name is NOT included.
-     */
-    @get:JvmName("simpleName")
-    public val simpleName: String
-        get() = simpleNames.last()
+        get() = "$packagePrefix${simpleNames.joinToString("$")}"
 
     /**
      * Obtains a new `ClassName` with the given suffix appended to the last simple name.
@@ -110,39 +78,12 @@ internal constructor(
         return ClassName(packageName, newSimpleNames)
     }
 
-    override fun toCode(): String = canonical
-
-    override fun toString(): String = canonical
-
-    override fun hashCode(): Int = canonical.hashCode()
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ClassName) return false
-        return canonical == other.canonical
+        if (!super.equals(other)) return false
+        return true
     }
-}
 
-/**
- * Obtains a name of a class taking into account nesting hierarchy.
- *
- * The receiver class may be nested inside another class, which may be nested inside
- * another class, and so on.
- *
- * The returned list contains simple names of the classes, starting from the outermost to
- * the innermost, which is the receiver of this extension function.
- *
- * If the class is not nested, the returned list contains only a simple name of the class.
- */
-private fun Class<*>.nestedNames(): List<String> {
-    if (declaringClass == null) {
-        return listOf(this.simpleName)
-    }
-    val names = mutableListOf<String>()
-    var cls: Class<*>? = this
-    do {
-        names.add(cls!!.simpleName)
-        cls = cls.declaringClass
-    } while (cls != null)
-    return names.reversed()
+    override fun hashCode(): Int = binary.hashCode()
 }

@@ -24,14 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.type
+package io.spine.protodata.codegen.java
 
-import io.spine.tools.code.Language
+import kotlin.reflect.KClass
 
 /**
- * A [CodeElement] that represents a name of a language-specific type.
- *
- * In Java, it would be a fully qualified class name.
- * In Kotlin — it could be a class name, an object name, or a function name.
+ * A fully qualified name of a Java enum type.
  */
-public interface NameElement<L : Language> : CodeElement<L>
+public class EnumName internal constructor(
+    packageName: String,
+    simpleNames: List<String>
+) : ClassOrEnumName(packageName, simpleNames) {
+
+    /**
+     * Creates a new enum name from the given package name and a simple name.
+     *
+     * If an enum is nested inside another class, the [simpleName] parameter must
+     * contain all the names from the outermost class to the innermost one, and
+     * finished with the enum type name.
+     */
+    public constructor(packageName: String, vararg simpleName: String) :
+            this(packageName, simpleName.toList())
+
+    /**
+     * Obtains the name of the given Java enum via its class.
+     */
+    public constructor(enum: Class<out Enum<*>>) :
+            this(enum.`package`?.name ?: "", enum.nestedNames())
+
+    /**
+     * Obtains the name of the given Kotlin enum via its class.
+     */
+    public constructor(enum: KClass<out Enum<*>>) : this(enum.java)
+}

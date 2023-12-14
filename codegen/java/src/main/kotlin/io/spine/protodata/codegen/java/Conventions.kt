@@ -26,6 +26,7 @@
 
 package io.spine.protodata.codegen.java
 
+import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoDeclarationName
 import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ServiceName
@@ -38,11 +39,14 @@ import io.spine.tools.code.Java
 /**
  * An abstract base for Java [Convention]s.
  *
+ * @param P the type of the Protobuf declaration name.
+ * @param J the type of the Java declaration name.
+ *
  * @property typeSystem the type system which is used to resolve types.
  */
-public abstract class BaseJavaConvention<N: ProtoDeclarationName>(
+public abstract class BaseJavaConvention<P: ProtoDeclarationName, J: ClassOrEnumName>(
     protected val typeSystem: TypeSystem
-) : Convention<Java, N, ClassName> {
+) : Convention<Java, P, J> {
 
     final override val language: Java = Java
 }
@@ -52,12 +56,18 @@ public abstract class BaseJavaConvention<N: ProtoDeclarationName>(
  *
  * @throws IllegalStateException if the type name is unknown.
  */
-public class MessageOrEnumConvention(ts: TypeSystem) : BaseJavaConvention<TypeName>(ts) {
+public class MessageOrEnumConvention(ts: TypeSystem) :
+    BaseJavaConvention<TypeName, ClassOrEnumName>(ts) {
 
-    override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
-        val header = typeSystem.findMessageOrEnum(name)?.second
+    override fun declarationFor(name: TypeName): Declaration<Java, ClassOrEnumName> {
+        val found = typeSystem.findMessageOrEnum(name)
+        val header = found?.second
         check(header != null) { "Unknown type `${name.typeUrl}`." }
-        val cls = name.javaClassName(accordingTo = header)
+        val cls = if (found.first is MessageType) {
+            name.javaClassName(accordingTo = header)
+        } else {
+            name.javaEnumName(accordingTo = header)
+        }
         return Declaration(cls, cls.javaFile)
     }
 }
@@ -69,11 +79,12 @@ public class MessageOrEnumConvention(ts: TypeSystem) : BaseJavaConvention<TypeNa
  *
  * @throws IllegalStateException if the type name is unknown.
  */
-public class MessageOrBuilderConvention(ts: TypeSystem) : BaseJavaConvention<TypeName>(ts) {
+public class MessageOrBuilderConvention(ts: TypeSystem) :
+    BaseJavaConvention<TypeName, ClassName>(ts) {
 
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
         val decl = MessageOrEnumConvention(typeSystem).declarationFor(name)
-        val messageOrBuilder = decl.name.withSuffix("OrBuilder")
+        val messageOrBuilder = (decl.name as ClassName).withSuffix("OrBuilder")
         return Declaration(messageOrBuilder, messageOrBuilder.javaFile)
     }
 }
@@ -84,7 +95,7 @@ public class MessageOrBuilderConvention(ts: TypeSystem) : BaseJavaConvention<Typ
  * @see <a href="https://protobuf.dev/reference/java/java-generated/#service">Protobuf Services</a>
  */
 public abstract class AbstractServiceConvention(ts: TypeSystem) :
-    BaseJavaConvention<ServiceName>(ts) {
+    BaseJavaConvention<ServiceName, ClassName>(ts) {
 
     override fun declarationFor(name: ServiceName): Declaration<Java, ClassName> {
         val pair = typeSystem.findService(name)
@@ -128,7 +139,9 @@ public class GrpcServiceConvention(ts: TypeSystem) : AbstractServiceConvention(t
 public class GenericServiceConvention(ts: TypeSystem): AbstractServiceConvention(ts) {
 
     override fun javaClassName(name: ServiceName, accordingTo: ProtoFileHeader): ClassName =
-        composeJavaClassName(accordingTo) {
+        composeJavaTypeName(accordingTo, {
             add(name.simpleName)
-        }
+        }, { packageName, list ->
+            ClassName(packageName, list)
+        }) as ClassName
 }

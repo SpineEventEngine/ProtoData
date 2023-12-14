@@ -57,7 +57,7 @@ public class JavaValueConverter(
     override fun toMessage(value: Value): Expression {
         val messageValue = value.messageValue
         val type = messageValue.type
-        val className = convention.declarationFor(type).name
+        val className = convention.declarationFor(type).name as ClassName
         return if (messageValue.fieldsMap.isEmpty()) {
             className.getDefaultInstance()
         } else {
@@ -72,7 +72,7 @@ public class JavaValueConverter(
     override fun toEnum(value: Value): MethodCall {
         val enumValue = value.enumValue
         val type = enumValue.type
-        val enumClassName = convention.declarationFor(type).name
+        val enumClassName = convention.declarationFor(type).name as EnumName
         return enumClassName.enumValue(enumValue.constNumber)
     }
 
@@ -86,16 +86,16 @@ public class JavaValueConverter(
     override fun toMap(value: Value): MethodCall {
         val firstEntry = value.mapValue.valueList.firstOrNull()
         val firstKey = firstEntry?.key
-        val keyClass = firstKey?.type?.toClass()
+        val keyClass = firstKey?.type?.toClass() as ClassName?
         val firstValue = firstEntry?.value
-        val valueClass = firstValue?.type?.toClass()
+        val valueClass = firstValue?.type?.toClass() as ClassName?
         val valuesMap = value.mapValue.valueList.associate {
             valueToCode(it.key) to valueToCode(it.value)
         }
         return mapExpression(valuesMap, keyClass, valueClass)
     }
 
-    private fun Type.toClass(): ClassName = when (kindCase) {
+    private fun Type.toClass(): ClassOrEnumName = when (kindCase) {
         MESSAGE -> convention.declarationFor(message).name
         ENUMERATION -> convention.declarationFor(enumeration).name
         PRIMITIVE -> primitive.toJavaClass()

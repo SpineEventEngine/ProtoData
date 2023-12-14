@@ -40,7 +40,7 @@ import io.spine.tools.code.Java
  */
 public class RejectionThrowableConvention(
     typeSystem: TypeSystem
-) : BaseJavaConvention<TypeName>(typeSystem) {
+) : BaseJavaConvention<TypeName, ClassName>(typeSystem) {
 
     @Suppress("ReturnCount")
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName>? {

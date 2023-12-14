@@ -41,8 +41,11 @@ import java.lang.annotation.Target
  */
 @Suppress("TooManyFunctions") // Overriding some methods to make them final.
 public abstract class TypeAnnotation<T : Annotation>(
-    protected val annotationClass: Class<T>
+    protected val annotationClass: Class<T>,
+    //protected val subject: ClassOrEnumName? = null
 ) : JavaRenderer() {
+
+    //private val specific: Boolean = subject != null
 
     init {
         @Suppress("LeakingThis")
@@ -55,6 +58,9 @@ public abstract class TypeAnnotation<T : Annotation>(
         sources.filter { shouldAnnotate(it) }
             .forEach { file ->
                 val annotationCode = annotationCode(file)
+                //TODO:2023-12-13:alexander.yevsyukov: Check if this is top-level type.
+                // If yes, use `BeforePrimaryTypeDeclaration` insertion point.
+                // Otherwise, use an insertion point for a nested type.
                 val line = file.at(BeforePrimaryDeclaration)
                 line.add(annotationCode)
             }
@@ -66,7 +72,7 @@ public abstract class TypeAnnotation<T : Annotation>(
     /**
      * Specifies whether to annotate a given file using the caller's implementation.
      *
-     * By default, checks whether the target file already includes the annotation.
+     * By default, the method checks whether the target file already includes the annotation.
      *
      * If a [Repeatable] annotation is attached to the annotation class,
      * it always applies the annotation and returns `true`.
@@ -79,6 +85,10 @@ public abstract class TypeAnnotation<T : Annotation>(
      */
     @Suppress("ReturnCount") // Cannot go lower here.
     protected open fun shouldAnnotate(file: SourceFile): Boolean {
+        //TODO:2023-12-13:alexander.yevsyukov: Check if this is top-level type.
+        // If yes, use `BeforePrimaryTypeDeclaration` insertion point.
+        // Otherwise, use an insertion point for a nested type.
+
         val coordinates = BeforePrimaryDeclaration.locateOccurrence(file.text())
         if (coordinates == nowhere) {
             return false

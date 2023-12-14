@@ -121,7 +121,7 @@ public class Literal(value: Any) : Expression(value.toString())
  *         the method type parameters.
  */
 @JvmOverloads
-public fun ClassName.call(
+public fun ClassOrEnumName.call(
     name: String,
     arguments: List<Expression> = listOf(),
     generics: List<ClassName> = listOf()
@@ -152,7 +152,7 @@ public fun ClassName.getDefaultInstance(): MethodCall =
  * Example: `ClassName("com.acme.Bird").enumValue(1)` yields
  * "`com.acme.Bird.forNumber(1)`".
  */
-public fun ClassName.enumValue(number: Int): MethodCall =
+public fun EnumName.enumValue(number: Int): MethodCall =
     call("forNumber", listOf(Literal(number)))
 
 /**

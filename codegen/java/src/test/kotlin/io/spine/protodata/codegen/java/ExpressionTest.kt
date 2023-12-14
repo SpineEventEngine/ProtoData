@@ -191,8 +191,8 @@ class `'ClassName' should` {
     @Test
     fun `obtain enum constants by number`() {
         val cls = Incarnation::class
-        val className = ClassName(cls)
-        assertCode(className.enumValue(2), "${cls.qualifiedName}.forNumber(2)")
+        val enumName = EnumName(cls)
+        assertCode(enumName.enumValue(2), "${cls.qualifiedName}.forNumber(2)")
     }
 
     @Test

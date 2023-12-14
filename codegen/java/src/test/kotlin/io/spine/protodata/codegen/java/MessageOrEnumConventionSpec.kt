@@ -45,7 +45,7 @@ internal class MessageOrEnumConventionSpec {
         declaration shouldNotBe null
         val (cls, path) = declaration
         val expectedClassName = "dev.acme.example.Foo"
-        cls.binary shouldBe expectedClassName
+        (cls as ClassName).binary shouldBe expectedClassName
         path shouldBe expectedClassName.toSourcePath()
     }
 
@@ -56,7 +56,7 @@ internal class MessageOrEnumConventionSpec {
         declaration shouldNotBe null
         val (cls, path) = declaration
         val expectedClassName = "dev.acme.example.Kind"
-        cls.binary shouldBe expectedClassName
+        cls.canonical shouldBe expectedClassName
         path shouldBe expectedClassName.toSourcePath()
     }
 }
