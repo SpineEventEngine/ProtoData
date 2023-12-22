@@ -26,6 +26,7 @@
 
 package io.spine.protodata.codegen.java.file
 
+import io.spine.protodata.codegen.java.ClassOrEnumName
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.string.ti
@@ -33,46 +34,31 @@ import io.spine.text.Text
 import io.spine.text.TextCoordinates
 
 /**
- * An insertion point located just before the primary declaration of a Java file.
- *
- * The primary declaration is the top-level class, interface, annotation, or an enum type,
- * which matches by name with the class.
- *
- * While technically Java allows other top-level declarations is the same file, those are rarely
- * used. `BeforePrimaryDeclaration` does not account for such declarations when searching for
- * a line number.
- *
- * This insertion point is not bound to the contents of the file in `label`,
- * thus allowing this type to be an object.
+ * An insertion point before a nested type declaration.
  */
-internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint {
+public class BeforeNestedTypeDeclaration(
+    private val name: ClassOrEnumName
+) : NonRepeatingInsertionPoint {
 
-    /**
-     * A pattern matching a top-level Java declaration.
-     *
-     * This pattern matches a type declaration, such as a class, an interface,
-     * an annotation, or an enum.
-     *
-     * The pattern expects the matched string to have at least one
-     * empty space character after the keyword declaring the type.
-     * However, regular expression pattern matching cannot guarantee
-     * that there will be no false positives, i.e., no structure, such
-     * as a comment, is going to yield an unwanted match.
-     */
-    private val pattern = Regex("((class)|(@?interface)|(enum))\\s+")
+    init {
+        require(name.isNested) {
+            "The type `${name.canonical}` is not nested."
+        }
+    }
 
-    override val label: String
-        get() = this.javaClass.simpleName
+    override val label: String = ""
+
+    private val pattern = Regex("""class\s+([A-Za-z_$][A-Za-z\d_$]*\s+)?$name\s*\{""")
 
     override fun locateOccurrence(text: Text): TextCoordinates {
         text.locateOutsideComments(pattern)?.let {
             return it
         }
         logger.atWarning().log { """
-            Could not find a primary declaration in the code:
+            Cannot find a declaration of the nested type `$name` in the code:
             ```java
-            ${text.printLines()}
-            ```    
+            ${text.printLines()}            
+            ```
             """.ti()
         }
         return nowhere

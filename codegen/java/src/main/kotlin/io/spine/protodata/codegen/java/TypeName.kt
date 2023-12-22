@@ -46,6 +46,15 @@ public abstract class TypeName internal constructor(
     }
 
     /**
+     * The simple name of this type.
+     *
+     * If the type is nested inside a class, the outer class name is NOT included.
+     */
+    @get:JvmName("simpleName")
+    public val simpleName: String
+        get() = simpleNames.last()
+    
+    /**
      * A prefix to be used to refer this type as a fully qualified name.
      *
      * If [packageName] is empty, the prefix is also empty.
@@ -53,6 +62,14 @@ public abstract class TypeName internal constructor(
      */
     protected val packagePrefix: String
         get() = if (packageName.isEmpty()) "" else "$packageName."
+
+    public companion object {
+
+        /**
+         * A regular expression for a simple Java type name.
+         */
+        public val simpleNameRegex: Regex = Regex("^[a-zA-Z_$][a-zA-Z\\d_$]*$")
+    }
 }
 
 /**
@@ -86,13 +103,9 @@ public abstract class ClassOrEnumName internal constructor(
     }
 
     /**
-     * The simple name of this type.
-     *
-     * If the type is nested inside a class, the outer class name is NOT included.
+     * Tells if this type is nested inside another type.
      */
-    @get:JvmName("simpleName")
-    public val simpleName: String
-        get() = simpleNames.last()
+    public val isNested: Boolean = simpleNames.size > 1
 
     /**
      * Obtains the [canonical] name of the type.

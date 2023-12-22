@@ -25,6 +25,7 @@
  */
 package io.spine.protodata.codegen.java.annotation
 
+import io.spine.protodata.codegen.java.ClassOrEnumName
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
@@ -42,10 +43,10 @@ import java.lang.annotation.Target
 @Suppress("TooManyFunctions") // Overriding some methods to make them final.
 public abstract class TypeAnnotation<T : Annotation>(
     protected val annotationClass: Class<T>,
-    //protected val subject: ClassOrEnumName? = null
+    protected val subject: ClassOrEnumName? = null
 ) : JavaRenderer() {
 
-    //private val specific: Boolean = subject != null
+    private val specific: Boolean = subject != null
 
     init {
         @Suppress("LeakingThis")
@@ -55,15 +56,42 @@ public abstract class TypeAnnotation<T : Annotation>(
     }
 
     final override fun render(sources: SourceFileSet) {
-        sources.filter { shouldAnnotate(it) }
-            .forEach { file ->
-                val annotationCode = annotationCode(file)
-                //TODO:2023-12-13:alexander.yevsyukov: Check if this is top-level type.
-                // If yes, use `BeforePrimaryTypeDeclaration` insertion point.
-                // Otherwise, use an insertion point for a nested type.
-                val line = file.at(BeforePrimaryDeclaration)
-                line.add(annotationCode)
+        if (!specific) {
+            annotateMany(sources)
+        } else {
+            val file = sources.find(subject!!.javaFile)
+            file?.let {
+                annotate(it)
             }
+        }
+    }
+
+    private fun annotateMany(sources: SourceFileSet) {
+        sources.filter {
+            shouldAnnotate(it)
+        }.forEach {
+            annotate(it)
+        }
+    }
+
+    private fun annotate(file: SourceFile) {
+//        val insertionPoint = if (subject == null) {
+//            BeforePrimaryDeclaration
+//        } else {
+//            if (subject.isNested) {
+//                BeforeNestedTypeDeclaration(subject.simpleName)
+//            } else {
+//                BeforePrimaryDeclaration
+//            }
+//        }
+
+
+        val annotationCode = annotationCode(file)
+        //TODO:2023-12-13:alexander.yevsyukov: Check if this is top-level type.
+        // If yes, use `BeforePrimaryTypeDeclaration` insertion point.
+        // Otherwise, use an insertion point for a nested type.
+        val line = file.at(BeforePrimaryDeclaration)
+        line.add(annotationCode)
     }
 
     private fun annotationCode(file: SourceFile): String =
