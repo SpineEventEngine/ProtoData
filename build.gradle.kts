@@ -73,6 +73,10 @@ allprojects {
     version = extra["protoDataVersion"]!!
 
     repositories.standardToSpineSdk()
+    repositories {
+        intellijReleases
+        jetBrainsCacheRedirector
+    }
 
     configurations.all {
         resolutionStrategy {
