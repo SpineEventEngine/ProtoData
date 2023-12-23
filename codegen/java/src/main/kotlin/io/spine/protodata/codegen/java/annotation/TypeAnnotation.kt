@@ -37,12 +37,21 @@ import java.lang.annotation.Target
 /**
  * A [JavaRenderer] which annotates a Java type using the given [annotation][annotationClass].
  *
- * The implementation assumes that [PrintBeforePrimaryDeclaration][io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration]
- * renderer is inserted before a reference to a renderer derived from this class.
+ * @param T the type of the annotation.
  */
-@Suppress("TooManyFunctions") // Overriding some methods to make them final.
 public abstract class TypeAnnotation<T : Annotation>(
+
+    /**
+     * The class of the annotation to apply.
+     */
     protected val annotationClass: Class<T>,
+
+    /**
+     * The subject of the annotation.
+     *
+     * If `null`, the annotation is applied to all the classes passed to this annotation.
+     * If not `null`, the annotation is applied only to the types specified by this field.
+     */
     protected val subject: ClassOrEnumName? = null
 ) : JavaRenderer() {
 
@@ -84,7 +93,6 @@ public abstract class TypeAnnotation<T : Annotation>(
 //                BeforePrimaryDeclaration
 //            }
 //        }
-
 
         val annotationCode = annotationCode(file)
         //TODO:2023-12-13:alexander.yevsyukov: Check if this is top-level type.
