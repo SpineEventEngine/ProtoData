@@ -32,6 +32,8 @@ import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.string.ti
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
+import io.spine.tools.psi.java.lineNumber
+import io.spine.tools.psi.java.locate
 
 /**
  * An insertion point before a nested type declaration.
@@ -48,11 +50,12 @@ public class BeforeNestedTypeDeclaration(
 
     override val label: String = ""
 
-    private val pattern = Regex("""class\s+([A-Za-z_$][A-Za-z\d_$]*\s+)?$name\s*\{""")
-
     override fun locateOccurrence(text: Text): TextCoordinates {
-        text.locateOutsideComments(pattern)?.let {
-            return it
+        val psiFile = PsiJavaParser.instance.parse(text.value)
+        val psiClass = psiFile.locate(name.simpleNames)
+        psiClass?.let {
+            val lineNumber = it.lineNumber
+            return atLine(lineNumber)
         }
         logger.atWarning().log { """
             Cannot find a declaration of the nested type `$name` in the code:
