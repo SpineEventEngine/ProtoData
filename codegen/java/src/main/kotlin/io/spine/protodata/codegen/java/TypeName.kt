@@ -35,8 +35,8 @@ import kotlin.io.path.Path
  * A fully qualified name of a Java type.
  */
 public abstract class TypeName internal constructor(
-    protected val packageName: String,
-    protected val simpleNames: List<String>
+    public val packageName: String,
+    public val simpleNames: List<String>
 ) : NameElement<Java>, JavaElement {
 
     init {
