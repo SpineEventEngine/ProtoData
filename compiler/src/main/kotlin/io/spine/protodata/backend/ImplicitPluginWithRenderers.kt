@@ -31,7 +31,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 
 /**
- * An adapter plugin for gathering renderers that do not belong to a semantically-defined plugin.
+ * An adapter plugin for gathering renderers that do not belong to a semantically defined plugin.
  *
  * This plugin is used for testing ProtoData and for compatibility reasons.
  */
