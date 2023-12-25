@@ -93,5 +93,5 @@ private val text = text {
             TRÊS
         }                
     }
-    """.ti()
+    """.ti() // We deliberately use OS-specific line endings here to simulate loading from disk.
 }
