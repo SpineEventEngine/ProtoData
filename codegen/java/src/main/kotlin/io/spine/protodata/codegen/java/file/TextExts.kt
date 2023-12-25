@@ -24,21 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata.codegen.java.file
 
-import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.Renderer
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiJavaFile
+import io.spine.string.Separator
+import io.spine.text.Text
+import io.spine.tools.psi.convertLineSeparators
 
 /**
- * An adapter plugin for gathering renderers that do not belong to a semantically defined plugin.
- *
- * This plugin is used for testing ProtoData and for compatibility reasons.
+ * Prints the lines of the text into a single string using the system line separator.
  */
-@VisibleForTesting
-internal class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
+internal fun Text.printLines(): String =
+        lines().joinToString(separator = Separator.system.value)
 
-    override fun renderers(): List<Renderer<*>> = renderers
-}
+/**
+ * Obtains the instance of [PsiFile] for this text.
+ */
+public fun Text.psiFile(): PsiJavaFile =
+    PsiJavaParser.instance.parse(value.convertLineSeparators())

@@ -24,21 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+@file:Suppress("ConstPropertyName")
 
-import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.Renderer
+package io.spine.internal.dependency
 
 /**
- * An adapter plugin for gathering renderers that do not belong to a semantically defined plugin.
+ * The components of the IntelliJ Platform.
  *
- * This plugin is used for testing ProtoData and for compatibility reasons.
+ * Make sure to add the `intellijReleases` and `jetBrainsCacheRedirector`
+ * repositories to your project. See `kotlin/Repositories.kt` for details.
  */
-@VisibleForTesting
-internal class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
+object IntelliJ {
 
-    override fun renderers(): List<Renderer<*>> = renderers
+    /**
+     * The version of the IntelliJ platform.
+     *
+     * This is the version used by Kotlin compiler `1.9.21`.
+     * Advance this version with caution because it may break the setup of
+     * IntelliJ platform standalone execution.
+     */
+    const val version = "213.7172.53"
+
+    object Platform {
+        private const val group = "com.jetbrains.intellij.platform"
+        const val core = "$group:core:$version"
+        const val util = "$group:util:$version"
+    }
+
+    object JavaPsi {
+        private const val group = "com.jetbrains.intellij.java"
+        const val api = "$group:java-psi:$version"
+        const val impl = "$group:java-psi-impl:$version"
+    }
 }

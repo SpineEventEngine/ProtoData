@@ -25,7 +25,9 @@
  */
 package io.spine.protodata.codegen.java.annotation
 
+import io.spine.protodata.codegen.java.ClassOrEnumName
 import io.spine.protodata.codegen.java.JavaRenderer
+import io.spine.protodata.codegen.java.file.BeforeNestedTypeDeclaration
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.SourceFile
@@ -36,29 +38,74 @@ import java.lang.annotation.Target
 /**
  * A [JavaRenderer] which annotates a Java type using the given [annotation][annotationClass].
  *
- * The implementation assumes that [PrintBeforePrimaryDeclaration][io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration]
- * renderer is inserted before a reference to a renderer derived from this class.
+ * @param T the type of the annotation.
  */
-@Suppress("TooManyFunctions") // Overriding some methods to make them final.
 public abstract class TypeAnnotation<T : Annotation>(
-    protected val annotationClass: Class<T>
+
+    /**
+     * The class of the annotation to apply.
+     */
+    protected val annotationClass: Class<T>,
+
+    /**
+     * The subject of the annotation.
+     *
+     * If `null`, the annotation is applied to all the classes passed to this annotation.
+     * If not `null`, the annotation is applied only to the types specified by this field.
+     */
+    protected val subject: ClassOrEnumName? = null
 ) : JavaRenderer() {
+
+    private val specific: Boolean = subject != null
 
     init {
         @Suppress("LeakingThis")
-            // In a controlled environment, we're disabling this check for one child class.
-            // Should be fine while the method is `internal` and not `protected` or `public`.
+        /* We call an overridable method from the constructor here.
+           We need this method to be overridable because we're disabling this check
+           for one child class (`SuppressWarningsAnnotation`).
+           Please see the documentation of [SuppressWarningsAnnotation.checkAnnotationClass]
+           for more details. Since the method is `internal`, and not `protected` or `public`,
+           we should be fine.
+        */
         checkAnnotationClass()
     }
 
     final override fun render(sources: SourceFileSet) {
-        sources.filter { shouldAnnotate(it) }
-            .forEach { file ->
-                val annotationCode = annotationCode(file)
-                val line = file.at(BeforePrimaryDeclaration)
-                line.add(annotationCode)
+        if (!specific) {
+            annotateMany(sources)
+        } else {
+            val file = sources.find(subject!!.javaFile)
+            check(file != null) {
+                "Cannot find a file for the type `${subject.canonical}`."
             }
+            annotate(file)
+        }
     }
+
+    private fun annotateMany(sources: SourceFileSet) {
+        sources.filter {
+            shouldAnnotate(it)
+        }.forEach {
+            annotate(it)
+        }
+    }
+
+    private fun annotate(file: SourceFile) {
+        val line = file.at(insertionPoint())
+        val annotationCode = annotationCode(file)
+        line.add(annotationCode)
+    }
+
+    private fun insertionPoint() =
+        if (subject == null) {
+            BeforePrimaryDeclaration
+        } else {
+            if (subject.isNested) {
+                BeforeNestedTypeDeclaration(subject)
+            } else {
+                BeforePrimaryDeclaration
+            }
+        }
 
     private fun annotationCode(file: SourceFile): String =
         "@${annotationClassReference()}${annotationArguments(file)}"
@@ -66,7 +113,7 @@ public abstract class TypeAnnotation<T : Annotation>(
     /**
      * Specifies whether to annotate a given file using the caller's implementation.
      *
-     * By default, checks whether the target file already includes the annotation.
+     * By default, the method checks whether the target file already includes the annotation.
      *
      * If a [Repeatable] annotation is attached to the annotation class,
      * it always applies the annotation and returns `true`.
@@ -79,7 +126,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      */
     @Suppress("ReturnCount") // Cannot go lower here.
     protected open fun shouldAnnotate(file: SourceFile): Boolean {
-        val coordinates = BeforePrimaryDeclaration.locateOccurrence(file.text())
+        val coordinates = insertionPoint().locateOccurrence(file.text())
         if (coordinates == nowhere) {
             return false
         }

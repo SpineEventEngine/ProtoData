@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public enum class TypedInsertionPoint {
     BUILDER_SCOPE,
 
     /**
-     * The place where class-level definition go in an enum class.
+     * The place where class-level definition goes in an enum class.
      *
      * Only available for enum types.
      */

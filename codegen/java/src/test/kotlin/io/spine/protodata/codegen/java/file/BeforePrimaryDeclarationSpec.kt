@@ -24,39 +24,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.codegen.java
+package io.spine.protodata.codegen.java.file
 
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.test.TypesTestEnv.enumTypeName
-import io.spine.protodata.test.TypesTestEnv.messageTypeName
-import io.spine.protodata.test.TypesTestEnv.typeSystem
+import io.spine.string.ti
+import io.spine.text.text
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import toSourcePath
 
-@DisplayName("`MessageOrEnumConvention` should")
-internal class MessageOrEnumConventionSpec {
+@DisplayName("`BeforePrimaryDeclaration` should locate a top level Java type:")
+class BeforePrimaryDeclarationSpec {
 
     @Test
-    fun `convert a message type name into a Java class name`() {
-        val convention = MessageOrEnumConvention(typeSystem)
-        val declaration = convention.declarationFor(messageTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        val expectedClassName = "dev.acme.example.Foo"
-        (cls as ClassName).binary shouldBe expectedClassName
-        path shouldBe expectedClassName.toSourcePath()
+    fun `a class`() {
+        val location = BeforePrimaryDeclaration.locateOccurrence(classSource)
+        location.wholeLine shouldBe 6
     }
 
     @Test
-    fun `convert an enum type name into a Java class name`() {
-        val convention = MessageOrEnumConvention(typeSystem)
-        val declaration = convention.declarationFor(enumTypeName)
-        declaration shouldNotBe null
-        val (cls, path) = declaration
-        val expectedClassName = "dev.acme.example.Kind"
-        cls.canonical shouldBe expectedClassName
-        path shouldBe expectedClassName.toSourcePath()
+    fun `an interface`() {
+        val location = BeforePrimaryDeclaration.locateOccurrence(interfaceSource)
+        location.wholeLine shouldBe 1
     }
+
+    @Test
+    fun `an enum`() {
+        val location = BeforePrimaryDeclaration.locateOccurrence(enumSource)
+        location.wholeLine shouldBe 2
+    }
+}
+
+private const val PACKAGE_NAME = "given.java.file"
+
+private val classSource = text {
+    value = """
+    /* File header comment. */    
+    package $PACKAGE_NAME;
+
+    /** 
+     * Top level class Javadoc. 
+     */
+    public class TopLevel {
+
+        /** Nested class Javadoc. */
+        private static class Nested {
+        }
+    }
+    """.ti()
+}
+
+private val interfaceSource = text {
+    value = """
+    /** Top level interface Javadoc. */
+    public interface TopLevel {
+    }
+    """.ti()
+}
+
+private val enumSource = text {
+    value = """
+    // File header comment.    
+    package $PACKAGE_NAME;
+    public enum TopLevel { ONE, TWO }
+    """.ti()
 }

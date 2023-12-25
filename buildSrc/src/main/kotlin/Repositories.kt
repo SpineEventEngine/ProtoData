@@ -24,21 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.kotlin.dsl.maven
 
-import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.Renderer
+val RepositoryHandler.intellijReleases: MavenArtifactRepository
+    get() = maven("https://www.jetbrains.com/intellij-repository/releases")
 
-/**
- * An adapter plugin for gathering renderers that do not belong to a semantically defined plugin.
- *
- * This plugin is used for testing ProtoData and for compatibility reasons.
- */
-@VisibleForTesting
-internal class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
-
-    override fun renderers(): List<Renderer<*>> = renderers
-}
+val RepositoryHandler.jetBrainsCacheRedirector: MavenArtifactRepository
+    get() = maven("https://cache-redirector.jetbrains.com/intellij-dependencies")

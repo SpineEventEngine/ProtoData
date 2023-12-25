@@ -24,21 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata.codegen.java
 
-import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.Renderer
+import kotlin.reflect.KClass
 
 /**
- * An adapter plugin for gathering renderers that do not belong to a semantically defined plugin.
- *
- * This plugin is used for testing ProtoData and for compatibility reasons.
+ * A fully qualified name of a Java enum type.
  */
-@VisibleForTesting
-internal class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
+public class EnumName internal constructor(
+    packageName: String,
+    simpleNames: List<String>
+) : ClassOrEnumName(packageName, simpleNames) {
 
-    override fun renderers(): List<Renderer<*>> = renderers
+    /**
+     * Creates a new enum name from the given package name and a simple name.
+     *
+     * If an enum is nested inside another class, the [simpleName] parameter must
+     * contain all the names from the outermost class to the innermost one, and
+     * finished with the enum type name.
+     */
+    public constructor(packageName: String, vararg simpleName: String) :
+            this(packageName, simpleName.toList())
+
+    /**
+     * Obtains the name of the given Java enum via its class.
+     */
+    public constructor(enum: Class<out Enum<*>>) :
+            this(enum.`package`?.name ?: "", enum.nestedNames())
+
+    /**
+     * Obtains the name of the given Kotlin enum via its class.
+     */
+    public constructor(enum: KClass<out Enum<*>>) : this(enum.java)
 }

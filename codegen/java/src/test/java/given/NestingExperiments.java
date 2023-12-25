@@ -24,21 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
-
-import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.Renderer
+package given;
 
 /**
- * An adapter plugin for gathering renderers that do not belong to a semantically defined plugin.
- *
- * This plugin is used for testing ProtoData and for compatibility reasons.
+ * This file shows various nesting levels of classes, interfaces, and enums.
  */
-@VisibleForTesting
-internal class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
+@SuppressWarnings({
+        "unused", "EmptyClass", "InterfaceNeverImplemented", "InnerClassTooDeeplyNested"
+})
+public class NestingExperiments {
 
-    override fun renderers(): List<Renderer<*>> = renderers
+    public interface NestedInterface {
+
+        public static class NestedClass {
+
+        }
+    }
+
+    public enum NestedEnum {
+
+        ENUM_VALUE {
+
+            // Non-static.
+            class WeCanDoIt {
+
+            }
+        },
+    }
 }

@@ -33,10 +33,12 @@ import io.spine.protodata.renderer.SourceFile
  * Suppresses warnings in the generated code.
  *
  * If no configuration is provided to ProtoData, suppresses all the warnings with `"ALL"`.
- * Otherwise, parses the config as a [SuppressionSettings] and suppresses only the specified warnings.
+ * Otherwise, parses the config as a [SuppressionSettings] and suppresses only
+ * the specified warnings.
  *
- * Warnings in the generated code do no good for the user, as they cannot be fixed without changing
- * the code generation logic. We recommend suppressing them.
+ * Warnings in the generated code do no good for the user, as they cannot be
+ * fixed without changing the code generation logic.
+ * That's why we recommend suppressing them.
  *
  * @see io.spine.protodata.codegen.java.annotation.TypeAnnotation
  */
@@ -50,18 +52,19 @@ public class SuppressWarningsAnnotation :
     override fun renderAnnotationArguments(file: SourceFile): String = "{${warningList()}}"
 
     /**
-     * Obtains the code for suppressing configured warnings.
+     * Obtains the code for suppressing warnings.
      *
      * If [SuppressionSettings] are not available, or the list of warnings is empty,
      * the method assumes [ALL_WARNINGS] are to be suppressed.
      *
-     * If settings are given, takes the list of warnings from the instance, removing single-
-     * or double quotes that could be in the values
+     * If settings are given, the method takes the list of warnings from the instance,
+     * removing single- or double quotes that could be in the values
      *
-     * **NOTE:** [ALL_WARNINGS] are assumed to avoid the case of working with a default instance
-     * of [SuppressionSettings] (e.g. when it was loaded from a file). Obviously, the user did
-     * not intend to suppress an empty list of warnings, if [SuppressionSettings] instance was added
-     * to ProtoData settings but no specific warnings were specified.
+     * **NOTE**: [ALL_WARNINGS] are assumed to avoid the case of working with
+     * a default instance of [SuppressionSettings] (e.g., when it was loaded from a file).
+     * We assume that the user did not intend to suppress an empty list of warnings,
+     * if [SuppressionSettings] instance was added to ProtoData settings
+     * but no specific warnings were specified.
      */
     private fun warningList(): String {
         val warnings = if (!configIsPresent()) {
@@ -77,15 +80,17 @@ public class SuppressWarningsAnnotation :
                 withQuotesStripped
             }
         }
-        val warningsList = warnings.joinToString { '"' + it + '"' }
-        return warningsList
+        val warningList = warnings.joinToString { '"' + it + '"' }
+        return warningList
     }
 
     /**
      * Overrides the check method and removes all the checks.
      *
-     * `SuppressWarnings` is a valid type annotation, so we don't have to check it. However,
-     * in JDK 19, this annotation type does not have a `@Target`. Because of this, the check fails.
+     * `SuppressWarnings` is a valid type annotation, so we don't have to check it.
+     * However, in JDK 19, this annotation type does not have a `@Target`.
+     * Because of this, the check in the parent class fails.
+     * We override the method with no-op to avoid the problem when running under JDK 19.
      *
      * See the [JDK bug](https://bugs.openjdk.org/browse/JDK-8280745) for more info.
      */

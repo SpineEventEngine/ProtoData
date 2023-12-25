@@ -28,9 +28,9 @@ import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Kotlin
+import io.spine.internal.dependency.ProtoData
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
-import io.spine.internal.dependency.ProtoData
 import io.spine.internal.dependency.Truth
 import io.spine.internal.dependency.Validation
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
@@ -63,6 +63,10 @@ subprojects {
     }
 
     repositories.standardToSpineSdk()
+    repositories {
+        intellijReleases
+        jetBrainsCacheRedirector
+    }
 
     val protoDataVersion: String by extra
     configurations {

@@ -38,6 +38,7 @@ plugins {
 dependencies {
     api(project(":compiler"))
     api(JavaPoet.lib)
+    api(Spine.psiJava)
 
     testImplementation(JavaX.annotations)
     testImplementation(Spine.testUtilTime)

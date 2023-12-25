@@ -26,45 +26,44 @@
 
 package io.spine.protodata.codegen.java.file
 
+import io.spine.protodata.codegen.java.ClassOrEnumName
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.string.ti
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.psi.java.lineNumber
+import io.spine.tools.psi.java.locate
 
 /**
- * An insertion point located just before the primary declaration of a Java file.
+ * An insertion point before a nested type declaration.
  *
- * The primary declaration is the top-level class, interface, annotation, or an enum type,
- * which matches by name with the class.
- *
- * While technically Java allows other top-level declarations is the same file, those are rarely
- * used. `BeforePrimaryDeclaration` does not account for such declarations when searching for
- * a line number.
- *
- * This insertion point is not bound to the contents of the file in `label`,
- * thus allowing this type to be an object.
- *
- * @see BeforeNestedTypeDeclaration
+ * @see BeforePrimaryDeclaration
  */
-internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint {
+public class BeforeNestedTypeDeclaration(
+    private val name: ClassOrEnumName
+) : NonRepeatingInsertionPoint {
 
-    override val label: String
-        get() = this.javaClass.simpleName
+    init {
+        require(name.isNested) {
+            "The type `${name.canonical}` is not nested."
+        }
+    }
+
+    override val label: String = ""
 
     override fun locateOccurrence(text: Text): TextCoordinates {
-        val file = text.psiFile()
-        if (file.classes.isNotEmpty()) {
-            val psiClass = file.classes.first()
-            val lineNumber = psiClass.lineNumber
+        val psiFile = text.psiFile()
+        val psiClass = psiFile.locate(name.simpleNames)
+        psiClass?.let {
+            val lineNumber = it.lineNumber
             return atLine(lineNumber)
         }
         logger.atWarning().log { """
-            Could not find a primary declaration in the code:
+            Cannot find a declaration of the nested type `$name` in the code:
             ```java
-            ${text.printLines()}
-            ```    
+            ${text.printLines()}            
+            ```
             """.ti()
         }
         return nowhere

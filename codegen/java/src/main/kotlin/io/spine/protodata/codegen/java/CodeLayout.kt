@@ -77,41 +77,53 @@ public fun EnumType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
     name.javaClassName(accordingTo)
 
 /**
- * Obtains a Java class name for a Protobuf declaration.
+ * Obtains a Java type name for a Protobuf declaration.
  *
  * The function calculates the package name taking into account values of
  * `java_package_name` and `java_multiple_files` options that may present in the file.
  *
  * @param accordingTo
  *        the header of the Protobuf file where the declaration resides in.
- * @param block
- *        the block of code which adds the name elements to the class name.
- *
+ * @param setup
+ *        the block of code which adds the name elements to the target name.
+ * @param create
+ *        the block of code which produces the name from the target Java type.
  * @see ProtoFileHeader.javaPackage
  * @see ProtoFileHeader.javaMultipleFiles
  */
-internal fun composeJavaClassName(
+internal fun composeJavaTypeName(
     accordingTo: ProtoFileHeader,
-    block: MutableList<String>.() -> Unit
-): ClassName {
+    setup: MutableList<String>.() -> Unit,
+    create: (String, List<String>) -> ClassOrEnumName
+): ClassOrEnumName {
     val packageName = accordingTo.javaPackage()
     val javaMultipleFiles = accordingTo.javaMultipleFiles()
     val nameElements = mutableListOf<String>()
     if (!javaMultipleFiles) {
         nameElements.add(accordingTo.javaOuterClassName())
     }
-    block(nameElements)
-    return ClassName(packageName, nameElements)
+    setup(nameElements)
+    return create(packageName, nameElements)
 }
 
 /**
  * Obtains a fully qualified Java class, generated for the Protobuf type with this name.
  */
 internal fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
-    composeJavaClassName(accordingTo) {
+    composeJavaTypeName(accordingTo, {
         addAll(nestingTypeNameList)
         add(simpleName)
-    }
+    }, { packageName, list ->
+        ClassName(packageName, list)
+    }) as ClassName
+
+internal fun TypeName.javaEnumName(accordingTo: ProtoFileHeader): EnumName =
+    composeJavaTypeName(accordingTo, {
+        addAll(nestingTypeNameList)
+        add(simpleName)
+    }, { packageName, list ->
+        EnumName(packageName, list)
+    }) as EnumName
 
 /**
  * Obtains a name of a Java package for the code generated from this Protobuf file.

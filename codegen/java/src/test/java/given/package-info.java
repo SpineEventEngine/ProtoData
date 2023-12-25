@@ -24,21 +24,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
-
-import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.Renderer
-
-/**
- * An adapter plugin for gathering renderers that do not belong to a semantically defined plugin.
- *
- * This plugin is used for testing ProtoData and for compatibility reasons.
- */
-@VisibleForTesting
-internal class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
-
-    override fun renderers(): List<Renderer<*>> = renderers
-}
+package given;
