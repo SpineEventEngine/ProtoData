@@ -26,50 +26,37 @@
 
 package io.spine.protodata.codegen.java.file
 
-import io.kotest.matchers.ints.shouldBeGreaterThan
-import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.codegen.java.ClassName
-import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
+import io.kotest.matchers.shouldBe
 import io.spine.string.ti
 import io.spine.text.text
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
-@DisplayName("`BeforeNestedTypeDeclaration` should")
-class BeforeNestedTypeDeclarationSpec {
+@DisplayName("`BeforePrimaryDeclaration` should locate a top level Java type:")
+class BeforePrimaryDeclarationSpec {
 
     @Test
-    fun `reject non-nested types`() {
-        assertThrows<IllegalArgumentException> {
-            BeforeNestedTypeDeclaration(ClassName(PACKAGE_NAME, "TopLevel"))
-        }
+    fun `a class`() {
+        val location = BeforePrimaryDeclaration.locateOccurrence(classSource)
+        location.wholeLine shouldBe 6
     }
 
     @Test
-    fun `find nested types`() {
-        val nested = ClassName(PACKAGE_NAME, "TopLevel", "Nested")
-        val deeplyNested = ClassName(PACKAGE_NAME, "TopLevel", "Nested", "DeeplyNested")
-
-        val nestedLocation = BeforeNestedTypeDeclaration(nested).locateOccurrence(text)
-        val deeperLocation = BeforeNestedTypeDeclaration(deeplyNested).locateOccurrence(text)
-
-        nestedLocation shouldNotBe nowhere
-        deeperLocation shouldNotBe nowhere
-        deeperLocation.wholeLine shouldBeGreaterThan nestedLocation.wholeLine
+    fun `an interface`() {
+        val location = BeforePrimaryDeclaration.locateOccurrence(interfaceSource)
+        location.wholeLine shouldBe 1
     }
 
     @Test
-    fun `find nested enum`() {
-        val nestedEnum = ClassName(PACKAGE_NAME, "TopLevel", "NestedEnum")
-        val location = BeforeNestedTypeDeclaration(nestedEnum).locateOccurrence(text)
-        location shouldNotBe nowhere
+    fun `an enum`() {
+        val location = BeforePrimaryDeclaration.locateOccurrence(enumSource)
+        location.wholeLine shouldBe 2
     }
 }
 
-private const val PACKAGE_NAME = "given.java.source.file"
+private const val PACKAGE_NAME = "given.java.file"
 
-private val text = text {
+private val classSource = text {
     value = """
     /* File header comment. */    
     package $PACKAGE_NAME;
@@ -81,17 +68,23 @@ private val text = text {
 
         /** Nested class Javadoc. */
         private static class Nested {
-    
-            private static class DeeplyNested {
-            }
         }
-                
-        /** Nested enum Javadoc. */
-        public enum NestedEnum {
-            UM,
-            DOIS,
-            TRÊS
-        }                
     }
+    """.ti()
+}
+
+private val interfaceSource = text {
+    value = """
+    /** Top level interface Javadoc. */
+    public interface TopLevel {
+    }
+    """.ti()
+}
+
+private val enumSource = text {
+    value = """
+    // File header comment.    
+    package $PACKAGE_NAME;
+    public enum TopLevel { ONE, TWO }
     """.ti()
 }

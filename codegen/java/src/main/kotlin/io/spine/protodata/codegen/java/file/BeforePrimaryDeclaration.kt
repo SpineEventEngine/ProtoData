@@ -31,6 +31,7 @@ import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.string.ti
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
+import io.spine.tools.psi.java.lineNumber
 
 /**
  * An insertion point located just before the primary declaration of a Java file.
@@ -47,26 +48,15 @@ import io.spine.text.TextCoordinates
  */
 internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint {
 
-    /**
-     * A pattern matching a top-level Java declaration.
-     *
-     * This pattern matches a type declaration, such as a class, an interface,
-     * an annotation, or an enum.
-     *
-     * The pattern expects the matched string to have at least one
-     * empty space character after the keyword declaring the type.
-     * However, regular expression pattern matching cannot guarantee
-     * that there will be no false positives, i.e., no structure, such
-     * as a comment, is going to yield an unwanted match.
-     */
-    private val pattern = Regex("((class)|(@?interface)|(enum))\\s+")
-
     override val label: String
         get() = this.javaClass.simpleName
 
     override fun locateOccurrence(text: Text): TextCoordinates {
-        text.locateOutsideComments(pattern)?.let {
-            return it
+        val file = text.psiFile()
+        if (file.classes.isNotEmpty()) {
+            val psiClass = file.classes.first()
+            val lineNumber = psiClass.lineNumber
+            return atLine(lineNumber)
         }
         logger.atWarning().log { """
             Could not find a primary declaration in the code:

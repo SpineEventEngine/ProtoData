@@ -26,42 +26,19 @@
 
 package io.spine.protodata.codegen.java.file
 
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiJavaFile
 import io.spine.string.Separator
-import io.spine.string.trimWhitespace
 import io.spine.text.Text
-import io.spine.text.TextCoordinates
-import io.spine.text.textCoordinates
-
-/**
- * Locates the pattern point in the given text checking that it is
- * not inside a Java comment line or block.
- *
- * @return the coordinates of the pattern or `null` if the pattern was not found.
- */
-internal fun Text.locateOutsideComments(pattern: Regex): TextCoordinates? {
-    var isBlockComment = false
-    lines().forEachIndexed { index, line ->
-        val trimmed = line.trimWhitespace()
-        if (trimmed.startsWith("//")) {
-            return@forEachIndexed
-        }
-        if (trimmed.startsWith("/*")) {
-            isBlockComment = true
-        }
-        if (line.contains("*/")) {
-            isBlockComment = false
-        }
-        if (!isBlockComment && pattern.find(line) != null) {
-            return textCoordinates {
-                wholeLine = index
-            }
-        }
-    }
-    return null
-}
 
 /**
  * Prints the lines of the text into a single string using the system line separator.
  */
 internal fun Text.printLines(): String =
         lines().joinToString(separator = Separator.system.value)
+
+/**
+ * Obtains the instance of [PsiFile] for this text.
+ */
+public fun Text.psiFile(): PsiJavaFile =
+    PsiJavaParser.instance.parse(value)
