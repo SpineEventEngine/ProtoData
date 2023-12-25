@@ -26,11 +26,11 @@
 
 package io.spine.protodata.codegen.java.file
 
-import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import io.spine.string.Separator
 import io.spine.text.Text
+import io.spine.tools.psi.convertLineSeparators
 
 /**
  * Prints the lines of the text into a single string using the system line separator.
@@ -41,7 +41,5 @@ internal fun Text.printLines(): String =
 /**
  * Obtains the instance of [PsiFile] for this text.
  */
-public fun Text.psiFile(): PsiJavaFile {
-    val convertedSeparators = StringUtilRt.convertLineSeparators(value)
-    return PsiJavaParser.instance.parse(convertedSeparators)
-}
+public fun Text.psiFile(): PsiJavaFile =
+    PsiJavaParser.instance.parse(value.convertLineSeparators())
