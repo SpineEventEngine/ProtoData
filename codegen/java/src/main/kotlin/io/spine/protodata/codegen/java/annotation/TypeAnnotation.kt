@@ -60,8 +60,13 @@ public abstract class TypeAnnotation<T : Annotation>(
 
     init {
         @Suppress("LeakingThis")
-            // In a controlled environment, we're disabling this check for one child class.
-            // Should be fine while the method is `internal` and not `protected` or `public`.
+        /* We call an overridable method from the constructor here.
+           We need this method to be overridable because we're disabling this check
+           for one child class (`SuppressWarningsAnnotation`).
+           Please see the documentation of [SuppressWarningsAnnotation.checkAnnotationClass]
+           for more details. Since the method is `internal`, and not `protected` or `public`,
+           we should be fine.
+        */
         checkAnnotationClass()
     }
 
@@ -70,9 +75,10 @@ public abstract class TypeAnnotation<T : Annotation>(
             annotateMany(sources)
         } else {
             val file = sources.find(subject!!.javaFile)
-            file?.let {
-                annotate(it)
+            check(file != null) {
+                "Cannot find a file for the type `${subject.canonical}`."
             }
+            annotate(file)
         }
     }
 
