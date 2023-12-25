@@ -51,7 +51,7 @@ public class BeforeNestedTypeDeclaration(
     override val label: String = ""
 
     override fun locateOccurrence(text: Text): TextCoordinates {
-        val psiFile = PsiJavaParser.instance.parse(text.value)
+        val psiFile = text.psiFile()
         val psiClass = psiFile.locate(name.simpleNames)
         psiClass?.let {
             val lineNumber = it.lineNumber
