@@ -27,6 +27,7 @@ package io.spine.protodata.codegen.java.annotation
 
 import io.spine.protodata.codegen.java.ClassOrEnumName
 import io.spine.protodata.codegen.java.JavaRenderer
+import io.spine.protodata.codegen.java.file.BeforeNestedTypeDeclaration
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.SourceFile
@@ -84,23 +85,21 @@ public abstract class TypeAnnotation<T : Annotation>(
     }
 
     private fun annotate(file: SourceFile) {
-//        val insertionPoint = if (subject == null) {
-//            BeforePrimaryDeclaration
-//        } else {
-//            if (subject.isNested) {
-//                BeforeNestedTypeDeclaration(subject.simpleName)
-//            } else {
-//                BeforePrimaryDeclaration
-//            }
-//        }
-
+        val line = file.at(insertionPoint())
         val annotationCode = annotationCode(file)
-        //TODO:2023-12-13:alexander.yevsyukov: Check if this is top-level type.
-        // If yes, use `BeforePrimaryTypeDeclaration` insertion point.
-        // Otherwise, use an insertion point for a nested type.
-        val line = file.at(BeforePrimaryDeclaration)
         line.add(annotationCode)
     }
+
+    private fun insertionPoint() =
+        if (subject == null) {
+            BeforePrimaryDeclaration
+        } else {
+            if (subject.isNested) {
+                BeforeNestedTypeDeclaration(subject)
+            } else {
+                BeforePrimaryDeclaration
+            }
+        }
 
     private fun annotationCode(file: SourceFile): String =
         "@${annotationClassReference()}${annotationArguments(file)}"
@@ -121,11 +120,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      */
     @Suppress("ReturnCount") // Cannot go lower here.
     protected open fun shouldAnnotate(file: SourceFile): Boolean {
-        //TODO:2023-12-13:alexander.yevsyukov: Check if this is top-level type.
-        // If yes, use `BeforePrimaryTypeDeclaration` insertion point.
-        // Otherwise, use an insertion point for a nested type.
-
-        val coordinates = BeforePrimaryDeclaration.locateOccurrence(file.text())
+        val coordinates = insertionPoint().locateOccurrence(file.text())
         if (coordinates == nowhere) {
             return false
         }
