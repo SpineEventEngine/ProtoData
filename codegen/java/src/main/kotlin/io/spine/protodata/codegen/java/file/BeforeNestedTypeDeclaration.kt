@@ -37,6 +37,8 @@ import io.spine.tools.psi.java.locate
 
 /**
  * An insertion point before a nested type declaration.
+ *
+ * @see BeforePrimaryDeclaration
  */
 public class BeforeNestedTypeDeclaration(
     private val name: ClassOrEnumName

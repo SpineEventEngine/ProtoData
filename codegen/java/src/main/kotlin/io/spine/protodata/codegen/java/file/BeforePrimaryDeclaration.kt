@@ -45,6 +45,8 @@ import io.spine.tools.psi.java.lineNumber
  *
  * This insertion point is not bound to the contents of the file in `label`,
  * thus allowing this type to be an object.
+ *
+ * @see BeforeNestedTypeDeclaration
  */
 internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint {
 
