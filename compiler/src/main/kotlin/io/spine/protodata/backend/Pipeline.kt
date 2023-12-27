@@ -91,16 +91,15 @@ public class Pipeline(
      * Creates a new `Pipeline` with only one plugin and one source set.
      */
     @VisibleForTesting
-    internal constructor(
+    public constructor(
         plugin: Plugin,
-        renderers: List<Renderer<*>>,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
         config: Configuration? = null,
         id: String = generateId()
     ) : this(
         id,
-        listOf(plugin, ImplicitPluginWithRenderers(renderers)),
+        listOf(plugin),
         listOf(sources),
         request,
         config

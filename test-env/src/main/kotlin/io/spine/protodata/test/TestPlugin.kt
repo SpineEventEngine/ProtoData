@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,24 @@ package io.spine.protodata.test
 
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.ViewRepository
+import io.spine.protodata.renderer.Renderer
 
-public class TestPlugin: Plugin {
+/**
+ * A test fixture for passing renderers to a [Pipeline][io.spine.protodata.backend.Pipeline].
+ */
+public class TestPlugin(renderers: Iterable<Renderer<*>>): Plugin {
+
+    /**
+     * A no-arg constructor to satisfy the contract for creating a [Plugin] by
+     * its name via reflection.
+     */
+    public constructor() : this(emptyList())
+
+    public constructor(vararg renderer: Renderer<*>) : this(renderer.toList())
+
+    private val renderers: List<Renderer<*>> = renderers.toList()
+
+    override fun renderers(): List<Renderer<*>> = renderers
 
     override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
         setOf(InternalMessageRepository(), DeletedTypeRepository())
