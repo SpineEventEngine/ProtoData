@@ -42,6 +42,7 @@ public class ImplicitPluginWithRenderers(
 ) : Plugin {
 
     public constructor(renderer: Renderer<*>) : this(listOf(renderer))
+    public constructor(vararg renderer: Renderer<*>) : this(renderer.toList())
 
     override fun renderers(): List<Renderer<*>> = renderers
 }
