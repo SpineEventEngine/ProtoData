@@ -31,7 +31,6 @@ import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
-import io.spine.tools.code.Language
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
 
 /**
@@ -55,7 +54,7 @@ public class NonVoidMethod : InsertionPoint {
             .asSequence()
             .mapIndexed { index, line -> index to line }
             .filter { publicInstanceMethodPattern.matches(it.second) }
-            .map { atLine(it.first) }
+            .map { atLine(it.first - 1) }
             .toSet()
 }
 
