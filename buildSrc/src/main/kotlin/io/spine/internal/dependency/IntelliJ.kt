@@ -34,6 +34,7 @@ package io.spine.internal.dependency
  * Make sure to add the `intellijReleases` and `jetBrainsCacheRedirector`
  * repositories to your project. See `kotlin/Repositories.kt` for details.
  */
+@Suppress("unused")
 object IntelliJ {
 
     /**
