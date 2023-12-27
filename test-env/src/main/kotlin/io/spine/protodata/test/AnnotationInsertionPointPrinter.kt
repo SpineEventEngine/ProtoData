@@ -52,7 +52,7 @@ public enum class AnnotationInsertionPoint : NonRepeatingInsertionPoint {
     /**
      * An insertion point in the imports black.
      *
-     * This insertion point allows to import types into the Java file.
+     * This insertion point allows importing types into the Java file.
      */
     IMPORT {
         override fun locateOccurrence(text: Text): TextCoordinates {
@@ -69,7 +69,7 @@ public enum class AnnotationInsertionPoint : NonRepeatingInsertionPoint {
     /**
      * An insertion point before the return type of method called `foo`.
      *
-     * This insertion point allows to annotate the return type.
+     * This insertion point allows annotating the return type.
      */
     BEFORE_RETURN_TYPE_METHOD_FOO {
         override fun locateOccurrence(text: Text): TextCoordinates {
