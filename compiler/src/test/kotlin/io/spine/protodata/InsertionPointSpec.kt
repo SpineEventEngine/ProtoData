@@ -31,9 +31,11 @@ import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldHaveAtLeastSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.collections.shouldNotHaveSize
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.ImplicitPluginWithRenderers
 import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
@@ -47,6 +49,8 @@ import io.spine.protodata.test.KotlinInsertionPoint.FILE_START
 import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
 import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
+import io.spine.text.Text
+import io.spine.text.TextCoordinates
 import java.lang.System.lineSeparator
 import java.nio.file.Path
 import kotlin.io.path.createFile
@@ -155,5 +159,14 @@ class InsertionPointsSpec {
     fun `in multiple places in one line`() {
         val lines = kotlinFile.readLines()
         lines[2] shouldContain Regex("$LALALA\\s+companion.+$LALALA\\s+object", DOT_MATCHES_ALL)
+    }
+
+    @Test
+    fun `return empty 'codeLine' for empty 'label'`() {
+        val insertionPoint = object: InsertionPoint {
+            override val label: String = ""
+            override fun locate(text: Text): Set<TextCoordinates> = setOf()
+        }
+        insertionPoint.codeLine shouldBe ""
     }
 }
