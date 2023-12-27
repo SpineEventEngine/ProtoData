@@ -29,18 +29,14 @@ package io.spine.protodata.test
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.startOfFile
-import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
 
-public class JavaGenericInsertionPointPrinter : InsertionPointPrinter<Java>(Java) {
-
-    override fun supportedInsertionPoints(): Set<InsertionPoint> =
-        GenericInsertionPoint.values().toSet()
-}
+public class JavaGenericInsertionPointPrinter :
+    InsertionPointPrinter<Java>(Java, GenericInsertionPoint.values().toSet())
 
 public enum class GenericInsertionPoint : NonRepeatingInsertionPoint {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@
 package io.spine.protodata.test
 
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
-import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.text.Text
@@ -38,11 +37,8 @@ import kotlin.text.RegexOption.DOT_MATCHES_ALL
 /**
  * An [InsertionPointPrinter] for the [AnnotationInsertionPoint].
  */
-public class AnnotationInsertionPointPrinter: InsertionPointPrinter<Java>(Java) {
-
-    override fun supportedInsertionPoints(): Set<InsertionPoint> =
-        AnnotationInsertionPoint.values().toSet()
-}
+public class AnnotationInsertionPointPrinter :
+    InsertionPointPrinter<Java>(Java, AnnotationInsertionPoint.values().toSet())
 
 /**
  * Insertion points that help renderers annotate certain parts of a Java file.
