@@ -118,7 +118,7 @@ private constructor(
      * Creates a new fluent builder for adding code at the given [insertionPoint].
      *
      * If the [insertionPoint] is not found in the code, no action will be
-     * performed as the result. If there are more than one instance of
+     * performed as the result. If there is more than one instance of
      * the same insertion point, the code will be added to all of them.
      *
      * Insertion points should be marked with comments of special format.
@@ -134,7 +134,7 @@ private constructor(
      * Creates a new fluent builder for adding code at the given inline [insertionPoint].
      *
      * If the [insertionPoint] is not found in the code, no action will be performed as the result.
-     * If there are more than one instance of the same insertion point, the code will be added to
+     * If there is more than one instance of the same insertion point, the code will be added to
      * all of them.
      *
      * Code inserted via the resulting fluent builder, unlike code inserted via [SourceFile.at],
@@ -158,7 +158,7 @@ private constructor(
     /**
      * Deletes this file from the source set.
      *
-     * As the result of this method, the associated source file will be
+     * As a result of this method, the associated source file will be
      * eventually removed from the file system.
      *
      * If the file was created earlier (by the same or a different [Renderer]),
