@@ -205,7 +205,13 @@ public class ProtocInsertionPoint(
      */
     public constructor(scope: String, type: TypeName) : this("$scope:${type.qualifiedName}")
 
-    override fun locate(text: Text): Set<TextCoordinates> = setOf()
+    override fun locate(text: Text): Set<TextCoordinates> = buildSet {
+        text.lines().mapIndexed { index, line ->
+            if (line.contains(codeLine)) {
+                add(atLine(index + 1))
+            }
+        }
+    }
 
     /**
      * The code line in the Protobuf compiler style.
