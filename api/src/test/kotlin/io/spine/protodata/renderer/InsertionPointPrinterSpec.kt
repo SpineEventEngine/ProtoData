@@ -24,31 +24,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test
+package io.spine.protodata.renderer
 
-import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
-import io.spine.protodata.renderer.CoordinatesFactory.Companion.startOfFile
-import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
-import io.spine.tools.code.Kotlin
+import io.spine.tools.code.Java
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
-public class VariousKtInsertionPointsPrinter :
-    InsertionPointPrinter<Kotlin>(Kotlin, KotlinInsertionPoint.values().toSet())
+@DisplayName("`InsertionPointPrinter` should")
+class InsertionPointPrinterSpec {
 
-public enum class KotlinInsertionPoint : NonRepeatingInsertionPoint {
+    /**
+     * Tests that the printer does not accept points without labels passed to the constructor.
+     *
+     * It is still possible to pass such points when overriding the deprecated method
+     * [InsertionPointPrinter.supportedInsertionPoints].
+     *
+     * Currently, the implementation of [InsertionPointPrinter.render] filters out such points.
+     * We aim to remove the printing of insertion points as PSI-based code parsing
+     * gets more ground.
+     */
+    @Test
+    fun `not accept points without labels`() {
+        assertThrows<IllegalArgumentException> {
+            object : InsertionPointPrinter<Java>(Java, listOf(StubPoint())) {
+                // No-op.
+            }
+        }
+    }
+}
 
-    FILE_START {
-        override fun locateOccurrence(text: Text): TextCoordinates = startOfFile
-    },
-    FILE_END {
-        override fun locateOccurrence(text: Text): TextCoordinates = endOfFile
-    },
-    LINE_FOUR_COL_THIRTY_THREE {
-        override fun locateOccurrence(text: Text): TextCoordinates = at(3, 33)
-    };
-
-    override val label: String
-        get() = name.lowercase()
+private class StubPoint: InsertionPoint {
+    override val label: String = ""
+    override fun locate(text: Text): Set<TextCoordinates> = emptySet()
 }

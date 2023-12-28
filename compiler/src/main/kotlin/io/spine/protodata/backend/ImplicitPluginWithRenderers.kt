@@ -33,12 +33,16 @@ import io.spine.protodata.renderer.Renderer
 /**
  * An adapter plugin for gathering renderers that do not belong to a semantically defined plugin.
  *
- * This plugin is used for testing ProtoData and for compatibility reasons.
+ * This plugin is useful for testing ProtoData and renderers in particular.
+ * It is not meant to be used for production.
  */
 @VisibleForTesting
-internal class ImplicitPluginWithRenderers(
+public class ImplicitPluginWithRenderers(
     private val renderers: List<Renderer<*>>
 ) : Plugin {
+
+    public constructor(renderer: Renderer<*>) : this(listOf(renderer))
+    public constructor(vararg renderer: Renderer<*>) : this(renderer.toList())
 
     override fun renderers(): List<Renderer<*>> = renderers
 }

@@ -43,6 +43,17 @@ public interface InsertionPoint : CoordinatesFactory, WithLogging {
 
     /**
      * The name of this insertion point.
+     *
+     * The name of the insertion point is used to formally identify the place
+     * where the code should be inserted. It could be a place in the code marked
+     * by [Protobuf compiler][ProtocInsertionPoint], or a custom insertion point added
+     * by [InsertionPointPrinter].
+     *
+     * Classes implementing custom insertion points may use an empty string if
+     * no printing of the insertion point is required.
+     *
+     * @see ProtocInsertionPoint
+     * @see [codeLine]
      */
     public val label: String
 
@@ -170,12 +181,15 @@ public sealed interface CoordinatesFactory {
  *
  * This property is an extension rather than a normal property because
  * we don't want users to override it.
+ *
+ * @return the code line that represents this insertion point or empty string if
+ *         the label of the insertion point is empty.
  */
 public val InsertionPoint.codeLine: String
     get() = if (this is ProtocInsertionPoint) {
         protocStyleCodeLine
     } else {
-        "INSERT:'${label}'"
+        if (label.isEmpty()) "" else "INSERT:'${label}'"
     }
 
 /**
@@ -205,7 +219,13 @@ public class ProtocInsertionPoint(
      */
     public constructor(scope: String, type: TypeName) : this("$scope:${type.qualifiedName}")
 
-    override fun locate(text: Text): Set<TextCoordinates> = setOf()
+    override fun locate(text: Text): Set<TextCoordinates> = buildSet {
+        text.lines().mapIndexed { index, line ->
+            if (line.contains(codeLine)) {
+                add(atLine(index + 1))
+            }
+        }
+    }
 
     /**
      * The code line in the Protobuf compiler style.

@@ -26,19 +26,13 @@
 
 package io.spine.protodata.codegen.java.file
 
-import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.tools.code.Java
-import io.spine.tools.code.Language
 
 /**
  * Prints the [BeforePrimaryDeclaration] insertion point.
  *
  * The insertion point is present in all the Java files.
  */
-public class PrintBeforePrimaryDeclaration : InsertionPointPrinter<Java>(Java) {
-
-    override fun supportedInsertionPoints(): Set<InsertionPoint> {
-        return setOf(BeforePrimaryDeclaration)
-    }
-}
+public class PrintBeforePrimaryDeclaration :
+    InsertionPointPrinter<Java>(Java, setOf(BeforePrimaryDeclaration))

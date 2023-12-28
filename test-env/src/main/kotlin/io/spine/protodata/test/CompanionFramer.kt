@@ -31,16 +31,11 @@ import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Kotlin
-import io.spine.tools.code.Language
-import io.spine.tools.code.SlashAsteriskCommentLang
 
 /**
  * An insertion point printer for the [CompanionFrame].
  */
-public class CompanionFramer : InsertionPointPrinter<Kotlin>(Kotlin) {
-
-    override fun supportedInsertionPoints(): Set<InsertionPoint> = setOf(CompanionFrame())
-}
+public class CompanionFramer : InsertionPointPrinter<Kotlin>(Kotlin, setOf(CompanionFrame()))
 
 private const val COMPANION_MARKER = " companion "
 

@@ -74,18 +74,19 @@ internal constructor(
      *         code lines.
      */
     public fun add(lines: Iterable<String>) {
-        val sourceLines = file.lines()
-        val updatedLines = ArrayList(sourceLines)
-        val pointMarker = point.codeLine
+        val text = file.text()
+        val sourceLines = text.lines()
+        val locations = point.locate(text).map { it.wholeLine }
         val newCode = lines.indent(indent, indentLevel)
         val newLines = lineSplitter().splitToList(newCode)
         var alreadyInsertedCount = 0
-        sourceLines.forEachIndexed { index, line ->
-            if (line.contains(pointMarker)) {
+        val updatedLines = ArrayList(sourceLines)
+        sourceLines.forEachIndexed { index, _ ->
+            if (locations.contains(index)) {
                 //   1. Take the index of the insertion point before any new code is added.
                 //   2. Add the number of lines taken up by the code inserted above this line.
                 //   3. Insert code at the next line, after the insertion point.
-                val trueLineNumber = index + (alreadyInsertedCount * newLines.size) + 1
+                val trueLineNumber = index + (alreadyInsertedCount * newLines.size)
                 updatedLines.addAll(trueLineNumber, newLines)
                 alreadyInsertedCount++
             }

@@ -26,31 +26,136 @@
 
 package io.spine.protodata.codegen.java.file
 
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldStartWith
+import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation
+import io.spine.protodata.renderer.SourceFileSet
 import io.spine.string.ti
 import io.spine.text.text
+import java.nio.file.Path
+import javax.annotation.processing.Generated
+import kotlin.io.path.createFile
+import kotlin.io.path.div
+import kotlin.io.path.name
+import kotlin.io.path.readLines
+import kotlin.io.path.writeText
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
-@DisplayName("`BeforePrimaryDeclaration` should locate a top level Java type:")
+@DisplayName("`BeforePrimaryDeclaration` should")
 class BeforePrimaryDeclarationSpec {
 
-    @Test
-    fun `a class`() {
-        val location = BeforePrimaryDeclaration.locateOccurrence(classSource)
-        location.wholeLine shouldBe 6
+    @Nested inner class
+    `locate a top level Java type` {
+
+        @Test
+        fun `a class`() {
+            val location = BeforePrimaryDeclaration.locateOccurrence(classSource)
+            location.wholeLine shouldBe 6
+        }
+
+        @Test
+        fun `an interface`() {
+            val location = BeforePrimaryDeclaration.locateOccurrence(interfaceSource)
+            location.wholeLine shouldBe 1
+        }
+
+        @Test
+        fun `an enum`() {
+            val location = BeforePrimaryDeclaration.locateOccurrence(enumSource)
+            location.wholeLine shouldBe 2
+        }
     }
 
-    @Test
-    fun `an interface`() {
-        val location = BeforePrimaryDeclaration.locateOccurrence(interfaceSource)
-        location.wholeLine shouldBe 1
+    /**
+     * Prepares test environment for the integration tests that use
+     * [BeforePrimaryDeclaration] for adding the [Generated] annotation.
+     */
+    companion object {
+
+        lateinit var classSrc: Path
+        lateinit var interfaceSrc: Path
+        lateinit var enumSrc: Path
+
+        @JvmStatic
+        @BeforeAll
+        fun runPipeline(@TempDir input: Path, @TempDir output: Path) {
+            val inputClassSrc = input / "TopLevelClass.java"
+            inputClassSrc.run {
+                createFile()
+                writeText(classSource.value)
+            }
+            val inputInterfaceSrc = input / "TopLevelInterface.java"
+            inputInterfaceSrc.run {
+                createFile()
+                writeText(interfaceSource.value)
+            }
+            val inputEnumSrc = input / "TopLevelEnum.java"
+            inputEnumSrc.run {
+                createFile()
+                writeText(enumSource.value)
+            }
+
+            Pipeline(
+                plugin = GeneratedTypeAnnotation().toPlugin(),
+                sources = SourceFileSet.create(input, output),
+                request = CodeGeneratorRequest.getDefaultInstance(),
+            )()
+
+            classSrc = output / inputClassSrc.name
+            interfaceSrc = output / inputInterfaceSrc.name
+            enumSrc = output / inputEnumSrc.name
+        }
     }
 
-    @Test
-    fun `an enum`() {
-        val location = BeforePrimaryDeclaration.locateOccurrence(enumSource)
-        location.wholeLine shouldBe 2
+    /**
+     * Integration tests for using `BeforePrimaryDeclaration` in a pipeline which
+     * annotates top level types with the [Generated] annotation.
+     * See the companion object for the pipeline definition.
+     */
+    @Nested inner class
+    `handle insertion of text before`{
+
+        private lateinit var generatedCode: List<String>
+
+        /**
+         * The prefix expected in the inserted line.
+         */
+        private val expectedPrefix = "@${Generated::class.java.canonicalName}"
+
+        /**
+         * The line before the top level declaration.
+         */
+        private fun lineBefore(declPrefix: String): String {
+            val declarationLine = generatedCode.indexOfFirst { it.startsWith(declPrefix) }
+            check(declarationLine != -1) {
+                "Top level declaration `$declPrefix` was not found."
+            }
+            return generatedCode[declarationLine - 1]
+        }
+
+        @Test
+        fun `a class`() {
+            generatedCode = classSrc.readLines()
+            lineBefore("public class") shouldStartWith expectedPrefix
+        }
+
+        @Test
+        fun `an interface`() {
+            generatedCode = interfaceSrc.readLines()
+            lineBefore("public interface") shouldStartWith expectedPrefix
+        }
+
+        @Test
+        fun `an enum`() {
+            generatedCode = enumSrc.readLines()
+            lineBefore("public enum") shouldStartWith expectedPrefix
+        }
     }
 }
 
@@ -64,7 +169,7 @@ private val classSource = text {
     /** 
      * Top level class Javadoc. 
      */
-    public class TopLevel {
+    public class TopLevelClass {
 
         /** Nested class Javadoc. */
         private static class Nested {
@@ -76,7 +181,7 @@ private val classSource = text {
 private val interfaceSource = text {
     value = """
     /** Top level interface Javadoc. */
-    public interface TopLevel {
+    public interface TopLevelInterface {
     }
     """.ti()
 }
@@ -85,6 +190,6 @@ private val enumSource = text {
     value = """
     // File header comment.    
     package $PACKAGE_NAME;
-    public enum TopLevel { ONE, TWO }
+    public enum TopLevelEnum { ONE, TWO }
     """.ti()
 }

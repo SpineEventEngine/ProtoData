@@ -161,8 +161,7 @@ class CodegenContextSpec {
         write(path, initialContent)
         val renderer = PrependingRenderer()
         Pipeline(
-            plugin = TestPlugin(),
-            renderers = listOf(
+            plugin = TestPlugin(
                 JavaGenericInsertionPointPrinter(),
                 renderer
             ),
@@ -186,10 +185,7 @@ class CodegenContextSpec {
         write(path, initialContent)
         val renderer = PrependingRenderer(NonExistingPoint)
         Pipeline(
-            plugin = TestPlugin(),
-            renderers = listOf(
-                renderer
-            ),
+            plugin = TestPlugin(renderer),
             sources = SourceFileSet.create(srcRoot, targetRoot),
             request
         )()
@@ -227,8 +223,7 @@ class CodegenContextSpec {
         write(path, initialContent)
         val renderer = PrependingRenderer(NonExistingPoint, inline = true)
         Pipeline(
-            plugin = TestPlugin(),
-            renderers = listOf(renderer),
+            plugin = TestPlugin(renderer),
             sources = SourceFileSet.create(srcRoot, targetRoot),
             request
         )()
@@ -242,8 +237,7 @@ class CodegenContextSpec {
         write(jsPath, "alert('Hello')")
         write(ktPath, "println(\"Hello\")")
         Pipeline(
-            plugin = TestPlugin(),
-            renderers = listOf(
+            plugin = TestPlugin(
                 JsRenderer(),
                 KtRenderer()
             ),
@@ -257,8 +251,7 @@ class CodegenContextSpec {
     @Test
     fun `add insertion points`() {
         Pipeline(
-            plugin = TestPlugin(),
-            renderers = listOf(
+            plugin = TestPlugin(
                 JavaGenericInsertionPointPrinter(),
                 CatOutOfTheBoxEmancipator()
             ),
@@ -275,8 +268,7 @@ class CodegenContextSpec {
     @Test
     fun `not add insertion points if nobody touches the file contents`() {
         Pipeline(
-            plugin = TestPlugin(),
-            renderers = listOf(
+            plugin = TestPlugin(
                 JavaGenericInsertionPointPrinter(),
                 JsRenderer()
             ),

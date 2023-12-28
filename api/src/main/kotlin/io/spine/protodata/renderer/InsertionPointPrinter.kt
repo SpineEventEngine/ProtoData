@@ -49,33 +49,59 @@ import io.spine.tools.code.Language
  * the `InsertionPointPrinter`s need to be invoked before the other `Renderers`.
  */
 public abstract class InsertionPointPrinter<L: Language>(
-    protected val target: L
+    protected val target: L,
+    points: Iterable<InsertionPoint>
 ) : Renderer<L>(target) {
+
+    @Deprecated("Please pass the insertion points to the constructor.")
+    public constructor(target: L) : this(target, emptyList())
+
+    protected val points: Set<InsertionPoint>
+
+    init {
+        points.forEach {
+            require(it.label.isNotEmpty()) {
+                "The insertion point `$it` has en empty label and cannot be printed."
+            }
+        }
+        this.points = points.toSet()
+    }
 
     /**
      * [InsertionPoint]s which could be added to source code by this `InsertionPointPrinter`.
      *
      * The property getter may use [Renderer.select] to find out more info about the message types.
      */
-    protected abstract fun supportedInsertionPoints(): Set<InsertionPoint>
+    @Deprecated("Please pass the insertion points to the constructor.", ReplaceWith("points"))
+    protected open fun supportedInsertionPoints(): Set<InsertionPoint> = points
 
     final override fun render(sources: SourceFileSet) {
         sources.prepareCode { file ->
-            supportedInsertionPoints().forEach { point ->
-                val text = file.text()
-                val coords = point.locate(text)
-                val precedent = coords.precedentType()
-                if (precedent != null) {
-                    coords.ensureSameType(point, precedent)
-                    val lines = file.lines().toMutableList()
-                    when (precedent) {
-                        INLINE -> renderInlinePoint(coords, lines, point, file)
-                        WHOLE_LINE -> renderWholeLinePoint(coords, lines, point, file)
-                        else -> error("Unexpected precedent type $precedent.")
-                    }
-                    file.updateLines(lines)
+            @Suppress("DEPRECATION") // Still have to support the deprecated method.
+            supportedInsertionPoints()
+                .filter { it.label.isNotEmpty() }
+                .forEach { point ->
+                    print(file, point)
                 }
+        }
+    }
+
+    private fun print(
+        file: SourceFile,
+        point: InsertionPoint
+    ) {
+        val text = file.text()
+        val coords = point.locate(text)
+        val precedent = coords.precedentType()
+        if (precedent != null) {
+            coords.ensureSameType(point, precedent)
+            val lines = file.lines().toMutableList()
+            when (precedent) {
+                INLINE -> renderInlinePoint(coords, lines, point, file)
+                WHOLE_LINE -> renderWholeLinePoint(coords, lines, point, file)
+                else -> error("Unexpected precedent type $precedent.")
             }
+            file.updateLines(lines)
         }
     }
 
@@ -86,7 +112,9 @@ public abstract class InsertionPointPrinter<L: Language>(
         file: SourceFile
     ) {
         val comment = target.comment(point.codeLine)
-        val lineNumbers = coordinates.filter { it.hasWholeLine() }.map { it.wholeLine }
+        val lineNumbers = coordinates
+            .filter { it.hasWholeLine() }
+            .map { it.wholeLine }
         lineNumbers.forEach {
             lines.checkLineNumber(it)
         }
