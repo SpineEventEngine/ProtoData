@@ -61,7 +61,7 @@ public abstract class InsertionPointPrinter<L: Language>(
     init {
         points.forEach {
             require(it.label.isNotEmpty()) {
-                "The insertion point `$it` is has en empty label and cannot be printed."
+                "The insertion point `$it` has en empty label and cannot be printed."
             }
         }
         this.points = points.toSet()
