@@ -49,7 +49,7 @@ import "google/protobuf/empty.proto";
 message File {
 
     // The path to the file, separating directories with slash (`/`) symbol.
-    string path = 1;
+    string path = 1 [(required) = true];
 }
 
 // A header of the Protobuf source code file which provides basic information about the file,
@@ -57,7 +57,7 @@ message File {
 message ProtoFileHeader {
 
     // Path to the file in a file system.
-    File file = 1;
+    File file = 1 [(required) = true];
 
     // Name of the Protobuf package to which the declarations of the file belong.
     string package_name = 2;

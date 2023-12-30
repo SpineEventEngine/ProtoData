@@ -187,8 +187,8 @@ internal fun buildRpc(
  * @see toHeaderWithoutOptions
  */
 internal fun FileDescriptor.toHeader(): ProtoFileHeader {
-    val file = toHeaderWithoutOptions()
-    return file.copy {
+    val header = toHeaderWithoutOptions()
+    return header.copy {
         option.addAll(options.toList())
     }
 }

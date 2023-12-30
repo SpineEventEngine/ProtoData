@@ -135,6 +135,7 @@ internal class JavaCodegenSpec {
 }
 
 private fun headerSingleFile(outerClassName: Option? = null) = protoFileHeader {
+    file = fileName
     option.apply {
         add(javaPackage)
         outerClassName?.let { add(it) }
@@ -142,6 +143,7 @@ private fun headerSingleFile(outerClassName: Option? = null) = protoFileHeader {
 }
 
 private fun headerMultipleFiles(outerClassName: Option? = null) = protoFileHeader {
+    file = fileName
     option.apply {
         add(javaPackage)
         add(javaMultipleFiles)
