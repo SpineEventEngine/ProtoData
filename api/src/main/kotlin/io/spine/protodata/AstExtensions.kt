@@ -46,8 +46,6 @@ import io.spine.protodata.CallCardinality.UNARY
 
 /**
  * Obtains a name of this Protobuf file without the extension.
- *
- * @receiver the header of the Protobuf file of interest.
  */
 public fun ProtoFileHeader.nameWithoutExtension(): String {
     val name = file.path.split("/").last()

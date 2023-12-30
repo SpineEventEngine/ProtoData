@@ -26,18 +26,20 @@
 
 package io.spine.protodata.codegen.java.file
 
-import com.google.protobuf.BoolValue
-import com.google.protobuf.StringValue
-import io.spine.protobuf.pack
 import io.spine.protodata.Option
+import io.spine.protodata.Types.boolean
+import io.spine.protodata.Types.string
 import io.spine.protodata.option
+import io.spine.protodata.pack
+import io.spine.protodata.packedTrue
 
 /**
  * The option to instruct `protoc` to generate multiple Java files.
  */
 public val javaMultipleFiles: Option = option {
     name = "java_multiple_files"
-    value = BoolValue.of(true).pack()
+    type = boolean
+    value = packedTrue
 }
 
 /**
@@ -46,7 +48,8 @@ public val javaMultipleFiles: Option = option {
  */
 public fun javaPackage(name: String): Option = option {
     this.name = "java_package"
-    value = StringValue.of(name).pack()
+    type = string
+    value = name.pack()
 }
 
 /**
@@ -54,5 +57,6 @@ public fun javaPackage(name: String): Option = option {
  */
 public fun javaOuterClassName(name: String): Option = option {
     this.name = "java_outer_classname"
-    value = StringValue.of(name).pack()
+    type = string
+    value = name.pack()
 }

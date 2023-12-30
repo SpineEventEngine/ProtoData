@@ -33,6 +33,7 @@ import "spine/protodata/ast.proto";
 message Value {
     // The kind of value.
     oneof kind {
+        option (is_required) = true;
 
         // Represents a `null` value.
         NullValue null_value = 1;
@@ -94,7 +95,7 @@ message MessageValue {
     //
     // Same as the `Value.type.message`.
     //
-    protodata.TypeName type = 2;
+    protodata.TypeName type = 2 [(required) = true];
 }
 
 // `MessageValue` represents an enum constant for the `Value` type union.
@@ -107,7 +108,7 @@ message EnumValue {
     //
     // Same as the `Value.type.enumeration`.
     //
-    protodata.TypeName type = 2;
+    protodata.TypeName type = 2 [(required) = true];
 }
 
 // `ListValue` is a wrapper around a repeated field of values.

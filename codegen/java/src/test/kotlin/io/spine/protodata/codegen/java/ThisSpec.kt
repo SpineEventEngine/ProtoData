@@ -24,16 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.codegen.java
+
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.codegen.java.Expression
-import java.nio.file.Path
-import kotlin.io.path.Path
+import io.spine.protodata.Field
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * Obtains a Java file path, assuming this string is a fully qualified class name.
- */
-internal fun String.toSourcePath(): Path = Path(replace(".", "//") + ".java")
+@DisplayName("`This` should")
+class ThisSpec {
 
-internal fun assertCode(expression: Expression, code: String) {
-    expression.toCode() shouldBe code
+    @Test
+    fun `convert to a 'MessageReference'`() {
+        val msg = This.asMessage
+        val field = msg.field("foo", Field.CardinalityCase.SINGLE)
+        field.getter.toCode() shouldBe "this.getFoo()"
+    }
 }

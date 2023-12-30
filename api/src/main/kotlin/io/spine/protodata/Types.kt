@@ -24,16 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.kotest.matchers.shouldBe
-import io.spine.protodata.codegen.java.Expression
-import java.nio.file.Path
-import kotlin.io.path.Path
+@file:JvmName("Types")
+
+package io.spine.protodata
 
 /**
- * Obtains a Java file path, assuming this string is a fully qualified class name.
+ * A collection of types used by ProtoData.
  */
-internal fun String.toSourcePath(): Path = Path(replace(".", "//") + ".java")
+public object Types {
 
-internal fun assertCode(expression: Expression, code: String) {
-    expression.toCode() shouldBe code
+    /**
+     * The boolean value type.
+     */
+    public val boolean: Type by lazy {
+        type { primitive = PrimitiveType.TYPE_BOOL }
+    }
+
+    /**
+     * The string value type.
+     */
+    public val string: Type by lazy {
+        type { primitive = PrimitiveType.TYPE_STRING }
+    }
 }

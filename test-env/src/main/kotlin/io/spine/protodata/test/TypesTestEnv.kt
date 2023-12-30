@@ -31,7 +31,6 @@ import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIEL
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_OUTER_CLASSNAME_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_PACKAGE_FIELD_NUMBER
 import com.google.protobuf.Empty
-import com.google.protobuf.StringValue
 import io.spine.protobuf.pack
 import io.spine.protodata.EnumConstant
 import io.spine.protodata.EnumType
@@ -51,6 +50,7 @@ import io.spine.protodata.fieldName
 import io.spine.protodata.file
 import io.spine.protodata.messageType
 import io.spine.protodata.option
+import io.spine.protodata.pack
 import io.spine.protodata.protoFileHeader
 import io.spine.protodata.protobufSourceFile
 import io.spine.protodata.service
@@ -78,13 +78,13 @@ public object TypesTestEnv {
         name = "java_package"
         number = JAVA_PACKAGE_FIELD_NUMBER
         type = type { primitive = TYPE_STRING }
-        value = StringValue.of("dev.acme.example").pack()
+        value = "dev.acme.example".pack()
     }
     public val outerClassnameOption: Option = option {
         name = "java_outer_classname"
         number = JAVA_OUTER_CLASSNAME_FIELD_NUMBER
         type = type { primitive = TYPE_STRING }
-        value = StringValue.of("CartoonRejections").pack()
+        value = "CartoonRejections".pack()
     }
     public val multipleFilesHeader: ProtoFileHeader = protoFileHeader {
         file = protoSourceMultiple
@@ -117,11 +117,13 @@ public object TypesTestEnv {
         type = type { primitive = TYPE_STRING }
         name = fieldName { value = "bar" }
         single = Empty.getDefaultInstance()
+        declaringType = messageTypeName
     }
     public val idField: Field = newField {
         type = type { primitive = TYPE_STRING }
         name = fieldName { value = "uuid" }
         single = Empty.getDefaultInstance()
+        declaringType = messageTypeName
     }
     public val messageType: MessageType = messageType {
         file = protoSourceMultiple
@@ -141,10 +143,12 @@ public object TypesTestEnv {
     public val undefinedConstant: EnumConstant = enumConstant {
         name = constantName { value = "UNDEFINED" }
         number = 0
+        declaredIn = enumTypeName
     }
     public val enumConstant: EnumConstant = enumConstant {
         name = constantName { value = "INSTANCE" }
         number = 1
+        declaredIn = enumTypeName
     }
     public val enumType: EnumType = newEnumType {
         file = protoSourceMultiple

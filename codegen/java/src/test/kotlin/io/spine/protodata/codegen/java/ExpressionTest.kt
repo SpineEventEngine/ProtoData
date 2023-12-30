@@ -26,16 +26,9 @@
 
 package io.spine.protodata.codegen.java
 
+import assertCode
 import com.google.protobuf.ByteString
-import com.google.protobuf.Empty
-import com.google.protobuf.Timestamp
-import io.kotest.matchers.shouldBe
 import io.spine.protobuf.TypeConverter
-import io.spine.protodata.Field
-import io.spine.protodata.Field.CardinalityCase.SINGLE
-import io.spine.protodata.FieldName
-import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.test.Incarnation
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -54,10 +47,7 @@ internal class ExpressionSpec {
     inner class Print {
 
         @Test
-        fun `Java string literal`() {
-            val expression = LiteralString("foo")
-            assertCode(expression, "\"foo\"")
-        }
+        fun `Java string literal`() = assertCode(LiteralString("foo"), "\"foo\"")
 
         @Test
         fun `ByteString constructor invocation`() {
@@ -70,28 +60,16 @@ internal class ExpressionSpec {
         }
 
         @Test
-        fun `literal 'null'`() {
-            val expression = Null
-            assertCode(expression, "null")
-        }
+        fun `literal 'null'`() = assertCode(Null, "null")
 
         @Test
-        fun `literal 'this'`() {
-            val expression = This
-            assertCode(expression, "this")
-        }
+        fun `literal 'this'`() = assertCode(This, "this")
 
         @Test
-        fun `a number`() {
-            val expression = Literal(42)
-            assertCode(expression, "42")
-        }
+        fun `a number`() = assertCode(Literal(42), "42")
 
         @Test
-        fun `a boolean`() {
-            val expression = Literal(false)
-            assertCode(expression, "false")
-        }
+        fun `a boolean`() = assertCode(Literal(false), "false")
 
         @Test
         fun anything() {
@@ -100,114 +78,4 @@ internal class ExpressionSpec {
             assertCode(expression, anything)
         }
     }
-}
-
-class `'This' should` {
-
-    @Test
-    fun `convert to a 'MessageReference'`() {
-        val msg = This.asMessage
-        val field = msg.field("foo", SINGLE)
-        field.getter.toCode() shouldBe "this.getFoo()"
-    }
-}
-
-class `'MessageReference' should` {
-
-    @Test
-    fun `print name`() {
-        val referenceName = "value"
-        val messageReference = MessageReference(referenceName)
-        assertCode(messageReference, referenceName)
-    }
-
-    @Test
-    fun `access a singular field`() {
-        val messageReference = MessageReference("msg")
-        val field = Field
-            .newBuilder()
-            .setName(FieldName.newBuilder().setValue("baz"))
-            .setSingle(Empty.getDefaultInstance())
-            .build()
-        val fieldAccess = messageReference.field(field)
-        assertCode(fieldAccess.getter, "msg.getBaz()")
-    }
-
-    @Test
-    fun `access a list field`() {
-        val messageReference = MessageReference("msg")
-        val field = Field
-            .newBuilder()
-            .setName(FieldName.newBuilder().setValue("baz"))
-            .setList(Empty.getDefaultInstance())
-            .build()
-        val fieldAccess = messageReference.field(field)
-        assertCode(fieldAccess.getter, "msg.getBazList()")
-    }
-
-    @Test
-    fun `access a map field`() {
-        val messageReference = MessageReference("msg")
-        val field = Field
-            .newBuilder()
-            .setName(FieldName.newBuilder().setValue("baz"))
-            .setMap(Field.OfMap.newBuilder().setKeyType(TYPE_STRING))
-            .build()
-        val fieldAccess = messageReference.field(field)
-        assertCode(fieldAccess.getter, "msg.getBazMap()")
-    }
-}
-
-class `'ClassName' should` {
-
-    @Test
-    fun `parse from a string`() {
-        val className = ClassName("com.acme", "Cls")
-        assertCode(className.getDefaultInstance(), "com.acme.Cls.getDefaultInstance()")
-    }
-
-    @Test
-    fun `parse from a Java class`() {
-        val cls = Timestamp::class.java
-        val className = ClassName(cls)
-        assertCode(className.getDefaultInstance(), "${cls.canonicalName}.getDefaultInstance()")
-    }
-
-    @Test
-    fun `parse from a Kotlin class`() {
-        val cls = Timestamp::class
-        val className = ClassName(cls)
-        assertCode(className.getDefaultInstance(), "${cls.qualifiedName}.getDefaultInstance()")
-    }
-
-
-    @Test
-    fun `create new builder instances`() {
-        val cls = Timestamp::class
-        val className = ClassName(cls)
-        assertCode(className.newBuilder(), "${cls.qualifiedName}.newBuilder()")
-    }
-
-    @Test
-    fun `obtain enum constants by number`() {
-        val cls = Incarnation::class
-        val enumName = EnumName(cls)
-        assertCode(enumName.enumValue(2), "${cls.qualifiedName}.forNumber(2)")
-    }
-
-    @Test
-    fun `obtain canonical name`() {
-        val cls = ClassName(Timestamp.Builder::class)
-        cls.canonical shouldBe "com.google.protobuf.Timestamp.Builder"
-    }
-
-    @Test
-    fun `obtain binary name`() {
-        val cls = ClassName(Timestamp.Builder::class)
-        cls.binary shouldBe "com.google.protobuf.Timestamp\$Builder"
-    }
-}
-
-private fun assertCode(expression: Expression, code: String) {
-    expression.toCode() shouldBe code
 }

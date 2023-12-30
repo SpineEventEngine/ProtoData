@@ -51,7 +51,7 @@ message ProtobufSourceFile {
     //
     // The `file` field of the header must be equal to the `file` field of this message type.
     //
-    ProtoFileHeader header = 2;
+    ProtoFileHeader header = 2 [(required) = true];
 
     // All the message types in this source files.
     //

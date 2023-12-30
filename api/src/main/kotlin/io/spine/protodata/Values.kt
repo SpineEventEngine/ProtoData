@@ -28,6 +28,7 @@
 
 package io.spine.protodata
 
+import com.google.protobuf.BoolValue
 import com.google.protobuf.ByteString
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
@@ -42,8 +43,12 @@ import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.MESSAGE
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType.STRING
 import com.google.protobuf.MapEntry
 import com.google.protobuf.Message
+import com.google.protobuf.StringValue
+import io.spine.protobuf.pack
 import io.spine.protodata.MapValueKt.entry
 import io.spine.protodata.NullValue.NULL_VALUE
+
+import com.google.protobuf.Any as ProtoAny
 
 /**
  * Converts this message to a [Value] instance.
@@ -119,6 +124,29 @@ private fun FieldDescriptor.fromList(raw: Any): Value = value {
     }
 }
 
-private val NULL by lazy {
+/**
+ * The value of `null`.
+ */
+public val NULL: Value by lazy {
     value { nullValue = NULL_VALUE }
 }
+
+/**
+ * `true` wrapped into `BoolValue` and packed.
+ */
+public val packedTrue: ProtoAny by lazy {
+    BoolValue.of(true).pack()
+}
+
+/**
+ * `false` wrapped into `BoolValue` and packed.
+ */
+public val packedFalse: ProtoAny by lazy {
+    BoolValue.of(false).pack()
+}
+
+/**
+ * Wraps this string into `StringValue` and packs.
+ */
+public fun String.pack(): ProtoAny =
+    StringValue.of(this).pack()
