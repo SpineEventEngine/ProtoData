@@ -46,7 +46,6 @@ import io.spine.protodata.event.EnumOptionDiscovered
 import io.spine.protodata.event.FieldEntered
 import io.spine.protodata.event.FieldOptionDiscovered
 import io.spine.protodata.event.FileEntered
-import io.spine.protodata.event.FileOptionDiscovered
 import io.spine.protodata.event.OneofGroupEntered
 import io.spine.protodata.event.OneofOptionDiscovered
 import io.spine.protodata.event.RpcEntered
@@ -69,11 +68,6 @@ internal class ProtoSourceFileView
     fun on(@External e: FileEntered) = alter {
         file = e.file
         header = e.header
-    }
-
-    @Subscribe
-    fun on(@External e: FileOptionDiscovered) = alter {
-        headerBuilder.addOption(e.option)
     }
 
     @Subscribe

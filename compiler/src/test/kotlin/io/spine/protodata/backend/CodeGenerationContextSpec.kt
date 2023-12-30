@@ -219,8 +219,8 @@ class CodeGenerationContextSpec {
         @BeforeEach
         fun buildViews() {
             pipelineId = Pipeline.generateId()
-            // First context
 
+            // First context
             createCodegenBlackBox(pipelineId).run {
                 val (context, blackbox) = this
                 context.use {
