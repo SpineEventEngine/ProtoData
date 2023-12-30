@@ -14,11 +14,11 @@ import "spine/protodata/configuration.proto";
 // An event emitted when the user configures ProtoData via a config file.
 message FileConfigDiscovered {
 
-    ConfigFile file = 1;
+    ConfigFile file = 1 [(required) = true];
 }
 
 // An event emitted when the user configures ProtoData via a raw string config value.
 message RawConfigDiscovered {
 
-    RawConfig config = 1;
+    RawConfig config = 1 [(required) = true];
 }

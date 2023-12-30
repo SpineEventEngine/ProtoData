@@ -134,9 +134,9 @@ message MapValue {
         // In Protobuf, a map key can only be of certain primitive types. See the official doc for
         // more info: https://developers.google.com/protocol-buffers/docs/proto3#maps.
         //
-        Value key = 1;
+        Value key = 1 [(required) = true];
 
         // A map value.
-        Value value = 2;
+        Value value = 2 [(required) = true];
     }
 }

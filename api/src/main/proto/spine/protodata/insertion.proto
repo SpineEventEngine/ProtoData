@@ -44,7 +44,7 @@ import "spine/protodata/ast.proto";
 message InsertedPoint {
 
     // The relative path to the code file.
-    File file = 1;
+    File file = 1 [(required) = true];
 
     // The label of the insertion point.
     string label = 2 [(required) = true, (column) = true];
@@ -61,7 +61,7 @@ message InsertedPoints {
     option (entity).kind = VIEW;
 
     // The relative path to the code file.
-    File file = 1;
+    File file = 1 [(required) = true];
 
     // Insertion points added to the given file.
     //

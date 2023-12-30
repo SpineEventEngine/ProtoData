@@ -66,7 +66,7 @@ message ProtoFileHeader {
     SyntaxVersion syntax = 3;
 
     // File-level options.
-    repeated Option option = 4;
+    repeated Option option = 4 [(distinct) = true];
 
     // The version of the Protobuf syntax, as defined in a Protobuf source file.
     //
@@ -136,10 +136,10 @@ message MessageType {
     //
     // The `oneof`s are ordered by their order of declaration in the message.
     //
-    repeated OneofGroup oneof_group = 3;
+    repeated OneofGroup oneof_group = 3 [(distinct) = true];
 
     // Message-level options.
-    repeated Option option = 4;
+    repeated Option option = 4 [(distinct) = true];
 
     // Path to the file which declares this type.
     File file = 5 [(required) = true];
@@ -155,14 +155,14 @@ message MessageType {
     // The types are ordered by their order of declaration in the message.
     // This field is empty if there are no message types nested in this one.
     //
-    repeated TypeName nested_messages = 7;
+    repeated TypeName nested_messages = 7 [(distinct) = true];
 
     // Enum type declarations nested inside this type.
     //
     // The types are ordered by their order of declaration in the message.
     // This field is empty if there are no enum types nested in this message type.
     //
-    repeated TypeName nested_enums = 8;
+    repeated TypeName nested_enums = 8 [(distinct) = true];
 
     // Documentation of this type.
     Doc doc = 9;
@@ -175,7 +175,7 @@ message EnumType {
     TypeName name = 1 [(required) = true];
 
     // Message-level options.
-    repeated Option option = 2;
+    repeated Option option = 2 [(distinct) = true];
 
     // Path to the file which declares this type.
     File file = 3 [(required) = true];
@@ -185,7 +185,7 @@ message EnumType {
     // The constants are ordered by their order of declaration in the enum.
     // This field might be empty if the enum does not define any constants.
     //
-    repeated EnumConstant constant = 4;
+    repeated EnumConstant constant = 4 [(distinct) = true];
 
     // Name of the message type which hosts the declaration of this type.
     //
@@ -354,7 +354,7 @@ message Field {
     }
 
     // Field-level options.
-    repeated Option option = 10;
+    repeated Option option = 10 [(distinct) = true];
 
     // Documentation of this field.
     Doc doc = 11;
@@ -386,10 +386,10 @@ message OneofGroup {
     //
     // The fields are ordered by their order of declaration in the group.
     //
-    repeated Field field = 2;
+    repeated Field field = 2 [(distinct) = true];
 
     // Oneof-level options.
-    repeated Option option = 3;
+    repeated Option option = 3 [(distinct) = true];
 
     // Documentation of this group.
     Doc doc = 4;
@@ -419,16 +419,16 @@ message ServiceName {
 message Service {
     option (is).java_type = "ProtoDeclaration";
 
-    ServiceName name = 1;
+    ServiceName name = 1 [(required) = true];
 
     // The remote procedure call methods exposed by this service.
     //
     // The methods are ordered by their order of declaration in the service.
     //
-    repeated Rpc rpc = 2;
+    repeated Rpc rpc = 2 [(distinct) = true];
 
     // Service-level options.
-    repeated Option option = 3;
+    repeated Option option = 3 [(distinct) = true];
 
     // Documentation of this service.
     Doc doc = 4;
@@ -446,45 +446,48 @@ message RpcName {
 // A remote procedure call method defined in a Protobuf service.
 message Rpc {
 
-    RpcName name = 1;
+    RpcName name = 1 [(required) = true];
 
     // The kind of call.
     //
     // A call may accept one request or a stream of requests and produce one response or
     // a stream of responses.
     //
-    CallCardinality cardinality = 2;
+    CallCardinality cardinality = 2 [(required) = true];
 
     // The type of the request messages.
-    TypeName request_type = 3;
+    TypeName request_type = 3 [(required) = true];
 
     // The type of the response messages.
-    TypeName response_type = 4;
+    TypeName response_type = 4 [(required) = true];
 
     // `rpc`-level options.
-    repeated Option option = 5;
+    repeated Option option = 5 [(distinct) = true];
 
     // Documentation of this `rpc`.
     Doc doc = 6;
 
     // The service declaring this method.
-    ServiceName service = 7;
+    ServiceName service = 7 [(required) = true];
 }
 
 // The kind of exchange between a client and a server in a single `rpc` call.
 enum CallCardinality {
 
+    // The cardinality is unknown.
+    CC_UNKNOWN = 0;
+
     // The client sends a single request to the server and gets a single response back.
-    UNARY = 0;
+    UNARY = 1;
 
     // The client sends a single request to the server and receives a stream of responses.
-    SERVER_STREAMING = 1;
+    SERVER_STREAMING = 2;
 
     // The client sends a stream of requests to the server and receives a single response.
-    CLIENT_STREAMING = 2;
+    CLIENT_STREAMING = 3;
 
     // The client sends a stream of requests to the server and receives a stream of responses.
-    BIDIRECTIONAL_STREAMING = 3;
+    BIDIRECTIONAL_STREAMING = 4;
 }
 
 // A Protobuf option.
