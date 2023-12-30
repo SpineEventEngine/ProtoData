@@ -152,6 +152,7 @@ private fun headerMultipleFiles(outerClassName: Option? = null) = protoFileHeade
 private val fileName: File = file {
     path = "given/file.proto"
 }
+
 private fun messageType(typeName: String) = messageType {
     name = typeName {
         packageName = PROTO_PACKAGE_NAME
