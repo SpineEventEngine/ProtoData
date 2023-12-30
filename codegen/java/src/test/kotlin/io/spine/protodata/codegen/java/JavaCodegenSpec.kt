@@ -29,11 +29,13 @@
 package io.spine.protodata.codegen.java
 
 import io.kotest.matchers.shouldBe
+import io.spine.protodata.File
 import io.spine.protodata.Option
 import io.spine.protodata.codegen.java.file.javaMultipleFiles
 import io.spine.protodata.codegen.java.file.javaOuterClassName
 import io.spine.protodata.codegen.java.file.javaPackage
 import io.spine.protodata.enumType
+import io.spine.protodata.file
 import io.spine.protodata.messageType
 import io.spine.protodata.protoFileHeader
 import io.spine.protodata.typeName
@@ -133,6 +135,7 @@ internal class JavaCodegenSpec {
 }
 
 private fun headerSingleFile(outerClassName: Option? = null) = protoFileHeader {
+    file = fileName
     option.apply {
         add(javaPackage)
         outerClassName?.let { add(it) }
@@ -140,6 +143,7 @@ private fun headerSingleFile(outerClassName: Option? = null) = protoFileHeader {
 }
 
 private fun headerMultipleFiles(outerClassName: Option? = null) = protoFileHeader {
+    file = fileName
     option.apply {
         add(javaPackage)
         add(javaMultipleFiles)
@@ -147,11 +151,16 @@ private fun headerMultipleFiles(outerClassName: Option? = null) = protoFileHeade
     }
 }
 
+private val fileName: File = file {
+    path = "given/file.proto"
+}
+
 private fun messageType(typeName: String) = messageType {
     name = typeName {
         packageName = PROTO_PACKAGE_NAME
         simpleName = typeName
     }
+    file = fileName
 }
 
 private fun nestedMessageType(typeName: String, nestingType: String) = messageType {
@@ -160,6 +169,7 @@ private fun nestedMessageType(typeName: String, nestingType: String) = messageTy
         simpleName = typeName
         nestingTypeName.add(nestingType)
     }
+    file = fileName
 }
 
 private fun withDeeperNesting(typeName: String, firstNesting: String) = messageType {
@@ -171,6 +181,7 @@ private fun withDeeperNesting(typeName: String, firstNesting: String) = messageT
             add("Component")
         }
     }
+    file = fileName
 }
 
 private fun enumTypeNamed(typeName: String) = enumType {
@@ -178,6 +189,7 @@ private fun enumTypeNamed(typeName: String) = enumType {
         packageName = PROTO_PACKAGE_NAME
         simpleName = typeName
     }
+    file = fileName
 }
 
 private const val PROTO_PACKAGE_NAME = "ecme.example"

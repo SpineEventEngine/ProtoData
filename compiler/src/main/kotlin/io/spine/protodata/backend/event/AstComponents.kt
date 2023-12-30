@@ -183,25 +183,12 @@ internal fun buildRpc(
 
 /**
  * Extracts metadata from this file descriptor, including file options.
- *
- * @see toHeaderWithoutOptions
  */
-internal fun FileDescriptor.toHeader(): ProtoFileHeader {
-    val file = toHeaderWithoutOptions()
-    return file.copy {
-        option.addAll(options.toList())
-    }
-}
-
-/**
- * Extracts metadata from this file descriptor, excluding file options.
- *
- * @see toHeader
- */
-internal fun FileDescriptor.toHeaderWithoutOptions(): ProtoFileHeader = protoFileHeader {
+internal fun FileDescriptor.toHeader(): ProtoFileHeader = protoFileHeader {
     file = file()
     packageName = `package`
-    syntax = this@toHeaderWithoutOptions.syntaxVersion()
+    syntax = syntaxVersion()
+    option.addAll(options.toList())
 }
 
 /**

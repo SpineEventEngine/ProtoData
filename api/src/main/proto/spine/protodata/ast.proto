@@ -49,7 +49,7 @@ import "google/protobuf/empty.proto";
 message File {
 
     // The path to the file, separating directories with slash (`/`) symbol.
-    string path = 1;
+    string path = 1 [(required) = true];
 }
 
 // A header of the Protobuf source code file which provides basic information about the file,
@@ -57,7 +57,7 @@ message File {
 message ProtoFileHeader {
 
     // Path to the file in a file system.
-    File file = 1;
+    File file = 1 [(required) = true];
 
     // Name of the Protobuf package to which the declarations of the file belong.
     string package_name = 2;
@@ -66,7 +66,7 @@ message ProtoFileHeader {
     SyntaxVersion syntax = 3;
 
     // File-level options.
-    repeated Option option = 4;
+    repeated Option option = 4 [(distinct) = true];
 
     // The version of the Protobuf syntax, as defined in a Protobuf source file.
     //
@@ -88,7 +88,7 @@ message TypeName {
     option (is).java_type = "TypeNameMixin";
 
     // The short name of the type.
-    string simple_name = 1;
+    string simple_name = 1 [(required) = true];
 
     // Names of the types nesting this type declaration.
     //
@@ -122,7 +122,7 @@ message TypeName {
 message MessageType {
     option (is).java_type = "ProtoDeclaration";
 
-    TypeName name = 1;
+    TypeName name = 1 [(required) = true];
 
     // The fields of this type.
     //
@@ -136,28 +136,33 @@ message MessageType {
     //
     // The `oneof`s are ordered by their order of declaration in the message.
     //
-    repeated OneofGroup oneof_group = 3;
+    repeated OneofGroup oneof_group = 3 [(distinct) = true];
 
     // Message-level options.
-    repeated Option option = 4;
+    repeated Option option = 4 [(distinct) = true];
 
     // Path to the file which declares this type.
-    File file = 5;
+    File file = 5 [(required) = true];
 
     // Name of the message type which hosts the declaration of this type.
+    //
+    // This field is empty for the top level message type.
+    //
     TypeName declared_in = 6;
 
     // Message type declarations nested inside this type.
     //
     // The types are ordered by their order of declaration in the message.
+    // This field is empty if there are no message types nested in this one.
     //
-    repeated TypeName nested_messages = 7;
+    repeated TypeName nested_messages = 7 [(distinct) = true];
 
     // Enum type declarations nested inside this type.
     //
     // The types are ordered by their order of declaration in the message.
+    // This field is empty if there are no enum types nested in this message type.
     //
-    repeated TypeName nested_enums = 8;
+    repeated TypeName nested_enums = 8 [(distinct) = true];
 
     // Documentation of this type.
     Doc doc = 9;
@@ -167,21 +172,25 @@ message MessageType {
 message EnumType {
     option (is).java_type = "ProtoDeclaration";
 
-    TypeName name = 1;
+    TypeName name = 1 [(required) = true];
 
     // Message-level options.
-    repeated Option option = 2;
+    repeated Option option = 2 [(distinct) = true];
 
     // Path to the file which declares this type.
-    File file = 3;
+    File file = 3 [(required) = true];
 
     // The enum constants, a.k.a. values.
     //
     // The constants are ordered by their order of declaration in the enum.
+    // This field might be empty if the enum does not define any constants.
     //
-    repeated EnumConstant constant = 4;
+    repeated EnumConstant constant = 4 [(distinct) = true];
 
     // Name of the message type which hosts the declaration of this type.
+    //
+    // This field is empty for the top level enum.
+    //
     TypeName declared_in = 5;
 
     // Documentation of this type.
@@ -191,13 +200,13 @@ message EnumType {
 // A name of an enum constant.
 message ConstantName {
 
-    string value = 1;
+    string value = 1 [(required) = true];
 }
 
 // An enum constant, a.k.a. an enum value.
 message EnumConstant {
 
-    ConstantName name = 1;
+    ConstantName name = 1 [(required) = true];
 
     // The number associated with the constant.
     //
@@ -208,7 +217,7 @@ message EnumConstant {
     uint32 number = 2;
 
     // The name of the enum type which declares this constant.
-    TypeName declared_in = 3;
+    TypeName declared_in = 3 [(required) = true];
 
     // The index of the constant within the enum.
     //
@@ -249,6 +258,7 @@ enum PrimitiveType {
 message Type {
 
     oneof kind {
+        option (is_required) = true;
 
         TypeName message = 1;
 
@@ -262,19 +272,26 @@ message Type {
 message FieldName {
 
     // Short name of the field.
-    string value = 1;
+    string value = 1 [(required) = true];
 }
 
 // A Protobuf message field.
 message Field {
 
-    FieldName name = 1;
+    FieldName name = 1 [(required) = true];
 
-    // The type of the field.
-    Type type = 2;
+    // The type of data stored in the field.
+    //
+    // Semantic of which depends on the field's `cardinality`:
+    //  * `single` -- the field holds a single value of the this type.
+    //  * `list` -- the field holds a list of values of the given type.
+    //  * `map` -- the field holds a map of key-value pairs, and the type of keys is defined by
+    //             `map.key_type`, and this field contains the type of values.
+    //
+    Type type = 2 [(required) = true];
 
     // The type in which the field is declared.
-    TypeName declaring_type = 3;
+    TypeName declaring_type = 3 [(required) = true];
 
     // The field number.
     //
@@ -307,6 +324,7 @@ message Field {
     uint32 order_of_declaration = 5;
 
     oneof cardinality {
+        option (is_required) = true;
 
         // The flag telling if the field holds just a single value.
         //
@@ -336,7 +354,7 @@ message Field {
     }
 
     // Field-level options.
-    repeated Option option = 10;
+    repeated Option option = 10 [(distinct) = true];
 
     // Documentation of this field.
     Doc doc = 11;
@@ -348,7 +366,7 @@ message Field {
         //
         // The type of the value is reflected in `Field.type`.
         //
-        PrimitiveType key_type = 1;
+        PrimitiveType key_type = 1 [(required) = true];
     }
 }
 
@@ -356,22 +374,22 @@ message Field {
 message OneofName {
 
     // Name of the `oneof` block.
-    string value = 1;
+    string value = 1 [(required) = true];
 }
 
 // Group is a set of fields declared within one `oneof` block.
 message OneofGroup {
 
-    OneofName name = 1;
+    OneofName name = 1 [(required) = true];
 
     // Fields declared in this group.
     //
     // The fields are ordered by their order of declaration in the group.
     //
-    repeated Field field = 2;
+    repeated Field field = 2 [(distinct) = true];
 
     // Oneof-level options.
-    repeated Option option = 3;
+    repeated Option option = 3 [(distinct) = true];
 
     // Documentation of this group.
     Doc doc = 4;
@@ -382,35 +400,35 @@ message ServiceName {
     option (is).java_type = "ServiceNameMixin";
 
     // The short name of the service type.
-    string simple_name = 1;
+    string simple_name = 1 [(required) = true];
 
     // The name of the package.
     string package_name = 2;
 
     // The prefix of the type's URL.
     //
-    // A type URL has the following structure: "<type URL prefix>/<package>.<short name>". For more
-    // info, see the definition of `google.protobuf.Any.type_url`.
+    // A type URL has the following structure: "<type URL prefix>/<package>.<short name>".
+    // For more info, see the definition of `google.protobuf.Any.type_url`.
     //
     // Must not include a training slash ("/").
     //
-    string type_url_prefix = 3;
+    string type_url_prefix = 3 [(pattern).regex = "^.*[^/]$"];
 }
 
 // A Protobuf service type.
 message Service {
     option (is).java_type = "ProtoDeclaration";
 
-    ServiceName name = 1;
+    ServiceName name = 1 [(required) = true];
 
     // The remote procedure call methods exposed by this service.
     //
     // The methods are ordered by their order of declaration in the service.
     //
-    repeated Rpc rpc = 2;
+    repeated Rpc rpc = 2 [(distinct) = true];
 
     // Service-level options.
-    repeated Option option = 3;
+    repeated Option option = 3 [(distinct) = true];
 
     // Documentation of this service.
     Doc doc = 4;
@@ -428,45 +446,48 @@ message RpcName {
 // A remote procedure call method defined in a Protobuf service.
 message Rpc {
 
-    RpcName name = 1;
+    RpcName name = 1 [(required) = true];
 
     // The kind of call.
     //
-    // A call may accept one request or a stream of requests and produce one response or a stream of
-    // responses.
+    // A call may accept one request or a stream of requests and produce one response or
+    // a stream of responses.
     //
-    CallCardinality cardinality = 2;
+    CallCardinality cardinality = 2 [(required) = true];
 
     // The type of the request messages.
-    TypeName request_type = 3;
+    TypeName request_type = 3 [(required) = true];
 
     // The type of the response messages.
-    TypeName response_type = 4;
+    TypeName response_type = 4 [(required) = true];
 
     // `rpc`-level options.
-    repeated Option option = 5;
+    repeated Option option = 5 [(distinct) = true];
 
     // Documentation of this `rpc`.
     Doc doc = 6;
 
     // The service declaring this method.
-    ServiceName service = 7;
+    ServiceName service = 7 [(required) = true];
 }
 
 // The kind of exchange between a client and a server in a single `rpc` call.
 enum CallCardinality {
 
+    // The cardinality is unknown.
+    CC_UNKNOWN = 0;
+
     // The client sends a single request to the server and gets a single response back.
-    UNARY = 0;
+    UNARY = 1;
 
     // The client sends a single request to the server and receives a stream of responses.
-    SERVER_STREAMING = 1;
+    SERVER_STREAMING = 2;
 
     // The client sends a stream of requests to the server and receives a single response.
-    CLIENT_STREAMING = 2;
+    CLIENT_STREAMING = 3;
 
     // The client sends a stream of requests to the server and receives a stream of responses.
-    BIDIRECTIONAL_STREAMING = 3;
+    BIDIRECTIONAL_STREAMING = 4;
 }
 
 // A Protobuf option.
@@ -486,7 +507,7 @@ message Option {
     // The name includes only the name of the field (or of the extension field) without the package
     // or the enclosing type.
     //
-    string name = 1;
+    string name = 1 [(required) = true];
 
     // The field number of the option.
     //
@@ -499,10 +520,10 @@ message Option {
     //
     // An option can have a primitive or a message type, but cannot be repeated of a map.
     //
-    Type type = 3;
+    Type type = 3 [(required) = true];
 
     // The packed value of the option.
-    google.protobuf.Any value = 4;
+    google.protobuf.Any value = 4 [(required) = true];
 }
 
 // Documentation associated with a certain Protobuf declaration.

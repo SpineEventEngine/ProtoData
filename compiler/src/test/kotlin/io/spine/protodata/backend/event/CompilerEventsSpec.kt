@@ -60,6 +60,7 @@ import io.spine.protodata.event.ServiceEntered
 import io.spine.protodata.event.ServiceExited
 import io.spine.protodata.event.TypeEntered
 import io.spine.protodata.event.TypeExited
+import io.spine.protodata.file
 import io.spine.protodata.messageType
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.typeName
@@ -234,6 +235,7 @@ class CompilerEventsSpec {
             .comparingExpectedFieldsOnly()
             .isEqualTo(messageType {
                 name = typeName { simpleName = "Journey" }
+                file = file { path = "spine/protodata/test/doctor.proto" }
             })
 
         val doc = typeEntered.type.doc

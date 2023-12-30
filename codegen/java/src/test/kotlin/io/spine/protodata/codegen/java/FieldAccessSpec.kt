@@ -31,32 +31,34 @@ import com.google.common.collect.ImmutableMap
 import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.Field
-import io.spine.protodata.FieldName
-import io.spine.protodata.OneofName
 import io.spine.protodata.PrimitiveType.TYPE_STRING
+import io.spine.protodata.Types
 import io.spine.protodata.field
 import io.spine.protodata.fieldName
 import io.spine.protodata.oneofName
+import io.spine.protodata.typeName
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-internal class `'FieldAccess' should` {
+@DisplayName("`FieldAccess` should")
+internal class FieldAccessSpec {
 
     @Test
     fun `provide a getter for a single field`() {
         val access = singleField().access()
-        assertCode(access.getter, "getIncarnation()")
+        assertAccessor(access.getter, "getIncarnation()")
     }
 
     @Test
     fun `provide a getter for a oneof field`() {
         val access = oneofField().access()
-        assertCode(access.getter, "getSidekick()")
+        assertAccessor(access.getter, "getSidekick()")
     }
 
     @Test
     fun `provide a getter for a list field`() {
         val access = listField().access()
-        assertCode(
+        assertAccessor(
             access.getter,
             accessor = "getRouteList()",
         )
@@ -65,7 +67,7 @@ internal class `'FieldAccess' should` {
     @Test
     fun `provide a getter for a map field`() {
         val access = mapField().access()
-        assertCode(
+        assertAccessor(
             access.getter,
             accessor = "getAttributesMap()",
         )
@@ -74,27 +76,27 @@ internal class `'FieldAccess' should` {
     @Test
     fun `provide a setter`() {
         val access = singleField().access()
-        assertCode(access.setter(Null), "setIncarnation(null)")
+        assertAccessor(access.setter(Null), "setIncarnation(null)")
     }
 
     @Test
     fun `provide add() method`() {
         val access = listField().access()
-        assertCode(access.add(Literal(42)), "addRoute(42)")
+        assertAccessor(access.add(Literal(42)), "addRoute(42)")
     }
 
     @Test
     fun `provide addAll() method`() {
         val access = listField().access()
         val expression = access.addAll(listExpression(listOf(Literal(3.14), Literal(2.71))))
-        assertCode(expression, "addAllRoute($IMMUTABLE_LIST.of(3.14, 2.71))")
+        assertAccessor(expression, "addAllRoute($IMMUTABLE_LIST.of(3.14, 2.71))")
     }
 
     @Test
     fun `provide put() method`() {
         val access = mapField().access()
         val expression = access.put(LiteralString("foo"), LiteralString("bar"))
-        assertCode(expression, "putAttributes(\"foo\", \"bar\")")
+        assertAccessor(expression, "putAttributes(\"foo\", \"bar\")")
     }
 
     @Test
@@ -107,7 +109,7 @@ internal class `'FieldAccess' should` {
         )
         val expression = access.putAll(mapValue)
         val type = String::class.java.canonicalName
-        assertCode(
+        assertAccessor(
             expression,
             "putAllAttributes($IMMUTABLE_MAP.<$type, $type>builder().put(\"foo\", \"bar\").build())"
         )
@@ -120,27 +122,40 @@ private val IMMUTABLE_MAP = ImmutableMap::class.qualifiedName!!
 private fun Field.access() =
     MessageReference("msg").field(this)
 
+private val stubType: io.spine.protodata.TypeName = typeName {
+    simpleName = "StubType"
+    packageName = "given.stub.type"
+}
+
 private fun singleField() = field {
     name = fieldName { value = "incarnation" }
     single = Empty.getDefaultInstance()
+    type = Types.string
+    declaringType = stubType
 }
 
 private fun listField() = field {
     name = fieldName { value = "route" }
+    type = Types.string
     list = Empty.getDefaultInstance()
+    declaringType = stubType
 }
 
 private fun mapField() = field {
     name = fieldName { value = "attributes" }
+    type = Types.string
     map = Field.OfMap.newBuilder().setKeyType(TYPE_STRING).build()
+    declaringType = stubType
 }
 
 private fun oneofField() = field {
     name = fieldName { value = "sidekick" }
+    type = Types.string
     oneofName = oneofName { value = "crew" }
+    declaringType = stubType
 }
 
-private fun assertCode(
+private fun assertAccessor(
     expression: Expression,
     accessor: String
 ) {

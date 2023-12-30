@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.kotest.matchers.shouldBe
+import io.spine.protodata.codegen.java.Expression
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -31,3 +33,7 @@ import kotlin.io.path.Path
  * Obtains a Java file path, assuming this string is a fully qualified class name.
  */
 internal fun String.toSourcePath(): Path = Path(replace(".", "//") + ".java")
+
+internal fun assertCode(expression: Expression, code: String) {
+    expression.toCode() shouldBe code
+}

@@ -29,13 +29,13 @@ package io.spine.protodata.codegen.java
 import com.google.protobuf.ByteString
 import com.google.protobuf.ByteString.copyFrom
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.NullValue.NULL_VALUE
+import io.spine.protodata.NULL
 import io.spine.protodata.Value
+import io.spine.protodata.enumValue
+import io.spine.protodata.messageValue
 import io.spine.protodata.test.TypesTestEnv.enumTypeName
 import io.spine.protodata.test.TypesTestEnv.messageTypeName
 import io.spine.protodata.test.TypesTestEnv.typeSystem
-import io.spine.protodata.enumValue
-import io.spine.protodata.messageValue
 import io.spine.protodata.value
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -47,7 +47,7 @@ internal class JavaValueConverterSpec {
 
     @Test
     fun nulls() {
-        val value = value { nullValue = NULL_VALUE }
+        val value = NULL
         checkCode(value, "null")
     }
 

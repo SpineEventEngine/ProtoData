@@ -25,6 +25,7 @@ message Config {
     ConfigId id = 1;
 
     oneof kind {
+        option (is_required) = true;
 
         google.protobuf.Empty empty = 2;
 
@@ -40,7 +41,7 @@ message Config {
 // is only one `Config` with the ID value "configuration_instance".
 //
 message ConfigId {
-    string value = 1;
+    string value = 1 [(required) = true];
 }
 
 // A file which contains the configuration.
@@ -49,7 +50,7 @@ message ConfigId {
 //
 message ConfigFile {
 
-    string path = 1;
+    string path = 1 [(required) = true];
 }
 
 // The raw string representation of the configuration.
@@ -58,9 +59,9 @@ message ConfigFile {
 //
 message RawConfig {
 
-    string value = 1;
+    string value = 1 [(required) = true];
 
-    ConfigurationFormat format = 2;
+    ConfigurationFormat format = 2 [(required) = true];
 }
 
 extend google.protobuf.EnumValueOptions {

@@ -24,20 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+@file:JvmName("Types")
+
+package io.spine.protodata
 
 /**
- * Dependencies on Spine Validation SDK.
- *
- * See [`SpineEventEngine/validation`](https://github.com/SpineEventEngine/validation/).
+ * A collection of types used by ProtoData.
  */
-@Suppress("unused", "ConstPropertyName")
-object Validation {
-    const val version = "2.0.0-SNAPSHOT.122"
-    const val group = "io.spine.validation"
-    const val runtime = "$group:spine-validation-java-runtime:$version"
-    const val java = "$group:spine-validation-java:$version"
-    const val javaBundle = "$group:spine-validation-java-bundle:$version"
-    const val model = "$group:spine-validation-model:$version"
-    const val config = "$group:spine-validation-configuration:$version"
+public object Types {
+
+    /**
+     * The boolean value type.
+     */
+    public val boolean: Type by lazy {
+        type { primitive = PrimitiveType.TYPE_BOOL }
+    }
+
+    /**
+     * The string value type.
+     */
+    public val string: Type by lazy {
+        type { primitive = PrimitiveType.TYPE_STRING }
+    }
 }
