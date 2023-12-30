@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test
 internal class ExpressionSpec {
 
     @Test
-    fun `pack value into any`() {
+    fun `pack value into 'Any'`() {
         val expression = Literal("messageVar")
         val packed = expression.packToAny()
         assertCode(packed, "${TypeConverter::class.qualifiedName}.toAny(messageVar)")
@@ -50,7 +50,7 @@ internal class ExpressionSpec {
         fun `Java string literal`() = assertCode(LiteralString("foo"), "\"foo\"")
 
         @Test
-        fun `ByteString constructor invocation`() {
+        fun `'ByteString' constructor invocation`() {
             val bytes = "foobar".toByteArray()
             val expression = LiteralBytes(ByteString.copyFrom(bytes))
             assertCode(
