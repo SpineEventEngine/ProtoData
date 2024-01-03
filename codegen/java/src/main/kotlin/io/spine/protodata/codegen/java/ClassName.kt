@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,7 @@ import kotlin.reflect.KClass
 /**
  * A fully qualified Java class name.
  */
-public class ClassName
-internal constructor(
+public class ClassName(
     packageName: String,
     simpleNames: List<String>
 ) : ClassOrEnumName(packageName, simpleNames) {
@@ -71,12 +70,22 @@ internal constructor(
 
     /**
      * Obtains a new `ClassName` with the given suffix appended to the last simple name.
+     *
+     * The method is useful for obtaining names for `MessageOrBuilder` interfaces.
      */
     public fun withSuffix(suffix: String): ClassName {
         val newLast = simpleNames.last() + suffix
         val newSimpleNames = simpleNames.dropLast(1) + newLast
         return ClassName(packageName, newSimpleNames)
     }
+
+    /**
+     * Obtains a new `ClassName` with the given simple name appended to the list of simple names.
+     *
+     * The method is useful for obtaining names for nested classes such as `Message.Builder`.
+     */
+    public fun nested(simpleClassName: String): ClassName =
+        ClassName(packageName, simpleNames + simpleClassName)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
