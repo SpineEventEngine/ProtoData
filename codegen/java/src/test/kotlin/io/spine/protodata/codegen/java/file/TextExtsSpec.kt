@@ -65,8 +65,8 @@ internal class TextExtsSpec {
     }
 }
 
-private val packageName = "given.source.code"
-private val topLevelClass = "TopLevelClass"
+private const val packageName = "given.source.code"
+private const val topLevelClass = "TopLevelClass"
 
 private val sourceCode = text {
     value = """
