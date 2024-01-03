@@ -43,7 +43,7 @@ internal class TextExtsSpec {
 
         @Test
         fun `a class`() {
-            val className = ClassName(packageName, topLevelClass)
+            val className = ClassName(PACKAGE_NAME, TOP_CLASS)
             val psiClass = sourceCode.locate(className)
             psiClass shouldNotBe null
             psiClass!!.name shouldBe className.simpleName
@@ -51,7 +51,8 @@ internal class TextExtsSpec {
 
         @Test
         fun `a nested enum`() {
-            val className = ClassName(packageName, topLevelClass, "NestedEnum")
+            val className = ClassName(PACKAGE_NAME,
+                TOP_CLASS, "NestedEnum")
             val psiClass = sourceCode.locate(className)
             psiClass shouldNotBe null
             psiClass!!.name shouldBe className.simpleName
@@ -59,25 +60,25 @@ internal class TextExtsSpec {
 
         @Test
         fun `returning 'null' if class or enum is not found`() {
-            val className = ClassName(packageName, "NonExistent")
+            val className = ClassName(PACKAGE_NAME, "NonExistent")
             sourceCode.locate(className) shouldBe null
         }
     }
 }
 
-private const val packageName = "given.source.code"
-private const val topLevelClass = "TopLevelClass"
+private const val PACKAGE_NAME = "given.source.code"
+private const val TOP_CLASS = "TopLevelClass"
 
 private val sourceCode = text {
     value = """
-    package $packageName;
+    package $PACKAGE_NAME;
     
     import io.spine.protodata.codegen.java.ClassOrEnumName;
 
     /**
      * A top-level class Javadoc.
      */
-    public class $topLevelClass {
+    public class $TOP_CLASS {
         
         private enum NestedEnum {
             VALUE_1,
