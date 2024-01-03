@@ -33,7 +33,6 @@ import io.spine.string.ti
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.psi.java.lineNumber
-import io.spine.tools.psi.java.locate
 
 /**
  * An insertion point before a nested type declaration.
@@ -53,8 +52,7 @@ public class BeforeNestedTypeDeclaration(
     override val label: String = ""
 
     override fun locateOccurrence(text: Text): TextCoordinates {
-        val psiFile = text.psiFile()
-        val psiClass = psiFile.locate(name.simpleNames)
+        val psiClass = text.locate(name)
         psiClass?.let {
             val lineNumber = it.lineNumber
             return atLine(lineNumber)
