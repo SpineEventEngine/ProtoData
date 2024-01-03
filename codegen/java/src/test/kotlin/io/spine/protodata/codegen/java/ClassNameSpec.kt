@@ -56,7 +56,6 @@ internal class ClassNameSpec {
         assertCode(className.getDefaultInstance(), "${cls.qualifiedName}.getDefaultInstance()")
     }
 
-
     @Test
     fun `create new builder instances`() {
         val cls = Timestamp::class
@@ -81,5 +80,10 @@ internal class ClassNameSpec {
     fun `obtain binary name`() {
         val cls = ClassName(Timestamp.Builder::class)
         cls.binary shouldBe "com.google.protobuf.Timestamp\$Builder"
+    }
+
+    @Test
+    fun `obtain a nested name`() {
+        ClassName(Timestamp::class).nested("Builder") shouldBe ClassName(Timestamp.Builder::class)
     }
 }

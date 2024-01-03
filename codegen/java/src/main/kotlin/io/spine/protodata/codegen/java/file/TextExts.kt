@@ -26,11 +26,14 @@
 
 package io.spine.protodata.codegen.java.file
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
+import io.spine.protodata.codegen.java.ClassOrEnumName
 import io.spine.string.Separator
 import io.spine.text.Text
 import io.spine.tools.psi.convertLineSeparators
+import io.spine.tools.psi.java.locate
 
 /**
  * Prints the lines of the text into a single string using the system line separator.
@@ -43,3 +46,14 @@ internal fun Text.printLines(): String =
  */
 public fun Text.psiFile(): PsiJavaFile =
     PsiJavaParser.instance.parse(value.convertLineSeparators())
+
+/**
+ * Locates a class or an enum with the given [name] in the [Text].
+ *
+ * @return the instance of [PsiClass] if found, `null` otherwise.
+ */
+public fun Text.locate(name: ClassOrEnumName): PsiClass? {
+    val psiFile = psiFile()
+    val psiClass = psiFile.locate(name.simpleNames)
+    return psiClass
+}
