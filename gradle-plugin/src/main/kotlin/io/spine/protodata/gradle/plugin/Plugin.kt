@@ -44,9 +44,12 @@ import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
+import io.spine.tools.gradle.protobuf.generatedDir
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import io.spine.tools.gradle.protobuf.protobufExtension
 import java.io.File
+import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
@@ -238,10 +241,10 @@ private fun Project.configureProtobufPlugin(
             }
         }
 
-        // The below block adds a configuration action for the `GenerateProtoTaskCollection`.
-        // We cannot do it like `generateProtoTasks.all().forEach { ... }` because it breaks the
-        // order of the configuration of the `GenerateProtoTaskCollection`. This, in turn,
-        // leads to missing generated sources in the `compileJava` task.
+        /* The below block adds a configuration action for the `GenerateProtoTaskCollection`.
+           We cannot do it like `generateProtoTasks.all().forEach { ... }` because it
+           breaks the configuration order of the `GenerateProtoTaskCollection`.
+           This, in turn, leads to missing generated sources in the `compileJava` task. */
         generateProtoTasks {
             it.all().forEach { task ->
                 configureProtoTask(task, ext)
@@ -302,9 +305,10 @@ private fun Project.hasKotlin(): Boolean {
 /**
  * Verifies if the project can deal with Java or Kotlin code.
  *
- * The current Protobuf support of Kotlin is based on Java codegen. Therefore,
- * it's likely that Java would be enabled in the project for Kotlin proto
- * code to be generated. Though, it may change someday, and Kotlin support for Protobuf would be
+ * The current Protobuf support of Kotlin is based on Java codegen.
+ * Therefore, it's likely that Java would be enabled in the project for
+ * Kotlin proto code to be generated.
+ * Though, it may change someday, and Kotlin support for Protobuf would be
  * self-sufficient. This method assumes such a case when it checks the presence of
  * Kotlin compilation tasks.
  *
@@ -338,6 +342,26 @@ private fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): F
 }
 
 /**
+ * The name of the gRPC plugin for `protoc`.
+ */
+private const val PROTOBUF_GRPC_PLUGIN_NAME = "grpc"
+
+/**
+ * The names of the subdirectories where ProtoData places generated files.
+ */
+private object GeneratedSubdir {
+    const val JAVA = "java"
+    const val KOTLIN = "kotlin"
+    const val GRPC = "grpc"
+}
+
+/**
+ * Tells if this task produces gRPC code.
+ */
+private fun GenerateProtoTask.hasGrpc(): Boolean =
+    plugins.names.contains(PROTOBUF_GRPC_PLUGIN_NAME)
+
+/**
  * Exclude [GenerateProtoTask.outputBaseDir] from Java source set directories to avoid
  * duplicated source code files.
  */
@@ -364,13 +388,20 @@ private fun GenerateProtoTask.excludeProtocOutput() {
         excludeFor(java)
 
         // Add copied files to the Java source set.
-        java.srcDir(generatedDir("java"))
+        java.srcDir(generatedDir(GeneratedSubdir.JAVA))
 
-        // TODO: Do we add it to `java` or `kotlin`?
-        java.srcDir(generatedDir("kotlin"))
+        if (hasGrpc()) {
+            java.srcDir(generatedDir(GeneratedSubdir.GRPC))
+        }
     }
 
-    //TODO:2024-01-05:alexander.yevsyukov: Filter similarly to `kotlin`.
+    if (project.hasKotlin()) {
+        val kotlinDirectorySet = sourceSet.extensions.findByName("kotlin") as SourceDirectorySet?
+        kotlinDirectorySet!!.let {
+            excludeFor(it)
+            it.srcDirs(generatedDir(GeneratedSubdir.KOTLIN))
+        }
+    }
 }
 
 /**
@@ -426,12 +457,13 @@ private fun Project.configureIdea() {
                 excludeDirs.add(protocOutput)
                 sourceDirs = filterSources(sourceDirs, protocOutput)
                 testSources.filter { !it.residesIn(protocOutput) }
-
-                //TODO:2024-01-05:alexander.yevsyukov: Mark generated sources calculating
-                // them from existing source sets instead of the filtering below.
-                // It looks like `generatedSourceDirs` is empty at this time.
-                // Check if Protobuf Gradle plugin modifies this property.
-                generatedSourceDirs = filterSources(generatedSourceDirs, protocOutput)
+                generatedSourceDirs = if (generatedDir.exists()) {
+                    generatedDir.listDirectoryEntries()
+                        .map { it.toFile() }
+                        .toSet()
+                } else {
+                    emptySet<File>()
+                }
             }
         }
     }
