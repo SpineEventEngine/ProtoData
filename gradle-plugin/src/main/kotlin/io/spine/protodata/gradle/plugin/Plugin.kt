@@ -368,8 +368,8 @@ private fun GenerateProtoTask.hasGrpc(): Boolean =
 private fun GenerateProtoTask.excludeProtocOutput() {
     val protocOutputDir = File(outputBaseDir).parentFile
 
+    /** Filters out directories belonging to `build/generated/source/proto`. */
     fun excludeFor(lang: SourceDirectorySet) {
-        // Filter out directories belonging to `build/generated/source/proto`.
         val newSourceDirectories = lang.sourceDirectories
             .filter { !it.residesIn(protocOutputDir) }
             .toSet()
