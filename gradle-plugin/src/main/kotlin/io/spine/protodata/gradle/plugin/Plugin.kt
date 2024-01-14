@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,12 @@ import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
+import io.spine.tools.gradle.protobuf.generatedDir
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import io.spine.tools.gradle.protobuf.protobufExtension
 import java.io.File
+import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
@@ -238,10 +241,10 @@ private fun Project.configureProtobufPlugin(
             }
         }
 
-        // The below block adds a configuration action for the `GenerateProtoTaskCollection`.
-        // We cannot do it like `generateProtoTasks.all().forEach { ... }` because it breaks the
-        // order of the configuration of the `GenerateProtoTaskCollection`. This, in turn,
-        // leads to missing generated sources in the `compileJava` task.
+        /* The below block adds a configuration action for the `GenerateProtoTaskCollection`.
+           We cannot do it like `generateProtoTasks.all().forEach { ... }` because it
+           breaks the configuration order of the `GenerateProtoTaskCollection`.
+           This, in turn, leads to missing generated sources in the `compileJava` task. */
         generateProtoTasks {
             it.all().forEach { task ->
                 configureProtoTask(task, ext)
@@ -281,57 +284,42 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
 }
 
 /**
- * Verifies if the project has `java` plugin or `compileKotlin` or `compileTestKotlin` tasks.
+ * Tells if this project can deal with Java code.
  *
- * The current Protobuf support of Kotlin is based on Java codegen. Therefore,
- * it's likely that Java would be enabled in the project for Kotlin proto
- * code to be generated. Though, it may change someday, and Kotlin support for Protobuf would be
- * self-sufficient. This method assumes such a case when it checks the presence of
- * Kotlin compilation tasks.
+ * @return `true` if `java` plugin is installed, `false` otherwise.
  */
-private fun Project.hasJavaOrKotlin(): Boolean {
-    if (pluginManager.hasPlugin("java")) {
-        return true
-    }
+private fun Project.hasJava(): Boolean =
+    pluginManager.hasPlugin("java")
+
+/**
+ * Tells if this project can deal with Kotlin code.
+ *
+ * @return `true` if `compileKotlin` or `compileTestKotlin` tasks are present, `false` otherwise.
+ */
+private fun Project.hasKotlin(): Boolean {
     val compileKotlin = tasks.findByName("compileKotlin")
     val compileTestKotlin = tasks.findByName("compileTestKotlin")
     return compileKotlin != null || compileTestKotlin != null
 }
 
 /**
- * Exclude [GenerateProtoTask.outputBaseDir] from Java source set directories to avoid
- * duplicated source code files.
- */
-private fun GenerateProtoTask.excludeProtocOutput() {
-    val protocOutputDir = File(outputBaseDir).parentFile
-    val java: SourceDirectorySet = sourceSet.java
-
-    // Filter out directories belonging to `build/generated/source/proto`.
-    val newSourceDirectories = java.sourceDirectories
-        .filter { !it.residesIn(protocOutputDir) }
-        .toSet()
-
-    // Clear the source directories of the Java source set.
-    // This trick was needed when building `base` module of Spine.
-    // Otherwise, the `java` plugin would complain about duplicate source files.
-    java.setSrcDirs(listOf<String>())
-
-    // Add the filtered directories back to the Java source set.
-    java.srcDirs(newSourceDirectories)
-
-    // Add copied files to the Java source set.
-    java.srcDir(generatedDir("java"))
-    java.srcDir(generatedDir("kotlin"))
-}
-
-/**
- * Obtains the `generated` directory for the source set of the task.
+ * Verifies if the project can deal with Java or Kotlin code.
  *
- * If [language] is specified returns the subdirectory for this language.
+ * The current Protobuf support of Kotlin is based on Java codegen.
+ * Therefore, it's likely that Java would be enabled in the project for
+ * Kotlin proto code to be generated.
+ * Though, it may change someday, and Kotlin support for Protobuf would be
+ * self-sufficient. This method assumes such a case when it checks the presence of
+ * Kotlin compilation tasks.
+ *
+ * @see [hasJava]
+ * @see [hasKotlin]
  */
-private fun GenerateProtoTask.generatedDir(language: String = ""): File {
-    val path = "${project.targetBaseDir}/${sourceSet.name}/$language"
-    return File(path)
+private fun Project.hasJavaOrKotlin(): Boolean {
+    if (hasJava()) {
+        return true
+    }
+    return hasKotlin()
 }
 
 /**
@@ -342,6 +330,87 @@ private val Project.targetBaseDir: String
         val ext = extensions.getByType(CodegenSettings::class.java)
         return ext.targetBaseDir.toString()
     }
+
+/**
+ * Obtains the `generated` directory for the given [sourceSet] and a language.
+ *
+ * If the language is not given, the returned directory is the root directory for the source set.
+ */
+private fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): File {
+    val path = "$targetBaseDir/${sourceSet.name}/$language"
+    return File(path)
+}
+
+/**
+ * The name of the gRPC plugin for `protoc`.
+ */
+private const val PROTOBUF_GRPC_PLUGIN_NAME = "grpc"
+
+/**
+ * The names of the subdirectories where ProtoData places generated files.
+ */
+private object GeneratedSubdir {
+    const val JAVA = "java"
+    const val KOTLIN = "kotlin"
+    const val GRPC = "grpc"
+}
+
+/**
+ * Tells if this task produces gRPC code.
+ */
+private fun GenerateProtoTask.hasGrpc(): Boolean =
+    plugins.names.contains(PROTOBUF_GRPC_PLUGIN_NAME)
+
+/**
+ * Exclude [GenerateProtoTask.outputBaseDir] from Java source set directories to avoid
+ * duplicated source code files.
+ */
+private fun GenerateProtoTask.excludeProtocOutput() {
+    val protocOutputDir = File(outputBaseDir).parentFile
+
+    /** Filters out directories belonging to `build/generated/source/proto`. */
+    fun excludeFor(lang: SourceDirectorySet) {
+        val newSourceDirectories = lang.sourceDirectories
+            .filter { !it.residesIn(protocOutputDir) }
+            .toSet()
+
+        // Clear the source directories of the Java source set.
+        // This trick was needed when building `base` module of Spine.
+        // Otherwise, the `java` plugin would complain about duplicate source files.
+        lang.setSrcDirs(listOf<String>())
+
+        // Add the filtered directories back to the Java source set.
+        lang.srcDirs(newSourceDirectories)
+    }
+
+    if (project.hasJava()) {
+        val java = sourceSet.java
+        excludeFor(java)
+
+        // Add copied files to the Java source set.
+        java.srcDir(generatedDir(GeneratedSubdir.JAVA))
+
+        if (hasGrpc()) {
+            java.srcDir(generatedDir(GeneratedSubdir.GRPC))
+        }
+    }
+
+    if (project.hasKotlin()) {
+        val kotlinDirectorySet = sourceSet.extensions.findByName("kotlin") as SourceDirectorySet?
+        kotlinDirectorySet!!.let {
+            excludeFor(it)
+            it.srcDirs(generatedDir(GeneratedSubdir.KOTLIN))
+        }
+    }
+}
+
+/**
+ * Obtains the `generated` directory for the source set of the task.
+ *
+ * If [language] is specified returns the subdirectory for this language.
+ */
+private fun GenerateProtoTask.generatedDir(language: String = ""): File =
+    project.generatedDir(sourceSet, language)
 
 /**
  * Makes a [LaunchProtoData], if it exists for the given [sourceSet], depend on
@@ -388,7 +457,13 @@ private fun Project.configureIdea() {
                 excludeDirs.add(protocOutput)
                 sourceDirs = filterSources(sourceDirs, protocOutput)
                 testSources.filter { !it.residesIn(protocOutput) }
-                generatedSourceDirs = filterSources(generatedSourceDirs, protocOutput)
+                generatedSourceDirs = if (generatedDir.exists()) {
+                    generatedDir.listDirectoryEntries()
+                        .map { it.toFile() }
+                        .toSet()
+                } else {
+                    emptySet<File>()
+                }
             }
         }
     }

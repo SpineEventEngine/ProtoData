@@ -32,7 +32,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.SourceSet
 
 /**
- * Launches the ProtoData command-line utility from a Gradle project.
+ * Utilities for working with `launchProtoData` tasks in a Gradle project.
  */
 public object LaunchTask {
 
