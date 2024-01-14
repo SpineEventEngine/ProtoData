@@ -284,7 +284,7 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
 }
 
 /**
- * Tells if this project may deal with Java code.
+ * Tells if this project can deal with Java code.
  *
  * @return `true` if `java` plugin is installed, `false` otherwise.
  */
@@ -292,7 +292,7 @@ private fun Project.hasJava(): Boolean =
     pluginManager.hasPlugin("java")
 
 /**
- * Tells if this project may deal with Kotlin code.
+ * Tells if this project can deal with Kotlin code.
  *
  * @return `true` if `compileKotlin` or `compileTestKotlin` tasks are present, `false` otherwise.
  */
