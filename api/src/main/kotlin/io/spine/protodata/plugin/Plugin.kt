@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import io.spine.protodata.CodegenContext
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
 import kotlin.reflect.KClass
@@ -39,15 +38,17 @@ import kotlin.reflect.KClass
 /**
  * A plugin into the code generation process.
  *
- * ProtoData uses the reactive approach to handling Protobuf source info. We handle events which
- * describe a Protobuf source set via a set of [views][View] and [policies][Policy].
+ * ProtoData uses the reactive approach to handling Protobuf source info.
+ * We handle events which describe a Protobuf source
+ * set via a set of [views][View] and [policies][Policy].
  *
- * Users may want to define bespoke [views][View] and [policies][Policy] based on the Protobuf
- * compiler events. To do so, define your handlers and events and expose the components via
+ * Users may want to define bespoke [views][View] and [policies][Policy] based
+ * on the Protobuf compiler events.
+ * To do so, define your handlers and events and expose the components via
  * [Plugin.viewRepositories], [Plugin.views], and [Plugin.policies] properties.
  *
- * Implementing classes must provide a parameterless constructor so that ProtoData can instantiate
- * a plugin via its fully qualified class name.
+ * Implementing classes must provide a parameterless constructor so that
+ * ProtoData can instantiate a plugin via its fully qualified class name.
  */
 public interface Plugin {
 
@@ -70,7 +71,8 @@ public interface Plugin {
      * Obtains the [views][View] added by this plugin represented via their
      * [repositories][ViewRepository].
      *
-     * A [View] may not have a need for repository. In such case, use [Plugin.views] instead.
+     * A [View] may not have a need for repository.
+     * In such a case, please use [Plugin.views] instead.
      */
     public fun viewRepositories(): Set<ViewRepository<*, *, *>> = setOf()
 
@@ -80,7 +82,7 @@ public interface Plugin {
     public fun policies(): Set<Policy<*>> = setOf()
 
     /**
-     * Extends the given bounded context being build with additional functionality.
+     * Extends the given bounded context being built with additional functionality.
      *
      * This callback is invoked after all the views, policies, and view repositories are
      * added to the context. The primary purpose of this method is to allow extending classes
@@ -88,10 +90,8 @@ public interface Plugin {
      *
      * For example, a plugin may add a custom
      * [ProcessManager][io.spine.server.procman.ProcessManager] which
-     * [reacts][io.spine.server.event.React] to
-     * [FileEntered][io.spine.protodata.event.FileEntered] and
-     * [FileExited][io.spine.protodata.event.FileExited] events to perform actions on
-     * the whole content of a proto file.
+     * [reacts][io.spine.server.event.React] on `FileEntered` and `FileExited` events
+     * to perform actions on the whole content of a proto file.
      *
      * @param context
      *         the `BoundedContextBuilder` to extend.
