@@ -26,20 +26,11 @@
 
 package io.spine.protodata.settings
 
-import com.google.common.io.CharSource
-import com.google.common.io.Files.asByteSource
 import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.File
-import io.spine.protodata.settings.Settings.KindCase.EMPTY
-import io.spine.protodata.settings.Settings.KindCase.FILE
-import io.spine.protodata.settings.Settings.KindCase.KIND_NOT_SET
-import io.spine.protodata.settings.Settings.KindCase.TEXT
-import io.spine.protodata.toPath
 import io.spine.server.query.Querying
 import io.spine.server.query.select
 import io.spine.util.theOnly
-import java.nio.charset.Charset.defaultCharset
 
 /**
  * A ProtoData component which accesses its settings via the [Settings] view.
@@ -48,41 +39,29 @@ import java.nio.charset.Charset.defaultCharset
 public interface LoadsSettings : Querying, WithSettings {
 
     override fun <T: Any> loadSettings(cls: Class<T>): T {
-        val allSettings = select<Settings>().all()
-        if (allSettings.isEmpty()) {
-            missingSettings(cls)
-        }
-        //TODO:2024-01-15:alexander.yevsyukov: Obtain settings for the given class.
-        val settings = allSettings.theOnly()
-        return when (settings.kindCase!!) {
-            FILE -> parseFile(settings.file, cls)
-            TEXT -> parseRaw(settings.text, cls)
-            EMPTY, KIND_NOT_SET -> missingSettings(cls)
-        }
+        val settings = findSettings() ?: missingSettings()
+        return settings.parse(cls)
     }
 
     override fun settingsAvailable(): Boolean {
-        //TODO:2024-01-15:alexander.yevsyukov: Query for the settings corresponding to this
-        // ProtoData component.
+        val settings = findSettings()
+        return settings != null
+    }
+
+    private fun findSettings(): Settings? {
+        //TODO:2024-01-15:alexander.yevsyukov: Obtain settings for the given class.
+
         val settings = select<Settings>().all()
-        return settings.isNotEmpty()
+        return if (settings.isEmpty()) null else settings.theOnly()
     }
 }
 
-private fun missingSettings(expectedType: Class<*>): Nothing {
-    throw ConfigurationError("No configuration provided. Expected `${expectedType.canonicalName}`.")
-}
+/**
+ * Obtains the ID of the settings consumer as the canonical name of the Java class.
+ */
+internal val LoadsSettings.consumerId: String
+    get() = this::class.java.canonicalName
 
-private fun <T> parseFile(file: File, cls: Class<T>): T {
-    val path = file.toPath()
-    val format = formatOf(path)
-    val bytes = asByteSource(path.toFile())
-    return format.parser.parse(bytes, cls)
-}
-
-private fun <T> parseRaw(config: Text, cls: Class<T>): T {
-    val bytes = CharSource
-        .wrap(config.value)
-        .asByteSource(defaultCharset())
-    return config.format.parser.parse(bytes, cls)
+private fun LoadsSettings.missingSettings(): Nothing {
+    throw ConfigurationError("Could not find settings for `$consumerId`.")
 }

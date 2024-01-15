@@ -30,9 +30,12 @@ import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.google.common.io.ByteSource
+import com.google.common.io.CharSource
+import com.google.common.io.Files
 import com.google.protobuf.Message
 import io.spine.protobuf.defaultInstance
 import io.spine.protodata.ConfigurationError
+import io.spine.protodata.File
 import io.spine.protodata.settings.Format.JSON
 import io.spine.protodata.settings.Format.PLAIN
 import io.spine.protodata.settings.Format.PROTO_BINARY
@@ -40,6 +43,12 @@ import io.spine.protodata.settings.Format.PROTO_JSON
 import io.spine.protodata.settings.Format.RCF_UNKNOWN
 import io.spine.protodata.settings.Format.UNRECOGNIZED
 import io.spine.protodata.settings.Format.YAML
+import io.spine.protodata.settings.Settings.KindCase.EMPTY
+import io.spine.protodata.settings.Settings.KindCase.FILE
+import io.spine.protodata.settings.Settings.KindCase.KIND_NOT_SET
+import io.spine.protodata.settings.Settings.KindCase.TEXT
+import io.spine.protodata.toPath
+
 import io.spine.type.fromJson
 import java.nio.charset.Charset.defaultCharset
 
@@ -53,6 +62,16 @@ internal sealed interface Parser {
      */
     fun <T> parse(source: ByteSource, cls: Class<T>): T
 }
+
+/**
+ * Parses this instance of [Settings] into the given class.
+ */
+internal fun <T : Any> Settings.parse(cls: Class<T>): T =
+    when (kindCase!!) {
+        FILE -> parseFile(file, cls)
+        TEXT -> parseText(text, cls)
+        EMPTY, KIND_NOT_SET -> unknownCase(cls)
+    }
 
 /**
  * Obtains a [Parser] for this format.
@@ -167,4 +186,24 @@ private object PlainParser : Parser {
         @Suppress("UNCHECKED_CAST")
         return value as T
     }
+}
+
+private fun <T> parseFile(file: File, cls: Class<T>): T {
+    val path = file.toPath()
+    val format = formatOf(path)
+    val bytes = Files.asByteSource(path.toFile())
+    return format.parser.parse(bytes, cls)
+}
+
+private fun <T> parseText(text: Text, cls: Class<T>): T {
+    val bytes = CharSource
+        .wrap(text.value)
+        .asByteSource(defaultCharset())
+    return text.format.parser.parse(bytes, cls)
+}
+
+private fun Settings.unknownCase(cls: Class<*>): Nothing {
+    throw ConfigurationError(
+        "Unable to parse settings as `${cls.canonicalName}`. `kindCase` is `$kindCase`."
+    )
 }
