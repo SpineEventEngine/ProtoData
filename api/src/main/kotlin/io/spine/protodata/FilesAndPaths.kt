@@ -24,31 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.settings
+package io.spine.protodata
 
-import com.google.common.annotations.VisibleForTesting
-import io.spine.io.Glob
-import io.spine.protodata.ConfigurationError
 import java.nio.file.Path
-import kotlin.io.path.name
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 
 /**
- * Checks if the given file matches this configuration format.
+ * Converts the given path to a [File] message.
  */
-public fun ConfigurationFormat.matches(file: Path): Boolean =
-    extensions
-            .map { Glob.extension(it) }
-            .any { it.matches(file) }
-
-@VisibleForTesting
-public val ConfigurationFormat.extensions: Set<String>
-    get() = valueDescriptor.options.getExtension(SettingsProto.extension).toSet()
+public fun Path.toProto(): File = file {
+    path = absolutePathString()
+}
 
 /**
- * Obtains a [ConfigurationFormat] from the file extension of the given configuration file.
- *
- * @throws ConfigurationError if the format is not recognized
+ * Converts the given [java.io.File] to a [File] message.
  */
-public fun formatOf(file: Path): ConfigurationFormat =
-    ConfigurationFormat.values().find { it.matches(file) }
-        ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")
+public fun java.io.File.toProto(): File = toPath().toProto()
+
+/**
+ * Converts the given [File] message to a [Path].
+ */
+public fun File.toPath(): Path = Path(path)

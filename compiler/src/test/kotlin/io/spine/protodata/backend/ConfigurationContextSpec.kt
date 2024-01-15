@@ -29,8 +29,8 @@ package io.spine.protodata.backend
 import com.google.common.collect.ImmutableSet
 import io.kotest.matchers.collections.shouldContainExactly
 import io.spine.base.EventMessage
+import io.spine.protodata.file
 import io.spine.protodata.settings.ConfigurationFormat
-import io.spine.protodata.settings.configFile
 import io.spine.protodata.settings.event.FileConfigDiscovered
 import io.spine.protodata.settings.event.RawConfigDiscovered
 import io.spine.protodata.settings.event.fileConfigDiscovered
@@ -72,11 +72,11 @@ class ConfigurationContextSpec {
 
     @Test
     fun `emit file configuration event`() {
-        val configFile = configFile {
+        val settingsFile = file {
             path = "foo/bar.bin"
         }
         val event = fileConfigDiscovered {
-            file = configFile
+            file = settingsFile
         }
         checkEvent(event)
     }

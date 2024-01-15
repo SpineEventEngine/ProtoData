@@ -32,8 +32,8 @@ import io.spine.protodata.settings.event.FileConfigDiscovered
 import io.spine.protodata.settings.event.RawConfigDiscovered
 import io.spine.protodata.settings.event.fileConfigDiscovered
 import io.spine.protodata.settings.event.rawConfigDiscovered
+import io.spine.protodata.toProto
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
 
 /**
  * User-provided custom configuration for ProtoData.
@@ -73,12 +73,9 @@ public sealed class Configuration {
 private class File(private val file: Path) : Configuration() {
 
     override fun produceEvent(): FileConfigDiscovered = fileConfigDiscovered {
-        file = this@File.file.toConfigFile()
+        file = this@File.file.toProto()
     }
 
-    private fun Path.toConfigFile() = configFile {
-        path = absolutePathString()
-    }
 }
 
 /**

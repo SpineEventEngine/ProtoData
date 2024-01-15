@@ -9,6 +9,7 @@ option java_package = "io.spine.protodata.test";
 option java_outer_classname = "UuidTypeProto";
 option java_multiple_files = true;
 
+import "spine/protodata/file.proto";
 import "spine/protodata/ast.proto";
 
 // A type which is a wrapper for a UUID string.

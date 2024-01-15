@@ -24,31 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.settings
+syntax = "proto3";
 
-import com.google.common.annotations.VisibleForTesting
-import io.spine.io.Glob
-import io.spine.protodata.ConfigurationError
-import java.nio.file.Path
-import kotlin.io.path.name
+package spine.protodata;
 
-/**
- * Checks if the given file matches this configuration format.
- */
-public fun ConfigurationFormat.matches(file: Path): Boolean =
-    extensions
-            .map { Glob.extension(it) }
-            .any { it.matches(file) }
+import "spine/options.proto";
 
-@VisibleForTesting
-public val ConfigurationFormat.extensions: Set<String>
-    get() = valueDescriptor.options.getExtension(SettingsProto.extension).toSet()
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata";
+option java_outer_classname = "FileProto";
+option java_multiple_files = true;
 
-/**
- * Obtains a [ConfigurationFormat] from the file extension of the given configuration file.
- *
- * @throws ConfigurationError if the format is not recognized
- */
-public fun formatOf(file: Path): ConfigurationFormat =
-    ConfigurationFormat.values().find { it.matches(file) }
-        ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")
+// Represents a file in an arbitrary OS.
+//
+// In most cases it is going to be a relative path.
+// In some cases it may be an absolute path.
+//
+// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
+// the current operating system. This value holds this exact format of the path.
+//
+message File {
+
+    // The path to the file, separating directories with slash (`/`) symbol.
+    string path = 1 [(required) = true];
+}

@@ -30,15 +30,16 @@ import com.google.common.io.CharSource
 import com.google.common.io.Files.asByteSource
 import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
+import io.spine.protodata.File
 import io.spine.protodata.settings.Config.KindCase.EMPTY
 import io.spine.protodata.settings.Config.KindCase.FILE
 import io.spine.protodata.settings.Config.KindCase.KIND_NOT_SET
 import io.spine.protodata.settings.Config.KindCase.RAW
+import io.spine.protodata.toPath
 import io.spine.server.query.Querying
 import io.spine.server.query.select
 import io.spine.util.theOnly
 import java.nio.charset.Charset.defaultCharset
-import kotlin.io.path.Path
 
 /**
  * A [Configured] component which accesses the ProtoData configuration via the [Config] view.
@@ -69,8 +70,8 @@ private fun noConfig(expectedType: Class<*>): Nothing {
     throw ConfigurationError("No configuration provided. Expected `${expectedType.canonicalName}`.")
 }
 
-private fun <T> parseFile(file: ConfigFile, cls: Class<T>): T {
-    val path = Path(file.path)
+private fun <T> parseFile(file: File, cls: Class<T>): T {
+    val path = file.toPath()
     val format = formatOf(path)
     val bytes = asByteSource(path.toFile())
     return format.parser.parse(bytes, cls)
