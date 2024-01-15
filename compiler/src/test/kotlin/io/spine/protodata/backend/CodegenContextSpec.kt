@@ -36,7 +36,7 @@ import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
-import io.spine.protodata.settings.Configuration
+import io.spine.protodata.settings.DiscoveredSettings
 import io.spine.protodata.settings.Format
 import io.spine.protodata.test.AnnotationInsertionPointPrinter
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
@@ -365,7 +365,7 @@ class CodegenContextSpec {
                     SourceFileSet.create(source2, destination2)
                 ),
                 request = request,
-                config = Configuration.rawValue(expectedContent, Format.PLAIN)
+                config = DiscoveredSettings.text(expectedContent, Format.PLAIN)
             )()
 
             val firstFile = destination1.resolve(ECHO_FILE)

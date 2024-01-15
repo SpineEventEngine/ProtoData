@@ -36,15 +36,15 @@ import io.spine.protodata.toProto
 import java.nio.file.Path
 
 /**
- * User-provided custom configuration for ProtoData.
+ * Helpers for emitting events on finding user-provided settings.
  *
  * @see WithSettings
  */
 @Internal
-public sealed class Configuration {
+public sealed class DiscoveredSettings {
 
     /**
-     * Constructs an event which contains the value of the configuration.
+     * Constructs an event on finding the settings.
      *
      * The event belongs to [ConfigurationContext][io.spine.protodata.backend.ConfigurationContext].
      */
@@ -55,22 +55,22 @@ public sealed class Configuration {
         /**
          * Creates a configuration written in a file with the given path.
          */
-        public fun file(file: Path): Configuration = File(file)
+        public fun file(file: Path): DiscoveredSettings = File(file)
 
         /**
          * Creates a configuration from the given value in the given format.
          */
-        public fun rawValue(value: String, format: Format): Configuration =
-            Raw(value, format)
+        public fun text(value: String, format: Format): DiscoveredSettings =
+            FormattedText(value, format)
     }
 }
 
 /**
- * A [Configuration] consisting of one [File].
+ * A [DiscoveredSettings] consisting of one [File].
  *
  * Produces [FileConfigDiscovered] event upon discovery.
  */
-private class File(private val file: Path) : Configuration() {
+private class File(private val file: Path) : DiscoveredSettings() {
 
     override fun produceEvent(): FileConfigDiscovered = fileConfigDiscovered {
         file = this@File.file.toProto()
@@ -79,21 +79,21 @@ private class File(private val file: Path) : Configuration() {
 }
 
 /**
- * A [Configuration] produced from a [value] in the specified [format].
+ * A [DiscoveredSettings] produced from a [value] in the specified [format].
  *
  * Produces [RawConfigDiscovered] event upon discovery.
  */
-private class Raw(
+private class FormattedText(
     private val value: String,
     private val format: Format
-) : Configuration() {
+) : DiscoveredSettings() {
 
     override fun produceEvent(): RawConfigDiscovered = rawConfigDiscovered {
         config = config()
     }
 
-    private fun config() = rawConfig {
-        format = this@Raw.format
-        value = this@Raw.value
+    private fun config() = text {
+        format = this@FormattedText.format
+        value = this@FormattedText.value
     }
 }

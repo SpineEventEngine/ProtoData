@@ -28,6 +28,7 @@ message Config {
     oneof kind {
         option (is_required) = true;
 
+        // No settings are supplied.
         google.protobuf.Empty empty = 2;
 
         // A file which contains the configuration.
@@ -36,7 +37,7 @@ message Config {
         //
         File file = 3;
 
-        RawConfig raw = 4;
+        Text text = 4;
     }
 }
 
@@ -49,11 +50,11 @@ message ConfigId {
     string value = 1 [(required) = true];
 }
 
-// The raw string representation of the configuration.
+// Settings as a string value.
 //
-// The format of the raw configuration can be `PROTO_JSON`, `JSON`, or `YAML`.
+// The format of the settings can be `PROTO_JSON`, `JSON`, or `YAML`.
 //
-message RawConfig {
+message Text {
 
     string value = 1 [(required) = true];
 

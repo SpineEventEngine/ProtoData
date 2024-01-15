@@ -60,7 +60,7 @@ import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.settings.Configuration
+import io.spine.protodata.settings.DiscoveredSettings
 import io.spine.protodata.settings.Format
 import io.spine.string.Separator.Companion.nl
 import io.spine.string.pi
@@ -271,7 +271,7 @@ internal class Run(version: String) : CliktCommand(
         return registry
     }
 
-    private fun resolveConfig(): Configuration? {
+    private fun resolveConfig(): DiscoveredSettings? {
         val hasFile = configurationFile != null
         val hasValue = configurationValue != null
         val hasFormat = configurationFormat != null
@@ -285,10 +285,10 @@ internal class Run(version: String) : CliktCommand(
                     " must be used together."
         }
         return when {
-            hasFile -> Configuration.file(configurationFile!!)
+            hasFile -> DiscoveredSettings.file(configurationFile!!)
             hasValue -> {
                 val format = Format.valueOf(configurationFormat!!.uppercase())
-                Configuration.rawValue(configurationValue!!, format)
+                DiscoveredSettings.text(configurationValue!!, format)
             }
             else -> null
         }

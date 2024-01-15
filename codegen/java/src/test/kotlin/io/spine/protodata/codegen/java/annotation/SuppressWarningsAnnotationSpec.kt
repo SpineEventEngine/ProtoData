@@ -31,7 +31,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
-import io.spine.protodata.settings.Configuration
+import io.spine.protodata.settings.DiscoveredSettings
 import io.spine.protodata.settings.Format.PROTO_JSON
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
@@ -70,7 +70,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
-                config = Configuration.rawValue("""
+                config = DiscoveredSettings.text("""
                     {"warnings": {"value": []}} 
                 """.trimIndent(), PROTO_JSON)
             )()
@@ -92,7 +92,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
             plugins = listOf(SuppressWarningsAnnotation.Plugin()),
             sources = sources,
             request = emptyRequest,
-            config = Configuration.rawValue("""
+            config = DiscoveredSettings.text("""
                 {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
             """.trimIndent(), PROTO_JSON)
         )()

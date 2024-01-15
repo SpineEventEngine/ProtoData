@@ -21,5 +21,5 @@ message FileConfigDiscovered {
 // An event emitted when the user configures ProtoData via a raw string config value.
 message RawConfigDiscovered {
 
-    RawConfig config = 1 [(required) = true];
+    Text config = 1 [(required) = true];
 }

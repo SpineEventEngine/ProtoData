@@ -35,7 +35,7 @@ import io.spine.protodata.settings.event.FileConfigDiscovered
 import io.spine.protodata.settings.event.RawConfigDiscovered
 import io.spine.protodata.settings.event.fileConfigDiscovered
 import io.spine.protodata.settings.event.rawConfigDiscovered
-import io.spine.protodata.settings.rawConfig
+import io.spine.protodata.settings.text
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.dispatch.DispatchOutcome
@@ -83,7 +83,7 @@ class ConfigurationContextSpec {
 
     @Test
     fun `emit raw configuration event`() {
-        val raw = rawConfig {
+        val raw = text {
             format = Format.JSON
             value = "{}"
         }

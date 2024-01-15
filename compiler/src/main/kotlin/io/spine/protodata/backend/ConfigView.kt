@@ -53,7 +53,7 @@ internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
 
     @Subscribe
     internal fun on(@External event: RawConfigDiscovered) = alter {
-        raw = event.config
+        text = event.config
     }
 
     /**

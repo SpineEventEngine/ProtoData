@@ -34,7 +34,7 @@ import io.spine.protodata.File
 import io.spine.protodata.settings.Config.KindCase.EMPTY
 import io.spine.protodata.settings.Config.KindCase.FILE
 import io.spine.protodata.settings.Config.KindCase.KIND_NOT_SET
-import io.spine.protodata.settings.Config.KindCase.RAW
+import io.spine.protodata.settings.Config.KindCase.TEXT
 import io.spine.protodata.toPath
 import io.spine.server.query.Querying
 import io.spine.server.query.select
@@ -48,22 +48,24 @@ import java.nio.charset.Charset.defaultCharset
 public interface LoadsSettings : Querying, WithSettings {
 
     override fun <T: Any> loadSettings(cls: Class<T>): T {
-        val configurations = select<Config>().all()
-        if (configurations.isEmpty()) {
+        val allSettings = select<Config>().all()
+        if (allSettings.isEmpty()) {
             missingSettings(cls)
         }
         //TODO:2024-01-15:alexander.yevsyukov: Obtain settings for the given class.
-        val config = configurations.theOnly()
-        return when (config.kindCase!!) {
-            FILE -> parseFile(config.file, cls)
-            RAW -> parseRaw(config.raw, cls)
+        val settings = allSettings.theOnly()
+        return when (settings.kindCase!!) {
+            FILE -> parseFile(settings.file, cls)
+            TEXT -> parseRaw(settings.text, cls)
             EMPTY, KIND_NOT_SET -> missingSettings(cls)
         }
     }
 
     override fun settingsAvailable(): Boolean {
-        val configurations = select<Config>().all()
-        return configurations.isNotEmpty()
+        //TODO:2024-01-15:alexander.yevsyukov: Query for the settings corresponding to this
+        // ProtoData component.
+        val settings = select<Config>().all()
+        return settings.isNotEmpty()
     }
 }
 
@@ -78,7 +80,7 @@ private fun <T> parseFile(file: File, cls: Class<T>): T {
     return format.parser.parse(bytes, cls)
 }
 
-private fun <T> parseRaw(config: RawConfig, cls: Class<T>): T {
+private fun <T> parseRaw(config: Text, cls: Class<T>): T {
     val bytes = CharSource
         .wrap(config.value)
         .asByteSource(defaultCharset())
