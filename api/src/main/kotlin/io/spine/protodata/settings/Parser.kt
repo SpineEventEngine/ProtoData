@@ -44,20 +44,37 @@ import io.spine.type.fromJson
 import java.nio.charset.Charset.defaultCharset
 
 /**
- * A parser for the ProtoData user-provided configuration.
+ * A parser for user-defined settings.
  */
-internal sealed interface ConfigurationParser {
+internal sealed interface Parser {
 
     /**
-     * Attempts to deserialize the given configuration value into the given class.
+     * Attempts to deserialize the given settings value into the given class.
      */
     fun <T> parse(source: ByteSource, cls: Class<T>): T
 }
 
 /**
+ * Obtains a [Parser] for this format.
+ *
+ * @throws ConfigurationError if the format is a non-value.
+ */
+internal val Format.parser: Parser
+    get() = when(this) {
+        PROTO_BINARY -> ProtoBinaryParser
+        PROTO_JSON -> ProtoJsonParser
+        JSON -> JsonParser
+        YAML -> YamlParser
+        PLAIN -> PlainParser
+        UNRECOGNIZED, RCF_UNKNOWN -> throw ConfigurationError(
+            "Unable to parse the configuration: unknown format `${this.name}`."
+        )
+    }
+
+/**
  * A configuration parser for Protobuf messages.
  */
-private sealed class ProtobufParser : ConfigurationParser {
+private sealed class ProtobufParser : Parser {
 
     final override fun <T> parse(source: ByteSource, cls: Class<T>): T {
         require(Message::class.java.isAssignableFrom(cls)) {
@@ -100,7 +117,7 @@ private object ProtoJsonParser : ProtobufParser() {
 /**
  * A configuration parser for text-based formats.
  */
-private sealed class JacksonParser : ConfigurationParser {
+private sealed class JacksonParser : Parser {
 
     protected abstract val factory: JsonFactory
 
@@ -138,7 +155,7 @@ private object YamlParser : JacksonParser() {
  * To ensure the type safety, the `cls` parameter is checked to be `java.lang.String`.
  * If the type is wrong, throws a [ConfigurationError].
  */
-private object PlainParser : ConfigurationParser {
+private object PlainParser : Parser {
 
     override fun <T> parse(source: ByteSource, cls: Class<T>): T {
         if (cls != String::class.java) {
@@ -151,20 +168,3 @@ private object PlainParser : ConfigurationParser {
         return value as T
     }
 }
-
-/**
- * Obtains a [ConfigurationParser] for this format.
- *
- * @throws ConfigurationError if the format is a non-value
- */
-internal val Format.parser: ConfigurationParser
-    get() = when(this) {
-        PROTO_BINARY -> ProtoBinaryParser
-        PROTO_JSON -> ProtoJsonParser
-        JSON -> JsonParser
-        YAML -> YamlParser
-        PLAIN -> PlainParser
-        UNRECOGNIZED, RCF_UNKNOWN -> throw ConfigurationError(
-            "Unable to parse the configuration: unknown format `${this.name}`."
-        )
-    }
