@@ -28,7 +28,7 @@ package io.spine.protodata.plugin
 
 import io.spine.base.EntityState
 import io.spine.base.EventMessage
-import io.spine.protodata.settings.ConfiguredQuerying
+import io.spine.protodata.settings.LoadsSettings
 import io.spine.server.event.Policy
 import io.spine.server.query.QueryingClient
 
@@ -62,25 +62,32 @@ import io.spine.server.query.QueryingClient
  * the [@React][io.spine.server.event.React] annotation causes a runtime error.
  *
  * The `whenever` method accepts a single event and produces an `Iterable` of events. In case if
- * you need to return a single event, use [Just].
- * If there are a few events, see the descendants of [io.spine.server.tuple.Tuple].
- * If there can be a few alternative events, see the descendants of [io.spine.server.tuple.Either].
+ * you need to return a single event, use [Just][io.spine.server.event.Just].
+ *
+ * If there are a few events, see the descendants of [Tuple][io.spine.server.tuple.Tuple].
+ *
+ * If there can be a few alternative events, see the descendants of
+ * [Either][io.spine.server.tuple.Either].
+ *
  * In case if one of the options doing nothing at all, use [io.spine.server.model.Nothing] as one
  * of the event types.
+ *
  * Finally, if there are multiple events of the same type, use a typed list,
  * e.g. `List<SomethingHappened>`.
  *
- * *Note.* Often when talking about policies, people imply converting an event into a command, not
- * an event. This approach seems too complicated to us at this stage, as not many commands will do
- * anything but produce events with the same information, thus we directly convert between events.
+ * ### The note on avoiding intermediate types
+ * Often when talking about policies, people imply converting an event into a command, not
+ * an event. We believe such an approach would introduce additional complexity without adding
+ * any value. Not so many commands will do anything but produce events with the same
+ * information in the code generation domain. Thus, we directly convert between events.
  */
-public abstract class Policy<E : EventMessage> : Policy<E>(), ConfiguredQuerying {
+public abstract class Policy<E : EventMessage> : Policy<E>(), LoadsSettings {
 
     final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(context, type, javaClass.name)
     }
 
-    final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
+    final override fun <T: Any> loadSettings(cls: Class<T>): T = super.loadSettings(cls)
 
-    final override fun configIsPresent(): Boolean = super.configIsPresent()
+    final override fun settingsAvailable(): Boolean = super.settingsAvailable()
 }

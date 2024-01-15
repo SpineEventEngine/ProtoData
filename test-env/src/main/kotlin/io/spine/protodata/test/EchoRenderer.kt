@@ -31,7 +31,7 @@ import io.spine.protobuf.AnyPacker
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.settings.configAs
+import io.spine.protodata.settings.loadSettings
 import io.spine.time.toInstant
 import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language
@@ -69,7 +69,7 @@ public abstract class StubSoloRenderer : SoloRenderer<AnyLanguage>(AnyLanguage),
 public class EchoRenderer : StubSoloRenderer() {
 
     override fun render(sources: SourceFileSet) {
-        val name = configAs<Name>()
+        val name = loadSettings<Name>()
         sources.createFile(Path(ECHO_FILE), name.value)
     }
 }
@@ -80,7 +80,7 @@ public class EchoRenderer : StubSoloRenderer() {
 public class ProtoEchoRenderer : StubSoloRenderer() {
 
     override fun render(sources: SourceFileSet) {
-        val echo = configAs<Echo>()
+        val echo = loadSettings<Echo>()
         val message = buildString {
             with(echo) {
                 append(`when`.toInstant())
@@ -102,7 +102,7 @@ public class ProtoEchoRenderer : StubSoloRenderer() {
 public class PlainStringRenderer : StubSoloRenderer() {
 
     override fun render(sources: SourceFileSet) {
-        val echo = configAs<String>()
+        val echo = loadSettings<String>()
         sources.createFile(Path(ECHO_FILE), echo)
     }
 }

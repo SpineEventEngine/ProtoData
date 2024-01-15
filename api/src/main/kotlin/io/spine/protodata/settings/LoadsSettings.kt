@@ -42,31 +42,32 @@ import io.spine.util.theOnly
 import java.nio.charset.Charset.defaultCharset
 
 /**
- * A [Configured] component which accesses the ProtoData configuration via the [Config] view.
+ * A ProtoData component which accesses its settings via the [Config] view.
  */
 @Internal
-public interface ConfiguredQuerying : Querying, Configured {
+public interface LoadsSettings : Querying, WithSettings {
 
-    override fun <T> configAs(cls: Class<T>): T {
+    override fun <T: Any> loadSettings(cls: Class<T>): T {
         val configurations = select<Config>().all()
         if (configurations.isEmpty()) {
-            noConfig(cls)
+            missingSettings(cls)
         }
+        //TODO:2024-01-15:alexander.yevsyukov: Obtain settings for the given class.
         val config = configurations.theOnly()
         return when (config.kindCase!!) {
             FILE -> parseFile(config.file, cls)
             RAW -> parseRaw(config.raw, cls)
-            EMPTY, KIND_NOT_SET -> noConfig(cls)
+            EMPTY, KIND_NOT_SET -> missingSettings(cls)
         }
     }
 
-    override fun configIsPresent(): Boolean {
+    override fun settingsAvailable(): Boolean {
         val configurations = select<Config>().all()
         return configurations.isNotEmpty()
     }
 }
 
-private fun noConfig(expectedType: Class<*>): Nothing {
+private fun missingSettings(expectedType: Class<*>): Nothing {
     throw ConfigurationError("No configuration provided. Expected `${expectedType.canonicalName}`.")
 }
 

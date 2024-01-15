@@ -42,7 +42,7 @@ import io.spine.server.route.EventRouting
  *
  * Can contain either a configuration file path or a string value of the configuration.
  *
- * @see io.spine.protodata.settings.Configured for fetching the value of the user configuration.
+ * @see io.spine.protodata.settings.WithSettings for fetching the value of the user configuration.
  */
 internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
 

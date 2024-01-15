@@ -27,7 +27,7 @@
 package io.spine.protodata.codegen.java.annotation
 
 import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.settings.configAs
+import io.spine.protodata.settings.loadSettings
 
 /**
  * Suppresses warnings in the generated code.
@@ -67,10 +67,10 @@ public class SuppressWarningsAnnotation :
      * but no specific warnings were specified.
      */
     private fun warningList(): String {
-        val warnings = if (!configIsPresent()) {
+        val warnings = if (!settingsAvailable()) {
             ALL_WARNINGS
         } else {
-            val configured = configAs<SuppressionSettings>().warnings.valueList
+            val configured = loadSettings<SuppressionSettings>().warnings.valueList
             if (configured.isEmpty()) {
                 ALL_WARNINGS
             } else {

@@ -38,7 +38,7 @@ import java.nio.file.Path
 /**
  * User-provided custom configuration for ProtoData.
  *
- * @see Configured
+ * @see WithSettings
  */
 @Internal
 public sealed class Configuration {
