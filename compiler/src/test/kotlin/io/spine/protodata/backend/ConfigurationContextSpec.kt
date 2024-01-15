@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableSet
 import io.kotest.matchers.collections.shouldContainExactly
 import io.spine.base.EventMessage
 import io.spine.protodata.file
-import io.spine.protodata.settings.ConfigurationFormat
+import io.spine.protodata.settings.Format
 import io.spine.protodata.settings.event.FileConfigDiscovered
 import io.spine.protodata.settings.event.RawConfigDiscovered
 import io.spine.protodata.settings.event.fileConfigDiscovered
@@ -84,7 +84,7 @@ class ConfigurationContextSpec {
     @Test
     fun `emit raw configuration event`() {
         val raw = rawConfig {
-            format = ConfigurationFormat.JSON
+            format = Format.JSON
             value = "{}"
         }
         val event = rawConfigDiscovered {

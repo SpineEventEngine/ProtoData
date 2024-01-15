@@ -30,10 +30,10 @@ package io.spine.protodata.cli
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.settings.ConfigurationFormat.JSON
-import io.spine.protodata.settings.ConfigurationFormat.PLAIN
-import io.spine.protodata.settings.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.settings.ConfigurationFormat.YAML
+import io.spine.protodata.settings.Format.JSON
+import io.spine.protodata.settings.Format.PLAIN
+import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.settings.Format.YAML
 
 /**
  * The command-line parameter for specifying ProtoData plugins used in

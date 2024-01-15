@@ -61,7 +61,7 @@ import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.settings.Configuration
-import io.spine.protodata.settings.ConfigurationFormat
+import io.spine.protodata.settings.Format
 import io.spine.string.Separator.Companion.nl
 import io.spine.string.pi
 import io.spine.string.ti
@@ -287,7 +287,7 @@ internal class Run(version: String) : CliktCommand(
         return when {
             hasFile -> Configuration.file(configurationFile!!)
             hasValue -> {
-                val format = ConfigurationFormat.valueOf(configurationFormat!!.uppercase())
+                val format = Format.valueOf(configurationFormat!!.uppercase())
                 Configuration.rawValue(configurationValue!!, format)
             }
             else -> null

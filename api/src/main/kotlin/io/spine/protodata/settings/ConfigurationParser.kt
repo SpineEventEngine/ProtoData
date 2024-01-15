@@ -33,13 +33,13 @@ import com.google.common.io.ByteSource
 import com.google.protobuf.Message
 import io.spine.protobuf.defaultInstance
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.settings.ConfigurationFormat.JSON
-import io.spine.protodata.settings.ConfigurationFormat.PLAIN
-import io.spine.protodata.settings.ConfigurationFormat.PROTO_BINARY
-import io.spine.protodata.settings.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.settings.ConfigurationFormat.RCF_UNKNOWN
-import io.spine.protodata.settings.ConfigurationFormat.UNRECOGNIZED
-import io.spine.protodata.settings.ConfigurationFormat.YAML
+import io.spine.protodata.settings.Format.JSON
+import io.spine.protodata.settings.Format.PLAIN
+import io.spine.protodata.settings.Format.PROTO_BINARY
+import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.settings.Format.RCF_UNKNOWN
+import io.spine.protodata.settings.Format.UNRECOGNIZED
+import io.spine.protodata.settings.Format.YAML
 import io.spine.type.fromJson
 import java.nio.charset.Charset.defaultCharset
 
@@ -157,7 +157,7 @@ private object PlainParser : ConfigurationParser {
  *
  * @throws ConfigurationError if the format is a non-value
  */
-internal val ConfigurationFormat.parser: ConfigurationParser
+internal val Format.parser: ConfigurationParser
     get() = when(this) {
         PROTO_BINARY -> ProtoBinaryParser
         PROTO_JSON -> ProtoJsonParser

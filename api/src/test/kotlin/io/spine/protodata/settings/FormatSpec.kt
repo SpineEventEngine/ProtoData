@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,17 +27,17 @@
 package io.spine.protodata.settings
 
 import com.google.common.truth.Truth.assertThat
-import io.spine.protodata.settings.ConfigurationFormat.JSON
-import io.spine.protodata.settings.ConfigurationFormat.PLAIN
-import io.spine.protodata.settings.ConfigurationFormat.PROTO_BINARY
-import io.spine.protodata.settings.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.settings.ConfigurationFormat.RCF_UNKNOWN
-import io.spine.protodata.settings.ConfigurationFormat.YAML
+import io.spine.protodata.settings.Format.JSON
+import io.spine.protodata.settings.Format.PLAIN
+import io.spine.protodata.settings.Format.PROTO_BINARY
+import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.settings.Format.RCF_UNKNOWN
+import io.spine.protodata.settings.Format.YAML
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @DisplayName("`ConfigurationFormat` should")
-class ConfigurationFormatSpec {
+class FormatSpec {
 
     @Test
     fun `provide allowed extensions`() {

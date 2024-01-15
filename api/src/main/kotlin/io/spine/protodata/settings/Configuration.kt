@@ -60,13 +60,13 @@ public sealed class Configuration {
         /**
          * Creates a configuration from the given value in the given format.
          */
-        public fun rawValue(value: String, format: ConfigurationFormat): Configuration =
+        public fun rawValue(value: String, format: Format): Configuration =
             Raw(value, format)
     }
 }
 
 /**
- * A [Configuration] consisting of one [ConfigFile].
+ * A [Configuration] consisting of one [File].
  *
  * Produces [FileConfigDiscovered] event upon discovery.
  */
@@ -85,7 +85,7 @@ private class File(private val file: Path) : Configuration() {
  */
 private class Raw(
     private val value: String,
-    private val format: ConfigurationFormat
+    private val format: Format
 ) : Configuration() {
 
     override fun produceEvent(): RawConfigDiscovered = rawConfigDiscovered {

@@ -57,7 +57,7 @@ message RawConfig {
 
     string value = 1 [(required) = true];
 
-    ConfigurationFormat format = 2 [(required) = true];
+    Format format = 2 [(required) = true];
 }
 
 extend google.protobuf.EnumValueOptions {
@@ -71,7 +71,7 @@ extend google.protobuf.EnumValueOptions {
 
 // The format of a custom configuration for ProtoData.
 //
-enum ConfigurationFormat {
+enum Format {
 
     RCF_UNKNOWN = 0;
 

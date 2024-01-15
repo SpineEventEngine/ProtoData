@@ -35,20 +35,20 @@ import kotlin.io.path.name
 /**
  * Checks if the given file matches this configuration format.
  */
-public fun ConfigurationFormat.matches(file: Path): Boolean =
+public fun Format.matches(file: Path): Boolean =
     extensions
             .map { Glob.extension(it) }
             .any { it.matches(file) }
 
 @VisibleForTesting
-public val ConfigurationFormat.extensions: Set<String>
+public val Format.extensions: Set<String>
     get() = valueDescriptor.options.getExtension(SettingsProto.extension).toSet()
 
 /**
- * Obtains a [ConfigurationFormat] from the file extension of the given configuration file.
+ * Obtains a [Format] from the file extension of the given configuration file.
  *
  * @throws ConfigurationError if the format is not recognized
  */
-public fun formatOf(file: Path): ConfigurationFormat =
-    ConfigurationFormat.values().find { it.matches(file) }
+public fun formatOf(file: Path): Format =
+    Format.values().find { it.matches(file) }
         ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")
