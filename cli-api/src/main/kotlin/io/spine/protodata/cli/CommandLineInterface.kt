@@ -120,10 +120,7 @@ public object UserClasspathParam : Parameter(
  * The command-line parameter for specifying the path to the file with custom
  * configuration for ProtoData.
  */
-@Deprecated(
-    message = "Use `ConfigDirParam` instead.",
-    replaceWith = ReplaceWith("ConfigDirParam")
-)
+@Deprecated(message = "Use `SettingsDirParam` instead.")
 public object ConfigFileParam : Parameter(
     name = "--configuration-file",
     shortName = "-c",
@@ -163,6 +160,7 @@ public object SettingsDirParam : Parameter (
 /**
  * The command-line parameter for specifying custom configuration values.
  */
+@Deprecated(message = "Use `SettingsDirParam` instead.")
 public object ConfigValueParam : Parameter(
     name = "--configuration-value",
     shortName = "--cv",
@@ -176,6 +174,7 @@ public object ConfigValueParam : Parameter(
 /**
  * The command-line parameter for specifying the format of a custom configuration.
  */
+@Deprecated(message = "Use `SettingsDirParam` instead.")
 public object ConfigFormatParam : Parameter(
     name = "--configuration-format",
     shortName = "--cf",
@@ -226,7 +225,9 @@ private object dash {
 @Suppress("ClassName", "SpellCheckingInspection") // for better readability in `help` texts.
 private object ddash {
     val tr = lazy { TargetRootParam.name }
+    @Suppress("DEPRECATION")
     val confVal = lazy { ConfigValueParam.name }
+    @Suppress("DEPRECATION")
     val confFmt = lazy { ConfigFormatParam.name }
     val plugin = lazy { PluginParam.name }
 }
