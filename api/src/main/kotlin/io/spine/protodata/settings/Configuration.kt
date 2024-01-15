@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+package io.spine.protodata.settings
 
 import io.spine.annotation.Internal
 import io.spine.base.EventMessage
-import io.spine.protodata.config.event.FileConfigDiscovered
-import io.spine.protodata.config.event.RawConfigDiscovered
-import io.spine.protodata.config.event.fileConfigDiscovered
-import io.spine.protodata.config.event.rawConfigDiscovered
+import io.spine.protodata.settings.event.FileConfigDiscovered
+import io.spine.protodata.settings.event.RawConfigDiscovered
+import io.spine.protodata.settings.event.fileConfigDiscovered
+import io.spine.protodata.settings.event.rawConfigDiscovered
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 

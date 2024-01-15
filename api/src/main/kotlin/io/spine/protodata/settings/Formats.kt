@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,35 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+package io.spine.protodata.settings
 
-import com.google.common.truth.Truth.assertThat
-import io.spine.protodata.config.ConfigurationFormat.JSON
-import io.spine.protodata.config.ConfigurationFormat.PLAIN
-import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
-import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
-import io.spine.protodata.config.ConfigurationFormat.YAML
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import com.google.common.annotations.VisibleForTesting
+import io.spine.io.Glob
+import io.spine.protodata.ConfigurationError
+import java.nio.file.Path
+import kotlin.io.path.name
 
-@DisplayName("`ConfigurationFormat` should")
-class ConfigurationFormatSpec {
+/**
+ * Checks if the given file matches this configuration format.
+ */
+public fun ConfigurationFormat.matches(file: Path): Boolean =
+    extensions
+            .map { Glob.extension(it) }
+            .any { it.matches(file) }
 
-    @Test
-    fun `provide allowed extensions`() {
-        assertThat(RCF_UNKNOWN.extensions)
-            .isEmpty()
+@VisibleForTesting
+public val ConfigurationFormat.extensions: Set<String>
+    get() = valueDescriptor.options.getExtension(ConfigurationProto.extension).toSet()
 
-        assertThat(JSON.extensions)
-            .containsExactly("json")
-        assertThat(PROTO_JSON.extensions)
-            .containsExactly("pb.json")
-        assertThat(PROTO_BINARY.extensions)
-            .containsExactly("pb", "bin")
-        assertThat(YAML.extensions)
-            .containsExactly("yml", "yaml")
-        assertThat(PLAIN.extensions)
-            .isEmpty()
-    }
-}
+/**
+ * Obtains a [ConfigurationFormat] from the file extension of the given configuration file.
+ *
+ * @throws ConfigurationError if the format is not recognized
+ */
+public fun formatOf(file: Path): ConfigurationFormat =
+    ConfigurationFormat.values().find { it.matches(file) }
+        ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")

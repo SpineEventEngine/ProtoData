@@ -28,9 +28,9 @@ package io.spine.protodata.plugin
 
 import io.spine.base.EntityState
 import io.spine.base.EventMessage
-import io.spine.server.query.QueryingClient
-import io.spine.protodata.config.ConfiguredQuerying
+import io.spine.protodata.settings.ConfiguredQuerying
 import io.spine.server.event.Policy
+import io.spine.server.query.QueryingClient
 
 /**
  * A policy converts one event into zero to many other events.

@@ -34,10 +34,10 @@ import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.config.Configuration
-import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
+import io.spine.protodata.settings.Configuration
+import io.spine.protodata.settings.ConfigurationFormat
 import io.spine.protodata.test.AnnotationInsertionPointPrinter
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.DeletedTypeRepository

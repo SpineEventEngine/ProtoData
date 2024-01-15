@@ -31,8 +31,8 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
-import io.spine.protodata.config.Configuration
-import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
+import io.spine.protodata.settings.Configuration
+import io.spine.protodata.settings.ConfigurationFormat.PROTO_JSON
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested

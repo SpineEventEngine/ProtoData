@@ -28,12 +28,12 @@ package io.spine.protodata.backend
 
 import io.spine.core.External
 import io.spine.core.Subscribe
-import io.spine.protodata.config.Config
-import io.spine.protodata.config.ConfigId
-import io.spine.protodata.config.event.FileConfigDiscovered
-import io.spine.protodata.config.event.RawConfigDiscovered
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
+import io.spine.protodata.settings.Config
+import io.spine.protodata.settings.ConfigId
+import io.spine.protodata.settings.event.FileConfigDiscovered
+import io.spine.protodata.settings.event.RawConfigDiscovered
 import io.spine.server.entity.alter
 import io.spine.server.route.EventRouting
 
@@ -42,7 +42,7 @@ import io.spine.server.route.EventRouting
  *
  * Can contain either a configuration file path or a string value of the configuration.
  *
- * @see io.spine.protodata.config.Configured for fetching the value of the user configuration
+ * @see io.spine.protodata.settings.Configured for fetching the value of the user configuration.
  */
 internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
 

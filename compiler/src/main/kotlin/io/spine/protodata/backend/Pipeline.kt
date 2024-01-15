@@ -32,12 +32,12 @@ import io.spine.annotation.Internal
 import io.spine.environment.DefaultMode
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.backend.event.CompilerEvents
-import io.spine.protodata.config.Configuration
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.settings.Configuration
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory

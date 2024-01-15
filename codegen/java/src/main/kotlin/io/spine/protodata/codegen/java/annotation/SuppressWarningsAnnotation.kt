@@ -26,8 +26,8 @@
 
 package io.spine.protodata.codegen.java.annotation
 
-import io.spine.protodata.config.configAs
 import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.settings.configAs
 
 /**
  * Suppresses warnings in the generated code.

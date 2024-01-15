@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+package io.spine.protodata.settings
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -33,13 +33,13 @@ import com.google.common.io.ByteSource
 import com.google.protobuf.Message
 import io.spine.protobuf.defaultInstance
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.config.ConfigurationFormat.JSON
-import io.spine.protodata.config.ConfigurationFormat.PLAIN
-import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
-import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
-import io.spine.protodata.config.ConfigurationFormat.UNRECOGNIZED
-import io.spine.protodata.config.ConfigurationFormat.YAML
+import io.spine.protodata.settings.ConfigurationFormat.JSON
+import io.spine.protodata.settings.ConfigurationFormat.PLAIN
+import io.spine.protodata.settings.ConfigurationFormat.PROTO_BINARY
+import io.spine.protodata.settings.ConfigurationFormat.PROTO_JSON
+import io.spine.protodata.settings.ConfigurationFormat.RCF_UNKNOWN
+import io.spine.protodata.settings.ConfigurationFormat.UNRECOGNIZED
+import io.spine.protodata.settings.ConfigurationFormat.YAML
 import io.spine.type.fromJson
 import java.nio.charset.Charset.defaultCharset
 

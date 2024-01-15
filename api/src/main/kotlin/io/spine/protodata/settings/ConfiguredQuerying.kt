@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+package io.spine.protodata.settings
 
 import com.google.common.io.CharSource
 import com.google.common.io.Files.asByteSource
 import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
+import io.spine.protodata.settings.Config.KindCase.EMPTY
+import io.spine.protodata.settings.Config.KindCase.FILE
+import io.spine.protodata.settings.Config.KindCase.KIND_NOT_SET
+import io.spine.protodata.settings.Config.KindCase.RAW
 import io.spine.server.query.Querying
-import io.spine.protodata.config.Config.KindCase.EMPTY
-import io.spine.protodata.config.Config.KindCase.FILE
-import io.spine.protodata.config.Config.KindCase.KIND_NOT_SET
-import io.spine.protodata.config.Config.KindCase.RAW
 import io.spine.server.query.select
 import io.spine.util.theOnly
 import java.nio.charset.Charset.defaultCharset

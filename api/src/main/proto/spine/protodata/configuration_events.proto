@@ -5,7 +5,7 @@ package spine.protodata;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.config.event";
+option java_package = "io.spine.protodata.settings.event";
 option java_outer_classname = "EventsProto";
 option java_multiple_files = true;
 

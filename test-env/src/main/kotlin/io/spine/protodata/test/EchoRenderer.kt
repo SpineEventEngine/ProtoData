@@ -28,10 +28,10 @@ package io.spine.protodata.test
 
 import com.google.protobuf.StringValue
 import io.spine.protobuf.AnyPacker
-import io.spine.protodata.config.configAs
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.settings.configAs
 import io.spine.time.toInstant
 import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language

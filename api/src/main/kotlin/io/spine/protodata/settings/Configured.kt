@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+package io.spine.protodata.settings
 
 /**
  * A ProtoData component which obtains the configuration provided by the user.
@@ -48,7 +48,7 @@ public interface Configured {
      *
      * In Kotlin, the simplest way to define a type compatible with a configuration is a data class.
      * Jackson is capable of working with Kotlin `val`-s, so the data class can be immutable.
-     * In Java, Jackson is capable of working with immutable types as well, however it may require
+     * In Java, Jackson is capable of working with immutable types as well. However, it may require
      * some annotations to be added to the class. See the Jackson doc for more info.
      *
      * @throws io.spine.protodata.ConfigurationError if no configuration is provided to ProtoData

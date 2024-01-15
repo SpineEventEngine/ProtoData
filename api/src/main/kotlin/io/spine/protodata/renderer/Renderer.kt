@@ -30,7 +30,7 @@ import io.spine.annotation.Internal
 import io.spine.base.EntityState
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.ContextAware
-import io.spine.protodata.config.ConfiguredQuerying
+import io.spine.protodata.settings.ConfiguredQuerying
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
