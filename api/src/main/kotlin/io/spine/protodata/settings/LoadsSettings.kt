@@ -38,6 +38,14 @@ import io.spine.util.theOnly
 @Internal
 public interface LoadsSettings : Querying, WithSettings {
 
+    /**
+     * Obtains the ID of the settings consumer which is used for [loading settings][loadSettings].
+     *
+     * The default value is a canonical name of the Java class implementing this interface.
+     */
+    public val consumerId: String
+        get() = this::class.java.canonicalName
+
     override fun <T: Any> loadSettings(cls: Class<T>): T {
         val settings = findSettings() ?: missingSettings()
         return settings.parse(cls)
@@ -50,17 +58,10 @@ public interface LoadsSettings : Querying, WithSettings {
 
     private fun findSettings(): Settings? {
         //TODO:2024-01-15:alexander.yevsyukov: Obtain settings for the given class.
-
         val settings = select<Settings>().all()
         return if (settings.isEmpty()) null else settings.theOnly()
     }
 }
-
-/**
- * Obtains the ID of the settings consumer as the canonical name of the Java class.
- */
-internal val LoadsSettings.consumerId: String
-    get() = this::class.java.canonicalName
 
 private fun LoadsSettings.missingSettings(): Nothing {
     throw ConfigurationError("Could not find settings for `$consumerId`.")
