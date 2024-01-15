@@ -30,10 +30,9 @@ import io.spine.core.External
 import io.spine.core.Subscribe
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
-import io.spine.protodata.settings.Config
-import io.spine.protodata.settings.ConfigId
-import io.spine.protodata.settings.event.FileConfigDiscovered
-import io.spine.protodata.settings.event.RawConfigDiscovered
+import io.spine.protodata.settings.Settings
+import io.spine.protodata.settings.event.SettingsFileDiscovered
+import io.spine.protodata.settings.event.TextSettingsSupplied
 import io.spine.server.entity.alter
 import io.spine.server.route.EventRouting
 
@@ -44,31 +43,31 @@ import io.spine.server.route.EventRouting
  *
  * @see io.spine.protodata.settings.WithSettings for fetching the value of the user configuration.
  */
-internal class ConfigView : View<ConfigId, Config, Config.Builder>() {
+internal class SettingsView : View<String, Settings, Settings.Builder>() {
 
     @Subscribe
-    internal fun on(@External event: FileConfigDiscovered) = alter {
+    internal fun on(@External event: SettingsFileDiscovered) = alter {
         file = event.file
     }
 
     @Subscribe
-    internal fun on(@External event: RawConfigDiscovered) = alter {
-        text = event.config
+    internal fun on(@External event: TextSettingsSupplied) = alter {
+        text = event.text
     }
 
     /**
      * A repository for the `ConfigView`.
      */
-    internal class Repo : ViewRepository<ConfigId, ConfigView, Config>() {
+    internal class Repo : ViewRepository<String, SettingsView, Settings>() {
 
         private val theId = setOf(
             /* Use the below code instead of Java API, when the mystery with KotlinCompile
                not being able to see the generated Kotlin proto code as its input is solved. */
             // configId { value = "configuration_instance" }
-            ConfigId.newBuilder().setValue("configuration_instance").build()
+            "configuration_instance"
         )
 
-        override fun setupEventRouting(routing: EventRouting<ConfigId>) {
+        override fun setupEventRouting(routing: EventRouting<String>) {
             super.setupEventRouting(routing)
             routing.replaceDefault { _, _ -> theId }
         }

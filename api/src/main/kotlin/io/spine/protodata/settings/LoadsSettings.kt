@@ -31,10 +31,10 @@ import com.google.common.io.Files.asByteSource
 import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.File
-import io.spine.protodata.settings.Config.KindCase.EMPTY
-import io.spine.protodata.settings.Config.KindCase.FILE
-import io.spine.protodata.settings.Config.KindCase.KIND_NOT_SET
-import io.spine.protodata.settings.Config.KindCase.TEXT
+import io.spine.protodata.settings.Settings.KindCase.EMPTY
+import io.spine.protodata.settings.Settings.KindCase.FILE
+import io.spine.protodata.settings.Settings.KindCase.KIND_NOT_SET
+import io.spine.protodata.settings.Settings.KindCase.TEXT
 import io.spine.protodata.toPath
 import io.spine.server.query.Querying
 import io.spine.server.query.select
@@ -42,13 +42,13 @@ import io.spine.util.theOnly
 import java.nio.charset.Charset.defaultCharset
 
 /**
- * A ProtoData component which accesses its settings via the [Config] view.
+ * A ProtoData component which accesses its settings via the [Settings] view.
  */
 @Internal
 public interface LoadsSettings : Querying, WithSettings {
 
     override fun <T: Any> loadSettings(cls: Class<T>): T {
-        val allSettings = select<Config>().all()
+        val allSettings = select<Settings>().all()
         if (allSettings.isEmpty()) {
             missingSettings(cls)
         }
@@ -64,7 +64,7 @@ public interface LoadsSettings : Querying, WithSettings {
     override fun settingsAvailable(): Boolean {
         //TODO:2024-01-15:alexander.yevsyukov: Query for the settings corresponding to this
         // ProtoData component.
-        val settings = select<Config>().all()
+        val settings = select<Settings>().all()
         return settings.isNotEmpty()
     }
 }

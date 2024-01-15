@@ -12,14 +12,14 @@ option java_multiple_files = true;
 import "spine/protodata/file.proto";
 import "spine/protodata/settings.proto";
 
-// An event emitted when the user configures ProtoData via a config file.
-message FileConfigDiscovered {
+// An event emitted when the user passes settings file to ProtoData.
+message SettingsFileDiscovered {
 
     File file = 1 [(required) = true];
 }
 
-// An event emitted when the user configures ProtoData via a raw string config value.
-message RawConfigDiscovered {
+// An event emitted when the user passes settings as a [Text] message.
+message TextSettingsSupplied {
 
-    Text config = 1 [(required) = true];
+    Text text = 1 [(required) = true];
 }

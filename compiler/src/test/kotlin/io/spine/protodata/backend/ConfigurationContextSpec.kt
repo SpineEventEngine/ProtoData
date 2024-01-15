@@ -31,10 +31,10 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.spine.base.EventMessage
 import io.spine.protodata.file
 import io.spine.protodata.settings.Format
-import io.spine.protodata.settings.event.FileConfigDiscovered
-import io.spine.protodata.settings.event.RawConfigDiscovered
-import io.spine.protodata.settings.event.fileConfigDiscovered
-import io.spine.protodata.settings.event.rawConfigDiscovered
+import io.spine.protodata.settings.event.SettingsFileDiscovered
+import io.spine.protodata.settings.event.TextSettingsSupplied
+import io.spine.protodata.settings.event.settingsFileDiscovered
+import io.spine.protodata.settings.event.textSettingsSupplied
 import io.spine.protodata.settings.text
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
@@ -75,7 +75,7 @@ class ConfigurationContextSpec {
         val settingsFile = file {
             path = "foo/bar.bin"
         }
-        val event = fileConfigDiscovered {
+        val event = settingsFileDiscovered {
             file = settingsFile
         }
         checkEvent(event)
@@ -87,8 +87,8 @@ class ConfigurationContextSpec {
             format = Format.JSON
             value = "{}"
         }
-        val event = rawConfigDiscovered {
-            config = raw
+        val event = textSettingsSupplied {
+            text = raw
         }
         checkEvent(event)
     }
@@ -116,8 +116,8 @@ private class RecordingDispatcher : EventDispatcher {
     }
 
     override fun externalEventClasses(): ImmutableSet<EventClass> = EventClass.setOf(
-        FileConfigDiscovered::class.java,
-        RawConfigDiscovered::class.java
+        SettingsFileDiscovered::class.java,
+        TextSettingsSupplied::class.java
     )
 
     override fun domesticEventClasses(): ImmutableSet<EventClass> =

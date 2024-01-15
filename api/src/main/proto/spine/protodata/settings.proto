@@ -20,10 +20,11 @@ import "spine/protodata/file.proto";
 //
 // There can only ever be one `Config` instance.
 //
-message Config {
+message Settings {
     option (entity).kind = PROJECTION;
 
-    ConfigId id = 1;
+    // A name of a ProtoData component which is going to consume the settings.
+    string consumer = 1;
 
     oneof kind {
         option (is_required) = true;
@@ -39,15 +40,6 @@ message Config {
 
         Text text = 4;
     }
-}
-
-// The ID of the `Config` view.
-//
-// It is required by the Spine framework that the ID was a non-empty message. By convention, there
-// is only one `Config` with the ID value "configuration_instance".
-//
-message ConfigId {
-    string value = 1 [(required) = true];
 }
 
 // Settings as a string value.

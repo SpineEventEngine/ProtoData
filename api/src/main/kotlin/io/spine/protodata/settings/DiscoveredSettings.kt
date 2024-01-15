@@ -28,10 +28,10 @@ package io.spine.protodata.settings
 
 import io.spine.annotation.Internal
 import io.spine.base.EventMessage
-import io.spine.protodata.settings.event.FileConfigDiscovered
-import io.spine.protodata.settings.event.RawConfigDiscovered
-import io.spine.protodata.settings.event.fileConfigDiscovered
-import io.spine.protodata.settings.event.rawConfigDiscovered
+import io.spine.protodata.settings.event.SettingsFileDiscovered
+import io.spine.protodata.settings.event.TextSettingsSupplied
+import io.spine.protodata.settings.event.settingsFileDiscovered
+import io.spine.protodata.settings.event.textSettingsSupplied
 import io.spine.protodata.toProto
 import java.nio.file.Path
 
@@ -68,11 +68,11 @@ public sealed class DiscoveredSettings {
 /**
  * A [DiscoveredSettings] consisting of one [File].
  *
- * Produces [FileConfigDiscovered] event upon discovery.
+ * Produces [SettingsFileDiscovered] event upon discovery.
  */
 private class File(private val file: Path) : DiscoveredSettings() {
 
-    override fun produceEvent(): FileConfigDiscovered = fileConfigDiscovered {
+    override fun produceEvent(): SettingsFileDiscovered = settingsFileDiscovered {
         file = this@File.file.toProto()
     }
 
@@ -81,18 +81,18 @@ private class File(private val file: Path) : DiscoveredSettings() {
 /**
  * A [DiscoveredSettings] produced from a [value] in the specified [format].
  *
- * Produces [RawConfigDiscovered] event upon discovery.
+ * Produces [TextSettingsSupplied] event upon discovery.
  */
 private class FormattedText(
     private val value: String,
     private val format: Format
 ) : DiscoveredSettings() {
 
-    override fun produceEvent(): RawConfigDiscovered = rawConfigDiscovered {
-        config = config()
+    override fun produceEvent(): TextSettingsSupplied = textSettingsSupplied {
+        text = toProto()
     }
 
-    private fun config() = text {
+    private fun toProto() = text {
         format = this@FormattedText.format
         value = this@FormattedText.value
     }

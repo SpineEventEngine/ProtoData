@@ -51,7 +51,7 @@ import kotlin.reflect.jvm.jvmName
  *  * [ProtoSourceFileView] — the view on the source files of the Protobuf model.
  *  * [DependencyView] — the view on the dependencies of the Protobuf model.
  *  * [InsertionPointsView] — the view on the insertion points defined in the current [Pipeline].
- *  * [ConfigView] — the view on the user data configuration.
+ *  * [SettingsView] — the view on the user data configuration.
  */
 public class CodeGenerationContext(
     /**
@@ -75,7 +75,7 @@ public class CodeGenerationContext(
             add(ViewRepository.default(ProtoSourceFileView::class.java))
             add(ViewRepository.default(DependencyView::class.java))
             add(ViewRepository.default(InsertionPointsView::class.java))
-            add(ConfigView.Repo())
+            add(SettingsView.Repo())
         }
         builder.setup()
         context = builder.build()
