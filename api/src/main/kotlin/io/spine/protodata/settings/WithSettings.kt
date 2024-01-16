@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+package io.spine.protodata.settings
 
 /**
- * A ProtoData component which obtains the configuration provided by the user.
+ * A ProtoData component which obtains settings provided by the user.
  */
-public interface Configured {
+public interface WithSettings {
 
     /**
-     * Obtains the configuration provided by the user as an instance of the given class.
+     * Obtains the settings provided by the user as an instance of the given class.
      *
-     * It is the API user's responsibility to know the format of the configuration and provide
+     * It is the API user's responsibility to know the format of the settings and provide
      * an appropriate class.
      *
      * For Protobuf messages, encoded either in binary or in the Protobuf JSON format, the [cls]
@@ -48,25 +48,26 @@ public interface Configured {
      *
      * In Kotlin, the simplest way to define a type compatible with a configuration is a data class.
      * Jackson is capable of working with Kotlin `val`-s, so the data class can be immutable.
-     * In Java, Jackson is capable of working with immutable types as well, however it may require
+     * In Java, Jackson is capable of working with immutable types as well. However, it may require
      * some annotations to be added to the class. See the Jackson doc for more info.
      *
-     * @throws io.spine.protodata.ConfigurationError if no configuration is provided to ProtoData
+     * @throws io.spine.protodata.ConfigurationError if no configuration is provided to ProtoData.
      */
-    public fun <T> configAs(cls: Class<T>): T
+    public fun <T: Any> loadSettings(cls: Class<T>): T
 
     /**
-     * Checks if ProtoData was supplied with any configuration.
+     * Checks if settings were supplied.
      *
-     * @return `true` if the caller provided the config, `false` otherwise
+     * @return `true` if the caller provided the settings, `false` otherwise
      */
-    public fun configIsPresent(): Boolean
+    public fun settingsAvailable(): Boolean
 }
 
 /**
- * Obtains the configuration provided by the user as an instance of the given class.
+ * Obtains the settings provided by the user as an instance of the given class.
  *
- * This is Kotlin-specific convenience API. See [the general API][Configured.configAs] for more.
+ * This is Kotlin-specific convenience API.
+ * See [the general API][WithSettings.loadSettings] for more.
  */
-public inline fun <reified T> Configured.configAs(): T =
-    configAs(T::class.java)
+public inline fun <reified T: Any> WithSettings.loadSettings(): T =
+    loadSettings(T::class.java)

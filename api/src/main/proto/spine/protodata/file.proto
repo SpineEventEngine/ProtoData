@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,35 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+syntax = "proto3";
 
-import com.google.common.truth.Truth.assertThat
-import io.spine.protodata.config.ConfigurationFormat.JSON
-import io.spine.protodata.config.ConfigurationFormat.PLAIN
-import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
-import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
-import io.spine.protodata.config.ConfigurationFormat.YAML
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+package spine.protodata;
 
-@DisplayName("`ConfigurationFormat` should")
-class ConfigurationFormatSpec {
+import "spine/options.proto";
 
-    @Test
-    fun `provide allowed extensions`() {
-        assertThat(RCF_UNKNOWN.extensions)
-            .isEmpty()
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata";
+option java_outer_classname = "FileProto";
+option java_multiple_files = true;
 
-        assertThat(JSON.extensions)
-            .containsExactly("json")
-        assertThat(PROTO_JSON.extensions)
-            .containsExactly("pb.json")
-        assertThat(PROTO_BINARY.extensions)
-            .containsExactly("pb", "bin")
-        assertThat(YAML.extensions)
-            .containsExactly("yml", "yaml")
-        assertThat(PLAIN.extensions)
-            .isEmpty()
-    }
+// Represents a file in an arbitrary OS.
+//
+// In most cases it is going to be a relative path.
+// In some cases it may be an absolute path.
+//
+// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
+// the current operating system. This value holds this exact format of the path.
+//
+message File {
+
+    // The path to the file, separating directories with slash (`/`) symbol.
+    string path = 1 [(required) = true];
 }

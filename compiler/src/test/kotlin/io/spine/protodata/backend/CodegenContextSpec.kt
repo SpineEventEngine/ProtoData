@@ -34,10 +34,10 @@ import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.config.Configuration
-import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
+import io.spine.protodata.settings.DiscoveredSettings
+import io.spine.protodata.settings.Format
 import io.spine.protodata.test.AnnotationInsertionPointPrinter
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.DeletedTypeRepository
@@ -365,7 +365,7 @@ class CodegenContextSpec {
                     SourceFileSet.create(source2, destination2)
                 ),
                 request = request,
-                config = Configuration.rawValue(expectedContent, ConfigurationFormat.PLAIN)
+                config = DiscoveredSettings.text(expectedContent, Format.PLAIN)
             )()
 
             val firstFile = destination1.resolve(ECHO_FILE)

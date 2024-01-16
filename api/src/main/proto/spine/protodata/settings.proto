@@ -5,12 +5,13 @@ package spine.protodata;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.config";
-option java_outer_classname = "ConfigurationProto";
+option java_package = "io.spine.protodata.settings";
+option java_outer_classname = "SettingsProto";
 option java_multiple_files = true;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/descriptor.proto";
+import "spine/protodata/file.proto";
 
 // A view on the ProtoData user configuration.
 //
@@ -19,49 +20,37 @@ import "google/protobuf/descriptor.proto";
 //
 // There can only ever be one `Config` instance.
 //
-message Config {
+message Settings {
     option (entity).kind = PROJECTION;
 
-    ConfigId id = 1;
+    // A name of a ProtoData component which is going to consume the settings.
+    string consumer = 1;
 
     oneof kind {
         option (is_required) = true;
 
+        // No settings are supplied.
         google.protobuf.Empty empty = 2;
 
-        ConfigFile file = 3;
+        // A file which contains the configuration.
+        //
+        // The format of the configuration is inferred from the file extension.
+        //
+        File file = 3;
 
-        RawConfig raw = 4;
+        Text text = 4;
     }
 }
 
-// The ID of the `Config` view.
+// Settings as a string value.
 //
-// It is required by the Spine framework that the ID was a non-empty message. By convention, there
-// is only one `Config` with the ID value "configuration_instance".
+// The format of the settings can be `PROTO_JSON`, `JSON`, or `YAML`.
 //
-message ConfigId {
-    string value = 1 [(required) = true];
-}
-
-// A file which contains the configuration.
-//
-// The format of the configuration is inferred from the file extension.
-//
-message ConfigFile {
-
-    string path = 1 [(required) = true];
-}
-
-// The raw string representation of the configuration.
-//
-// The format of the raw configuration can be `PROTO_JSON`, `JSON`, or `YAML`.
-//
-message RawConfig {
+message Text {
 
     string value = 1 [(required) = true];
 
-    ConfigurationFormat format = 2 [(required) = true];
+    Format format = 2 [(required) = true];
 }
 
 extend google.protobuf.EnumValueOptions {
@@ -75,7 +64,7 @@ extend google.protobuf.EnumValueOptions {
 
 // The format of a custom configuration for ProtoData.
 //
-enum ConfigurationFormat {
+enum Format {
 
     RCF_UNKNOWN = 0;
 

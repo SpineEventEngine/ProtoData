@@ -30,7 +30,7 @@ import io.spine.annotation.Internal
 import io.spine.base.EntityState
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.ContextAware
-import io.spine.protodata.config.ConfiguredQuerying
+import io.spine.protodata.settings.LoadsSettings
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
@@ -46,7 +46,7 @@ import io.spine.tools.code.Language
 public abstract class Renderer<L : Language>
 protected constructor(
     protected val language: L
-) : ConfiguredQuerying, ContextAware {
+) : LoadsSettings, ContextAware {
 
     private lateinit var _context: CodegenContext
 
@@ -108,9 +108,9 @@ protected constructor(
     public final override fun <S : EntityState<*>> select(type: Class<S>): QueryingClient<S> =
         _context.select(type)
 
-    final override fun <T> configAs(cls: Class<T>): T = super.configAs(cls)
+    final override fun <T: Any> loadSettings(cls: Class<T>): T = super.loadSettings(cls)
 
-    final override fun configIsPresent(): Boolean = super.configIsPresent()
+    final override fun settingsAvailable(): Boolean = super.settingsAvailable()
 
     /**
      * Injects the `Code Generation` context into this renderer.

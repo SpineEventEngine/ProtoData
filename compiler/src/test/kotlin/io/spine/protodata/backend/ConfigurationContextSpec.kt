@@ -29,13 +29,13 @@ package io.spine.protodata.backend
 import com.google.common.collect.ImmutableSet
 import io.kotest.matchers.collections.shouldContainExactly
 import io.spine.base.EventMessage
-import io.spine.protodata.config.ConfigurationFormat
-import io.spine.protodata.config.configFile
-import io.spine.protodata.config.event.FileConfigDiscovered
-import io.spine.protodata.config.event.RawConfigDiscovered
-import io.spine.protodata.config.event.fileConfigDiscovered
-import io.spine.protodata.config.event.rawConfigDiscovered
-import io.spine.protodata.config.rawConfig
+import io.spine.protodata.file
+import io.spine.protodata.settings.Format
+import io.spine.protodata.settings.event.SettingsFileDiscovered
+import io.spine.protodata.settings.event.TextSettingsSupplied
+import io.spine.protodata.settings.event.settingsFileDiscovered
+import io.spine.protodata.settings.event.textSettingsSupplied
+import io.spine.protodata.settings.text
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.dispatch.DispatchOutcome
@@ -72,23 +72,23 @@ class ConfigurationContextSpec {
 
     @Test
     fun `emit file configuration event`() {
-        val configFile = configFile {
+        val settingsFile = file {
             path = "foo/bar.bin"
         }
-        val event = fileConfigDiscovered {
-            file = configFile
+        val event = settingsFileDiscovered {
+            file = settingsFile
         }
         checkEvent(event)
     }
 
     @Test
     fun `emit raw configuration event`() {
-        val raw = rawConfig {
-            format = ConfigurationFormat.JSON
+        val raw = text {
+            format = Format.JSON
             value = "{}"
         }
-        val event = rawConfigDiscovered {
-            config = raw
+        val event = textSettingsSupplied {
+            text = raw
         }
         checkEvent(event)
     }
@@ -116,8 +116,8 @@ private class RecordingDispatcher : EventDispatcher {
     }
 
     override fun externalEventClasses(): ImmutableSet<EventClass> = EventClass.setOf(
-        FileConfigDiscovered::class.java,
-        RawConfigDiscovered::class.java
+        SettingsFileDiscovered::class.java,
+        TextSettingsSupplied::class.java
     )
 
     override fun domesticEventClasses(): ImmutableSet<EventClass> =

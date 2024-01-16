@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,27 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+package io.spine.protodata.settings
 
 import io.spine.annotation.Internal
 import io.spine.base.EventMessage
-import io.spine.protodata.config.event.FileConfigDiscovered
-import io.spine.protodata.config.event.RawConfigDiscovered
-import io.spine.protodata.config.event.fileConfigDiscovered
-import io.spine.protodata.config.event.rawConfigDiscovered
+import io.spine.protodata.settings.event.SettingsFileDiscovered
+import io.spine.protodata.settings.event.TextSettingsSupplied
+import io.spine.protodata.settings.event.settingsFileDiscovered
+import io.spine.protodata.settings.event.textSettingsSupplied
+import io.spine.protodata.toProto
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
 
 /**
- * User-provided custom configuration for ProtoData.
+ * Helpers for emitting events on finding user-provided settings.
  *
- * @see Configured
+ * @see WithSettings
  */
 @Internal
-public sealed class Configuration {
+public sealed class DiscoveredSettings {
 
     /**
-     * Constructs an event which contains the value of the configuration.
+     * Constructs an event on finding the settings.
      *
      * The event belongs to [ConfigurationContext][io.spine.protodata.backend.ConfigurationContext].
      */
@@ -55,48 +55,45 @@ public sealed class Configuration {
         /**
          * Creates a configuration written in a file with the given path.
          */
-        public fun file(file: Path): Configuration = File(file)
+        public fun file(file: Path): DiscoveredSettings = File(file)
 
         /**
          * Creates a configuration from the given value in the given format.
          */
-        public fun rawValue(value: String, format: ConfigurationFormat): Configuration =
-            Raw(value, format)
+        public fun text(value: String, format: Format): DiscoveredSettings =
+            FormattedText(value, format)
     }
 }
 
 /**
- * A [Configuration] consisting of one [ConfigFile].
+ * A [DiscoveredSettings] consisting of one [File].
  *
- * Produces [FileConfigDiscovered] event upon discovery.
+ * Produces [SettingsFileDiscovered] event upon discovery.
  */
-private class File(private val file: Path) : Configuration() {
+private class File(private val file: Path) : DiscoveredSettings() {
 
-    override fun produceEvent(): FileConfigDiscovered = fileConfigDiscovered {
-        file = this@File.file.toConfigFile()
+    override fun produceEvent(): SettingsFileDiscovered = settingsFileDiscovered {
+        file = this@File.file.toProto()
     }
 
-    private fun Path.toConfigFile() = configFile {
-        path = absolutePathString()
-    }
 }
 
 /**
- * A [Configuration] produced from a [value] in the specified [format].
+ * A [DiscoveredSettings] produced from a [value] in the specified [format].
  *
- * Produces [RawConfigDiscovered] event upon discovery.
+ * Produces [TextSettingsSupplied] event upon discovery.
  */
-private class Raw(
+private class FormattedText(
     private val value: String,
-    private val format: ConfigurationFormat
-) : Configuration() {
+    private val format: Format
+) : DiscoveredSettings() {
 
-    override fun produceEvent(): RawConfigDiscovered = rawConfigDiscovered {
-        config = config()
+    override fun produceEvent(): TextSettingsSupplied = textSettingsSupplied {
+        text = toProto()
     }
 
-    private fun config() = rawConfig {
-        format = this@Raw.format
-        value = this@Raw.value
+    private fun toProto() = text {
+        format = this@FormattedText.format
+        value = this@FormattedText.value
     }
 }

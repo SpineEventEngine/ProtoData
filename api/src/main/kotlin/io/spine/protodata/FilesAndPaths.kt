@@ -24,12 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata
+
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Converts the given path to a [File] message.
  */
-val protoDataVersion: String by extra("0.17.0")
+public fun Path.toProto(): File = file {
+    path = absolutePathString()
+}
+
+/**
+ * Converts the given [java.io.File] to a [File] message.
+ */
+public fun java.io.File.toProto(): File = toPath().toProto()
+
+/**
+ * Converts the given [File] message to a [Path].
+ */
+public fun File.toPath(): Path = Path(path)

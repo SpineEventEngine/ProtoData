@@ -55,12 +55,13 @@ import io.spine.protodata.cli.InfoLoggingParam
 import io.spine.protodata.cli.Parameter
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RequestParam
+import io.spine.protodata.cli.SettingsDirParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
-import io.spine.protodata.config.Configuration
-import io.spine.protodata.config.ConfigurationFormat
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.settings.DiscoveredSettings
+import io.spine.protodata.settings.Format
 import io.spine.string.Separator.Companion.nl
 import io.spine.string.pi
 import io.spine.string.ti
@@ -109,10 +110,11 @@ internal class Run(version: String) : CliktCommand(
     epilog = "https://github.com/SpineEventEngine/ProtoData/",
     printHelpOnEmptyArgs = true
 ), WithLogging {
-    private fun Parameter.toOption(completionCandidates: CompletionCandidates? = null) = option(
+
+    private fun Parameter.toOption(cc: CompletionCandidates? = null) = option(
         name, shortName,
         help = help,
-        completionCandidates = completionCandidates
+        completionCandidates = cc
     )
 
     private fun NullableOption<Path, Path>.splitPaths() = split(pathSeparator)
@@ -146,6 +148,7 @@ internal class Run(version: String) : CliktCommand(
                 mustBeReadable = true
             ).splitPaths()
 
+    @Deprecated("Use `settingsDir` instead.", ReplaceWith("settingsDir"))
     private val configurationFile: Path?
             by ConfigFileParam.toOption().path(
                 mustExist = true,
@@ -154,17 +157,28 @@ internal class Run(version: String) : CliktCommand(
                 canBeSymlink = false
             )
 
+    @Suppress("unused")
+    private val settingsDir: Path?
+            by SettingsDirParam.toOption().path(
+                mustExist = true,
+                mustBeReadable = true,
+                canBeDir = true,
+                canBeSymlink = false
+            )
+
     private val configurationValue: String?
             by ConfigValueParam.toOption()
 
     private val configurationFormat: String? by ConfigFormatParam.toOption(
-        completionCandidates = CompletionCandidates.Fixed(
+        cc = CompletionCandidates.Fixed(
             ConfigFormatParam.options().toSet()
         )
     )
 
     private val debug: Boolean by DebugLoggingParam.toOption().flag(default = false)
+
     private val info: Boolean by InfoLoggingParam.toOption().flag(default = false)
+
     private val loggingLevel: Level by lazy {
         checkUsage(!(debug && info)) {
             "Debug and info logging levels cannot be enabled at the same time."
@@ -257,7 +271,7 @@ internal class Run(version: String) : CliktCommand(
         return registry
     }
 
-    private fun resolveConfig(): Configuration? {
+    private fun resolveConfig(): DiscoveredSettings? {
         val hasFile = configurationFile != null
         val hasValue = configurationValue != null
         val hasFormat = configurationFormat != null
@@ -271,10 +285,10 @@ internal class Run(version: String) : CliktCommand(
                     " must be used together."
         }
         return when {
-            hasFile -> Configuration.file(configurationFile!!)
+            hasFile -> DiscoveredSettings.file(configurationFile!!)
             hasValue -> {
-                val format = ConfigurationFormat.valueOf(configurationFormat!!.uppercase())
-                Configuration.rawValue(configurationValue!!, format)
+                val format = Format.valueOf(configurationFormat!!.uppercase())
+                DiscoveredSettings.text(configurationValue!!, format)
             }
             else -> null
         }
@@ -318,7 +332,7 @@ internal class Run(version: String) : CliktCommand(
 }
 
 /**
- * Creates a list that contain a single, empty source set.
+ * Creates a list that contains a single, empty source set.
  */
 private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet> =
     listOf(SourceFileSet.empty(first()))

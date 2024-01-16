@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package spine.protodata;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.settings.event";
+option java_outer_classname = "EventsProto";
+option java_multiple_files = true;
+
+import "spine/protodata/file.proto";
+import "spine/protodata/settings.proto";
+
+// An event emitted when the user passes settings file to ProtoData.
+message SettingsFileDiscovered {
+
+    File file = 1 [(required) = true];
+}
+
+// An event emitted when the user passes settings as a [Text] message.
+message TextSettingsSupplied {
+
+    Text text = 1 [(required) = true];
+}

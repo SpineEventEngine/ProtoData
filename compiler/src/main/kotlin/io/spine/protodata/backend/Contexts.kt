@@ -32,7 +32,7 @@ import io.spine.base.EventMessage
 import io.spine.core.userId
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.InsertionPointsView
-import io.spine.protodata.plugin.ViewRepository
+import io.spine.protodata.plugin.addView
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContext.singleTenant
@@ -51,7 +51,7 @@ import kotlin.reflect.jvm.jvmName
  *  * [ProtoSourceFileView] — the view on the source files of the Protobuf model.
  *  * [DependencyView] — the view on the dependencies of the Protobuf model.
  *  * [InsertionPointsView] — the view on the insertion points defined in the current [Pipeline].
- *  * [ConfigView] — the view on the user data configuration.
+ *  * [SettingsView] — the view on the user data configuration.
  */
 public class CodeGenerationContext(
     /**
@@ -72,10 +72,10 @@ public class CodeGenerationContext(
 
     init {
         val builder = singleTenant("Code Generation-$pipelineId").apply {
-            add(ViewRepository.default(ProtoSourceFileView::class.java))
-            add(ViewRepository.default(DependencyView::class.java))
-            add(ViewRepository.default(InsertionPointsView::class.java))
-            add(ConfigView.Repo())
+            addView(ProtoSourceFileView::class)
+            addView(DependencyView::class)
+            addView(InsertionPointsView::class)
+            add(SettingsView.Repo())
         }
         builder.setup()
         context = builder.build()

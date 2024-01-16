@@ -24,12 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.settings
+
+import com.google.common.annotations.VisibleForTesting
+import io.spine.io.Glob
+import io.spine.protodata.ConfigurationError
+import java.nio.file.Path
+import kotlin.io.path.name
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Checks if the given file matches this configuration format.
  */
-val protoDataVersion: String by extra("0.17.0")
+public fun Format.matches(file: Path): Boolean =
+    extensions
+            .map { Glob.extension(it) }
+            .any { it.matches(file) }
+
+@VisibleForTesting
+public val Format.extensions: Set<String>
+    get() = valueDescriptor.options.getExtension(SettingsProto.extension).toSet()
+
+/**
+ * Obtains a [Format] from the file extension of the given configuration file.
+ *
+ * @throws ConfigurationError if the format is not recognized
+ */
+public fun formatOf(file: Path): Format =
+    Format.values().find { it.matches(file) }
+        ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")

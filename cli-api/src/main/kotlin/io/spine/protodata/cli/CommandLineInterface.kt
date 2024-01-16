@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +29,11 @@
 package io.spine.protodata.cli
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.protodata.config.ConfigurationFormat.JSON
-import io.spine.protodata.config.ConfigurationFormat.PLAIN
-import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.config.ConfigurationFormat.YAML
 import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.settings.Format.JSON
+import io.spine.protodata.settings.Format.PLAIN
+import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.settings.Format.YAML
 
 /**
  * The command-line parameter for specifying ProtoData plugins used in
@@ -120,6 +120,7 @@ public object UserClasspathParam : Parameter(
  * The command-line parameter for specifying the path to the file with custom
  * configuration for ProtoData.
  */
+@Deprecated(message = "Use `SettingsDirParam` instead.")
 public object ConfigFileParam : Parameter(
     name = "--configuration-file",
     shortName = "-c",
@@ -136,8 +137,30 @@ public object ConfigFileParam : Parameter(
 )
 
 /**
+ * The command-line parameter for specifying the path to the directory with
+ * setting files for ProtoData plugins.
+ */
+public object SettingsDirParam : Parameter (
+    name = "--settings-dir",
+    shortName = "-d",
+    help = """
+        A directory which contains setting files for ProtoData plugins.
+        
+        Setting files may be a JSON, a YAML, or a binary Protobuf file.
+        A name of the file must match the name of the plugin class, with the extension
+        corresponding to the format of the file:
+         * JSON files must have `.json` extension.
+         * JSON files with Protobuf JSON format must have `.pb.json` extension.
+         * YAML files must have `.yml` or `.yaml` extension.
+         * Protobuf binary files must have `.pb` or `.bin` extension.
+        Messages must not be delimited.
+        """
+)
+
+/**
  * The command-line parameter for specifying custom configuration values.
  */
+@Deprecated(message = "Use `SettingsDirParam` instead.")
 public object ConfigValueParam : Parameter(
     name = "--configuration-value",
     shortName = "--cv",
@@ -151,6 +174,7 @@ public object ConfigValueParam : Parameter(
 /**
  * The command-line parameter for specifying the format of a custom configuration.
  */
+@Deprecated(message = "Use `SettingsDirParam` instead.")
 public object ConfigFormatParam : Parameter(
     name = "--configuration-format",
     shortName = "--cf",
@@ -201,7 +225,9 @@ private object dash {
 @Suppress("ClassName", "SpellCheckingInspection") // for better readability in `help` texts.
 private object ddash {
     val tr = lazy { TargetRootParam.name }
+    @Suppress("DEPRECATION")
     val confVal = lazy { ConfigValueParam.name }
+    @Suppress("DEPRECATION")
     val confFmt = lazy { ConfigFormatParam.name }
     val plugin = lazy { PluginParam.name }
 }

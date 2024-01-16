@@ -24,40 +24,76 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.config
+package io.spine.protodata.settings
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.google.common.io.ByteSource
+import com.google.common.io.CharSource
+import com.google.common.io.Files
 import com.google.protobuf.Message
 import io.spine.protobuf.defaultInstance
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.config.ConfigurationFormat.JSON
-import io.spine.protodata.config.ConfigurationFormat.PLAIN
-import io.spine.protodata.config.ConfigurationFormat.PROTO_BINARY
-import io.spine.protodata.config.ConfigurationFormat.PROTO_JSON
-import io.spine.protodata.config.ConfigurationFormat.RCF_UNKNOWN
-import io.spine.protodata.config.ConfigurationFormat.UNRECOGNIZED
-import io.spine.protodata.config.ConfigurationFormat.YAML
+import io.spine.protodata.File
+import io.spine.protodata.settings.Format.JSON
+import io.spine.protodata.settings.Format.PLAIN
+import io.spine.protodata.settings.Format.PROTO_BINARY
+import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.settings.Format.RCF_UNKNOWN
+import io.spine.protodata.settings.Format.UNRECOGNIZED
+import io.spine.protodata.settings.Format.YAML
+import io.spine.protodata.settings.Settings.KindCase.EMPTY
+import io.spine.protodata.settings.Settings.KindCase.FILE
+import io.spine.protodata.settings.Settings.KindCase.KIND_NOT_SET
+import io.spine.protodata.settings.Settings.KindCase.TEXT
+import io.spine.protodata.toPath
+
 import io.spine.type.fromJson
 import java.nio.charset.Charset.defaultCharset
 
 /**
- * A parser for the ProtoData user-provided configuration.
+ * A parser for user-defined settings.
  */
-internal sealed interface ConfigurationParser {
+internal sealed interface Parser {
 
     /**
-     * Attempts to deserialize the given configuration value into the given class.
+     * Attempts to deserialize the given settings value into the given class.
      */
     fun <T> parse(source: ByteSource, cls: Class<T>): T
 }
 
 /**
+ * Parses this instance of [Settings] into the given class.
+ */
+internal fun <T : Any> Settings.parse(cls: Class<T>): T =
+    when (kindCase!!) {
+        FILE -> parseFile(file, cls)
+        TEXT -> parseText(text, cls)
+        EMPTY, KIND_NOT_SET -> unknownCase(cls)
+    }
+
+/**
+ * Obtains a [Parser] for this format.
+ *
+ * @throws ConfigurationError if the format is a non-value.
+ */
+internal val Format.parser: Parser
+    get() = when(this) {
+        PROTO_BINARY -> ProtoBinaryParser
+        PROTO_JSON -> ProtoJsonParser
+        JSON -> JsonParser
+        YAML -> YamlParser
+        PLAIN -> PlainParser
+        UNRECOGNIZED, RCF_UNKNOWN -> throw ConfigurationError(
+            "Unable to parse the configuration: unknown format `${this.name}`."
+        )
+    }
+
+/**
  * A configuration parser for Protobuf messages.
  */
-private sealed class ProtobufParser : ConfigurationParser {
+private sealed class ProtobufParser : Parser {
 
     final override fun <T> parse(source: ByteSource, cls: Class<T>): T {
         require(Message::class.java.isAssignableFrom(cls)) {
@@ -100,7 +136,7 @@ private object ProtoJsonParser : ProtobufParser() {
 /**
  * A configuration parser for text-based formats.
  */
-private sealed class JacksonParser : ConfigurationParser {
+private sealed class JacksonParser : Parser {
 
     protected abstract val factory: JsonFactory
 
@@ -138,7 +174,7 @@ private object YamlParser : JacksonParser() {
  * To ensure the type safety, the `cls` parameter is checked to be `java.lang.String`.
  * If the type is wrong, throws a [ConfigurationError].
  */
-private object PlainParser : ConfigurationParser {
+private object PlainParser : Parser {
 
     override fun <T> parse(source: ByteSource, cls: Class<T>): T {
         if (cls != String::class.java) {
@@ -152,19 +188,22 @@ private object PlainParser : ConfigurationParser {
     }
 }
 
-/**
- * Obtains a [ConfigurationParser] for this format.
- *
- * @throws ConfigurationError if the format is a non-value
- */
-internal val ConfigurationFormat.parser: ConfigurationParser
-    get() = when(this) {
-        PROTO_BINARY -> ProtoBinaryParser
-        PROTO_JSON -> ProtoJsonParser
-        JSON -> JsonParser
-        YAML -> YamlParser
-        PLAIN -> PlainParser
-        UNRECOGNIZED, RCF_UNKNOWN -> throw ConfigurationError(
-            "Unable to parse the configuration: unknown format `${this.name}`."
-        )
-    }
+private fun <T> parseFile(file: File, cls: Class<T>): T {
+    val path = file.toPath()
+    val format = formatOf(path)
+    val bytes = Files.asByteSource(path.toFile())
+    return format.parser.parse(bytes, cls)
+}
+
+private fun <T> parseText(text: Text, cls: Class<T>): T {
+    val bytes = CharSource
+        .wrap(text.value)
+        .asByteSource(defaultCharset())
+    return text.format.parser.parse(bytes, cls)
+}
+
+private fun Settings.unknownCase(cls: Class<*>): Nothing {
+    throw ConfigurationError(
+        "Unable to parse settings as `${cls.canonicalName}`. `kindCase` is `$kindCase`."
+    )
+}

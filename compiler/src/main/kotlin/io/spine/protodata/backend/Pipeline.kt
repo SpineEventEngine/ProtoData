@@ -32,12 +32,12 @@ import io.spine.annotation.Internal
 import io.spine.environment.DefaultMode
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.backend.event.CompilerEvents
-import io.spine.protodata.config.Configuration
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.settings.DiscoveredSettings
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
@@ -82,7 +82,7 @@ public class Pipeline(
     /**
      * The configuration of the pipeline.
      */
-    private val config: Configuration? = null
+    private val config: DiscoveredSettings? = null
 ) {
 
     private lateinit var codegenContext: CodegenContext
@@ -95,7 +95,7 @@ public class Pipeline(
         plugin: Plugin,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
-        config: Configuration? = null,
+        config: DiscoveredSettings? = null,
         id: String = generateId()
     ) : this(
         id,

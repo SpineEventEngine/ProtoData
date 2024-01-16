@@ -35,6 +35,7 @@ option java_package = "io.spine.protodata.event";
 option java_outer_classname = "EventsProto";
 option java_multiple_files = true;
 
+import "spine/protodata/file.proto";
 import "spine/protodata/ast.proto";
 import "spine/protodata/source.proto";
 

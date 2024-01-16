@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,20 +37,7 @@ option java_multiple_files = true;
 
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
-
-// Represents a file in an arbitrary OS.
-//
-// In most cases it is going to be a relative path.
-// In some cases it may be an absolute path.
-//
-// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
-// the current operating system. This value holds this exact format of the path.
-//
-message File {
-
-    // The path to the file, separating directories with slash (`/`) symbol.
-    string path = 1 [(required) = true];
-}
+import "spine/protodata/file.proto";
 
 // A header of the Protobuf source code file which provides basic information about the file,
 // such as file-wide options applied to the file.
