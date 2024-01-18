@@ -36,4 +36,7 @@ dependencies {
 
 tasks.withType<DokkaTask>().configureEach {
     configureForKotlin()
+    onlyIf {
+        (it as DokkaTask).isInPublishingGraph()
+    }
 }

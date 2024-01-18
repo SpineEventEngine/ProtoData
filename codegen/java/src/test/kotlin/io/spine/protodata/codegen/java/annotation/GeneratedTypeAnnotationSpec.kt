@@ -36,19 +36,34 @@ import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
 import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation.Companion.currentDateTime
 import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.settings.SettingsDirectory
 import io.spine.time.testing.FrozenMadHatterParty
 import io.spine.time.toTimestamp
+import java.nio.file.Path
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.io.path.Path
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("`GeneratedTypeAnnotation` renderer should")
 internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
+
+    companion object {
+
+        lateinit var settings: SettingsDirectory
+
+        @BeforeAll
+        @JvmStatic
+        fun createSettings(@TempDir dir: Path) {
+            settings = SettingsDirectory(dir)
+        }
+    }
 
     @Test
     fun `add the annotation, assuming 'PROTODATA_CLI' as the default generator`() {
@@ -141,7 +156,8 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
         Pipeline(
             plugins = listOf(generatedTypeAnnotation.toPlugin()),
             sources = this.sources,
-            request = CodeGeneratorRequest.getDefaultInstance()
+            request = CodeGeneratorRequest.getDefaultInstance(),
+            settings = settings
         )()
     }
 }

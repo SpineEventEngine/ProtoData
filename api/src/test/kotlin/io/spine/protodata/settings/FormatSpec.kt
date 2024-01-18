@@ -36,7 +36,7 @@ import io.spine.protodata.settings.Format.YAML
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`ConfigurationFormat` should")
+@DisplayName("`Format` should")
 class FormatSpec {
 
     @Test
@@ -53,6 +53,6 @@ class FormatSpec {
         assertThat(YAML.extensions)
             .containsExactly("yml", "yaml")
         assertThat(PLAIN.extensions)
-            .isEmpty()
+            .containsExactly("txt")
     }
 }

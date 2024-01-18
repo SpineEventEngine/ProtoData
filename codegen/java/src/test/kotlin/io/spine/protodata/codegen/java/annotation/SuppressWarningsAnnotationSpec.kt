@@ -26,17 +26,21 @@
 
 package io.spine.protodata.codegen.java.annotation
 
-import com.google.common.truth.Truth.assertThat
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.JAVA_FILE
 import io.spine.protodata.codegen.java.WithSourceFileSet
-import io.spine.protodata.settings.DiscoveredSettings
 import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.settings.defaultConsumerId
+import io.spine.string.ti
+import java.nio.file.Path
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("`SuppressRenderer` should")
 internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
@@ -54,50 +58,58 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
     inner class `suppress ALL warnings ` {
 
         @Test
-        fun `if no settings are passed`() {
+        fun `if no settings are passed`(@TempDir dir: Path) {
             Pipeline(
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
-                request = emptyRequest
+                request = emptyRequest,
+                settings = SettingsDirectory(dir)
             )()
             val code = loadCode()
             assertContainsSuppressionAll(code)
         }
 
         @Test
-        fun `if settings contain an empty list of suppressions`() {
+        fun `if settings contain an empty list of suppressions`(@TempDir dir: Path) {
+            val settings = SettingsDirectory(dir)
+            settings.write(SuppressWarningsAnnotation::class.java.defaultConsumerId,
+                PROTO_JSON, """
+                    {"warnings": {"value": []}} 
+                """.ti()
+            )
             Pipeline(
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
-                config = DiscoveredSettings.text("""
-                    {"warnings": {"value": []}} 
-                """.trimIndent(), PROTO_JSON)
+                settings = settings
             )()
             val code = loadCode()
             assertContainsSuppressionAll(code)
         }
 
         private fun assertContainsSuppressionAll(code: String) {
-            assertThat(code)
-                .contains("@SuppressWarnings({\"ALL\"})")
+            code shouldContain "@SuppressWarnings({\"ALL\"})"
         }
     }
 
     @Test
-    fun `suppress only selected warnings`() {
+    fun `suppress only selected warnings`(@TempDir dir: Path) {
+        val settings = SettingsDirectory(dir)
         val deprecation = "deprecation"
         val stringEqualsEmptyString = "StringEqualsEmptyString"
+        settings.write(SuppressWarningsAnnotation::class.java.defaultConsumerId,
+            PROTO_JSON, """
+                {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
+            """.ti()
+        )
         Pipeline(
             plugins = listOf(SuppressWarningsAnnotation.Plugin()),
             sources = sources,
             request = emptyRequest,
-            config = DiscoveredSettings.text("""
-                {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
-            """.trimIndent(), PROTO_JSON)
+            settings = settings
         )()
         val code = loadCode()
-        assertThat(code)
-            .contains("""@SuppressWarnings({"deprecation", "StringEqualsEmptyString"})""")
+
+        code shouldContain """@SuppressWarnings({"deprecation", "StringEqualsEmptyString"})"""
     }
 }

@@ -37,7 +37,7 @@ import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.settings.DiscoveredSettings
+import io.spine.protodata.settings.SettingsDirectory
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
@@ -80,9 +80,9 @@ public class Pipeline(
     private val request: CodeGeneratorRequest,
 
     /**
-     * The configuration of the pipeline.
+     * The directory where setting files for this pipeline are stored.
      */
-    private val config: DiscoveredSettings? = null
+    private val settings: SettingsDirectory
 ) {
 
     private lateinit var codegenContext: CodegenContext
@@ -95,14 +95,14 @@ public class Pipeline(
         plugin: Plugin,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
-        config: DiscoveredSettings? = null,
+        settings: SettingsDirectory,
         id: String = generateId()
     ) : this(
         id,
         listOf(plugin),
         listOf(sources),
         request,
-        config
+        settings
     )
 
     init {
@@ -149,9 +149,8 @@ public class Pipeline(
         configuration: ConfigurationContext,
         compiler: ProtobufCompilerContext
     ) {
-        config?.let {
-            val event = it.produceEvent()
-            configuration.emitted(event)
+        settings.emitEvents().forEach {
+            configuration.emitted(it)
         }
         val events = CompilerEvents.parse(request)
         compiler.emitted(events)

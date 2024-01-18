@@ -28,7 +28,6 @@ package io.spine.protodata.cli.app
 
 import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.MutuallyExclusiveGroupException
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.options.NullableOption
 import com.github.ajalt.clikt.parameters.options.flag
@@ -47,9 +46,6 @@ import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
 import io.spine.option.OptionsProvider
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.cli.ConfigFileParam
-import io.spine.protodata.cli.ConfigFormatParam
-import io.spine.protodata.cli.ConfigValueParam
 import io.spine.protodata.cli.DebugLoggingParam
 import io.spine.protodata.cli.InfoLoggingParam
 import io.spine.protodata.cli.Parameter
@@ -60,8 +56,8 @@ import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.settings.DiscoveredSettings
-import io.spine.protodata.settings.Format
+import io.spine.protodata.settings.SettingsDirectory
+import io.spine.string.Separator
 import io.spine.string.Separator.Companion.nl
 import io.spine.string.pi
 import io.spine.string.ti
@@ -105,8 +101,8 @@ private fun readVersion(): String = Version.fromManifestOf(Run::class.java).valu
 internal class Run(version: String) : CliktCommand(
     name = "protodata",
     help = "ProtoData tool helps build better multi-platform code generation." +
-            System.lineSeparator() +
-            "Version ${version}.",
+            Separator.nl() +
+            "Version $version.",
     epilog = "https://github.com/SpineEventEngine/ProtoData/",
     printHelpOnEmptyArgs = true
 ), WithLogging {
@@ -148,32 +144,14 @@ internal class Run(version: String) : CliktCommand(
                 mustBeReadable = true
             ).splitPaths()
 
-    @Deprecated("Use `settingsDir` instead.", ReplaceWith("settingsDir"))
-    private val configurationFile: Path?
-            by ConfigFileParam.toOption().path(
-                mustExist = true,
-                mustBeReadable = true,
-                canBeDir = false,
-                canBeSymlink = false
-            )
-
     @Suppress("unused")
-    private val settingsDir: Path?
+    private val settingsDir: Path
             by SettingsDirParam.toOption().path(
                 mustExist = true,
                 mustBeReadable = true,
                 canBeDir = true,
                 canBeSymlink = false
-            )
-
-    private val configurationValue: String?
-            by ConfigValueParam.toOption()
-
-    private val configurationFormat: String? by ConfigFormatParam.toOption(
-        cc = CompletionCandidates.Fixed(
-            ConfigFormatParam.options().toSet()
-        )
-    )
+            ).required()
 
     private val debug: Boolean by DebugLoggingParam.toOption().flag(default = false)
 
@@ -207,22 +185,21 @@ internal class Run(version: String) : CliktCommand(
         val plugins = loadPlugins()
         val registry = createRegistry()
         val request = loadRequest(registry)
-        val config = resolveConfig()
-
+        val dir = SettingsDirectory(settingsDir)
         logger.atDebug().log { """
             Starting code generation with the following arguments:
               - plugins: ${plugins.joinToString()}
               - request
                   - files to generate: ${request.fileToGenerateList.joinToString()}
                   - parameter: ${request.parameter}
-              - config: ${config}.
+              - settings dir: ${settingsDir}.
             """.ti()
         }
         val pipeline = Pipeline(
             plugins = plugins,
             sources = sources,
             request = request,
-            config = config
+            settings = dir
         )
         pipeline()
     }
@@ -269,29 +246,6 @@ internal class Run(version: String) : CliktCommand(
         val filesProvider = FileSetOptionsProvider(files)
         filesProvider.registerIn(registry)
         return registry
-    }
-
-    private fun resolveConfig(): DiscoveredSettings? {
-        val hasFile = configurationFile != null
-        val hasValue = configurationValue != null
-        val hasFormat = configurationFormat != null
-        if (hasFile && hasValue) {
-            throw MutuallyExclusiveGroupException(
-                listOf(ConfigFileParam.name, ConfigValueParam.name)
-            )
-        }
-        checkUsage(hasValue == hasFormat) {
-            "Options `${ConfigValueParam.name}` and `${ConfigFileParam.name}`" +
-                    " must be used together."
-        }
-        return when {
-            hasFile -> DiscoveredSettings.file(configurationFile!!)
-            hasValue -> {
-                val format = Format.valueOf(configurationFormat!!.uppercase())
-                DiscoveredSettings.text(configurationValue!!, format)
-            }
-            else -> null
-        }
     }
 
     private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {

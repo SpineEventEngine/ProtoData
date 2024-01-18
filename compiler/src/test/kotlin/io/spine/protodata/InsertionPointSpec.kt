@@ -38,6 +38,7 @@ import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
+import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.CompanionFramer
 import io.spine.protodata.test.CompanionLalalaRenderer
@@ -119,6 +120,7 @@ class InsertionPointsSpec {
             )),
             sources = listOf(SourceFileSet.create(input, output)),
             request = CodeGeneratorRequest.getDefaultInstance(),
+            settings = SettingsDirectory(input)
         )()
         kotlinFile = output / inputKtFile.name
         javaFile = output / inputJavaFile.name

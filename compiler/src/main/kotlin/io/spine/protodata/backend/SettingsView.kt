@@ -28,11 +28,11 @@ package io.spine.protodata.backend
 
 import io.spine.core.External
 import io.spine.core.Subscribe
+import io.spine.protodata.nameWithoutExtension
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.protodata.settings.Settings
 import io.spine.protodata.settings.event.SettingsFileDiscovered
-import io.spine.protodata.settings.event.TextSettingsSupplied
 import io.spine.server.entity.alter
 import io.spine.server.route.EventRouting
 
@@ -50,26 +50,16 @@ internal class SettingsView : View<String, Settings, Settings.Builder>() {
         file = event.file
     }
 
-    @Subscribe
-    internal fun on(@External event: TextSettingsSupplied) = alter {
-        text = event.text
-    }
-
     /**
      * A repository for the `ConfigView`.
      */
     internal class Repo : ViewRepository<String, SettingsView, Settings>() {
 
-        private val theId = setOf(
-            /* Use the below code instead of Java API, when the mystery with KotlinCompile
-               not being able to see the generated Kotlin proto code as its input is solved. */
-            // configId { value = "configuration_instance" }
-            "configuration_instance"
-        )
-
         override fun setupEventRouting(routing: EventRouting<String>) {
             super.setupEventRouting(routing)
-            routing.replaceDefault { _, _ -> theId }
+            routing.unicast<SettingsFileDiscovered> { e, _ ->
+                e.file.nameWithoutExtension
+            }
         }
     }
 }

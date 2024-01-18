@@ -27,9 +27,9 @@
 package io.spine.protodata.gradle.plugin
 
 import io.spine.protodata.Constants.CLI_APP_CLASS
-import io.spine.protodata.cli.ConfigFileParam
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RequestParam
+import io.spine.protodata.cli.SettingsDirParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
@@ -41,6 +41,7 @@ import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
@@ -70,6 +71,14 @@ public abstract class LaunchProtoData : JavaExec() {
 
     @get:Internal
     public abstract val configurationFile: RegularFileProperty
+
+    /**
+     * The directory where settings files for ProtoData components are stored.
+     *
+     * If not specified, the project root directory will be used.
+     */
+    @get:Internal
+    public abstract val settingsDir: DirectoryProperty
 
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
@@ -130,10 +139,13 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield(userCp)
             }
 
-            if (configurationFile.isPresent) {
-                yield(ConfigFileParam.name)
-                yield(project.file(configurationFile).absolutePath)
+            yield(SettingsDirParam.name)
+            val dir = if (settingsDir.isPresent) {
+                project.file(settingsDir).absolutePath
+            } else {
+                project.projectDir.absolutePath
             }
+            yield(dir)
         }.asIterable()
         logger.info { "ProtoData command for `${path}`: ${command.joinToString(separator = " ")}" }
         classpath(protoDataConfig)

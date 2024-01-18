@@ -40,6 +40,8 @@ import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
 import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
+import io.spine.protodata.settings.Format
+import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.EchoRenderer
 import io.spine.protodata.test.PlainStringRenderer
@@ -49,12 +51,12 @@ import io.spine.protodata.test.ProtoEchoRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.protodata.test.echo
+import io.spine.string.ti
 import io.spine.time.LocalDates
 import io.spine.time.Month.SEPTEMBER
 import io.spine.time.toInstant
 import io.spine.type.toCompactJson
 import java.nio.file.Path
-import kotlin.io.path.createFile
 import kotlin.io.path.name
 import kotlin.io.path.pathString
 import kotlin.io.path.readText
@@ -62,7 +64,6 @@ import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -112,25 +113,27 @@ class MainSpec {
     }
 
     @Test
-    fun `render enhanced code`() {
+    fun `render enhanced code`(@TempDir dir: Path) {
         launchApp(
             "-p", TestPlugin::class.jvmName,
             "-p", UnderscorePrefixRenderer::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
-            "-t", codegenRequestFile.toString()
+            "-t", codegenRequestFile.toString(),
+            "-d", dir.pathString
         )
         targetFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
     }
 
     @Test
-    fun `provide Spine options by default`() {
+    fun `provide Spine options by default`(@TempDir dir: Path) {
         launchApp(
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
             "-p", DefaultOptionsCounterRenderer::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
+            "-d", dir.pathString
         )
         val generatedFile = targetRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
         generatedFile.readText() shouldBe "true, true"
@@ -140,34 +143,38 @@ class MainSpec {
     inner class `Receive custom configuration through` {
 
         @Test
-        fun `configuration file`(@TempDir configDir: Path) {
+        fun `configuration file`(@TempDir dir: Path) {
+            val settings = SettingsDirectory(dir)
             val name = "Internet"
-            val configFile = configDir.resolve("name.json")
-            configFile.createFile()
-            configFile.writeText("""
-                { "value": "$name" }
-            """.trimIndent())
+            settings.writeFor<EchoRenderer>(Format.JSON, """
+                    { "value": "$name" }
+                """.ti()
+            )
 
             launchApp(
                 "-p", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-c", configFile.pathString
+                "-d", dir.pathString
             )
             outputEchoFile.readText() shouldBe name
         }
 
         @Test
-        fun `configuration value`() {
+        fun `configuration value`(@TempDir dir: Path) {
+            val settings = SettingsDirectory(dir)
             val name = "Mr. World"
+            settings.writeFor<EchoRenderer>(Format.JSON, """
+                    { "value": "$name" }
+                """.ti()
+            )
             launchApp(
                 "-p", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "--cv", """{ "value": "$name" }""",
-                "--cf", "json"
+                "-d", dir.pathString,
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -177,26 +184,25 @@ class MainSpec {
     inner class `Receive custom configuration as` {
 
         @Test
-        fun `plain JSON`(@TempDir configDir: Path) {
+        fun `plain JSON`(@TempDir dir: Path) {
+            val settings = SettingsDirectory(dir)
             val name = "Internet"
-            val configFile = configDir.resolve("name.json")
-            configFile.createFile()
-            configFile.writeText("""
-                { "value": "$name" }
-            """.trimIndent())
-
+            settings.writeFor<EchoRenderer>(Format.JSON, """
+                    { "value": "$name" }
+                """.ti()
+            )
             launchApp(
                 "-p", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-c", configFile.pathString
+                "-d", dir.pathString
             )
             outputEchoFile.readText() shouldBe name
         }
 
         @Test
-        fun `Protobuf JSON`() {
+        fun `Protobuf JSON`(@TempDir dir: Path) {
             val time = Time.currentTime()
             val json = echo {
                 message = "English, %s!"
@@ -204,13 +210,15 @@ class MainSpec {
                 arg = stringValue { value = "Adam Falkner" }.pack()
                 when_ = time
             }.toCompactJson()
+            val settings = SettingsDirectory(dir)
+            settings.writeFor<ProtoEchoRenderer>(Format.PROTO_JSON, json)
+
             launchApp(
                 "-p", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "--cv", json,
-                "--cf", "proto_json"
+                "-d", dir.pathString
             )
             val text = outputEchoFile.readText()
 
@@ -219,7 +227,7 @@ class MainSpec {
         }
 
         @Test
-        fun `binary Protobuf`(@TempDir configDir: Path) {
+        fun `binary Protobuf`(@TempDir dir: Path) {
             val time = LocalDates.of(1962, SEPTEMBER, 12)
             val bytes = echo {
                 message = "We choose to go to the %s."
@@ -228,16 +236,15 @@ class MainSpec {
                 when_ = time.toTimestamp()
             }.toByteArray()
 
-            val configFile = configDir.resolve("config.bin")
-            configFile.createFile()
-            configFile.writeBytes(bytes)
+            val settings = SettingsDirectory(dir)
+            settings.writeFor<ProtoEchoRenderer>(Format.PROTO_BINARY, bytes)
 
             launchApp(
                 "-p", ProtoEchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-c", configFile.pathString
+                "-d", dir.pathString
             )
 
             val text = outputEchoFile.readText()
@@ -248,33 +255,35 @@ class MainSpec {
 
         @Suppress("TestFunctionName")
         @Test
-        fun YAML(@TempDir configDir: Path) {
+        fun YAML(@TempDir dir: Path) {
             val name = "Mr. Anderson"
-            val configFile = configDir.resolve("config.yml")
-            configFile.createFile()
-            configFile.writeText("""
-                value: $name
-            """.trimIndent())
+            val settings = SettingsDirectory(dir)
+            settings.writeFor<EchoRenderer>(Format.YAML, """
+                    value: $name
+                """.trimIndent()
+            )
+
             launchApp(
                 "-p", EchoRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-c", configFile.pathString
+                "-d", dir.pathString
             )
             outputEchoFile.readText() shouldBe name
         }
 
         @Test
-        fun `plain string`() {
+        fun `plain string`(@TempDir configDir: Path) {
             val plainString = "dont.mail.me:42@example.org"
+            SettingsDirectory(configDir).writeFor<PlainStringRenderer>(Format.PLAIN, plainString)
+
             launchApp(
                 "-p", PlainStringRenderer::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "--cv", plainString,
-                "--cf", "plain"
+                "-d", configDir.pathString
             )
             outputEchoFile.readText() shouldBe plainString
         }
@@ -284,24 +293,26 @@ class MainSpec {
     inner class `Fail if` {
 
         @Test
-        fun `target dir is missing`() {
+        fun `target dir is missing`(@TempDir dir: Path) {
             assertThrows<UsageError> {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
                     "-p", UnderscorePrefixRenderer::class.jvmName,
                     "-t", codegenRequestFile.toString(),
-                    "--src", srcRoot.toString()
+                    "--src", srcRoot.toString(),
+                    "-d", dir.pathString
                 )
             }
         }
 
         @Test
-        fun `code generator request file is missing`() {
+        fun `code generator request file is missing`(@TempDir dir: Path) {
             assertMissingOption {
                 launchApp(
                     "-p", TestPlugin::class.jvmName,
                     "-p", UnderscorePrefixRenderer::class.jvmName,
-                    "--src", srcRoot.toString()
+                    "--src", srcRoot.toString(),
+                    "-d", dir.pathString
                 )
             }
         }
