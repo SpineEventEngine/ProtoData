@@ -32,7 +32,7 @@ import io.spine.base.EventMessage
 import io.spine.core.userId
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.InsertionPointsView
-import io.spine.protodata.plugin.addView
+import io.spine.protodata.plugin.add
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContext.singleTenant
@@ -72,9 +72,9 @@ public class CodeGenerationContext(
 
     init {
         val builder = singleTenant("Code Generation-$pipelineId").apply {
-            addView(ProtoSourceFileView::class)
-            addView(DependencyView::class)
-            addView(InsertionPointsView::class)
+            add<ProtoSourceFileView>()
+            add<DependencyView>()
+            add<InsertionPointsView>()
             add(SettingsView.Repo())
         }
         builder.setup()

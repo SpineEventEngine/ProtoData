@@ -26,9 +26,9 @@
 
 package io.spine.protodata.settings
 
-import com.google.common.annotations.VisibleForTesting
 import io.spine.io.Glob
 import io.spine.protodata.ConfigurationError
+import io.spine.protodata.settings.Format.UNRECOGNIZED
 import java.nio.file.Path
 import kotlin.io.path.name
 
@@ -40,9 +40,16 @@ public fun Format.matches(file: Path): Boolean =
             .map { Glob.extension(it) }
             .any { it.matches(file) }
 
-@VisibleForTesting
-public val Format.extensions: Set<String>
-    get() = valueDescriptor.options.getExtension(SettingsProto.extension).toSet()
+
+/**
+ * Obtains file extensions associated with this format.
+ */
+public val Format.extensions: List<String>
+    get() = if (this == UNRECOGNIZED) {
+        emptyList()
+    } else {
+        valueDescriptor.options.getExtension(SettingsProto.extension).toList()
+    }
 
 /**
  * Obtains a [Format] from the file extension of the given configuration file.
@@ -51,4 +58,10 @@ public val Format.extensions: Set<String>
  */
 public fun formatOf(file: Path): Format =
     Format.values().find { it.matches(file) }
-        ?: throw ConfigurationError("Unrecognized configuration format: `${file.name}`.")
+        ?: throw ConfigurationError("Unrecognized settings format: `${file.name}`.")
+
+/**
+ * Tells if this file is a settings file.
+ */
+public fun Path.isSettings(): Boolean =
+    Format.values().any { it.matches(this) }

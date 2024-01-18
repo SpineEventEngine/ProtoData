@@ -17,9 +17,3 @@ message SettingsFileDiscovered {
 
     File file = 1 [(required) = true];
 }
-
-// An event emitted when the user passes settings as a [Text] message.
-message TextSettingsSupplied {
-
-    Text text = 1 [(required) = true];
-}

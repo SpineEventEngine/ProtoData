@@ -137,8 +137,16 @@ public open class ViewRepository<I : Any, V : View<I, S, *>, S : EntityState<I>>
  * Adds a [View] by its class to the bounded context with the default
  * instance of [ViewRepository].
  */
-public fun BoundedContextBuilder.addView(view: KClass<out View<*, *, *>>): BoundedContextBuilder =
+public fun BoundedContextBuilder.add(view: KClass<out View<*, *, *>>): BoundedContextBuilder =
     add(ViewRepository.default(view.java))
+
+/**
+ * Adds a [View] by its class to the bounded context with the default
+ * instance of [ViewRepository].
+ */
+public inline fun <reified V: View<*, *, *>> BoundedContextBuilder.add() {
+    add(V::class)
+}
 
 /**
  * Adds the default [ViewRepository] instance for the specified [View] class to this `MutableSet`.

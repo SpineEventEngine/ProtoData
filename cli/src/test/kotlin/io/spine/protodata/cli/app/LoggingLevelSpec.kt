@@ -40,23 +40,29 @@ import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.StubSoloRenderer
 import java.nio.file.Path
+import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
-class `ProtoData CLI logging levels should` {
+@DisplayName("`ProtoData` CLI logging levels should")
+class LoggingLevelSpec {
 
     private lateinit var codegenRequestFile: Path
+    private lateinit var settingsDirectory: Path
     private lateinit var srcRoot : Path
     private lateinit var targetRoot : Path
     private lateinit var sourceFile: Path
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
+        settingsDirectory = sandbox.resolve("settings")
+        settingsDirectory.toFile().mkdirs()
         srcRoot = sandbox.resolve("src")
         srcRoot.toFile().mkdirs()
         targetRoot = sandbox.resolve("target")
@@ -119,8 +125,7 @@ class `ProtoData CLI logging levels should` {
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
-            "--cv", "testing-logging-levels",
-            "--cf", "plain",
+            "-d", settingsDirectory.pathString
         )
         params.addAll(argv)
         Run("1961.04.12").parse(params)

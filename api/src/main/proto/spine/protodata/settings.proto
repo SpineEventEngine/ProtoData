@@ -37,20 +37,7 @@ message Settings {
         // The format of the configuration is inferred from the file extension.
         //
         File file = 3;
-
-        Text text = 4;
     }
-}
-
-// Settings as a string value.
-//
-// The format of the settings can be `PROTO_JSON`, `JSON`, or `YAML`.
-//
-message Text {
-
-    string value = 1 [(required) = true];
-
-    Format format = 2 [(required) = true];
 }
 
 extend google.protobuf.EnumValueOptions {
@@ -81,5 +68,5 @@ enum Format {
     YAML = 4 [(extension) = "yml", (extension) = "yaml"];
 
     // A plain string value.
-    PLAIN = 5;
+    PLAIN = 5 [(extension) = "txt"];
 }

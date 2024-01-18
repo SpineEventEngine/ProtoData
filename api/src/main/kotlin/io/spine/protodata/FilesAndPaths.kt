@@ -26,9 +26,13 @@
 
 package io.spine.protodata
 
+import io.spine.protodata.settings.Format
+import io.spine.protodata.settings.extensions
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
 
 /**
  * Converts the given path to a [File] message.
@@ -46,3 +50,18 @@ public fun java.io.File.toProto(): File = toPath().toProto()
  * Converts the given [File] message to a [Path].
  */
 public fun File.toPath(): Path = Path(path)
+
+/**
+ * Returns the name of this file without an extension.
+ *
+ * Takes care of the special case for "pb.json" quasi-extension.
+ */
+public val File.nameWithoutExtension: String
+    get() {
+        val pbJson = Format.PROTO_JSON.extensions[0]
+        return if (path.endsWith(pbJson)) {
+            Path(path.removeSuffix(".$pbJson")).name
+        } else {
+            Path(path).nameWithoutExtension
+        }
+    }

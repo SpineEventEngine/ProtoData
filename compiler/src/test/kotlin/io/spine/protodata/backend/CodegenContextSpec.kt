@@ -36,8 +36,9 @@ import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.renderer.codeLine
-import io.spine.protodata.settings.DiscoveredSettings
 import io.spine.protodata.settings.Format
+import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.settings.defaultConsumerId
 import io.spine.protodata.test.AnnotationInsertionPointPrinter
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.DeletedTypeRepository
@@ -121,21 +122,23 @@ class CodegenContextSpec {
     }
 
     @Test
-    fun `render enhanced code`() {
+    fun `render enhanced code`(@TempDir settingsDir: Path) {
         Pipeline(
             plugins = listOf(TestPlugin(), renderer),
             sources = listOf(overwritingSourceSet),
-            request = request
+            request = request,
+            settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetFile).isEqualTo("_Journey worth taking")
     }
 
     @Test
-    fun `generate new files`() {
+    fun `generate new files`(@TempDir settingsDir: Path) {
         Pipeline(
             plugins = listOf(TestPlugin(), InternalAccessRenderer()),
             sources = listOf(overwritingSourceSet),
-            request = request
+            request = request,
+            settings = SettingsDirectory(settingsDir)
         )()
         val newClass = targetRoot.resolve("spine/protodata/test/JourneyInternal.java")
         assertExists(newClass)
@@ -143,19 +146,20 @@ class CodegenContextSpec {
     }
 
     @Test
-    fun `delete files`() {
+    fun `delete files`(@TempDir settingsDir: Path) {
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, "foo bar")
         Pipeline(
             plugins = listOf(TestPlugin(), DeletingRenderer()),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request = request
+            request = request,
+            settings = SettingsDirectory(settingsDir)
         )()
         assertDoesNotExist(targetRoot / path)
     }
 
     @Test
-    fun `write into insertion points`() {
+    fun `write into insertion points`(@TempDir settingsDir: Path) {
         val initialContent = "foo bar"
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, initialContent)
@@ -166,7 +170,8 @@ class CodegenContextSpec {
                 renderer
             ),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            request,
+            settings = SettingsDirectory(settingsDir)
         )()
 
         assertTextIn(targetRoot / path).run {
@@ -179,7 +184,7 @@ class CodegenContextSpec {
     }
 
     @Test
-    fun `not write into non-existing insertion points`() {
+    fun `not write into non-existing insertion points`(@TempDir settingsDir: Path) {
         val initialContent = "foo bar"
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, initialContent)
@@ -187,13 +192,14 @@ class CodegenContextSpec {
         Pipeline(
             plugin = TestPlugin(renderer),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            request,
+            settings = SettingsDirectory(settingsDir)
         )()
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
 
     @Test
-    fun `write into inline insertion points`() {
+    fun `write into inline insertion points`(@TempDir settingsDir: Path) {
         val path = "ClassWithMethod.java"
         write(path, """
             class ClassWithMethod {
@@ -211,13 +217,14 @@ class CodegenContextSpec {
             )),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = CodeGeneratorRequest.getDefaultInstance(),
+            settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetRoot / path)
             .contains("@Nullable String")
     }
 
     @Test
-    fun `not write into non-existing inline insertion points`() {
+    fun `not write into non-existing inline insertion points`(@TempDir settingsDir: Path) {
         val initialContent = "foo bar"
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, initialContent)
@@ -225,13 +232,14 @@ class CodegenContextSpec {
         Pipeline(
             plugin = TestPlugin(renderer),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            request,
+            settings = SettingsDirectory(settingsDir)
         )()
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
 
     @Test
-    fun `use different renderers for different files`() {
+    fun `use different renderers for different files`(@TempDir settingsDir: Path) {
         val jsPath = "test/source.js"
         val ktPath = "corp/acme/test/Source.kt"
         write(jsPath, "alert('Hello')")
@@ -242,21 +250,23 @@ class CodegenContextSpec {
                 KtRenderer()
             ),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            request,
+            settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetRoot / jsPath).contains("Hello JavaScript")
         assertTextIn(targetRoot / ktPath).contains("Hello Kotlin")
     }
 
     @Test
-    fun `add insertion points`() {
+    fun `add insertion points`(@TempDir settingsDir: Path) {
         Pipeline(
             plugin = TestPlugin(
                 JavaGenericInsertionPointPrinter(),
                 CatOutOfTheBoxEmancipator()
             ),
             sources = overwritingSourceSet,
-            request
+            request,
+            settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetFile).run {
             startsWith("/* ${GenericInsertionPoint.FILE_START.codeLine} */")
@@ -266,14 +276,15 @@ class CodegenContextSpec {
     }
 
     @Test
-    fun `not add insertion points if nobody touches the file contents`() {
+    fun `not add insertion points if nobody touches the file contents`(@TempDir settingsDir: Path) {
         Pipeline(
             plugin = TestPlugin(
                 JavaGenericInsertionPointPrinter(),
                 JsRenderer()
             ),
             sources = overwritingSourceSet,
-            request
+            request,
+            settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetFile).run {
             doesNotContain(GenericInsertionPoint.FILE_START.codeLine)
@@ -283,11 +294,14 @@ class CodegenContextSpec {
     }
 
     @Test
-    fun `write code into different destination`(@TempDir destination: Path) {
+    fun `write code into different destination`(
+        @TempDir settingsDir: Path,
+        @TempDir destination: Path) {
         Pipeline(
             plugins = listOf(TestPlugin(), InternalAccessRenderer()),
             sources = listOf(SourceFileSet.create(srcRoot, destination)),
-            request = request
+            request = request,
+            settings = SettingsDirectory(settingsDir)
         )()
 
         val path = "spine/protodata/test/JourneyInternal.java"
@@ -301,11 +315,12 @@ class CodegenContextSpec {
     }
 
     @Test
-    fun `copy all sources into the new destination`() {
+    fun `copy all sources into the new destination`(@TempDir settingsDir: Path) {
         Pipeline(
             plugins = listOf(TestPlugin(), NoOpRenderer()),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request = request
+            request = request,
+            settings = SettingsDirectory(settingsDir)
         )()
         assertExists(targetFile)
     }
@@ -315,6 +330,7 @@ class CodegenContextSpec {
 
         @Test
         fun `preserve source set when copying files`(
+            @TempDir settingsDir: Path,
             @TempDir source2: Path,
             @TempDir destination1: Path,
             @TempDir destination2: Path
@@ -333,7 +349,8 @@ class CodegenContextSpec {
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request = request
+                request = request,
+                settings = SettingsDirectory(settingsDir)
             )()
 
             assertExists(destination1.resolve(targetFile.name))
@@ -348,13 +365,18 @@ class CodegenContextSpec {
 
         @Test
         fun `generate new files by relative path`(
+            @TempDir settingsDir: Path,
             @TempDir source2: Path,
             @TempDir destination1: Path,
             @TempDir destination2: Path
         ) {
             checkTemps(source2, destination1, destination2)
-
             val expectedContent = "123456789"
+            val settings = SettingsDirectory(settingsDir)
+            settings.write(PlainStringRenderer::class.java.defaultConsumerId,
+                Format.PLAIN,
+                expectedContent
+            )
             Pipeline(
                 plugins = listOf(
                     TestPlugin(),
@@ -365,7 +387,7 @@ class CodegenContextSpec {
                     SourceFileSet.create(source2, destination2)
                 ),
                 request = request,
-                config = DiscoveredSettings.text(expectedContent, Format.PLAIN)
+                settings = settings
             )()
 
             val firstFile = destination1.resolve(ECHO_FILE)
@@ -379,6 +401,7 @@ class CodegenContextSpec {
 
         @Test
         fun `change files using insertion points`(
+            @TempDir settingsDir: Path,
             @TempDir source2: Path,
             @TempDir destination1: Path,
             @TempDir destination2: Path
@@ -399,7 +422,8 @@ class CodegenContextSpec {
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request = request
+                request = request,
+                settings = SettingsDirectory(settingsDir)
             )()
 
             assertDoesNotExist(destination2.resolve(existingFilePath))
@@ -414,7 +438,7 @@ class CodegenContextSpec {
     inner class `Fail to construct if` {
 
         @Test
-        fun `view is already registered`() {
+        fun `view is already registered`(@TempDir settingsDir: Path) {
             val viewClass = DeletedTypeView::class.java
             val pipeline = Pipeline(
                 plugins = listOf(
@@ -425,7 +449,8 @@ class CodegenContextSpec {
                     renderer
                 ),
                 sources = listOf(overwritingSourceSet),
-                request = request
+                request = request,
+                settings = SettingsDirectory(settingsDir)
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
             error.message shouldContain(viewClass.name)

@@ -30,7 +30,6 @@ import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
 import io.spine.server.query.Querying
 import io.spine.server.query.select
-import io.spine.util.theOnly
 
 /**
  * A ProtoData component which accesses its settings via the [Settings] view.
@@ -58,9 +57,8 @@ public interface LoadsSettings : Querying, WithSettings {
     }
 
     private fun findSettings(): Settings? {
-        //TODO:2024-01-15:alexander.yevsyukov: Obtain settings for the given class.
-        val settings = select<Settings>().all()
-        return if (settings.isEmpty()) null else settings.theOnly()
+        val settings = select<Settings>().findById(consumerId)
+        return settings
     }
 }
 
@@ -72,7 +70,9 @@ private fun LoadsSettings.missingSettings(): Nothing {
  * Obtains the default ID of the settings consumer which is used
  * for [loading settings][LoadsSettings.loadSettings].
  *
+ * @receiver the class which implements [LoadsSettings].
+ *           The class is not bound to avoid casting at the usage sites.
  * @return the canonical name of the given class.
  */
-public val Class<LoadsSettings>.defaultConsumerId: String
+public val Class<*>.defaultConsumerId: String
     get() = canonicalName

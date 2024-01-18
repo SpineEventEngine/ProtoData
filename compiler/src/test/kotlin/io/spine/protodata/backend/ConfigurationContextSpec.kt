@@ -30,12 +30,8 @@ import com.google.common.collect.ImmutableSet
 import io.kotest.matchers.collections.shouldContainExactly
 import io.spine.base.EventMessage
 import io.spine.protodata.file
-import io.spine.protodata.settings.Format
 import io.spine.protodata.settings.event.SettingsFileDiscovered
-import io.spine.protodata.settings.event.TextSettingsSupplied
 import io.spine.protodata.settings.event.settingsFileDiscovered
-import io.spine.protodata.settings.event.textSettingsSupplied
-import io.spine.protodata.settings.text
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.dispatch.DispatchOutcome
@@ -81,18 +77,6 @@ class ConfigurationContextSpec {
         checkEvent(event)
     }
 
-    @Test
-    fun `emit raw configuration event`() {
-        val raw = text {
-            format = Format.JSON
-            value = "{}"
-        }
-        val event = textSettingsSupplied {
-            text = raw
-        }
-        checkEvent(event)
-    }
-
     private fun checkEvent(event: EventMessage) {
         configurationContext.use {
             it.emitted(event)
@@ -116,8 +100,7 @@ private class RecordingDispatcher : EventDispatcher {
     }
 
     override fun externalEventClasses(): ImmutableSet<EventClass> = EventClass.setOf(
-        SettingsFileDiscovered::class.java,
-        TextSettingsSupplied::class.java
+        SettingsFileDiscovered::class.java
     )
 
     override fun domesticEventClasses(): ImmutableSet<EventClass> =

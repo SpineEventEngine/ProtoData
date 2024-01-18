@@ -32,6 +32,7 @@ import io.kotest.matchers.string.shouldStartWith
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.settings.SettingsDirectory
 import io.spine.string.ti
 import io.spine.text.text
 import java.nio.file.Path
@@ -84,7 +85,7 @@ class BeforePrimaryDeclarationSpec {
 
         @JvmStatic
         @BeforeAll
-        fun runPipeline(@TempDir input: Path, @TempDir output: Path) {
+        fun runPipeline(@TempDir settingsDir: Path, @TempDir input: Path, @TempDir output: Path) {
             val inputClassSrc = input / "TopLevelClass.java"
             inputClassSrc.run {
                 createFile()
@@ -105,6 +106,7 @@ class BeforePrimaryDeclarationSpec {
                 plugin = GeneratedTypeAnnotation().toPlugin(),
                 sources = SourceFileSet.create(input, output),
                 request = CodeGeneratorRequest.getDefaultInstance(),
+                settings = SettingsDirectory(settingsDir)
             )()
 
             classSrc = output / inputClassSrc.name
