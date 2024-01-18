@@ -52,16 +52,17 @@ public fun java.io.File.toProto(): File = toPath().toProto()
 public fun File.toPath(): Path = Path(path)
 
 /**
+ * The suffix of `pb.json` files including the leading dot.
+ */
+private val PB_JSON_SUFFIX = ".${Format.PROTO_JSON.extensions[0]}"
+
+/**
  * Returns the name of this file without an extension.
  *
  * Takes care of the special case for "pb.json" quasi-extension.
  */
 public val File.nameWithoutExtension: String
-    get() {
-        val pbJson = Format.PROTO_JSON.extensions[0]
-        return if (path.endsWith(pbJson)) {
-            Path(path.removeSuffix(".$pbJson")).name
-        } else {
-            Path(path).nameWithoutExtension
-        }
-    }
+    get() = if (path.endsWith(PB_JSON_SUFFIX))
+        Path(path.removeSuffix(PB_JSON_SUFFIX)).name
+    else
+        Path(path).nameWithoutExtension
