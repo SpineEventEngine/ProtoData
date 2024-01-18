@@ -42,9 +42,8 @@ public interface LoadsSettings : Querying, WithSettings {
      *
      * The default value is a canonical name of the Java class implementing this interface.
      */
-    @Suppress("UNCHECKED_CAST") // The cast is safe as all classes implement this interface.
     public val consumerId: String
-        get() = (this::class.java as Class<LoadsSettings>).defaultConsumerId
+        get() = this::class.java.defaultConsumerId
 
     override fun <T: Any> loadSettings(cls: Class<T>): T {
         val settings = findSettings() ?: missingSettings()
