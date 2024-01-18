@@ -64,7 +64,7 @@ public class SettingsDirectory(
     }
 
     /**
-     * Writes settings file for the given consumer.
+     * Writes settings file for the consumer specified by the generic parameter.
      *
      * @param T the type of the settings consumer.
      * @param format the format of the settings file.
@@ -87,7 +87,7 @@ public class SettingsDirectory(
     }
 
     /**
-     * Writes settings file for the given consumer.
+     * Writes settings file for the consumer specified by the generic parameter.
      *
      * @param T the type of the settings consumer.
      * @param format the format of the settings file.
