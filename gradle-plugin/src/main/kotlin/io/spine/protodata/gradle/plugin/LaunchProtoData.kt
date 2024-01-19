@@ -46,6 +46,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
@@ -73,11 +74,11 @@ public abstract class LaunchProtoData : JavaExec() {
     public abstract val configurationFile: RegularFileProperty
 
     /**
-     * The directory where settings files for ProtoData components are stored.
+     * The directory which stores ProtoData settings files.
      *
      * If not specified, the project root directory will be used.
      */
-    @get:Internal
+    @get:InputDirectory
     public abstract val settingsDir: DirectoryProperty
 
     @get:Input
