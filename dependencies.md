@@ -1,6 +1,6 @@
 
 
-# Dependencies of `io.spine.protodata:protodata-api:0.17.1`
+# Dependencies of `io.spine.protodata:protodata-api:0.17.2`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.15.3.**No license information found**
@@ -926,12 +926,12 @@
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Thu Jan 18 02:13:20 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Jan 19 23:26:02 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-cli:0.17.1`
+# Dependencies of `io.spine.protodata:protodata-cli:0.17.2`
 
 ## Runtime
 1.  **Group** : be.cyberelf.nanoxml. **Name** : nanoxml. **Version** : 2.2.3.
@@ -2024,12 +2024,12 @@ This report was generated on **Thu Jan 18 02:13:20 WET 2024** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Thu Jan 18 02:13:21 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Jan 19 23:26:02 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-cli-api:0.17.1`
+# Dependencies of `io.spine.protodata:protodata-cli-api:0.17.2`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.15.3.**No license information found**
@@ -2944,12 +2944,12 @@ This report was generated on **Thu Jan 18 02:13:21 WET 2024** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Thu Jan 18 02:13:21 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Jan 19 23:26:03 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-codegen-java:0.17.1`
+# Dependencies of `io.spine.protodata:protodata-codegen-java:0.17.2`
 
 ## Runtime
 1.  **Group** : be.cyberelf.nanoxml. **Name** : nanoxml. **Version** : 2.2.3.
@@ -4025,12 +4025,12 @@ This report was generated on **Thu Jan 18 02:13:21 WET 2024** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Thu Jan 18 02:13:22 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Jan 19 23:26:03 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-compiler:0.17.1`
+# Dependencies of `io.spine.protodata:protodata-compiler:0.17.2`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.15.3.**No license information found**
@@ -4956,12 +4956,12 @@ This report was generated on **Thu Jan 18 02:13:22 WET 2024** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Thu Jan 18 02:13:22 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Jan 19 23:26:03 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-gradle-api:0.17.1`
+# Dependencies of `io.spine.protodata:protodata-gradle-api:0.17.2`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.15.3.**No license information found**
@@ -5880,12 +5880,12 @@ This report was generated on **Thu Jan 18 02:13:22 WET 2024** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Thu Jan 18 02:13:22 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Jan 19 23:26:04 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-gradle-plugin:0.17.1`
+# Dependencies of `io.spine.protodata:protodata-gradle-plugin:0.17.2`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.15.3.**No license information found**
@@ -6975,12 +6975,12 @@ This report was generated on **Thu Jan 18 02:13:22 WET 2024** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Thu Jan 18 02:13:23 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Jan 19 23:26:04 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-protoc:0.17.1`
+# Dependencies of `io.spine.protodata:protodata-protoc:0.17.2`
 
 ## Runtime
 1.  **Group** : com.google.code.findbugs. **Name** : jsr305. **Version** : 3.0.2.
@@ -7754,12 +7754,12 @@ This report was generated on **Thu Jan 18 02:13:23 WET 2024** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Thu Jan 18 02:13:23 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Jan 19 23:26:04 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
 
-# Dependencies of `io.spine.protodata:protodata-test-env:0.17.1`
+# Dependencies of `io.spine.protodata:protodata-test-env:0.17.2`
 
 ## Runtime
 1.  **Group** : com.fasterxml.jackson. **Name** : jackson-bom. **Version** : 2.15.3.**No license information found**
@@ -8692,4 +8692,4 @@ This report was generated on **Thu Jan 18 02:13:23 WET 2024** using [Gradle-Lice
 
 The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
-This report was generated on **Thu Jan 18 02:13:23 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Fri Jan 19 23:26:05 WET 2024** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
