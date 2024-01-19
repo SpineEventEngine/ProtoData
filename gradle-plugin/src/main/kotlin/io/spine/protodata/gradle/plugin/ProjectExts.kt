@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,12 @@
 
 package io.spine.protodata.gradle.plugin
 
+import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
+import io.spine.protodata.gradle.Directories.SETTINGS_SUBDIR
+import java.io.File
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
@@ -54,3 +59,13 @@ internal fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompile<*>? {
     val taskName = sourceSet.getCompileTaskName("Kotlin")
     return tasks.findByName(taskName) as KotlinCompile<*>?
 }
+
+/**
+ * Obtains the provider with the default location of the ProtoData settings directory.
+ *
+ * By convention, ProtoData expects settings under the `build/protodata/settings` directory.
+ */
+public val Project.protoDataSettingsDir: Provider<Directory>
+    get() = layout.buildDirectory.dir(
+        PROTODATA_WORKING_DIR + File.separatorChar + SETTINGS_SUBDIR
+    )
