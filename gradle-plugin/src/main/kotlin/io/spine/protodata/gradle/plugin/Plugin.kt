@@ -166,12 +166,12 @@ private fun Project.createTasks(ext: Extension) {
  */
 @CanIgnoreReturnValue
 private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): LaunchProtoData {
-    ensureSettingsDirExists()
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
         plugins = ext.plugins
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)
+        settingsDir = ext.settingsDirProperty
         protoDataConfiguration = protoDataRawArtifact
         userClasspathConfiguration = userClasspath
         project.afterEvaluate {
@@ -180,6 +180,7 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
             compileCommandLine()
         }
         setPreLaunchCleanup()
+        ensureSettingsDirectory(ext.settingsDirProperty.get().asFile)
         onlyIf {
             hasRequestFile(sourceSet)
         }
@@ -192,19 +193,6 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
         kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
     }
     return result
-}
-
-private fun Project.ensureSettingsDirExists() {
-    val settingsDirectory = project.protoDataSettingsDir.get().asFile
-    if (!settingsDirectory.exists()) {
-        if(settingsDirectory.mkdirs()) {
-            logger.warn("The ProtoData settings directory has been created: {}", settingsDirectory)
-        } else {
-            logger.error(
-                "ERROR: the ProtoData settings directory failed to create: {}",
-                settingsDirectory)
-        }
-    }
 }
 
 /**
@@ -480,9 +468,11 @@ private fun Project.configureIdea() {
  * The primary use of this extension is to exclude `build/generated/source`.
  */
 private fun IdeaModule.excludeWithNested(directory: File) {
-    excludeDirs.add(directory)
-    directory.toPath().listDirectoryEntries().forEach {
-        excludeDirs.add(it.toFile())
+    if (directory.exists()) {
+        excludeDirs.add(directory)
+        directory.toPath().listDirectoryEntries().forEach {
+            excludeDirs.add(it.toFile())
+        }
     }
 }
 
@@ -491,4 +481,3 @@ private fun IdeaModule.excludeWithNested(directory: File) {
  */
 private fun File.residesIn(directory: File): Boolean =
     canonicalFile.startsWith(directory.absolutePath)
-
