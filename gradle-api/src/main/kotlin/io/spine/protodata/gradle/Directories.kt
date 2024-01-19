@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,23 +26,18 @@
 
 package io.spine.protodata.gradle
 
-import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
-import org.gradle.api.tasks.SourceSet
-
 /**
- * Utilities for working with `CodeGeneratorRequest` files.
+ * Constants for directory names used by ProtoData.
  */
-public object CodeGeneratorRequestFile {
+public object Directories {
 
     /**
-     * The default name of the subdirectory of the `build` directory where code generation
-     * request files are placed.
+     * The name of the ProtoData working directory under the `build`.
      */
-    @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
-    public const val defaultDirectory: String = "$PROTODATA_WORKING_DIR/requests"
+    public const val PROTODATA_WORKING_DIR: String = "protodata"
 
     /**
-     * Obtains the name of the file with the code generation request for the given source set.
+     * The name of the directory where the ProtoData settings files are stored.
      */
-    public fun name(sourceSet: SourceSet): String = "${sourceSet.name}.bin"
+    public const val SETTINGS_SUBDIR: String = "settings"
 }

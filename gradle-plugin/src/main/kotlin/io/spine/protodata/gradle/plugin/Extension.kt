@@ -88,7 +88,7 @@ public class Extension(internal val project: Project): CodegenSettings {
     }
 
     /**
-     * Allows to configure the subdirectories under the generated source set.
+     * Allows configuring the subdirectories under the generated source set.
      *
      * Defaults to [defaultSubdirectories].
      */
@@ -150,6 +150,7 @@ public class Extension(internal val project: Project): CodegenSettings {
             "grpc",
             "js",
             "dart",
+            //TODO:2024-01-19:alexander.yevsyukov: Remove these two entries.
             "spine",
             "protodata"
         )
