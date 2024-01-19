@@ -41,15 +41,12 @@ import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectories
@@ -70,16 +67,14 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:InputFile
     internal lateinit var requestFile: Provider<RegularFile>
 
-    @get:Internal
-    public abstract val configurationFile: RegularFileProperty
-
     /**
      * The directory which stores ProtoData settings files.
      *
      * If not specified, the project root directory will be used.
      */
     @get:InputDirectory
-    public abstract val settingsDir: DirectoryProperty
+    @get:Optional
+    internal lateinit var settingsDir: Provider<Directory>
 
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
@@ -98,19 +93,23 @@ public abstract class LaunchProtoData : JavaExec() {
     internal lateinit var sources: Provider<List<Directory>>
 
     @get:InputFiles
-    internal lateinit var userClasspathConfig: Configuration
+    internal lateinit var userClasspathConfiguration: Configuration
 
     /**
      * A Gradle [Configuration] which is used to run ProtoData.
      */
     @get:InputFiles
-    internal lateinit var protoDataConfig: Configuration
+    internal lateinit var protoDataConfiguration: Configuration
 
     /**
      * The paths to the directories where the source code processed by ProtoData should go.
      */
     @get:OutputDirectories
     internal lateinit var targets: Provider<List<Directory>>
+
+    init {
+        settingsDir = project.protoDataSettingsDir
+    }
 
     /**
      * Configures the CLI command for this task.
@@ -134,7 +133,7 @@ public abstract class LaunchProtoData : JavaExec() {
             yield(TargetRootParam.name)
             yield(targets.absolutePaths())
 
-            val userCp = userClasspathConfig.asPath
+            val userCp = userClasspathConfiguration.asPath
             if (userCp.isNotEmpty()) {
                 yield(UserClasspathParam.name)
                 yield(userCp)
@@ -149,8 +148,8 @@ public abstract class LaunchProtoData : JavaExec() {
             yield(dir)
         }.asIterable()
         logger.info { "ProtoData command for `${path}`: ${command.joinToString(separator = " ")}" }
-        classpath(protoDataConfig)
-        classpath(userClasspathConfig)
+        classpath(protoDataConfiguration)
+        classpath(userClasspathConfiguration)
         mainClass.set(CLI_APP_CLASS)
         args(command)
     }
