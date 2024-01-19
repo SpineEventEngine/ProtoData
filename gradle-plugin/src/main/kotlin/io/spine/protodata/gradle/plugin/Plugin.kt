@@ -63,6 +63,7 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.gradle.plugins.ide.idea.model.IdeaModule
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -113,16 +114,6 @@ public class Plugin : GradlePlugin<Project> {
         }
     }
 }
-
-/**
- * The name of the Gradle Configuration created by ProtoData Gradle plugin for holding
- * user-defined classpath.
- */
-@Deprecated(
-    "Use `Names.USER_CLASSPATH_CONFIGURATION` instead.",
-    ReplaceWith("Names.USER_CLASSPATH_CONFIGURATION")
-)
-public const val USER_CLASSPATH_CONFIGURATION_NAME: String = USER_CLASSPATH_CONFIGURATION
 
 private fun Project.createExtension(): Extension {
     val extension = Extension(this)
@@ -175,13 +166,14 @@ private fun Project.createTasks(ext: Extension) {
  */
 @CanIgnoreReturnValue
 private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): LaunchProtoData {
+    ensureSettingsDirExists()
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
         plugins = ext.plugins
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)
-        protoDataConfig = protoDataRawArtifact
-        userClasspathConfig = userClasspath
+        protoDataConfiguration = protoDataRawArtifact
+        userClasspathConfiguration = userClasspath
         project.afterEvaluate {
             sources = ext.sourceDirs(sourceSet)
             targets = ext.targetDirs(sourceSet)
@@ -200,6 +192,19 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
         kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
     }
     return result
+}
+
+private fun Project.ensureSettingsDirExists() {
+    val settingsDirectory = project.protoDataSettingsDir.get().asFile
+    if (!settingsDirectory.exists()) {
+        if(settingsDirectory.mkdirs()) {
+            logger.warn("The ProtoData settings directory has been created: {}", settingsDirectory)
+        } else {
+            logger.error(
+                "ERROR: the ProtoData settings directory failed to create: {}",
+                settingsDirectory)
+        }
+    }
 }
 
 /**
@@ -450,10 +455,10 @@ private fun Project.configureIdea() {
 
     gradle.afterProject {
         pluginManager.withPlugin("idea") {
-            val protocOutput = file(generatedSourceProtoDir)
             val idea = extensions.getByType<IdeaModel>()
             with(idea.module) {
-                excludeDirs.add(protocOutput)
+                val protocOutput = file(generatedSourceProtoDir)
+                excludeWithNested(protocOutput)
                 sourceDirs = filterSources(sourceDirs, protocOutput)
                 testSources.filter { !it.residesIn(protocOutput) }
                 generatedSourceDirs = if (generatedDir.exists()) {
@@ -465,6 +470,19 @@ private fun Project.configureIdea() {
                 }
             }
         }
+    }
+}
+
+/**
+ * Excludes the given directory and its immediate subdirectories from
+ * being seen as ones with the source code.
+ *
+ * The primary use of this extension is to exclude `build/generated/source`.
+ */
+private fun IdeaModule.excludeWithNested(directory: File) {
+    excludeDirs.add(directory)
+    directory.toPath().listDirectoryEntries().forEach {
+        excludeDirs.add(it.toFile())
     }
 }
 
