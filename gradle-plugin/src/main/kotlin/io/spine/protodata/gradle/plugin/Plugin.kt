@@ -181,7 +181,7 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
         }
         setPreLaunchCleanup()
         onlyIf {
-            checkRequestFile(sourceSet)
+            hasRequestFile(sourceSet)
         }
         dependsOn(
             protoDataRawArtifact.buildDependencies,

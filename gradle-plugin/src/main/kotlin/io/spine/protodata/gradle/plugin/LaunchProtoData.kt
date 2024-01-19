@@ -197,7 +197,7 @@ private fun Provider<List<Directory>>.absolutePaths(): String =
  * Logs error if the given source set contains `proto` directory which contains files,
  * which assumes that the request file should have been created.
  */
-internal fun LaunchProtoData.checkRequestFile(sourceSet: SourceSet): Boolean {
+internal fun LaunchProtoData.hasRequestFile(sourceSet: SourceSet): Boolean {
     val requestFile = requestFile.get().asFile
     if (!requestFile.exists() && sourceSet.containsProtoFiles()) {
         logger.error {
