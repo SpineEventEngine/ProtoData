@@ -66,6 +66,12 @@ private fun LoadsSettings.missingSettings(): Nothing {
 }
 
 /**
+ * Loads settings with the type specified by the generic parameter [T].
+ */
+public inline fun <reified T: Any> LoadsSettings.loadSettings(): T =
+    loadSettings(T::class.java)
+
+/**
  * Obtains the default ID of the settings consumer which is used
  * for [loading settings][LoadsSettings.loadSettings].
  *
