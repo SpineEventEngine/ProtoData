@@ -465,7 +465,9 @@ private fun Project.configureIdea() {
  * Excludes the given directory and its immediate subdirectories from
  * being seen as ones with the source code.
  *
- * The primary use of this extension is to exclude `build/generated/source`.
+ * The primary use of this extension is to exclude `build/generated/source/proto` and its
+ * subdirectories to avoid duplication of types in the generated code with those in
+ * produced by ProtoData under the `$projectDir/generated/` directory.
  */
 private fun IdeaModule.excludeWithNested(directory: File) {
     if (directory.exists()) {
