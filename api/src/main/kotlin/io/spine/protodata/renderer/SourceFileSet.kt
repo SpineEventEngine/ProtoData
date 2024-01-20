@@ -29,6 +29,7 @@ package io.spine.protodata.renderer
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import io.spine.annotation.Internal
 import io.spine.protodata.ProtoDeclarationName
+import io.spine.protodata.renderer.SourceFileSet.Companion.create
 import io.spine.protodata.type.Convention
 import io.spine.protodata.type.NameElement
 import io.spine.server.query.Querying
@@ -258,9 +259,9 @@ internal constructor(
     }
 
     /**
-     * Applies the given [action] to all the code files which are accessed by a [Renderer].
+     * Applies given [action] to all the code files which are accessed by a [Renderer].
      *
-     * When a file's code is first accessed, runs the given action.
+     * When a file's code is first accessed, the method runs the given action.
      * The action may change the code if necessary, for example,
      * by adding insertion points.
      */
@@ -378,7 +379,7 @@ public class FileCreation<N: ProtoDeclarationName>(
      *
      * If the convention does not define a declaration for the given type, returns `null`.
      *
-     * @param N the type of the Protobuf declaration name such as message, enum, or a service.
+     * @param T the type of the Protobuf declaration name such as message, enum, or a service.
      */
     public fun <L : Language, T : NameElement<L>> namedUsing(
         convention: Convention<L, N, T>

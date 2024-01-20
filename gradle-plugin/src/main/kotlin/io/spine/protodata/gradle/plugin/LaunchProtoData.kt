@@ -36,14 +36,14 @@ import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
 import io.spine.tools.gradle.protobuf.containsProtoFiles
+import java.io.File
 import java.io.File.pathSeparator
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -69,16 +69,13 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:InputFile
     internal lateinit var requestFile: Provider<RegularFile>
 
-    @get:Internal
-    public abstract val configurationFile: RegularFileProperty
-
     /**
-     * The directory where settings files for ProtoData components are stored.
+     * The directory which stores ProtoData settings files.
      *
      * If not specified, the project root directory will be used.
      */
     @get:Internal
-    public abstract val settingsDir: DirectoryProperty
+    internal lateinit var settingsDir: Provider<Directory>
 
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
@@ -97,13 +94,13 @@ public abstract class LaunchProtoData : JavaExec() {
     internal lateinit var sources: Provider<List<Directory>>
 
     @get:InputFiles
-    internal lateinit var userClasspathConfig: Configuration
+    internal lateinit var userClasspathConfiguration: Configuration
 
     /**
      * A Gradle [Configuration] which is used to run ProtoData.
      */
     @get:InputFiles
-    internal lateinit var protoDataConfig: Configuration
+    internal lateinit var protoDataConfiguration: Configuration
 
     /**
      * The paths to the directories where the source code processed by ProtoData should go.
@@ -133,7 +130,7 @@ public abstract class LaunchProtoData : JavaExec() {
             yield(TargetRootParam.name)
             yield(targets.absolutePaths())
 
-            val userCp = userClasspathConfig.asPath
+            val userCp = userClasspathConfiguration.asPath
             if (userCp.isNotEmpty()) {
                 yield(UserClasspathParam.name)
                 yield(userCp)
@@ -148,14 +145,18 @@ public abstract class LaunchProtoData : JavaExec() {
             yield(dir)
         }.asIterable()
         logger.info { "ProtoData command for `${path}`: ${command.joinToString(separator = " ")}" }
-        classpath(protoDataConfig)
-        classpath(userClasspathConfig)
+        classpath(protoDataConfiguration)
+        classpath(userClasspathConfiguration)
         mainClass.set(CLI_APP_CLASS)
         args(command)
     }
 
     internal fun setPreLaunchCleanup() {
         doFirst(CleanAction())
+    }
+
+    internal fun ensureSettingsDirectory(settingsDirectory: File) {
+        doFirst { project.ensureSettingsDirExists(settingsDirectory) }
     }
 
     /**
@@ -197,7 +198,7 @@ private fun Provider<List<Directory>>.absolutePaths(): String =
  * Logs error if the given source set contains `proto` directory which contains files,
  * which assumes that the request file should have been created.
  */
-internal fun LaunchProtoData.checkRequestFile(sourceSet: SourceSet): Boolean {
+internal fun LaunchProtoData.hasRequestFile(sourceSet: SourceSet): Boolean {
     val requestFile = requestFile.get().asFile
     if (!requestFile.exists() && sourceSet.containsProtoFiles()) {
         logger.error {
@@ -207,4 +208,32 @@ internal fun LaunchProtoData.checkRequestFile(sourceSet: SourceSet): Boolean {
         }
     }
     return requestFile.exists()
+}
+
+/**
+ * Ensures that the settings directory exists.
+ *
+ * ProtoData CLI expects that the directory exists.
+ * ProtoData may be configured to run without settings, e.g., when running tests.
+ *
+ * Normally, there will be a task that writes settings for ProtoData, and `LaunchProtoData`
+ * task would depend on this task.
+ *
+ * This function handles the case when the directory is missed.
+ * If the directory does not exist, it creates it performing logging operations
+ * using the project logger.
+ */
+private fun Project.ensureSettingsDirExists(settingsDirectory: File) {
+    if (!settingsDirectory.exists()) {
+        if (settingsDirectory.mkdirs()) {
+            logger.warn(
+                "The ProtoData settings directory has been created: `{}`.",
+                settingsDirectory
+            )
+        } else {
+            logger.error(
+                "Unable to create the ProtoData settings directory: `{}`.",
+                settingsDirectory)
+        }
+    }
 }

@@ -63,6 +63,7 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.gradle.plugins.ide.idea.model.IdeaModule
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -113,16 +114,6 @@ public class Plugin : GradlePlugin<Project> {
         }
     }
 }
-
-/**
- * The name of the Gradle Configuration created by ProtoData Gradle plugin for holding
- * user-defined classpath.
- */
-@Deprecated(
-    "Use `Names.USER_CLASSPATH_CONFIGURATION` instead.",
-    ReplaceWith("Names.USER_CLASSPATH_CONFIGURATION")
-)
-public const val USER_CLASSPATH_CONFIGURATION_NAME: String = USER_CLASSPATH_CONFIGURATION
 
 private fun Project.createExtension(): Extension {
     val extension = Extension(this)
@@ -180,16 +171,18 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
         plugins = ext.plugins
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)
-        protoDataConfig = protoDataRawArtifact
-        userClasspathConfig = userClasspath
+        settingsDir = ext.settingsDirProperty
+        protoDataConfiguration = protoDataRawArtifact
+        userClasspathConfiguration = userClasspath
         project.afterEvaluate {
             sources = ext.sourceDirs(sourceSet)
             targets = ext.targetDirs(sourceSet)
             compileCommandLine()
         }
         setPreLaunchCleanup()
+        ensureSettingsDirectory(ext.settingsDirProperty.get().asFile)
         onlyIf {
-            checkRequestFile(sourceSet)
+            hasRequestFile(sourceSet)
         }
         dependsOn(
             protoDataRawArtifact.buildDependencies,
@@ -450,10 +443,10 @@ private fun Project.configureIdea() {
 
     gradle.afterProject {
         pluginManager.withPlugin("idea") {
-            val protocOutput = file(generatedSourceProtoDir)
             val idea = extensions.getByType<IdeaModel>()
             with(idea.module) {
-                excludeDirs.add(protocOutput)
+                val protocOutput = file(generatedSourceProtoDir)
+                excludeWithNested(protocOutput)
                 sourceDirs = filterSources(sourceDirs, protocOutput)
                 testSources.filter { !it.residesIn(protocOutput) }
                 generatedSourceDirs = if (generatedDir.exists()) {
@@ -469,8 +462,22 @@ private fun Project.configureIdea() {
 }
 
 /**
+ * Excludes the given directory and its immediate subdirectories from
+ * being seen as ones with the source code.
+ *
+ * The primary use of this extension is to exclude `build/generated/source`.
+ */
+private fun IdeaModule.excludeWithNested(directory: File) {
+    if (directory.exists()) {
+        excludeDirs.add(directory)
+        directory.toPath().listDirectoryEntries().forEach {
+            excludeDirs.add(it.toFile())
+        }
+    }
+}
+
+/**
  * Tells if this file resides in the given [directory].
  */
 private fun File.residesIn(directory: File): Boolean =
     canonicalFile.startsWith(directory.absolutePath)
-

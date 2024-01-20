@@ -24,12 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.gradle
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Constants for directory names used by ProtoData.
  */
-val protoDataVersion: String by extra("0.17.2")
+public object Directories {
+
+    /**
+     * The name of the ProtoData working directory under the `build`.
+     */
+    public const val PROTODATA_WORKING_DIR: String = "protodata"
+
+    /**
+     * The name of the directory where the ProtoData settings files are stored.
+     */
+    public const val SETTINGS_SUBDIR: String = "settings"
+}

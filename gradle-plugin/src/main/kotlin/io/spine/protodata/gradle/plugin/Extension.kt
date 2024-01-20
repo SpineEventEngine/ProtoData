@@ -28,8 +28,9 @@ package io.spine.protodata.gradle.plugin
 
 import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.gradle.CodeGeneratorRequestFile
-import io.spine.protodata.gradle.CodeGeneratorRequestFile.defaultDirectory
 import io.spine.protodata.gradle.CodegenSettings
+import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
+import io.spine.protodata.gradle.Directories.SETTINGS_SUBDIR
 import io.spine.tools.fs.DirectoryName.generated
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import org.gradle.api.Project
@@ -40,6 +41,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.listProperty
+import org.jetbrains.kotlin.konan.file.File
 
 /**
  * The `protoData { }` Gradle extension.
@@ -58,6 +60,10 @@ public class Extension(internal val project: Project): CodegenSettings {
         get() = requestFilesDirProperty.get()
         set(value) = requestFilesDirProperty.set(project.file(value))
 
+    override var settingsDir: Any
+        get() = settingsDirProperty.get()
+        set(value) = requestFilesDirProperty.set(project.file(value))
+
     @VisibleForTesting
     public val plugins: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
@@ -68,7 +74,13 @@ public class Extension(internal val project: Project): CodegenSettings {
 
     internal val requestFilesDirProperty: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(
-            layout.buildDirectory.dir(defaultDirectory)
+            layout.buildDirectory.dir(CodeGeneratorRequestFile.defaultDirectory)
+        )
+    }
+
+    internal val settingsDirProperty: DirectoryProperty = with(project) {
+        objects.directoryProperty().convention(
+            layout.buildDirectory.dir(PROTODATA_WORKING_DIR + File.separatorChar + SETTINGS_SUBDIR)
         )
     }
 
@@ -88,7 +100,7 @@ public class Extension(internal val project: Project): CodegenSettings {
     }
 
     /**
-     * Allows to configure the subdirectories under the generated source set.
+     * Allows configuring the subdirectories under the generated source set.
      *
      * Defaults to [defaultSubdirectories].
      */
@@ -150,8 +162,6 @@ public class Extension(internal val project: Project): CodegenSettings {
             "grpc",
             "js",
             "dart",
-            "spine",
-            "protodata"
         )
     }
 }
