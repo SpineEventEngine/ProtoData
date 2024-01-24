@@ -44,7 +44,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
@@ -67,8 +67,11 @@ import org.gradle.api.tasks.SourceSet
  */
 public abstract class LaunchProtoData : JavaExec() {
 
+    /**
+     * The file containing the binary form of `CodeGeneratorRequest` passed to this task.
+     */
     @get:InputFile
-    internal lateinit var requestFile: Provider<RegularFile>
+    internal abstract val requestFile: RegularFileProperty
 
     /**
      * The directory which stores ProtoData settings files.

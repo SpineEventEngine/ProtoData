@@ -182,7 +182,7 @@ private fun Project.createLaunchTask(
         settingsDir.set(settingsDirTask.settingsDir.get())
         plugins = ext.plugins
         optionProviders = ext.optionProviders
-        requestFile = ext.requestFile(sourceSet)
+        requestFile.set(ext.requestFile(sourceSet))
         protoDataConfiguration = protoDataRawArtifact
         userClasspathConfiguration = userClasspath
         project.afterEvaluate {
