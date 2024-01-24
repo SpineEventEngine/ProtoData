@@ -33,8 +33,6 @@ import io.spine.protodata.cli.SettingsDirParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
-import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
-import io.spine.protodata.gradle.Directories.SETTINGS_SUBDIR
 import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
 import io.spine.tools.gradle.protobuf.containsProtoFiles
@@ -106,13 +104,6 @@ public abstract class LaunchProtoData : JavaExec() {
      */
     @get:OutputDirectories
     internal lateinit var targets: Provider<List<Directory>>
-
-    init {
-        @Suppress("LeakingThis") // As advised by Gradle docs.
-        settingsDir.convention(
-            project.layout.buildDirectory.dir("$PROTODATA_WORKING_DIR/$SETTINGS_SUBDIR")
-        )
-    }
 
     /**
      * Configures the CLI command for this task.
