@@ -82,9 +82,6 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
 
-    @get:Input
-    internal lateinit var optionProviders: Provider<List<String>>
-
     /**
      * The paths to the directories with the generated source code.
      *

@@ -181,7 +181,6 @@ private fun Project.createLaunchTask(
     val result = tasks.create<LaunchProtoData>(taskName) {
         settingsDir.set(settingsDirTask.settingsDir.get())
         plugins = ext.plugins
-        optionProviders = ext.optionProviders
         requestFile.set(ext.requestFile(sourceSet))
         protoDataConfiguration = protoDataRawArtifact
         userClasspathConfiguration = userClasspath
