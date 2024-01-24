@@ -72,11 +72,9 @@ public abstract class LaunchProtoData : JavaExec() {
 
     /**
      * The directory which stores ProtoData settings files.
-     *
-     * If not specified, the project root directory will be used.
      */
     @get:InputDirectory
-    public abstract val settingsDir: DirectoryProperty
+    internal abstract val settingsDir: DirectoryProperty
 
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
@@ -145,12 +143,7 @@ public abstract class LaunchProtoData : JavaExec() {
             }
 
             yield(SettingsDirParam.name)
-            val dir = if (settingsDir.isPresent) {
-                project.file(settingsDir).absolutePath
-            } else {
-                project.projectDir.absolutePath
-            }
-            yield(dir)
+            yield(project.file(settingsDir).absolutePath)
         }.asIterable()
         logger.info { "ProtoData command for `${path}`: ${command.joinToString(separator = " ")}" }
         classpath(protoDataConfiguration)
