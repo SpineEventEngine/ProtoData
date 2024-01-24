@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.17.2</version>
+<version>0.17.3</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -312,7 +312,17 @@ all modules and does not describe the project structure per-subproject.
   </dependency>
   <dependency>
     <groupId>org.jetbrains.dokka</groupId>
+    <artifactId>gfm-plugin</artifactId>
+    <version>1.9.10</version>
+  </dependency>
+  <dependency>
+    <groupId>org.jetbrains.dokka</groupId>
     <artifactId>javadoc-plugin</artifactId>
+    <version>1.9.10</version>
+  </dependency>
+  <dependency>
+    <groupId>org.jetbrains.dokka</groupId>
+    <artifactId>jekyll-plugin</artifactId>
     <version>1.9.10</version>
   </dependency>
   <dependency>
