@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,3 +57,8 @@ protobuf {
 tasks.withType<PublishToMavenRepository>().configureEach {
     onlyIf { false }
 }
+
+/**
+ * No need to generate the documentation for test environment code.
+ */
+disableDocumentationTasks()
