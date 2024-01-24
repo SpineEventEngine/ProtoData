@@ -70,7 +70,7 @@ public abstract class CreateSettingsDirectory: DefaultTask() {
  * Normally, there will be a task that writes settings for ProtoData, and `LaunchProtoData`
  * task would depend on this task.
  *
- * This function handles the case when the directory is missed.
+ * This function handles the case when the directory is missing.
  * If the directory does not exist, it creates it performing logging operations
  * using the project logger.
  */
