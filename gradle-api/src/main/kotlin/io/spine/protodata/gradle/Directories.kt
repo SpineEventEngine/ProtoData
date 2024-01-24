@@ -32,18 +32,20 @@ package io.spine.protodata.gradle
 public object Directories {
 
     /**
-     * The name of the ProtoData working directory under the `build`.
+     * The name of the ProtoData working directory which is conventionally
+     * placed under the `build` directory.
      */
     public const val PROTODATA_WORKING_DIR: String = "protodata"
 
     /**
-     * The name of the directory where the ProtoData settings files are stored.
+     * The name of the subdirectory under [PROTODATA_WORKING_DIR] where
+     * the ProtoData settings files are stored.
      */
     public const val SETTINGS_SUBDIR: String = "settings"
 
     /**
-     * The name of the directory where [code generation requests files][CodeGeneratorRequestFile]
-     * are stored.
+     * The name of the subdirectory under [PROTODATA_WORKING_DIR] where
+     * [code generation requests files][CodeGeneratorRequestFile] are stored.
      */
     public const val REQUESTS_SUBDIR: String = "requests"
 }
