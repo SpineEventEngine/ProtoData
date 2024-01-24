@@ -33,22 +33,23 @@ import io.spine.protodata.cli.SettingsDirParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
+import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
+import io.spine.protodata.gradle.Directories.SETTINGS_SUBDIR
 import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
 import io.spine.tools.gradle.protobuf.containsProtoFiles
-import java.io.File
 import java.io.File.pathSeparator
 import org.gradle.api.Action
-import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectories
@@ -74,8 +75,8 @@ public abstract class LaunchProtoData : JavaExec() {
      *
      * If not specified, the project root directory will be used.
      */
-    @get:Internal
-    internal lateinit var settingsDir: Provider<Directory>
+    @get:InputDirectory
+    public abstract val settingsDir: DirectoryProperty
 
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
@@ -107,6 +108,13 @@ public abstract class LaunchProtoData : JavaExec() {
      */
     @get:OutputDirectories
     internal lateinit var targets: Provider<List<Directory>>
+
+    init {
+        @Suppress("LeakingThis") // As advised by Gradle docs.
+        settingsDir.convention(
+            project.layout.buildDirectory.dir("$PROTODATA_WORKING_DIR/$SETTINGS_SUBDIR")
+        )
+    }
 
     /**
      * Configures the CLI command for this task.
@@ -153,10 +161,6 @@ public abstract class LaunchProtoData : JavaExec() {
 
     internal fun setPreLaunchCleanup() {
         doFirst(CleanAction())
-    }
-
-    internal fun ensureSettingsDirectory(settingsDirectory: File) {
-        doFirst { project.ensureSettingsDirExists(settingsDirectory) }
     }
 
     /**
@@ -210,30 +214,3 @@ internal fun LaunchProtoData.hasRequestFile(sourceSet: SourceSet): Boolean {
     return requestFile.exists()
 }
 
-/**
- * Ensures that the settings directory exists.
- *
- * ProtoData CLI expects that the directory exists.
- * ProtoData may be configured to run without settings, e.g., when running tests.
- *
- * Normally, there will be a task that writes settings for ProtoData, and `LaunchProtoData`
- * task would depend on this task.
- *
- * This function handles the case when the directory is missed.
- * If the directory does not exist, it creates it performing logging operations
- * using the project logger.
- */
-private fun Project.ensureSettingsDirExists(settingsDirectory: File) {
-    if (!settingsDirectory.exists()) {
-        if (settingsDirectory.mkdirs()) {
-            logger.warn(
-                "The ProtoData settings directory has been created: `{}`.",
-                settingsDirectory
-            )
-        } else {
-            logger.error(
-                "Unable to create the ProtoData settings directory: `{}`.",
-                settingsDirectory)
-        }
-    }
-}

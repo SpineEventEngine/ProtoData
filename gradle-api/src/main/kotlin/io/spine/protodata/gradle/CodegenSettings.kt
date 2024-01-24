@@ -52,11 +52,6 @@ public interface CodegenSettings {
     public var requestFilesDir: Any
 
     /**
-     * A directory with settings files for ProtoData.
-     */
-    public var settingsDir: Any
-
-    /**
      * The subdirectories to which the files generated from Protobuf are placed.
      *
      * If the code files that need processing are placed in a few subdirectories within

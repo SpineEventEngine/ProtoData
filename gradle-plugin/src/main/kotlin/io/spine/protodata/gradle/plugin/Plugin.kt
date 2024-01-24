@@ -50,6 +50,7 @@ import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.generatedDir
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import io.spine.tools.gradle.protobuf.protobufExtension
+import io.spine.util.theOnly
 import java.io.File
 import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
@@ -155,23 +156,33 @@ private val Project.userClasspath: Configuration
  * @see [Project.configureProtobufPlugin]
  */
 private fun Project.createTasks(ext: Extension) {
+    val settingsDirTask = createSettingsDirTask()
     sourceSets.forEach { sourceSet ->
-        createLaunchTask(sourceSet, ext)
+        createLaunchTask(settingsDirTask, sourceSet, ext)
         createCleanTask(sourceSet, ext)
     }
+}
+
+private fun Project.createSettingsDirTask(): CreateSettingsDirectory {
+    val result = tasks.create<CreateSettingsDirectory>("createSettingsDirectory")
+    return result
 }
 
 /**
  * Creates [LaunchProtoData] to serve the given [sourceSet].
  */
 @CanIgnoreReturnValue
-private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): LaunchProtoData {
+private fun Project.createLaunchTask(
+    settingsDirTask: CreateSettingsDirectory,
+    sourceSet: SourceSet,
+    ext: Extension
+): LaunchProtoData {
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
+        settingsDir.set(settingsDirTask.settingsDir.get())
         plugins = ext.plugins
         optionProviders = ext.optionProviders
         requestFile = ext.requestFile(sourceSet)
-        settingsDir = ext.settingsDirProperty
         protoDataConfiguration = protoDataRawArtifact
         userClasspathConfiguration = userClasspath
         project.afterEvaluate {
@@ -180,13 +191,13 @@ private fun Project.createLaunchTask(sourceSet: SourceSet, ext: Extension): Laun
             compileCommandLine()
         }
         setPreLaunchCleanup()
-        ensureSettingsDirectory(ext.settingsDirProperty.get().asFile)
         onlyIf {
             hasRequestFile(sourceSet)
         }
         dependsOn(
+            settingsDirTask,
             protoDataRawArtifact.buildDependencies,
-            userClasspath.buildDependencies
+            userClasspath.buildDependencies,
         )
         val launchTask = this
         javaCompileFor(sourceSet)?.dependsOn(launchTask)
@@ -422,7 +433,9 @@ private fun Project.handleLaunchTaskDependency(
         launchTask.dependsOn(task)
     } else {
         project.afterEvaluate {
-            launchTask = createLaunchTask(sourceSet, ext)
+            val settingsTask =
+                project.tasks.withType(CreateSettingsDirectory::class.java).theOnly()
+            launchTask = createLaunchTask(settingsTask, sourceSet, ext)
             launchTask!!.dependsOn(task)
             createCleanTask(sourceSet, ext)
         }
