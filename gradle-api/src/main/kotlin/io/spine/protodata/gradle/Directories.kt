@@ -40,4 +40,10 @@ public object Directories {
      * The name of the directory where the ProtoData settings files are stored.
      */
     public const val SETTINGS_SUBDIR: String = "settings"
+
+    /**
+     * The name of the directory where [code generation requests files][CodeGeneratorRequestFile]
+     * are stored.
+     */
+    public const val REQUESTS_SUBDIR: String = "requests"
 }

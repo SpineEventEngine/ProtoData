@@ -27,6 +27,7 @@
 package io.spine.protodata.gradle
 
 import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
+import io.spine.protodata.gradle.Directories.REQUESTS_SUBDIR
 import org.gradle.api.tasks.SourceSet
 
 /**
@@ -39,7 +40,7 @@ public object CodeGeneratorRequestFile {
      * request files are placed.
      */
     @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
-    public const val defaultDirectory: String = "$PROTODATA_WORKING_DIR/requests"
+    public const val defaultDirectory: String = "$PROTODATA_WORKING_DIR/$REQUESTS_SUBDIR"
 
     /**
      * Obtains the name of the file with the code generation request for the given source set.
