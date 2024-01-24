@@ -195,3 +195,20 @@ fun DokkaTask.isInPublishingGraph(): Boolean =
             startsWith("publish") && !startsWith("publishToMavenLocal")
         }
     }
+
+/**
+ * Disables Dokka and Javadoc tasks in this `Project`.
+ *
+ * This function could be useful to improve build speed when building subprojects containing
+ * test environments or integration test projects.
+ */
+fun Project.disableDocumentationTasks() {
+    gradle.taskGraph.whenReady {
+        tasks.forEach { task ->
+            val lowercaseName = task.name.toLowerCase()
+            if (lowercaseName.contains("dokka") || lowercaseName.contains("javadoc")) {
+                task.enabled = false
+            }
+        }
+    }
+}
