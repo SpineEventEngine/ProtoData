@@ -86,6 +86,7 @@ private constructor(
          *
          * Uses a regular expression to match line breaks, with or without carriage returns.
          */
+        @Deprecated("Please use `CharSequence.lines()` instead.")
         public val lineSplitter: Splitter = Splitter.on(Pattern.compile("\r?\n"))
 
         /**
