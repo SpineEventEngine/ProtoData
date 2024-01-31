@@ -51,7 +51,7 @@ internal class TypeAnnotationSpec {
     }
 
     @Test
-    fun `reject both 'subject' and 'file' arguments`() {
+    fun `reject simultaneously 'subject' and 'file' arguments`() {
         assertThrows<IllegalArgumentException> {
             StubAnnotation(SuppressWarnings::class.java,
                 ClassName("foo", "bar"),
