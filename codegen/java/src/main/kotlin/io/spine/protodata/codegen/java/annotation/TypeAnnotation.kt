@@ -29,6 +29,7 @@ import io.spine.protodata.codegen.java.ClassOrEnumName
 import io.spine.protodata.codegen.java.JavaRenderer
 import io.spine.protodata.codegen.java.file.BeforeNestedTypeDeclaration
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
+import io.spine.protodata.codegen.java.isJavaLang
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
@@ -142,12 +143,11 @@ public abstract class TypeAnnotation<T : Annotation>(
         return !line.contains(annotationClass)
     }
 
-    private fun annotationClassReference(): String {
-        val qualifiedName = annotationClass.name
-        return if (qualifiedName.contains("java.lang")) {
-            annotationClass.simpleName
+    private fun annotationClassReference(): String = with(annotationClass) {
+        if (isJavaLang) {
+            simpleName
         } else {
-            qualifiedName
+            name
         }
     }
 
