@@ -133,7 +133,7 @@ public abstract class TypeAnnotation<T : Annotation>(
         }
 
     private fun annotationCode(file: SourceFile): String =
-        "@${annotationClassReference()}${annotationArguments(file)}"
+        "@${annotationClass.codeReference}${annotationArguments(file)}"
 
     /**
      * Specifies whether to annotate a given file using the caller's implementation.
@@ -163,16 +163,8 @@ public abstract class TypeAnnotation<T : Annotation>(
         // Subtract 1 because the insertion point refers to the line of
         // a Java type declaration, starting with `class`, `interface`, or `enum`.
         val line = lines[lineNumber - 1]
-        val annotationClass = annotationClassReference()
+        val annotationClass = annotationClass.codeReference
         return !line.contains(annotationClass)
-    }
-
-    private fun annotationClassReference(): String = with(annotationClass) {
-        if (isJavaLang) {
-            simpleName
-        } else {
-            name
-        }
     }
 
     private fun annotationArguments(file: SourceFile): String {
@@ -214,3 +206,6 @@ public abstract class TypeAnnotation<T : Annotation>(
 
 private val <T: Annotation> Class<T>.isRepeatable: Boolean
     get() = isAnnotationPresent(Repeatable::class.java)
+
+private val <T: Annotation> Class<T>.codeReference: String
+    get() = if (isJavaLang) simpleName else name
