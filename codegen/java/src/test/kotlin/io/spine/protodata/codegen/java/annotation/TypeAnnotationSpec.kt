@@ -51,6 +51,20 @@ internal class TypeAnnotationSpec {
     }
 
     @Test
+    fun `reject both 'subject' and 'file' arguments`() {
+        assertThrows<IllegalArgumentException> {
+            StubAnnotation(SuppressWarnings::class.java,
+                ClassName("foo", "bar"),
+                SourceFile.fromCode(Paths.get("stub", "Source.java"), """
+                    class Source { }    
+                    """.trimIndent()
+                )
+            )
+        }
+
+    }
+
+    @Test
     fun `accept annotation class with 'TYPE' target`() {
         assertDoesNotThrow {
             StubAnnotation(SuppressWarnings::class.java)
@@ -105,9 +119,10 @@ internal class TypeAnnotationSpec {
 
 private class StubAnnotation<T : Annotation>(
     annotationClass: Class<T>,
-    subject: ClassOrEnumName? = null
+    subject: ClassOrEnumName? = null,
+    file: SourceFile? = null
 ) :
-    TypeAnnotation<T>(annotationClass, subject) {
+    TypeAnnotation<T>(annotationClass, subject, file) {
 
     override fun renderAnnotationArguments(file: SourceFile): String = ""
 

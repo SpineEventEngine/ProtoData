@@ -49,15 +49,30 @@ public abstract class TypeAnnotation<T : Annotation>(
     protected val annotationClass: Class<T>,
 
     /**
-     * The subject of the annotation.
+     * The class or enum class name to be annotated.
      *
-     * If `null`, the annotation is applied to all the classes passed to this annotation.
+     * Cannot be used together with [file].
+     * If both [subject] and [file] are specified, `IllegalArgumentException` will be thrown.
+     *
+     * If both [subject] and [file] are `null`, the annotation is applied to all the classes
+     * passed to this annotation.
+     *
      * If not `null`, the annotation is applied only to the types specified by this field.
      */
-    protected val subject: ClassOrEnumName? = null
+    protected val subject: ClassOrEnumName? = null,
+
+    /**
+     * The source file top class of which should be annotated.
+     *
+     * Cannot be used together with [subject].
+     * If both [file] and [subject] are specified, `IllegalArgumentException` will be thrown.
+     *
+     * If not `null`, the annotation is applied only to the top class of the specified file.
+     */
+    protected val file: SourceFile? = null
 ) : JavaRenderer() {
 
-    private val specific: Boolean = subject != null
+    private val specific: Boolean = subject != null || file != null
 
     init {
         @Suppress("LeakingThis")
@@ -69,18 +84,27 @@ public abstract class TypeAnnotation<T : Annotation>(
            we should be fine.
         */
         checkAnnotationClass()
+
+        require(!(subject != null && file != null)) {
+            "Cannot specify both `subject` and `file`."
+        }
     }
 
     final override fun render(sources: SourceFileSet) {
         if (!specific) {
             annotateMany(sources)
         } else {
-            val file = sources.find(subject!!.javaFile)
-            check(file != null) {
-                "Cannot find a file for the type `${subject.canonical}`."
-            }
+            val file = this.file ?: subjectFileIn(sources)
             annotate(file)
         }
+    }
+
+    private fun subjectFileIn(sources: SourceFileSet): SourceFile {
+        val file = sources.find(subject!!.javaFile)
+        check(file != null) {
+            "Cannot find a file for the type `${subject.canonical}`."
+        }
+        return file
     }
 
     private fun annotateMany(sources: SourceFileSet) {
