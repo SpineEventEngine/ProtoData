@@ -24,12 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.codegen.java
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Tells if this class belongs to the "java.lang" package.
  */
-val protoDataVersion: String by extra("0.17.4")
+public val Class<*>.isJavaLang: Boolean
+    get() = name.contains("java.lang")

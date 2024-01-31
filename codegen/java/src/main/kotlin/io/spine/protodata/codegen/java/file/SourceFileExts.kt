@@ -24,12 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.codegen.java.file
+
+import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.renderer.SourceFileSet
+import kotlin.io.path.extension
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Tells if this is a Java source file.
  */
-val protoDataVersion: String by extra("0.17.4")
+public val SourceFile.isJava: Boolean
+    get() = relativePath.extension == "java"
+
+/**
+ * Tells if this source file set produces files that reside under the "java" directory.
+ */
+public val SourceFileSet.hasJavaOutput: Boolean
+    get() = outputRoot.endsWith("java")
+
+/**
+ * Tells if this source file set produces files that reside under the "grpc" directory.
+ */
+public val SourceFileSet.hasGrpcOutput: Boolean
+    get() = outputRoot.endsWith("grpc")
