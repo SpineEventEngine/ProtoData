@@ -31,7 +31,6 @@ import io.spine.string.Indent
 import io.spine.string.Indent.Companion.DEFAULT_JAVA_INDENT_SIZE
 import io.spine.string.Separator
 import io.spine.string.atLevel
-import io.spine.text.TextFactory.lineSplitter
 
 /**
  * A fluent builder for inserting code into pre-prepared insertion points.
@@ -78,7 +77,7 @@ internal constructor(
         val sourceLines = text.lines()
         val locations = point.locate(text).map { it.wholeLine }
         val newCode = lines.indent(indent, indentLevel)
-        val newLines = lineSplitter().splitToList(newCode)
+        val newLines = newCode.lines()
         var alreadyInsertedCount = 0
         val updatedLines = ArrayList(sourceLines)
         sourceLines.forEachIndexed { index, _ ->
