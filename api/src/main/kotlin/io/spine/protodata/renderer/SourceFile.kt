@@ -272,7 +272,7 @@ private constructor(
     /**
      * Adds an action to be executed before obtaining the [text] of this source file.
      */
-    internal fun whenRead(action: (SourceFile) -> Unit) {
+    internal fun beforeRead(action: (SourceFile) -> Unit) {
         preReadActions.add(action)
         if (alreadyRead) {
             action(this)

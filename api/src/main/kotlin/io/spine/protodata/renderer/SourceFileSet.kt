@@ -224,7 +224,7 @@ internal constructor(
         files[file.relativePath] = file
         file.attachTo(this)
         preReadActions.forEach {
-            file.whenRead(it)
+            file.beforeRead(it)
         }
         return file
     }
@@ -267,7 +267,7 @@ internal constructor(
      */
     internal fun prepareCode(action: (SourceFile) -> Unit) {
         files.values.forEach {
-            it.whenRead(action)
+            it.beforeRead(action)
         }
         preReadActions.add(action)
     }
