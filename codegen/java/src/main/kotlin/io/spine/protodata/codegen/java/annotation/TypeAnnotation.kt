@@ -96,9 +96,7 @@ public abstract class TypeAnnotation<T : Annotation>(
             annotateMany(sources)
         } else {
             val file = this.file ?: subjectFileIn(sources)
-            if (shouldAnnotate(file)) {
-                annotate(file)
-            }
+            annotate(file)
         }
     }
 
