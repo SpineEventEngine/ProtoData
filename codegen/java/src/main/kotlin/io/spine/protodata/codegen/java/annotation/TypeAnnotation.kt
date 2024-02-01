@@ -205,5 +205,11 @@ public abstract class TypeAnnotation<T : Annotation>(
 private val <T: Annotation> Class<T>.isRepeatable: Boolean
     get() = isAnnotationPresent(Repeatable::class.java)
 
+/**
+ * Obtains the code which is used for referencing this annotation class in Java code.
+ *
+ * @return a simple class name for the class beloging to `java.lang` package.
+ *          Otherwise, a fully qualified name is returned.
+ */
 internal val <T: Annotation> Class<T>.codeReference: String
     get() = if (isJavaLang) simpleName else name
