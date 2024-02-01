@@ -110,9 +110,10 @@ public abstract class TypeAnnotation<T : Annotation>(
         return file
     }
 
-    private fun annotateMany(sources: SourceFileSet) = sources.forEach {
-        annotate(it)
-    }
+    private fun annotateMany(sources: SourceFileSet) =
+        sources.forEach {
+            annotate(it)
+        }
 
     @VisibleForTesting
     internal fun annotate(file: SourceFile) {
