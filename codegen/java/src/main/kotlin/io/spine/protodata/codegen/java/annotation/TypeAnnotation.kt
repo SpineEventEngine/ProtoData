@@ -93,7 +93,9 @@ public abstract class TypeAnnotation<T : Annotation>(
 
     final override fun render(sources: SourceFileSet) {
         if (!specific) {
-            annotateMany(sources)
+            sources.forEach {
+                annotate(it)
+            }
         } else {
             val file = this.file ?: subjectFileIn(sources)
             annotate(file)
@@ -107,11 +109,6 @@ public abstract class TypeAnnotation<T : Annotation>(
         }
         return file
     }
-
-    private fun annotateMany(sources: SourceFileSet) =
-        sources.forEach {
-            annotate(it)
-        }
 
     @VisibleForTesting
     internal fun annotate(file: SourceFile) {
