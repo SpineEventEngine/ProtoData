@@ -35,6 +35,7 @@ import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
 import java.lang.annotation.ElementType.TYPE
 import java.lang.annotation.Target
+import org.jetbrains.annotations.VisibleForTesting
 
 /**
  * A [JavaRenderer] which annotates a Java type using the given [annotation][annotationClass].
@@ -92,7 +93,9 @@ public abstract class TypeAnnotation<T : Annotation>(
 
     final override fun render(sources: SourceFileSet) {
         if (!specific) {
-            annotateMany(sources)
+            sources.forEach {
+                annotate(it)
+            }
         } else {
             val file = this.file ?: subjectFileIn(sources)
             annotate(file)
@@ -107,18 +110,13 @@ public abstract class TypeAnnotation<T : Annotation>(
         return file
     }
 
-    private fun annotateMany(sources: SourceFileSet) {
-        sources.filter {
-            shouldAnnotate(it)
-        }.forEach {
-            annotate(it)
+    @VisibleForTesting
+    internal fun annotate(file: SourceFile) {
+        if (shouldAnnotate(file)) {
+            val line = file.at(insertionPoint())
+            val annotationCode = annotationCode(file)
+            line.add(annotationCode)
         }
-    }
-
-    private fun annotate(file: SourceFile) {
-        val line = file.at(insertionPoint())
-        val annotationCode = annotationCode(file)
-        line.add(annotationCode)
     }
 
     private fun insertionPoint() =
@@ -207,5 +205,11 @@ public abstract class TypeAnnotation<T : Annotation>(
 private val <T: Annotation> Class<T>.isRepeatable: Boolean
     get() = isAnnotationPresent(Repeatable::class.java)
 
-private val <T: Annotation> Class<T>.codeReference: String
+/**
+ * Obtains the code which is used for referencing this annotation class in Java code.
+ *
+ * @return a simple class name for the class beloging to `java.lang` package.
+ *          Otherwise, a fully qualified name is returned.
+ */
+internal val <T: Annotation> Class<T>.codeReference: String
     get() = if (isJavaLang) simpleName else name

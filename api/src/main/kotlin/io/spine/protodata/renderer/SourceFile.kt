@@ -269,6 +269,9 @@ private constructor(
         return text(code)
     }
 
+    /**
+     * Adds an action to be executed before obtaining the [text] of this source file.
+     */
     internal fun whenRead(action: (SourceFile) -> Unit) {
         preReadActions.add(action)
         if (alreadyRead) {

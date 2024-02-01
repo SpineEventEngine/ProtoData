@@ -26,6 +26,9 @@
 
 package io.spine.protodata.codegen.java.file
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
@@ -45,7 +48,7 @@ internal fun Text.printLines(): String =
  * Obtains the instance of [PsiFile] for this text.
  */
 public fun Text.psiFile(): PsiJavaFile =
-    PsiJavaParser.instance.parse(value.convertLineSeparators())
+    TextToPsiParser.get(this)
 
 /**
  * Locates a class or an enum with the given [name] in the [Text].
@@ -56,4 +59,23 @@ public fun Text.locate(name: ClassOrEnumName): PsiClass? {
     val psiFile = psiFile()
     val psiClass = psiFile.locate(name.simpleNames)
     return psiClass
+}
+
+/**
+ * The cache which allows avoiding repeated parsing of a [Text] instance for
+ * obtaining corresponding [PsiJavaFile].
+ */
+private object TextToPsiParser: CacheLoader<Text, PsiJavaFile>() {
+
+    private const val LIMIT = 300L
+
+    private val cache: LoadingCache<Text, PsiJavaFile> =
+        CacheBuilder.newBuilder()
+            .maximumSize(LIMIT)
+            .build(TextToPsiParser)
+
+    fun get(text: Text): PsiJavaFile = cache.get(text)
+
+    override fun load(key: Text): PsiJavaFile =
+        PsiJavaParser.instance.parse(key.value.convertLineSeparators())
 }
