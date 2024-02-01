@@ -73,45 +73,54 @@ internal class TypeAnnotationSpec {
     @Nested inner class
     `for non-repeatable annotation class` {
 
+        private val annotation = StubAnnotation(annotationClass)
+
         @Test
         fun `do not annotate if it already present`() {
-            val annotation = StubAnnotation(SuppressWarnings::class.java)
-            annotation.shouldAnnotate(fileWithAnnotation) shouldBe false
+            val file = fileWithAnnotation
+            annotation.shouldAnnotate(file) shouldBe false
+
+            annotation.annotate(file)
+            file.countAnnotations(annotationClass.codeReference) shouldBe 1
         }
 
         @Test
         fun `annotate if is not present`() {
-            val annotation = StubAnnotation(SuppressWarnings::class.java)
-            annotation.shouldAnnotate(fileWithoutAnnotation) shouldBe true
+            val file = fileWithoutAnnotation
+
+            annotation.shouldAnnotate(file) shouldBe true
+
+            annotation.annotate(file)
+            file.countAnnotations(annotationClass.codeReference) shouldBe 1
         }
     }
 
     @Nested inner class
     `for repeatable annotation class, annotate if the annotation` {
 
+        private val annotation = StubAnnotation(repeatableAnnotationClass)
+
         @Test
         fun `is already present`() {
-            val annotation = StubAnnotation(Schedule::class.java)
             annotation.shouldAnnotate(fileWithRepeatableAnnotation) shouldBe true
         }
 
         @Test
         fun `is absent`() {
-            val annotation = StubAnnotation(Schedule::class.java)
             annotation.shouldAnnotate(fileWithoutAnnotation) shouldBe true
         }
     }
 
     @Test
     fun `reject files without 'BeforePrimaryDeclaration' insertion point`() {
-        val annotation = StubAnnotation(Schedule::class.java)
+        val annotation = StubAnnotation(repeatableAnnotationClass)
         annotation.shouldAnnotate(fileWithoutInsertionPoint) shouldBe false
     }
 
     @Test
-    fun `annotate nested type`() {
+    fun `tell it should annotate a nested type`() {
         val className = ClassName(PACKAGE_NAME, "TheOuterClass", "NestedClassToAnnotate")
-        val annotation = StubAnnotation(SuppressWarnings::class.java, className)
+        val annotation = StubAnnotation(annotationClass, className)
         annotation.shouldAnnotate(fileWithNestedType) shouldBe true
     }
 }
@@ -132,22 +141,31 @@ private class StubAnnotation<T : Annotation>(
     public override fun shouldAnnotate(file: SourceFile): Boolean = super.shouldAnnotate(file)
 }
 
+private fun SourceFile.countAnnotations(clsName: String): Int =
+    lines().count { it.contains(clsName) }
+
 /**
  * A stable path to the Java source code file.
  */
 private val path = Paths.get("given", "java", "code", "TheClassToAnnotate.java")
 
 private const val PACKAGE_NAME = "given.java.code"
+
+private val annotationClass = SuppressWarnings::class.java
+
+private val repeatableAnnotationClass = Schedule::class.java
+
 /**
  * A source file with a non-repeatable annotation.
  */
-private val fileWithAnnotation: SourceFile = SourceFile.fromCode(
+private val fileWithAnnotation: SourceFile
+    get() = SourceFile.fromCode(
     code = """
         package $PACKAGE_NAME;
         
         /* INSERT:'BeforePrimaryDeclaration' */
 
-        @SuppressWarnings("SomeWarning")
+        @${annotationClass.codeReference}("SomeWarning")
         public class TheClassToAnnotate {
           // Empty by design. 
         }
@@ -155,7 +173,8 @@ private val fileWithAnnotation: SourceFile = SourceFile.fromCode(
     relativePath = path
 )
 
-private val fileWithoutAnnotation: SourceFile = SourceFile.fromCode(
+private val fileWithoutAnnotation: SourceFile
+    get() = SourceFile.fromCode(
     code = """
         package $PACKAGE_NAME;
         
@@ -168,7 +187,8 @@ private val fileWithoutAnnotation: SourceFile = SourceFile.fromCode(
     relativePath = path
 )
 
-private val fileWithRepeatableAnnotation: SourceFile = SourceFile.fromCode(
+private val fileWithRepeatableAnnotation: SourceFile
+    get() = SourceFile.fromCode(
     code = """
         package $PACKAGE_NAME;
         
@@ -182,7 +202,8 @@ private val fileWithRepeatableAnnotation: SourceFile = SourceFile.fromCode(
     relativePath = path
 )
 
-private val fileWithoutInsertionPoint: SourceFile = SourceFile.fromCode(
+private val fileWithoutInsertionPoint: SourceFile
+    get() = SourceFile.fromCode(
     code = """
         /**
          * A Java file without {@code BeforePrimaryDeclaration} insertion point.
@@ -192,7 +213,8 @@ private val fileWithoutInsertionPoint: SourceFile = SourceFile.fromCode(
     relativePath = Paths.get("given", "java", "code", "package-info.java")
 )
 
-private val fileWithNestedType: SourceFile = SourceFile.fromCode(
+private val fileWithNestedType: SourceFile
+    get() = SourceFile.fromCode(
     code = """
         package $PACKAGE_NAME;
         
