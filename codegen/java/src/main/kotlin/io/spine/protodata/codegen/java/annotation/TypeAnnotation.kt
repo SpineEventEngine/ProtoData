@@ -27,9 +27,10 @@ package io.spine.protodata.codegen.java.annotation
 
 import io.spine.protodata.codegen.java.ClassOrEnumName
 import io.spine.protodata.codegen.java.JavaRenderer
+import io.spine.protodata.codegen.java.codeReference
 import io.spine.protodata.codegen.java.file.BeforeNestedTypeDeclaration
 import io.spine.protodata.codegen.java.file.BeforePrimaryDeclaration
-import io.spine.protodata.codegen.java.isJavaLang
+import io.spine.protodata.codegen.java.isRepeatable
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
@@ -202,14 +203,3 @@ public abstract class TypeAnnotation<T : Annotation>(
     }
 }
 
-private val <T: Annotation> Class<T>.isRepeatable: Boolean
-    get() = isAnnotationPresent(Repeatable::class.java)
-
-/**
- * Obtains the code which is used for referencing this annotation class in Java code.
- *
- * @return a simple class name for the class beloging to `java.lang` package.
- *          Otherwise, a fully qualified name is returned.
- */
-internal val <T: Annotation> Class<T>.codeReference: String
-    get() = if (isJavaLang) simpleName else name

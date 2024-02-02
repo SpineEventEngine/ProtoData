@@ -32,6 +32,7 @@ import given.annotation.Schedule
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.codegen.java.ClassName
 import io.spine.protodata.codegen.java.ClassOrEnumName
+import io.spine.protodata.codegen.java.codeReference
 import io.spine.protodata.renderer.SourceFile
 import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
