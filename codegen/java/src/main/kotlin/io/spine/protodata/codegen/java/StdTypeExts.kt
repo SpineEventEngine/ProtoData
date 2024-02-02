@@ -31,3 +31,18 @@ package io.spine.protodata.codegen.java
  */
 public val Class<*>.isJavaLang: Boolean
     get() = name.contains("java.lang")
+
+/**
+ * Tells if this annotation type is repeatable.
+ */
+public val <T: Annotation> Class<T>.isRepeatable: Boolean
+    get() = isAnnotationPresent(Repeatable::class.java)
+
+/**
+ * Obtains the code which is used for referencing this annotation class in Java code.
+ *
+ * @return a simple class name for the class beloging to `java.lang` package.
+ *          Otherwise, a canonical name is returned.
+ */
+public val <T: Annotation> Class<T>.codeReference: String
+    get() = if (isJavaLang) simpleName else canonicalName
