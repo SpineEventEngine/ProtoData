@@ -36,6 +36,8 @@ import io.spine.protodata.codegen.java.ClassOrEnumName
 import io.spine.string.Separator
 import io.spine.text.Text
 import io.spine.tools.psi.convertLineSeparators
+import io.spine.tools.psi.java.Environment
+import io.spine.tools.psi.java.Parser
 import io.spine.tools.psi.java.locate
 
 /**
@@ -69,6 +71,11 @@ private object TextToPsiParser: CacheLoader<Text, PsiJavaFile>() {
 
     private const val LIMIT = 300L
 
+    private val parser by lazy {
+        Environment.setUp()
+        Parser(Environment.project)
+    }
+
     private val cache: LoadingCache<Text, PsiJavaFile> =
         CacheBuilder.newBuilder()
             .maximumSize(LIMIT)
@@ -77,5 +84,5 @@ private object TextToPsiParser: CacheLoader<Text, PsiJavaFile>() {
     fun get(text: Text): PsiJavaFile = cache.get(text)
 
     override fun load(key: Text): PsiJavaFile =
-        PsiJavaParser.instance.parse(key.value.convertLineSeparators())
+        parser.parse(key.value.convertLineSeparators())
 }
