@@ -33,9 +33,12 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import io.spine.protodata.codegen.java.ClassOrEnumName
+import io.spine.protodata.renderer.SourceFile
 import io.spine.string.Separator
 import io.spine.text.Text
 import io.spine.tools.psi.convertLineSeparators
+import io.spine.tools.psi.java.Environment
+import io.spine.tools.psi.java.Parser
 import io.spine.tools.psi.java.locate
 
 /**
@@ -62,20 +65,46 @@ public fun Text.locate(name: ClassOrEnumName): PsiClass? {
 }
 
 /**
+ * Obtains an instance of [PsiJavaFile] which corresponds to this source file.
+ *
+ * The content of the source file is parsed.
+ * The instance of `PsiJavaFile` is not tied to a file on the disk.
+ */
+public fun SourceFile.toPsi(): PsiJavaFile {
+    check(isJava) {
+        "Unable to convert non-Java file `$relativePath` to ${PsiJavaFile::class.java.simpleName}."
+    }
+    return TextToPsiParser.get(this)
+}
+
+/**
  * The cache which allows avoiding repeated parsing of a [Text] instance for
  * obtaining corresponding [PsiJavaFile].
  */
-private object TextToPsiParser: CacheLoader<Text, PsiJavaFile>() {
+private object TextToPsiParser {
 
     private const val LIMIT = 300L
+
+    fun get(text: Text): PsiJavaFile {
+        return cache.get(text)
+    }
+
+    fun get(file: SourceFile): PsiJavaFile {
+        return cache.get(file.text())
+    }
+
+    private val parser by lazy {
+        Environment.setUp()
+        Parser(Environment.project)
+    }
 
     private val cache: LoadingCache<Text, PsiJavaFile> =
         CacheBuilder.newBuilder()
             .maximumSize(LIMIT)
-            .build(TextToPsiParser)
+            .build(Loader)
 
-    fun get(text: Text): PsiJavaFile = cache.get(text)
-
-    override fun load(key: Text): PsiJavaFile =
-        PsiJavaParser.instance.parse(key.value.convertLineSeparators())
+    private object Loader : CacheLoader<Text, PsiJavaFile>() {
+        override fun load(key: Text): PsiJavaFile =
+            parser.parse(key.value.convertLineSeparators())
+    }
 }

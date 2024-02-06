@@ -66,7 +66,7 @@ import kotlin.text.Charsets.UTF_8
  *
  * @see SourceFile
  */
-@Suppress("TooManyFunctions") // All part of the public API.
+@Suppress("TooManyFunctions") // All parts of the public API.
 public class SourceFileSet
 internal constructor(
     files: Set<SourceFile>,
@@ -137,7 +137,7 @@ internal constructor(
             }
             val files = walk(source)
                 .filter { it.isRegularFile() }
-                .map { SourceFile.read(source.relativize(it), source) }
+                .map { SourceFile.read(source, source.relativize(it)) }
                 .collect(toImmutableSet())
             return SourceFileSet(files, source, target)
         }

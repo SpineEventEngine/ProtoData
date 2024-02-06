@@ -93,12 +93,13 @@ private constructor(
          * Reads the file from the given FS location.
          */
         internal fun read(
-            relativePath: Path,
             sourceRoot: Path,
+            relativePath: Path,
             charset: Charset = Charsets.UTF_8
         ): SourceFile {
             val absolute = sourceRoot / relativePath
-            return SourceFile(absolute.readText(charset), relativePath)
+            val code = absolute.readText(charset)
+            return SourceFile(code, relativePath)
         }
 
         /**
