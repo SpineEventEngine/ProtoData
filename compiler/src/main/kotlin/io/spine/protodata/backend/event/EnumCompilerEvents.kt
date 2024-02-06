@@ -127,6 +127,7 @@ internal class EnumCompilerEvents(
                 file = path
                 type = typeName
                 constant = name
+                option = it
             }
         }
         yield(
