@@ -97,7 +97,7 @@ internal class ServiceCompilerEvents(
         desc: MethodDescriptor
     ) {
         val path = header.file
-        val theRpc = buildRpc(desc, serviceName, documentation)
+        val theRpc = buildRpc(desc, serviceName)
         yield(
             rpcEntered {
                 file = path

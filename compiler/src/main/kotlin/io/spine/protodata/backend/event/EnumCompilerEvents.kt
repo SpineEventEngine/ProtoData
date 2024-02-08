@@ -115,7 +115,7 @@ internal class EnumCompilerEvents(
         val name = constantName {
             value = desc.name
         }
-        val theConstant = buildConstant(desc, typeName, documentation)
+        val theConstant = buildConstant(desc, typeName)
         val path = header.file
         yield(
             enumConstantEntered {

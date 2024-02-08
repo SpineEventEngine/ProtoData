@@ -52,6 +52,7 @@ import com.google.protobuf.Descriptors.FieldDescriptor.Type.STRING
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT32
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT64
 import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
@@ -101,8 +102,8 @@ private operator fun Documentation?.unaryPlus(): Documentation =
  *
  * @see buildField
  */
-public fun FieldDescriptor.toField(documentation: Documentation? = null): Field {
-    val field = buildField(this, documentation)
+public fun FieldDescriptor.toField(): Field {
+    val field = buildField(this)
     return field.copy {
         // There are several similar expressions in this file like
         // the `option.addAll()` call below. Sadly, these duplicates
@@ -119,18 +120,16 @@ public fun FieldDescriptor.toField(documentation: Documentation? = null): Field 
  *
  * @see toField
  */
-public fun buildField(
-    desc: FieldDescriptor,
-    documentation: Documentation?
-): Field = field {
-    val declaredIn = desc.containingType.name()
-    name = desc.name()
-    orderOfDeclaration = desc.index
-    doc = (+documentation).forField(desc)
-    number = desc.number
-    declaringType = declaredIn
-    copyTypeAndCardinality(desc)
-}
+public fun buildField(desc: FieldDescriptor): Field =
+    field {
+        val declaredIn = desc.containingType.name()
+        name = desc.name()
+        orderOfDeclaration = desc.index
+        doc = desc.fileDoc.forField(desc)
+        number = desc.number
+        declaringType = declaredIn
+        copyTypeAndCardinality(desc)
+    }
 
 /**
  * Copies the field type and cardinality (`map`/`list`/`oneof_name`/`single`) from
@@ -158,11 +157,8 @@ private fun FieldKt.Dsl.copyTypeAndCardinality(
  *
  * @see buildConstant
  */
-public fun EnumValueDescriptor.buildConstantWithOptions(
-    declaringType: TypeName,
-    documentation: Documentation?
-): EnumConstant {
-    val constant = buildConstant(this, declaringType, documentation)
+public fun EnumValueDescriptor.buildConstantWithOptions(declaringType: TypeName): EnumConstant {
+    val constant = buildConstant(this, declaringType)
     return constant.copy {
         option.addAll(options.toList())
     }
@@ -175,28 +171,22 @@ public fun EnumValueDescriptor.buildConstantWithOptions(
  *
  * @see buildConstantWithOptions
  */
-public fun buildConstant(
-    desc: EnumValueDescriptor,
-    declaringType: TypeName,
-    documentation: Documentation?
-): EnumConstant = enumConstant {
-    name = constantName { value = desc.name }
-    declaredIn = declaringType
-    number = desc.number
-    orderOfDeclaration = desc.index
-    doc = (+documentation).forEnumConstant(desc)
-}
+public fun buildConstant(desc: EnumValueDescriptor, declaringType: TypeName): EnumConstant =
+    enumConstant {
+        name = constantName { value = desc.name }
+        declaredIn = declaringType
+        number = desc.number
+        orderOfDeclaration = desc.index
+        doc = desc.fileDoc.forEnumConstant(desc)
+    }
 
 /**
  * Converts this method descriptor into an [Rpc] with options.
  *
  * @see buildRpc
  */
-public fun MethodDescriptor.buildRpcWithOptions(
-    declaringService: ServiceName,
-    documentation: Documentation?
-): Rpc {
-    val rpc = buildRpc(this, declaringService, documentation)
+public fun MethodDescriptor.buildRpcWithOptions(declaringService: ServiceName): Rpc {
+    val rpc = buildRpc(this, declaringService)
     return rpc.copy {
         option.addAll(options.toList())
     }
@@ -211,14 +201,13 @@ public fun MethodDescriptor.buildRpcWithOptions(
  */
 public fun buildRpc(
     desc: MethodDescriptor,
-    declaringService: ServiceName,
-    documentation: Documentation?
+    declaringService: ServiceName
 ): Rpc = rpc {
     name = desc.name()
     cardinality = desc.cardinality
     requestType = desc.inputType.name()
     responseType = desc.outputType.name()
-    doc = (+documentation).forRpc(desc)
+    doc = desc.fileDoc.forRpc(desc)
     service = declaringService
 }
 
@@ -375,8 +364,7 @@ private fun fieldToAny(field: FieldDescriptor, value: Any): ProtoAny =
  */
 public fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
     val path = file()
-    val doc = Documentation.fromFile(this)
-    val definitions = DefinitionFactory(this, doc)
+    val definitions = DefinitionFactory(this)
     return protobufSourceFile {
         file = path
         header = toHeader()
@@ -391,21 +379,25 @@ public fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
 private fun <T : ProtoDeclaration> Sequence<T>.associateByUrl() =
     associateBy { it.name.typeUrl }
 
+private val GenericDescriptor.fileDoc: Documentation
+    get() = Documentation(file)
+
 /**
  * Converts the receiver `Descriptor` into a [MessageType].
  */
-public fun Descriptor.toMessageType(documentation: Documentation? = null): MessageType =
+public fun Descriptor.toMessageType(): MessageType =
     messageType {
+        val docs = fileDoc
         val typeName = name()
         name = typeName
         file = getFile().file()
-        doc = (+documentation).forMessage(this@toMessageType)
+        doc = docs.forMessage(this@toMessageType)
         option.addAll(options.toList())
         if (containingType != null) {
             declaredIn = containingType.name()
         }
-        oneofGroup.addAll(realOneofs.map { it.toOneOfGroup(documentation) })
-        field.addAll(fields.mapped(documentation))
+        oneofGroup.addAll(realOneofs.map { it.toOneOfGroup() })
+        field.addAll(fields.mapped())
         nestedMessages.addAll(nestedTypes.map { it.name() })
         nestedEnums.addAll(enumTypes.map { it.name() })
     }
@@ -413,47 +405,47 @@ public fun Descriptor.toMessageType(documentation: Documentation? = null): Messa
 /**
  * Converts this oneof descriptor to [OneofGroup].
  */
-public fun OneofDescriptor.toOneOfGroup(documentation: Documentation? = null): OneofGroup =
+public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
     oneofGroup {
-    val groupName = name()
-    name = groupName
-    field.addAll(fields.mapped(documentation))
-    option.addAll(options.toList())
-    doc = (+documentation).forOneof(this@toOneOfGroup)
-}
+        val docs = fileDoc
+        val groupName = name()
+        name = groupName
+        field.addAll(fields.mapped())
+        option.addAll(options.toList())
+        doc = docs.forOneof(this@toOneOfGroup)
+    }
 
-private fun Iterable<FieldDescriptor>.mapped(
-    documentation: Documentation? = null
-): Iterable<Field> =
-    map { f -> f.toField(documentation) }
+private fun Iterable<FieldDescriptor>.mapped(): Iterable<Field> = map { it.toField() }
 
 /**
  * Converts this enum descriptor into [EnumType] instance.
  */
-public fun EnumDescriptor.toEnumType(documentation: Documentation? = null): EnumType =
+public fun EnumDescriptor.toEnumType(): EnumType =
     enumType {
+        val docs = fileDoc
         val typeName = name()
         name = typeName
         option.addAll(options.toList())
         file = getFile().file()
-        constant.addAll(values.map { it.buildConstantWithOptions(typeName, documentation) })
+        constant.addAll(values.map { it.buildConstantWithOptions(typeName) })
         if (containingType != null) {
             declaredIn = containingType.name()
         }
-        doc = (+documentation).forEnum(this@toEnumType)
+        doc = docs.forEnum(this@toEnumType)
     }
 
 /**
  * Converts this services descriptor into [Service] instance.
  */
-public fun ServiceDescriptor.toService(documentation: Documentation? = null): Service =
+public fun ServiceDescriptor.toService(): Service =
     service {
+        val docs = fileDoc
         val serviceName = name()
         name = serviceName
         file = getFile().file()
-        rpc.addAll(methods.map { it.buildRpcWithOptions(serviceName, documentation) })
+        rpc.addAll(methods.map { it.buildRpcWithOptions(serviceName) })
         option.addAll(options.toList())
-        doc = (+documentation).forService(this@toService)
+        doc = docs.forService(this@toService)
     }
 
 /**
@@ -461,13 +453,9 @@ public fun ServiceDescriptor.toService(documentation: Documentation? = null): Se
  *
  * @property file
  *            the descriptor of the Protobuf file.
- * @property documentation
- *            all the documentation and comments present in the file.
  */
-private class DefinitionFactory(
-    private val file: FileDescriptor,
-    private val documentation: Documentation,
-) {
+private class DefinitionFactory(private val file: FileDescriptor) {
+
     /**
      * Builds the message type definitions from the [file].
      *
@@ -478,7 +466,7 @@ private class DefinitionFactory(
         for (msg in file.messageTypes) {
             messages += walkMessage(msg) { it.nestedTypes }
         }
-        return messages.map { it.toMessageType(documentation) }
+        return messages.map { it.toMessageType() }
     }
 
     /**
@@ -500,7 +488,7 @@ private class DefinitionFactory(
      * @return all the services declared in the file, including the nested ones.
      */
     fun services(): Sequence<Service> =
-        file.services.asSequence().map { it.toService(documentation) }
+        file.services.asSequence().map { it.toService() }
 }
 
 /**

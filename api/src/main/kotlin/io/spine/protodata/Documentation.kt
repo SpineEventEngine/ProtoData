@@ -51,19 +51,35 @@ import io.spine.util.interlaced
  */
 public class Documentation internal constructor(locations: List<Location>) {
 
+    /**
+     * Creates an instance of `Documentation` with all the docs from the given file.
+     */
+    public constructor(file: FileDescriptorProto): this(file.sourceCodeInfo.locationList)
+
+    /**
+     * Creates an instance of `Documentation` with all the docs from the given file.
+     */
+    public constructor(file: FileDescriptor): this(file.toProto())
+
     public companion object {
 
         /**
          * Creates an instance of `Documentation` with all the docs from the given file.
          */
-        public fun fromFile(file: FileDescriptor): Documentation =
-            fromFile(file.toProto())
+        @Deprecated(
+            message = "Please use constructor instead",
+            replaceWith = ReplaceWith("Documentation(file)")
+        )
+        public fun fromFile(file: FileDescriptor): Documentation = Documentation(file)
 
         /**
          * Creates an instance of `Documentation` with all the docs from the given file.
          */
-        public fun fromFile(file: FileDescriptorProto): Documentation =
-            Documentation(file.sourceCodeInfo.locationList)
+        @Deprecated(
+            message = "Please use constructor instead",
+            replaceWith = ReplaceWith("Documentation(file)")
+        )
+        public fun fromFile(file: FileDescriptorProto): Documentation = Documentation(file)
     }
 
     private val docs: Map<LocationPath, Location> =
