@@ -179,7 +179,7 @@ internal class MessageCompilerEvents(
         desc: FieldDescriptor
     ) {
         val fieldName = desc.name()
-        val theField = buildField(desc, typeName, documentation)
+        val theField = buildField(desc, documentation)
         val path = header.file
         yield(
             fieldEntered {
