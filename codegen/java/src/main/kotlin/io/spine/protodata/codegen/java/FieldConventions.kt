@@ -27,6 +27,7 @@
 package io.spine.protodata.codegen.java
 
 import io.spine.protodata.Field
+import io.spine.protodata.Field.CardinalityCase
 import io.spine.protodata.Field.CardinalityCase.LIST
 import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
@@ -38,7 +39,7 @@ import io.spine.string.camelCase
  */
 public abstract class FieldConventions(
     protected val name: FieldName,
-    protected val cardinality: Field.CardinalityCase = SINGLE
+    protected val cardinality: CardinalityCase = SINGLE
 ) {
     protected val getterName: String
         get() = when (cardinality) {
@@ -94,8 +95,11 @@ public abstract class FieldConventions(
 
 /**
  * Obtains the names of the methods associated with the given field.
+ *
+ * The class is made `open` for accessing `protected` properties of
+ * [FieldConventions] via inheriting this class.
  */
-public class FieldMethods(public val field: Field) :
+public open class FieldMethods(public val field: Field) :
     FieldConventions(field.name, field.cardinalityCase) {
 
     /**
@@ -107,4 +111,20 @@ public class FieldMethods(public val field: Field) :
      * The name of the accessor method for the field.
      */
     public val getter: String = getterName
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FieldMethods) return false
+        if (!super.equals(other)) return false
+
+        if (field != other.field) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + field.hashCode()
+        return result
+    }
 }
