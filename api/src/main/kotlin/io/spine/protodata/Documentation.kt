@@ -51,6 +51,8 @@ import io.spine.util.interlaced
  */
 public class Documentation internal constructor(locations: List<Location>) {
 
+    private val docs: Map<LocationPath, Location> = locations.associateBy(LocationPath::from)
+
     /**
      * Creates an instance of `Documentation` with all the docs from the given file.
      */
@@ -60,30 +62,6 @@ public class Documentation internal constructor(locations: List<Location>) {
      * Creates an instance of `Documentation` with all the docs from the given file.
      */
     public constructor(file: FileDescriptor): this(file.toProto())
-
-    public companion object {
-
-        /**
-         * Creates an instance of `Documentation` with all the docs from the given file.
-         */
-        @Deprecated(
-            message = "Please use constructor instead",
-            replaceWith = ReplaceWith("Documentation(file)")
-        )
-        public fun fromFile(file: FileDescriptor): Documentation = Documentation(file)
-
-        /**
-         * Creates an instance of `Documentation` with all the docs from the given file.
-         */
-        @Deprecated(
-            message = "Please use constructor instead",
-            replaceWith = ReplaceWith("Documentation(file)")
-        )
-        public fun fromFile(file: FileDescriptorProto): Documentation = Documentation(file)
-    }
-
-    private val docs: Map<LocationPath, Location> =
-        locations.associateBy(LocationPath::from)
 
     /**
      * Obtains documentation for the given message.
@@ -219,6 +197,7 @@ private constructor(private val value: List<Int>) {
                 descriptor.index
             ))
         }
+
         private fun upToTop(parent: Descriptor): List<Int> {
             val rootPath = mutableListOf<Int>()
             var containingType: Descriptor? = parent

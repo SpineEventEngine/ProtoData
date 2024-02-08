@@ -84,20 +84,6 @@ import kotlin.Any
 import com.google.protobuf.Any as ProtoAny
 
 /**
- * An en empty instance of [Documentation] for using when Protobuf comments
- * are of no importance.
- */
-private val emptyDocumentation: Documentation by lazy {
-    Documentation(emptyList())
-}
-
-/**
- * Allows to fall back to [emptyDocumentation] if no [Documentation] instance is available.
- */
-private operator fun Documentation?.unaryPlus(): Documentation =
-    this ?: emptyDocumentation
-
-/**
  * Converts this field descriptor into a [Field] with options.
  *
  * @see buildField

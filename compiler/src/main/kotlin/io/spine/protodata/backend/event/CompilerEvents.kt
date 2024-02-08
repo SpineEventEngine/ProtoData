@@ -73,7 +73,7 @@ private class ProtoFileEvents(
 
     private val header = fileDescriptor.toHeader()
 
-    private val documentation = Documentation.fromFile(fileDescriptor)
+    private val documentation = Documentation(fileDescriptor)
 
     /**
      * Yields compiler events for the given file.
