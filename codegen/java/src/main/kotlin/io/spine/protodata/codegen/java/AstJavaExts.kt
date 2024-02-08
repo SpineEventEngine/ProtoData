@@ -30,10 +30,8 @@ import io.spine.protodata.Field
 import io.spine.protodata.FieldName
 import io.spine.protodata.PrimitiveType.TYPE_BYTES
 import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.isMap
-import io.spine.protodata.isRepeated
+import io.spine.protodata.isPrimitive
 import io.spine.string.camelCase
-import io.spine.string.titleCase
 
 /**
  * Obtains the name of the field in Java case, as if it were declared as a field
@@ -49,24 +47,22 @@ public fun FieldName.javaCase(): String {
 /**
  * Obtains the name of the primary setter method for this field.
  */
-public fun Field.primarySetterName(): String {
-    val capName = name.javaCase().titleCase()
-    return when {
-        isMap -> "putAll$capName"
-        isRepeated -> "addAll$capName"
-        else -> "set$capName"
-    }
-}
+public val Field.primarySetterName: String
+    get() = FieldMethods(this).primarySetter
+
+/**
+ * Obtains the name of the accessor method for this field.
+ */
+public val Field.getterName: String
+    get() = FieldMethods(this).getter
 
 /**
  * Tells if the type of this field corresponds to a primitive type in Java.
  */
-public fun Field.isJavaPrimitive(): Boolean {
-    if (!type.hasPrimitive()) {
-        return false
-    }
-    return when (type.primitive) {
+public val Field.isJavaPrimitive: Boolean
+    get() = if (!type.isPrimitive) {
+        false
+    } else when (type.primitive) {
         TYPE_STRING, TYPE_BYTES -> false
         else -> true
     }
-}

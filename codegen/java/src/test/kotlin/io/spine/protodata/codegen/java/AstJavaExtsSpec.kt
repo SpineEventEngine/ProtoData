@@ -64,8 +64,7 @@ internal class AstJavaExtsSpec {
 
         private val valueDescriptor = Value.getDescriptor()
 
-        @Nested
-        inner class
+        @Nested inner class
         `primary setter name for` {
 
             @Test
@@ -85,17 +84,43 @@ internal class AstJavaExtsSpec {
 
             private fun Descriptor.setterFor(fieldName: String): String {
                 val fld = field(fieldName)!!
-                return fld.toField().primarySetterName()
+                return fld.toField().primarySetterName
+            }
+        }
+
+        @Nested inner class
+        `getter name for` {
+
+            private val valueDescriptor = Value.getDescriptor()
+
+            @Test
+            fun `regular type`() {
+                valueDescriptor.getterFor("number_value") shouldBe "getNumberValue"
+            }
+
+            @Test
+            fun `map type`() {
+                Struct.getDescriptor().getterFor("fields") shouldBe "getFieldsMap"
+            }
+
+            @Test
+            fun `repeated type`() {
+                ListValue.getDescriptor().getterFor("values") shouldBe "getValuesList"
+            }
+
+            private fun Descriptor.getterFor(fieldName: String): String {
+                val fld = field(fieldName)!!
+                return fld.toField().getterName
             }
         }
 
         @Test
         fun `telling if it is of Java primitive type`() {
-            valueField("string_value").isJavaPrimitive() shouldBe false
-            valueField("list_value").isJavaPrimitive() shouldBe false
+            valueField("string_value").isJavaPrimitive shouldBe false
+            valueField("list_value").isJavaPrimitive shouldBe false
 
-            valueField("number_value").isJavaPrimitive() shouldBe true
-            valueField("bool_value").isJavaPrimitive() shouldBe true
+            valueField("number_value").isJavaPrimitive shouldBe true
+            valueField("bool_value").isJavaPrimitive shouldBe true
         }
 
         private fun valueField(name: String): Field = valueDescriptor.field(name)!!.toField()

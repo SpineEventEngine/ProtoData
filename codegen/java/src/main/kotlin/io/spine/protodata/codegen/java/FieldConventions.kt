@@ -91,3 +91,20 @@ public abstract class FieldConventions(
         return result
     }
 }
+
+/**
+ * Obtains the names of the methods associated with the given field.
+ */
+public class FieldMethods(public val field: Field) :
+    FieldConventions(field.name, field.cardinalityCase) {
+
+    /**
+     * The name of the primary method which sets a value of the field.
+    */
+    public val primarySetter: String = setterName
+
+    /**
+     * The name of the accessor method for the field.
+     */
+    public val getter: String = getterName
+}
