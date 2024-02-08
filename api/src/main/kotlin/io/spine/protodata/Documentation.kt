@@ -26,7 +26,6 @@
 
 package io.spine.protodata
 
-import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.DescriptorProtos.DescriptorProto
 import com.google.protobuf.DescriptorProtos.DescriptorProto.FIELD_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.DescriptorProto.NESTED_TYPE_FIELD_NUMBER
@@ -36,109 +35,114 @@ import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
-import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.string.trimWhitespace
 import io.spine.util.interlaced
 
-private fun Iterable<String>.trimWhitespace(): List<String> =
-    map { it.trimWhitespace() }
-
 /**
  * Documentation contained in a Protobuf file.
  */
-public class Documentation(
-    locations: List<DescriptorProtos.SourceCodeInfo.Location>
-) {
+public class Documentation internal constructor(locations: List<Location>) {
 
     public companion object {
 
         /**
          * Creates an instance of `Documentation` with all the docs from the given file.
          */
-        public fun fromFile(file: Descriptors.FileDescriptor): Documentation =
-            Documentation(file.toProto().sourceCodeInfo.locationList)
+        public fun fromFile(file: FileDescriptor): Documentation =
+            fromFile(file.toProto())
+
+        /**
+         * Creates an instance of `Documentation` with all the docs from the given file.
+         */
+        public fun fromFile(file: FileDescriptorProto): Documentation =
+            Documentation(file.sourceCodeInfo.locationList)
     }
 
-    private val docs: Map<LocationPath, DescriptorProtos.SourceCodeInfo.Location> =
+    private val docs: Map<LocationPath, Location> =
         locations.associateBy(LocationPath::from)
 
     /**
      * Obtains documentation for the given message.
      */
-    public fun forMessage(descriptor: Descriptors.Descriptor): Doc {
-        val path = LocationPath.fromMessage(descriptor)
+    public fun forMessage(d: Descriptor): Doc {
+        val path = LocationPath.fromMessage(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given message field.
      */
-    public fun forField(descriptor: Descriptors.FieldDescriptor): Doc {
-        val path = LocationPath.fromMessage(descriptor.containingType)
-                               .field(descriptor)
+    public fun forField(d: FieldDescriptor): Doc {
+        val path = LocationPath.fromMessage(d.containingType).field(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given `oneof` group.
      */
-    public fun forOneof(descriptor: Descriptors.OneofDescriptor): Doc {
-        val path = LocationPath.fromMessage(descriptor.containingType)
-                               .oneof(descriptor)
+    public fun forOneof(d: OneofDescriptor): Doc {
+        val path = LocationPath.fromMessage(d.containingType).oneof(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given enum type.
      */
-    public fun forEnum(descriptor: Descriptors.EnumDescriptor): Doc {
-        val path = LocationPath.fromEnum(descriptor)
+    public fun forEnum(d: EnumDescriptor): Doc {
+        val path = LocationPath.fromEnum(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given enum constant.
      */
-    public fun forEnumConstant(descriptor: Descriptors.EnumValueDescriptor): Doc {
-        val path = LocationPath.fromEnum(descriptor.type)
-                               .constant(descriptor)
+    public fun forEnumConstant(d: EnumValueDescriptor): Doc {
+        val path = LocationPath.fromEnum(d.type).constant(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given service.
      */
-    public fun forService(descriptor: Descriptors.ServiceDescriptor): Doc {
-        val path = LocationPath.fromService(descriptor)
+    public fun forService(d: ServiceDescriptor): Doc {
+        val path = LocationPath.fromService(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given RPC method.
      */
-    public fun forRpc(descriptor: Descriptors.MethodDescriptor): Doc {
-        val path = LocationPath.fromService(descriptor.service)
-                               .rpc(descriptor)
+    public fun forRpc(d: MethodDescriptor): Doc {
+        val path = LocationPath.fromService(d.service).rpc(d)
         return commentsAt(path)
     }
 
     private fun commentsAt(path: LocationPath): Doc {
-        val location = docs[path] ?: DescriptorProtos.SourceCodeInfo.Location.getDefaultInstance()
-        return Doc.newBuilder()
-                  .setLeadingComment(location.leadingComments.trimWhitespace())
-                  .setTrailingComment(location.trailingComments.trimWhitespace())
-                  .addAllDetachedComment(location.leadingDetachedCommentsList.trimWhitespace())
-                  .build()
+        val location = docs[path] ?: Location.getDefaultInstance()
+        return doc {
+            leadingComment = location.leadingComments.trimWhitespace()
+            trailingComment = location.trailingComments.trimWhitespace()
+            detachedComment.addAll(location.leadingDetachedCommentsList.trimWhitespace())
+        }
     }
 }
 
+private fun Iterable<String>.trimWhitespace(): List<String> =
+    map { it.trimWhitespace() }
+
+private val Descriptor.isTopLevel: Boolean
+    get() = containingType == null
+
+private val EnumDescriptor.isTopLevel: Boolean
+    get() = containingType == null
 
 /**
  * A numerical path to a location is source code.
@@ -166,7 +170,7 @@ private constructor(private val value: List<Int>) {
         fun fromMessage(descriptor: Descriptor): LocationPath {
             val numbers = mutableListOf<Int>()
             numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
-            if (!descriptor.topLevel) {
+            if (!descriptor.isTopLevel) {
                 numbers.addAll(upToTop(descriptor.containingType))
                 numbers.add(NESTED_TYPE_FIELD_NUMBER)
             }
@@ -179,7 +183,7 @@ private constructor(private val value: List<Int>) {
          */
         fun fromEnum(descriptor: EnumDescriptor): LocationPath {
             val numbers = mutableListOf<Int>()
-            if (descriptor.topLevel) {
+            if (descriptor.isTopLevel) {
                 numbers.add(FileDescriptorProto.ENUM_TYPE_FIELD_NUMBER)
             } else {
                 numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
@@ -199,7 +203,6 @@ private constructor(private val value: List<Int>) {
                 descriptor.index
             ))
         }
-
         private fun upToTop(parent: Descriptor): List<Int> {
             val rootPath = mutableListOf<Int>()
             var containingType: Descriptor? = parent
@@ -248,13 +251,6 @@ private constructor(private val value: List<Int>) {
     override fun toString(): String {
         return "LocationPath(${value.joinToString()})"
     }
-
     private fun subDeclaration(descriptorFieldNumber: Int, index: Int): LocationPath =
         LocationPath(value + arrayOf(descriptorFieldNumber, index))
 }
-
-private val Descriptor.topLevel: Boolean
-    get() = containingType == null
-
-private val EnumDescriptor.topLevel: Boolean
-    get() = containingType == null
