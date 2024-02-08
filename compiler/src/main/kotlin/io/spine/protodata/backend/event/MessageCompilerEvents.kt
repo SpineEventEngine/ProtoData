@@ -30,9 +30,10 @@ import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.base.EventMessage
+import io.spine.protodata.Documentation
 import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.TypeName
-import io.spine.protodata.backend.Documentation
+import io.spine.protodata.buildField
 import io.spine.protodata.event.FieldEntered
 import io.spine.protodata.event.FieldExited
 import io.spine.protodata.event.OneofGroupEntered
@@ -51,6 +52,7 @@ import io.spine.protodata.event.typeOptionDiscovered
 import io.spine.protodata.messageType
 import io.spine.protodata.name
 import io.spine.protodata.oneofGroup
+import io.spine.protodata.produceOptionEvents
 
 /**
  * Produces events for a message.

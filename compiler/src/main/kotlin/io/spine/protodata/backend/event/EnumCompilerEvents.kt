@@ -29,9 +29,10 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.base.EventMessage
+import io.spine.protodata.Documentation
 import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.TypeName
-import io.spine.protodata.backend.Documentation
+import io.spine.protodata.buildConstant
 import io.spine.protodata.constantName
 import io.spine.protodata.enumType
 import io.spine.protodata.event.EnumConstantEntered
@@ -45,6 +46,7 @@ import io.spine.protodata.event.enumEntered
 import io.spine.protodata.event.enumExited
 import io.spine.protodata.event.enumOptionDiscovered
 import io.spine.protodata.name
+import io.spine.protodata.produceOptionEvents
 
 /**
  * Produces events for an enum.

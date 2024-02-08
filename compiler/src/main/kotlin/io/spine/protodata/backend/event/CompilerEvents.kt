@@ -30,10 +30,12 @@ import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
-import io.spine.protodata.backend.Documentation
+import io.spine.protodata.Documentation
 import io.spine.protodata.event.FileEntered
 import io.spine.protodata.event.FileExited
 import io.spine.protodata.event.FileOptionDiscovered
+import io.spine.protodata.produceOptionEvents
+import io.spine.protodata.toHeader
 
 /**
  * A factory for Protobuf compiler events.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata
 
+import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.DescriptorProtos.DescriptorProto
 import com.google.protobuf.DescriptorProtos.DescriptorProto.FIELD_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.DescriptorProto.NESTED_TYPE_FIELD_NUMBER
@@ -35,42 +36,43 @@ import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
+import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
-import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
-import io.spine.protodata.Doc
 import io.spine.string.trimWhitespace
 import io.spine.util.interlaced
+
+private fun Iterable<String>.trimWhitespace(): List<String> =
+    map { it.trimWhitespace() }
 
 /**
  * Documentation contained in a Protobuf file.
  */
-internal class Documentation(
-    locations: List<Location>
+public class Documentation(
+    locations: List<DescriptorProtos.SourceCodeInfo.Location>
 ) {
 
-    companion object {
+    public companion object {
 
         /**
          * Creates an instance of `Documentation` with all the docs from the given file.
          */
-        fun fromFile(file: FileDescriptor) = Documentation(
-            file.toProto().sourceCodeInfo.locationList
-        )
+        public fun fromFile(file: Descriptors.FileDescriptor): Documentation =
+            Documentation(file.toProto().sourceCodeInfo.locationList)
     }
 
-    private val docs: Map<LocationPath, Location> =
+    private val docs: Map<LocationPath, DescriptorProtos.SourceCodeInfo.Location> =
         locations.associateBy(LocationPath::from)
 
     /**
      * Obtains documentation for the given message.
      */
-    fun forMessage(descriptor: Descriptor): Doc {
+    public fun forMessage(descriptor: Descriptors.Descriptor): Doc {
         val path = LocationPath.fromMessage(descriptor)
         return commentsAt(path)
     }
@@ -78,7 +80,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given message field.
      */
-    fun forField(descriptor: FieldDescriptor): Doc {
+    public fun forField(descriptor: Descriptors.FieldDescriptor): Doc {
         val path = LocationPath.fromMessage(descriptor.containingType)
                                .field(descriptor)
         return commentsAt(path)
@@ -87,7 +89,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given `oneof` group.
      */
-    fun forOneof(descriptor: OneofDescriptor): Doc {
+    public fun forOneof(descriptor: Descriptors.OneofDescriptor): Doc {
         val path = LocationPath.fromMessage(descriptor.containingType)
                                .oneof(descriptor)
         return commentsAt(path)
@@ -96,7 +98,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given enum type.
      */
-    fun forEnum(descriptor: EnumDescriptor): Doc {
+    public fun forEnum(descriptor: Descriptors.EnumDescriptor): Doc {
         val path = LocationPath.fromEnum(descriptor)
         return commentsAt(path)
     }
@@ -104,7 +106,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given enum constant.
      */
-    fun forEnumConstant(descriptor: EnumValueDescriptor): Doc {
+    public fun forEnumConstant(descriptor: Descriptors.EnumValueDescriptor): Doc {
         val path = LocationPath.fromEnum(descriptor.type)
                                .constant(descriptor)
         return commentsAt(path)
@@ -113,7 +115,7 @@ internal class Documentation(
     /**
      * Obtains documentation for the given service.
      */
-    fun forService(descriptor: ServiceDescriptor): Doc {
+    public fun forService(descriptor: Descriptors.ServiceDescriptor): Doc {
         val path = LocationPath.fromService(descriptor)
         return commentsAt(path)
     }
@@ -121,14 +123,14 @@ internal class Documentation(
     /**
      * Obtains documentation for the given RPC method.
      */
-    fun forRpc(descriptor: MethodDescriptor): Doc {
+    public fun forRpc(descriptor: Descriptors.MethodDescriptor): Doc {
         val path = LocationPath.fromService(descriptor.service)
                                .rpc(descriptor)
         return commentsAt(path)
     }
 
     private fun commentsAt(path: LocationPath): Doc {
-        val location = docs[path] ?: Location.getDefaultInstance()
+        val location = docs[path] ?: DescriptorProtos.SourceCodeInfo.Location.getDefaultInstance()
         return Doc.newBuilder()
                   .setLeadingComment(location.leadingComments.trimWhitespace())
                   .setTrailingComment(location.trailingComments.trimWhitespace())
@@ -137,8 +139,6 @@ internal class Documentation(
     }
 }
 
-private fun Iterable<String>.trimWhitespace(): List<String> =
-    map { it.trimWhitespace() }
 
 /**
  * A numerical path to a location is source code.

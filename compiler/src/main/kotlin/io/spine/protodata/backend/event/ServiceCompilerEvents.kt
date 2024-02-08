@@ -29,9 +29,10 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.base.EventMessage
+import io.spine.protodata.Documentation
 import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ServiceName
-import io.spine.protodata.backend.Documentation
+import io.spine.protodata.buildRpc
 import io.spine.protodata.event.ServiceEntered
 import io.spine.protodata.event.ServiceExited
 import io.spine.protodata.event.rpcEntered
@@ -41,6 +42,7 @@ import io.spine.protodata.event.serviceEntered
 import io.spine.protodata.event.serviceExited
 import io.spine.protodata.event.serviceOptionDiscovered
 import io.spine.protodata.name
+import io.spine.protodata.produceOptionEvents
 import io.spine.protodata.service
 
 /**
