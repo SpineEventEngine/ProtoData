@@ -49,7 +49,7 @@ import io.spine.util.interlaced
 /**
  * Documentation contained in a Protobuf file.
  */
-public class Documentation internal constructor(locations: List<Location>) {
+public class Documentation private constructor(locations: List<Location>) {
 
     private val docs: Map<LocationPath, Location> = locations.associateBy(LocationPath::from)
 
