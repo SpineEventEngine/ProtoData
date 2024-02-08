@@ -83,15 +83,20 @@ import kotlin.Any
 import com.google.protobuf.Any as ProtoAny
 
 /**
+ * An en empty instance of [Documentation] for using when Protobuf comments
+ * are of no importance.
+ */
+private val emptyDocumentation: Documentation by lazy {
+    Documentation(emptyList())
+}
+
+/**
  * Converts this field descriptor into a [Field] with options.
  *
  * @see buildField
  */
-public fun FieldDescriptor.buildFieldWithOptions(
-    declaringType: TypeName,
-    documentation: Documentation
-): Field {
-    val field = buildField(this, declaringType, documentation)
+public fun FieldDescriptor.toField(documentation: Documentation? = null): Field {
+    val field = buildField(this, documentation)
     return field.copy {
         // There are several similar expressions in this file like
         // the `option.addAll()` call below. Sadly, these duplicates
@@ -106,16 +111,16 @@ public fun FieldDescriptor.buildFieldWithOptions(
  *
  * The resulting [Field] will not reflect the field options.
  *
- * @see buildFieldWithOptions
+ * @see toField
  */
 public fun buildField(
     desc: FieldDescriptor,
-    declaredIn: TypeName,
-    documentation: Documentation
+    documentation: Documentation? = null
 ): Field = field {
+    val declaredIn = desc.containingType.name()
     name = desc.name()
     orderOfDeclaration = desc.index
-    doc = documentation.forField(desc)
+    doc = (documentation ?: emptyDocumentation).forField(desc)
     number = desc.number
     declaringType = declaredIn
     copyTypeAndCardinality(desc)
@@ -442,16 +447,16 @@ private class DefinitionFactory(
         if (containingType != null) {
             declaredIn = containingType.name()
         }
-        oneofGroup.addAll(realOneofs.map { it.asOneof(typeName) })
-        field.addAll(fields.declaredIn(typeName))
+        oneofGroup.addAll(realOneofs.map { it.asOneof() })
+        field.addAll(fields.mapped())
         nestedMessages.addAll(nestedTypes.map { it.name() })
         nestedEnums.addAll(enumTypes.map { it.name() })
     }
 
-    private fun OneofDescriptor.asOneof(typeName: TypeName) = oneofGroup {
+    private fun OneofDescriptor.asOneof() = oneofGroup {
         val groupName = name()
         name = groupName
-        field.addAll(fields.declaredIn(typeName))
+        field.addAll(fields.mapped())
         option.addAll(options.toList())
         doc = documentation.forOneof(this@asOneof)
     }
@@ -477,9 +482,8 @@ private class DefinitionFactory(
         doc = documentation.forService(this@asService)
     }
 
-    private fun Iterable<FieldDescriptor>.declaredIn(declaringType: TypeName): Iterable<Field> {
-        return map { f -> f.buildFieldWithOptions(declaringType, documentation) }
-    }
+    private fun Iterable<FieldDescriptor>.mapped(): Iterable<Field> =
+        map { f -> f.toField(documentation) }
 }
 
 /**
