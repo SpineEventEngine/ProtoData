@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata
 
 import com.google.protobuf.DescriptorProtos.DescriptorProto
 import com.google.protobuf.DescriptorProtos.DescriptorProto.FIELD_FIELD_NUMBER
@@ -43,102 +43,100 @@ import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
-import io.spine.protodata.Doc
 import io.spine.string.trimWhitespace
 import io.spine.util.interlaced
 
 /**
  * Documentation contained in a Protobuf file.
  */
-internal class Documentation(
-    locations: List<Location>
-) {
+public class Documentation private constructor(locations: List<Location>) {
 
-    companion object {
+    private val docs: Map<LocationPath, Location> = locations.associateBy(LocationPath::from)
 
-        /**
-         * Creates an instance of `Documentation` with all the docs from the given file.
-         */
-        fun fromFile(file: FileDescriptor) = Documentation(
-            file.toProto().sourceCodeInfo.locationList
-        )
-    }
+    /**
+     * Creates an instance of `Documentation` with all the docs from the given file.
+     */
+    public constructor(file: FileDescriptorProto): this(file.sourceCodeInfo.locationList)
 
-    private val docs: Map<LocationPath, Location> =
-        locations.associateBy(LocationPath::from)
+    /**
+     * Creates an instance of `Documentation` with all the docs from the given file.
+     */
+    public constructor(file: FileDescriptor): this(file.toProto())
 
     /**
      * Obtains documentation for the given message.
      */
-    fun forMessage(descriptor: Descriptor): Doc {
-        val path = LocationPath.fromMessage(descriptor)
+    public fun forMessage(d: Descriptor): Doc {
+        val path = LocationPath.fromMessage(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given message field.
      */
-    fun forField(descriptor: FieldDescriptor): Doc {
-        val path = LocationPath.fromMessage(descriptor.containingType)
-                               .field(descriptor)
+    public fun forField(d: FieldDescriptor): Doc {
+        val path = LocationPath.fromMessage(d.containingType).field(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given `oneof` group.
      */
-    fun forOneof(descriptor: OneofDescriptor): Doc {
-        val path = LocationPath.fromMessage(descriptor.containingType)
-                               .oneof(descriptor)
+    public fun forOneof(d: OneofDescriptor): Doc {
+        val path = LocationPath.fromMessage(d.containingType).oneof(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given enum type.
      */
-    fun forEnum(descriptor: EnumDescriptor): Doc {
-        val path = LocationPath.fromEnum(descriptor)
+    public fun forEnum(d: EnumDescriptor): Doc {
+        val path = LocationPath.fromEnum(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given enum constant.
      */
-    fun forEnumConstant(descriptor: EnumValueDescriptor): Doc {
-        val path = LocationPath.fromEnum(descriptor.type)
-                               .constant(descriptor)
+    public fun forEnumConstant(d: EnumValueDescriptor): Doc {
+        val path = LocationPath.fromEnum(d.type).constant(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given service.
      */
-    fun forService(descriptor: ServiceDescriptor): Doc {
-        val path = LocationPath.fromService(descriptor)
+    public fun forService(d: ServiceDescriptor): Doc {
+        val path = LocationPath.fromService(d)
         return commentsAt(path)
     }
 
     /**
      * Obtains documentation for the given RPC method.
      */
-    fun forRpc(descriptor: MethodDescriptor): Doc {
-        val path = LocationPath.fromService(descriptor.service)
-                               .rpc(descriptor)
+    public fun forRpc(d: MethodDescriptor): Doc {
+        val path = LocationPath.fromService(d.service).rpc(d)
         return commentsAt(path)
     }
 
     private fun commentsAt(path: LocationPath): Doc {
         val location = docs[path] ?: Location.getDefaultInstance()
-        return Doc.newBuilder()
-                  .setLeadingComment(location.leadingComments.trimWhitespace())
-                  .setTrailingComment(location.trailingComments.trimWhitespace())
-                  .addAllDetachedComment(location.leadingDetachedCommentsList.trimWhitespace())
-                  .build()
+        return doc {
+            leadingComment = location.leadingComments.trimWhitespace()
+            trailingComment = location.trailingComments.trimWhitespace()
+            detachedComment.addAll(location.leadingDetachedCommentsList.trimWhitespace())
+        }
     }
 }
 
 private fun Iterable<String>.trimWhitespace(): List<String> =
     map { it.trimWhitespace() }
+
+private val Descriptor.isTopLevel: Boolean
+    get() = containingType == null
+
+private val EnumDescriptor.isTopLevel: Boolean
+    get() = containingType == null
 
 /**
  * A numerical path to a location is source code.
@@ -166,7 +164,7 @@ private constructor(private val value: List<Int>) {
         fun fromMessage(descriptor: Descriptor): LocationPath {
             val numbers = mutableListOf<Int>()
             numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
-            if (!descriptor.topLevel) {
+            if (!descriptor.isTopLevel) {
                 numbers.addAll(upToTop(descriptor.containingType))
                 numbers.add(NESTED_TYPE_FIELD_NUMBER)
             }
@@ -179,7 +177,7 @@ private constructor(private val value: List<Int>) {
          */
         fun fromEnum(descriptor: EnumDescriptor): LocationPath {
             val numbers = mutableListOf<Int>()
-            if (descriptor.topLevel) {
+            if (descriptor.isTopLevel) {
                 numbers.add(FileDescriptorProto.ENUM_TYPE_FIELD_NUMBER)
             } else {
                 numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
@@ -248,13 +246,6 @@ private constructor(private val value: List<Int>) {
     override fun toString(): String {
         return "LocationPath(${value.joinToString()})"
     }
-
     private fun subDeclaration(descriptorFieldNumber: Int, index: Int): LocationPath =
         LocationPath(value + arrayOf(descriptorFieldNumber, index))
 }
-
-private val Descriptor.topLevel: Boolean
-    get() = containingType == null
-
-private val EnumDescriptor.topLevel: Boolean
-    get() = containingType == null

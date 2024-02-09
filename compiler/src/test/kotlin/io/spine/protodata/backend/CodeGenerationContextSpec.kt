@@ -51,12 +51,12 @@ import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.asType
 import io.spine.protodata.backend.event.CompilerEvents
-import io.spine.protodata.backend.event.toFile
 import io.spine.protodata.file
 import io.spine.protodata.option
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.PhDProto
 import io.spine.protodata.test.XtraOptsProto
+import io.spine.protodata.toFile
 import io.spine.testing.server.blackbox.BlackBox
 import io.spine.testing.server.blackbox.assertEntity
 import io.spine.time.TimeProto

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,12 +43,19 @@ import kotlin.io.path.Path
 /**
  * Obtains the path to the `.java` file, generated from this message.
  *
- * The class which represents this message might not be the top level class of the Java file.
+ * The class which represents this message might not be the top level class of the Java file,
+ * which is determined by the options in the given Protobuf file header.
  */
 public fun MessageType.javaFile(accordingTo: ProtoFileHeader): Path =
     name.javaFile(accordingTo)
 
-internal fun TypeName.javaFile(accordingTo: ProtoFileHeader): Path {
+/**
+ * Obtains the path to the `.java` file, generated for the type with this name.
+ *
+ * The class which represents this message might not be the top level class of the Java file,
+ * which is determined by the options in the given Protobuf file header.
+ */
+public fun TypeName.javaFile(accordingTo: ProtoFileHeader): Path {
     val packageName = accordingTo.javaPackage()
     val javaMultipleFiles = accordingTo.javaMultipleFiles()
     val topLevelClassName = when {
@@ -107,9 +114,9 @@ internal fun composeJavaTypeName(
 }
 
 /**
- * Obtains a fully qualified Java class, generated for the Protobuf type with this name.
+ * Obtains a fully qualified Java class name, generated for the Protobuf type with this name.
  */
-internal fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
+public fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
     composeJavaTypeName(accordingTo, {
         addAll(nestingTypeNameList)
         add(simpleName)
@@ -117,7 +124,10 @@ internal fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
         ClassName(packageName, list)
     }) as ClassName
 
-internal fun TypeName.javaEnumName(accordingTo: ProtoFileHeader): EnumName =
+/**
+ * Obtains a fully qualified Java enum type name, generated for the Protobuf enum with this name.
+ */
+public fun TypeName.javaEnumName(accordingTo: ProtoFileHeader): EnumName =
     composeJavaTypeName(accordingTo, {
         addAll(nestingTypeNameList)
         add(simpleName)

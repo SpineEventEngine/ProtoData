@@ -437,8 +437,8 @@ message Rpc {
 
     // The kind of call.
     //
-    // A call may accept one request or a stream of requests and produce one response or
-    // a stream of responses.
+    // A call may accept one request or a stream of requests and produce
+    // one response or a stream of responses.
     //
     CallCardinality cardinality = 2 [(required) = true];
 
@@ -491,21 +491,21 @@ message Option {
 
     // The short name of the option.
     //
-    // The name includes only the name of the field (or of the extension field) without the package
-    // or the enclosing type.
+    // The name includes only the name of the field (or of the extension field) without
+    // the package or the enclosing type.
     //
     string name = 1 [(required) = true];
 
     // The field number of the option.
     //
-    // Custom options are defined as extensions to the standard option types and must have distinct
-    // field numbers.
+    // Custom options are defined as extensions to the standard option types and
+    // must have distinct field numbers.
     //
     uint32 number = 2;
 
     // The type of the option.
     //
-    // An option can have a primitive or a message type, but cannot be repeated of a map.
+    // An option can have a primitive or a message type, but cannot be repeated or a map.
     //
     Type type = 3 [(required) = true];
 

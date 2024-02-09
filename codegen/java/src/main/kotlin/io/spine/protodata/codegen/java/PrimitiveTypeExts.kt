@@ -55,7 +55,10 @@ public fun PrimitiveType.toJavaClass(): ClassName {
     return ClassName(klass.javaObjectType)
 }
 
-private fun PrimitiveType.primitiveClass(): KClass<*> =
+/**
+ * Obtains a Kotlin class which corresponds to this primitive type.
+ */
+public fun PrimitiveType.primitiveClass(): KClass<*> =
     when (this) {
         TYPE_DOUBLE -> Double::class
         TYPE_FLOAT -> Float::class
@@ -66,6 +69,15 @@ private fun PrimitiveType.primitiveClass(): KClass<*> =
         TYPE_BYTES -> ByteString::class
         UNRECOGNIZED, PT_UNKNOWN -> unknownType(this)
     }
+
+/**
+ * Obtains a name of the class which corresponds to this primitive type.
+ */
+public fun PrimitiveType.toPrimitiveName(): String {
+    val klass = primitiveClass()
+    val primitiveClass = klass.javaPrimitiveType ?: klass.java
+    return primitiveClass.name
+}
 
 private fun unknownType(type: PrimitiveType): Nothing {
     error("Unknown primitive type: `$type`.")

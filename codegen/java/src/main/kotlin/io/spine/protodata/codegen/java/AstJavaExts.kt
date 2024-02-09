@@ -24,21 +24,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend.event
+package io.spine.protodata.codegen.java
 
-import com.google.protobuf.Descriptors.FileDescriptor
-import io.spine.protodata.event.dependencyDiscovered
-import io.spine.protodata.file
-import io.spine.protodata.toPbSourceFile
+import io.spine.protodata.Field
+import io.spine.protodata.FieldName
+import io.spine.protodata.PrimitiveType.TYPE_BYTES
+import io.spine.protodata.PrimitiveType.TYPE_STRING
+import io.spine.protodata.isPrimitive
+import io.spine.string.camelCase
 
 /**
- * Creates a `DependencyDiscovered` event from the given file descriptor.
+ * Obtains the name of the field in Java case, as if it were declared as a field
+ * in a Java class.
  *
- * The event reflects all the definitions from the file.
+ * @return this field name in `lowerCamelCase` form.
  */
-internal fun discoverDependencies(fileDescriptor: FileDescriptor) =
-    dependencyDiscovered {
-        val id = fileDescriptor.file()
-        file = id
-        source = fileDescriptor.toPbSourceFile()
+public fun FieldName.javaCase(): String {
+    val camelCase = value.camelCase()
+    return camelCase.replaceFirstChar { it.lowercaseChar() }
+}
+
+/**
+ * Obtains the name of the primary setter method for this field.
+ */
+public val Field.primarySetterName: String
+    get() = FieldMethods(this).primarySetter
+
+/**
+ * Obtains the name of the accessor method for this field.
+ */
+public val Field.getterName: String
+    get() = FieldMethods(this).getter
+
+/**
+ * Tells if the type of this field corresponds to a primitive type in Java.
+ */
+public val Field.isJavaPrimitive: Boolean
+    get() = if (!type.isPrimitive) {
+        false
+    } else when (type.primitive) {
+        TYPE_STRING, TYPE_BYTES -> false
+        else -> true
     }
