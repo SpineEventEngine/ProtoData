@@ -60,7 +60,7 @@ internal class AstJavaExtsSpec {
 
     @Nested
     inner class
-    `'Field' class` {
+    `'Field' class providing` {
 
         private val valueDescriptor = Value.getDescriptor()
 
