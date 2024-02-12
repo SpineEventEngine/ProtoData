@@ -48,7 +48,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 
 @TestInstance(PER_CLASS)
 @DisplayName("AST extensions should")
-class AstExtensionsSpec {
+class AstExtsKtExtensionsSpec {
 
     @Nested
     inner class `Check if a field is` {

@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("`AstJavaExts` should teach")
-internal class AstJavaExtsSpec {
+internal class AstExtsKtJavaExtsSpec {
 
     @Nested
     inner class
