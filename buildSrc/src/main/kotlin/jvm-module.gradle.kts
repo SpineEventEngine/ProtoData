@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@
  */
 
 import BuildSettings.javaVersion
+import Jvm_module_gradle.Module
 import io.spine.internal.dependency.CheckerFramework
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
@@ -44,19 +45,6 @@ import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.testing.configureLogging
 import io.spine.internal.gradle.testing.registerTestTasks
-import org.gradle.api.Project
-import org.gradle.api.tasks.Delete
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getValue
-import org.gradle.kotlin.dsl.idea
-import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.`java-library`
-import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.kotlin.dsl.registering
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -65,11 +53,11 @@ plugins {
     id("net.ltgt.errorprone")
     id("pmd-settings")
     id("project-report")
-    id("dokka-for-java")
     kotlin("jvm")
     id("io.kotest")
     id("org.jetbrains.kotlinx.kover")
     id("detekt-code-analysis")
+    id("dokka-for-java")
     id("dokka-for-kotlin")
 }
 

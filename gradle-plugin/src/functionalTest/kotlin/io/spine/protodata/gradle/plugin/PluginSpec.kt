@@ -42,6 +42,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.TaskOutcome.SKIPPED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
+import org.gradle.testkit.runner.internal.DefaultGradleRunner
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -185,6 +186,7 @@ class PluginSpec {
         val version = Plugin.readVersion()
         val builder = GradleProject.setupAt(projectDir)
             .fromResources(resourceDir)
+            .withSharedTestKitDirectory()
             .replace("@PROTODATA_PLUGIN_ID@", GRADLE_PLUGIN_ID)
             .replace("@PROTODATA_VERSION@", version)
             .withLoggingLevel(LogLevel.INFO)
@@ -197,6 +199,12 @@ class PluginSpec {
             //.enableRunnerDebug()
             .copyBuildSrc()
         project = builder.create()
+        (project.runner as DefaultGradleRunner).withJvmArguments(
+            "-Xmx8g",
+            "-XX:MaxMetaspaceSize=1512m",
+            "-XX:+UseParallelGC",
+            "-XX:+HeapDumpOnOutOfMemoryError"
+        )
     }
 }
 
