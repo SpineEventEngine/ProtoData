@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,6 +202,7 @@ fun DokkaTask.isInPublishingGraph(): Boolean =
  * This function could be useful to improve build speed when building subprojects containing
  * test environments or integration test projects.
  */
+@Suppress("unused")
 fun Project.disableDocumentationTasks() {
     gradle.taskGraph.whenReady {
         tasks.forEach { task ->
