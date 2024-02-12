@@ -80,7 +80,7 @@ public val TypeNameOrBuilder.qualifiedName: String
  * Tells if this field is a Protobuf message.
  */
 public val Field.isMessage: Boolean
-    get() = type.hasMessage()
+    get() = type.isMessage
 
 /**
  * Shows if this field is a `map`.
@@ -236,6 +236,12 @@ public val Type.isPrimitive: Boolean
  */
 public val Type.isMessage: Boolean
     get() = hasMessage()
+
+/**
+ * Tells if this type represents a Protobuf `enum`.
+ */
+public val Type.isEnum: Boolean
+    get() = hasEnumeration()
 
 /**
  * Tells if this type is `google.protobuf.Any`.
