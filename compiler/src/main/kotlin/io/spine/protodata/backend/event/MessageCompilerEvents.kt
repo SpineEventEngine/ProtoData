@@ -61,12 +61,16 @@ internal class MessageCompilerEvents(
     private val header: ProtoFileHeader,
     private val documentation: Documentation
 ) {
-
     /**
      * Yields compiler events for the given message type.
      *
-     * Opens with an [TypeEntered] event. Then go the events regarding the type metadata. Then go
-     * the events regarding the fields. At last, closes with an [TypeExited] event.
+     * Starts with an [TypeEntered] event.
+     * Then the events regarding the type metadata come.
+     * Then go the events regarding the fields.
+     * At last, closes with an [TypeExited] event.
+     *
+     * @param desc
+     *         the descriptor of a Protobuf [Message] type.
      */
     internal suspend fun SequenceScope<EventMessage>.produceMessageEvents(
         desc: Descriptor,
