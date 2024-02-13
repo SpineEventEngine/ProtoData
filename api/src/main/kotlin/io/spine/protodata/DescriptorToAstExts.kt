@@ -118,7 +118,7 @@ public fun buildField(desc: FieldDescriptor): Field =
     }
 
 /**
- * Copies the field type and cardinality (`map`/`list`/`oneof_name`/`single`) from
+ * Converts the field type and cardinality (`map`/`list`/`oneof_name`/`single`) from
  * the given descriptor to the receiver DSL-style builder.
  */
 private fun FieldKt.Dsl.copyTypeAndCardinality(
@@ -143,7 +143,7 @@ private fun FieldKt.Dsl.copyTypeAndCardinality(
  *
  * @see buildConstant
  */
-public fun EnumValueDescriptor.buildConstantWithOptions(declaringType: TypeName): EnumConstant {
+public fun EnumValueDescriptor.toEnumConstant(declaringType: TypeName): EnumConstant {
     val constant = buildConstant(this, declaringType)
     return constant.copy {
         option.addAll(options.toList())
@@ -155,7 +155,7 @@ public fun EnumValueDescriptor.buildConstantWithOptions(declaringType: TypeName)
  *
  * The resulting [EnumConstant] will not reflect the options on the enum constant.
  *
- * @see buildConstantWithOptions
+ * @see toEnumConstant
  */
 public fun buildConstant(desc: EnumValueDescriptor, declaringType: TypeName): EnumConstant =
     enumConstant {
@@ -171,7 +171,7 @@ public fun buildConstant(desc: EnumValueDescriptor, declaringType: TypeName): En
  *
  * @see buildRpc
  */
-public fun MethodDescriptor.buildRpcWithOptions(declaringService: ServiceName): Rpc {
+public fun MethodDescriptor.toRpc(declaringService: ServiceName): Rpc {
     val rpc = buildRpc(this, declaringService)
     return rpc.copy {
         option.addAll(options.toList())
@@ -183,7 +183,7 @@ public fun MethodDescriptor.buildRpcWithOptions(declaringService: ServiceName): 
  *
  * The resulting [Rpc] will not reflect the method options.
  *
- * @see buildRpcWithOptions
+ * @see toRpc
  */
 public fun buildRpc(
     desc: MethodDescriptor,
@@ -411,7 +411,7 @@ public fun EnumDescriptor.toEnumType(): EnumType =
         name = typeName
         option.addAll(options.toList())
         file = getFile().file()
-        constant.addAll(values.map { it.buildConstantWithOptions(typeName) })
+        constant.addAll(values.map { it.toEnumConstant(typeName) })
         if (containingType != null) {
             declaredIn = containingType.name()
         }
@@ -427,7 +427,7 @@ public fun ServiceDescriptor.toService(): Service =
         val serviceName = name()
         name = serviceName
         file = getFile().file()
-        rpc.addAll(methods.map { it.buildRpcWithOptions(serviceName) })
+        rpc.addAll(methods.map { it.toRpc(serviceName) })
         option.addAll(options.toList())
         doc = docs.forService(this@toService)
     }

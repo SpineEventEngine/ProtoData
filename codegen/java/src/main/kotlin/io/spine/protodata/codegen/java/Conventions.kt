@@ -62,7 +62,9 @@ public class MessageOrEnumConvention(ts: TypeSystem) :
     override fun declarationFor(name: TypeName): Declaration<Java, ClassOrEnumName> {
         val found = typeSystem.findMessageOrEnum(name)
         val header = found?.second
-        check(header != null) { "Unknown type `${name.typeUrl}`." }
+        check(header != null) {
+            "Unable to locate a header for the proto type `${name.typeUrl}`."
+        }
         val cls = if (found.first is MessageType) {
             name.javaClassName(accordingTo = header)
         } else {

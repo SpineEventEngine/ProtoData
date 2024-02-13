@@ -98,6 +98,8 @@ subprojects {
         }
     }
 
+    disableDocumentationTasks()
+
     tasks.withType<KotlinCompile> {
         setFreeCompilerArgs()
     }
