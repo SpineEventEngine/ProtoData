@@ -45,7 +45,7 @@ public class InternalMessageView
     @Subscribe
     internal fun on(@External e: TypeEntered) {
         update {
-            name = e.type.name
+            name = e.type
         }
     }
 }
@@ -58,8 +58,8 @@ public class InternalMessageRepository :
 
     protected override fun setupEventRouting(routing: EventRouting<TypeName>) {
         super.setupEventRouting(routing)
-        routing.route(TypeEntered::class.java) { event, _ ->
-            withId(event.type.name)
+        routing.route<TypeEntered> { event, _ ->
+            withId(event.type)
         }
     }
 }

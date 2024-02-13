@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,9 @@ import io.spine.code.proto.FileSet
 import io.spine.protodata.Documentation
 import io.spine.protodata.event.FileEntered
 import io.spine.protodata.event.FileExited
-import io.spine.protodata.event.FileOptionDiscovered
+import io.spine.protodata.event.fileEntered
+import io.spine.protodata.event.fileExited
+import io.spine.protodata.event.fileOptionDiscovered
 import io.spine.protodata.produceOptionEvents
 import io.spine.protodata.toHeader
 
@@ -70,9 +72,7 @@ public object CompilerEvents {
 private class ProtoFileEvents(
     private val fileDescriptor: FileDescriptor
 ) {
-
     private val header = fileDescriptor.toHeader()
-
     private val documentation = Documentation(fileDescriptor)
 
     /**
@@ -83,33 +83,35 @@ private class ProtoFileEvents(
      */
     suspend fun SequenceScope<EventMessage>.produceFileEvents() {
         yield(
-            FileEntered.newBuilder()
-                .setFile(header.file)
-                .setHeader(header)
-                .build()
+            fileEntered {
+                // Avoid the name clash with the class property.
+                val hdr = this@ProtoFileEvents.header
+                file = hdr.file
+                header = hdr
+            }
         )
         produceOptionEvents(fileDescriptor.options) {
-            FileOptionDiscovered.newBuilder()
-                .setFile(header.file)
-                .setOption(it)
-                .build()
+            fileOptionDiscovered {
+                file = header.file
+                option = it
+            }
         }
         val messageEvents = MessageCompilerEvents(header, documentation)
         fileDescriptor.messageTypes.forEach {
             messageEvents.apply { produceMessageEvents(it) }
         }
-        val enumEvents = EnumCompilerEvents(header, documentation)
+        val enumEvents = EnumCompilerEvents(header)
         fileDescriptor.enumTypes.forEach {
             enumEvents.apply { produceEnumEvents(it) }
         }
-        val serviceEvents = ServiceCompilerEvents(header, documentation)
+        val serviceEvents = ServiceCompilerEvents(header)
         fileDescriptor.services.forEach {
             serviceEvents.apply { produceServiceEvents(it) }
         }
         yield(
-            FileExited.newBuilder()
-                .setFile(header.file)
-                .build()
+            fileExited {
+                file = header.file
+            }
         )
     }
 }

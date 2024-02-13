@@ -72,6 +72,16 @@ message FileExited {
     File file = 1 [(required) = true];
 }
 
+// Emitted when processing discovers a message type.
+message TypeDiscovered {
+
+    // The file in which the type is defined.
+    File file = 1 [(required) = true];
+
+    // The discovered message type.
+    MessageType type = 2 [(required) = true];
+}
+
 // Emitted when processing reaches a message type.
 message TypeEntered {
 
@@ -79,7 +89,7 @@ message TypeEntered {
     File file = 1 [(required) = true];
 
     // The type processing of which is started.
-    MessageType type = 2 [(required) = true];
+    TypeName type = 2 [(required) = true];
 }
 
 // Emitted when a message-level option is found.
@@ -192,14 +202,24 @@ message FieldExited {
     FieldName field = 3 [(required) = true];
 }
 
-// Emitted when processing reaches an enum type.
-message EnumEntered {
+ // Emitted when an enum type is discovered in a proto file.
+message EnumDiscovered {
 
     // The file in which the enum is defined.
     File file = 1 [(required) = true];
 
     // The type of the enum.
     EnumType type = 2 [(required) = true];
+}
+
+// Emitted when processing reaches an enum type.
+message EnumEntered {
+
+    // The file in which the enum is defined.
+    File file = 1 [(required) = true];
+
+    // The enum type processing of which is started.
+    TypeName type = 2 [(required) = true];
 }
 
 // Emitted when an enum-level option is found.
@@ -269,6 +289,16 @@ message EnumExited {
     TypeName type = 2 [(required) = true];
 }
 
+ // Emitted when a service definition is discovered in a proto file.
+message ServiceDiscovered {
+
+    // The file in which the service is defined.
+    File file = 1 [(required) = true];
+
+    // The service processing of which is started.
+    Service service = 2 [(required) = true];
+}
+
 // Emitted when the processing reaches a service.
 message ServiceEntered {
 
@@ -276,7 +306,7 @@ message ServiceEntered {
     File file = 1 [(required) = true];
 
     // The service processing of which is started.
-    Service service = 2 [(required) = true];
+    ServiceName service = 2 [(required) = true];
 }
 
 // Emitted when an service-level option is found.

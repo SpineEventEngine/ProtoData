@@ -29,12 +29,9 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.Documentation
 import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.TypeName
 import io.spine.protodata.buildConstant
 import io.spine.protodata.constantName
-import io.spine.protodata.enumType
 import io.spine.protodata.event.EnumConstantEntered
 import io.spine.protodata.event.EnumConstantExited
 import io.spine.protodata.event.EnumEntered
@@ -42,18 +39,19 @@ import io.spine.protodata.event.EnumExited
 import io.spine.protodata.event.enumConstantEntered
 import io.spine.protodata.event.enumConstantExited
 import io.spine.protodata.event.enumConstantOptionDiscovered
+import io.spine.protodata.event.enumDiscovered
 import io.spine.protodata.event.enumEntered
 import io.spine.protodata.event.enumExited
 import io.spine.protodata.event.enumOptionDiscovered
 import io.spine.protodata.name
 import io.spine.protodata.produceOptionEvents
+import io.spine.protodata.toEnumType
 
 /**
  * Produces events for an enum.
  */
 internal class EnumCompilerEvents(
-    private val header: ProtoFileHeader,
-    private val documentation: Documentation
+    private val header: ProtoFileHeader
 ) {
 
     /**
@@ -65,23 +63,21 @@ internal class EnumCompilerEvents(
      * At last, closes with an [EnumExited] event.
      */
     internal suspend fun SequenceScope<EventMessage>.produceEnumEvents(
-        desc: EnumDescriptor,
-        nestedIn: TypeName? = null
+        desc: EnumDescriptor
     ) {
+        val enumType = desc.toEnumType()
         val typeName = desc.name()
         val path = header.file
-        val type = enumType {
-            name = typeName
-            file = path
-            if (nestedIn != null) {
-                declaredIn = nestedIn
+        yield(
+            enumDiscovered {
+                file = path
+                type = enumType
             }
-            doc = documentation.forEnum(desc)
-        }
+        )
         yield(
             enumEntered {
                 file = path
-                this.type = type
+                type = typeName
             }
         )
         produceOptionEvents(desc.options) {
@@ -92,7 +88,7 @@ internal class EnumCompilerEvents(
             }
         }
         desc.values.forEach {
-            produceConstantEvents(typeName, it)
+            produceConstantEvents(it)
         }
         yield(
             enumExited {
@@ -105,13 +101,14 @@ internal class EnumCompilerEvents(
     /**
      * Yields compiler events for the given enum constant.
      *
-     * Opens with an [EnumConstantEntered] event. Then go the events regarding the constant options.
+     * Opens with an [EnumConstantEntered] event.
+     * Then go the events regarding the constant options.
      * At last, closes with an [EnumConstantExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceConstantEvents(
-        typeName: TypeName,
         desc: EnumValueDescriptor
     ) {
+        val typeName = desc.type.name()
         val name = constantName {
             value = desc.name
         }

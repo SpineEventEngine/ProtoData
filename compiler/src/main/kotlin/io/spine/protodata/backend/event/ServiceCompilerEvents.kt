@@ -29,28 +29,26 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.Documentation
 import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.ServiceName
 import io.spine.protodata.buildRpc
 import io.spine.protodata.event.ServiceEntered
 import io.spine.protodata.event.ServiceExited
 import io.spine.protodata.event.rpcEntered
 import io.spine.protodata.event.rpcExited
 import io.spine.protodata.event.rpcOptionDiscovered
+import io.spine.protodata.event.serviceDiscovered
 import io.spine.protodata.event.serviceEntered
 import io.spine.protodata.event.serviceExited
 import io.spine.protodata.event.serviceOptionDiscovered
 import io.spine.protodata.name
 import io.spine.protodata.produceOptionEvents
-import io.spine.protodata.service
+import io.spine.protodata.toService
 
 /**
  * Produces events for a service.
  */
 internal class ServiceCompilerEvents(
-    private val header: ProtoFileHeader,
-    private val documentation: Documentation
+    private val header: ProtoFileHeader
 ) {
 
     /**
@@ -60,29 +58,32 @@ internal class ServiceCompilerEvents(
      * Then go the events regarding the RPC methods. At last, closes with an [ServiceExited] event.
      */
     internal suspend fun SequenceScope<EventMessage>.produceServiceEvents(
-        descriptor: ServiceDescriptor
+        desc: ServiceDescriptor
     ) {
         val path = header.file
-        val serviceName = descriptor.name()
+        val serviceType = desc.toService()
+        yield(
+            serviceDiscovered {
+                file = path
+                service = serviceType
+            }
+        )
+        val serviceName = desc.name()
         yield(
             serviceEntered {
                 file = path
-                service = service {
-                    name = serviceName
-                    doc = documentation.forService(descriptor)
-                    file = path
-                }
+                service = serviceName
             }
         )
-        produceOptionEvents(descriptor.options) {
+        produceOptionEvents(desc.options) {
             serviceOptionDiscovered {
                 file = path
                 service = serviceName
                 option = it
             }
         }
-        descriptor.methods.forEach {
-            produceRpcEvents(serviceName, it)
+        desc.methods.forEach {
+            produceRpcEvents(it)
         }
         yield(
             serviceExited {
@@ -93,9 +94,9 @@ internal class ServiceCompilerEvents(
     }
 
     private suspend fun SequenceScope<EventMessage>.produceRpcEvents(
-        serviceName: ServiceName,
         desc: MethodDescriptor
     ) {
+        val serviceName = desc.service.name()
         val path = header.file
         val theRpc = buildRpc(desc, serviceName)
         yield(

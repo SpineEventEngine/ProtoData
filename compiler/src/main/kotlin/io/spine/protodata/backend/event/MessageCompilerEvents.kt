@@ -32,7 +32,6 @@ import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.Documentation
 import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.TypeName
 import io.spine.protodata.buildField
 import io.spine.protodata.event.FieldEntered
 import io.spine.protodata.event.FieldExited
@@ -46,13 +45,14 @@ import io.spine.protodata.event.fieldOptionDiscovered
 import io.spine.protodata.event.oneofGroupEntered
 import io.spine.protodata.event.oneofGroupExited
 import io.spine.protodata.event.oneofOptionDiscovered
+import io.spine.protodata.event.typeDiscovered
 import io.spine.protodata.event.typeEntered
 import io.spine.protodata.event.typeExited
 import io.spine.protodata.event.typeOptionDiscovered
-import io.spine.protodata.messageType
 import io.spine.protodata.name
 import io.spine.protodata.oneofGroup
 import io.spine.protodata.produceOptionEvents
+import io.spine.protodata.toMessageType
 
 /**
  * Produces events for a message.
@@ -61,33 +61,33 @@ internal class MessageCompilerEvents(
     private val header: ProtoFileHeader,
     private val documentation: Documentation
 ) {
-
     /**
      * Yields compiler events for the given message type.
      *
-     * Opens with an [TypeEntered] event. Then go the events regarding the type metadata. Then go
-     * the events regarding the fields. At last, closes with an [TypeExited] event.
+     * Starts with an [TypeEntered] event.
+     * Then the events regarding the type metadata come.
+     * Then go the events regarding the fields.
+     * At last, closes with an [TypeExited] event.
+     *
+     * @param desc
+     *         the descriptor of a Protobuf [Message] type.
      */
     internal suspend fun SequenceScope<EventMessage>.produceMessageEvents(
-        desc: Descriptor,
-        nestedIn: TypeName? = null
+        desc: Descriptor
     ) {
         val typeName = desc.name()
         val path = header.file
-        val messageType = messageType {
-            name = typeName
-            file = path
-            if (nestedIn != null) {
-                declaredIn = nestedIn
+        val messageType = desc.toMessageType()
+        yield(
+            typeDiscovered {
+                file = path
+                type = messageType
             }
-            doc = documentation.forMessage(desc)
-            nestedMessages.addAll(desc.nestedTypes.map { it.name() })
-            nestedEnums.addAll(desc.enumTypes.map { it.name() })
-        }
+        )
         yield(
             typeEntered {
                 file = path
-                type = messageType
+                type = messageType.name
             }
         )
         produceOptionEvents(desc.options) {
@@ -99,21 +99,21 @@ internal class MessageCompilerEvents(
         }
 
         desc.realOneofs.forEach {
-            produceOneofEvents(typeName, it)
+            produceOneofEvents(it)
         }
 
         desc.fields
             .filter { it.realContainingOneof == null }
-            .forEach { produceFieldEvents(typeName, it) }
+            .forEach { produceFieldEvents(it) }
 
         desc.nestedTypes.forEach {
-            produceMessageEvents(nestedIn = typeName, desc = it)
+            produceMessageEvents(desc = it)
         }
 
-        val enums = EnumCompilerEvents(header, documentation)
+        val enums = EnumCompilerEvents(header)
         desc.enumTypes.forEach {
             enums.apply {
-                produceEnumEvents(nestedIn = typeName, desc = it)
+                produceEnumEvents(desc = it)
             }
         }
 
@@ -128,13 +128,15 @@ internal class MessageCompilerEvents(
     /**
      * Yields compiler events for the given `oneof` group.
      *
-     * Opens with an [OneofGroupEntered] event. Then go the events regarding the group metadata.
-     * Then go the events regarding the fields. At last, closes with an [OneofGroupExited] event.
+     * Opens with an [OneofGroupEntered] event.
+     * Then go the events regarding the group metadata.
+     * Then go the events regarding the fields.
+     * At last, closes with an [OneofGroupExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
-        typeName: TypeName,
         desc: OneofDescriptor
     ) {
+        val typeName = desc.containingType.name()
         val oneofName = desc.name()
         val oneofGroup = oneofGroup {
             name = oneofName
@@ -157,7 +159,7 @@ internal class MessageCompilerEvents(
             }
         }
         desc.fields.forEach {
-            produceFieldEvents(typeName, it)
+            produceFieldEvents(it)
         }
         yield(
             oneofGroupExited {
@@ -171,13 +173,14 @@ internal class MessageCompilerEvents(
     /**
      * Yields compiler events for the given field.
      *
-     * Opens with an [FieldEntered] event. Then go the events regarding the field options. At last,
-     * closes with an [FieldExited] event.
+     * Opens with an [FieldEntered] event.
+     * Then go the events regarding the field options.
+     * At last, closes with an [FieldExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
-        typeName: TypeName,
         desc: FieldDescriptor
     ) {
+        val typeName = desc.containingType.name()
         val fieldName = desc.name()
         val theField = buildField(desc)
         val path = header.file

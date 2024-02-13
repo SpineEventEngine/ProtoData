@@ -38,7 +38,6 @@ import io.spine.protodata.toPbSourceFile
  */
 internal fun discoverDependencies(fileDescriptor: FileDescriptor) =
     dependencyDiscovered {
-        val id = fileDescriptor.file()
-        file = id
+        file = fileDescriptor.file()
         source = fileDescriptor.toPbSourceFile()
     }
