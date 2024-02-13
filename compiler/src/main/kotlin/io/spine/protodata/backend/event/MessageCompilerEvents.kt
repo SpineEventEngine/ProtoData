@@ -132,8 +132,10 @@ internal class MessageCompilerEvents(
     /**
      * Yields compiler events for the given `oneof` group.
      *
-     * Opens with an [OneofGroupEntered] event. Then go the events regarding the group metadata.
-     * Then go the events regarding the fields. At last, closes with an [OneofGroupExited] event.
+     * Opens with an [OneofGroupEntered] event.
+     * Then go the events regarding the group metadata.
+     * Then go the events regarding the fields.
+     * At last, closes with an [OneofGroupExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
         typeName: TypeName,
@@ -175,8 +177,9 @@ internal class MessageCompilerEvents(
     /**
      * Yields compiler events for the given field.
      *
-     * Opens with an [FieldEntered] event. Then go the events regarding the field options. At last,
-     * closes with an [FieldExited] event.
+     * Opens with an [FieldEntered] event.
+     * Then go the events regarding the field options.
+     * At last, closes with an [FieldExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
         typeName: TypeName,
