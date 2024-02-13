@@ -373,11 +373,9 @@ private val GenericDescriptor.fileDoc: Documentation
  */
 public fun Descriptor.toMessageType(): MessageType =
     messageType {
-        val docs = fileDoc
-        val typeName = name()
-        name = typeName
+        name = name()
         file = getFile().file()
-        doc = docs.forMessage(this@toMessageType)
+        doc = fileDoc.forMessage(this@toMessageType)
         option.addAll(options.toList())
         if (containingType != null) {
             declaredIn = containingType.name()
