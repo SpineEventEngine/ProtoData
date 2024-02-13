@@ -204,6 +204,7 @@ message FieldExited {
 
  // Emitted when an enum type is discovered in a proto file.
 message EnumDiscovered {
+
     // The file in which the enum is defined.
     File file = 1 [(required) = true];
 
@@ -290,6 +291,7 @@ message EnumExited {
 
  // Emitted when a service definition is discovered in a proto file.
 message ServiceDiscovered {
+
     // The file in which the service is defined.
     File file = 1 [(required) = true];
 
