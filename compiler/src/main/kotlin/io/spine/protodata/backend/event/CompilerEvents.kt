@@ -72,9 +72,7 @@ public object CompilerEvents {
 private class ProtoFileEvents(
     private val fileDescriptor: FileDescriptor
 ) {
-
     private val header = fileDescriptor.toHeader()
-
     private val documentation = Documentation(fileDescriptor)
 
     /**
@@ -86,8 +84,10 @@ private class ProtoFileEvents(
     suspend fun SequenceScope<EventMessage>.produceFileEvents() {
         yield(
             fileEntered {
-                file = header.file
-                header = header
+                // Avoid the name clash with the class property.
+                val hdr = this@ProtoFileEvents.header
+                file = hdr.file
+                header = hdr
             }
         )
         produceOptionEvents(fileDescriptor.options) {

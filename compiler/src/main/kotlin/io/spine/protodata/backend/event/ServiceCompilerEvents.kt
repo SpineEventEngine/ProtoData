@@ -30,7 +30,6 @@ import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.ServiceName
 import io.spine.protodata.buildRpc
 import io.spine.protodata.event.ServiceEntered
 import io.spine.protodata.event.ServiceExited
@@ -59,32 +58,32 @@ internal class ServiceCompilerEvents(
      * Then go the events regarding the RPC methods. At last, closes with an [ServiceExited] event.
      */
     internal suspend fun SequenceScope<EventMessage>.produceServiceEvents(
-        descriptor: ServiceDescriptor
+        desc: ServiceDescriptor
     ) {
         val path = header.file
-        val serviceType = descriptor.toService()
+        val serviceType = desc.toService()
         yield(
             serviceDiscovered {
                 file = path
                 service = serviceType
             }
         )
-        val serviceName = descriptor.name()
+        val serviceName = desc.name()
         yield(
             serviceEntered {
                 file = path
                 service = serviceName
             }
         )
-        produceOptionEvents(descriptor.options) {
+        produceOptionEvents(desc.options) {
             serviceOptionDiscovered {
                 file = path
                 service = serviceName
                 option = it
             }
         }
-        descriptor.methods.forEach {
-            produceRpcEvents(serviceName, it)
+        desc.methods.forEach {
+            produceRpcEvents(it)
         }
         yield(
             serviceExited {
@@ -95,9 +94,9 @@ internal class ServiceCompilerEvents(
     }
 
     private suspend fun SequenceScope<EventMessage>.produceRpcEvents(
-        serviceName: ServiceName,
         desc: MethodDescriptor
     ) {
+        val serviceName = desc.service.name()
         val path = header.file
         val theRpc = buildRpc(desc, serviceName)
         yield(

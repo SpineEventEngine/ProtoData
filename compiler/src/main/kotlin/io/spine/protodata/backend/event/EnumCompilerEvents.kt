@@ -30,7 +30,6 @@ import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.TypeName
 import io.spine.protodata.buildConstant
 import io.spine.protodata.constantName
 import io.spine.protodata.event.EnumConstantEntered
@@ -89,7 +88,7 @@ internal class EnumCompilerEvents(
             }
         }
         desc.values.forEach {
-            produceConstantEvents(typeName, it)
+            produceConstantEvents(it)
         }
         yield(
             enumExited {
@@ -102,13 +101,14 @@ internal class EnumCompilerEvents(
     /**
      * Yields compiler events for the given enum constant.
      *
-     * Opens with an [EnumConstantEntered] event. Then go the events regarding the constant options.
+     * Opens with an [EnumConstantEntered] event.
+     * Then go the events regarding the constant options.
      * At last, closes with an [EnumConstantExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceConstantEvents(
-        typeName: TypeName,
         desc: EnumValueDescriptor
     ) {
+        val typeName = desc.type.name()
         val name = constantName {
             value = desc.name
         }

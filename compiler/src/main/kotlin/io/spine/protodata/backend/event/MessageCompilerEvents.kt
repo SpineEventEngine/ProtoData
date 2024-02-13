@@ -32,7 +32,6 @@ import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.Documentation
 import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.TypeName
 import io.spine.protodata.buildField
 import io.spine.protodata.event.FieldEntered
 import io.spine.protodata.event.FieldExited
@@ -100,12 +99,12 @@ internal class MessageCompilerEvents(
         }
 
         desc.realOneofs.forEach {
-            produceOneofEvents(typeName, it)
+            produceOneofEvents(it)
         }
 
         desc.fields
             .filter { it.realContainingOneof == null }
-            .forEach { produceFieldEvents(typeName, it) }
+            .forEach { produceFieldEvents(it) }
 
         desc.nestedTypes.forEach {
             produceMessageEvents(desc = it)
@@ -135,9 +134,9 @@ internal class MessageCompilerEvents(
      * At last, closes with an [OneofGroupExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
-        typeName: TypeName,
         desc: OneofDescriptor
     ) {
+        val typeName = desc.containingType.name()
         val oneofName = desc.name()
         val oneofGroup = oneofGroup {
             name = oneofName
@@ -160,7 +159,7 @@ internal class MessageCompilerEvents(
             }
         }
         desc.fields.forEach {
-            produceFieldEvents(typeName, it)
+            produceFieldEvents(it)
         }
         yield(
             oneofGroupExited {
@@ -179,9 +178,9 @@ internal class MessageCompilerEvents(
      * At last, closes with an [FieldExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
-        typeName: TypeName,
         desc: FieldDescriptor
     ) {
+        val typeName = desc.containingType.name()
         val fieldName = desc.name()
         val theField = buildField(desc)
         val path = header.file
