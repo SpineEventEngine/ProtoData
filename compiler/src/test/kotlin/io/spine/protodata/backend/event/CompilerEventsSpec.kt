@@ -58,6 +58,7 @@ import io.spine.protodata.event.RpcExited
 import io.spine.protodata.event.RpcOptionDiscovered
 import io.spine.protodata.event.ServiceEntered
 import io.spine.protodata.event.ServiceExited
+import io.spine.protodata.event.TypeDiscovered
 import io.spine.protodata.event.TypeEntered
 import io.spine.protodata.event.TypeExited
 import io.spine.protodata.file
@@ -230,7 +231,7 @@ class CompilerEventsSpec {
 
     @Test
     fun `include message doc info`() {
-        val typeEntered = emitted<TypeEntered>()
+        val typeEntered = emitted<TypeDiscovered>()
         assertThat(typeEntered.type)
             .comparingExpectedFieldsOnly()
             .isEqualTo(messageType {

@@ -46,13 +46,14 @@ import io.spine.protodata.event.fieldOptionDiscovered
 import io.spine.protodata.event.oneofGroupEntered
 import io.spine.protodata.event.oneofGroupExited
 import io.spine.protodata.event.oneofOptionDiscovered
+import io.spine.protodata.event.typeDiscovered
 import io.spine.protodata.event.typeEntered
 import io.spine.protodata.event.typeExited
 import io.spine.protodata.event.typeOptionDiscovered
-import io.spine.protodata.messageType
 import io.spine.protodata.name
 import io.spine.protodata.oneofGroup
 import io.spine.protodata.produceOptionEvents
+import io.spine.protodata.toMessageType
 
 /**
  * Produces events for a message.
@@ -73,25 +74,21 @@ internal class MessageCompilerEvents(
      *         the descriptor of a Protobuf [Message] type.
      */
     internal suspend fun SequenceScope<EventMessage>.produceMessageEvents(
-        desc: Descriptor,
-        nestedIn: TypeName? = null
+        desc: Descriptor
     ) {
         val typeName = desc.name()
         val path = header.file
-        val messageType = messageType {
-            name = typeName
-            file = path
-            if (nestedIn != null) {
-                declaredIn = nestedIn
+        val messageType = desc.toMessageType()
+        yield(
+            typeDiscovered {
+                file = path
+                type = messageType
             }
-            doc = documentation.forMessage(desc)
-            nestedMessages.addAll(desc.nestedTypes.map { it.name() })
-            nestedEnums.addAll(desc.enumTypes.map { it.name() })
-        }
+        )
         yield(
             typeEntered {
                 file = path
-                type = messageType
+                type = messageType.name
             }
         )
         produceOptionEvents(desc.options) {
@@ -111,13 +108,13 @@ internal class MessageCompilerEvents(
             .forEach { produceFieldEvents(typeName, it) }
 
         desc.nestedTypes.forEach {
-            produceMessageEvents(nestedIn = typeName, desc = it)
+            produceMessageEvents(desc = it)
         }
 
-        val enums = EnumCompilerEvents(header, documentation)
+        val enums = EnumCompilerEvents(header)
         desc.enumTypes.forEach {
             enums.apply {
-                produceEnumEvents(nestedIn = typeName, desc = it)
+                produceEnumEvents(desc = it)
             }
         }
 

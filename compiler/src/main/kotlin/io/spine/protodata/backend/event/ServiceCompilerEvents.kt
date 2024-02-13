@@ -29,7 +29,6 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.Documentation
 import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ServiceName
 import io.spine.protodata.buildRpc
@@ -38,19 +37,19 @@ import io.spine.protodata.event.ServiceExited
 import io.spine.protodata.event.rpcEntered
 import io.spine.protodata.event.rpcExited
 import io.spine.protodata.event.rpcOptionDiscovered
+import io.spine.protodata.event.serviceDiscovered
 import io.spine.protodata.event.serviceEntered
 import io.spine.protodata.event.serviceExited
 import io.spine.protodata.event.serviceOptionDiscovered
 import io.spine.protodata.name
 import io.spine.protodata.produceOptionEvents
-import io.spine.protodata.service
+import io.spine.protodata.toService
 
 /**
  * Produces events for a service.
  */
 internal class ServiceCompilerEvents(
-    private val header: ProtoFileHeader,
-    private val documentation: Documentation
+    private val header: ProtoFileHeader
 ) {
 
     /**
@@ -63,15 +62,18 @@ internal class ServiceCompilerEvents(
         descriptor: ServiceDescriptor
     ) {
         val path = header.file
+        val serviceType = descriptor.toService()
+        yield(
+            serviceDiscovered {
+                file = path
+                service = serviceType
+            }
+        )
         val serviceName = descriptor.name()
         yield(
             serviceEntered {
                 file = path
-                service = service {
-                    name = serviceName
-                    doc = documentation.forService(descriptor)
-                    file = path
-                }
+                service = serviceName
             }
         )
         produceOptionEvents(descriptor.options) {

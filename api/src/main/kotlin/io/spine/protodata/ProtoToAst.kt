@@ -419,7 +419,7 @@ public fun EnumDescriptor.toEnumType(): EnumType =
     }
 
 /**
- * Converts this services descriptor into [Service] instance.
+ * Converts this service descriptor into [Service] instance.
  */
 public fun ServiceDescriptor.toService(): Service =
     service {
