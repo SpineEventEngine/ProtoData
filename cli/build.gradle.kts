@@ -183,6 +183,7 @@ tasks.publish {
 tasks.shadowJar {
     mergeServiceFiles("desc.ref")
     mergeServiceFiles("META-INF/services/io.spine.option.OptionsProvider")
+    isZip64 = true
 }
 
 // See https://github.com/johnrengelman/shadow/issues/153.
