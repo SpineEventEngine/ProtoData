@@ -26,8 +26,6 @@
 
 package io.spine.protodata.codegen.java.style
 
-import io.spine.protodata.codegen.java.style.PackageTableKt.entry
-
 /**
  * The constant to be used in settings to designate "too many".
  *
@@ -44,26 +42,11 @@ private const val A_LOT = 9999
  *
  * @see [com.intellij.psi.codeStyle.JavaCodeStyleSettings]
  */
-public fun importOnDemandDefaults(): ImportOnDemand {
-    return importOnDemand {
-        // Unlike IntelliJ, which sets the `CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND` to `5`, our
-        // default value forces NOT using on-demand imports as much as possible.
-        classCount = A_LOT
+public fun importOnDemandDefaults(): ImportOnDemand = importOnDemand {
+    // Unlike IntelliJ, which sets the `CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND` to `5`, our
+    // default value forces NOT using on-demand imports as much as possible.
+    classCount = A_LOT
 
-        // Similarly to static imports, we want them all rather than star imports.
-        nameCount = A_LOT
-
-        packages = packageTable {
-            entry.add(entry {
-                packageName = "java.awt"
-                withSubpackages = false
-                isStatic = false
-            })
-            entry.add(entry {
-                packageName = "javax.swing"
-                withSubpackages = false
-                isStatic = false
-            })
-        }
-    }
+    // Similarly to static imports, we want them all rather than star imports.
+    nameCount = A_LOT
 }
