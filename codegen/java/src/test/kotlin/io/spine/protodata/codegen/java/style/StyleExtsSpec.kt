@@ -26,30 +26,18 @@
 
 package io.spine.protodata.codegen.java.style
 
-import com.google.common.annotations.VisibleForTesting
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * The constant to be used in settings to designate "too many".
- *
- * For example, for star imports it would mean "start using on-demand import" when
- * the usage of this package is real madness.
- */
-@VisibleForTesting
-internal const val A_LOT = 9999
+@DisplayName("PSI Java style extensions should")
+internal class StyleExtsSpec {
 
-/**
- * Creates an instance of [ImportOnDemand] with the default values.
- *
- * This function borrows some default values set by IntelliJ Platform and
- * alters others to suite conventions used by Spine SDK.
- *
- * @see [com.intellij.psi.codeStyle.JavaCodeStyleSettings]
- */
-public fun importOnDemandDefaults(): ImportOnDemand = importOnDemand {
-    // Unlike IntelliJ, which sets the `CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND` to `5`, our
-    // default value forces NOT using on-demand imports as much as possible.
-    classCount = A_LOT
+    @Test
+    fun `create 'ImportOnDemand' instance with default settings`() {
+        val importOnDemand = importOnDemandDefaults()
 
-    // Similarly to static imports, we want them all rather than star imports.
-    nameCount = A_LOT
+        importOnDemand.classCount shouldBe A_LOT
+        importOnDemand.nameCount shouldBe A_LOT
+    }
 }
