@@ -27,6 +27,9 @@
 package io.spine.protodata.codegen.java.style
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.psi.codeStyle.JavaCodeStyleSettings
+import com.intellij.psi.codeStyle.PackageEntry
+import com.intellij.psi.codeStyle.PackageEntryTable
 
 /**
  * The constant to be used in settings to designate "too many".
@@ -53,3 +56,41 @@ public fun importOnDemandDefaults(): ImportOnDemand = importOnDemand {
     // Similarly to static imports, we want them all rather than star imports.
     nameCount = A_LOT
 }
+
+/**
+ * Applies values of this [JavaCodeStyle] to corresponding properties of
+ * IntelliJ Platform type [JavaCodeStyleSettings].
+ */
+public fun JavaCodeStyle.applyTo(ij: JavaCodeStyleSettings) {
+    with(ij) {
+        with(importSettings.innerClasses) {
+            isInsertInnerClassImports = insert
+            doNotImportInner = excludeList
+        }
+
+        with(importSettings.onDemand) {
+            classCountToUseImportOnDemand = classCount
+            namesCountToUseImportOnDemand = nameCount
+            // There's no setter for this property in the version of the IntelliJ Platform
+            // dependency we use at the time of writing. So, we use the public field directly.
+            PACKAGES_TO_USE_IMPORT_ON_DEMAND = packages.toIntelliJ()
+        }
+
+        with(importSettings.importLayout) {
+            // There's no setter for this property in the version of the IntelliJ Platform
+            // dependency we use at the time of writing. So, we use the public field directly.
+            IMPORT_LAYOUT_TABLE = toIntelliJ()
+        }
+    }
+}
+
+private fun PackageTable.toIntelliJ(): PackageEntryTable {
+    val result = PackageEntryTable()
+    entryList.forEach {
+        result.addEntry(it.toIntelliJ())
+    }
+    return result
+}
+
+private fun PackageTable.Entry.toIntelliJ(): PackageEntry =
+    PackageEntry(isStatic, packageName, withSubpackages)
