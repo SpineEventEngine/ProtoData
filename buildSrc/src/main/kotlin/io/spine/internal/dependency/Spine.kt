@@ -124,7 +124,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/tool-base">spine-tool-base</a>
          */
-        const val toolBase = "2.0.0-SNAPSHOT.201"
+        const val toolBase = "2.0.0-SNAPSHOT.202"
 
         /**
          * The version of [Spine.javadocTools].
@@ -152,6 +152,7 @@ object Spine {
     const val testlib = "$toolsGroup:spine-testlib:${ArtifactVersion.testlib}"
     const val testUtilTime = "$toolsGroup:spine-testutil-time:${ArtifactVersion.time}"
     const val psiJava = "$toolsGroup:spine-psi-java:${ArtifactVersion.toolBase}"
+    const val psiJavaBundle = "$toolsGroup:spine-psi-java-bundle:${ArtifactVersion.toolBase}"
     const val toolBase = "$toolsGroup:spine-tool-base:${ArtifactVersion.toolBase}"
     const val pluginBase = "$toolsGroup:spine-plugin-base:${ArtifactVersion.toolBase}"
     const val pluginTestlib = "$toolsGroup:spine-plugin-testlib:${ArtifactVersion.toolBase}"
