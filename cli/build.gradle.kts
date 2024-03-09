@@ -48,7 +48,7 @@ dependencies {
         ":cli-api",
         ":api",
         ":compiler",
-        ":codegen-java"
+        ":java"
     ).forEach { implementation(project(it)) }
 
     testImplementation(project(":test-env"))

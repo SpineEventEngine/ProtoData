@@ -33,12 +33,10 @@ include(
     "cli",
     "protoc",
     "test-env",
-    "codegen-java",
+    "java",
     "gradle-api",
     "gradle-plugin"
 )
-
-project(":codegen-java").projectDir = file("$rootDir/codegen/java")
 
 dependencyResolutionManagement {
     repositories {

@@ -87,7 +87,7 @@ subprojects {
                     Spine.Logging.lib,
                     Spine.reflect,
                     ProtoData.compiler,
-                    ProtoData.codegenJava,
+                    ProtoData.java,
                     Jackson.Junior.objects
                 )
             }

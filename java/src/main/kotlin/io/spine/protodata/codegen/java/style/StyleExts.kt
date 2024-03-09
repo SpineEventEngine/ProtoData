@@ -34,7 +34,7 @@ import com.intellij.psi.codeStyle.PackageEntryTable
 /**
  * The constant to be used in settings to designate "too many".
  *
- * For example, for star imports it would mean "start using on-demand import" when
+ * For example, for star imports, it would mean "start using on-demand import" when
  * the usage of this package is real madness.
  */
 @VisibleForTesting

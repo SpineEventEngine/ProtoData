@@ -99,11 +99,11 @@ object ProtoData {
     val cliApi
         get() = "$group:protodata-cli-api:$version"
 
-    fun codegenJava(version: String): String =
-        "$group:protodata-codegen-java:$version"
+    fun java(version: String): String =
+        "$group:protodata-java:$version"
 
-    val codegenJava
-        get() = codegenJava(version)
+    val java
+        get() = java(version)
 
     val fatCli
         get() = "$group:protodata-fat-cli:$version"
