@@ -24,36 +24,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata.java
 
-package spine.protodata.java;
+import io.spine.protodata.Field
+import io.spine.protodata.FieldName
+import io.spine.protodata.PrimitiveType.TYPE_BYTES
+import io.spine.protodata.PrimitiveType.TYPE_STRING
+import io.spine.protodata.isPrimitive
+import io.spine.string.camelCase
 
-import "spine/options.proto";
-
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.java.annotation";
-option java_outer_classname = "AnnotationProto";
-option java_multiple_files = true;
-
-// The configuration expected by the `SuppressWarningsAnnotation` renderer.
-//
-// To combine the config for `SuppressWarningsAnnotation` with config for other renderers,
-// declare a message with the same fields and field numbers as this one. More fields may be added.
-// This way, `SuppressWarningsAnnotation` will still be able to parse config
-// as `SuppressionSettings`.
-//
-message SuppressionSettings {
-
-    // The Java warnings to suppress.
-    //
-    // We use a novelty field number instead of `1` in order to avoid a clash when users combine
-    // `SuppressionSettings` with other types of configuration.
-    //
-    Warnings warnings = 42;
+/**
+ * Obtains the name of the field in Java case, as if it were declared as a field
+ * in a Java class.
+ *
+ * @return this field name in `lowerCamelCase` form.
+ */
+public fun FieldName.javaCase(): String {
+    val camelCase = value.camelCase()
+    return camelCase.replaceFirstChar { it.lowercaseChar() }
 }
 
-// Java compiler and inspection tools warnings that can be suppressed.
-message Warnings {
+/**
+ * Obtains the name of the primary setter method for this field.
+ */
+public val Field.primarySetterName: String
+    get() = io.spine.protodata.java.FieldMethods(this).primarySetter
 
-    repeated string value = 1;
-}
+/**
+ * Obtains the name of the accessor method for this field.
+ */
+public val Field.getterName: String
+    get() = io.spine.protodata.java.FieldMethods(this).getter
+
+/**
+ * Tells if the type of this field corresponds to a primitive type in Java.
+ */
+public val Field.isJavaPrimitive: Boolean
+    get() = if (!type.isPrimitive) {
+        false
+    } else when (type.primitive) {
+        TYPE_STRING, TYPE_BYTES -> false
+        else -> true
+    }

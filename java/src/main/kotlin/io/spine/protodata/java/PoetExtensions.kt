@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2022, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,36 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+@file:JvmName("Poet")
 
-package spine.protodata.java;
+package io.spine.protodata.java
 
-import "spine/options.proto";
+import com.google.common.collect.ImmutableList
+import com.squareup.javapoet.CodeBlock
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.java.annotation";
-option java_outer_classname = "AnnotationProto";
-option java_multiple_files = true;
-
-// The configuration expected by the `SuppressWarningsAnnotation` renderer.
-//
-// To combine the config for `SuppressWarningsAnnotation` with config for other renderers,
-// declare a message with the same fields and field numbers as this one. More fields may be added.
-// This way, `SuppressWarningsAnnotation` will still be able to parse config
-// as `SuppressionSettings`.
-//
-message SuppressionSettings {
-
-    // The Java warnings to suppress.
-    //
-    // We use a novelty field number instead of `1` in order to avoid a clash when users combine
-    // `SuppressionSettings` with other types of configuration.
-    //
-    Warnings warnings = 42;
-}
-
-// Java compiler and inspection tools warnings that can be suppressed.
-message Warnings {
-
-    repeated string value = 1;
+/**
+ * Splits this `CodeBlock` into lines.
+ */
+public fun CodeBlock.lines(): ImmutableList<String> {
+    val code = this.toString()
+    if (code.isEmpty()) {
+        return ImmutableList.of()
+    }
+    val lines = code.lines()
+    return ImmutableList.copyOf(lines)
 }

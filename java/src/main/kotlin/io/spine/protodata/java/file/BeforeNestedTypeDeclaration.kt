@@ -24,36 +24,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata.java.file
 
-package spine.protodata.java;
+import io.spine.protodata.java.ClassOrEnumName
+import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
+import io.spine.protodata.renderer.NonRepeatingInsertionPoint
+import io.spine.string.ti
+import io.spine.text.Text
+import io.spine.text.TextCoordinates
+import io.spine.tools.psi.java.lineNumber
 
-import "spine/options.proto";
+/**
+ * An insertion point before a nested type declaration.
+ *
+ * @see BeforePrimaryDeclaration
+ */
+public class BeforeNestedTypeDeclaration(
+    private val name: ClassOrEnumName
+) : NonRepeatingInsertionPoint {
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.java.annotation";
-option java_outer_classname = "AnnotationProto";
-option java_multiple_files = true;
+    init {
+        require(name.isNested) {
+            "The type `${name.canonical}` is not nested."
+        }
+    }
 
-// The configuration expected by the `SuppressWarningsAnnotation` renderer.
-//
-// To combine the config for `SuppressWarningsAnnotation` with config for other renderers,
-// declare a message with the same fields and field numbers as this one. More fields may be added.
-// This way, `SuppressWarningsAnnotation` will still be able to parse config
-// as `SuppressionSettings`.
-//
-message SuppressionSettings {
+    override val label: String = ""
 
-    // The Java warnings to suppress.
-    //
-    // We use a novelty field number instead of `1` in order to avoid a clash when users combine
-    // `SuppressionSettings` with other types of configuration.
-    //
-    Warnings warnings = 42;
-}
-
-// Java compiler and inspection tools warnings that can be suppressed.
-message Warnings {
-
-    repeated string value = 1;
+    override fun locateOccurrence(text: Text): TextCoordinates {
+        val psiClass = text.locate(name)
+        psiClass?.let {
+            val lineNumber = it.lineNumber
+            return atLine(lineNumber)
+        }
+        logger.atWarning().log { """
+            Cannot find a declaration of the nested type `$name` in the code:
+            ```java
+            ${text.printLines()}            
+            ```
+            """.ti()
+        }
+        return nowhere
+    }
 }

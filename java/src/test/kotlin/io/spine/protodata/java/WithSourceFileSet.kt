@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,36 +24,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata.java
 
-package spine.protodata.java;
+import io.spine.protodata.renderer.SourceFileSet
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption
+import kotlin.io.path.writeText
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.io.TempDir
 
-import "spine/options.proto";
+internal const val JAVA_FILE = "java/org/example/Test.java"
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.java.annotation";
-option java_outer_classname = "AnnotationProto";
-option java_multiple_files = true;
+/**
+ * A base for test cases that require a source file set with a Java file to run.
+ */
+internal open class WithSourceFileSet protected constructor() {
 
-// The configuration expected by the `SuppressWarningsAnnotation` renderer.
-//
-// To combine the config for `SuppressWarningsAnnotation` with config for other renderers,
-// declare a message with the same fields and field numbers as this one. More fields may be added.
-// This way, `SuppressWarningsAnnotation` will still be able to parse config
-// as `SuppressionSettings`.
-//
-message SuppressionSettings {
+    protected lateinit var sources: List<SourceFileSet>
+        private set
 
-    // The Java warnings to suppress.
-    //
-    // We use a novelty field number instead of `1` in order to avoid a clash when users combine
-    // `SuppressionSettings` with other types of configuration.
-    //
-    Warnings warnings = 42;
-}
-
-// Java compiler and inspection tools warnings that can be suppressed.
-message Warnings {
-
-    repeated string value = 1;
+    @BeforeEach
+    fun createSourceSet(@TempDir path: Path) {
+        val sourceRoot = path.resolve("source")
+        val targetRoot = path.resolve("target")
+        val sourceFile = sourceRoot.resolve(JAVA_FILE)
+        val contents = javaClass.classLoader.getResource(JAVA_FILE)!!.readText()
+        sourceFile.parent.toFile().mkdirs()
+        sourceFile.writeText(contents, options = arrayOf(StandardOpenOption.CREATE_NEW))
+        sources = listOf(SourceFileSet.create(sourceRoot, targetRoot))
+    }
 }

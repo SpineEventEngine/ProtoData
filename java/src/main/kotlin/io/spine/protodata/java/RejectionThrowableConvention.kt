@@ -24,36 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.test.uuid;
+package io.spine.protodata.java
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableList;
-import io.spine.protodata.plugin.Plugin;
-import io.spine.protodata.plugin.ViewRepository;
-import io.spine.protodata.renderer.Renderer;
-import io.spine.protodata.test.UuidType;
-import io.spine.protodata.java.file.PrintBeforePrimaryDeclaration;
-
-import java.util.Set;
-import java.util.List;
+import io.spine.protobuf.isNotDefault
+import io.spine.protodata.TypeName
+import io.spine.protodata.type.Declaration
+import io.spine.protodata.type.TypeSystem
+import io.spine.tools.code.Java
 
 /**
- * The plugin which supplies the {@link UuidType} view.
+ * A convention which governs Java Rejection-Throwable class declarations.
+ *
+ * The convention only defines a declaration for rejection message types. Any other types are
+ * undefined and thus result in the [declarationFor] method returning `null`.
  */
-@SuppressWarnings("unused") // Accessed reflectively.
-public final class UuidPlugin implements Plugin {
+public class RejectionThrowableConvention(
+    typeSystem: TypeSystem
+) : BaseJavaConvention<TypeName, ClassName>(typeSystem) {
 
-    @Override
-    public List<Renderer<?>> renderers() {
-        return ImmutableList.of(
-                new ClassScopePrinter(),
-                new UuidJavaRenderer(),
-                new PrintBeforePrimaryDeclaration()
-        );
-    }
-
-    @Override
-    public Set<ViewRepository<?, ?, ?>> viewRepositories() {
-        return ImmutableSet.of(new UuidTypeRepository());
+    @Suppress("ReturnCount")
+    override fun declarationFor(name: TypeName): Declaration<Java, ClassName>? {
+        val declaration = typeSystem.findMessage(name) ?: return null
+        val (msg, header) = declaration
+        val fileName = header.file.path
+        if (!fileName.endsWith("rejections.proto") // Not a rejection message.
+            || msg.declaredIn.isNotDefault()       // Not a top-level message.
+        ) {
+            return null
+        }
+        val packageName = header.javaPackage()
+        val simpleName = name.simpleName
+        val cls = ClassName(packageName, simpleName)
+        return Declaration(cls, cls.javaFile)
     }
 }

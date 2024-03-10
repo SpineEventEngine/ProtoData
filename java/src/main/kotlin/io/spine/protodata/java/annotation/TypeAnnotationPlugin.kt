@@ -24,36 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata.java.annotation
 
-package spine.protodata.java;
+import io.spine.protodata.java.file.PrintBeforePrimaryDeclaration
+import io.spine.protodata.plugin.AbstractPlugin
+import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.plugin.Policy
+import io.spine.protodata.plugin.View
+import io.spine.protodata.plugin.ViewRepository
 
-import "spine/options.proto";
-
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.java.annotation";
-option java_outer_classname = "AnnotationProto";
-option java_multiple_files = true;
-
-// The configuration expected by the `SuppressWarningsAnnotation` renderer.
-//
-// To combine the config for `SuppressWarningsAnnotation` with config for other renderers,
-// declare a message with the same fields and field numbers as this one. More fields may be added.
-// This way, `SuppressWarningsAnnotation` will still be able to parse config
-// as `SuppressionSettings`.
-//
-message SuppressionSettings {
-
-    // The Java warnings to suppress.
-    //
-    // We use a novelty field number instead of `1` in order to avoid a clash when users combine
-    // `SuppressionSettings` with other types of configuration.
-    //
-    Warnings warnings = 42;
-}
-
-// Java compiler and inspection tools warnings that can be suppressed.
-message Warnings {
-
-    repeated string value = 1;
-}
+/**
+ * An abstract base for plugins that generate code for type annotations.
+ *
+ * Extending classes must provide a list of renderers for the supported annotations, and
+ * a parameterless constructor to satisfy the [Plugin] instantiation mechanism.
+ */
+public abstract class TypeAnnotationPlugin(
+    renderers: Iterable<TypeAnnotation<*>>,
+    views: Set<Class<out View<*, *, *>>> = setOf(),
+    viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
+    policies: Set<Policy<*>> = setOf(),
+) : AbstractPlugin(
+    listOf(PrintBeforePrimaryDeclaration()) + renderers,
+    views, viewRepositories, policies
+)

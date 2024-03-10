@@ -24,36 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata.java.style
 
-package spine.protodata.java;
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-import "spine/options.proto";
+@DisplayName("PSI Java style extensions should")
+internal class StyleExtsSpec {
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.java.annotation";
-option java_outer_classname = "AnnotationProto";
-option java_multiple_files = true;
+    @Test
+    fun `create 'ImportOnDemand' instance with default settings`() {
+        val importOnDemand = importOnDemandDefaults()
 
-// The configuration expected by the `SuppressWarningsAnnotation` renderer.
-//
-// To combine the config for `SuppressWarningsAnnotation` with config for other renderers,
-// declare a message with the same fields and field numbers as this one. More fields may be added.
-// This way, `SuppressWarningsAnnotation` will still be able to parse config
-// as `SuppressionSettings`.
-//
-message SuppressionSettings {
-
-    // The Java warnings to suppress.
-    //
-    // We use a novelty field number instead of `1` in order to avoid a clash when users combine
-    // `SuppressionSettings` with other types of configuration.
-    //
-    Warnings warnings = 42;
-}
-
-// Java compiler and inspection tools warnings that can be suppressed.
-message Warnings {
-
-    repeated string value = 1;
+        importOnDemand.classCount shouldBe A_LOT
+        importOnDemand.nameCount shouldBe A_LOT
+    }
 }

@@ -31,8 +31,8 @@ package spine.protodata.java;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.codegen.java.style";
-option java_outer_classname = "SettingsProto";
+option java_package = "io.spine.protodata.java.style";
+option java_outer_classname = "StyleProto";
 option java_multiple_files = true;
 
 // Style settings for import statements in Java files.
