@@ -86,7 +86,7 @@ subprojects {
                     Validation.runtime,
                     Spine.Logging.lib,
                     Spine.reflect,
-                    ProtoData.compiler,
+                    ProtoData.backend,
                     ProtoData.java,
                     Jackson.Junior.objects
                 )

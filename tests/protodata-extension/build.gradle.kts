@@ -36,6 +36,6 @@ apply {
 }
 
 dependencies {
-    compileOnly("io.spine.protodata:compiler")
+    compileOnly("io.spine.protodata:backend")
     implementation("io.spine.protodata:java")
 }

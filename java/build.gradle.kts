@@ -36,7 +36,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler"))
+    api(project(":backend"))
     api(JavaPoet.lib)
     api(Spine.psiJavaBundle)
 

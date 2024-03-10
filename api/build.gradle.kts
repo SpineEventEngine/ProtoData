@@ -53,5 +53,5 @@ dependencies {
     testImplementation(project(":test-env"))
 
     // For using `CodeGenerationContext` in stubs.
-    testImplementation(project(":compiler"))
+    testImplementation(project(":backend"))
 }

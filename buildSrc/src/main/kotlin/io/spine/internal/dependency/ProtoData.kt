@@ -90,8 +90,8 @@ object ProtoData {
     val api
         get() = api(version)
 
-    val compiler
-        get() = "$group:protodata-compiler:$version"
+    val backend
+        get() = "$group:protodata-backend:$version"
 
     val gradleApi
         get() = "$group:protodata-gradle-api:$version"
