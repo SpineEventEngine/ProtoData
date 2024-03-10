@@ -85,7 +85,7 @@ dependencies {
 
 /**
  * Make functional tests depend on publishing all the submodules to Maven Local so that
- * the gradle plugin can get all the dependencies when it's applied to the test projects.
+ * the Gradle plugin can get all the dependencies when it's applied to the test projects.
  */
 val functionalTest: Task by tasks.getting {
     val task = this
