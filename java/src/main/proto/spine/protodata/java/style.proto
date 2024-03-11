@@ -35,6 +35,8 @@ option java_package = "io.spine.protodata.java.style";
 option java_outer_classname = "StyleProto";
 option java_multiple_files = true;
 
+import "spine/protodata/style.proto";
+
 // Style settings for import statements in Java files.
 //
 // This message type is modeled after fields and methods of
@@ -106,4 +108,5 @@ message PackageTable {
 //
 message JavaCodeStyle {
     ImportSettings import_settings = 1;
+    IndentOptions indent_options = 2;
 }
