@@ -46,8 +46,8 @@ message SuppressionSettings {
 
     // The Java warnings to suppress.
     //
-    // We use a novelty field number instead of `1` in order to avoid a clash when users combine
-    // `SuppressionSettings` with other types of configuration.
+    // We use a novelty field number instead of `1` in order to avoid a clash when
+    // users combine `SuppressionSettings` with other types of configuration.
     //
     Warnings warnings = 42;
 }
