@@ -26,35 +26,57 @@
 
 package io.spine.protodata.java.style
 
-import com.google.common.annotations.VisibleForTesting
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.JavaCodeStyleSettings
 import com.intellij.psi.codeStyle.PackageEntry
 import com.intellij.psi.codeStyle.PackageEntryTable
-
-/**
- * The constant to be used in settings to designate "too many".
- *
- * For example, for star imports, it would mean "start using on-demand import" when
- * the usage of this package is real madness.
- */
-@VisibleForTesting
-internal const val A_LOT = 9999
+import io.spine.protodata.indentOptions
+import io.spine.protodata.java.style.Defaults.CONTINUATION_INDENT
+import io.spine.protodata.java.style.Defaults.INDENT
+import io.spine.protodata.java.style.Defaults.ON_DEMAND_IMPORT_THRESHOLD
 
 /**
  * Creates an instance of [ImportOnDemand] with the default values.
  *
- * This function borrows some default values set by IntelliJ Platform and
- * alters others to suite conventions used by Spine SDK.
+ * The returned instance:
+ *  - instructs that on-demand imports are not used neither for classes, nor for static imports;
+ *  - has the [packages][ImportOnDemand.getPackages] list is empty.
  *
  * @see [com.intellij.psi.codeStyle.JavaCodeStyleSettings]
  */
 public fun importOnDemandDefaults(): ImportOnDemand = importOnDemand {
     // Unlike IntelliJ, which sets the `CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND` to `5`, our
     // default value forces NOT using on-demand imports as much as possible.
-    classCount = A_LOT
+    classCount = ON_DEMAND_IMPORT_THRESHOLD
 
     // Similarly to static imports, we want them all rather than star imports.
-    nameCount = A_LOT
+    nameCount = ON_DEMAND_IMPORT_THRESHOLD
+}
+
+/**
+ * Obtains an instance of [JavaCodeStyle] with the values used by default
+ * in the Java code of Spine SDK.
+ */
+public fun javaCodeStyleDefaults(): JavaCodeStyle = javaCodeStyle {
+    importSettings = importSettings {
+        onDemand = importOnDemandDefaults()
+    }
+
+    indentOptions = indentOptions {
+        indentSize = INDENT
+        continuationIndentSize = CONTINUATION_INDENT
+    }
+}
+
+/**
+ * Applies common language settings stored in this [JavaCodeStyle] to
+ * the given common style settings of the IntelliJ Platform.
+ */
+public fun JavaCodeStyle.applyTo(ij: CodeStyleSettings) {
+    with(ij.indentOptions) {
+        INDENT_SIZE = indentOptions.indentSize
+        CONTINUATION_INDENT_SIZE = indentOptions.continuationIndentSize
+    }
 }
 
 /**
@@ -94,3 +116,4 @@ private fun PackageTable.toIntelliJ(): PackageEntryTable {
 
 private fun PackageTable.Entry.toIntelliJ(): PackageEntry =
     PackageEntry(isStatic, packageName, withSubpackages)
+

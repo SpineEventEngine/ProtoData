@@ -79,6 +79,14 @@ private constructor(
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
     private var alreadyRead = false
 
+    /**
+     * The full path to the file created in the [output root][SourceFileSet.outputRoot] of
+     * the source file set to which this file belongs.
+     */
+    public val outputPath: Path by lazy {
+        sources.outputRoot / relativePath
+    }
+
     public companion object {
 
         /**

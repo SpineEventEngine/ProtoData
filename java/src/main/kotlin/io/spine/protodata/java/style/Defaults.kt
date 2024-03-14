@@ -26,19 +26,29 @@
 
 package io.spine.protodata.java.style
 
-import io.kotest.matchers.shouldBe
-import io.spine.protodata.java.style.Defaults.ON_DEMAND_IMPORT_THRESHOLD
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import com.google.common.annotations.VisibleForTesting
 
-@DisplayName("PSI Java style extensions should")
-internal class StyleExtsSpec {
+/**
+ * Constants for default Java code style.
+ */
+internal object Defaults {
 
-    @Test
-    fun `create 'ImportOnDemand' instance with default settings`() {
-        val importOnDemand = importOnDemandDefaults()
+    /**
+     * The constant to be used in settings to designate "too many".
+     *
+     * For example, for star imports, it would mean "start using on-demand import" when
+     * the usage of this package is real madness.
+     */
+    @VisibleForTesting
+    const val ON_DEMAND_IMPORT_THRESHOLD = 9999
 
-        importOnDemand.classCount shouldBe ON_DEMAND_IMPORT_THRESHOLD
-        importOnDemand.nameCount shouldBe ON_DEMAND_IMPORT_THRESHOLD
-    }
+    /**
+     * The number of spaces to indent Java code.
+     */
+    const val INDENT = 4
+
+    /**
+     * The indentation of the next wrapped line.
+     */
+    const val CONTINUATION_INDENT = 8
 }
