@@ -26,15 +26,21 @@
 
 @file:JvmName("Ast2Java")
 
+@file:Suppress("TooManyFunctions")
+
 package io.spine.protodata.java
 
 import com.google.protobuf.BoolValue
 import com.google.protobuf.StringValue
 import io.spine.protodata.EnumType
+import io.spine.protodata.Field
+import io.spine.protodata.FieldName
 import io.spine.protodata.MessageType
+import io.spine.protodata.PrimitiveType
 import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.TypeName
 import io.spine.protodata.find
+import io.spine.protodata.isPrimitive
 import io.spine.protodata.nameWithoutExtension
 import io.spine.string.camelCase
 import java.nio.file.Path
@@ -164,3 +170,37 @@ public fun ProtoFileHeader.javaOuterClassName(): String =
         ?.value
         ?: nameWithoutExtension().camelCase()
 
+
+/**
+ * Obtains the name of the field in Java case, as if it were declared as a field
+ * in a Java class.
+ *
+ * @return this field name in `lowerCamelCase` form.
+ */
+public fun FieldName.javaCase(): String {
+    val camelCase = value.camelCase()
+    return camelCase.replaceFirstChar { it.lowercaseChar() }
+}
+
+/**
+ * Obtains the name of the primary setter method for this field.
+ */
+public val Field.primarySetterName: String
+    get() = FieldMethods(this).primarySetter
+
+/**
+ * Obtains the name of the accessor method for this field.
+ */
+public val Field.getterName: String
+    get() = FieldMethods(this).getter
+
+/**
+ * Tells if the type of this field corresponds to a primitive type in Java.
+ */
+public val Field.isJavaPrimitive: Boolean
+    get() = if (!type.isPrimitive) {
+        false
+    } else when (type.primitive) {
+        PrimitiveType.TYPE_STRING, PrimitiveType.TYPE_BYTES -> false
+        else -> true
+    }
