@@ -54,9 +54,12 @@ public class SettingsDirectory(
     /**
      * Writes settings file for the given consumer.
      *
-     * @param consumerId the ID of the consumer to write settings for.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param consumerId
+     *         the ID of the consumer to write settings for.
+     * @param format
+     *         the format of the settings file.
+     * @param content
+     *         the content of the settings file.
      */
     public fun write(consumerId: String, format: Format, content: String) {
         val file = file(consumerId, format)
@@ -66,9 +69,12 @@ public class SettingsDirectory(
     /**
      * Writes settings file for the consumer specified by the generic parameter.
      *
-     * @param T the type of the settings consumer.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param T
+     *         the type of the settings consumer.
+     * @param format
+     *         the format of the settings file.
+     * @param content
+     *         the content of the settings file.
      */
     public inline fun <reified T: LoadsSettings> writeFor(format: Format, content: String) {
         write(T::class.java.defaultConsumerId, format, content)
@@ -77,9 +83,12 @@ public class SettingsDirectory(
     /**
      * Writes settings file for the given consumer.
      *
-     * @param consumerId the ID of the consumer to write settings for.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param consumerId
+     *         the ID of the consumer to write settings for.
+     * @param format
+     *         the format of the settings file.
+     * @param content
+     *         the content of the settings file.
      */
     public fun write(consumerId: String, format: Format, content: ByteArray) {
         val file = file(consumerId, format)
@@ -89,9 +98,12 @@ public class SettingsDirectory(
     /**
      * Writes settings file for the consumer specified by the generic parameter.
      *
-     * @param T the type of the settings consumer.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param T
+     *         the type of the settings consumer.
+     * @param format
+     *         the format of the settings file.
+     * @param content
+     *         the content of the settings file.
      */
     public inline fun <reified T: LoadsSettings> writeFor(format: Format, content: ByteArray) {
         write(T::class.java.defaultConsumerId, format, content)
