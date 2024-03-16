@@ -332,8 +332,7 @@ private fun checkTarget(targetRoot: Path) {
                 separator = nl,
                 transform = { f -> "    $f" }
             )
-            "Target directory `$targetRoot` must be empty. Found inside:$nl" +
-                    "${ls}."
+            "Target directory `$targetRoot` must be empty. Found inside:$nl$ls"
         }
     }
 }
