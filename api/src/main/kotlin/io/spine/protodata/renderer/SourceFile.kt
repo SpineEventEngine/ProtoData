@@ -80,6 +80,14 @@ private constructor(
     private var alreadyRead = false
 
     /**
+     * The full path to the file created in the [input root][SourceFileSet.inputRoot] of
+     * the source file set to which this file belongs.
+     */
+    public val inputPath: Path by lazy {
+        sources.inputRoot / relativePath
+    }
+
+    /**
      * The full path to the file created in the [output root][SourceFileSet.outputRoot] of
      * the source file set to which this file belongs.
      */
