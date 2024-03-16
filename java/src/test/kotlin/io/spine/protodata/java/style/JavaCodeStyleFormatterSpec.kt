@@ -56,11 +56,16 @@ internal class JavaCodeStyleFormatterSpec {
 
     companion object {
 
-        /** Set the indentation size other used in IJ settings for Java. */
+        /**
+         * Set the indentation size other than used in IntelliJ Platform
+         * settings for Java by default, so that we see that a custom value works.
+         */
         private const val INDENT_SIZE = 5
         val INDENT = " ".repeat(INDENT_SIZE)
 
-        /** The name of the resource file with the source code for testing the formatting. */
+        /**
+         * The name of the resource file with the source code for testing the formatting.
+         */
         private const val fileName = "Client.java"
 
         private lateinit var outputDir: Path
