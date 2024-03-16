@@ -34,6 +34,7 @@ import io.spine.protodata.settings.defaultConsumerId
 import io.spine.protodata.settings.loadSettings
 import io.spine.tools.psi.codeStyleManager
 import io.spine.tools.psi.codeStyleSettings
+import io.spine.tools.psi.convertLineSeparators
 import io.spine.tools.psi.force
 import io.spine.tools.psi.get
 import io.spine.tools.psi.java.Environment
@@ -88,8 +89,9 @@ public class JavaCodeStyleFormatter : JavaRenderer() {
     }
 
     private fun reformat(file: SourceFile) {
+        val withAdjustedSeparators = file.text().value.convertLineSeparators()
         val outputFile = file.outputPath.toFile()
-        val psiFile = parser.parse(file.text().value, outputFile)
+        val psiFile = parser.parse(withAdjustedSeparators, outputFile)
         execute {
             project.codeStyleManager.reformat(psiFile)
         }
