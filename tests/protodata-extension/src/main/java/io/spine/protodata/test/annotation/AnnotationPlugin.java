@@ -32,7 +32,7 @@ import io.spine.protodata.plugin.Plugin;
 import io.spine.protodata.plugin.Plugin;
 import io.spine.protodata.plugin.ViewRepository;
 import io.spine.protodata.renderer.Renderer;
-import io.spine.protodata.codegen.java.annotation.GeneratedTypeAnnotation;
+import io.spine.protodata.java.annotation.GeneratedTypeAnnotation;
 
 import java.util.Set;
 import java.util.List;

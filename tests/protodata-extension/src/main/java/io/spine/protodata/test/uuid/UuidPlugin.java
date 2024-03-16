@@ -32,7 +32,7 @@ import io.spine.protodata.plugin.Plugin;
 import io.spine.protodata.plugin.ViewRepository;
 import io.spine.protodata.renderer.Renderer;
 import io.spine.protodata.test.UuidType;
-import io.spine.protodata.codegen.java.file.PrintBeforePrimaryDeclaration;
+import io.spine.protodata.java.file.PrintBeforePrimaryDeclaration;
 
 import java.util.Set;
 import java.util.List;

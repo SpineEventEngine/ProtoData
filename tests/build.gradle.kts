@@ -27,6 +27,7 @@
 import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Jackson
 import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.ProtoData
 import io.spine.internal.dependency.Protobuf
@@ -85,8 +86,9 @@ subprojects {
                     Validation.runtime,
                     Spine.Logging.lib,
                     Spine.reflect,
-                    ProtoData.compiler,
-                    ProtoData.codegenJava,
+                    ProtoData.backend,
+                    ProtoData.java,
+                    Jackson.Junior.objects
                 )
             }
         }

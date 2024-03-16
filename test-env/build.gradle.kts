@@ -31,7 +31,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":compiler"))
+    implementation(project(":backend"))
     implementation(Grpc.stub)
     implementation(Grpc.protobuf)
 }

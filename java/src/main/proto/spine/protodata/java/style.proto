@@ -1,0 +1,112 @@
+/*
+ * Copyright 2024, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+syntax = "proto3";
+
+package spine.protodata.java;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.java.style";
+option java_outer_classname = "StyleProto";
+option java_multiple_files = true;
+
+import "spine/protodata/style.proto";
+
+// Style settings for import statements in Java files.
+//
+// This message type is modeled after fields and methods of
+// `com.intellij.psi.codeStyle.JavaCodeStyleSettings` class responsible for imports.
+//
+message ImportSettings {
+    InnerClassImports inner_classes = 10;
+    ImportOnDemand on_demand = 20;
+    PackageTable import_layout = 30;
+}
+
+// Settings for importing inner classes.
+message InnerClassImports {
+
+    // If true, inner classes are imported.
+    bool insert = 1;
+
+    // The list of simple class names that are excluded from imports.
+    //
+    // See [com.intellij.psi.codeStyle.JavaCodeStyleSettings.getDoNotImportInner].
+    //
+    repeated string exclude = 2;
+}
+
+// Settings for on-demand or start import (`*`) to be used instead of
+// individual import statements in a Java file.
+message ImportOnDemand {
+
+    // The number of classes which turns the star import for classes in a package.
+    //
+    // See [com.intellij.psi.codeStyle.JavaCodeStyleSettings.getClassCountToUseImportOnDemand].
+    //
+    int32 class_count = 1;
+
+    // The number of statically imported names which turns the star import for names in a class.
+    //
+    // See: `JavaCodeStyleSettings.getNamesCountToUseImportOnDemand()`.
+    //
+    int32 name_count = 2;
+
+    // The packages for which star import will be always used.
+    PackageTable packages = 80;
+}
+
+// A list of import settings for Java packages.
+message PackageTable {
+
+    // Entries of this table.
+    repeated Entry entry = 1;
+
+    // An entry in [PackageTable].
+    message Entry {
+
+        // The name of the package to be used in the import statement.
+        string package_name = 1;
+
+        // If true, subpackages of the package specified in [package_name] are also
+        // implicitly added to this [PackageTable].
+        bool with_subpackages = 2;
+
+        // If `true`, the `static import` will be used in Java.
+        bool is_static = 3;
+    }
+}
+
+// Java code style settings.
+//
+// See [com.intellij.psi.codeStyle.JavaCodeStyleSettings].
+//
+message JavaCodeStyle {
+    ImportSettings import_settings = 1;
+    IndentOptions indent_options = 2;
+}
