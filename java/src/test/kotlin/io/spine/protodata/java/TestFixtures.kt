@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,12 @@
  */
 
 import io.kotest.matchers.shouldBe
+import io.spine.io.Resource
 import io.spine.protodata.java.Expression
 import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.io.path.div
+import kotlin.io.path.writeText
 
 /**
  * Obtains a Java file path, assuming this string is a fully qualified class name.
@@ -36,4 +39,14 @@ internal fun String.toSourcePath(): Path = Path(replace(".", "//") + ".java")
 
 internal fun assertCode(expression: Expression, code: String) {
     expression.toCode() shouldBe code
+}
+
+/**
+ * Reads a text file from resources and writes it to the given directory.
+ */
+internal fun copyResource(fileName: String, outDir: Path) {
+    val resource = Resource.file(fileName, object{}.javaClass.classLoader)
+    val loaded = resource.read()
+    val outFile = outDir / fileName
+    outFile.writeText(loaded)
 }

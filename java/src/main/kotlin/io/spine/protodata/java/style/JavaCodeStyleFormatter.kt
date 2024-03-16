@@ -26,6 +26,7 @@
 
 package io.spine.protodata.java.style
 
+import com.intellij.psi.codeStyle.JavaCodeStyleSettings
 import io.spine.protodata.java.JavaRenderer
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
@@ -34,10 +35,10 @@ import io.spine.protodata.settings.loadSettings
 import io.spine.tools.psi.codeStyleManager
 import io.spine.tools.psi.codeStyleSettings
 import io.spine.tools.psi.force
+import io.spine.tools.psi.get
 import io.spine.tools.psi.java.Environment
-import io.spine.tools.psi.java.FileSystem
+import io.spine.tools.psi.java.Parser
 import io.spine.tools.psi.java.execute
-import io.spine.tools.psi.java.javaCodeStyleSettings
 
 /**
  * Reformats Java source code files using settings passed as [JavaCodeStyle] instance.
@@ -64,13 +65,19 @@ public class JavaCodeStyleFormatter : JavaRenderer() {
 
     private fun applyStyleToIntelliJ() {
         if (!appliedToIntelliJ) {
+            val ijCodeStyleSettings = project.codeStyleSettings
+            val ijJavaCodeStyleSettings = ijCodeStyleSettings.get<JavaCodeStyleSettings>()
             codeStyle.run {
-                applyTo(project.codeStyleSettings)
-                applyTo(project.javaCodeStyleSettings)
+                applyTo(ijCodeStyleSettings)
+                applyTo(ijJavaCodeStyleSettings)
             }
-            project.force(project.codeStyleSettings)
+            project.force(ijCodeStyleSettings)
             appliedToIntelliJ = true
         }
+    }
+
+    private val parser by lazy {
+        Parser(project)
     }
 
     override fun render(sources: SourceFileSet) {
@@ -81,7 +88,8 @@ public class JavaCodeStyleFormatter : JavaRenderer() {
     }
 
     private fun reformat(file: SourceFile) {
-        val psiFile = FileSystem.load(file.outputPath.toFile())
+        val outputFile = file.outputPath.toFile()
+        val psiFile = parser.parse(file.text().value, outputFile)
         execute {
             project.codeStyleManager.reformat(psiFile)
         }
@@ -96,5 +104,4 @@ public class JavaCodeStyleFormatter : JavaRenderer() {
          */
         public val defaultConsumerId: String = JavaCodeStyle::class.java.defaultConsumerId
     }
-
 }
