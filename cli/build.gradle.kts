@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,6 +184,26 @@ tasks.shadowJar {
     mergeServiceFiles("desc.ref")
     mergeServiceFiles("META-INF/services/io.spine.option.OptionsProvider")
     isZip64 = true
+    exclude(
+        // Exclude license files that cause or may cause issues with LicenseReport.
+        // We analyze these files when building artifacts we depend on.
+        "about_files/**",
+        "license/**",
+
+        "ant_tasks/**", // `resource-ant.jar` is of no use here.
+
+        /* Exclude `https://github.com/JetBrains/pty4j`.
+          We don't need the terminal. */
+        "resources/com/pty4j/**",
+
+        // Protobuf files.
+        "google/**",
+        "spine/**",
+        "src/**",
+
+        // Java source code files of the package `org.osgi`.
+        "OSGI-OPT/**"
+    )
 }
 
 // See https://github.com/johnrengelman/shadow/issues/153.

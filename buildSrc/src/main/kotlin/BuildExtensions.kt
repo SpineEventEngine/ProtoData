@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,9 +132,9 @@ val PluginDependenciesSpec.kover: PluginDependencySpec
  * Configures the dependencies between third-party Gradle tasks
  * and those defined via ProtoData and Spine Model Compiler.
  *
- * It is required to avoid warnings in build logs, detecting the undeclared
+ * It is required in order to avoid warnings in build logs, detecting the undeclared
  * usage of Spine-specific task output by other tasks,
- * e.g., the output of `launchProtoData` is used by `compileKotlin`.
+ * e.g. the output of `launchProtoData` is used by `compileKotlin`.
  */
 @Suppress("unused")
 fun Project.configureTaskDependencies() {

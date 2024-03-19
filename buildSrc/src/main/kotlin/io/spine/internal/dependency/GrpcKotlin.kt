@@ -24,20 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.jetbrains.dokka.gradle.DokkaTask
+package io.spine.internal.dependency
 
-plugins {
-    id("org.jetbrains.dokka") // Cannot use `Dokka` dependency object here yet.
-}
+/**
+ * gRPC-Kotlin/JVM.
+ *
+ * @see <a href="https://github.com/grpc/grpc-kotlin">GitHub project</a>
+ */
+@Suppress("unused")
+object GrpcKotlin {
+    const val version = "1.3.0"
+    const val stub = "io.grpc:grpc-kotlin-stub:$version"
 
-dependencies {
-    useDokkaForKotlinAsJava()
-    useDokkaWithSpineExtensions()
-}
-
-tasks.withType<DokkaTask>().configureEach {
-    configureForJava()
-    onlyIf {
-        (it as DokkaTask).isInPublishingGraph()
+    object ProtocPlugin {
+        const val id = "grpckt"
+        const val artifact = "io.grpc:protoc-gen-grpc-kotlin:$version:jdk8@jar"
     }
 }
