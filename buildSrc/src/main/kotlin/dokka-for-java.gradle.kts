@@ -37,7 +37,4 @@ dependencies {
 
 tasks.withType<DokkaTask>().configureEach {
     configureForJava()
-    onlyIf {
-        (it as DokkaTask).isInPublishingGraph()
-    }
 }

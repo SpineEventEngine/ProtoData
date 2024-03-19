@@ -45,6 +45,8 @@ import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.testing.configureLogging
 import io.spine.internal.gradle.testing.registerTestTasks
+import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -53,11 +55,11 @@ plugins {
     id("net.ltgt.errorprone")
     id("pmd-settings")
     id("project-report")
+    id("dokka-for-java")
     kotlin("jvm")
     id("io.kotest")
     id("org.jetbrains.kotlinx.kover")
     id("detekt-code-analysis")
-    id("dokka-for-java")
     id("dokka-for-kotlin")
 }
 

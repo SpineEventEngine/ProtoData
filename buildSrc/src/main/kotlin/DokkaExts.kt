@@ -184,19 +184,6 @@ fun Project.dokkaJavaJar(): TaskProvider<Jar> = tasks.getOrCreate("dokkaJavaJar"
 }
 
 /**
- * Tells if this task belongs to the execution graph which contains publishing tasks.
- *
- * The task `"publishToMavenLocal"` is excluded from the check because it is a part of
- * the local testing workflow.
- */
-fun DokkaTask.isInPublishingGraph(): Boolean =
-    project.gradle.taskGraph.allTasks.any {
-        with(it.name) {
-            startsWith("publish") && !startsWith("publishToMavenLocal")
-        }
-    }
-
-/**
  * Disables Dokka and Javadoc tasks in this `Project`.
  *
  * This function could be useful to improve build speed when building subprojects containing
