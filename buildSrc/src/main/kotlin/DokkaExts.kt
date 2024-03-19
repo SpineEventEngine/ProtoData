@@ -168,19 +168,6 @@ fun Project.dokkaKotlinJar(): TaskProvider<Jar> = tasks.getOrCreate("dokkaKotlin
 }
 
 /**
- * Tells if this task belongs to the execution graph which contains publishing tasks.
- *
- * The task `"publishToMavenLocal"` is excluded from the check because it is a part of
- * the local testing workflow.
- */
-fun DokkaTask.isInPublishingGraph(): Boolean =
-    project.gradle.taskGraph.allTasks.any {
-        with(it.name) {
-            startsWith("publish") && !startsWith("publishToMavenLocal")
-        }
-    }
-
-/**
  * Locates or creates `dokkaJavaJar` task in this [Project].
  *
  * The output of this task is a `jar` archive. The archive contains the Dokka output, generated upon
@@ -195,6 +182,19 @@ fun Project.dokkaJavaJar(): TaskProvider<Jar> = tasks.getOrCreate("dokkaJavaJar"
         this@getOrCreate.dependsOn(dokkaTask)
     }
 }
+
+/**
+ * Tells if this task belongs to the execution graph which contains publishing tasks.
+ *
+ * The task `"publishToMavenLocal"` is excluded from the check because it is a part of
+ * the local testing workflow.
+ */
+fun DokkaTask.isInPublishingGraph(): Boolean =
+    project.gradle.taskGraph.allTasks.any {
+        with(it.name) {
+            startsWith("publish") && !startsWith("publishToMavenLocal")
+        }
+    }
 
 /**
  * Disables Dokka and Javadoc tasks in this `Project`.
