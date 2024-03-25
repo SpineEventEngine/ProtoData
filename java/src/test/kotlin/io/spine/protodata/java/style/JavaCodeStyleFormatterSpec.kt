@@ -103,7 +103,7 @@ internal class JavaCodeStyleFormatterSpec {
 
             val settings = SettingsDirectory(settingDir)
             settings.write(
-                JavaCodeStyleFormatter.defaultConsumerId,
+                JavaCodeStyleFormatter.settingsId,
                 Format.PROTO_JSON,
                 javaStyle.toJson()
             )

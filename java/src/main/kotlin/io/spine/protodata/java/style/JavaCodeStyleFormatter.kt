@@ -50,7 +50,7 @@ import io.spine.tools.psi.java.execute
  */
 public class JavaCodeStyleFormatter : JavaRenderer() {
 
-    override val consumerId: String = defaultConsumerId
+    override val consumerId: String = settingsId
 
     private val project = Environment.project
 
@@ -104,6 +104,6 @@ public class JavaCodeStyleFormatter : JavaRenderer() {
         /**
          * The ID to be used when passing settings to [JavaCodeStyleFormatter].
          */
-        public val defaultConsumerId: String = JavaCodeStyle::class.java.defaultConsumerId
+        public val settingsId: String = JavaCodeStyle::class.java.defaultConsumerId
     }
 }
