@@ -94,6 +94,11 @@ val functionalTest: Task by tasks.getting {
     }
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 val pluginName = "protoDataPlugin"
 
 gradlePlugin {
