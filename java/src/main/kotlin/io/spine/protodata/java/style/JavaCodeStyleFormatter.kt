@@ -34,6 +34,7 @@ import io.spine.protodata.settings.defaultConsumerId
 import io.spine.protodata.settings.loadSettings
 import io.spine.tools.psi.codeStyleManager
 import io.spine.tools.psi.codeStyleSettings
+import io.spine.tools.psi.content
 import io.spine.tools.psi.convertLineSeparators
 import io.spine.tools.psi.force
 import io.spine.tools.psi.get
@@ -95,7 +96,7 @@ public class JavaCodeStyleFormatter : JavaRenderer() {
         execute {
             project.codeStyleManager.reformat(psiFile)
         }
-        val updatedCode = psiFile.text
+        val updatedCode = psiFile.content()
         file.overwrite(updatedCode)
     }
 

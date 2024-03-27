@@ -23,31 +23,67 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+syntax = "proto3";
 
-import io.kotest.matchers.shouldBe
-import io.spine.io.Resource
-import io.spine.protodata.java.Expression
-import java.nio.file.Path
-import kotlin.io.path.Path
-import kotlin.io.path.div
-import kotlin.io.path.writeText
+package memory;
 
-/**
- * Obtains a Java file path, assuming this string is a fully qualified class name.
- */
-internal fun String.toSourcePath(): Path = Path(replace(".", "//") + ".java")
+// This file is for testing processing of a bigger Java file.
+// It is based a similar proto code from McJava which caused a memory issue.
 
-internal fun assertCode(expression: Expression, code: String) {
-    expression.toCode() shouldBe code
+option java_package = "memory";
+
+// Produce one big Java file.
+option java_multiple_files = false;
+
+// Do not specify java_outer_classname option as we're not generating multiple
+// Java classes for rejections.
+
+import "google/protobuf/any.proto";
+
+message Rejection1Dep {
+    string id = 1;
 }
 
-/**
- * Reads a text file from resources and writes it to the given directory.
- */
-internal fun copyResource(fileName: String, outDir: Path) {
-    val resource = Resource.file(fileName, object{}.javaClass.classLoader)
-    val loaded = resource.read()
-    val outFile = outDir / fileName
-    outFile.parent.toFile().mkdirs()
-    outFile.writeText(loaded)
+enum Rejection2DepEnum {
+    OK = 0;
+}
+
+message Rejection1 {
+    Rejection1Dep id = 1;
+}
+
+message Rejection2 {
+    Rejection2DepEnum id = 1;
+}
+
+message Rejection3 {
+    Rejection3Inner innerMessage = 2;
+
+    message Rejection3Inner {
+        string id = 1;
+    }
+}
+
+message Rejection4 {
+    string id = 1;
+    google.protobuf.Any any_id = 2;
+    bool boolean_id = 3;
+    Rejection4Inner inner_id = 4;
+    Rejection4InnerEnum inner_enum_id = 5;
+
+    message Rejection4Inner {
+        string id = 1;
+    }
+
+    enum Rejection4InnerEnum {
+        OK = 0;
+    }
+}
+
+message RejectionWithRepeatedField {
+    repeated int32 values = 1;
+}
+
+message RejectionWithMapField {
+    map<int32, int32> map = 1;
 }
