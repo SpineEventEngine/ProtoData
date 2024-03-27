@@ -48,5 +48,6 @@ internal fun copyResource(fileName: String, outDir: Path) {
     val resource = Resource.file(fileName, object{}.javaClass.classLoader)
     val loaded = resource.read()
     val outFile = outDir / fileName
+    outFile.parent.toFile().mkdirs()
     outFile.writeText(loaded)
 }
