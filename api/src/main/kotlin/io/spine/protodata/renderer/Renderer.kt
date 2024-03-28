@@ -83,7 +83,7 @@ protected constructor(
      * The source set is guaranteed to consist only of the files, containing the code in
      * the supported programming [language].
      *
-     * This method may be called several times, if ProtoData is called with multiple source and
+     * This method may be called several times if ProtoData is called with multiple source and
      * target directories.
      */
     protected abstract fun render(sources: SourceFileSet)

@@ -71,12 +71,24 @@ import kotlin.system.exitProcess
 /**
  * Launches the CLI application.
  *
- * When the application is done, or an unhandled error occurs, exits the process.
+ * When the application is done exists the process with the code `0`.
+ * If an unhandled error occurs, exits the process with the code `-1`.
  */
+@Suppress(
+    "TooGenericExceptionCaught", // We do want the most generic type thrown.
+    "PrintStackTrace"
+)
 public fun main(args: Array<String>) {
-    val version = readVersion()
-    val run = Run(version)
-    run.main(args)
+    try {
+        val version = readVersion()
+        val run = Run(version)
+        run.main(args)
+        exitProcess(0)
+    } catch (e: Throwable) {
+        System.err.println("Exception occurred in ProtoData `main()`: `${e.message}`.")
+        e.printStackTrace(System.err)
+        exitProcess(-1)
+    }
 }
 
 private fun readVersion(): String = Version.fromManifestOf(Run::class.java).value
