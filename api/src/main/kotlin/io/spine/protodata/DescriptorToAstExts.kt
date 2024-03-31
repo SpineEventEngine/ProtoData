@@ -387,6 +387,21 @@ public fun Descriptor.toMessageType(): MessageType =
     }
 
 /**
+ * Obtains a field with the given [name].
+ *
+ * @throws IllegalStateException
+ *          if there is no such a field in this message type.
+ */
+public fun Descriptor.field(name: String): Field {
+    val field: FieldDescriptor? = findFieldByName(name)
+    check(field != null) {
+        "Unable to find the field named `$name` in the message type `${this.fullName}`."
+    }
+    val result = field.toField()
+    return result
+}
+
+/**
  * Converts this oneof descriptor to [OneofGroup].
  */
 public fun OneofDescriptor.toOneOfGroup(): OneofGroup =

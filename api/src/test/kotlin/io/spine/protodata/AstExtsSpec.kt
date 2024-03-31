@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,8 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 @DisplayName("AST extensions should")
 class AstExtsSpec {
 
-    @Nested
-    inner class `Check if a field is` {
+    @Nested inner class
+    `Check if a field is` {
 
         @Test
         fun `repeated if list`() {
@@ -84,8 +84,8 @@ class AstExtsSpec {
         }
     }
 
-    @Nested
-    inner class `Recognize RPC cardinality` {
+    @Nested inner class
+    `Recognize RPC cardinality` {
 
         @Test
         fun unary() {
@@ -121,8 +121,8 @@ class AstExtsSpec {
         }
     }
 
-    @Nested
-    inner class `Generate 'TypeName'` {
+    @Nested inner class
+    `Obtain 'TypeName'` {
 
         @Test
         fun `for a top-level message`() {

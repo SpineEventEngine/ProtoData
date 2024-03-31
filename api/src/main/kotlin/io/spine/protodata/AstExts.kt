@@ -31,6 +31,7 @@
 package io.spine.protodata
 
 import com.google.protobuf.Message
+import io.spine.type.shortDebugString
 
 /**
  * Obtains a name of this Protobuf file without the extension.
@@ -44,6 +45,21 @@ public fun ProtoFileHeader.nameWithoutExtension(): String {
         name
     }
 }
+
+/**
+ * Obtains a simple name of the type, if represents a message or an enum.
+ *
+ * @throws IllegalStateException
+ *          if this is a primitive type.
+ */
+public val Type.simpleName: String
+    get() {
+        return when {
+            isMessage -> message.simpleName
+            isEnum -> enumeration.simpleName
+            else -> error("Unable to obtain a simple name from the type `${shortDebugString()}`.")
+        }
+    }
 
 /**
  * Tells if this type is a Protobuf primitive type.
