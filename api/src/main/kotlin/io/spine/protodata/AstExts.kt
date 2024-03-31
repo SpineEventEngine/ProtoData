@@ -54,11 +54,26 @@ public fun ProtoFileHeader.nameWithoutExtension(): String {
  *          if this is a primitive type.
  */
 public val Type.simpleName: String
-    get() {
-        return when {
-            isMessage -> message.simpleName
-            isEnum -> enumeration.simpleName
-            else -> error("Unable to obtain a simple name from the type `${shortDebugString()}`.")
+    get() = typeName.simpleName
+
+/**
+ * Converts a message or an enum type to its [TypeName].
+ *
+ * @throws IllegalStateException
+ *          if this type is not a message or an enum type.
+ */
+public val Type.typeName: TypeName
+    get() = when {
+        isMessage -> message
+        isEnum -> enumeration
+        else -> {
+            val unable = "Unable to obtain `${TypeName::class.simpleName}`"
+            if (isPrimitive) {
+                error("$unable for the primitive type `${primitive.name}`.")
+            } else {
+                // This is a safety net in case `Type` is extended with more `oneof` cases.
+                error("$unable for the type `${shortDebugString()}`.")
+            }
         }
     }
 
