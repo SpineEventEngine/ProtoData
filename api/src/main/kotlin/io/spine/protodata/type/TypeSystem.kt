@@ -27,17 +27,22 @@
 package io.spine.protodata.type
 
 import io.spine.protodata.EnumType
-import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoDeclaration
 import io.spine.protodata.ProtoDeclarationName
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ProtobufDependency
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.Service
 import io.spine.protodata.ServiceName
+import io.spine.protodata.Type
 import io.spine.protodata.TypeName
+import io.spine.protodata.isEnum
+import io.spine.protodata.isMessage
+import io.spine.protodata.typeName
 import io.spine.server.query.Querying
 import io.spine.server.query.select
+import io.spine.type.shortDebugString
 
 /**
  * A collection of known Protobuf types.
@@ -96,4 +101,25 @@ public class TypeSystem(
         val type = types?.get(typeUrl)
         return if (type != null) type to file.header else null
     }
+}
+
+/**
+ * Finds a header of the file which declares the given [type].
+ *
+ * @return the header for the Protobuf file in which the given type is declared, or
+ *         `null` if the header was not found.
+ * @throws IllegalArgumentException
+ *          if the given type is not a message or an enum.
+ */
+public fun TypeSystem.findHeader(type: Type): ProtoFileHeader? {
+    require(type.isMessage || type.isEnum) {
+        "The type must be either a message or an enum. Passed: `${type.shortDebugString()}`."
+    }
+    val typeName = type.typeName
+    val found = when {
+        type.isMessage -> findMessage(typeName)
+        type.isEnum -> findEnum(typeName)
+        else -> null // Cannot happen.
+    }
+    return found?.second
 }
