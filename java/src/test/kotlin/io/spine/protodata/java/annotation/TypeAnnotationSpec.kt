@@ -32,7 +32,7 @@ import given.annotation.Schedule
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.ClassOrEnumName
-import io.spine.protodata.java.codeReference
+import io.spine.protodata.java.reference
 import io.spine.protodata.renderer.SourceFile
 import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
@@ -82,7 +82,7 @@ internal class TypeAnnotationSpec {
             annotation.shouldAnnotate(file) shouldBe false
 
             annotation.annotate(file)
-            file.countAnnotations(annotationClass.codeReference) shouldBe 1
+            file.countAnnotations(annotationClass.reference) shouldBe 1
         }
 
         @Test
@@ -92,7 +92,7 @@ internal class TypeAnnotationSpec {
             annotation.shouldAnnotate(file) shouldBe true
 
             annotation.annotate(file)
-            file.countAnnotations(annotationClass.codeReference) shouldBe 1
+            file.countAnnotations(annotationClass.reference) shouldBe 1
         }
     }
 
@@ -166,7 +166,7 @@ private val fileWithAnnotation: SourceFile
         
         /* INSERT:'BeforePrimaryDeclaration' */
 
-        @${annotationClass.codeReference}("SomeWarning")
+        @${annotationClass.reference}("SomeWarning")
         public class TheClassToAnnotate {
           // Empty by design. 
         }

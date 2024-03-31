@@ -27,10 +27,10 @@ package io.spine.protodata.java.annotation
 
 import io.spine.protodata.java.ClassOrEnumName
 import io.spine.protodata.java.JavaRenderer
-import io.spine.protodata.java.codeReference
 import io.spine.protodata.java.file.BeforeNestedTypeDeclaration
 import io.spine.protodata.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.java.isRepeatable
+import io.spine.protodata.java.reference
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
@@ -132,7 +132,7 @@ public abstract class TypeAnnotation<T : Annotation>(
         }
 
     private fun annotationCode(file: SourceFile): String =
-        "@${annotationClass.codeReference}${annotationArguments(file)}"
+        "@${annotationClass.reference}${annotationArguments(file)}"
 
     /**
      * Specifies whether to annotate a given file using the caller's implementation.
@@ -162,7 +162,7 @@ public abstract class TypeAnnotation<T : Annotation>(
         // Subtract 1 because the insertion point refers to the line of
         // a Java type declaration, starting with `class`, `interface`, or `enum`.
         val line = lines[lineNumber - 1]
-        val annotationClass = annotationClass.codeReference
+        val annotationClass = annotationClass.reference
         return !line.contains(annotationClass)
     }
 

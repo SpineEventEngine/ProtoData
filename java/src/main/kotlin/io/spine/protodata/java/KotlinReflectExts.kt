@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package given.annotation;
+package io.spine.protodata.java
 
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.TYPE;
+import kotlin.reflect.KClass
 
 /**
- * A repeated annotation.
+ * Obtains the code which is used for referencing this Kotlin class in Java code.
+ *
+ * @return a simple class name for the class belonging to `java.lang` package.
+ *         Otherwise, a canonical name is returned.
  */
-@SuppressWarnings("unused") // Properties explain the meaning of the annotation.
-@Target(TYPE)
-@Repeatable(Schedules.class)
-public @interface Schedule {
-    String dayOfMonth() default "first";
-    String dayOfWeek() default "Mon";
-    int hour() default 12;
-}
+public val <T: Any> KClass<T>.reference: String
+    get() = java.reference

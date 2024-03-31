@@ -26,23 +26,29 @@
 
 package io.spine.protodata.java
 
-/**
- * Tells if this class belongs to the "java.lang" package.
- */
-public val Class<*>.isJavaLang: Boolean
-    get() = name.contains("java.lang")
+import given.annotation.Schedule
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * Tells if this annotation type is repeatable.
- */
-public val <T: Annotation> Class<T>.isRepeatable: Boolean
-    get() = isAnnotationPresent(Repeatable::class.java)
+@DisplayName("`java.lang` type extensions should")
+internal class JavaLangExtsSpec {
 
-/**
- * Obtains the code which is used for referencing this annotation class in Java code.
- *
- * @return a simple class name for the class beloging to `java.lang` package.
- *          Otherwise, a canonical name is returned.
- */
-public val <T: Annotation> Class<T>.codeReference: String
-    get() = if (isJavaLang) simpleName else canonicalName
+    @Test
+    fun `tell if a class belongs to 'java-DOT-lang' package`() {
+        String::class.java.isJavaLang shouldBe true
+        List::class.java.isJavaLang shouldBe false
+    }
+
+    @Test
+    fun `tell if annotation class is repeatable`() {
+        Schedule::class.java.isRepeatable shouldBe true
+        SuppressWarnings::class.java.isRepeatable shouldBe false
+    }
+
+    @Test
+    fun `obtain class reference for Java codegen`() {
+        String::class.java.reference shouldBe "String"
+        List::class.java.reference shouldBe "java.util.List"
+    }
+}

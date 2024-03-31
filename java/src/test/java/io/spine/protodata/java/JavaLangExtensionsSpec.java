@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package given.annotation;
+package io.spine.protodata.java;
 
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Target;
+import given.annotation.Schedule;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static java.lang.annotation.ElementType.TYPE;
+import static com.google.common.truth.Truth.assertThat;
+import static io.spine.protodata.java.JavaLangExtensions.isRepeatable;
 
-/**
- * A repeated annotation.
- */
-@SuppressWarnings("unused") // Properties explain the meaning of the annotation.
-@Target(TYPE)
-@Repeatable(Schedules.class)
-public @interface Schedule {
-    String dayOfMonth() default "first";
-    String dayOfWeek() default "Mon";
-    int hour() default 12;
+@DisplayName("`JavaLangExtensions` should")
+class JavaLangExtensionsSpec {
+
+    @Test
+    @DisplayName("tell if an annotation is repeatable")
+    void isAnnotationRepeatable() {
+        assertThat(isRepeatable(Schedule.class)).isTrue();
+    }
 }
