@@ -31,6 +31,7 @@
 package io.spine.protodata
 
 import com.google.protobuf.Message
+import io.spine.option.OptionsProto
 import io.spine.type.shortDebugString
 
 /**
@@ -110,6 +111,22 @@ public fun PrimitiveType.asType(): Type = type { primitive = this@asType }
  */
 public val MessageType.qualifiedName: String
     get() = name.qualifiedName
+
+
+/**
+ * Tells if this is a column option.
+ */
+private val Option.isColumn: Boolean
+    get() = name == OptionsProto.column.descriptor.name
+
+/**
+ * Obtains column fields of this message type.
+ *
+ * @return the list if the column fields, or
+ *         empty list if none of the fields has the `(column)` option.
+ */
+public val MessageType.columns: List<Field>
+    get() = fieldList.filter { it.optionList.any { option -> option.isColumn } }
 
 /**
  * Tells if this field is a Protobuf message.
