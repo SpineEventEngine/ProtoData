@@ -24,40 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("JavaLangTypes")
+@file:JvmName("ProtoFileHeaders")
 
 package io.spine.protodata.java
 
-/**
- * Tells if this class belongs to the "java.lang" package.
- */
-public val Class<*>.isJavaLang: Boolean
-    get() = name.contains("java.lang")
+import com.google.protobuf.BoolValue
+import com.google.protobuf.StringValue
+import io.spine.protodata.ProtoFileHeader
+import io.spine.protodata.find
+import io.spine.protodata.nameWithoutExtension
+import io.spine.string.camelCase
 
 /**
- * Tells if this annotation type is repeatable.
+ * Obtains a name of a Java package for the code generated from this Protobuf file.
  *
- * Since the receiver is the Java class, we check the presence of
- * [java.lang.annotation.Repeatable] annotation, not [kotlin.annotation.Repeatable].
+ * @return A value of the `java_package` option, if it is set.
+ *         Otherwise, returns the package name of the file.
  */
-public val <T: Annotation> Class<T>.isRepeatable: Boolean
-    get() = isAnnotationPresent(java.lang.annotation.Repeatable::class.java)
+public fun ProtoFileHeader.javaPackage(): String =
+    optionList.find("java_package", StringValue::class.java)
+        ?.value
+        ?: packageName
 
 /**
- * Obtains the code which is used for referencing this annotation class in Java code.
- *
- * @return a simple class name for the class belonging to `java.lang` package.
- *          Otherwise, a canonical name is returned.
+ * Obtains a value of `java_multiple_files` option set for this file.
  */
-@Deprecated(message = "Please use `reference` instead.", replaceWith = ReplaceWith("reference"))
-public val <T: Annotation> Class<T>.codeReference: String
-    get() = reference
+public fun ProtoFileHeader.javaMultipleFiles(): Boolean =
+    optionList.find("java_multiple_files", BoolValue::class.java)
+        ?.value
+        ?: false
 
 /**
- * Obtains the code which is used for referencing this class in Java code.
+ * Obtains a name of the Java outer class generated for this Protobuf file.
  *
- * @return a simple class name for the class belonging to `java.lang` package.
- *         Otherwise, a canonical name is returned.
+ * @return A value of `java_outer_classname` option, if it set for this file.
  */
-public val <T: Any> Class<T>.reference: String
-    get() = if (isJavaLang) simpleName else canonicalName
+public fun ProtoFileHeader.javaOuterClassName(): String =
+    optionList.find("java_outer_classname", StringValue::class.java)
+        ?.value
+        ?: nameWithoutExtension().camelCase()

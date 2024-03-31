@@ -24,40 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("JavaLangTypes")
+@file:JvmName("EnumTypes")
 
 package io.spine.protodata.java
 
-/**
- * Tells if this class belongs to the "java.lang" package.
- */
-public val Class<*>.isJavaLang: Boolean
-    get() = name.contains("java.lang")
+import io.spine.protodata.EnumType
+import io.spine.protodata.ProtoFileHeader
 
 /**
- * Tells if this annotation type is repeatable.
+ * Obtains the full name of the Java enum, generated from this Protobuf enum.
  *
- * Since the receiver is the Java class, we check the presence of
- * [java.lang.annotation.Repeatable] annotation, not [kotlin.annotation.Repeatable].
+ * @return name of the enum class generated from this enum.
  */
-public val <T: Annotation> Class<T>.isRepeatable: Boolean
-    get() = isAnnotationPresent(java.lang.annotation.Repeatable::class.java)
-
-/**
- * Obtains the code which is used for referencing this annotation class in Java code.
- *
- * @return a simple class name for the class belonging to `java.lang` package.
- *          Otherwise, a canonical name is returned.
- */
-@Deprecated(message = "Please use `reference` instead.", replaceWith = ReplaceWith("reference"))
-public val <T: Annotation> Class<T>.codeReference: String
-    get() = reference
-
-/**
- * Obtains the code which is used for referencing this class in Java code.
- *
- * @return a simple class name for the class belonging to `java.lang` package.
- *         Otherwise, a canonical name is returned.
- */
-public val <T: Any> Class<T>.reference: String
-    get() = if (isJavaLang) simpleName else canonicalName
+public fun EnumType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
+    name.javaClassName(accordingTo)

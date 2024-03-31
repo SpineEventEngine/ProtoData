@@ -24,40 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("JavaLangTypes")
+@file:JvmName("MessageTypes")
 
 package io.spine.protodata.java
 
-/**
- * Tells if this class belongs to the "java.lang" package.
- */
-public val Class<*>.isJavaLang: Boolean
-    get() = name.contains("java.lang")
+import io.spine.protodata.MessageType
+import io.spine.protodata.ProtoFileHeader
+import java.nio.file.Path
 
 /**
- * Tells if this annotation type is repeatable.
+ * Obtains the path to the `.java` file, generated from this message.
  *
- * Since the receiver is the Java class, we check the presence of
- * [java.lang.annotation.Repeatable] annotation, not [kotlin.annotation.Repeatable].
+ * The class which represents this message might not be the top level class of the Java file,
+ * which is determined by the options in the given Protobuf file header.
  */
-public val <T: Annotation> Class<T>.isRepeatable: Boolean
-    get() = isAnnotationPresent(java.lang.annotation.Repeatable::class.java)
+public fun MessageType.javaFile(accordingTo: ProtoFileHeader): Path =
+    name.javaFile(accordingTo)
 
 /**
- * Obtains the code which is used for referencing this annotation class in Java code.
+ * Obtains the full name of the Java class, generated from this message.
  *
- * @return a simple class name for the class belonging to `java.lang` package.
- *          Otherwise, a canonical name is returned.
+ * @return name of the class generated from this message.
  */
-@Deprecated(message = "Please use `reference` instead.", replaceWith = ReplaceWith("reference"))
-public val <T: Annotation> Class<T>.codeReference: String
-    get() = reference
-
-/**
- * Obtains the code which is used for referencing this class in Java code.
- *
- * @return a simple class name for the class belonging to `java.lang` package.
- *         Otherwise, a canonical name is returned.
- */
-public val <T: Any> Class<T>.reference: String
-    get() = if (isJavaLang) simpleName else canonicalName
+public fun MessageType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
+    name.javaClassName(accordingTo)

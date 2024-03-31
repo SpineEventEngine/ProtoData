@@ -24,40 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("JavaLangTypes")
+@file:JvmName("FieldNames")
 
 package io.spine.protodata.java
 
-/**
- * Tells if this class belongs to the "java.lang" package.
- */
-public val Class<*>.isJavaLang: Boolean
-    get() = name.contains("java.lang")
+import io.spine.protodata.FieldName
+import io.spine.string.camelCase
 
 /**
- * Tells if this annotation type is repeatable.
+ * Obtains the name of the field in Java case, as if it were declared as a field
+ * in a Java class.
  *
- * Since the receiver is the Java class, we check the presence of
- * [java.lang.annotation.Repeatable] annotation, not [kotlin.annotation.Repeatable].
+ * @return this field name in `lowerCamelCase` form.
  */
-public val <T: Annotation> Class<T>.isRepeatable: Boolean
-    get() = isAnnotationPresent(java.lang.annotation.Repeatable::class.java)
-
-/**
- * Obtains the code which is used for referencing this annotation class in Java code.
- *
- * @return a simple class name for the class belonging to `java.lang` package.
- *          Otherwise, a canonical name is returned.
- */
-@Deprecated(message = "Please use `reference` instead.", replaceWith = ReplaceWith("reference"))
-public val <T: Annotation> Class<T>.codeReference: String
-    get() = reference
-
-/**
- * Obtains the code which is used for referencing this class in Java code.
- *
- * @return a simple class name for the class belonging to `java.lang` package.
- *         Otherwise, a canonical name is returned.
- */
-public val <T: Any> Class<T>.reference: String
-    get() = if (isJavaLang) simpleName else canonicalName
+public fun FieldName.javaCase(): String {
+    val camelCase = value.camelCase()
+    return camelCase.replaceFirstChar { it.lowercaseChar() }
+}
