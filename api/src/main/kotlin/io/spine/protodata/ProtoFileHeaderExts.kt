@@ -40,4 +40,3 @@ public fun ProtoFileHeader.nameWithoutExtension(): String {
         name
     }
 }
-
