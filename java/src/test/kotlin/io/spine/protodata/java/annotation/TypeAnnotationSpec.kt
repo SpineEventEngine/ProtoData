@@ -195,7 +195,7 @@ private val fileWithRepeatableAnnotation: SourceFile
         
         /* INSERT:'BeforePrimaryDeclaration' */
 
-        @Schedule
+        @given.annotation.Schedule
         public class TheClassToAnnotate {
           // Empty by design. 
         }
