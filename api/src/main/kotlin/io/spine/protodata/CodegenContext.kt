@@ -36,7 +36,7 @@ import io.spine.server.query.Querying
 /**
  * A context of code generation.
  */
-public interface CodegenContext: Querying, Closeable {
+public interface CodegenContext : Querying, Closeable {
 
     /**
      * The type system containing all the types available for code generation.
@@ -53,5 +53,5 @@ public interface CodegenContext: Querying, Closeable {
      * A test-only method which checks if the context has entities of the given type.
      */
     @VisibleForTesting
-    public fun <E: Entity<*, *>> hasEntitiesOfType(cls: Class<E>): Boolean
+    public fun <E : Entity<*, *>> hasEntitiesOfType(cls: Class<E>): Boolean
 }

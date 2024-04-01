@@ -37,6 +37,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target(TYPE)
 @Retention(RUNTIME)
-@interface Schedules {
+public @interface Schedules {
     Schedule[] value();
 }

@@ -56,12 +56,12 @@ public class Documentation private constructor(locations: List<Location>) {
     /**
      * Creates an instance of `Documentation` with all the docs from the given file.
      */
-    public constructor(file: FileDescriptorProto): this(file.sourceCodeInfo.locationList)
+    public constructor(file: FileDescriptorProto) : this(file.sourceCodeInfo.locationList)
 
     /**
      * Creates an instance of `Documentation` with all the docs from the given file.
      */
-    public constructor(file: FileDescriptor): this(file.toProto())
+    public constructor(file: FileDescriptor) : this(file.toProto())
 
     /**
      * Obtains documentation for the given message.
@@ -192,10 +192,12 @@ private constructor(private val value: List<Int>) {
          * Obtains the `LocationPath` from the given service.
          */
         fun fromService(descriptor: ServiceDescriptor): LocationPath {
-            return LocationPath(listOf(
-                FileDescriptorProto.SERVICE_FIELD_NUMBER,
-                descriptor.index
-            ))
+            return LocationPath(
+                listOf(
+                    FileDescriptorProto.SERVICE_FIELD_NUMBER,
+                    descriptor.index
+                )
+            )
         }
 
         private fun upToTop(parent: Descriptor): List<Int> {
@@ -246,6 +248,7 @@ private constructor(private val value: List<Int>) {
     override fun toString(): String {
         return "LocationPath(${value.joinToString()})"
     }
+
     private fun subDeclaration(descriptorFieldNumber: Int, index: Int): LocationPath =
         LocationPath(value + arrayOf(descriptorFieldNumber, index))
 }

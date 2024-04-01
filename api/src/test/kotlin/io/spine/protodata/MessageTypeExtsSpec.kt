@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,41 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("Options")
+package io.spine.protodata
 
-package io.spine.protodata.java.file
+import io.kotest.matchers.shouldBe
+import io.spine.protodata.api.given.Project
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import com.google.protobuf.Any as ProtoAny
 
-import io.spine.protodata.Option
-import io.spine.protodata.TypeInstances.boolean
-import io.spine.protodata.TypeInstances.string
-import io.spine.protodata.option
-import io.spine.protodata.pack
-import io.spine.protodata.packedTrue
+@DisplayName("`MessageType` extensions should")
+internal class MessageTypeExtsSpec {
 
-/**
- * The option to instruct `protoc` to generate multiple Java files.
- */
-public val javaMultipleFiles: Option = option {
-    name = "java_multiple_files"
-    type = boolean
-    value = packedTrue
-}
+    @Test
+    fun `obtain qualified name of the type`() {
+        val type = ProtoAny.getDescriptor().toMessageType()
+        type.qualifiedName shouldBe "google.protobuf.Any"
+    }
 
-/**
- * Obtains an option to set the Java package with the given [name]
- * for the generated code.
- */
-public fun javaPackage(name: String): Option = option {
-    this.name = "java_package"
-    type = string
-    value = name.pack()
-}
+    @Test
+    fun `obtain entity columns`() {
+        val type = Project.getDescriptor().toMessageType()
+        val columns = type.columns
 
-/**
- * Obtains the option to set the [name] of the outer Java class.
- */
-public fun javaOuterClassName(name: String): Option = option {
-    this.name = "java_outer_classname"
-    type = string
-    value = name.pack()
+        columns.size shouldBe 2
+        columns[0].name.value shouldBe "name"
+        columns[1].name.value shouldBe "status"
+    }
 }

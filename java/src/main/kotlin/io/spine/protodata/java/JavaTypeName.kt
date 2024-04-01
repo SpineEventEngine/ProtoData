@@ -34,7 +34,7 @@ import kotlin.io.path.Path
 /**
  * A fully qualified name of a Java type.
  */
-public abstract class TypeName internal constructor(
+public abstract class JavaTypeName internal constructor(
     public val packageName: String,
     public val simpleNames: List<String>
 ) : NameElement<Java>, JavaElement {
@@ -78,7 +78,7 @@ public abstract class TypeName internal constructor(
 public abstract class ClassOrEnumName internal constructor(
     packageName: String,
     simpleNames: List<String>
-) : TypeName(packageName, simpleNames) {
+) : JavaTypeName(packageName, simpleNames) {
 
     /**
      * The canonical name of the type.

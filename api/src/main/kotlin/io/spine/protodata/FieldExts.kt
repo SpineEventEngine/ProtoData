@@ -24,76 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("Ast")
-
-@file:Suppress("TooManyFunctions")
+@file:JvmName("Fields")
 
 package io.spine.protodata
-
-import com.google.protobuf.Message
-
-/**
- * Obtains a name of this Protobuf file without the extension.
- */
-public fun ProtoFileHeader.nameWithoutExtension(): String {
-    val name = file.path.split("/").last()
-    val index = name.indexOf(".")
-    return if (index > 0) {
-        name.substring(0, index)
-    } else {
-        name
-    }
-}
-
-/**
- * Tells if this type is a Protobuf primitive type.
- */
-public val Type.isPrimitive: Boolean
-    get() = hasPrimitive()
-
-/**
- * Tells if this type represents a Protobuf message.
- */
-public val Type.isMessage: Boolean
-    get() = hasMessage()
-
-/**
- * Tells if this type represents a Protobuf `enum`.
- */
-public val Type.isEnum: Boolean
-    get() = hasEnumeration()
-
-/**
- * Tells if this type is `google.protobuf.Any`.
- */
-public val Type.isAny: Boolean
-    get() = isMessage
-            && message.packageName.equals("google.protobuf")
-            && message.simpleName.equals("Any")
-
-/**
- * Obtains the fully qualified name from this `TypeName`.
- */
-public val TypeNameOrBuilder.qualifiedName: String
-    get() {
-        val names = buildList<String> {
-            add(packageName)
-            addAll(nestingTypeNameList)
-            add(simpleName)
-        }
-        return names.filter { it.isNotEmpty() }.joinToString(separator = ".")
-    }
-
-/**
- * Obtains a [Type] wrapping this `PrimitiveType`.
- */
-public fun PrimitiveType.asType(): Type = type { primitive = this@asType }
-
-/**
- * Obtains the package and the name of the type.
- */
-public val MessageType.qualifiedName: String
-    get() = name.qualifiedName
 
 /**
  * Tells if this field is a Protobuf message.
@@ -142,15 +75,3 @@ public val Field.isPartOfOneof: Boolean
 public val Field.qualifiedName: String
     get() = "${declaringType.qualifiedName}.${name.value}"
 
-/**
- * Looks up an option value by the [optionName].
- *
- * If the option has a Protobuf primitive type, [cls] must be the wrapper type.
- * For example, an `Int32Value` for `int32`, `StringValue` for `string`, etc.
- *
- * @return the value of the option or a `null` if the option is not found.
- */
-public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>): T? {
-    val value = firstOrNull { it.name == optionName }?.value
-    return value?.unpack(cls)
-}

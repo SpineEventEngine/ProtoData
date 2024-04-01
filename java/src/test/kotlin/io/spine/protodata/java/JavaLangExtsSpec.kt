@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,26 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("Types")
+package io.spine.protodata.java
 
-package io.spine.protodata
+import given.annotation.Schedule
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A collection of types used by ProtoData.
- */
-public object Types {
+@DisplayName("`java.lang` type extensions should")
+internal class JavaLangExtsSpec {
 
-    /**
-     * The boolean value type.
-     */
-    public val boolean: Type by lazy {
-        type { primitive = PrimitiveType.TYPE_BOOL }
+    @Test
+    fun `tell if a class belongs to 'java-DOT-lang' package`() {
+        String::class.java.isJavaLang shouldBe true
+        List::class.java.isJavaLang shouldBe false
     }
 
-    /**
-     * The string value type.
-     */
-    public val string: Type by lazy {
-        type { primitive = PrimitiveType.TYPE_STRING }
+    @Test
+    fun `tell if annotation class is repeatable`() {
+        Schedule::class.java.isRepeatable shouldBe true
+        SuppressWarnings::class.java.isRepeatable shouldBe false
+    }
+
+    @Test
+    fun `obtain class reference for Java codegen`() {
+        String::class.java.reference shouldBe "String"
+        List::class.java.reference shouldBe "java.util.List"
     }
 }

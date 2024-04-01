@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:JvmName("JavaLangTypes")
+
 package io.spine.protodata.java
 
 /**
@@ -34,15 +36,28 @@ public val Class<*>.isJavaLang: Boolean
 
 /**
  * Tells if this annotation type is repeatable.
+ *
+ * Since the receiver is the Java class, we check the presence of
+ * [java.lang.annotation.Repeatable] annotation, not [kotlin.annotation.Repeatable].
  */
 public val <T: Annotation> Class<T>.isRepeatable: Boolean
-    get() = isAnnotationPresent(Repeatable::class.java)
+    get() = isAnnotationPresent(java.lang.annotation.Repeatable::class.java)
 
 /**
  * Obtains the code which is used for referencing this annotation class in Java code.
  *
- * @return a simple class name for the class beloging to `java.lang` package.
+ * @return a simple class name for the class belonging to `java.lang` package.
  *          Otherwise, a canonical name is returned.
  */
+@Deprecated(message = "Please use `reference` instead.", replaceWith = ReplaceWith("reference"))
 public val <T: Annotation> Class<T>.codeReference: String
+    get() = reference
+
+/**
+ * Obtains the code which is used for referencing this class in Java code.
+ *
+ * @return a simple class name for the class belonging to `java.lang` package.
+ *         Otherwise, a canonical name is returned.
+ */
+public val <T: Any> Class<T>.reference: String
     get() = if (isJavaLang) simpleName else canonicalName

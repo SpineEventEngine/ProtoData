@@ -35,7 +35,7 @@ import io.spine.text.Text;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.protodata.Ast.getQualifiedName;
+import static io.spine.protodata.TypeNames.getQualifiedName;
 import static io.spine.protodata.renderer.CoordinatesFactory.nowhere;
 import static java.lang.String.format;
 

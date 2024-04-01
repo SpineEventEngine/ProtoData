@@ -34,7 +34,7 @@ import static java.lang.annotation.ElementType.TYPE;
 /**
  * A repeated annotation.
  */
-@SuppressWarnings("unused") // Left for richness of the declaration.
+@SuppressWarnings("unused") // Properties explain the meaning of the annotation.
 @Target(TYPE)
 @Repeatable(Schedules.class)
 public @interface Schedule {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,41 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("Options")
+@file:JvmName("MessageTypes")
 
-package io.spine.protodata.java.file
+package io.spine.protodata.java
 
-import io.spine.protodata.Option
-import io.spine.protodata.TypeInstances.boolean
-import io.spine.protodata.TypeInstances.string
-import io.spine.protodata.option
-import io.spine.protodata.pack
-import io.spine.protodata.packedTrue
+import io.spine.protodata.MessageType
+import io.spine.protodata.ProtoFileHeader
+import java.nio.file.Path
 
 /**
- * The option to instruct `protoc` to generate multiple Java files.
+ * Obtains the path to the `.java` file, generated from this message.
+ *
+ * The class which represents this message might not be the top level class of the Java file,
+ * which is determined by the options in the given Protobuf file header.
  */
-public val javaMultipleFiles: Option = option {
-    name = "java_multiple_files"
-    type = boolean
-    value = packedTrue
-}
+public fun MessageType.javaFile(accordingTo: ProtoFileHeader): Path =
+    name.javaFile(accordingTo)
 
 /**
- * Obtains an option to set the Java package with the given [name]
- * for the generated code.
+ * Obtains the full name of the Java class, generated from this message.
+ *
+ * @return name of the class generated from this message.
  */
-public fun javaPackage(name: String): Option = option {
-    this.name = "java_package"
-    type = string
-    value = name.pack()
-}
-
-/**
- * Obtains the option to set the [name] of the outer Java class.
- */
-public fun javaOuterClassName(name: String): Option = option {
-    this.name = "java_outer_classname"
-    type = string
-    value = name.pack()
-}
+public fun MessageType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
+    name.javaClassName(accordingTo)

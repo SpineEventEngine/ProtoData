@@ -31,7 +31,7 @@ import com.google.protobuf.Empty
 import io.spine.protodata.FieldKt.ofMap
 import io.spine.protodata.FieldName
 import io.spine.protodata.PrimitiveType
-import io.spine.protodata.Types
+import io.spine.protodata.TypeInstances
 import io.spine.protodata.field
 import io.spine.protodata.fieldName
 import io.spine.protodata.typeName
@@ -53,7 +53,7 @@ internal class MessageReferenceSpec {
         val messageReference = MessageReference(LABEL)
         val field = field {
             name = fieldName
-            type = Types.string
+            type = TypeInstances.string
             declaringType = typeName
             single = Empty.getDefaultInstance()
         }
@@ -66,7 +66,7 @@ internal class MessageReferenceSpec {
         val messageReference = MessageReference(LABEL)
         val field = field {
             name = fieldName
-            type = Types.string
+            type = TypeInstances.string
             declaringType = typeName
             list = Empty.getDefaultInstance()
         }
@@ -79,7 +79,7 @@ internal class MessageReferenceSpec {
         val messageReference = MessageReference(LABEL)
         val field = field {
             name = fieldName
-            type = Types.string
+            type = TypeInstances.string
             declaringType = typeName
             map = ofMap {
                 keyType = PrimitiveType.TYPE_STRING
