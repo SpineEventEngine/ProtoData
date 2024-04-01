@@ -351,8 +351,8 @@ public fun FieldDescriptor.type(): Type {
 }
 
 /**
- * Converts this field type into an instance of [PrimitiveType] or throws an exception
- * if this type is not primitive.
+ * Converts this field type into an instance of [PrimitiveType], or
+ * throws an exception if this type is not primitive.
  */
 @Suppress("ComplexMethod") // ... not really, performing plain conversion.
 public fun FieldDescriptor.Type.toPrimitiveType(): PrimitiveType =
