@@ -57,7 +57,9 @@ public fun ProtoFileHeader.javaMultipleFiles(): Boolean =
 /**
  * Obtains a name of the Java outer class generated for this Protobuf file.
  *
- * @return A value of `java_outer_classname` option, if it set for this file.
+ * @return A value of `java_outer_classname` option, if it is set for this file.
+ *         If an option is not set, a `CamelCase` version of the proto file name is
+ *         returned, according to Protobuf conventions for Java.
  */
 public fun ProtoFileHeader.javaOuterClassName(): String =
     optionList.find("java_outer_classname", StringValue::class.java)
