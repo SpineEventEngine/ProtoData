@@ -26,14 +26,7 @@
 
 package io.spine.protodata
 
-import com.google.protobuf.Descriptors
-import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
-import io.spine.protodata.CallCardinality.CLIENT_STREAMING
-import io.spine.protodata.CallCardinality.SERVER_STREAMING
-import io.spine.protodata.CallCardinality.UNARY
-import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.TopLevelEnum
 import io.spine.protodata.test.TopLevelMessage
 import io.spine.protodata.test.TopLevelMessage.NestedEnum
@@ -47,101 +40,28 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 
 @TestInstance(PER_CLASS)
-@DisplayName("AST extensions should")
-class AstExtsSpec {
+@DisplayName("`Descriptor` extensions should")
+internal class DescriptorExtsSpec {
 
-    @Nested inner class
-    `Check if a field is` {
-
-        @Test
-        fun `repeated if list`() {
-            val field = Field.newBuilder()
-                .setList(Empty.getDefaultInstance())
-                .buildPartial()
-
-            field.isRepeated shouldBe true
-        }
-
-        @Test
-        fun `repeated if map`() {
-            val field = Field.newBuilder()
-                .setMap(
-                    Field.OfMap.newBuilder()
-                    .setKeyType(PrimitiveType.TYPE_STRING)
-                    .build())
-                .buildPartial()
-
-            field.isRepeated shouldBe true
-        }
-
-        @Test
-        fun `not repeated`() {
-            val field = Field.newBuilder()
-                .setSingle(Empty.getDefaultInstance())
-                .buildPartial()
-
-            field.isRepeated shouldBe false
-        }
-    }
-
-    @Nested inner class
-    `Recognize RPC cardinality` {
-
-        @Test
-        fun unary() {
-            val method = method("who")
-
-            method.cardinality shouldBe UNARY
-        }
-
-        @Test
-        fun `server streaming`() {
-            val method = method("where_are_you")
-
-            method.cardinality shouldBe SERVER_STREAMING
-        }
-
-        @Test
-        fun `client streaming`() {
-            val method = method("rescue_call")
-
-            method.cardinality shouldBe CLIENT_STREAMING
-        }
-
-        @Test
-        fun `bidirectional streaming`() {
-            val method = method("which_actor")
-
-            method.cardinality shouldBe BIDIRECTIONAL_STREAMING
-        }
-
-        private fun method(name: String): Descriptors.MethodDescriptor {
-            val service = DoctorProto.getDescriptor().services[0]
-            return service.methods.find { it.name == name }!!
-        }
-    }
-
-    @Nested inner class
+    @Nested
+    inner class
     `Obtain 'TypeName'` {
 
         @Test
         fun `for a top-level message`() {
             val name = TopLevelMessage.getDescriptor().name()
-
             name.qualifiedName shouldBe "spine.protodata.test.TopLevelMessage"
         }
 
         @Test
         fun `for a top-level enum`() {
             val name = TopLevelEnum.getDescriptor().name()
-
             name.qualifiedName shouldBe "spine.protodata.test.TopLevelEnum"
         }
 
         @Test
         fun `for a nested message`() {
             val name = NestedMessage.VeryNestedMessage.getDescriptor().name()
-
             name.qualifiedName shouldBe
                     "spine.protodata.test.TopLevelMessage.NestedMessage.VeryNestedMessage"
         }
@@ -149,21 +69,18 @@ class AstExtsSpec {
         @Test
         fun `for a nested enum`() {
             val name = NestedEnum.getDescriptor().name()
-
             name.qualifiedName shouldBe "spine.protodata.test.TopLevelMessage.NestedEnum"
         }
 
         @Test
         fun `for a top-level message without a package`() {
             val name = GlobalMessage.getDescriptor().name()
-
             name.typeUrl shouldBe "type.googleapis.com/GlobalMessage"
         }
 
         @Test
         fun `for a nested message without a package`() {
             val name = LocalMessage.getDescriptor().name()
-
             name.qualifiedName shouldBe "GlobalMessage.LocalMessage"
         }
     }
