@@ -120,4 +120,3 @@ private fun fieldToAny(field: FieldDescriptor, value: Any): com.google.protobuf.
     } else {
         TypeConverter.toAny(value)
     }
-
