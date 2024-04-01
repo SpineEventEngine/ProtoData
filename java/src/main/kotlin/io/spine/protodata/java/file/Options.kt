@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:JvmName("Options")
+
 package io.spine.protodata.java.file
 
 import io.spine.protodata.Option
