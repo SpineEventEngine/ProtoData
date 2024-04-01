@@ -26,18 +26,92 @@
 
 package io.spine.protodata
 
+import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
+import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.BOOL
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.BYTES
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.DOUBLE
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.FIXED32
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.FIXED64
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.FLOAT
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.GROUP
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.INT32
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.INT64
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.MESSAGE
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.SFIXED32
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.SFIXED64
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.SINT32
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.SINT64
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.STRING
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT32
+import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT64
 import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
+import com.google.protobuf.Empty
 import io.spine.option.OptionsProto
 import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
 import io.spine.protodata.CallCardinality.CLIENT_STREAMING
 import io.spine.protodata.CallCardinality.SERVER_STREAMING
 import io.spine.protodata.CallCardinality.UNARY
+import io.spine.protodata.FieldKt.ofMap
+import io.spine.protodata.PrimitiveType.TYPE_BOOL
+import io.spine.protodata.PrimitiveType.TYPE_BYTES
+import io.spine.protodata.PrimitiveType.TYPE_DOUBLE
+import io.spine.protodata.PrimitiveType.TYPE_FIXED32
+import io.spine.protodata.PrimitiveType.TYPE_FIXED64
+import io.spine.protodata.PrimitiveType.TYPE_FLOAT
+import io.spine.protodata.PrimitiveType.TYPE_INT32
+import io.spine.protodata.PrimitiveType.TYPE_INT64
+import io.spine.protodata.PrimitiveType.TYPE_SFIXED32
+import io.spine.protodata.PrimitiveType.TYPE_SFIXED64
+import io.spine.protodata.PrimitiveType.TYPE_SINT32
+import io.spine.protodata.PrimitiveType.TYPE_SINT64
+import io.spine.protodata.PrimitiveType.TYPE_STRING
+import io.spine.protodata.PrimitiveType.TYPE_UINT32
+import io.spine.protodata.PrimitiveType.TYPE_UINT64
+import io.spine.protodata.ProtoFileHeader.SyntaxVersion
+import io.spine.protodata.ProtoFileHeader.SyntaxVersion.PROTO2
+import io.spine.protodata.ProtoFileHeader.SyntaxVersion.PROTO3
+
+/**
+ * Obtains documentation of this [GenericDescriptor].
+ */
+private val GenericDescriptor.fileDoc: Documentation
+    get() = Documentation(file)
+
+/**
+ * Obtains the syntax version of the given [FileDescriptor].
+ */
+public fun FileDescriptor.syntaxVersion(): SyntaxVersion =
+    when (toProto().syntax) {
+        "proto2" -> PROTO2
+        "proto3" -> PROTO3
+        else -> PROTO2
+    }
+
+/**
+ * Obtains type URL prefix declared in the file.
+ *
+ * If there is no `type_url_prefix` option declared in the file, assumes that
+ * the prefix is `"type.googleapis.com"`, as it's the convention used by Google Protobuf
+ * Java implementation for packing `com.google.protobuf.Any` instances.
+ */
+public val FileDescriptor.typeUrlPrefix: String
+    get() {
+        val customTypeUrl = options.getExtension(OptionsProto.typeUrlPrefix)
+        return if (customTypeUrl.isNullOrBlank()) {
+            "type.googleapis.com"
+        } else {
+            customTypeUrl
+        }
+    }
 
 /**
  * Obtains the relative path to this file as a [File].
@@ -45,22 +119,75 @@ import io.spine.protodata.CallCardinality.UNARY
 public fun FileDescriptor.file(): File = file { path = name }
 
 /**
+ * Extracts metadata from this file descriptor, including file options.
+ */
+public fun FileDescriptor.toHeader(): ProtoFileHeader = protoFileHeader {
+    file = file()
+    packageName = `package`
+    syntax = syntaxVersion()
+    option.addAll(options.toList())
+}
+
+/**
+ * Obtains the file path from this file descriptor.
+ */
+public fun FileDescriptorProto.toFile(): File = file {
+    path = name
+}
+
+/**
+ * Converts this file descriptor to the instance of [ProtobufSourceFile].
+ */
+public fun FileDescriptor.toPbSourceFile(): ProtobufSourceFile {
+    val path = file()
+    val definitions = DefinitionFactory(this)
+    return protobufSourceFile {
+        file = path
+        header = toHeader()
+        with(definitions) {
+            type.putAll(messageTypes().associateByUrl())
+            enumType.putAll(enumTypes().associateByUrl())
+            service.putAll(services().associateByUrl())
+        }
+    }
+}
+
+/**
  * Obtains the name of this message type as a [TypeName].
  */
 public fun Descriptor.name(): TypeName = buildTypeName(name, file, containingType)
 
 /**
- * Obtains the name of this enum type as a [TypeName].
+ * Converts the receiver `Descriptor` into a [MessageType].
  */
-public fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containingType)
+public fun Descriptor.toMessageType(): MessageType =
+    messageType {
+        name = name()
+        file = getFile().file()
+        doc = fileDoc.forMessage(this@toMessageType)
+        option.addAll(options.toList())
+        if (containingType != null) {
+            declaredIn = containingType.name()
+        }
+        oneofGroup.addAll(realOneofs.map { it.toOneOfGroup() })
+        field.addAll(fields.mapped())
+        nestedMessages.addAll(nestedTypes.map { it.name() })
+        nestedEnums.addAll(enumTypes.map { it.name() })
+    }
 
 /**
- * Obtains the name of this service as a [ServiceName].
+ * Obtains a field with the given [name].
+ *
+ * @throws IllegalStateException
+ *          if there is no such a field in this message type.
  */
-public fun ServiceDescriptor.name(): ServiceName = serviceName {
-    typeUrlPrefix = file.typeUrlPrefix
-    packageName = file.`package`
-    simpleName = name
+public fun Descriptor.field(name: String): Field {
+    val field: FieldDescriptor? = findFieldByName(name)
+    check(field != null) {
+        "Unable to find the field named `$name` in the message type `${this.fullName}`."
+    }
+    val result = field.toField()
+    return result
 }
 
 /**
@@ -72,35 +199,6 @@ public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
  * Obtains the name of this `oneof` as a [OneofName].
  */
 public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
-
-/**
- * Obtains the name of this RPC method as an [RpcName].
- */
-public fun MethodDescriptor.name(): RpcName = rpcName { value = name }
-
-/**
- * Obtains the [CallCardinality] of this RPC method.
- *
- * The cardinality determines how many messages may flow from the client to the server and back.
- */
-public val MethodDescriptor.cardinality: CallCardinality
-    get() = when {
-        !isClientStreaming && !isServerStreaming -> UNARY
-        !isClientStreaming && isServerStreaming -> SERVER_STREAMING
-        isClientStreaming && !isServerStreaming -> CLIENT_STREAMING
-        isClientStreaming && isServerStreaming -> BIDIRECTIONAL_STREAMING
-        else -> error("Unable to determine cardinality of method: `$fullName`.")
-    }
-
-private val FileDescriptor.typeUrlPrefix: String
-    get() {
-        val customTypeUrl = options.getExtension(OptionsProto.typeUrlPrefix)
-        return if (customTypeUrl.isNullOrBlank()) {
-            "type.googleapis.com"
-        } else {
-            customTypeUrl
-        }
-    }
 
 private fun buildTypeName(
     simpleName: String,
@@ -121,4 +219,324 @@ private fun buildTypeName(
         typeName.addAllNestingTypeName(nestingNames)
     }
     return typeName.build()
+}
+
+/**
+ * Converts this field descriptor into a [Field] with options.
+ *
+ * @see buildField
+ */
+public fun FieldDescriptor.toField(): Field {
+    val field = buildField(this)
+    return field.copy {
+        // There are several similar expressions in this file like
+        // the `option.addAll()` call below. Sadly, these duplicates
+        // could not be refactored into a common function because
+        // they have no common compile-time type.
+        option.addAll(options.toList())
+    }
+}
+
+/**
+ * Converts this field descriptor into a [Field].
+ *
+ * The resulting [Field] will not reflect the field options.
+ *
+ * @see toField
+ */
+public fun buildField(desc: FieldDescriptor): Field =
+    field {
+        val declaredIn = desc.containingType.name()
+        name = desc.name()
+        orderOfDeclaration = desc.index
+        doc = desc.fileDoc.forField(desc)
+        number = desc.number
+        declaringType = declaredIn
+        copyTypeAndCardinality(desc)
+    }
+
+/**
+ * Converts the field type and cardinality (`map`/`list`/`oneof_name`/`single`) from
+ * the given descriptor to the receiver DSL-style builder.
+ */
+private fun FieldKt.Dsl.copyTypeAndCardinality(
+    desc: FieldDescriptor
+) {
+    if (desc.isMapField) {
+        val (keyField, valueField) = desc.messageType.fields
+        map = ofMap { keyType = keyField.primitiveType() }
+        type = valueField.type()
+    } else {
+        type = desc.type()
+        when {
+            desc.isRepeated -> list = Empty.getDefaultInstance()
+            desc.realContainingOneof != null -> oneofName = desc.realContainingOneof.name()
+            else -> single = Empty.getDefaultInstance()
+        }
+    }
+}
+
+/**
+ * Obtains the name of this enum type as a [TypeName].
+ */
+public fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containingType)
+
+/**
+ * Converts this enum descriptor into [EnumType] instance.
+ */
+public fun EnumDescriptor.toEnumType(): EnumType =
+    enumType {
+        val docs = fileDoc
+        val typeName = name()
+        name = typeName
+        option.addAll(options.toList())
+        file = getFile().file()
+        constant.addAll(values.map { it.toEnumConstant(typeName) })
+        if (containingType != null) {
+            declaredIn = containingType.name()
+        }
+        doc = docs.forEnum(this@toEnumType)
+    }
+
+/**
+ * Converts this enum value descriptor into an [EnumConstant] with options.
+ *
+ * @see buildConstant
+ */
+public fun EnumValueDescriptor.toEnumConstant(declaringType: TypeName): EnumConstant {
+    val constant = buildConstant(this, declaringType)
+    return constant.copy {
+        option.addAll(options.toList())
+    }
+}
+
+/**
+ * Converts this enum value descriptor into an [EnumConstant].
+ *
+ * The resulting [EnumConstant] will not reflect the options on the enum constant.
+ *
+ * @see toEnumConstant
+ */
+public fun buildConstant(desc: EnumValueDescriptor, declaringType: TypeName): EnumConstant =
+    enumConstant {
+        name = constantName { value = desc.name }
+        declaredIn = declaringType
+        number = desc.number
+        orderOfDeclaration = desc.index
+        doc = desc.fileDoc.forEnumConstant(desc)
+    }
+
+/**
+ * Converts this method descriptor into an [Rpc] with options.
+ *
+ * @see buildRpc
+ */
+public fun MethodDescriptor.toRpc(declaringService: ServiceName): Rpc {
+    val rpc = buildRpc(this, declaringService)
+    return rpc.copy {
+        option.addAll(options.toList())
+    }
+}
+
+/**
+ * Constructs a [Type] of the receiver field.
+ */
+public fun FieldDescriptor.type(): Type {
+    return when (type) {
+        ENUM -> enum(this)
+        MESSAGE -> message(this)
+        GROUP -> error("Cannot process the field `$fullName` of type `$type`.")
+        else -> primitiveType().asType()
+    }
+}
+
+/**
+ * Converts this field type into an instance of [PrimitiveType] or throws an exception
+ * if this type is not primitive.
+ */
+@Suppress("ComplexMethod") // ... not really, performing plain conversion.
+public fun FieldDescriptor.Type.toPrimitiveType(): PrimitiveType =
+    when (this) {
+        BOOL -> TYPE_BOOL
+        BYTES -> TYPE_BYTES
+        DOUBLE -> TYPE_DOUBLE
+        FIXED32 -> TYPE_FIXED32
+        FIXED64 -> TYPE_FIXED64
+        FLOAT -> TYPE_FLOAT
+        INT32 -> TYPE_INT32
+        INT64 -> TYPE_INT64
+        SFIXED32 -> TYPE_SFIXED32
+        SFIXED64 -> TYPE_SFIXED64
+        SINT32 -> TYPE_SINT32
+        SINT64 -> TYPE_SINT64
+        STRING -> TYPE_STRING
+        UINT32 -> TYPE_UINT32
+        UINT64 -> TYPE_UINT64
+        else -> error("`$this` is not a primitive type.")
+    }
+
+/**
+ * Obtains the type of this field as a [PrimitiveType] or throws an exception
+ * if the type is not primitive.
+ */
+public fun FieldDescriptor.primitiveType(): PrimitiveType = type.toPrimitiveType()
+
+/**
+ * Obtains the type of the given [field] as an enum type.
+ */
+private fun enum(field: FieldDescriptor): Type = type {
+    enumeration = field.enumType.name()
+}
+
+/**
+ * Obtains the type of the given [field] as a message type.
+ */
+private fun message(field: FieldDescriptor): Type = type {
+    message = field.messageType.name()
+}
+
+private fun <T : ProtoDeclaration> Sequence<T>.associateByUrl() =
+    associateBy { it.name.typeUrl }
+
+/**
+ * Converts this oneof descriptor to [OneofGroup].
+ */
+public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
+    oneofGroup {
+        val docs = fileDoc
+        val groupName = name()
+        name = groupName
+        field.addAll(fields.mapped())
+        option.addAll(options.toList())
+        doc = docs.forOneof(this@toOneOfGroup)
+    }
+
+private fun Iterable<FieldDescriptor>.mapped(): Iterable<Field> = map { it.toField() }
+
+/**
+ * Obtains the name of this service as a [ServiceName].
+ */
+public fun ServiceDescriptor.name(): ServiceName = serviceName {
+    typeUrlPrefix = file.typeUrlPrefix
+    packageName = file.`package`
+    simpleName = name
+}
+
+/**
+ * Converts this service descriptor into [Service] instance.
+ */
+public fun ServiceDescriptor.toService(): Service =
+    service {
+        val docs = fileDoc
+        val serviceName = name()
+        name = serviceName
+        file = getFile().file()
+        rpc.addAll(methods.map { it.toRpc(serviceName) })
+        option.addAll(options.toList())
+        doc = docs.forService(this@toService)
+    }
+
+/**
+ * Obtains the name of this RPC method as an [RpcName].
+ */
+public fun MethodDescriptor.name(): RpcName = rpcName { value = name }
+
+/**
+ * Obtains the [CallCardinality] of this RPC method.
+ *
+ * The cardinality determines how many messages may flow from the client to the server and back.
+ */
+public val MethodDescriptor.cardinality: CallCardinality
+    get() = when {
+        !isClientStreaming && !isServerStreaming -> UNARY
+        !isClientStreaming && isServerStreaming -> SERVER_STREAMING
+        isClientStreaming && !isServerStreaming -> CLIENT_STREAMING
+        isClientStreaming && isServerStreaming -> BIDIRECTIONAL_STREAMING
+        else -> error("Unable to determine cardinality of method: `$fullName`.")
+    }
+
+/**
+ * Converts this method descriptor into an [Rpc].
+ *
+ * The resulting [Rpc] will not reflect the method options.
+ *
+ * @see toRpc
+ */
+public fun buildRpc(
+    desc: MethodDescriptor,
+    declaringService: ServiceName
+): Rpc = rpc {
+    name = desc.name()
+    cardinality = desc.cardinality
+    requestType = desc.inputType.name()
+    responseType = desc.outputType.name()
+    doc = desc.fileDoc.forRpc(desc)
+    service = declaringService
+}
+
+/**
+ * A factory of Protobuf definitions of a single `.proto` file.
+ *
+ * @property file
+ *            the descriptor of the Protobuf file.
+ */
+private class DefinitionFactory(private val file: FileDescriptor) {
+
+    /**
+     * Builds the message type definitions from the [file].
+     *
+     * @return all the message types declared in the file, including nested types.
+     */
+    fun messageTypes(): Sequence<MessageType> {
+        var messages = file.messageTypes.asSequence()
+        for (msg in file.messageTypes) {
+            messages += walkMessage(msg) { it.nestedTypes }
+        }
+        return messages.map { it.toMessageType() }
+    }
+
+    /**
+     * Builds the enum type definitions from the [file].
+     *
+     * @return all the enums declared in the file, including nested enums.
+     */
+    fun enumTypes(): Sequence<EnumType> {
+        var enums = file.enumTypes.asSequence()
+        for (msg in file.messageTypes) {
+            enums += walkMessage(msg) { it.enumTypes }
+        }
+        return enums.map { it.toEnumType() }
+    }
+
+    /**
+     * Builds the service definitions from the [file].
+     *
+     * @return all the services declared in the file, including the nested ones.
+     */
+    fun services(): Sequence<Service> =
+        file.services.asSequence().map { it.toService() }
+}
+
+/**
+ * Produces a sequence by walking through all the nested message definitions staring with [type].
+ *
+ * @param type
+ *         the message definition which may contain nested message definition to walk through.
+ * @param extractorFun
+ *         a function that, given a message definition, extracts the items of interest.
+ * @return results of the calls to [extractorFun] flattened into one sequence.
+ */
+private fun <T> walkMessage(
+    type: Descriptor,
+    extractorFun: (Descriptor) -> Iterable<T>,
+): Sequence<T> {
+    val queue = ArrayDeque<Descriptor>()
+    queue.add(type)
+    return sequence {
+        while (queue.isNotEmpty()) {
+            val msg = queue.removeFirst()
+            yieldAll(extractorFun(msg))
+            queue.addAll(msg.nestedTypes)
+        }
+    }
 }

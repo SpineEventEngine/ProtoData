@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,26 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("Types")
+@file:JvmName("MessageTypes")
 
 package io.spine.protodata
 
 /**
- * A collection of types used by ProtoData.
+ * Obtains the package and the name of the type.
  */
-public object Types {
+public val MessageType.qualifiedName: String
+    get() = name.qualifiedName
 
-    /**
-     * The boolean value type.
-     */
-    public val boolean: Type by lazy {
-        type { primitive = PrimitiveType.TYPE_BOOL }
-    }
-
-    /**
-     * The string value type.
-     */
-    public val string: Type by lazy {
-        type { primitive = PrimitiveType.TYPE_STRING }
-    }
-}
+/**
+ * Obtains column fields of this message type.
+ *
+ * @return the list if the column fields, or
+ *         empty list if none of the fields has the `(column)` option.
+ */
+public val MessageType.columns: List<Field>
+    get() = fieldList.filter { it.optionList.any { option -> option.isColumn } }

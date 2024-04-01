@@ -32,7 +32,7 @@ import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.Field
 import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.Types
+import io.spine.protodata.TypeInstances
 import io.spine.protodata.field
 import io.spine.protodata.fieldName
 import io.spine.protodata.oneofName
@@ -130,27 +130,27 @@ private val stubType: io.spine.protodata.TypeName = typeName {
 private fun singleField() = field {
     name = fieldName { value = "incarnation" }
     single = Empty.getDefaultInstance()
-    type = Types.string
+    type = TypeInstances.string
     declaringType = stubType
 }
 
 private fun listField() = field {
     name = fieldName { value = "route" }
-    type = Types.string
+    type = TypeInstances.string
     list = Empty.getDefaultInstance()
     declaringType = stubType
 }
 
 private fun mapField() = field {
     name = fieldName { value = "attributes" }
-    type = Types.string
+    type = TypeInstances.string
     map = Field.OfMap.newBuilder().setKeyType(TYPE_STRING).build()
     declaringType = stubType
 }
 
 private fun oneofField() = field {
     name = fieldName { value = "sidekick" }
-    type = Types.string
+    type = TypeInstances.string
     oneofName = oneofName { value = "crew" }
     declaringType = stubType
 }
