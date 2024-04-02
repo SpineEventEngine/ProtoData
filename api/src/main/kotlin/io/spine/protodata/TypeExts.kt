@@ -46,18 +46,30 @@ public val Type.simpleName: String
  *          if this type is not a message or an enum type.
  */
 public val Type.typeName: TypeName
+    get() {
+        messageOrEnumName?.let {
+            return it
+        }
+        val unable = "Unable to obtain `${TypeName::class.simpleName}`"
+        if (isPrimitive) {
+            error("$unable for the primitive type `${primitive.name}`.")
+        } else {
+            // This is a safety net in case `Type` is extended with more `oneof` cases.
+            error("$unable for the type `${shortDebugString()}`.")
+        }
+    }
+
+/**
+ * The type name of this type, given that the type is a complex type and
+ * not a Protobuf primitive type.
+ *
+ * If the type is primitive, this value is `null`.
+ */
+public val Type.messageOrEnumName: TypeName?
     get() = when {
         isMessage -> message
         isEnum -> enumeration
-        else -> {
-            val unable = "Unable to obtain `${TypeName::class.simpleName}`"
-            if (isPrimitive) {
-                error("$unable for the primitive type `${primitive.name}`.")
-            } else {
-                // This is a safety net in case `Type` is extended with more `oneof` cases.
-                error("$unable for the type `${shortDebugString()}`.")
-            }
-        }
+        else -> null
     }
 
 /**
