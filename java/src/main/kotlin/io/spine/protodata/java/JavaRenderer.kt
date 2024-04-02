@@ -27,10 +27,13 @@
 package io.spine.protodata.java
 
 import io.spine.protodata.File
+import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
 import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.Java
 import java.nio.file.Path
 
@@ -62,4 +65,15 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
         select(ProtobufSourceFile::class.java)
             .findById(path)!!
             .header
+
+    /**
+     * Locates a source file for the given message in this [SourceFileSet].
+     *
+     * @return the found file or `null` if not found.
+     */
+    protected fun SourceFileSet.fileOf(msg: MessageType): SourceFile? {
+        val javaFile = javaFileOf(type = msg.name, declaredIn = msg.file)
+        val sourceFile = find(javaFile)
+        return sourceFile
+    }
 }
