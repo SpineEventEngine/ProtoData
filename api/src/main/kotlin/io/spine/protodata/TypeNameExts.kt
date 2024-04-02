@@ -29,7 +29,7 @@
 package io.spine.protodata
 
 /**
- * Obtains the fully qualified name from this `TypeName`.
+ * Obtains a fully qualified name of a `TypeName` or its builder.
  */
 public val TypeNameOrBuilder.qualifiedName: String
     get() {
