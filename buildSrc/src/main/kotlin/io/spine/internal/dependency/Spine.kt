@@ -55,7 +55,7 @@ object Spine {
         const val reflect = "2.0.0-SNAPSHOT.183"
 
         /**
-         * The version of [Spine.logging].
+         * The version of [Spine.Logging].
          *
          * @see <a href="https://github.com/SpineEventEngine/logging">spine-logging</a>
          */
@@ -135,13 +135,6 @@ object Spine {
     }
 
     const val base = "$group:spine-base:${ArtifactVersion.base}"
-
-    @Deprecated("Use `Logging.lib` instead.", ReplaceWith("Logging.lib"))
-    const val logging = "$group:spine-logging:${ArtifactVersion.logging}"
-    @Deprecated("Use `Logging.context` instead.", ReplaceWith("Logging.context"))
-    const val loggingContext = "$group:spine-logging-context:${ArtifactVersion.logging}"
-    @Deprecated("Use `Logging.backend` instead.", ReplaceWith("Logging.backend"))
-    const val loggingBackend = "$group:spine-logging-backend:${ArtifactVersion.logging}"
 
     const val reflect = "$group:spine-reflect:${ArtifactVersion.reflect}"
     const val baseTypes = "$group:spine-base-types:${ArtifactVersion.baseTypes}"

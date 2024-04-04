@@ -64,10 +64,6 @@ subprojects {
     }
 
     repositories.standardToSpineSdk()
-    repositories {
-        intellijReleases
-        jetBrainsCacheRedirector
-    }
 
     val protoDataVersion: String by extra
     configurations {
