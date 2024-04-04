@@ -104,9 +104,11 @@ internal class MessageTypeDependenciesSpec {
             val allTypes = MessageTypeDependencies(funnyType, null, typeSystem).set
 
             allTypes shouldHaveSize 3
-            allTypes shouldContain jungleType
-            allTypes shouldContain treeType
-            allTypes shouldContain gorillaType
+            allTypes.shouldContainExactlyInAnyOrder(
+                jungleType,
+                treeType,
+                gorillaType
+            )
         }
 
         @Test
