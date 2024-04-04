@@ -28,6 +28,7 @@
 
 package io.spine.protodata
 
+import io.spine.protodata.type.TypeSystem
 import io.spine.type.shortDebugString
 
 /**
@@ -97,6 +98,22 @@ public val Type.isAny: Boolean
     get() = isMessage
             && message.packageName.equals("google.protobuf")
             && message.simpleName.equals("Any")
+
+/**
+ * Converts this type to an instance of [MessageType] finding it using the given [typeSystem].
+ *
+ * @throws IllegalStateException
+ *          - if this type is not a message type.
+ *          - if the type system does not have a corresponding `MessageType.
+ */
+public fun Type.toMessageType(typeSystem: TypeSystem): MessageType {
+    check(isMessage)
+    val found = typeSystem.findMessage(message)?.first
+    check(found != null) {
+        "Unable to find `${MessageType::class.simpleName}` for the type `${shortDebugString()}`."
+    }
+    return found
+}
 
 /**
  * A collection of types used by ProtoData.

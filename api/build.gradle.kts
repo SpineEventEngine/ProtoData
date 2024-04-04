@@ -26,9 +26,11 @@
 
 import io.spine.internal.dependency.Jackson
 import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.Validation
 
 plugins {
     `build-proto-model`
+    `java-test-fixtures`
 }
 
 dependencies {
@@ -49,6 +51,11 @@ dependencies {
         implementation(dataformatYaml)
         runtimeOnly(moduleKotlin)
     }
+
+    arrayOf(Spine.base, Validation.runtime)
+        .forEach {
+            testFixturesImplementation(it)
+        }
 
     testImplementation(project(":test-env"))
 

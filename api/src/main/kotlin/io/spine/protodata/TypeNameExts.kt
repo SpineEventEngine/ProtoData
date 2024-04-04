@@ -28,6 +28,9 @@
 
 package io.spine.protodata
 
+import com.google.protobuf.Message
+import io.spine.protobuf.defaultInstance
+
 /**
  * Obtains a fully qualified name of a `TypeName` or its builder.
  */
@@ -40,3 +43,11 @@ public val TypeNameOrBuilder.qualifiedName: String
         }
         return names.filter { it.isNotEmpty() }.joinToString(separator = ".")
     }
+
+/**
+ * Obtains a [MessageType] that corresponds to the message class
+ * specified in the generic parameter [T].
+ */
+public inline fun <reified T: Message> messageTypeOf(): MessageType {
+    return T::class.java.defaultInstance.descriptorForType.toMessageType()
+}
