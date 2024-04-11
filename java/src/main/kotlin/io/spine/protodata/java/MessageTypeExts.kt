@@ -30,6 +30,7 @@ package io.spine.protodata.java
 
 import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoFileHeader
+import io.spine.protodata.type.TypeSystem
 import java.nio.file.Path
 
 /**
@@ -48,3 +49,16 @@ public fun MessageType.javaFile(accordingTo: ProtoFileHeader): Path =
  */
 public fun MessageType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
     name.javaClassName(accordingTo)
+
+/**
+ * Obtains a clas name for the Java code generated for this message type.
+ *
+ * @param typeSystem
+ *         the type system to be used for obtaining the header for the proto
+ *         file in which this message type is declared.
+ */
+public fun MessageType.javaClassName(typeSystem: TypeSystem): ClassName {
+    val header = typeSystem.findMessage(name)!!.second
+    val className = javaClassName(header)
+    return className
+}
