@@ -98,7 +98,7 @@ message NoColumnsView {
 message IdOnlyView {
     option (entity).kind = PROJECTION;
 
-    UserId id = 3;
+    UserId id = 1;
 }
 
 message UserId {
