@@ -42,6 +42,13 @@ import io.spine.test.type.MagazineCover
 import io.spine.test.type.MessageTypeDependenciesSpecProto
 import io.spine.test.type.OopFun
 import io.spine.test.type.Photo
+import io.spine.test.type.ProjectId
+import io.spine.test.type.ProjectName
+import io.spine.test.type.ProjectProto
+import io.spine.test.type.ProjectView
+import io.spine.test.type.UserId
+import io.spine.test.type.UserName
+import io.spine.test.type.UserView
 import io.spine.test.type.Volume
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -52,13 +59,14 @@ internal class MessageTypeDependenciesSpec {
 
     private val typeSystem: TypeSystem by lazy {
         val protoSources = setOf(
-            MessageTypeDependenciesSpecProto.getDescriptor().toPbSourceFile()
+            MessageTypeDependenciesSpecProto.getDescriptor().toPbSourceFile(),
+            ProjectProto.getDescriptor().toPbSourceFile(),
         )
         TypeSystem(protoSources)
     }
 
     private fun allDependenciesOf(type: MessageType): Set<MessageType> =
-        MessageTypeDependencies(type, null, typeSystem).set
+        MessageTypeDependencies(type, null, typeSystem).scan()
 
     @Test
     fun `collect no types if there are no fields with message type`() {
@@ -68,7 +76,7 @@ internal class MessageTypeDependenciesSpec {
     }
 
     @Test
-    fun `collect types including nested`() {
+    fun `collect nested types`() {
         val coverType = messageTypeOf<MagazineCover>()
         val found = allDependenciesOf(coverType)
         found shouldHaveSize 4
@@ -77,6 +85,20 @@ internal class MessageTypeDependenciesSpec {
             messageTypeOf<Photo>(),
             messageTypeOf<MagazineCover.Url>(),
             messageTypeOf<Article.Headline>(),
+        )
+    }
+
+    @Test
+    fun `collect types referenced from types of fields`() {
+        val projectView = messageTypeOf<ProjectView>()
+        val deps = MessageTypeDependencies(projectView, SINGLE, typeSystem).scan()
+        deps shouldHaveSize 5
+        deps.shouldContainExactlyInAnyOrder(
+            messageTypeOf<ProjectId>(),
+            messageTypeOf<ProjectName>(),
+            messageTypeOf<UserView>(),
+            messageTypeOf<UserId>(),
+            messageTypeOf<UserName>(),
         )
     }
 
@@ -91,45 +113,48 @@ internal class MessageTypeDependenciesSpec {
         )
     }
 
+
     @Nested inner class
     `allow gathering types by cardinality of fields obtaining` {
-
         private val funnyType = messageTypeOf<OopFun>()
         private val jungleType = messageTypeOf<Jungle>()
         private val treeType = messageTypeOf<Jungle.BananaTree>()
+        private val bananaType = messageTypeOf<Jungle.BananaTree.Banana>()
+
         private val gorillaType = messageTypeOf<Jungle.Gorilla>()
 
         @Test
         fun `all fields`() {
-            val allTypes = MessageTypeDependencies(funnyType, null, typeSystem).set
+            val allTypes = MessageTypeDependencies(funnyType, null, typeSystem).scan()
 
-            allTypes shouldHaveSize 3
+            allTypes shouldHaveSize 4
             allTypes.shouldContainExactlyInAnyOrder(
                 jungleType,
                 treeType,
+                bananaType,
                 gorillaType
             )
         }
 
         @Test
         fun `single fields`() {
-            val singleTypes = MessageTypeDependencies(funnyType, SINGLE, typeSystem).set
+            val singleTypes = MessageTypeDependencies(funnyType, SINGLE, typeSystem).scan()
             singleTypes shouldHaveSize 1
             singleTypes shouldContain jungleType
         }
 
         @Test
         fun `map fields`() {
-            val mapTypes = MessageTypeDependencies(funnyType, MAP, typeSystem).set
+            val mapTypes = MessageTypeDependencies(funnyType, MAP, typeSystem).scan()
             mapTypes shouldHaveSize 1
             mapTypes shouldContain gorillaType
         }
-
         @Test
         fun `repeated fields`() {
-            val repeatedTypes = MessageTypeDependencies(funnyType, LIST, typeSystem).set
-            repeatedTypes shouldHaveSize 1
+            val repeatedTypes = MessageTypeDependencies(funnyType, LIST, typeSystem).scan()
+            repeatedTypes shouldHaveSize 2
             repeatedTypes shouldContain treeType
+            repeatedTypes shouldContain bananaType
         }
     }
 }

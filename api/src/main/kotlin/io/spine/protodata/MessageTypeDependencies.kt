@@ -50,23 +50,34 @@ public class MessageTypeDependencies(
     private val cardinality: CardinalityCase?,
     private val typeSystem: TypeSystem
 ) {
+    private val typesToScan = ArrayDeque<MessageType>()
     private val found = mutableSetOf<MessageType>()
 
+    init {
+        typesToScan.add(messageType)
+    }
+
     /**
-     * Obtains the dependencies found the [messageType].
+     * Obtains the dependencies found in the [messageType].
      */
+    @Deprecated(
+        message = "Please use `scan()` instead.",
+        replaceWith = ReplaceWith("scan()")
+    )
     public val set: Set<MessageType> by lazy {
         scan()
         found
     }
 
-    private fun scan() {
-        val typesToScan = ArrayDeque<MessageType>()
-        typesToScan.add(messageType)
+    /**
+     * Obtains the dependencies found in the [messageType].
+     */
+    public fun scan(): Set<MessageType> {
         while (!typesToScan.isEmpty()) {
             val current = typesToScan.removeFirst()
             current.addMessageFieldTypes()
         }
+        return found.toSet()
     }
 
     /**
@@ -83,6 +94,7 @@ public class MessageTypeDependencies(
             .filter { !found.contains(it) }
             .forEach {
                 found.add(it)
+                typesToScan.add(it)
             }
     }
 
