@@ -51,7 +51,7 @@ public fun MessageType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
     name.javaClassName(accordingTo)
 
 /**
- * Obtains a clas name for the Java code generated for this message type.
+ * Obtains a class name for the Java code generated for this message type.
  *
  * @param typeSystem
  *         the type system to be used for obtaining the header for the proto
