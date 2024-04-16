@@ -24,45 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata
 
-package spine.protodata;
+import io.spine.protodata.FilePattern.KindCase.KIND_NOT_SET
+import io.spine.protodata.FilePattern.KindCase.PREFIX
+import io.spine.protodata.FilePattern.KindCase.REGEX
+import io.spine.protodata.FilePattern.KindCase.SUFFIX
 
-import "spine/options.proto";
-
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata";
-option java_outer_classname = "FileProto";
-option java_multiple_files = true;
-
-// Represents a file in an arbitrary OS.
-//
-// In most cases it is going to be a relative path.
-// In some cases it may be an absolute path.
-//
-// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
-// the current operating system. This value holds this exact format of the path.
-//
-message File {
-
-    // The path to the file, separating directories with slash (`/`) symbol.
-    string path = 1 [(required) = true];
-}
-
-// A pattern matching file paths.
-message FilePattern {
-
-    oneof kind {
-        option (is_required) = true;
-
-        // The path must end with this string.
-        string suffix = 1;
-
-        // The path must start with this string.
-        string prefix = 2;
-
-        // The path must match this regular expression.
-        string regex = 3;
+/**
+ * Tells if this file pattern matches the file in which the given [type] is declared.
+ */
+public fun FilePattern.matches(type: MessageType): Boolean {
+    val protoFileName = type.file.name
+    return when (kindCase) {
+        SUFFIX -> protoFileName.endsWith(suffix)
+        PREFIX -> protoFileName.endsWith(prefix)
+        REGEX -> protoFileName.matches(Regex(regex))
+        KIND_NOT_SET -> false
+        else -> return false
     }
 }
-
