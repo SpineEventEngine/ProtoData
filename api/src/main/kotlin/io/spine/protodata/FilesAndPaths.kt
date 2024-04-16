@@ -60,9 +60,20 @@ private val PB_JSON_SUFFIX = ".${Format.PROTO_JSON.extensions[0]}"
  * Returns the name of this file without an extension.
  *
  * Takes care of the special case for "pb.json" quasi-extension.
+ *
+ * @see File.name
  */
 public val File.nameWithoutExtension: String
     get() = if (path.endsWith(PB_JSON_SUFFIX))
         Path(path.removeSuffix(PB_JSON_SUFFIX)).name
     else
         Path(path).nameWithoutExtension
+
+/**
+ * Obtains the last component of the file path, which includes
+ * the name and extension of this file.
+ *
+ * @see File.nameWithoutExtension
+ */
+public val File.name: String
+    get() = toPath().fileName.toString()
