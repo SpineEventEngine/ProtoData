@@ -26,21 +26,40 @@
 
 package io.spine.protodata
 
-import io.spine.protodata.FilePattern.KindCase.KIND_NOT_SET
-import io.spine.protodata.FilePattern.KindCase.PREFIX
-import io.spine.protodata.FilePattern.KindCase.REGEX
-import io.spine.protodata.FilePattern.KindCase.SUFFIX
+import org.checkerframework.checker.regex.qual.Regex
 
 /**
- * Tells if this file pattern matches the file in which the given [type] is declared.
+ * Provides methods for creating [FilePattern] instances of sorts.
  */
-public fun FilePattern.matches(type: MessageType): Boolean {
-    val protoFileName = type.file.name
-    return when (kindCase) {
-        SUFFIX -> protoFileName.endsWith(suffix)
-        PREFIX -> protoFileName.endsWith(prefix)
-        REGEX -> protoFileName.matches(Regex(regex))
-        KIND_NOT_SET -> false
-        else -> return false
+public object FilePatternFactory {
+
+    /**
+     * Creates a new [FilePattern] with the [suffix][FilePattern.getSuffix] field filled.
+     */
+    public fun suffix(value: String): FilePattern = filePattern {
+        value.checkNotBlank("suffix")
+        suffix = value
+    }
+
+    /**
+     * Creates a new [FilePattern] with the [prefix][FilePattern.getPrefix] field filled.
+     */
+    public fun prefix(value: String): FilePattern = filePattern {
+        value.checkNotBlank("prefix")
+        prefix = value
+    }
+
+    /**
+     * Creates a new [FilePattern] with the [regex][FilePattern.getRegex] field filled.
+     */
+    public fun regex(pattern: @Regex String): FilePattern = filePattern {
+        pattern.checkNotBlank("regex")
+        regex = pattern
+    }
+
+    private fun String.checkNotBlank(name: String) {
+        require(isNotBlank()) {
+            "File pattern $name cannot be empty or blank: `$this`."
+        }
     }
 }
