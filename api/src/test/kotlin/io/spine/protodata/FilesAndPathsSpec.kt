@@ -24,12 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.21.2")
+package io.spine.protodata
+
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+
+@DisplayName("Extensions for `File`, `Path`, and `java.io.File` should")
+internal class FilesAndPathsSpec {
+
+    @Test
+    fun `obtain a name of a 'File'`() {
+        file { path = "foo/bar/buz.proto" }.name shouldBe "buz.proto"
+        file { path = "foo/bar" }.name shouldBe "bar"
+        file { path = "fiz.buz" }.name shouldBe "fiz.buz"
+    }
+
+    @Test
+    fun `obtain a 'File' name without extension`() {
+        file { path = "foo/bar.pb.json" }.nameWithoutExtension shouldBe "bar"
+        file { path = "foo/bar.proto" }.nameWithoutExtension shouldBe "bar"
+        file { path = "foo/bar" }.nameWithoutExtension shouldBe "bar"
+    }
+}

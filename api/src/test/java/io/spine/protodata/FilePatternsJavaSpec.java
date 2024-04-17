@@ -24,12 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.21.2")
+package io.spine.protodata;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
+
+@DisplayName("`FilePatterns` Java API should")
+class FilePatternsJavaSpec {
+
+    /**
+     * This is how McJava Gradle API is going to use it.
+     */
+    private static FilePatternFactory by() {
+        return FilePatternFactory.INSTANCE;
+    }
+
+    @Test
+    @DisplayName("support calls via factory object")
+    void factoryCalls() {
+        var expected = "foo.proto";
+        var pattern = by().suffix(expected);
+        assertThat(pattern.getSuffix())
+                .isEqualTo(expected);
+    }
+}

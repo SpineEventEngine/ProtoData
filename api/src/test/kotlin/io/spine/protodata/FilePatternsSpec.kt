@@ -24,12 +24,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.21.2")
+package io.spine.protodata
+
+import io.spine.protodata.FilePatternFactory.prefix
+import io.spine.protodata.FilePatternFactory.regex
+import io.spine.protodata.FilePatternFactory.suffix
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+
+@DisplayName("`FilePattern` extensions should")
+internal class FilePatternsSpec {
+
+    @Nested inner class
+    Prohibit {
+
+        @Test
+        fun `empty or blank suffix`() {
+            assertThrowing { suffix("") }
+            assertThrowing { suffix(" ") }
+        }
+
+        @Test
+        fun `empty or blank prefix`() {
+            assertThrowing { prefix("") }
+            assertThrowing { prefix(" ") }
+        }
+
+        @Test
+        fun `empty or blank regex`() {
+            assertThrowing { regex("") }
+            assertThrowing { regex(" ") }
+        }
+
+        private fun assertThrowing(call: () -> FilePattern) {
+            assertThrows<IllegalArgumentException> {
+                call.invoke()
+            }
+        }
+    }
+}

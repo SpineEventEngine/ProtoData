@@ -24,12 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:JvmName("FilePatterns")
+
+package io.spine.protodata
+
+import io.spine.protodata.FilePattern.KindCase.KIND_NOT_SET
+import io.spine.protodata.FilePattern.KindCase.PREFIX
+import io.spine.protodata.FilePattern.KindCase.REGEX
+import io.spine.protodata.FilePattern.KindCase.SUFFIX
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Tells if this file pattern matches the file in which the given [type] is declared.
  */
-val protoDataVersion: String by extra("0.21.2")
+public fun FilePattern.matches(type: MessageType): Boolean {
+    val protoFileName = type.file.name
+    return when (kindCase) {
+        SUFFIX -> protoFileName.endsWith(suffix)
+        PREFIX -> protoFileName.endsWith(prefix)
+        REGEX -> protoFileName.matches(Regex(regex))
+        KIND_NOT_SET -> false
+        else -> return false
+    }
+}

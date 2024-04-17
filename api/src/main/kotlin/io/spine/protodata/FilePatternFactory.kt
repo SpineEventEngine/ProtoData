@@ -24,12 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata
+
+import org.checkerframework.checker.regex.qual.Regex
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Provides methods for creating [FilePattern] instances of sorts.
  */
-val protoDataVersion: String by extra("0.21.2")
+public object FilePatternFactory {
+
+    /**
+     * Creates a new [FilePattern] with the [suffix][FilePattern.getSuffix] field filled.
+     */
+    public fun suffix(value: String): FilePattern = filePattern {
+        value.checkNotBlank("suffix")
+        suffix = value
+    }
+
+    /**
+     * Creates a new [FilePattern] with the [prefix][FilePattern.getPrefix] field filled.
+     */
+    public fun prefix(value: String): FilePattern = filePattern {
+        value.checkNotBlank("prefix")
+        prefix = value
+    }
+
+    /**
+     * Creates a new [FilePattern] with the [regex][FilePattern.getRegex] field filled.
+     */
+    public fun regex(pattern: @Regex String): FilePattern = filePattern {
+        pattern.checkNotBlank("regex")
+        regex = pattern
+    }
+
+    private fun String.checkNotBlank(name: String) {
+        require(isNotBlank()) {
+            "File pattern $name cannot be empty or blank: `$this`."
+        }
+    }
+}

@@ -48,3 +48,20 @@ message File {
     // The path to the file, separating directories with slash (`/`) symbol.
     string path = 1 [(required) = true];
 }
+
+// A pattern matching file paths.
+message FilePattern {
+
+    oneof kind {
+        option (is_required) = true;
+
+        // The path must end with this string.
+        string suffix = 1;
+
+        // The path must start with this string.
+        string prefix = 2;
+
+        // The path must match this regular expression.
+        string regex = 3;
+    }
+}
