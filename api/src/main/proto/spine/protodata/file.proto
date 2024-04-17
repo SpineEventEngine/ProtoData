@@ -65,4 +65,3 @@ message FilePattern {
         string regex = 3;
     }
 }
-
