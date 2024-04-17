@@ -34,15 +34,21 @@ import io.spine.protodata.FilePattern.KindCase.REGEX
 import io.spine.protodata.FilePattern.KindCase.SUFFIX
 
 /**
- * Tells if this file pattern matches the file in which the given [type] is declared.
+ * Tells if this patterns matches the given [file].
  */
-public fun FilePattern.matches(type: MessageType): Boolean {
-    val protoFileName = type.file.name
+public fun FilePattern.matches(file: File): Boolean {
+    val path = file.path
     return when (kindCase) {
-        SUFFIX -> protoFileName.endsWith(suffix)
-        PREFIX -> protoFileName.endsWith(prefix)
-        REGEX -> protoFileName.matches(Regex(regex))
+        PREFIX -> path.startsWith(prefix)
+        SUFFIX -> path.endsWith(suffix)
+        REGEX -> path.matches(Regex(regex))
         KIND_NOT_SET -> false
         else -> return false
     }
 }
+
+/**
+ * Tells if this file pattern matches the file in which the given [type] is declared.
+ */
+public fun FilePattern.matches(type: MessageType): Boolean =
+    matches(type.file)

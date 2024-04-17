@@ -26,9 +26,15 @@
 
 package io.spine.protodata
 
+import com.google.protobuf.Any
+import com.google.protobuf.BytesValue
+import com.google.protobuf.Empty
+import com.google.protobuf.Timestamp
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.FilePatternFactory.prefix
 import io.spine.protodata.FilePatternFactory.regex
 import io.spine.protodata.FilePatternFactory.suffix
+import io.spine.validate.ValidationError
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -38,22 +44,22 @@ import org.junit.jupiter.api.assertThrows
 internal class FilePatternsSpec {
 
     @Nested inner class
-    Prohibit {
+    `Prohibit empty or blank`{
 
         @Test
-        fun `empty or blank suffix`() {
+        fun suffix() {
             assertThrowing { suffix("") }
             assertThrowing { suffix(" ") }
         }
 
         @Test
-        fun `empty or blank prefix`() {
+        fun prefix() {
             assertThrowing { prefix("") }
             assertThrowing { prefix(" ") }
         }
 
         @Test
-        fun `empty or blank regex`() {
+        fun regex() {
             assertThrowing { regex("") }
             assertThrowing { regex(" ") }
         }
@@ -61,6 +67,64 @@ internal class FilePatternsSpec {
         private fun assertThrowing(call: () -> FilePattern) {
             assertThrows<IllegalArgumentException> {
                 call.invoke()
+            }
+        }
+    }
+
+    @Nested inner class
+    `Match a 'MessageType' file by` {
+
+        @Test
+        fun prefix() {
+            prefix("google/protobuf/any").run {
+                matches(messageTypeOf<Any>()) shouldBe true
+                matches(messageTypeOf<Timestamp>()) shouldBe false
+            }
+        }
+
+        @Test
+        fun suffix() {
+            suffix("y.proto").run {
+                matches(messageTypeOf<Any>()) shouldBe true
+                matches(messageTypeOf<Empty>()) shouldBe true
+                matches(messageTypeOf<BytesValue>()) shouldBe false
+            }
+        }
+
+        @Test
+        fun regex() {
+            val protobufFile = "google/protobuf/([a-z0-9_-]+)\\.proto\$"
+            // Smoke test for the regex itself.
+            val regex = Regex(protobufFile)
+            regex.matches("google/protobuf/any.proto") shouldBe true
+
+            regex(protobufFile).run {
+                matches(messageTypeOf<Any>()) shouldBe true
+                matches(messageTypeOf<Empty>()) shouldBe true
+                matches(messageTypeOf<BytesValue>()) shouldBe true
+                matches(messageTypeOf<ValidationError>()) shouldBe false
+            }
+        }
+    }
+
+    @Nested inner class
+    `Match a file by` {
+
+        @Test
+        fun prefix() {
+            prefix("C:/").run {
+                matches(file { path = "C:/"}) shouldBe true
+                matches(file { path = "C:/autoexec.bat" }) shouldBe true
+                matches(file { path = "custom.proto" }) shouldBe false
+            }
+        }
+
+        @Test
+        fun suffix() {
+            suffix("y.proto").run {
+                matches(file { path = "any.proto" }) shouldBe true
+                matches(file { path = "protobuf/empty.proto" }) shouldBe true
+                matches(file { path = "api.proto" }) shouldBe false
             }
         }
     }
