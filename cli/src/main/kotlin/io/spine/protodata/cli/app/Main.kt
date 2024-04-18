@@ -85,8 +85,12 @@ public fun main(args: Array<String>) {
         run.main(args)
         exitProcess(0)
     } catch (e: Throwable) {
-        System.err.println("Exception occurred in ProtoData `main()`: `${e.message}`.")
-        e.printStackTrace(System.err)
+        System.err.run {
+            println("Exception caught in ProtoData `main()`:")
+            println("```")
+            e.printStackTrace(this)
+            println("```")
+        }
         exitProcess(-1)
     }
 }
