@@ -33,11 +33,14 @@ import io.spine.code.proto.FileSet
 import io.spine.protodata.Documentation
 import io.spine.protodata.event.FileEntered
 import io.spine.protodata.event.FileExited
+import io.spine.protodata.event.dependencyDiscovered
 import io.spine.protodata.event.fileEntered
 import io.spine.protodata.event.fileExited
 import io.spine.protodata.event.fileOptionDiscovered
+import io.spine.protodata.file
 import io.spine.protodata.produceOptionEvents
 import io.spine.protodata.toHeader
+import io.spine.protodata.toPbSourceFile
 
 /**
  * A factory for Protobuf compiler events.
@@ -58,7 +61,7 @@ public object CompilerEvents {
             val (ownFiles, dependencies) = files.files().partition {
                 it.name in filesToGenerate
             }
-            yieldAll(dependencies.map(::discoverDependencies))
+            yieldAll(dependencies.map(::toDependencyEvent))
             ownFiles
                 .map(::ProtoFileEvents)
                 .forEach { it.apply { produceFileEvents() } }
@@ -115,3 +118,14 @@ private class ProtoFileEvents(
         )
     }
 }
+
+/**
+ * Creates a `DependencyDiscovered` event from the given file descriptor.
+ *
+ * The event reflects all the definitions from the file.
+ */
+private fun toDependencyEvent(fileDescriptor: FileDescriptor) =
+    dependencyDiscovered {
+        file = fileDescriptor.file()
+        source = fileDescriptor.toPbSourceFile()
+    }
