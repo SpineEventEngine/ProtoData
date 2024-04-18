@@ -61,7 +61,7 @@ public object CompilerEvents {
             val (ownFiles, dependencies) = files.files().partition {
                 it.name in filesToGenerate
             }
-            yieldAll(dependencies.map(::toDependencyEvent))
+            yieldAll(dependencies.map { it.toDependencyEvent() })
             ownFiles
                 .map(::ProtoFileEvents)
                 .forEach { it.apply { produceFileEvents() } }
@@ -124,8 +124,8 @@ private class ProtoFileEvents(
  *
  * The event reflects all the definitions from the file.
  */
-private fun toDependencyEvent(fileDescriptor: FileDescriptor) =
+private fun FileDescriptor.toDependencyEvent() =
     dependencyDiscovered {
-        file = fileDescriptor.file()
-        source = fileDescriptor.toPbSourceFile()
+        file = file()
+        source = toPbSourceFile()
     }
