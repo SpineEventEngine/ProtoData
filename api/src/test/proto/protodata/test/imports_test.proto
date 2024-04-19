@@ -1,0 +1,21 @@
+
+syntax = "proto3";
+
+package spine.protodata.test;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.test";
+option java_outer_classname = "ImportsTestProto";
+option java_multiple_files = true;
+
+import "google/protobuf/any.proto";
+
+// On `import public` please see https://protobuf.dev/programming-guides/proto3/#importing
+import public "google/protobuf/timestamp.proto";
+
+message Stash {
+    google.protobuf.Any content = 1 [(required) = true];
+    google.protobuf.Timestamp keep_until = 2 [(required) = true];
+}

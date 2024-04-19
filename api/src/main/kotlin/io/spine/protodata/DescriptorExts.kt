@@ -114,6 +114,17 @@ public val FileDescriptor.typeUrlPrefix: String
     }
 
 /**
+ * Obtains a number of imports declared in the proto file represented by this [FileDescriptor].
+ *
+ * The returned value includes the number of `import public` statements.
+ *
+ * @see FileDescriptor.dependencies
+ * @see FileDescriptor.publicDependencies
+ */
+public val FileDescriptor.importCount: Int
+    get() = dependencies.size
+
+/**
  * Obtains the relative path to this file as a [File].
  */
 public fun FileDescriptor.file(): File = file { path = name }
