@@ -26,18 +26,39 @@
 
 package io.spine.protodata
 
+import com.google.protobuf.AnyProto
+import com.google.protobuf.TimestampProto
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.test.ImportsTestProto
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import com.google.protobuf.Any as ProtoAny
 
 @DisplayName("`FileDescriptor` extensions should")
 internal class FileDescriptorExtsSpec {
 
+    /** The descriptor of `google/protobuf/any.proto`. */
+    private val anyProto = AnyProto.getDescriptor()
+
+    /** The descriptor of `imports_test.proto`. */
+    private val importsTestProto = ImportsTestProto.getDescriptor()
+
+    /** The descriptor of `google/protobuf/timestamp.proto`. */
+    private val timestampProto = TimestampProto.getDescriptor()
+
     @Test
     fun `obtain a total number of imports of the file`() {
-        ProtoAny.getDescriptor().file.importCount shouldBe 0
-        ImportsTestProto.getDescriptor().importCount shouldBe 3
+        anyProto.importCount shouldBe 0
+        importsTestProto.importCount shouldBe 3
+    }
+
+    @Test
+    fun `tell if a file is imported by another`() {
+        anyProto.isImportedBy(importsTestProto) shouldBe true
+        timestampProto.isImportedBy(importsTestProto) shouldBe true
+
+        importsTestProto.run {
+            isImportedBy(anyProto) shouldBe false
+            isImportedBy(timestampProto) shouldBe false
+        }
     }
 }

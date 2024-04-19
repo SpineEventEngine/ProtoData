@@ -73,6 +73,12 @@ public val FileDescriptor.importCount: Int
     get() = dependencies.size
 
 /**
+ * Tells if this proto file is imported by [another] file.
+ */
+public fun FileDescriptor.isImportedBy(another: FileDescriptor): Boolean =
+    another.dependencies.contains(this)
+
+/**
  * Obtains the relative path to this file as a [File].
  */
 public fun FileDescriptor.file(): File = file { path = name }
