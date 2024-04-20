@@ -105,3 +105,27 @@ internal fun buildTypeName(
     }
     return typeName.build()
 }
+
+/**
+ * Produces a sequence by walking through all the nested message definitions staring with [type].
+ *
+ * @param type
+ *         the message definition which may contain nested message definition to walk through.
+ * @param extractorFun
+ *         a function that, given a message definition, extracts the items of interest.
+ * @return results of the calls to [extractorFun] flattened into one sequence.
+ */
+internal fun <T> walkMessage(
+    type: Descriptor,
+    extractorFun: (Descriptor) -> Iterable<T>,
+): Sequence<T> {
+    val queue = ArrayDeque<Descriptor>()
+    queue.add(type)
+    return sequence {
+        while (queue.isNotEmpty()) {
+            val msg = queue.removeFirst()
+            yieldAll(extractorFun(msg))
+            queue.addAll(msg.nestedTypes)
+        }
+    }
+}

@@ -27,7 +27,6 @@
 package io.spine.protodata
 
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
-import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.FileDescriptor
 import io.spine.option.OptionsProto
 import io.spine.protodata.ProtoFileHeader.SyntaxVersion
@@ -161,28 +160,4 @@ private class DefinitionFactory(private val file: FileDescriptor) {
      */
     fun services(): Sequence<Service> =
         file.services.asSequence().map { it.toService() }
-}
-
-/**
- * Produces a sequence by walking through all the nested message definitions staring with [type].
- *
- * @param type
- *         the message definition which may contain nested message definition to walk through.
- * @param extractorFun
- *         a function that, given a message definition, extracts the items of interest.
- * @return results of the calls to [extractorFun] flattened into one sequence.
- */
-private fun <T> walkMessage(
-    type: Descriptor,
-    extractorFun: (Descriptor) -> Iterable<T>,
-): Sequence<T> {
-    val queue = ArrayDeque<Descriptor>()
-    queue.add(type)
-    return sequence {
-        while (queue.isNotEmpty()) {
-            val msg = queue.removeFirst()
-            yieldAll(extractorFun(msg))
-            queue.addAll(msg.nestedTypes)
-        }
-    }
 }
