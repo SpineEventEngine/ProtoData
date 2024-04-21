@@ -80,7 +80,7 @@ public class Pipeline(
     private val request: CodeGeneratorRequest,
 
     /**
-     * The directory where setting files for this pipeline are stored.
+     * The directory to which setting files for the [plugins] should be stored.
      */
     private val settings: SettingsDirectory
 ) {
