@@ -42,6 +42,12 @@ public class FileDependencies(
     /**
      * Obtains dependencies as a list sorted by the number of dependencies, and
      * then by the file names.
+     *
+     * Files with fewer dependencies are coming earlier in the list.
+     * If the number of dependencies is the same, the file, which does not depend on another,
+     * comes earlier in the list.
+     * If two files do not depend on each other, they are sorted alphabetically by
+     * their [names][FileDescriptor.getName].
      */
     public fun asList(): List<FileDescriptor> {
         val seq = files.flatMap<FileDescriptor, FileDescriptor> {
@@ -80,6 +86,8 @@ public class FileDependencies(
 
 /**
  * Compares [FileDescriptor] instances by their dependencies, and then by their names.
+ *
+ * @see FileDependencies.asList
  */
 private class FdComparator : Comparator<FileDescriptor> {
 

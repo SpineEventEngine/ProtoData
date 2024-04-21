@@ -39,9 +39,10 @@ import org.junit.jupiter.api.Test
 internal class FileDependenciesSpec {
 
     @Test
-    fun `obtain empty list if there are no dependencies`() {
-        val deps = FileDependencies(listOf(AnyProto.getDescriptor()))
-        deps.asList() shouldBe emptyList()
+    fun `obtain a list with only the file if there are no dependencies`() {
+        val anyProto = AnyProto.getDescriptor()
+        val deps = FileDependencies(listOf(anyProto))
+        deps.asList() shouldBe listOf(anyProto)
     }
 
     @Test
