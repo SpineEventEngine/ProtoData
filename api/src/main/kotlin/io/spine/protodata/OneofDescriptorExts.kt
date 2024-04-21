@@ -34,7 +34,7 @@ import com.google.protobuf.Descriptors.OneofDescriptor
 public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
 
 /**
- * Converts this oneof descriptor to [OneofGroup].
+ * Converts this `oneof` descriptor to [OneofGroup].
  */
 public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
     oneofGroup {

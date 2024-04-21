@@ -37,7 +37,7 @@ option java_multiple_files = true;
 
 import "google/protobuf/any.proto";
 
-// On `import public` please see https://protobuf.dev/programming-guides/proto3/#importing
+// On `import public` please see https://protobuf.dev/programming-guides/proto3/#importing.
 import public "google/protobuf/timestamp.proto";
 
 message Stash {
