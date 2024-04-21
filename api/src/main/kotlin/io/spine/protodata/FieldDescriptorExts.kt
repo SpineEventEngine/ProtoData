@@ -184,5 +184,3 @@ private fun enum(field: FieldDescriptor): Type = type {
  * Transforms this `Iterable` of field descriptors into an `Iterable` with [Field] instances.
  */
 internal fun Iterable<FieldDescriptor>.mapped(): Iterable<Field> = map { it.toField() }
-
-
