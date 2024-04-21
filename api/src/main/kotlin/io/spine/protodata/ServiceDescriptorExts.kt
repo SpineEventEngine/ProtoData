@@ -24,37 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata
 
-package spine.protodata.api.test;
+import com.google.protobuf.Descriptors.ServiceDescriptor
 
-import "spine/options.proto";
-
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.api.given";
-option java_outer_classname = "EntitiesProto";
-option java_multiple_files = true;
-
-import "spine/core/user_id.proto";
-
-// A stub type for testing the `column` option.
-message Project {
-    option (entity).kind = AGGREGATE;
-
-    string id = 1;
-
-    string name = 2 [(column) = true];
-
-    Status status = 3 [(column) = true];
-
-    Project parent_project = 4;
-
-    spine.core.UserId assignee = 5;
-
-    enum Status {
-        PS_UNDEFINED = 0;
-        CREATED = 1;
-        STARTED = 2;
-        DONE = 3;
-    }
+/**
+ * Obtains the name of this service as a [ServiceName].
+ */
+public fun ServiceDescriptor.name(): ServiceName = serviceName {
+    typeUrlPrefix = file.typeUrlPrefix
+    packageName = file.`package`
+    simpleName = name
 }
+
+/**
+ * Converts this service descriptor into [Service] instance.
+ */
+public fun ServiceDescriptor.toService(): Service =
+    service {
+        val docs = fileDoc
+        val serviceName = name()
+        name = serviceName
+        file = getFile().file()
+        rpc.addAll(methods.map { it.toRpc(serviceName) })
+        option.addAll(options.toList())
+        doc = docs.forService(this@toService)
+    }

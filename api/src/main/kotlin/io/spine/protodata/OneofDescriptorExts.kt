@@ -24,37 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata
 
-package spine.protodata.api.test;
+import com.google.protobuf.Descriptors.OneofDescriptor
 
-import "spine/options.proto";
+/**
+ * Obtains the name of this `oneof` as a [OneofName].
+ */
+public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.api.given";
-option java_outer_classname = "EntitiesProto";
-option java_multiple_files = true;
-
-import "spine/core/user_id.proto";
-
-// A stub type for testing the `column` option.
-message Project {
-    option (entity).kind = AGGREGATE;
-
-    string id = 1;
-
-    string name = 2 [(column) = true];
-
-    Status status = 3 [(column) = true];
-
-    Project parent_project = 4;
-
-    spine.core.UserId assignee = 5;
-
-    enum Status {
-        PS_UNDEFINED = 0;
-        CREATED = 1;
-        STARTED = 2;
-        DONE = 3;
+/**
+ * Converts this `oneof` descriptor to [OneofGroup].
+ */
+public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
+    oneofGroup {
+        val docs = fileDoc
+        val groupName = name()
+        name = groupName
+        field.addAll(fields.mapped())
+        option.addAll(options.toList())
+        doc = docs.forOneof(this@toOneOfGroup)
     }
-}

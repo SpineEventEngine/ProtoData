@@ -50,53 +50,48 @@ public class MessageTypeDependencies(
     private val cardinality: CardinalityCase?,
     private val typeSystem: TypeSystem
 ) {
-    private val typesToScan = ArrayDeque<MessageType>()
-    private val found = mutableSetOf<MessageType>()
+    /**
+     * The guard set against recursive type definitions.
+     */
+    private val encountered = mutableSetOf<MessageType>()
 
-    init {
-        typesToScan.add(messageType)
+    /**
+     * Obtains the dependencies found in the [messageType].
+     */
+    public fun asSet(): Set<MessageType> {
+        val seq = walkMessage(messageType) {
+            it.matchingFieldTypes()
+        }
+        return seq.toSet()
     }
 
     /**
      * Obtains the dependencies found in the [messageType].
      */
     @Deprecated(
-        message = "Please use `scan()` instead.",
-        replaceWith = ReplaceWith("scan()")
+        message = "Please use `asSet()` instead.",
+        replaceWith = ReplaceWith("asSet()")
     )
     public val set: Set<MessageType> by lazy {
-        scan()
-        found
+        asSet()
     }
 
     /**
      * Obtains the dependencies found in the [messageType].
      */
-    public fun scan(): Set<MessageType> {
-        while (!typesToScan.isEmpty()) {
-            val current = typesToScan.removeFirst()
-            current.addMessageFieldTypes()
-        }
-        return found.toSet()
-    }
+    @Deprecated(
+        message = "Please use `asSet()` instead.",
+        replaceWith = ReplaceWith("asSet()")
+    )
+    public fun scan(): Set<MessageType> = asSet()
 
-    /**
-     * Adds [MessageType]s discovered in the fields of this type, unless they
-     * are already remembered as [found].
-     *
-     * Only singular fields are checked.
-     */
-    private fun MessageType.addMessageFieldTypes() {
+    private fun MessageType.matchingFieldTypes(): Iterable<MessageType> =
         fieldList.asSequence()
             .filter { it.matchesCardinality() }
-            .filter { it.type.isMessage }
-            .map { it.type.toMessageType(typeSystem) }
-            .filter { !found.contains(it) }
-            .forEach {
-                found.add(it)
-                typesToScan.add(it)
-            }
-    }
+            .map { it.type }
+            .filter { it.isMessage }
+            .map { it.toMessageType(typeSystem) }
+            .toSet()
 
     private fun Field.matchesCardinality(): Boolean =
         if (cardinality != null) {
@@ -104,4 +99,23 @@ public class MessageTypeDependencies(
         } else {
             true
         }
+
+    private fun <T> walkMessage(
+        type: MessageType,
+        extractorFun: (MessageType) -> Iterable<T>
+    ): Sequence<T> {
+        val queue = ArrayDeque<MessageType>()
+        queue.add(type)
+        return sequence {
+            while (queue.isNotEmpty()) {
+                val current = queue.removeFirst()
+                encountered.add(current)
+                yieldAll(extractorFun(current))
+                current.matchingFieldTypes()
+                    .filter { !encountered.contains(it) }
+                    .forEach(queue::add)
+            }
+        }
+    }
 }
+

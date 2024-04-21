@@ -30,6 +30,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.Field.CardinalityCase.LIST
 import io.spine.protodata.Field.CardinalityCase.MAP
 import io.spine.protodata.Field.CardinalityCase.SINGLE
@@ -66,7 +67,7 @@ internal class MessageTypeDependenciesSpec {
     }
 
     private fun allDependenciesOf(type: MessageType): Set<MessageType> =
-        MessageTypeDependencies(type, null, typeSystem).scan()
+        MessageTypeDependencies(type, null, typeSystem).asSet()
 
     @Test
     fun `collect no types if there are no fields with message type`() {
@@ -89,9 +90,18 @@ internal class MessageTypeDependenciesSpec {
     }
 
     @Test
+    fun `obtain the same result in repeated calls`() {
+        val coverType = messageTypeOf<MagazineCover>()
+        val deps = MessageTypeDependencies(coverType, null, typeSystem)
+        val found = deps.asSet()
+        val foundNextTime = deps.asSet()
+        found shouldBe foundNextTime
+    }
+
+    @Test
     fun `collect types referenced from types of fields`() {
         val projectView = messageTypeOf<ProjectView>()
-        val deps = MessageTypeDependencies(projectView, SINGLE, typeSystem).scan()
+        val deps = MessageTypeDependencies(projectView, SINGLE, typeSystem).asSet()
         deps shouldHaveSize 5
         deps.shouldContainExactlyInAnyOrder(
             messageTypeOf<ProjectId>(),
@@ -113,7 +123,6 @@ internal class MessageTypeDependenciesSpec {
         )
     }
 
-
     @Nested inner class
     `allow gathering types by cardinality of fields obtaining` {
         private val funnyType = messageTypeOf<OopFun>()
@@ -125,7 +134,7 @@ internal class MessageTypeDependenciesSpec {
 
         @Test
         fun `all fields`() {
-            val allTypes = MessageTypeDependencies(funnyType, null, typeSystem).scan()
+            val allTypes = MessageTypeDependencies(funnyType, null, typeSystem).asSet()
 
             allTypes shouldHaveSize 4
             allTypes.shouldContainExactlyInAnyOrder(
@@ -138,20 +147,20 @@ internal class MessageTypeDependenciesSpec {
 
         @Test
         fun `single fields`() {
-            val singleTypes = MessageTypeDependencies(funnyType, SINGLE, typeSystem).scan()
+            val singleTypes = MessageTypeDependencies(funnyType, SINGLE, typeSystem).asSet()
             singleTypes shouldHaveSize 1
             singleTypes shouldContain jungleType
         }
 
         @Test
         fun `map fields`() {
-            val mapTypes = MessageTypeDependencies(funnyType, MAP, typeSystem).scan()
+            val mapTypes = MessageTypeDependencies(funnyType, MAP, typeSystem).asSet()
             mapTypes shouldHaveSize 1
             mapTypes shouldContain gorillaType
         }
         @Test
         fun `repeated fields`() {
-            val repeatedTypes = MessageTypeDependencies(funnyType, LIST, typeSystem).scan()
+            val repeatedTypes = MessageTypeDependencies(funnyType, LIST, typeSystem).asSet()
             repeatedTypes shouldHaveSize 2
             repeatedTypes shouldContain treeType
             repeatedTypes shouldContain bananaType

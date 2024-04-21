@@ -28,6 +28,8 @@
 
 package io.spine.protodata
 
+import io.spine.protodata.type.TypeSystem
+
 /**
  * Obtains the package and the name of the type.
  */
@@ -42,3 +44,18 @@ public val MessageType.qualifiedName: String
  */
 public val MessageType.columns: List<Field>
     get() = fieldList.filter { it.optionList.any { option -> option.isColumn } }
+
+/**
+ * Obtains message types nested into this one.
+ *
+ * @param typeSystem
+ *         the type system used to resolve types by their names.
+ */
+public fun MessageType.nestedMessageTypes(typeSystem: TypeSystem): List<MessageType> =
+    nestedMessagesList.map { typeName ->
+        val type = typeSystem.findMessage(typeName)?.first
+        check(type != null) {
+            "Unable to obtain a message type named `${typeName.qualifiedName}`."
+        }
+        type
+    }

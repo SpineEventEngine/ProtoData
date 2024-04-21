@@ -24,37 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata
 
-package spine.protodata.api.test;
+import com.google.protobuf.AnyProto
+import com.google.protobuf.TimestampProto
+import io.kotest.matchers.shouldBe
+import io.spine.protodata.test.ImportsTestProto
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-import "spine/options.proto";
+@DisplayName("`FileDescriptor` extensions should")
+internal class FileDescriptorExtsSpec {
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.api.given";
-option java_outer_classname = "EntitiesProto";
-option java_multiple_files = true;
+    /** The descriptor of `google/protobuf/any.proto`. */
+    private val anyProto = AnyProto.getDescriptor()
 
-import "spine/core/user_id.proto";
+    /** The descriptor of `imports_test.proto`. */
+    private val importsTestProto = ImportsTestProto.getDescriptor()
 
-// A stub type for testing the `column` option.
-message Project {
-    option (entity).kind = AGGREGATE;
+    /** The descriptor of `google/protobuf/timestamp.proto`. */
+    private val timestampProto = TimestampProto.getDescriptor()
 
-    string id = 1;
+    @Test
+    fun `obtain a total number of imports of the file`() {
+        anyProto.importCount shouldBe 0
+        importsTestProto.importCount shouldBe 3
+    }
 
-    string name = 2 [(column) = true];
+    @Test
+    fun `tell if a file is imported by another`() {
+        anyProto.isImportedBy(importsTestProto) shouldBe true
+        timestampProto.isImportedBy(importsTestProto) shouldBe true
 
-    Status status = 3 [(column) = true];
-
-    Project parent_project = 4;
-
-    spine.core.UserId assignee = 5;
-
-    enum Status {
-        PS_UNDEFINED = 0;
-        CREATED = 1;
-        STARTED = 2;
-        DONE = 3;
+        importsTestProto.run {
+            isImportedBy(anyProto) shouldBe false
+            isImportedBy(timestampProto) shouldBe false
+        }
     }
 }
