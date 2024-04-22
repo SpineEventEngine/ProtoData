@@ -40,7 +40,7 @@ import kotlin.io.path.listDirectoryEntries
  * Only the files directly in the directory are considered, no subdirectories are traversed.
  */
 public class SettingsDirectory(
-    private val directory: Path
+    public val directory: Path
 ) {
     init {
         require(directory.toFile().isDirectory) {

@@ -1,3 +1,5 @@
+import io.spine.internal.dependency.Spine
+
 /*
  * Copyright 2024, TeamDev. All rights reserved.
  *
@@ -24,33 +26,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
-
-include(
-    "api",
-    "backend",
-    "cli-api",
-    "cli",
-    "protoc",
-    "test-env",
-    "testlib",
-    "java",
-    "gradle-api",
-    "gradle-plugin"
-)
-
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
+dependencies {
+    api(Spine.testlib)
+    api(Spine.CoreJava.testUtilServer)
+    api(project(":api"))
+    api(project(":backend"))
 }
