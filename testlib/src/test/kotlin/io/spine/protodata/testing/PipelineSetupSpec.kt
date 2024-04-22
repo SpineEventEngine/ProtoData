@@ -54,7 +54,7 @@ internal class PipelineSetupSpec {
             outputRoot
         ) { _, _ -> }
 
-        setup.settings.directory.exists() shouldBe true
+        setup.settings.path.exists() shouldBe true
         
         setup.sourceFileSet.inputRoot shouldBe inputRoot
 
