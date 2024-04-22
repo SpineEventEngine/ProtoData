@@ -1,5 +1,3 @@
-import io.spine.internal.dependency.Spine
-
 /*
  * Copyright 2024, TeamDev. All rights reserved.
  *
@@ -26,9 +24,26 @@ import io.spine.internal.dependency.Spine
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.internal.dependency.Grpc
+import io.spine.internal.dependency.Spine
+
+plugins {
+    protobuf
+    `java-test-fixtures`
+}
+
+protobuf {
+    protoc {
+        artifact = io.spine.internal.dependency.Protobuf.compiler
+    }
+}
+
 dependencies {
     api(Spine.testlib)
     api(Spine.CoreJava.testUtilServer)
     api(project(":api"))
     api(project(":backend"))
+
+    // For `google/type/` proto types used in stub domains.
+    testFixturesImplementation(Grpc.api)
 }
