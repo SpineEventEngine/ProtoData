@@ -26,6 +26,7 @@
 
 package io.spine.protodata.testing
 
+import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.spine.protodata.FileDependencies
@@ -95,7 +96,8 @@ public class PipelineSetup<P: Plugin>(
         return pipeline
     }
 
-    private fun createRequest() = codeGeneratorRequest {
+    @VisibleForTesting
+    internal fun createRequest() = codeGeneratorRequest {
         fileToGenerate.addAll(protoFiles.map { it.name })
 
         val dependencies = FileDependencies(protoFiles).asList()

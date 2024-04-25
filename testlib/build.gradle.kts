@@ -24,8 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.protobuf.gradle.id
 import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.Spine
+import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 plugins {
     protobuf
@@ -35,6 +37,27 @@ plugins {
 protobuf {
     protoc {
         artifact = io.spine.internal.dependency.Protobuf.compiler
+    }
+
+    val scriptPluginId = "codegen-request"
+    plugins {
+        create(scriptPluginId) {
+            path = "$projectDir/store-request.sh"
+        }
+    }
+
+    // Allows test suites to fetch generated Java files generated for the `testFixtures`
+    // source set as resources.
+    generateProtoTasks {
+        ofSourceSet("testFixtures").forEach { task ->
+            tasks.processTestResources {
+                from(task.outputs)
+                duplicatesStrategy = INCLUDE
+            }
+            task.plugins {
+                id(scriptPluginId)
+            }
+        }
     }
 }
 

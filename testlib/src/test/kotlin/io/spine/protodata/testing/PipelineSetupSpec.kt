@@ -26,13 +26,22 @@
 
 package io.spine.protodata.testing
 
+import com.google.common.truth.extensions.proto.ProtoTruth.assertThat
 import com.google.protobuf.AnyProto
 import com.google.protobuf.Empty
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.spine.given.domain.gas.GasTransportationProto
+import io.spine.given.domain.oil.OilRefineryProto
+import io.spine.io.Resource
+import io.spine.io.ResourceDirectory
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.settings.Format
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.path.exists
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -86,9 +95,55 @@ internal class PipelineSetupSpec {
     }
 
     @Test
-    fun `obtain input root from the 'build' directory`() {
-        val currentDir = System.getProperty("user.dir")
-        println(currentDir)
+    fun `load Java source code copied by a Gradle task to test resources`(
+        @TempDir settingsDir: Path,
+        @TempDir outputRoot: Path,
+    ) {
+        val dir = ResourceDirectory.get("java", this::class.java.classLoader)
+        val inputRoot = dir.toPath()
+        val setup = PipelineSetup(
+            StubPlugin(),
+            listOf(AnyProto.getDescriptor()),
+            settingsDir,
+            inputRoot,
+            outputRoot
+        ) { _, _ -> }
+
+        val sourceFileSet = setup.sourceFileSet
+        sourceFileSet.find(
+            Paths.get("io/spine/given/domain/gas/CompressorStation.java")
+        ) shouldNotBe null
+    }
+
+    @Test
+    @Disabled
+    fun `create 'CodeGeneratorRequest' instance mimicking 'protoc'`(
+        @TempDir settingsDir: Path,
+        @TempDir outputRoot: Path,
+    ) {
+        val dir = ResourceDirectory.get("java", this::class.java.classLoader)
+        val inputRoot = dir.toPath()
+        val setup = PipelineSetup(
+            StubPlugin(),
+            listOf(
+                GasTransportationProto.getDescriptor(),
+                OilRefineryProto.getDescriptor()
+            ),
+            settingsDir,
+            inputRoot,
+            outputRoot
+        ) { _, _ -> }
+
+        val resourceFile = Resource.file(
+            "CodeGeneratorRequest.binpb",
+            this::class.java.classLoader
+        )
+        val requestFromResources = CodeGeneratorRequest.parseFrom(resourceFile.open())
+        val fromSetup = setup.createRequest()
+
+        assertThat(requestFromResources)
+            .comparingExpectedFieldsOnly()
+            .isEqualTo(fromSetup)
     }
 }
 
