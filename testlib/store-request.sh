@@ -12,7 +12,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # We put the file under the `build/resources/test` so that tests can pick it up.
-TARGET_DIR="$SCRIPT_DIR/build/resources/test/codegen-request"
+TARGET_DIR="$SCRIPT_DIR/build/resources/test/pipeline-setup"
 mkdir -p "$TARGET_DIR"
 
 OUTPUT_FILE="$TARGET_DIR/CodeGeneratorRequest.binpb"

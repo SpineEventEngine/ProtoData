@@ -41,6 +41,7 @@ import io.spine.protodata.settings.Format
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -115,6 +116,7 @@ internal class PipelineSetupSpec {
     }
 
     @Test
+    @Disabled("Until migration to ProtoTap")
     fun `create 'CodeGeneratorRequest' instance mimicking 'protoc'`(
         @TempDir settingsDir: Path,
         @TempDir outputRoot: Path,
@@ -132,11 +134,15 @@ internal class PipelineSetupSpec {
             outputRoot
         ) { _, _ -> }
 
-        val resourceFile = Resource.file(
-            "codegen-request/CodeGeneratorRequest.binpb",
-            this::class.java.classLoader
-        )
-        val requestFromResources = CodeGeneratorRequest.parseFrom(resourceFile.open())
+        val resourceDir = "pipeline-setup"
+        val classLoader = this::class.java.classLoader
+
+        //val descriptorSetFile = Resource.file("$resourceDir/FileDescriptorSet.binpb", classLoader)
+        //val descriptorSet = FileDescriptorSet.parseFrom(descriptorSetFile.open())
+
+        val requestFile = Resource.file("$resourceDir/CodeGeneratorRequest.binpb", classLoader)
+        val requestFromResources = CodeGeneratorRequest.parseFrom(requestFile.open())
+
         val fromSetup = setup.createRequest()
 
         assertThat(requestFromResources)
