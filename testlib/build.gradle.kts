@@ -25,7 +25,6 @@
  */
 
 import com.google.protobuf.gradle.id
-import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.Spine
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
@@ -39,7 +38,7 @@ protobuf {
         artifact = io.spine.internal.dependency.Protobuf.compiler
     }
 
-    val scriptPluginId = "codegen-request"
+    val scriptPluginId = "pipeline-setup"
     plugins {
         create(scriptPluginId) {
             path = "$projectDir/store-request.sh"
@@ -50,12 +49,26 @@ protobuf {
     // source set as resources.
     generateProtoTasks {
         ofSourceSet("testFixtures").forEach { task ->
+
+            // Copy generated code to test resources so that `PipelineSetup` could
+            // pick them up.
             tasks.processTestResources {
                 from(task.outputs)
                 duplicatesStrategy = INCLUDE
             }
-            task.plugins {
-                id(scriptPluginId)
+
+            // Generate descriptor set file with source code info and imports.
+            // Put the file under test resources as well.
+            with(task) {
+                plugins {
+                    id(scriptPluginId)
+                }
+                generateDescriptorSet = true
+                with(descriptorSetOptions) {
+                    path = "$buildDir/resources/test/$scriptPluginId/FileDescriptorSet.binpb"
+                    includeSourceInfo = true
+                    includeImports = true
+                }
             }
         }
     }
@@ -66,7 +79,4 @@ dependencies {
     api(Spine.CoreJava.testUtilServer)
     api(project(":api"))
     api(project(":backend"))
-
-    // For `google/type/` proto types used in stub domains.
-    testFixturesImplementation(Grpc.api)
 }
