@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.writeBytes
+import kotlin.text.Charsets.UTF_8
 
 /**
  * Stores received `CodeGeneratorRequest` message to the file the name of which is passed as
@@ -58,3 +59,12 @@ public fun main() {
     val emptyResponse = CodeGeneratorResponse.getDefaultInstance()
     emptyResponse.writeTo(System.out)
 }
+
+/**
+ * Decodes a UTF-8 string encoded in Base64 in this string.
+ */
+private fun String.decodeBase64(): String {
+    val bytes = Base64.getDecoder().decode(this)
+    return String(bytes, UTF_8)
+}
+
