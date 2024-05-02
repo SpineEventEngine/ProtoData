@@ -33,8 +33,10 @@ plugins {
     prototap
 }
 
-prototap {
-    artifact.set(io.spine.internal.dependency.Protobuf.compiler)
+protobuf {
+    protoc {
+        artifact = io.spine.internal.dependency.Protobuf.compiler
+    }
 }
 
 dependencies {
