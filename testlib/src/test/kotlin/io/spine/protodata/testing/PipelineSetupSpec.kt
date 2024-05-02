@@ -39,7 +39,7 @@ import io.spine.io.ResourceDirectory
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.settings.Format
 import java.nio.file.Path
-import java.nio.file.Paths
+import kotlin.io.path.Path
 import kotlin.io.path.exists
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -99,7 +99,7 @@ internal class PipelineSetupSpec {
         @TempDir settingsDir: Path,
         @TempDir outputRoot: Path,
     ) {
-        val dir = ResourceDirectory.get("java", this::class.java.classLoader)
+        val dir = ResourceDirectory.get("prototap/java", this::class.java.classLoader)
         val inputRoot = dir.toPath()
         val setup = PipelineSetup(
             StubPlugin(),
@@ -111,7 +111,7 @@ internal class PipelineSetupSpec {
 
         val sourceFileSet = setup.sourceFileSet
         sourceFileSet.find(
-            Paths.get("io/spine/given/domain/gas/CompressorStation.java")
+            Path("io/spine/given/domain/gas/CompressorStation.java")
         ) shouldNotBe null
     }
 
