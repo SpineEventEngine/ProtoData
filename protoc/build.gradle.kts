@@ -28,11 +28,10 @@ import io.spine.internal.dependency.Protobuf
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 dependencies {
-    Protobuf.libs.forEach { implementation(it) }
+    implementation(Protobuf.javaLib)
 }
 
 tasks.jar {
-
     manifest {
         attributes(mapOf("Main-Class" to "io.spine.protodata.protoc.Plugin"))
     }
@@ -43,10 +42,10 @@ tasks.jar {
             else -> zipTree(it)
         }
     })
-
-    // We should provide a classifier or else Protobuf Gradle plugin will substitute it with
-    // an OS-specific one.
+    exclude(
+        // Protobuf files.
+        "google/**",
+    )
     archiveClassifier.set("exe")
-
     duplicatesStrategy = INCLUDE
 }
