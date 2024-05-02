@@ -32,20 +32,29 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.writeBytes
 
 /**
- * Stores the received `CodeGeneratorRequest` to the file passed as the parameter.
+ * Stores received `CodeGeneratorRequest` message to the file the name of which is passed as
+ * the value of the [parameter][CodeGeneratorRequest.getParameter] property of the request.
+ *
+ * The name of the file is [Base64] encoded.
+ *
+ * The function returns empty [CodeGeneratorRequest] written to [System.out]
+ * according to the `protoc` plugin
+ * [protocol](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.compiler.plugin.pb/).
  */
 public fun main() {
     val request = CodeGeneratorRequest.parseFrom(System.`in`)
     val requestFile = Path(request.parameter.decodeBase64())
-    requestFile.toFile()
-               .parentFile
-               .mkdirs()
+
+    val targetDir = requestFile.toFile().parentFile
+    targetDir.mkdirs()
+
     requestFile.writeBytes(request.toByteArray(), CREATE, TRUNCATE_EXISTING)
 
     val emptyResponse = CodeGeneratorResponse.getDefaultInstance()
-    System.out.write(emptyResponse.toByteArray())
+    emptyResponse.writeTo(System.out)
 }
