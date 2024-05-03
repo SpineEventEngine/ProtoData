@@ -67,4 +67,3 @@ private fun String.decodeBase64(): String {
     val bytes = Base64.getDecoder().decode(this)
     return String(bytes, UTF_8)
 }
-
