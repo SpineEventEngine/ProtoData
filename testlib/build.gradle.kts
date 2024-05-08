@@ -45,4 +45,6 @@ dependencies {
     api(ProtoTap.api)
     api(project(":api"))
     api(project(":backend"))
+
+    implementation(Spine.reflect)
 }
