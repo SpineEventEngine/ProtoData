@@ -129,7 +129,10 @@ import java.nio.file.Path
  *         the directory to which store the settings for the given plugin.
  * @param writeSettings
  *         a callback for writing plugin settings before the pipeline is created.
+ * @constructor Creates in instance for creating [Pipeline] for testing the given [plugins].
  *
+ * @see [byResources]
+ * @see [SettingsDirectory]
  * @see [io.spine.protodata.settings.LoadsSettings.consumerId]
  */
 public class PipelineSetup(
