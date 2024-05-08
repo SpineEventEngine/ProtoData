@@ -32,7 +32,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.io.ResourceDirectory
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.settings.Format
+import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.testing.PipelineSetup.Companion.byResources
 import io.spine.tools.code.Java
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
 import java.nio.file.Path
@@ -45,26 +46,28 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("`PipelineSetup` should")
 internal class PipelineSetupSpec {
 
+    private val emptyRequest = CodeGeneratorRequest.getDefaultInstance()
+
     @Test
     fun `ensure directories are created`(
-        @TempDir settingsDir: Path,
-        @TempDir inputRoot: Path,
-        @TempDir outputRoot: Path,
+        @TempDir input: Path,
+        @TempDir output: Path,
+        @TempDir settings: Path,
     ) {
         val setup = PipelineSetup(
-            StubPlugin(),
-            inputRoot,
-            outputRoot,
-            CodeGeneratorRequest.getDefaultInstance(),
-            settingsDir,
+            listOf(StubPlugin()),
+            input,
+            output,
+            emptyRequest,
+            settings,
         ) { _ -> }
 
         setup.run {
-            settings.path.exists() shouldBe true
+            this.settings.path.exists() shouldBe true
             sourceFileSet.run {
-                inputRoot shouldBe inputRoot
-                outputRoot.run {
-                    this shouldBe outputRoot
+                input shouldBe input
+                output.run {
+                    this shouldBe output
                     exists() shouldBe true
                 }
             }
@@ -73,23 +76,21 @@ internal class PipelineSetupSpec {
 
     @Test
     fun `invoke settings callback before creating a pipeline`(
-        @TempDir settingsDir: Path,
-        @TempDir inputRoot: Path,
-        @TempDir outputRoot: Path,
+        @TempDir input: Path,
+        @TempDir output: Path,
+        @TempDir settings: Path,
     ) {
         val setup = PipelineSetup(
-            StubPlugin(),
-            inputRoot,
-            outputRoot,
-            CodeGeneratorRequest.getDefaultInstance(),
-            settingsDir,
-        ) { settings ->
-            settings.write("foo_bar", Format.PROTO_JSON, Empty.getDefaultInstance().toByteArray())
-        }
+            listOf(StubPlugin()),
+            input,
+            output,
+            emptyRequest,
+            settings,
+        ) { it.write("foo_bar", PROTO_JSON, Empty.getDefaultInstance().toByteArray()) }
 
-        settingsDir.fileCount() shouldBe 0
+        settings.fileCount() shouldBe 0
         setup.createPipeline()
-        settingsDir.fileCount() shouldBe 1
+        settings.fileCount() shouldBe 1
     }
 
     @Test
@@ -99,25 +100,26 @@ internal class PipelineSetupSpec {
     }
 
     @Test
-    fun `obtain 'CodeGeneratorRequest' and sources from resources captured by ProtoTap`(
-        @TempDir settingsDir: Path,
-        @TempDir outputRoot: Path,
+    fun `use 'CodeGeneratorRequest' captured by ProtoTap`(
+        @TempDir output: Path,
+        @TempDir settings: Path,
+    ) {
+        val setup = setupByResources(Java, output, settings)
+        setup.request shouldNotBe CodeGeneratorRequest.getDefaultInstance()
+    }
+
+    @Test
+    fun `use sources captured by ProtoTap`(
+        @TempDir output: Path,
+        @TempDir settings: Path,
     ) {
         val language = Java
-        val setup = PipelineSetup.byResources(
-            language,
-            listOf(StubPlugin()),
-            outputRoot,
-            settingsDir,
-        ) { _ -> }
-
-        val resourceDir = ResourceDirectory.get(
-            "${PROTOC_PLUGIN_NAME}/${language.protocOutputDir()}",
-            this::class.java.classLoader
-        )
-
+        val setup = setupByResources(language, output, settings)
         setup.run {
-            request shouldNotBe CodeGeneratorRequest.getDefaultInstance()
+            val resourceDir = ResourceDirectory.get(
+                "${PROTOC_PLUGIN_NAME}/${language.protocOutputDir()}",
+                this::class.java.classLoader
+            )
             sourceFileSet.run {
                 isEmpty shouldBe false
                 inputRoot shouldBe resourceDir.toPath()
@@ -128,6 +130,17 @@ internal class PipelineSetupSpec {
         }
     }
 }
+
+private fun setupByResources(
+    language: Java,
+    outputRoot: Path,
+    settingsDir: Path
+): PipelineSetup = byResources(
+    language,
+    listOf(StubPlugin()),
+    outputRoot,
+    settingsDir,
+) { _ -> }
 
 internal class StubPlugin: Plugin
 

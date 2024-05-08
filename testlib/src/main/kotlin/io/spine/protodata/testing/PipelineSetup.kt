@@ -75,18 +75,6 @@ public class PipelineSetup(
     private val writeSettings: (SettingsDirectory) -> Unit
 ) {
     /**
-     * Creates an instance with only one plugin to be passed to the created pipeline.
-     */
-    public constructor(
-        plugin: Plugin,
-        inputRoot: Path,
-        outputRoot: Path,
-        request: CodeGeneratorRequest,
-        settingsDir: Path,
-        writeSettings: (SettingsDirectory) -> Unit
-    ): this(listOf(plugin), inputRoot, outputRoot, request, settingsDir, writeSettings)
-
-    /**
      * The directory to store settings for the [plugins].
      */
     public val settings: SettingsDirectory
