@@ -33,7 +33,9 @@ import io.kotest.matchers.shouldNotBe
 import io.spine.io.ResourceDirectory
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.PipelineSetup.Companion.byResources
+import io.spine.protodata.testing.PipelineSetup.Companion.detectCallingClass
 import io.spine.tools.code.Java
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
 import java.nio.file.Path
@@ -46,22 +48,13 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("`PipelineSetup` should")
 internal class PipelineSetupSpec {
 
-    private val emptyRequest = CodeGeneratorRequest.getDefaultInstance()
-
     @Test
     fun `ensure directories are created`(
         @TempDir input: Path,
         @TempDir output: Path,
         @TempDir settings: Path,
     ) {
-        val setup = PipelineSetup(
-            listOf(StubPlugin()),
-            input,
-            output,
-            emptyRequest,
-            settings,
-        ) { _ -> }
-
+        val setup = setup(input, output, settings) { _ -> }
         setup.run {
             this.settings.path.exists() shouldBe true
             sourceFileSet.run {
@@ -80,14 +73,9 @@ internal class PipelineSetupSpec {
         @TempDir output: Path,
         @TempDir settings: Path,
     ) {
-        val setup = PipelineSetup(
-            listOf(StubPlugin()),
-            input,
-            output,
-            emptyRequest,
-            settings,
-        ) { it.write("foo_bar", PROTO_JSON, Empty.getDefaultInstance().toByteArray()) }
-
+        val setup = setup(input, output, settings) {
+            it.write("foo_bar", PROTO_JSON, Empty.getDefaultInstance().toByteArray())
+        }
         settings.fileCount() shouldBe 0
         setup.createPipeline()
         settings.fileCount() shouldBe 1
@@ -95,7 +83,7 @@ internal class PipelineSetupSpec {
 
     @Test
     fun `obtain the calling class`() {
-        val callingClass = PipelineSetup.detectCallingClass()
+        val callingClass = detectCallingClass()
         callingClass shouldBe this::class.java
     }
 
@@ -130,6 +118,20 @@ internal class PipelineSetupSpec {
         }
     }
 }
+
+private fun setup(
+    input: Path,
+    output: Path,
+    settings: Path,
+    writeSettings: (SettingsDirectory) -> Unit
+): PipelineSetup = PipelineSetup(
+    listOf(StubPlugin()),
+    input,
+    output,
+    CodeGeneratorRequest.getDefaultInstance(),
+    settings,
+    writeSettings
+)
 
 private fun setupByResources(
     language: Java,
