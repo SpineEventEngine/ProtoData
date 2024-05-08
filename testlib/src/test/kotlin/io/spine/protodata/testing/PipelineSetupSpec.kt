@@ -59,13 +59,15 @@ internal class PipelineSetupSpec {
             settingsDir,
         ) { _ -> }
 
-        setup.settings.path.exists() shouldBe true
-        
-        setup.sourceFileSet.inputRoot shouldBe inputRoot
-
-        setup.sourceFileSet.outputRoot.run {
-            this shouldBe outputRoot
-            exists() shouldBe true
+        setup.run {
+            settings.path.exists() shouldBe true
+            sourceFileSet.run {
+                inputRoot shouldBe inputRoot
+                outputRoot.run {
+                    this shouldBe outputRoot
+                    exists() shouldBe true
+                }
+            }
         }
     }
 
@@ -97,7 +99,7 @@ internal class PipelineSetupSpec {
     }
 
     @Test
-    fun `obtain 'CodeGeneratorRequest' request and sources from resources captured by ProtoTap`(
+    fun `obtain 'CodeGeneratorRequest' and sources from resources captured by ProtoTap`(
         @TempDir settingsDir: Path,
         @TempDir outputRoot: Path,
     ) {
@@ -115,14 +117,14 @@ internal class PipelineSetupSpec {
         )
 
         setup.run {
+            request shouldNotBe CodeGeneratorRequest.getDefaultInstance()
             sourceFileSet.run {
-                inputRoot shouldBe resourceDir.toPath()
                 isEmpty shouldBe false
+                inputRoot shouldBe resourceDir.toPath()
                 find(
                     Path("io/spine/given/domain/gas/CompressorStation.java")
                 ) shouldNotBe null
             }
-            request shouldNotBe CodeGeneratorRequest.getDefaultInstance()
         }
     }
 }

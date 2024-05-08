@@ -125,7 +125,8 @@ public class PipelineSetup(
             settingsDir: Path,
             writeSettings: (SettingsDirectory) -> Unit
         ): PipelineSetup {
-            val classLoader = classLoaderOfCaller()
+            val callingClass = detectCallingClass()
+            val classLoader = callingClass.classLoader
             val inputRoot = inputRootOf(language, classLoader)
             val request = loadRequest(classLoader)
             return PipelineSetup(
@@ -140,14 +141,11 @@ public class PipelineSetup(
 
         @VisibleForTesting
         internal fun detectCallingClass(): Class<*> {
-            val caller = findCallerOf(this::class.java, 0)
-            val callingClass = Class.forName(caller!!.className)
+            val thisClass = this::class.java
+            val caller = findCallerOf(thisClass, 0)
+            check(caller != null) { "Unable to obtain the caller for the class `$thisClass`." }
+            val callingClass = Class.forName(caller.className)
             return callingClass
-        }
-
-        private fun classLoaderOfCaller(): ClassLoader {
-            val callingClass = detectCallingClass()
-            return callingClass.classLoader
         }
 
         private fun loadRequest(classLoader: ClassLoader): CodeGeneratorRequest {
