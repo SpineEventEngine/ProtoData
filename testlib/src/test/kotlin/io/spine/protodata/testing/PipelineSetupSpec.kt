@@ -37,6 +37,8 @@ import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.PipelineSetup.Companion.byResources
 import io.spine.protodata.testing.PipelineSetup.Companion.detectCallingClass
 import io.spine.tools.code.Java
+import io.spine.tools.code.Kotlin
+import io.spine.tools.code.TypeScript
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -116,6 +118,13 @@ internal class PipelineSetupSpec {
                 ) shouldNotBe null
             }
         }
+    }
+
+    @Test
+    fun `calculate the name of 'protoc' output directory for a 'Language'`() {
+        Java.protocOutputDir() shouldBe "java"
+        Kotlin.protocOutputDir() shouldBe "kotlin"
+        TypeScript.protocOutputDir() shouldBe "ts"
     }
 }
 
