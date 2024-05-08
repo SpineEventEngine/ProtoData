@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,43 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.gradle.buildDirectory
+package io.spine.internal.gradle.java
 
-plugins {
-    jacoco
-}
-
-/**
- * Configures [JacocoReport] task to run in a Kotlin Multiplatform project for
- * `commonMain` and `jvmMain` source sets.
- *
- * This script plugin must be applied using the following construct at the end of
- * a `build.gradle.kts` file of a module:
- *
- * ```kotlin
- * apply(plugin="jacoco-kotlin-jvm")
- * ```
- * Please do not apply this script plugin in the `plugins {}` block because `jacocoTestReport`
- * task is not yet available at this stage.
- */
-@Suppress("unused")
-private val about = ""
+import net.ltgt.gradle.errorprone.errorprone
+import org.gradle.api.Project
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.named
 
 /**
- * Configure Jacoco task with custom input from this Kotlin Multiplatform project.
+ * Disables Java linters in this [Project].
+ *
+ * In particular, the following linters will be disabled:
+ *
+ * 1. CheckStyle.
+ * 2. PMD.
+ * 3. ErrorProne.
+ *
+ * Apply this configuration for modules that have original Flogger sources,
+ * which have not been migrated to Kotlin yet. They produce a lot of
+ * errors/warnings failing the build.
+ *
+ * Our own sources are mostly in Kotlin (as for `spine-logging` repo),
+ * so this action seems quite safe.
  */
-val jacocoTestReport: JacocoReport by tasks.getting(JacocoReport::class) {
-
-    val classFiles = File("$buildDirectory/classes/kotlin/jvm/")
-        .walkBottomUp()
-        .toSet()
-    classDirectories.setFrom(classFiles)
-
-    val coverageSourceDirs = arrayOf(
-        "src/commonMain",
-        "src/jvmMain"
-    )
-    sourceDirectories.setFrom(files(coverageSourceDirs))
-
-    executionData.setFrom(files("$buildDirectory/jacoco/jvmTest.exec"))
+// TODO:2023-09-22:yevhenii.nadtochii: Remove this piece of configuration.
+// See issue: https://github.com/SpineEventEngine/logging/issues/56
+fun Project.disableLinters() {
+    tasks {
+        named("checkstyleMain") { enabled = false }
+        named("pmdMain") { enabled = false }
+        named<JavaCompile>("compileJava") {
+            options.errorprone.isEnabled.set(false)
+        }
+    }
 }

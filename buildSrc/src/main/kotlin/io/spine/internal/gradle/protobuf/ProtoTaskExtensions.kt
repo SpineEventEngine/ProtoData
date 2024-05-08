@@ -134,7 +134,8 @@ private fun GenerateProtoTask.setupDescriptorSetFileCreation() {
     // The name of the generated file reflects project's Maven coordinates.
     val ssn = sourceSet.name
     generateDescriptorSet = true
-    val descriptorsDir = "${project.buildDir}/descriptors/${ssn}"
+    val buildDir = project.layout.buildDirectory.asFile.get().path
+    val descriptorsDir = "$buildDir/descriptors/${ssn}"
     val descriptorName = project.descriptorSetName(sourceSet)
     with(descriptorSetOptions) {
         path = "$descriptorsDir/$descriptorName"

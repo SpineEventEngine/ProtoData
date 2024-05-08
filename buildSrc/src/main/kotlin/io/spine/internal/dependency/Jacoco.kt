@@ -24,43 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.gradle.buildDirectory
-
-plugins {
-    jacoco
-}
+package io.spine.internal.dependency
 
 /**
- * Configures [JacocoReport] task to run in a Kotlin Multiplatform project for
- * `commonMain` and `jvmMain` source sets.
+ * Code coverage library for Java.
  *
- * This script plugin must be applied using the following construct at the end of
- * a `build.gradle.kts` file of a module:
- *
- * ```kotlin
- * apply(plugin="jacoco-kotlin-jvm")
- * ```
- * Please do not apply this script plugin in the `plugins {}` block because `jacocoTestReport`
- * task is not yet available at this stage.
+ * @see <a href="https://www.eclemma.org/jacoco/">Releases</a>
  */
-@Suppress("unused")
-private val about = ""
-
-/**
- * Configure Jacoco task with custom input from this Kotlin Multiplatform project.
- */
-val jacocoTestReport: JacocoReport by tasks.getting(JacocoReport::class) {
-
-    val classFiles = File("$buildDirectory/classes/kotlin/jvm/")
-        .walkBottomUp()
-        .toSet()
-    classDirectories.setFrom(classFiles)
-
-    val coverageSourceDirs = arrayOf(
-        "src/commonMain",
-        "src/jvmMain"
-    )
-    sourceDirectories.setFrom(files(coverageSourceDirs))
-
-    executionData.setFrom(files("$buildDirectory/jacoco/jvmTest.exec"))
+@Suppress("ConstPropertyName")
+object Jacoco {
+    const val version = "0.8.12"
 }

@@ -122,6 +122,10 @@ private fun ResolutionStrategy.forceTestDependencies() {
 private fun ResolutionStrategy.forceTransitiveDependencies() {
     force(
         Asm.lib,
+        Asm.tree,
+        Asm.analysis,
+        Asm.util,
+        Asm.commons,
         AutoValue.annotations,
         CommonsCli.lib,
         CommonsCodec.lib,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2022, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,43 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.gradle.buildDirectory
+package io.spine.internal.gradle.dokka
 
-plugins {
-    jacoco
+import java.io.File
+import org.gradle.api.file.FileCollection
+import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
+
+/**
+ * Returns only Java source roots out of all present in the source set.
+ *
+ * It is a helper method for generating documentation by Dokka only for Java code.
+ * It is helpful when both Java and Kotlin source files are present in a source set.
+ * Dokka can properly generate documentation for either Kotlin or Java depending on
+ * the configuration, but not both.
+ */
+internal fun GradleDokkaSourceSetBuilder.onlyJavaSources(): FileCollection {
+    return sourceRoots.filter(File::isJavaSourceDirectory)
 }
 
-/**
- * Configures [JacocoReport] task to run in a Kotlin Multiplatform project for
- * `commonMain` and `jvmMain` source sets.
- *
- * This script plugin must be applied using the following construct at the end of
- * a `build.gradle.kts` file of a module:
- *
- * ```kotlin
- * apply(plugin="jacoco-kotlin-jvm")
- * ```
- * Please do not apply this script plugin in the `plugins {}` block because `jacocoTestReport`
- * task is not yet available at this stage.
- */
-@Suppress("unused")
-private val about = ""
-
-/**
- * Configure Jacoco task with custom input from this Kotlin Multiplatform project.
- */
-val jacocoTestReport: JacocoReport by tasks.getting(JacocoReport::class) {
-
-    val classFiles = File("$buildDirectory/classes/kotlin/jvm/")
-        .walkBottomUp()
-        .toSet()
-    classDirectories.setFrom(classFiles)
-
-    val coverageSourceDirs = arrayOf(
-        "src/commonMain",
-        "src/jvmMain"
-    )
-    sourceDirectories.setFrom(files(coverageSourceDirs))
-
-    executionData.setFrom(files("$buildDirectory/jacoco/jvmTest.exec"))
+private fun File.isJavaSourceDirectory(): Boolean {
+    return isDirectory && name == "java"
 }
