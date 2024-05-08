@@ -73,7 +73,7 @@ internal val Project.spinePublishing: SpinePublishing
         if (fromRoot != null) {
             return fromRoot
         }
-        throw IllegalStateException("`SpinePublishing` is not found in `${project.name}`.")
+        error("`SpinePublishing` is not found in `${project.name}`.")
     }
 
 /**

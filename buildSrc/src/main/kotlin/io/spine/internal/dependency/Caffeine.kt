@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,25 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.dokka
-
-import java.io.File
-import org.gradle.api.file.FileCollection
-import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
+package io.spine.internal.dependency
 
 /**
- * Returns only Java source roots out of all present in the source set.
+ * A [high performance](https://github.com/ben-manes/caffeine/wiki/Benchmarks),
+ * [near optimal](https://github.com/ben-manes/caffeine/wiki/Efficiency) caching library.
  *
- * It is a helper method for generating documentation by Dokka only for Java code.
- * It is helpful when both Java and Kotlin source files are present in a source set.
- * Dokka can properly generate documentation for either Kotlin or Java depending on
- * the configuration, but not both.
+ * This library is a transitive dependency for us via ErrorProne.
+ *
+ * @see <a href="https://github.com/ben-manes/caffeine">Caffeine at GitHub</a>
  */
 @Suppress("unused")
-internal fun GradleDokkaSourceSetBuilder.onlyJavaSources(): FileCollection {
-    return sourceRoots.filter(File::isJavaSourceDirectory)
-}
-
-private fun File.isJavaSourceDirectory(): Boolean {
-    return isDirectory && name == "java"
+object Caffeine {
+    private const val version = "3.0.5"
+    const val lib = "com.github.ben-manes.caffeine:caffeine:$version"
 }
