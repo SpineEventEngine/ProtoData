@@ -78,20 +78,20 @@ import java.nio.file.Path
  * Alternatively, you can put proto files under the `test` source set, but with `testFixtures`
  * it is a bit more neat.
  *
- * ### 2. Add [Protobuf Gradle Plugin](https://github.com/google/protobuf-gradle-plugin)
+ * #### 2. Add [Protobuf Gradle Plugin](https://github.com/google/protobuf-gradle-plugin)
  * ... if it's not yet applied directly or indirectly.
  *
  * Please don't forget to specify
  * the [`protoc` artifact](https://github.com/google/protobuf-gradle-plugin?tab=readme-ov-file#locate-external-executables).
  *
- * ### 3. Add [ProtoTap Gradle Plugin](https://github.com/SpineEventEngine/ProtoTap)
+ * #### 3. Add [ProtoTap Gradle Plugin](https://github.com/SpineEventEngine/ProtoTap)
  * If you're going to put proto files under `testFixtures` or `test` source sets, ProtoTap
  * would pick them automatically.
  *
  * If you're going to use a custom source set, please pass it to
  * the [plugin settings](https://github.com/SpineEventEngine/ProtoTap?tab=readme-ov-file#using-plugin-settings).
  *
- * ### 4. Add a test method with two `@TempDir` parameters
+ * #### 4. Add a test method with two `@TempDir` parameters
  * This step applies if you're using JUnit. We will need two directories: one is for storing
  * settings for the ProtoData plugins we're going to test, and another is for the output of
  * the code generation process:
