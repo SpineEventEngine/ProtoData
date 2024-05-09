@@ -106,7 +106,7 @@ import java.nio.file.Path
  * }
  * ```
  *
- * ### 5. Create `PipelineSetup` instance using [byResources] factory method
+ * #### 5. Create `PipelineSetup` instance using [byResources] factory method
  *
  * ```kotlin
  * val setup = PipelineSetup.byResources(outputDir, settingsDir) {
