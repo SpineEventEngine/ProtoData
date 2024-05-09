@@ -95,6 +95,7 @@ import java.nio.file.Path
  * This step applies if you're using JUnit. We will need two directories: one is for storing
  * settings for the ProtoData plugins we're going to test, and another is for the output of
  * the code generation process:
+ *
  * ```kotlin
  * @Test
  * fun `my test`(
@@ -104,7 +105,9 @@ import java.nio.file.Path
  *     // Test code will be here.
  * }
  * ```
+ *
  * ### 5. Create `PipelineSetup` instance using [byResources] factory method
+ *
  * ```kotlin
  * val setup = PipelineSetup.byResources(outputDir, settingsDir) {
  *     // Write settings here.
@@ -116,6 +119,17 @@ import java.nio.file.Path
  *
  * The callback block for writing settings accepts an instance of [SettingsDirectory] that
  * will be available from the [Pipeline] to be created.
+ *
+ * ### Conventions for directory names for generated Protobuf code
+ * Protobuf compiler creates a separate directory for each programming language after a name
+ * of the corresponding `protoc` plugin or built-in. Correspondingly, directories in test resources
+ * with the generated code copied by ProtoTap would have those names. Here are the conventions
+ * used by `PipelineSetup` for accessing language subdirectories:
+ *  * [Java] -> "java"
+ *  * [Kotlin] -> "kotlin"
+ *  * [TypeScript] -> "ts"
+ *  * [Protobuf] -> "proto"
+ *  * Other languages -> a lowercase version of [Language.name].
  *
  * @property plugins
  *         the list of plugins to be passed to the created pipeline.
@@ -269,7 +283,7 @@ internal fun Language.protocOutputDir(): String {
         Java, Kotlin -> name.lowercase()
         TypeScript -> "ts"
         // It's not likely we have proto files in the output of `protoc` or ProtoData anytime soon.
-        // But let's cover this case of the mete-codegen tools that produce Protobuf code.
+        // But let's cover this case of the meta-codegen tools that produce Protobuf code.
         Protobuf -> "proto"
         else -> name
     }
