@@ -58,6 +58,8 @@ fun KotlinCompile.setFreeCompilerArgs() {
             "-Xskip-prerelease-check",
             "-Xjvm-default=all",
             "-Xinline-classes",
+            // Avoid Kotlin compiler warning for `expect/actual` classes.
+            // See: https://youtrack.jetbrains.com/issue/KT-61573
             "-Xexpect-actual-classes",
             "-opt-in=" +
                     "kotlin.contracts.ExperimentalContracts," +
