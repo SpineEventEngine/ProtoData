@@ -113,7 +113,7 @@ import java.nio.file.Path
  *     // Write settings here.
  * }
  * ```
- * The above call to `byResources()` assumes we work with code generation in [Java].
+ * The above call to [byResources] assumes we work with code generation in [Java].
  * For other programming languages please use the overload which accepts [Language] as
  * the first parameter (e.g. [Kotlin] or [TypeScript]).
  *
