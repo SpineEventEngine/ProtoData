@@ -68,30 +68,30 @@ import java.nio.file.Path
  * scenarios when generated code and [CodeGeneratorRequest] are already available or generated via
  * a custom procedure.
  *
- * ### Creating `PipelineSetup` with the help of ProtoTap
+ * ## Creating `PipelineSetup` with the help of ProtoTap
  * 
  * Here are the steps for creating an instance of `PipelineSetup` in your tests.
  *
- * #### 1. Add [`java-test-fixtures`](https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures) plugin
+ * ### 1. Add [`java-test-fixtures`](https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures) plugin
  * The plugin will create the `testFixtures` source set in which we will put proto files.
  *
  * Alternatively, you can put proto files under the `test` source set, but with `testFixtures`
  * it is a bit more neat.
  *
- * #### 2. Add [Protobuf Gradle Plugin](https://github.com/google/protobuf-gradle-plugin)
+ * ### 2. Add [Protobuf Gradle Plugin](https://github.com/google/protobuf-gradle-plugin)
  * ... if it's not yet applied directly or indirectly.
  *
  * Please don't forget to specify
  * the [`protoc` artifact](https://github.com/google/protobuf-gradle-plugin?tab=readme-ov-file#locate-external-executables).
  *
- * #### 3. Add [ProtoTap Gradle Plugin](https://github.com/SpineEventEngine/ProtoTap)
+ * ### 3. Add [ProtoTap Gradle Plugin](https://github.com/SpineEventEngine/ProtoTap)
  * If you're going to put proto files under `testFixtures` or `test` source sets, ProtoTap
  * would pick them automatically.
  *
  * If you're going to use a custom source set, please pass it to
  * the [plugin settings](https://github.com/SpineEventEngine/ProtoTap?tab=readme-ov-file#using-plugin-settings).
  *
- * #### 4. Add a test method with two `@TempDir` parameters
+ * ### 4. Add a test method with two `@TempDir` parameters
  * This step applies if you're using JUnit. We will need two directories: one is for storing
  * settings for the ProtoData plugins we're going to test, and another is for the output of
  * the code generation process:
@@ -106,29 +106,29 @@ import java.nio.file.Path
  * }
  * ```
  *
- * #### 5. Create `PipelineSetup` instance using [byResources] factory method
+ * ### 5. Create `PipelineSetup` instance using [byResources] factory method
  *
  * ```kotlin
  * val setup = PipelineSetup.byResources(outputDir, settingsDir) {
  *     // Write settings here.
  * }
  * ```
- * The above call to `byResources()` assumes we work with code generation in Java.
- * For another programming language please use the overload which accepts [Language] as
+ * The above call to `byResources()` assumes we work with code generation in [Java].
+ * For other programming languages please use the overload which accepts [Language] as
  * the first parameter (e.g. [Kotlin] or [TypeScript]).
  *
  * The callback block for writing settings accepts an instance of [SettingsDirectory] that
  * will be available from the [Pipeline] to be created.
  *
- * ### Conventions for directory names for generated Protobuf code
+ * ## Conventions for directory names with the generated code
  * Protobuf compiler creates a separate directory for each programming language after a name
  * of the corresponding `protoc` plugin or built-in. Correspondingly, directories in test resources
  * with the generated code copied by ProtoTap would have those names. Here are the conventions
  * used by `PipelineSetup` for accessing language subdirectories:
- *  * [Java] -> "java"
- *  * [Kotlin] -> "kotlin"
- *  * [TypeScript] -> "ts"
- *  * [Protobuf] -> "proto"
+ *  * [Java] -> `"java"`
+ *  * [Kotlin] -> `"kotlin"`
+ *  * [TypeScript] -> `"ts"`
+ *  * [Protobuf] -> `"proto"`
  *  * Other languages -> a lowercase version of [Language.name].
  *
  * @property plugins
