@@ -93,7 +93,7 @@ enum Format {
     // A Protobuf message encoded in Protobuf JSON.
     //
     // Use this item instead of [JSON] for Protobuf messages stored in
-    // JSON format so that correct parser is selected for the file.
+    // JSON format so that the correct parser is selected for the file.
     //
     PROTO_JSON = 2 [(extension) = "pb.json"];
 
