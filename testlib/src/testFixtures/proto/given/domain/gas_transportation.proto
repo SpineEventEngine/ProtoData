@@ -1,0 +1,65 @@
+/*
+* Copyright 2024, TeamDev. All rights reserved.
+*
+* Redistribution and use in source and/or binary forms, with or without
+* modification, must retain the above copyright notice and the following
+* disclaimer.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+* A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+* OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+syntax = "proto3";
+
+package given.domain;
+
+//
+// This is a "vanilla" Protobuf file, which does not use Spine-specific features like
+// custom options such as `type_url_prefix` or validation constraints.
+// We also use "pure" Protobuf Java `protoc` plugin to process these files so that
+// we recreate conditions we have before ProtoData gets into play after `protoc`
+// finishes its work.
+//
+
+option java_package = "io.spine.given.domain.gas";
+option java_outer_classname = "GasTransportationProto";
+option java_multiple_files = true;
+
+import "google/type/latlng.proto";
+
+message OilAndGasWell {
+    google.type.LatLng location = 1;
+}
+
+message Pipe {
+    google.type.LatLng from = 1;
+    google.type.LatLng to = 2;
+}
+
+message GasProcessingPlant {
+    string name = 1;
+    google.type.LatLng location = 2;
+    repeated Pipe inbound = 3;
+    repeated Pipe outbound = 4;
+}
+
+message CompressorStation {
+    google.type.LatLng location = 1;
+    repeated Pipe inbound = 2;
+    repeated Pipe outbound = 3;
+}
+
+message LngStorage {
+    string name = 1;
+    google.type.LatLng location = 2;
+    Pipe inbound = 3;
+    Pipe outbound = 4;
+}

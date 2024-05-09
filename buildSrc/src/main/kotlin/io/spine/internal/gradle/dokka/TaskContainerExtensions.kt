@@ -24,30 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Protobuf
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package io.spine.internal.gradle.dokka
 
-dependencies {
-    implementation(Protobuf.javaLib)
-}
+import org.gradle.api.tasks.TaskContainer
+import org.jetbrains.dokka.gradle.DokkaTask
 
-tasks.jar {
-    manifest {
-        attributes(mapOf("Main-Class" to "io.spine.protodata.protoc.Plugin"))
-    }
-    // Assemble "Fat-JAR" artifact containing all the dependencies.
-    from(configurations.runtimeClasspath.get().map {
-        when {
-            it.isDirectory -> it
-            else -> zipTree(it)
-        }
-    })
-    exclude(
-        // Protobuf files.
-        "google/**",
-    )
-    // We should provide a classifier or else Protobuf Gradle plugin will substitute it with
-    // an OS-specific one.
-    archiveClassifier.set("exe")
-    duplicatesStrategy = INCLUDE
-}
+/**
+ * Finds the `dokkaHtml` Gradle task.
+ */
+@Suppress("unused")
+fun TaskContainer.dokkaHtmlTask() = this.getByName("dokkaHtml") as DokkaTask

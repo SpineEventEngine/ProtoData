@@ -37,17 +37,22 @@ import kotlin.io.path.listDirectoryEntries
  * A directory containing settings files.
  *
  * Only the files with the [recognized extensions][Format] are considered settings files.
- * Only the files directly in the directory are considered, no subdirectories are traversed.
+ *
+ * Only the files belonging to the directory directly are considered,
+ * no subdirectories are traversed.
+ *
+ * @param path
+ *         the existing path to the settings directory.
  */
 public class SettingsDirectory(
-    private val directory: Path
+    public val path: Path
 ) {
     init {
-        require(directory.toFile().isDirectory) {
-            "The path `$directory` is not a directory."
+        require(path.toFile().isDirectory) {
+            "The path `$path` is not a directory."
         }
-        require(directory.exists()) {
-            "The directory `$directory` does not exist."
+        require(path.exists()) {
+            "The directory `$path` does not exist."
         }
     }
 
@@ -111,7 +116,7 @@ public class SettingsDirectory(
 
     private fun file(consumerId: String, format: Format): Path {
         val fileName = "${consumerId}.${format.extensions.first()}"
-        return directory.resolve(fileName)
+        return path.resolve(fileName)
     }
 
     /**
@@ -126,6 +131,6 @@ public class SettingsDirectory(
         }
 
     private fun files() =
-        directory.listDirectoryEntries()
+        path.listDirectoryEntries()
             .filter { it.isSettings() }
 }

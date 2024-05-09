@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.protoc
-
-import java.util.*
-import kotlin.text.Charsets.UTF_8
+package io.spine.internal.dependency
 
 /**
- * Decodes a UTF-8 string encoded in Base64 in this string.
+ * A [high performance](https://github.com/ben-manes/caffeine/wiki/Benchmarks),
+ * [near optimal](https://github.com/ben-manes/caffeine/wiki/Efficiency) caching library.
+ *
+ * This library is a transitive dependency for us via ErrorProne.
+ *
+ * @see <a href="https://github.com/ben-manes/caffeine">Caffeine at GitHub</a>
  */
-internal fun String.decodeBase64(): String {
-    val bytes = Base64.getDecoder().decode(this)
-    return String(bytes, UTF_8)
+@Suppress("unused")
+object Caffeine {
+    private const val version = "3.0.5"
+    const val lib = "com.github.ben-manes.caffeine:caffeine:$version"
 }

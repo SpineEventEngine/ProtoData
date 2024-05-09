@@ -26,7 +26,8 @@
 
 package io.spine.protodata.settings
 
-import com.google.common.truth.Truth.assertThat
+import io.kotest.matchers.collections.shouldContainInOrder
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.settings.Format.JSON
 import io.spine.protodata.settings.Format.PLAIN
 import io.spine.protodata.settings.Format.PROTO_BINARY
@@ -41,18 +42,22 @@ class FormatSpec {
 
     @Test
     fun `provide allowed extensions`() {
-        assertThat(RCF_UNKNOWN.extensions)
-            .isEmpty()
+        RCF_UNKNOWN.extensions shouldBe emptyList()
 
-        assertThat(JSON.extensions)
-            .containsExactly("json")
-        assertThat(PROTO_JSON.extensions)
-            .containsExactly("pb.json")
-        assertThat(PROTO_BINARY.extensions)
-            .containsExactly("pb", "bin")
-        assertThat(YAML.extensions)
-            .containsExactly("yml", "yaml")
-        assertThat(PLAIN.extensions)
-            .containsExactly("txt")
+        PROTO_BINARY.extensions.shouldContainInOrder(
+            "binpb", "pb", "bin"
+        )
+        PROTO_JSON.extensions.shouldContainInOrder(
+            "pb.json"
+        )
+        JSON.extensions.shouldContainInOrder(
+            "json"
+        )
+        YAML.extensions.shouldContainInOrder(
+            "yml", "yaml"
+        )
+        PLAIN.extensions.shouldContainInOrder(
+            "txt"
+        )
     }
 }

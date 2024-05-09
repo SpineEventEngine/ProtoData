@@ -36,7 +36,7 @@ object Validation {
     /**
      * The version of the Validation library artifacts.
      */
-    const val version = "2.0.0-SNAPSHOT.132"
+    const val version = "2.0.0-SNAPSHOT.133"
 
     /**
      * The distinct version of the Validation library used by build tools during
@@ -46,7 +46,7 @@ object Validation {
      * transitional dependencies, this is the version used to build the project itself to
      * avoid errors caused by incompatible API changes.
      */
-    const val dogfoodingVersion = "2.0.0-SNAPSHOT.132"
+    const val dogfoodingVersion = "2.0.0-SNAPSHOT.133"
 
     const val group = "io.spine.validation"
     private const val prefix = "spine-validation"

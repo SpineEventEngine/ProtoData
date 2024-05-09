@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,20 +32,38 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.writeBytes
+import kotlin.text.Charsets.UTF_8
 
 /**
- * Stores the received `CodeGeneratorRequest` to the file passed as the parameter.
+ * Stores received `CodeGeneratorRequest` message to the file the name of which is passed as
+ * the value of the [parameter][CodeGeneratorRequest.getParameter] property of the request.
+ *
+ * The name of the file is [Base64] encoded.
+ *
+ * The function returns empty [CodeGeneratorRequest] written to [System.out]
+ * according to the `protoc` plugin
+ * [protocol](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.compiler.plugin.pb/).
  */
 public fun main() {
     val request = CodeGeneratorRequest.parseFrom(System.`in`)
     val requestFile = Path(request.parameter.decodeBase64())
-    requestFile.toFile()
-               .parentFile
-               .mkdirs()
+
+    val targetDir = requestFile.toFile().parentFile
+    targetDir.mkdirs()
+
     requestFile.writeBytes(request.toByteArray(), CREATE, TRUNCATE_EXISTING)
 
     val emptyResponse = CodeGeneratorResponse.getDefaultInstance()
-    System.out.write(emptyResponse.toByteArray())
+    emptyResponse.writeTo(System.out)
+}
+
+/**
+ * Decodes a UTF-8 string encoded in Base64 in this string.
+ */
+private fun String.decodeBase64(): String {
+    val bytes = Base64.getDecoder().decode(this)
+    return String(bytes, UTF_8)
 }

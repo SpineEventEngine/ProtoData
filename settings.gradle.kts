@@ -33,6 +33,7 @@ include(
     "cli",
     "protoc",
     "test-env",
+    "testlib",
     "java",
     "gradle-api",
     "gradle-plugin"

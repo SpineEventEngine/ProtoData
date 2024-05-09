@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,30 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Protobuf
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package io.spine.internal.dependency
 
-dependencies {
-    implementation(Protobuf.javaLib)
-}
-
-tasks.jar {
-    manifest {
-        attributes(mapOf("Main-Class" to "io.spine.protodata.protoc.Plugin"))
-    }
-    // Assemble "Fat-JAR" artifact containing all the dependencies.
-    from(configurations.runtimeClasspath.get().map {
-        when {
-            it.isDirectory -> it
-            else -> zipTree(it)
-        }
-    })
-    exclude(
-        // Protobuf files.
-        "google/**",
-    )
-    // We should provide a classifier or else Protobuf Gradle plugin will substitute it with
-    // an OS-specific one.
-    archiveClassifier.set("exe")
-    duplicatesStrategy = INCLUDE
+/**
+ * An open-source logging framework.
+ *
+ * Spine uses its own [logging library][Spine.Logging], but also
+ * provides a backend implementation for [Log4j2]. This is why
+ * this dependency is needed.
+ *
+ * @see <a href="https://github.com/apache/logging-log4j2">Log4j2 releases at GitHub</a>
+ */
+@Suppress("unused", "ConstPropertyName")
+object Log4j2 {
+    private const val version = "2.20.0"
+    const val core = "org.apache.logging.log4j:log4j-core:$version"
 }

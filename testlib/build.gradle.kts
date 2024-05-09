@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,30 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Protobuf
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+import io.spine.internal.dependency.ProtoTap
+import io.spine.internal.dependency.Spine
 
-dependencies {
-    implementation(Protobuf.javaLib)
+plugins {
+    protobuf
+    `java-test-fixtures`
+    prototap
 }
 
-tasks.jar {
-    manifest {
-        attributes(mapOf("Main-Class" to "io.spine.protodata.protoc.Plugin"))
+protobuf {
+    protoc {
+        artifact = io.spine.internal.dependency.Protobuf.compiler
     }
-    // Assemble "Fat-JAR" artifact containing all the dependencies.
-    from(configurations.runtimeClasspath.get().map {
-        when {
-            it.isDirectory -> it
-            else -> zipTree(it)
-        }
-    })
-    exclude(
-        // Protobuf files.
-        "google/**",
-    )
-    // We should provide a classifier or else Protobuf Gradle plugin will substitute it with
-    // an OS-specific one.
-    archiveClassifier.set("exe")
-    duplicatesStrategy = INCLUDE
+}
+
+dependencies {
+    api(Spine.testlib)
+    api(Spine.CoreJava.testUtilServer)
+    api(ProtoTap.api)
+    api(project(":api"))
+    api(project(":backend"))
+
+    implementation(Spine.reflect)
 }

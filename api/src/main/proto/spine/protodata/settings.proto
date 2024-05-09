@@ -70,21 +70,31 @@ extend google.protobuf.EnumValueOptions {
 
     // Possible file extensions associated with a file format.
     //
-    // Only applicable to the `ConfigurationFormat` enum.
+    // Only applicable to the `Format` enum.
     //
     repeated string extension = 73980 [(internal) = true];
 }
 
-// The format of a custom configuration for ProtoData.
+// The format of a protobuf message stored in a file.
+//
+// Configuration files for ProtoData and its plugins could be stored in one of these formats.
 //
 enum Format {
 
     RCF_UNKNOWN = 0;
 
     // A Protobuf message encoded in binary.
-    PROTO_BINARY = 1 [(extension) = "pb", (extension) = "bin"];
+    //
+    // See: https://protobuf.dev/programming-guides/techniques/#suffixes
+    // See: https://buf.build/docs/reference/inputs#binpb
+    //
+    PROTO_BINARY = 1 [(extension) = "binpb", (extension) = "pb", (extension) = "bin"];
 
     // A Protobuf message encoded in Protobuf JSON.
+    //
+    // Use this item instead of [JSON] for Protobuf messages stored in
+    // JSON format so that the correct parser is selected for the file.
+    //
     PROTO_JSON = 2 [(extension) = "pb.json"];
 
     // A plain JSON value.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,30 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Protobuf
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package io.spine.internal.dependency
 
-dependencies {
-    implementation(Protobuf.javaLib)
-}
-
-tasks.jar {
-    manifest {
-        attributes(mapOf("Main-Class" to "io.spine.protodata.protoc.Plugin"))
-    }
-    // Assemble "Fat-JAR" artifact containing all the dependencies.
-    from(configurations.runtimeClasspath.get().map {
-        when {
-            it.isDirectory -> it
-            else -> zipTree(it)
-        }
-    })
-    exclude(
-        // Protobuf files.
-        "google/**",
-    )
-    // We should provide a classifier or else Protobuf Gradle plugin will substitute it with
-    // an OS-specific one.
-    archiveClassifier.set("exe")
-    duplicatesStrategy = INCLUDE
+// https://github.com/stefanbirkner/system-lambda
+@Suppress("unused", "ConstPropertyName")
+object SystemLambda {
+    const val version = "1.2.1"
+    const val group = "com.github.stefanbirkner"
+    const val lib = "$group:system-lambda:$version"
 }

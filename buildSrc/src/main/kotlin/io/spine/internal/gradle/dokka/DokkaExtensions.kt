@@ -24,30 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Protobuf
-import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+package io.spine.internal.gradle.dokka
 
-dependencies {
-    implementation(Protobuf.javaLib)
+import java.io.File
+import org.gradle.api.file.FileCollection
+import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
+
+/**
+ * Returns only Java source roots out of all present in the source set.
+ *
+ * It is a helper method for generating documentation by Dokka only for Java code.
+ * It is helpful when both Java and Kotlin source files are present in a source set.
+ * Dokka can properly generate documentation for either Kotlin or Java depending on
+ * the configuration, but not both.
+ */
+@Suppress("unused")
+internal fun GradleDokkaSourceSetBuilder.onlyJavaSources(): FileCollection {
+    return sourceRoots.filter(File::isJavaSourceDirectory)
 }
 
-tasks.jar {
-    manifest {
-        attributes(mapOf("Main-Class" to "io.spine.protodata.protoc.Plugin"))
-    }
-    // Assemble "Fat-JAR" artifact containing all the dependencies.
-    from(configurations.runtimeClasspath.get().map {
-        when {
-            it.isDirectory -> it
-            else -> zipTree(it)
-        }
-    })
-    exclude(
-        // Protobuf files.
-        "google/**",
-    )
-    // We should provide a classifier or else Protobuf Gradle plugin will substitute it with
-    // an OS-specific one.
-    archiveClassifier.set("exe")
-    duplicatesStrategy = INCLUDE
+private fun File.isJavaSourceDirectory(): Boolean {
+    return isDirectory && name == "java"
 }
