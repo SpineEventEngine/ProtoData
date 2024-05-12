@@ -109,6 +109,7 @@ public class Pipeline(
         under<DefaultMode> {
             use(InMemoryStorageFactory.newInstance())
             use(InMemoryTransportFactory.newInstance())
+            use(Delivery.direct())
         }
     }
 
@@ -121,9 +122,6 @@ public class Pipeline(
      * should be single-threaded.
      */
     public operator fun invoke() {
-        under<DefaultMode> {
-            use(Delivery.direct())
-        }
         codegenContext = assembleCodegenContext()
         codegenContext.use {
             ConfigurationContext(id).use { configuration ->
