@@ -199,6 +199,12 @@ public class PipelineSetup(
     /**
      * Creates a [Pipeline] and a [BlackBox] to for testing the [CodeGenerationContext] of
      * the created pipeline.
+     *
+     * The created instances of [Pipeline] and [BlackBox] are "entangled" in the sense
+     * that the [BlackBox] instance should be queried only after the [Pipeline] is
+     * [executed][Pipeline.invoke].
+     *
+     * @see BlackBox
      */
     public fun createPipelineWithBlackBox(): Pair<Pipeline, BlackBox> {
         val pipeline = createPipeline()
