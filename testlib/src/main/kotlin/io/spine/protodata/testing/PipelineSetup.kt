@@ -194,13 +194,13 @@ public class PipelineSetup(
         replaceWith = ReplaceWith("createPipelineAndBlackBox()")
     )
     public fun createPipelineAndBlackbox(): Pair<Pipeline, BlackBox> =
-        createPipelineAndBlackBox()
+        createPipelineWithBlackBox()
 
     /**
      * Creates a [Pipeline] and a [BlackBox] to for testing the [CodeGenerationContext] of
      * the created pipeline.
      */
-    public fun createPipelineAndBlackBox(): Pair<Pipeline, BlackBox> {
+    public fun createPipelineWithBlackBox(): Pair<Pipeline, BlackBox> {
         val pipeline = createPipeline()
         val codegenContext = (pipeline.codegenContext as CodeGenerationContext).context
         val blackbox = BlackBox.from(codegenContext)

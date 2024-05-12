@@ -134,7 +134,7 @@ internal class PipelineSetupSpec {
         @TempDir settings: Path,
     ) {
         val setup = setupByResources(Java, output, settings)
-        val (pipeline, blackbox) = setup.createPipelineAndBlackBox()
+        val (pipeline, blackbox) = setup.createPipelineWithBlackBox()
 
         // We do not expose the type behind `codegenContext` property for additional
         // safety of the usage. We still assume and test it here because it's essential for
