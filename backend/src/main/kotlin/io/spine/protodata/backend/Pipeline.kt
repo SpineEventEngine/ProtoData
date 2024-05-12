@@ -85,7 +85,13 @@ public class Pipeline(
     private val settings: SettingsDirectory
 ) {
 
-    private lateinit var codegenContext: CodegenContext
+    /**
+     * Obtains code generation context used by this pipeline.
+     */
+    @VisibleForTesting
+    public val codegenContext: CodegenContext by lazy {
+        assembleCodegenContext()
+    }
 
     /**
      * Creates a new `Pipeline` with only one plugin and one source set.
@@ -109,6 +115,7 @@ public class Pipeline(
         under<DefaultMode> {
             use(InMemoryStorageFactory.newInstance())
             use(InMemoryTransportFactory.newInstance())
+            use(Delivery.direct())
         }
     }
 
@@ -121,10 +128,6 @@ public class Pipeline(
      * should be single-threaded.
      */
     public operator fun invoke() {
-        under<DefaultMode> {
-            use(Delivery.direct())
-        }
-        codegenContext = assembleCodegenContext()
         codegenContext.use {
             ConfigurationContext(id).use { configuration ->
                 ProtobufCompilerContext(id).use { compiler ->

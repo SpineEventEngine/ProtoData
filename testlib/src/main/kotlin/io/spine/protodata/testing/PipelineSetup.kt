@@ -30,12 +30,14 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.io.Resource
 import io.spine.io.ResourceDirectory
+import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.PipelineSetup.Companion.byResources
 import io.spine.reflect.CallerFinder.findCallerOf
+import io.spine.testing.server.blackbox.BlackBox
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
@@ -58,7 +60,7 @@ import java.nio.file.Path
  * [CodeGeneratorRequest] or [FileDescriptorSet][com.google.protobuf.DescriptorProtos.FileDescriptorSet]
  * using `protoc` and then use its output in tests.
  *
- * A convenient way for capturing the generated "vanilla" code and associated files is
+ * A convenient way of capturing the generated "vanilla" code and associated files is
  * using [ProtoTap Gradle Plugin](https://github.com/SpineEventEngine/ProtoTap).
  * This is the recommended way for working with `PipelineSetup` which provides most of the input
  * for creation of a [Pipeline] automatically. Configuration steps associated with this approach are
@@ -76,12 +78,12 @@ import java.nio.file.Path
  * The plugin will create the `testFixtures` source set in which we will put proto files.
  *
  * Alternatively, you can put proto files under the `test` source set, but with `testFixtures`
- * it is a bit more neat.
+ * it is a bit neater.
  *
  * ### 2. Add [Protobuf Gradle Plugin](https://github.com/google/protobuf-gradle-plugin)
  * ... if it's not yet applied directly or indirectly.
  *
- * Please don't forget to specify
+ * Please remember to specify
  * the [`protoc` artifact](https://github.com/google/protobuf-gradle-plugin?tab=readme-ov-file#locate-external-executables).
  *
  * ### 3. Add [ProtoTap Gradle Plugin](https://github.com/SpineEventEngine/ProtoTap)
@@ -187,6 +189,17 @@ public class PipelineSetup(
         return pipeline
     }
 
+    /**
+     * Creates a [Pipeline] and a [BlackBox] to for testing the [CodeGenerationContext] of
+     * the created pipeline.
+     */
+    public fun createPipelineAndBlackbox(): Pair<Pipeline, BlackBox> {
+        val pipeline = createPipeline()
+        val codegenContext = (pipeline.codegenContext as CodeGenerationContext).context
+        val blackbox = BlackBox.from(codegenContext)
+        return Pair(pipeline, blackbox)
+    }
+
     public companion object {
 
         /**
@@ -247,6 +260,15 @@ public class PipelineSetup(
             writeSettings: (SettingsDirectory) -> Unit
         ): PipelineSetup = byResources(Java, plugins, outputDir, settingsDir, writeSettings)
 
+        /**
+         * Detects which class calls a method of [Pipeline.Companion].
+         *
+         * The method is used for obtaining a `ClassLoader` of a test suite class that
+         * creates an instance of [PipelineSetup] so that the class loader can be used for
+         * accessing the resources.
+         *
+         * @see byResources
+         */
         @VisibleForTesting
         internal fun detectCallingClass(): Class<*> {
             val thisClass = this::class.java
