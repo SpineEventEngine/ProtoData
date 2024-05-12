@@ -76,12 +76,12 @@ import java.nio.file.Path
  * The plugin will create the `testFixtures` source set in which we will put proto files.
  *
  * Alternatively, you can put proto files under the `test` source set, but with `testFixtures`
- * it is a bit more neat.
+ * it is a bit neater.
  *
  * ### 2. Add [Protobuf Gradle Plugin](https://github.com/google/protobuf-gradle-plugin)
  * ... if it's not yet applied directly or indirectly.
  *
- * Please don't forget to specify
+ * Please remember to specify
  * the [`protoc` artifact](https://github.com/google/protobuf-gradle-plugin?tab=readme-ov-file#locate-external-executables).
  *
  * ### 3. Add [ProtoTap Gradle Plugin](https://github.com/SpineEventEngine/ProtoTap)
@@ -247,6 +247,15 @@ public class PipelineSetup(
             writeSettings: (SettingsDirectory) -> Unit
         ): PipelineSetup = byResources(Java, plugins, outputDir, settingsDir, writeSettings)
 
+        /**
+         * Detects which class calls a method of [Pipeline.Companion].
+         *
+         * The method is used for obtaining a `ClassLoader` of a test suite class that
+         * creates an instance of [PipelineSetup] so that the class loader can be used for
+         * accessing the resources.
+         *
+         * @see byResources
+         */
         @VisibleForTesting
         internal fun detectCallingClass(): Class<*> {
             val thisClass = this::class.java
