@@ -31,6 +31,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.io.ResourceDirectory
+import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.settings.Format.PROTO_JSON
 import io.spine.protodata.settings.SettingsDirectory
@@ -125,6 +126,27 @@ internal class PipelineSetupSpec {
         Java.protocOutputDir() shouldBe "java"
         Kotlin.protocOutputDir() shouldBe "kotlin"
         TypeScript.protocOutputDir() shouldBe "ts"
+    }
+
+    @Test
+    fun `create a pipeline with 'BlackBox' instance over 'CodeGeneratorContext'`(
+        @TempDir output: Path,
+        @TempDir settings: Path,
+    ) {
+        val setup = setupByResources(Java, output, settings)
+        val (pipeline, blackbox) = setup.createPipelineAndBlackbox()
+
+        // We do not expose the type behind `codegenContext` property for additional
+        // safety of the usage. We still assume and test it here because it's essential for
+        // the testing utilities we provide.
+        (pipeline.codegenContext is CodeGenerationContext) shouldBe true
+        val underlyingContext = (pipeline.codegenContext as CodeGenerationContext).context
+
+        blackbox.use {
+            it.isOpen shouldBe true
+            pipeline.invoke()
+            underlyingContext.isOpen shouldBe false
+        }
     }
 }
 

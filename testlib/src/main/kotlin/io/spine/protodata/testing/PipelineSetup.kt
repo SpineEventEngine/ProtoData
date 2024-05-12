@@ -30,12 +30,14 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.io.Resource
 import io.spine.io.ResourceDirectory
+import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.PipelineSetup.Companion.byResources
 import io.spine.reflect.CallerFinder.findCallerOf
+import io.spine.testing.server.blackbox.BlackBox
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
@@ -58,7 +60,7 @@ import java.nio.file.Path
  * [CodeGeneratorRequest] or [FileDescriptorSet][com.google.protobuf.DescriptorProtos.FileDescriptorSet]
  * using `protoc` and then use its output in tests.
  *
- * A convenient way for capturing the generated "vanilla" code and associated files is
+ * A convenient way of capturing the generated "vanilla" code and associated files is
  * using [ProtoTap Gradle Plugin](https://github.com/SpineEventEngine/ProtoTap).
  * This is the recommended way for working with `PipelineSetup` which provides most of the input
  * for creation of a [Pipeline] automatically. Configuration steps associated with this approach are
@@ -185,6 +187,17 @@ public class PipelineSetup(
         val id = Pipeline.generateId()
         val pipeline = Pipeline(id, plugins, listOf(sourceFileSet), request, settings)
         return pipeline
+    }
+
+    /**
+     * Creates a [Pipeline] and a [BlackBox] to for testing the [CodeGenerationContext] of
+     * the created pipeline.
+     */
+    public fun createPipelineAndBlackbox(): Pair<Pipeline, BlackBox> {
+        val pipeline = createPipeline()
+        val codegenContext = (pipeline.codegenContext as CodeGenerationContext).context
+        val blackbox = BlackBox.from(codegenContext)
+        return Pair(pipeline, blackbox)
     }
 
     public companion object {
