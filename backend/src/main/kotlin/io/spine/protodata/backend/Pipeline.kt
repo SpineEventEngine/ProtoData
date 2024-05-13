@@ -67,22 +67,22 @@ public class Pipeline(
     /**
      * The code generation plugins to be applied to the pipeline.
      */
-    private val plugins: List<Plugin>,
+    public val plugins: List<Plugin>,
 
     /**
      * The source sets to be processed by the pipeline.
      */
-    private val sources: List<SourceFileSet>,
+    public val sources: List<SourceFileSet>,
 
     /**
      * The Protobuf compiler request.
      */
-    private val request: CodeGeneratorRequest,
+    public val request: CodeGeneratorRequest,
 
     /**
      * The directory to which setting files for the [plugins] should be stored.
      */
-    private val settings: SettingsDirectory
+    public val settings: SettingsDirectory
 ) {
 
     /**

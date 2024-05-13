@@ -189,11 +189,24 @@ public class PipelineSetup(
         return pipeline
     }
 
+    @Deprecated(
+        message = "Please use `createPipelineAndBlackBox()` instead.",
+        replaceWith = ReplaceWith("createPipelineAndBlackBox()")
+    )
+    public fun createPipelineAndBlackbox(): Pair<Pipeline, BlackBox> =
+        createPipelineWithBlackBox()
+
     /**
      * Creates a [Pipeline] and a [BlackBox] to for testing the [CodeGenerationContext] of
      * the created pipeline.
+     *
+     * The created instances of [Pipeline] and [BlackBox] are "entangled" in the sense
+     * that the [BlackBox] instance should be queried only after the [Pipeline] is
+     * [executed][Pipeline.invoke].
+     *
+     * @see BlackBox
      */
-    public fun createPipelineAndBlackbox(): Pair<Pipeline, BlackBox> {
+    public fun createPipelineWithBlackBox(): Pair<Pipeline, BlackBox> {
         val pipeline = createPipeline()
         val codegenContext = (pipeline.codegenContext as CodeGenerationContext).context
         val blackbox = BlackBox.from(codegenContext)
