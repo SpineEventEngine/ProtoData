@@ -26,30 +26,28 @@
 
 package io.spine.protodata.java.file
 
-import io.spine.protodata.renderer.SourceFile
+import io.kotest.matchers.shouldBe
 import io.spine.protodata.renderer.SourceFileSet
-import kotlin.io.path.extension
+import java.nio.file.Path
+import kotlin.io.path.createFile
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
-/**
- * Tells if this is a Java source file.
- */
-public val SourceFile.isJava: Boolean
-    get() = relativePath.extension == "java"
+@DisplayName("`SourceFile` extensions should")
+internal class SourceFileExtsSpec {
 
-/**
- * Tells if this source file set produces files that reside under the "java" directory.
- */
-public val SourceFileSet.hasJavaOutput: Boolean
-    get() = outputRoot.endsWith("java")
+    @Test
+    fun `tell if the set contains Java files`(
+        @TempDir withFiles: Path,
+        @TempDir withoutFiles: Path,
+        @TempDir outputDir: Path
+    ) {
+        withFiles.resolve("Hello.java").createFile()
+        val withFilesSet = SourceFileSet.create(withFiles, outputDir)
+        withFilesSet.hasJavaFiles shouldBe true
 
-/**
- * Tells if this source file set produces files that reside under the "grpc" directory.
- */
-public val SourceFileSet.hasGrpcOutput: Boolean
-    get() = outputRoot.endsWith("grpc")
-
-/**
- * Tells if this source file set has at least one Java file.
- */
-public val SourceFileSet.hasJavaFiles: Boolean
-    get() = any { it.isJava }
+        val withoutFilesSet = SourceFileSet.create(withoutFiles, outputDir)
+        withoutFilesSet.hasJavaFiles shouldBe false
+    }
+}
