@@ -223,8 +223,9 @@ public class PipelineSetup(
          *         the programming language which is handled by the pipeline to be created.
          * @param plugins
          *         the list of plugins to be passed to the created pipeline.
-         * @param outputDir
-         *         the root directory to which the updated code will be placed.
+         * @param outputRoot
+         *         the root directory to which the updated code will be placed into
+         *         the subdirectory calculated from the [language].
          * @param settingsDir
          *         the directory to which store the settings for the given plugin.
          * @param writeSettings
@@ -233,7 +234,7 @@ public class PipelineSetup(
         public fun byResources(
             language: Language,
             plugins: List<Plugin>,
-            outputDir: Path,
+            outputRoot: Path,
             settingsDir: Path,
             writeSettings: (SettingsDirectory) -> Unit
         ): PipelineSetup {
@@ -244,7 +245,7 @@ public class PipelineSetup(
             return PipelineSetup(
                 plugins,
                 inputRoot,
-                outputDir,
+                outputRoot.resolve(language.protocOutputDir()),
                 request,
                 settingsDir,
                 writeSettings,
@@ -259,8 +260,9 @@ public class PipelineSetup(
          *
          * @param plugins
          *         the list of plugins to be passed to the created pipeline.
-         * @param outputDir
-         *         the root directory to which the updated code will be placed.
+         * @param outputRoot
+         *         the root directory to which the updated code will be placed under
+         *         the `java` subdirectory.
          * @param settingsDir
          *         the directory to which store the settings for the given plugin.
          * @param writeSettings
@@ -268,10 +270,10 @@ public class PipelineSetup(
          */
         public fun byResources(
             plugins: List<Plugin>,
-            outputDir: Path,
+            outputRoot: Path,
             settingsDir: Path,
             writeSettings: (SettingsDirectory) -> Unit
-        ): PipelineSetup = byResources(Java, plugins, outputDir, settingsDir, writeSettings)
+        ): PipelineSetup = byResources(Java, plugins, outputRoot, settingsDir, writeSettings)
 
         /**
          * Detects which class calls a method of [Pipeline.Companion].
