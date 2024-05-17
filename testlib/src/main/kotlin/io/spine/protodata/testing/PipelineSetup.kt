@@ -240,12 +240,13 @@ public class PipelineSetup(
         ): PipelineSetup {
             val callingClass = detectCallingClass()
             val classLoader = callingClass.classLoader
-            val inputRoot = inputRootOf(language, classLoader)
+            val inputDir = inputRootOf(language, classLoader)
+            val outputDir = outputRoot.resolve(language.protocOutputDir())
             val request = loadRequest(classLoader)
             return PipelineSetup(
                 plugins,
-                inputRoot,
-                outputRoot.resolve(language.protocOutputDir()),
+                inputDir,
+                outputDir,
                 request,
                 settingsDir,
                 writeSettings,
