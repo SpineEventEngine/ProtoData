@@ -47,3 +47,9 @@ public val SourceFileSet.hasJavaOutput: Boolean
  */
 public val SourceFileSet.hasGrpcOutput: Boolean
     get() = outputRoot.endsWith("grpc")
+
+/**
+ * Tells if this source file set has at least one Java file.
+ */
+public val SourceFileSet.hasJavaFiles: Boolean
+    get() = any { it.isJava }

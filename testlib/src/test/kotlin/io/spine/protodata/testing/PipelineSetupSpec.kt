@@ -52,18 +52,22 @@ import org.junit.jupiter.api.io.TempDir
 internal class PipelineSetupSpec {
 
     @Test
-    fun `ensure directories are created`(
+    fun `ensure output and settings directories are created`(
         @TempDir input: Path,
         @TempDir output: Path,
         @TempDir settings: Path,
     ) {
-        val setup = setup(input, output, settings) { _ -> }
+        // Since JUnit creates `output` and `settings` directories automatically,
+        // have nested ones to check the creation.
+        val outputPrim = output.resolve("primo")
+        val settingsPrim = settings.resolve("primus")
+        val setup = setup(input, outputPrim, settingsPrim) { _ -> }
         setup.run {
             this.settings.path.exists() shouldBe true
             sourceFileSet.run {
-                input shouldBe input
-                output.run {
-                    this shouldBe output
+                inputRoot shouldBe input
+                outputRoot.run {
+                    this shouldBe outputPrim
                     exists() shouldBe true
                 }
             }
@@ -107,13 +111,20 @@ internal class PipelineSetupSpec {
         val language = Java
         val setup = setupByResources(language, output, settings)
         setup.run {
+            val langDir = language.protocOutputDir()
             val resourceDir = ResourceDirectory.get(
-                "${PROTOC_PLUGIN_NAME}/${language.protocOutputDir()}",
+                "${PROTOC_PLUGIN_NAME}/$langDir",
                 this::class.java.classLoader
             )
             sourceFileSet.run {
+                // We have generated sources as input in the set.
                 isEmpty shouldBe false
-                inputRoot shouldBe resourceDir.toPath()
+                val inputPath = resourceDir.toPath()
+                inputRoot shouldBe inputPath
+
+                // The output root of the source file set is configured with the subdirectory
+                // which corresponds to the input.
+                outputRoot shouldBe output.resolve(langDir)
                 find(
                     Path("io/spine/given/domain/gas/CompressorStation.java")
                 ) shouldNotBe null

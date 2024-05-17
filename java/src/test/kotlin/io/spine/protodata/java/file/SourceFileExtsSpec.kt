@@ -24,12 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.23.0")
+package io.spine.protodata.java.file
+
+import io.kotest.matchers.shouldBe
+import io.spine.protodata.renderer.SourceFileSet
+import java.nio.file.Path
+import kotlin.io.path.createFile
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+
+@DisplayName("`SourceFile` extensions should")
+internal class SourceFileExtsSpec {
+
+    @Test
+    fun `tell if the set contains Java files`(
+        @TempDir withFiles: Path,
+        @TempDir withoutFiles: Path,
+        @TempDir outputDir: Path
+    ) {
+        withFiles.resolve("Hello.java").createFile()
+        val withFilesSet = SourceFileSet.create(withFiles, outputDir)
+        withFilesSet.hasJavaFiles shouldBe true
+
+        val withoutFilesSet = SourceFileSet.create(withoutFiles, outputDir)
+        withoutFilesSet.hasJavaFiles shouldBe false
+    }
+}
