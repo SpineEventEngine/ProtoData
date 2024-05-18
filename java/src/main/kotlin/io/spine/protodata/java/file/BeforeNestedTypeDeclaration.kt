@@ -61,7 +61,7 @@ public class BeforeNestedTypeDeclaration(
         logger.atWarning().log { """
             Cannot find a declaration of the nested type `$name` in the code:
             ```java
-            ${txt.printLines()}            
+            $text            
             ```
             """.ti()
         }

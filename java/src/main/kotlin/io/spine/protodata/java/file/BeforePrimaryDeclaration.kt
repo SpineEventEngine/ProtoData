@@ -64,7 +64,7 @@ internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint {
         logger.atWarning().log { """
             Could not find a primary declaration in the code:
             ```java
-            ${txt.printLines()}
+            $text
             ```    
             """.ti()
         }
