@@ -44,6 +44,7 @@ import io.spine.tools.psi.java.locate
 /**
  * Prints the lines of the text into a single string using the system line separator.
  */
+@Deprecated(message = "Use plain string values instead.", ReplaceWith("value"))
 internal fun Text.printLines(): String =
         lines().joinToString(separator = Separator.system.value)
 
