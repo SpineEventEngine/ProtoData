@@ -94,7 +94,9 @@ private object TextToPsiParser {
         return cache.get(text)
     }
 
+    @Deprecated(message = "Please use `SourceFile.psi()` instead.")
     fun get(file: SourceFile): PsiJavaFile {
+        @Suppress("DEPRECATION")
         return cache.get(file.text())
     }
 

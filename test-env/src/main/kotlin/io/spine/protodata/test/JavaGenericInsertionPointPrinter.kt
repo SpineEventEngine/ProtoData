@@ -31,7 +31,6 @@ import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.startOfFile
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
-import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
 
@@ -41,16 +40,16 @@ public class JavaGenericInsertionPointPrinter :
 public enum class GenericInsertionPoint : NonRepeatingInsertionPoint {
 
     FILE_START {
-        override fun locateOccurrence(text: Text): TextCoordinates = startOfFile
+        override fun locateOccurrence(text: String): TextCoordinates = startOfFile
     },
     FILE_MIDDLE {
-        override fun locateOccurrence(text: Text): TextCoordinates = atLine(text.lines().size / 2)
+        override fun locateOccurrence(text: String): TextCoordinates = atLine(text.lines().size / 2)
     },
     FILE_END {
-        override fun locateOccurrence(text: Text): TextCoordinates = endOfFile
+        override fun locateOccurrence(text: String): TextCoordinates = endOfFile
     },
     OUTSIDE_FILE {
-        override fun locateOccurrence(text: Text): TextCoordinates = nowhere
+        override fun locateOccurrence(text: String): TextCoordinates = nowhere
     };
 
     override val label: String

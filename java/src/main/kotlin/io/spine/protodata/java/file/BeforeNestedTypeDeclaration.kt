@@ -30,8 +30,8 @@ import io.spine.protodata.java.ClassOrEnumName
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.string.ti
-import io.spine.text.Text
 import io.spine.text.TextCoordinates
+import io.spine.text.TextFactory.text
 import io.spine.tools.psi.java.lineNumber
 
 /**
@@ -51,8 +51,9 @@ public class BeforeNestedTypeDeclaration(
 
     override val label: String = ""
 
-    override fun locateOccurrence(text: Text): TextCoordinates {
-        val psiClass = text.locate(name)
+    override fun locateOccurrence(text: String): TextCoordinates {
+        val txt = text(text)
+        val psiClass = txt.locate(name)
         psiClass?.let {
             val lineNumber = it.lineNumber
             return atLine(lineNumber)
@@ -60,7 +61,7 @@ public class BeforeNestedTypeDeclaration(
         logger.atWarning().log { """
             Cannot find a declaration of the nested type `$name` in the code:
             ```java
-            ${text.printLines()}            
+            ${txt.printLines()}            
             ```
             """.ti()
         }

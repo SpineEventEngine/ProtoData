@@ -28,7 +28,6 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
-import io.spine.server.query.select
 import io.spine.tools.code.Java
 
 /**
@@ -42,7 +41,7 @@ public class UnderscorePrefixRenderer : SoloRenderer<Java>(Java) {
             val oldName = internalType.name.simpleName
             val newName = "_$oldName"
             sources.forEach {
-                it.overwrite(it.text().value.replace(oldName, newName))
+                it.overwrite(it.code().replace(oldName, newName))
             }
         }
     }

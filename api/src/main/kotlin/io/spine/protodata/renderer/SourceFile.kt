@@ -109,10 +109,15 @@ private constructor(
     /**
      * Obtains an instance of [PsiFile] which corresponds to this source file.
      *
-     * The content of the source file is parsed using the language type obtained from
-     * the input file name.
+     * The content of the source file is parsed using the language type
+     * obtained from the input file name.
      *
-     * The returned value is cached until [overwrite]
+     * The returned value is cached until [overwrite] is called.
+     *
+     * Modifications made to the returned instance are <em>NOT</em>
+     * automatically reflected in the [code].
+     * If you intend to modify this source file via PSI, get the updated text
+     * via [PsiFile.getText] after modifications are applied, and then call [overwrite].
      */
     public fun psi(): PsiFile {
         if (psiFile != null) {
@@ -304,28 +309,28 @@ private constructor(
     /**
      * Obtains the entire content of this file.
      */
-    @Deprecated("Use `text()` instead.", ReplaceWith("text()"))
     public fun code(): String {
-        return text().value
+        initializeCode()
+        return code
     }
 
     /**
      * Obtains the entire content of this file as a list of lines.
      */
     public fun lines(): List<String> {
-        return text().lines()
+        return code.lines()
     }
 
     /**
      * Obtains the text content of this source file.
      */
+    @Deprecated("Use `code()` instead.", ReplaceWith("code()"))
     public fun text(): Text {
-        initializeCode()
         return text(code)
     }
 
     /**
-     * Adds an action to be executed before obtaining the [text] of this source file.
+     * Adds an action to be executed before obtaining the [code] of this source file.
      */
     internal fun beforeRead(action: (SourceFile) -> Unit) {
         preReadActions.add(action)

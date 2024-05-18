@@ -90,7 +90,7 @@ public class JavaCodeStyleFormatter : JavaRenderer() {
     }
 
     private fun reformat(file: SourceFile) {
-        val withAdjustedSeparators = file.text().value.convertLineSeparators()
+        val withAdjustedSeparators = file.code().convertLineSeparators()
         val outputFile = file.outputPath.toFile()
         val psiFile = parser.parse(withAdjustedSeparators, outputFile)
         execute {

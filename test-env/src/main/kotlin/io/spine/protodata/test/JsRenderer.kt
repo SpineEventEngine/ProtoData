@@ -29,13 +29,12 @@ package io.spine.protodata.test
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.JavaScript
-import io.spine.tools.code.Language
 
 public class JsRenderer : Renderer<JavaScript>(JavaScript) {
 
     override fun render(sources: SourceFileSet) {
         sources.forEach {
-            it.overwrite(it.text().value.replace("Hello", "Hello JavaScript"))
+            it.overwrite(it.code().replace("Hello", "Hello JavaScript"))
         }
     }
 }

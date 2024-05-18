@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
 
+import static kotlin.text.StringsKt.lines;
+
 /**
  * An insertion point at the line before a class declaration.
  */
@@ -45,8 +47,8 @@ final class MessageClass implements InsertionPoint {
     }
 
     @Override
-    public Set<TextCoordinates> locate(Text text) {
-        var lines = text.lines();
+    public Set<TextCoordinates> locate(String text) {
+        var lines = lines(text);
         var coords = ImmutableSet.<TextCoordinates>builder();
         for (int i = 0; i < lines.size(); i++) {
             if (lines.get(i).contains("final class ")) {

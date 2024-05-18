@@ -27,7 +27,6 @@
 package io.spine.protodata.test
 
 import io.spine.protodata.renderer.InsertionPoint
-import io.spine.text.Text
 import io.spine.text.TextCoordinates
 
 /**
@@ -37,5 +36,5 @@ public object NonExistingPoint : InsertionPoint {
 
     override val label: String = "NonExistingPoint"
 
-    override fun locate(text: Text): Set<TextCoordinates> = emptySet()
+    override fun locate(text: String): Set<TextCoordinates> = emptySet()
 }

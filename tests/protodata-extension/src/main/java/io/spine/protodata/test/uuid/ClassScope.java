@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.protodata.TypeNames.getQualifiedName;
 import static io.spine.protodata.renderer.CoordinatesFactory.nowhere;
 import static java.lang.String.format;
+import static kotlin.text.StringsKt.lines;
 
 /**
  * An {@link InsertionPoint} in the scope of a generated Java class.
@@ -69,9 +70,9 @@ final class ClassScope implements NonRepeatingInsertionPoint {
      * is not added either.
      */
     @Override
-    public TextCoordinates locateOccurrence(Text text) {
+    public TextCoordinates locateOccurrence(String text) {
         String pattern = format(NATIVE_INSERTION_POINT_FMT, getQualifiedName(typeName));
-        List<String> lines = text.lines();
+        List<String> lines = lines(text);
         for (int lineNumber = 0; lineNumber < lines.size(); lineNumber++) {
             String line = lines.get(lineNumber);
             if (line.contains(pattern)) {

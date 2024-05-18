@@ -29,8 +29,8 @@ package io.spine.protodata.java.file
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
 import io.spine.string.ti
-import io.spine.text.Text
 import io.spine.text.TextCoordinates
+import io.spine.text.TextFactory.text
 import io.spine.tools.psi.java.lineNumber
 
 /**
@@ -53,8 +53,9 @@ internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint {
     override val label: String
         get() = this.javaClass.simpleName
 
-    override fun locateOccurrence(text: Text): TextCoordinates {
-        val file = text.psiFile()
+    override fun locateOccurrence(text: String): TextCoordinates {
+        val txt = text(text)
+        val file = txt.psiFile()
         if (file.classes.isNotEmpty()) {
             val psiClass = file.classes.first()
             val lineNumber = psiClass.lineNumber
@@ -63,7 +64,7 @@ internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint {
         logger.atWarning().log { """
             Could not find a primary declaration in the code:
             ```java
-            ${text.printLines()}
+            ${txt.printLines()}
             ```    
             """.ti()
         }

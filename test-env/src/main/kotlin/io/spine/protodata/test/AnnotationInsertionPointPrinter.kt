@@ -29,7 +29,6 @@ package io.spine.protodata.test
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
-import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
@@ -51,7 +50,7 @@ public enum class AnnotationInsertionPoint : NonRepeatingInsertionPoint {
      * This insertion point allows importing types into the Java file.
      */
     IMPORT {
-        override fun locateOccurrence(text: Text): TextCoordinates {
+        override fun locateOccurrence(text: String): TextCoordinates {
             val lines = text.lines()
             val packageLineIndex = lines.asSequence()
                 .mapIndexed { index, line -> index to line }
@@ -68,7 +67,7 @@ public enum class AnnotationInsertionPoint : NonRepeatingInsertionPoint {
      * This insertion point allows annotating the return type.
      */
     BEFORE_RETURN_TYPE_METHOD_FOO {
-        override fun locateOccurrence(text: Text): TextCoordinates {
+        override fun locateOccurrence(text: String): TextCoordinates {
             val lines = text.lines()
             val (lineIndex, line) = lines.asSequence()
                 .mapIndexed { index, line -> index to line }

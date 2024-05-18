@@ -68,7 +68,13 @@ public interface InsertionPoint : CoordinatesFactory, WithLogging {
      * @see SourceFile.at
      * @see SourceFile.atInline
      */
-    public fun locate(text: Text): Set<TextCoordinates>
+    public fun locate(text: String): Set<TextCoordinates>
+
+    @Deprecated(
+        message = "Use `locate(String)` instead.",
+        replaceWith = ReplaceWith("locate(text.value)")
+    )
+    public fun locate(text: Text): Set<TextCoordinates> = locate(text.value)
 
     private fun logUnsupportedKind() =
         logger.atWarning().log {
@@ -99,7 +105,13 @@ public interface NonRepeatingInsertionPoint : InsertionPoint {
      * @see SourceFile.at
      * @see SourceFile.atInline
      */
-    public fun locateOccurrence(text: Text): TextCoordinates
+    public fun locateOccurrence(text: String): TextCoordinates
+
+    @Deprecated(
+        message = "Use `locateOccurrence(String)` instead.",
+        replaceWith = ReplaceWith("locateOccurrence(text.value)")
+    )
+    public fun locateOccurrence(text: Text): TextCoordinates = locateOccurrence(text.value)
 
     /**
      * Locates the site where the insertion point should be added.
@@ -110,7 +122,7 @@ public interface NonRepeatingInsertionPoint : InsertionPoint {
      *
      * @see locateOccurrence
      */
-    override fun locate(text: Text): Set<TextCoordinates> =
+    override fun locate(text: String): Set<TextCoordinates> =
         setOf(locateOccurrence(text))
 }
 
@@ -219,7 +231,7 @@ public class ProtocInsertionPoint(
      */
     public constructor(scope: String, type: TypeName) : this("$scope:${type.qualifiedName}")
 
-    override fun locate(text: Text): Set<TextCoordinates> = buildSet {
+    override fun locate(text: String): Set<TextCoordinates> = buildSet {
         text.lines().mapIndexed { index, line ->
             if (line.contains(codeLine)) {
                 add(atLine(index + 1))
