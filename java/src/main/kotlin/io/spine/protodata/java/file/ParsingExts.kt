@@ -70,11 +70,16 @@ public fun Text.locate(name: ClassOrEnumName): PsiClass? {
  * The content of the source file is parsed.
  * The instance of `PsiJavaFile` is not tied to a file on the disk.
  */
+@Deprecated(
+    message = "Please use `psi()` instead",
+    replaceWith = ReplaceWith("psi() as PsiJavaFile")
+)
 public fun SourceFile.toPsi(): PsiJavaFile {
     check(isJava) {
         "Unable to convert non-Java file `$relativePath` to ${PsiJavaFile::class.java.simpleName}."
     }
-    return TextToPsiParser.get(this)
+    val psiFile = psi()
+    return psiFile as PsiJavaFile
 }
 
 /**

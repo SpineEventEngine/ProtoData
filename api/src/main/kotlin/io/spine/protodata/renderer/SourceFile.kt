@@ -28,6 +28,11 @@ package io.spine.protodata.renderer
 
 import com.google.common.annotations.VisibleForTesting
 import com.google.common.base.Splitter
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeRegistry
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
+import com.intellij.util.io.lastModified
 import io.spine.protodata.InsertedPoints
 import io.spine.protodata.file
 import io.spine.server.query.select
@@ -93,6 +98,38 @@ private constructor(
      */
     public val outputPath: Path by lazy {
         sources.outputRoot / relativePath
+    }
+
+    private val fileFactory by lazy {
+        PsiFileFactory.getInstance(sources.project)
+    }
+
+    private var psiFile: PsiFile? = null
+
+    /**
+     * Obtains an instance of [PsiFile] which corresponds to this source file.
+     *
+     * The content of the source file is parsed using the language type obtained from
+     * the input file name.
+     *
+     * The returned value is cached until [overwrite]
+     */
+    public fun psi(): PsiFile {
+        if (psiFile != null) {
+            return psiFile!!
+        }
+        val fileName = outputPath.toFile().canonicalPath
+        val timeStamp = inputPath.lastModified().toMillis()
+        val fileType = psiFileType()
+        return fileFactory.createFileFromText(
+            fileName,
+            fileType,
+            code,
+            timeStamp,
+            true /* `eventSystemEnabled` */
+        ).also {
+            psiFile = it
+        }
     }
 
     public companion object {
@@ -199,6 +236,7 @@ private constructor(
     public fun overwrite(newCode: String) {
         this.code = newCode
         this.changed = true
+        this.psiFile = null
     }
 
     /**
@@ -304,4 +342,9 @@ private constructor(
     }
 
     override fun toString(): String = relativePath.toString()
+}
+
+private fun SourceFile.psiFileType(): FileType {
+    val registry = FileTypeRegistry.getInstance()
+    return registry!!.getFileTypeByFileName(relativePath.toString())
 }
