@@ -31,7 +31,6 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.intellij.util.io.lastModified
 import io.spine.protodata.InsertedPoints
 import io.spine.protodata.file
 import io.spine.protodata.renderer.SourceFile.Companion.fromCode
@@ -39,12 +38,14 @@ import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
 import io.spine.tools.psi.convertLineSeparators
+import io.spine.tools.psi.java.Environment
 import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.nio.file.StandardOpenOption.WRITE
+import java.time.Instant
 import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -118,6 +119,13 @@ private constructor(
     private var psiFile: PsiFile? = null
 
     /**
+     * The type of the file to be used by [fileFactory] when parsing.
+     */
+    private val fileType: FileType by lazy {
+        psiFileType()
+    }
+
+    /**
      * Obtains an instance of [PsiFile] which corresponds to this source file.
      *
      * The content of the source file is parsed using the language type
@@ -135,11 +143,7 @@ private constructor(
             return psiFile!!
         }
         val fileName = outputPath.toFile().canonicalPath
-        val timeStamp = inputPath.lastModified().toMillis()
-        // Ensure we initialized `Environment` before calling `psiFileType()` which
-        // uses `FileTypeRegistry`. Getting `fileFactory` property does this for us.
-        val fileFactory = this.fileFactory
-        val fileType = psiFileType()
+        val timeStamp = Instant.now().toEpochMilli()
         return fileFactory.createFileFromText(
             fileName,
             fileType,
@@ -363,6 +367,11 @@ private constructor(
  * Gets the type of this source file by using its name.
  */
 private fun SourceFile.psiFileType(): FileType {
+    // Ensure all the services are registered. This is fast to call repeatedly.
+    Environment.setUp()
     val registry = FileTypeRegistry.getInstance()
-    return registry!!.getFileTypeByFileName(relativePath.toString())
+    check(registry != null) {
+        "Unable to get `FileTypeRegistry` instance."
+    }
+    return registry.getFileTypeByFileName(relativePath.toString())
 }
