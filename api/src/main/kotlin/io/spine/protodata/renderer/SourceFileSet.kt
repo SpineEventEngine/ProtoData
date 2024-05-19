@@ -100,7 +100,7 @@ internal constructor(
     internal lateinit var querying: Querying
 
     /**
-     * Gets the project to which this source file set belongs.
+     * Obtains the project to which this source file set belongs.
      */
     public val project: Project by lazy {
         Environment.setUp()
