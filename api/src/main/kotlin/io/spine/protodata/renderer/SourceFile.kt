@@ -27,19 +27,25 @@
 package io.spine.protodata.renderer
 
 import com.google.common.annotations.VisibleForTesting
-import com.google.common.base.Splitter
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeRegistry
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 import io.spine.protodata.InsertedPoints
 import io.spine.protodata.file
+import io.spine.protodata.renderer.SourceFile.Companion.fromCode
 import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
+import io.spine.tools.psi.convertLineSeparators
+import io.spine.tools.psi.java.Environment
 import java.lang.System.lineSeparator
 import java.nio.charset.Charset
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.nio.file.StandardOpenOption.WRITE
-import java.util.regex.Pattern
+import java.time.Instant
 import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -68,13 +74,16 @@ private constructor(
     private var code: String,
 
     /**
-     * The FS path to the file relative to the source root.
+     * The file system path to the file relative to the source root.
      */
     public val relativePath: Path,
 
+    /**
+     * Tells if the [code] was modified after it was loaded, or if the file was
+     * created [from the code][fromCode].
+     */
     private var changed: Boolean = false
 ) {
-
     private lateinit var sources: SourceFileSet
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
     private var alreadyRead = false
@@ -95,18 +104,61 @@ private constructor(
         sources.outputRoot / relativePath
     }
 
+    /**
+     * The file factory for parsing the code.
+     */
+    private val fileFactory by lazy {
+        PsiFileFactory.getInstance(sources.project)
+    }
+
+    /**
+     * The instance of [PsiFile] obtained by parsing the current [code].
+     *
+     * Is `null` before the [psi] method is called, or after the [overwrite] method is called.
+     */
+    private var psiFile: PsiFile? = null
+
+    /**
+     * The type of the file to be used by [fileFactory] when parsing.
+     */
+    private val fileType: FileType by lazy {
+        psiFileType()
+    }
+
+    /**
+     * Obtains an instance of [PsiFile] which corresponds to this source file.
+     *
+     * The content of the source file is parsed using the language type
+     * obtained from the input file name.
+     *
+     * The returned value is cached until [overwrite] is called.
+     *
+     * Modifications made to the returned instance are <em>NOT</em>
+     * automatically reflected in the [code].
+     * If you intend to modify this source file via PSI, get the updated text
+     * via [PsiFile.getText] after modifications are applied, and then call [overwrite].
+     */
+    public fun psi(): PsiFile {
+        if (psiFile != null) {
+            return psiFile!!
+        }
+        val fileName = outputPath.toFile().canonicalPath
+        val timeStamp = Instant.now().toEpochMilli()
+        return fileFactory.createFileFromText(
+            fileName,
+            fileType,
+            code.convertLineSeparators(),
+            timeStamp,
+            true /* `eventSystemEnabled` */
+        ).also {
+            psiFile = it
+        }
+    }
+
     public companion object {
 
         /**
-         * A splitter to divide code fragments into lines.
-         *
-         * Uses a regular expression to match line breaks, with or without carriage returns.
-         */
-        @Deprecated("Please use `CharSequence.lines()` instead.")
-        public val lineSplitter: Splitter = Splitter.on(Pattern.compile("\r?\n"))
-
-        /**
-         * Reads the file from the given FS location.
+         * Reads the file from the given file system location.
          */
         internal fun read(
             sourceRoot: Path,
@@ -122,8 +174,8 @@ private constructor(
          * Constructs a file from source code.
          *
          * @param relativePath
-         *         the FS path for the file relative to the source root; the file might
-         *         not exist on the file system.
+         *         the file system path for the file relative to the source root;
+         *         the file might not exist on the file system.
          * @param code
          *         the source code.
          */
@@ -156,9 +208,10 @@ private constructor(
      * all of them.
      *
      * Code inserted via the resulting fluent builder, unlike code inserted via [SourceFile.at],
-     * will be placed right into the line that contains the insertion point. Authors of [Renderer]s
-     * may choose to either use insertion points in the whole-line mode or in the inline mode. Also,
-     * the same insertion point may be used in both modes.
+     * will be placed right into the line that contains the insertion point.
+     * Authors of [Renderer]s may choose to either use insertion points in the whole-line
+     * mode or in the inline mode.
+     * Also, the same insertion point may be used in both modes.
      *
      * @see at
      */
@@ -199,6 +252,7 @@ private constructor(
     public fun overwrite(newCode: String) {
         this.code = newCode
         this.changed = true
+        this.psiFile = null
     }
 
     /**
@@ -264,30 +318,30 @@ private constructor(
     }
 
     /**
-     * Obtains the entire content of this file.
+     * Gets the entire content of this file.
      */
-    @Deprecated("Use `text()` instead.", ReplaceWith("text()"))
     public fun code(): String {
-        return text().value
+        initializeCode()
+        return code
     }
 
     /**
-     * Obtains the entire content of this file as a list of lines.
+     * Gets the content of this file as a list of lines.
      */
     public fun lines(): List<String> {
-        return text().lines()
+        return code.lines()
     }
 
     /**
-     * Obtains the text content of this source file.
+     * Gets the text content of this source file.
      */
+    @Deprecated("Use `code()` instead.", ReplaceWith("code()"))
     public fun text(): Text {
-        initializeCode()
         return text(code)
     }
 
     /**
-     * Adds an action to be executed before obtaining the [text] of this source file.
+     * Adds an action to be executed before obtaining the [code] of this source file.
      */
     internal fun beforeRead(action: (SourceFile) -> Unit) {
         preReadActions.add(action)
@@ -303,5 +357,21 @@ private constructor(
         }
     }
 
+    /**
+     * Returns the [relativePath] string of this source file.
+     */
     override fun toString(): String = relativePath.toString()
+}
+
+/**
+ * Gets the type of this source file by using its name.
+ */
+private fun SourceFile.psiFileType(): FileType {
+    // Ensure all the services are registered. This is fast to call repeatedly.
+    Environment.setUp()
+    val registry = FileTypeRegistry.getInstance()
+    check(registry != null) {
+        "Unable to get `FileTypeRegistry` instance."
+    }
+    return registry.getFileTypeByFileName(relativePath.toString())
 }

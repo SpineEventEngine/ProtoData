@@ -42,7 +42,6 @@ import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.string.ti
 import io.spine.text.TextCoordinates
-import io.spine.text.text
 import java.nio.file.Path
 import javax.annotation.processing.Generated
 import kotlin.io.path.createFile
@@ -108,7 +107,7 @@ class BeforeNestedTypeDeclarationSpec {
             val inputClassSrc = input / "$TOP_CLASS.java"
             inputClassSrc.run {
                 createFile()
-                writeText(sourceCode.value)
+                writeText(sourceCode)
             }
 
             Pipeline(
@@ -172,8 +171,7 @@ private val deeplyNestedClassName = ClassName(PACKAGE_NAME, TOP_CLASS, NESTED, D
 private val nestedEnum = EnumName(PACKAGE_NAME, TOP_CLASS, NESTED_ENUM)
 private val nestedInterface = ClassName(PACKAGE_NAME, TOP_CLASS, NESTED_INTERFACE)
 
-private val sourceCode = text {
-    value = """
+private val sourceCode = """
     /* File header comment. */    
     package $PACKAGE_NAME;
 
@@ -204,7 +202,6 @@ private val sourceCode = text {
         } 
     }
     """.ti() // We deliberately use OS-specific line endings here to simulate loading from disk.
-}
 
 /**
  * Stub renderer which adds the [SuppressWarnings] annotation to the given type.

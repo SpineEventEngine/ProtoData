@@ -44,6 +44,7 @@ import io.spine.tools.psi.java.locate
 /**
  * Prints the lines of the text into a single string using the system line separator.
  */
+@Deprecated(message = "Use plain string values instead.", ReplaceWith("value"))
 internal fun Text.printLines(): String =
         lines().joinToString(separator = Separator.system.value)
 
@@ -70,11 +71,16 @@ public fun Text.locate(name: ClassOrEnumName): PsiClass? {
  * The content of the source file is parsed.
  * The instance of `PsiJavaFile` is not tied to a file on the disk.
  */
+@Deprecated(
+    message = "Please use `psi()` instead",
+    replaceWith = ReplaceWith("psi() as PsiJavaFile")
+)
 public fun SourceFile.toPsi(): PsiJavaFile {
     check(isJava) {
         "Unable to convert non-Java file `$relativePath` to ${PsiJavaFile::class.java.simpleName}."
     }
-    return TextToPsiParser.get(this)
+    val psiFile = psi()
+    return psiFile as PsiJavaFile
 }
 
 /**
@@ -89,7 +95,9 @@ private object TextToPsiParser {
         return cache.get(text)
     }
 
+    @Deprecated(message = "Please use `SourceFile.psi()` instead.")
     fun get(file: SourceFile): PsiJavaFile {
+        @Suppress("DEPRECATION")
         return cache.get(file.text())
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
 package io.spine.protodata.renderer
 
 import com.google.common.collect.ImmutableSet.toImmutableSet
+import com.intellij.openapi.project.Project
 import io.spine.annotation.Internal
 import io.spine.protodata.ProtoDeclarationName
 import io.spine.protodata.renderer.SourceFileSet.Companion.create
@@ -35,6 +36,7 @@ import io.spine.protodata.type.NameElement
 import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.tools.code.Language
+import io.spine.tools.psi.java.Environment
 import io.spine.util.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files.walk
@@ -96,6 +98,14 @@ internal constructor(
     private val deletedFiles = mutableSetOf<SourceFile>()
     private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
     internal lateinit var querying: Querying
+
+    /**
+     * Obtains the project to which this source file set belongs.
+     */
+    public val project: Project by lazy {
+        Environment.setUp()
+        Environment.project
+    }
 
     init {
         require(inputRoot.absolutePathString() != outputRoot.absolutePathString()) {

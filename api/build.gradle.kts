@@ -39,6 +39,7 @@ dependencies {
         Spine.text,
         Spine.CoreJava.server,
         Spine.toolBase,
+        Spine.psiJavaBundle
     ).forEach {
         api(it)
     }

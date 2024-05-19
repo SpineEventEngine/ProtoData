@@ -34,7 +34,6 @@ import io.spine.protodata.java.annotation.GeneratedTypeAnnotation
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.string.ti
-import io.spine.text.text
 import java.nio.file.Path
 import javax.annotation.processing.Generated
 import kotlin.io.path.createFile
@@ -89,17 +88,17 @@ class BeforePrimaryDeclarationSpec {
             val inputClassSrc = input / "TopLevelClass.java"
             inputClassSrc.run {
                 createFile()
-                writeText(classSource.value)
+                writeText(classSource)
             }
             val inputInterfaceSrc = input / "TopLevelInterface.java"
             inputInterfaceSrc.run {
                 createFile()
-                writeText(interfaceSource.value)
+                writeText(interfaceSource)
             }
             val inputEnumSrc = input / "TopLevelEnum.java"
             inputEnumSrc.run {
                 createFile()
-                writeText(enumSource.value)
+                writeText(enumSource)
             }
 
             Pipeline(
@@ -163,8 +162,7 @@ class BeforePrimaryDeclarationSpec {
 
 private const val PACKAGE_NAME = "given.java.file"
 
-private val classSource = text {
-    value = """
+private val classSource = """
     /* File header comment. */    
     package $PACKAGE_NAME;
 
@@ -178,20 +176,15 @@ private val classSource = text {
         }
     }
     """.ti()
-}
 
-private val interfaceSource = text {
-    value = """
+private val interfaceSource = """
     /** Top level interface Javadoc. */
     public interface TopLevelInterface {
     }
     """.ti()
-}
 
-private val enumSource = text {
-    value = """
+private val enumSource = """
     // File header comment.    
     package $PACKAGE_NAME;
     public enum TopLevelEnum { ONE, TWO }
     """.ti()
-}

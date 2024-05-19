@@ -94,7 +94,7 @@ internal class SourceFileJavaSpec : WithSourceFileSet() {
             val comment = "// This is Protoc standard insertion point."
             file.at(point)
                 .add(comment)
-            val code = file.text().value
+            val code = file.code()
             assertThat(code)
                 .contains(comment)
 

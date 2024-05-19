@@ -90,7 +90,7 @@ public abstract class InsertionPointPrinter<L: Language>(
         file: SourceFile,
         point: InsertionPoint
     ) {
-        val text = file.text()
+        val text = file.code()
         val coords = point.locate(text)
         val precedent = coords.precedentType()
         if (precedent != null) {

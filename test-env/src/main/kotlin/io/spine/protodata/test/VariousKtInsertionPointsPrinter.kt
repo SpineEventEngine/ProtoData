@@ -30,7 +30,6 @@ import io.spine.protodata.renderer.CoordinatesFactory.Companion.endOfFile
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.startOfFile
 import io.spine.protodata.renderer.InsertionPointPrinter
 import io.spine.protodata.renderer.NonRepeatingInsertionPoint
-import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Kotlin
 
@@ -40,13 +39,13 @@ public class VariousKtInsertionPointsPrinter :
 public enum class KotlinInsertionPoint : NonRepeatingInsertionPoint {
 
     FILE_START {
-        override fun locateOccurrence(text: Text): TextCoordinates = startOfFile
+        override fun locateOccurrence(text: String): TextCoordinates = startOfFile
     },
     FILE_END {
-        override fun locateOccurrence(text: Text): TextCoordinates = endOfFile
+        override fun locateOccurrence(text: String): TextCoordinates = endOfFile
     },
     LINE_FOUR_COL_THIRTY_THREE {
-        override fun locateOccurrence(text: Text): TextCoordinates = at(3, 33)
+        override fun locateOccurrence(text: String): TextCoordinates = at(3, 33)
     };
 
     override val label: String

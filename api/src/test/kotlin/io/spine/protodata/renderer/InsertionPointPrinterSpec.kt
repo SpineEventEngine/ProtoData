@@ -26,7 +26,6 @@
 
 package io.spine.protodata.renderer
 
-import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
 import org.junit.jupiter.api.DisplayName
@@ -58,5 +57,5 @@ class InsertionPointPrinterSpec {
 
 private class StubPoint: InsertionPoint {
     override val label: String = ""
-    override fun locate(text: Text): Set<TextCoordinates> = emptySet()
+    override fun locate(text: String): Set<TextCoordinates> = emptySet()
 }

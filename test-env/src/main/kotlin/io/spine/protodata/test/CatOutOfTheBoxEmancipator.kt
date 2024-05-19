@@ -29,7 +29,6 @@ package io.spine.protodata.test
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.tools.code.AnyLanguage
-import io.spine.tools.code.Language
 
 /**
  * Reads every file in the source set and obtains its code, invoking the insertion point rendering,
@@ -42,7 +41,7 @@ public class CatOutOfTheBoxEmancipator : Renderer<AnyLanguage>(AnyLanguage) {
 
     override fun render(sources: SourceFileSet) {
         sources.forEach {
-            it.text()
+            it.code()
         }
     }
 }

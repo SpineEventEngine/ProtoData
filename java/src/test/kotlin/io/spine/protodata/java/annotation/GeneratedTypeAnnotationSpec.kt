@@ -149,8 +149,7 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
     private fun generatedCode() = sources.first()
         .file(Path(JAVA_FILE))
-        .text()
-        .value
+        .code()
 
     private fun createPipelineWith(generatedTypeAnnotation: GeneratedTypeAnnotation) {
         Pipeline(

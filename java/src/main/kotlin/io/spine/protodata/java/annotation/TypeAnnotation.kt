@@ -150,7 +150,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      */
     @Suppress("ReturnCount") // Cannot go lower here.
     protected open fun shouldAnnotate(file: SourceFile): Boolean {
-        val coordinates = insertionPoint().locateOccurrence(file.text())
+        val coordinates = insertionPoint().locateOccurrence(file.code())
         if (coordinates == nowhere) {
             return false
         }

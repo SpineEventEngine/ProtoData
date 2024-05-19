@@ -26,15 +26,11 @@
 
 package io.spine.protodata.renderer
 
-import com.google.protobuf.Empty
-import io.spine.annotation.Internal
 import io.spine.logging.WithLogging
 import io.spine.protodata.TypeName
 import io.spine.protodata.qualifiedName
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
-import io.spine.text.cursor
-import io.spine.text.textCoordinates
 
 /**
  * A point is a source file, where more code may be inserted.
@@ -68,7 +64,13 @@ public interface InsertionPoint : CoordinatesFactory, WithLogging {
      * @see SourceFile.at
      * @see SourceFile.atInline
      */
-    public fun locate(text: Text): Set<TextCoordinates>
+    public fun locate(text: String): Set<TextCoordinates>
+
+    @Deprecated(
+        message = "Use `locate(String)` instead.",
+        replaceWith = ReplaceWith("locate(text.value)")
+    )
+    public fun locate(text: Text): Set<TextCoordinates> = locate(text.value)
 
     private fun logUnsupportedKind() =
         logger.atWarning().log {
@@ -99,7 +101,13 @@ public interface NonRepeatingInsertionPoint : InsertionPoint {
      * @see SourceFile.at
      * @see SourceFile.atInline
      */
-    public fun locateOccurrence(text: Text): TextCoordinates
+    public fun locateOccurrence(text: String): TextCoordinates
+
+    @Deprecated(
+        message = "Use `locateOccurrence(String)` instead.",
+        replaceWith = ReplaceWith("locateOccurrence(text.value)")
+    )
+    public fun locateOccurrence(text: Text): TextCoordinates = locateOccurrence(text.value)
 
     /**
      * Locates the site where the insertion point should be added.
@@ -110,70 +118,8 @@ public interface NonRepeatingInsertionPoint : InsertionPoint {
      *
      * @see locateOccurrence
      */
-    override fun locate(text: Text): Set<TextCoordinates> =
+    override fun locate(text: String): Set<TextCoordinates> =
         setOf(locateOccurrence(text))
-}
-
-/**
- * A factory of [TextCoordinates] instances.
- *
- * This interface serves as a trait for the [InsertionPoint] type.
- * The methods it provides are meant to be used by the authors of custom insertion points.
- */
-@Internal
-public sealed interface CoordinatesFactory {
-
-    /**
-     * Obtains coordinates pointing at a specific line and column in the file.
-     */
-    public fun at(line: Int, column: Int): TextCoordinates {
-        val cursor = cursor {
-            this.line = line
-            this.column = column
-        }
-        return textCoordinates {
-            inline = cursor
-        }
-    }
-
-    /**
-     * Obtains coordinates pointing at the beginning of a specific line in the text.
-     */
-    public fun atLine(line: Int): TextCoordinates = textCoordinates {
-        wholeLine = line
-    }
-
-    public companion object {
-
-        /**
-         * Obtains coordinates pointing at the beginning of the first line in the text.
-         */
-        @get:JvmName("startOfFile")
-        @get:JvmStatic
-        public val startOfFile: TextCoordinates = textCoordinates {
-            wholeLine = 0
-        }
-
-        /**
-         * Obtains coordinates pointing at the point after the last line in the text.
-         */
-        @get:JvmName("endOfFile")
-        @get:JvmStatic
-        public val endOfFile: TextCoordinates = textCoordinates {
-            endOfText = Empty.getDefaultInstance()
-        }
-
-        /**
-         * Obtains coordinates that do not point at anywhere in the text.
-         *
-         * The insertion point will NOT be placed in the file at question.
-         */
-        @get:JvmName("nowhere")
-        @get:JvmStatic
-        public val nowhere: TextCoordinates = textCoordinates {
-            nowhere = Empty.getDefaultInstance()
-        }
-    }
 }
 
 /**
@@ -219,7 +165,7 @@ public class ProtocInsertionPoint(
      */
     public constructor(scope: String, type: TypeName) : this("$scope:${type.qualifiedName}")
 
-    override fun locate(text: Text): Set<TextCoordinates> = buildSet {
+    override fun locate(text: String): Set<TextCoordinates> = buildSet {
         text.lines().mapIndexed { index, line ->
             if (line.contains(codeLine)) {
                 add(atLine(index + 1))

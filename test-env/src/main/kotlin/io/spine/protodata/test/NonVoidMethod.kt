@@ -28,7 +28,6 @@ package io.spine.protodata.test
 
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.InsertionPointPrinter
-import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
@@ -49,7 +48,7 @@ public class NonVoidMethod : InsertionPoint {
     override val label: String
         get() = "NonVoidMethod"
 
-    override fun locate(text: Text): Set<TextCoordinates> =
+    override fun locate(text: String): Set<TextCoordinates> =
         text.lines()
             .asSequence()
             .mapIndexed { index, line -> index to line }

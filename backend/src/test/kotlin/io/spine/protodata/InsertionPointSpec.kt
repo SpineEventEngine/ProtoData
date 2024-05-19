@@ -50,7 +50,6 @@ import io.spine.protodata.test.KotlinInsertionPoint.FILE_START
 import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
 import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
-import io.spine.text.Text
 import io.spine.text.TextCoordinates
 import java.lang.System.lineSeparator
 import java.nio.file.Path
@@ -167,7 +166,7 @@ class InsertionPointsSpec {
     fun `return empty 'codeLine' for empty 'label'`() {
         val insertionPoint = object: InsertionPoint {
             override val label: String = ""
-            override fun locate(text: Text): Set<TextCoordinates> = setOf()
+            override fun locate(text: String): Set<TextCoordinates> = setOf()
         }
         insertionPoint.codeLine shouldBe ""
     }

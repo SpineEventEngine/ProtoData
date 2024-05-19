@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.string.Strings.camelCase;
 import static java.lang.String.format;
 import static io.spine.protodata.renderer.CoordinatesFactory.nowhere;
+import static kotlin.text.StringsKt.lines;
 
 /**
  * An insertion point at the line right before a getter method of the given field.
@@ -62,11 +63,11 @@ final class FieldGetter implements NonRepeatingInsertionPoint {
 
     @NonNull
     @Override
-    public TextCoordinates locateOccurrence(Text text) {
+    public TextCoordinates locateOccurrence(String text) {
         var fieldName = camelCase(field.getField().getValue());
         var getterName = "get" + fieldName;
         var pattern = Pattern.compile("public .+ " + getterName);
-        var lines = text.lines();
+        var lines = lines(text);
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             if (pattern.matcher(line).find()) {

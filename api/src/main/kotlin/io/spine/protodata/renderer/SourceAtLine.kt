@@ -73,7 +73,7 @@ internal constructor(
      *         code lines.
      */
     public fun add(lines: Iterable<String>) {
-        val text = file.text()
+        val text = file.code()
         val sourceLines = text.lines()
         val locations = point.locate(text).map { it.wholeLine }
         val newCode = lines.indent(indent, indentLevel)
