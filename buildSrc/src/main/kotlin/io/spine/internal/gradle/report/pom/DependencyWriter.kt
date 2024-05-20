@@ -124,10 +124,34 @@ private fun Project.depsFromAllConfigurations(): Set<ModuleDependency> {
             // Force resolution of the configuration.
             configuration.resolvedConfiguration
         }
+        val forcedModules = configuration
+            .resolutionStrategy
+            .forcedModules.map {
+                "${it.group}:${it.name}"
+            }
         configuration.dependencies.filter { it.isExternal() }
             .forEach { dependency ->
                 val moduleDependency = ModuleDependency(project, configuration, dependency)
-                result.add(moduleDependency)
+                if (forcedModules.contains(moduleDependency.gaOnly)) {
+                    val factualVersion = configuration
+                        .resolutionStrategy
+                        .forcedModules.first {
+                            it.group == moduleDependency.group!!
+                                    && it.name == moduleDependency.name
+                        }
+                        .version!!
+
+                    logger.warn(
+                        " *** '${moduleDependency.gav}' is forced " +
+                                "in [${project.name} -> ${configuration.name}] " +
+                                "with version '${factualVersion}'. ***"
+                    )
+                    val dependencyWithForcedVersion =
+                        ModuleDependency(project, configuration, dependency, factualVersion)
+                    result.add(dependencyWithForcedVersion)
+                } else {
+                    result.add(moduleDependency)
+                }
             }
     }
     return result
@@ -154,13 +178,22 @@ private fun Dependency.isExternal(): Boolean {
  * The rejected duplicates are logged.
  */
 private fun Project.deduplicate(dependencies: Set<ModuleDependency>): List<ModuleDependency> {
+    dependencies.forEach {
+        if (it.project.name.contains("backend") || it.project.name.contains("api")) {
+            logger.warn(
+                "--- [${it.project.name} -> ${it.configuration.name}]: " +
+                        "${it.group}:${it.name}:${it.version} ---"
+            )
+        }
+    }
+
     val groups = dependencies.distinctBy { it.gav }
         .groupBy { it.run { "$group:$name" } }
 
     logDuplicates(groups)
 
     val filtered = groups.map { group ->
-        group.value.maxByOrNull { dep -> dep.version!! }!!
+        group.value.maxByOrNull { dep -> dep.version }!!
     }
     return filtered
 }
@@ -177,7 +210,7 @@ private fun Project.logDuplicate(dependency: String, versions: List<ModuleDepend
     versions.forEach {
         logger.lifecycle(
             "module: {}, configuration: {}, version: {}",
-            it.module.name,
+            it.project.name,
             it.configuration.name,
             it.version
         )
