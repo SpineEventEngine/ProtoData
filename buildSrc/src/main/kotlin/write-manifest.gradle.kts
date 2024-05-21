@@ -91,7 +91,8 @@ val manifestAttributes = mapOf(
     "Build-OS" to buildOs(),
     IMPLEMENTATION_TITLE.toString() to implementationTitle(),
     IMPLEMENTATION_VERSION.toString() to project.version,
-    IMPLEMENTATION_VENDOR.toString() to "TeamDev"
+    IMPLEMENTATION_VENDOR.toString() to "TeamDev",
+    "Bundle-License" to "http://www.apache.org/licenses/LICENSE-2.0.txt"
 )
 
 /**
