@@ -31,6 +31,7 @@ import java.io.Writer
 import java.util.*
 import kotlin.reflect.full.isSubclassOf
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.internal.artifacts.dependencies.AbstractExternalModuleDependency
 import org.gradle.kotlin.dsl.withGroovyBuilder
@@ -124,37 +125,34 @@ private fun Project.depsFromAllConfigurations(): Set<ModuleDependency> {
             // Force resolution of the configuration.
             configuration.resolvedConfiguration
         }
-        val forcedModules = configuration
-            .resolutionStrategy
-            .forcedModules.map {
-                "${it.group}:${it.name}"
-            }
         configuration.dependencies.filter { it.isExternal() }
             .forEach { dependency ->
-                val moduleDependency = ModuleDependency(project, configuration, dependency)
-                if (forcedModules.contains(moduleDependency.gaOnly)) {
-                    val factualVersion = configuration
-                        .resolutionStrategy
-                        .forcedModules.first {
-                            it.group == moduleDependency.group!!
-                                    && it.name == moduleDependency.name
-                        }
-                        .version!!
-
-                    logger.warn(
-                        " *** '${moduleDependency.gav}' is forced " +
-                                "in [${project.name} -> ${configuration.name}] " +
-                                "with version '${factualVersion}'. ***"
-                    )
-                    val dependencyWithForcedVersion =
-                        ModuleDependency(project, configuration, dependency, factualVersion)
-                    result.add(dependencyWithForcedVersion)
-                } else {
-                    result.add(moduleDependency)
-                }
+                val forcedVersion = configuration.forcedVersionOf(dependency)
+                val moduleDependency =
+                    if (forcedVersion != null) {
+                        ModuleDependency(project, configuration, dependency, forcedVersion)
+                    } else {
+                        ModuleDependency(project, configuration, dependency)
+                    }
+                result.add(moduleDependency)
             }
     }
     return result
+}
+
+/**
+ * Searches for a forced version of given [dependency] in this [Configuration].
+ *
+ * Returns `null`, if it wasn't forced.
+ */
+private fun Configuration.forcedVersionOf(dependency: Dependency): String? {
+    val forcedModules = resolutionStrategy.forcedModules
+    val maybeForced = forcedModules.firstOrNull {
+        it.group == dependency.group
+                && it.name == dependency.name
+                && it.version != null
+    }
+    return maybeForced?.version
 }
 
 /**
@@ -178,15 +176,6 @@ private fun Dependency.isExternal(): Boolean {
  * The rejected duplicates are logged.
  */
 private fun Project.deduplicate(dependencies: Set<ModuleDependency>): List<ModuleDependency> {
-    dependencies.forEach {
-        if (it.project.name.contains("backend") || it.project.name.contains("api")) {
-            logger.warn(
-                "--- [${it.project.name} -> ${it.configuration.name}]: " +
-                        "${it.group}:${it.name}:${it.version} ---"
-            )
-        }
-    }
-
     val groups = dependencies.distinctBy { it.gav }
         .groupBy { it.run { "$group:$name" } }
 
