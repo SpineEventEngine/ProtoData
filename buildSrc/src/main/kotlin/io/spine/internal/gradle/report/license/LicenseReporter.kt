@@ -84,7 +84,13 @@ object LicenseReporter {
 
         with(project.the<LicenseReportExtension>()) {
             outputDir = reportOutputDir.absolutePath
-            excludeGroups = arrayOf("io.spine", "io.spine.tools", "io.spine.gcloud")
+            excludeGroups = arrayOf(
+                "io.spine",
+                "io.spine.gcloud",
+                "io.spine.protodata",
+                "io.spine.tools",
+                "io.spine.validation"
+            )
             configurations = ALL
 
             renderers = arrayOf(MarkdownReportRenderer(Paths.outputFilename))
