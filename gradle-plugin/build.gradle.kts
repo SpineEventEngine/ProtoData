@@ -99,11 +99,9 @@ java {
     withJavadocJar()
 }
 
-publishing.publications.forEach {
-    if (it is MavenPublication) {
-        it.groupId = "io.spine"
-        it.artifactId = "protodata"
-    }
+publishing.publications.withType<MavenPublication>().all {
+    groupId = "io.spine"
+    artifactId = "protodata"
 }
 
 val pluginName = "protoDataPlugin"
