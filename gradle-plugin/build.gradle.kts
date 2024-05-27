@@ -99,6 +99,13 @@ java {
     withJavadocJar()
 }
 
+publishing.publications.forEach {
+    if (it is MavenPublication) {
+        it.groupId = "io.spine"
+        it.artifactId = "protodata"
+    }
+}
+
 val pluginName = "protoDataPlugin"
 
 @Suppress("UnstableApiUsage") // `@Incubating` properties of `gradlePlugin`.
