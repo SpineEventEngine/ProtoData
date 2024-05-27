@@ -31,6 +31,7 @@ import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
+import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
@@ -66,14 +67,32 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
             .findById(path)!!
             .header
 
-    /**
+    /** 
      * Locates a source file for the given message in this [SourceFileSet].
      *
      * @return the found file or `null` if not found.
      */
+    @Deprecated(
+        message = "Please use `javaFileOf()` instead.",
+        ReplaceWith("javaFileOf")
+    )
     protected fun SourceFileSet.fileOf(msg: MessageType): SourceFile? {
+        return javaFileOf(msg)
+    }
+
+    /**
+     * Locates a Java source file for the given message in this [SourceFileSet].
+     *
+     * @throws IllegalStateException
+     *          if there is no Java file for the given message type in this source file set.
+     */
+    protected fun SourceFileSet.javaFileOf(msg: MessageType): SourceFile {
         val javaFile = javaFileOf(type = msg.name, declaredIn = msg.file)
         val sourceFile = find(javaFile)
+        check(sourceFile != null) {
+            "Unable to locate the file for the message type `${msg.name.qualifiedName}`" +
+                    " in the source set `$this`."
+        }
         return sourceFile
     }
 }

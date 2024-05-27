@@ -33,7 +33,7 @@ import io.spine.internal.gradle.isSnapshot
 plugins {
     `java-gradle-plugin`
     `maven-publish`
-    id("com.gradle.plugin-publish").version("0.18.0")
+    id("com.gradle.plugin-publish").version("1.2.1")
     `version-to-resources`
     `write-manifest`
 }
@@ -101,38 +101,23 @@ java {
 
 val pluginName = "protoDataPlugin"
 
+@Suppress("UnstableApiUsage") // `@Incubating` properties of `gradlePlugin`.
 gradlePlugin {
+    website.set("https://spine.io/")
+    vcsUrl.set("https://github.com/SpineEventEngine/ProtoData.git")
     plugins {
         create(pluginName) {
             id = "io.spine.protodata"
             implementationClass = "io.spine.protodata.gradle.plugin.Plugin"
-            displayName = "ProtoData"
+            displayName = "ProtoData Gradle Plugin"
             description = "Sets up the ProtoData tool to be used in your project."
+            tags.set(listOf("spine", "protobuf", "protodata", "code generation", "codegen"))
         }
     }
     val functionalTest by sourceSets.getting
     testSourceSets(
         functionalTest
     )
-}
-
-pluginBundle {
-    website = "https://spine.io/"
-    vcsUrl = "https://github.com/SpineEventEngine/ProtoData.git"
-    tags = listOf("spine", "protobuf", "protodata", "code generation", "codegen")
-
-    val pubVersion = project.version.toString()
-    mavenCoordinates {
-        groupId = "io.spine"
-        artifactId = "protodata"
-        version = pubVersion
-    }
-
-    plugins {
-        named(pluginName) {
-            version = pubVersion
-        }
-    }
 }
 
 val protoDataVersion: String by extra
