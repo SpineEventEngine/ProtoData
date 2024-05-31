@@ -31,9 +31,12 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import com.google.protobuf.compiler.version
 import io.kotest.matchers.shouldBe
+import io.spine.io.replaceExtension
+import io.spine.type.fromJson
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.util.*
+import kotlin.io.path.exists
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -71,12 +74,31 @@ class ProtocPluginSpec {
         checkWritesRequestToFile()
     }
 
+    @Test
+    fun `write request in JSON format`() {
+        createRequestAndLaunchMain()
+        val requestInJson = requestFile.toPath().replaceExtension("pb.json")
+
+        requestInJson.exists() shouldBe true
+
+        val json = requestInJson.toFile().readText()
+        val requestFromJson = CodeGeneratorRequest::class.java.fromJson(json)
+        val requestFromBinary = CodeGeneratorRequest.parseFrom(requestFile.readBytes())
+
+        requestFromJson shouldBe requestFromBinary
+    }
+
     private fun checkWritesRequestToFile() {
-        val request = constructRequest()
-        launchMain(request)
+        val request = createRequestAndLaunchMain()
         val read = requestFile.readBytes()
         val restoredRequest = CodeGeneratorRequest.parseFrom(read)
         restoredRequest shouldBe request
+    }
+
+    private fun createRequestAndLaunchMain(): CodeGeneratorRequest {
+        val request = constructRequest()
+        launchMain(request)
+        return request
     }
 
     private fun constructRequest(): CodeGeneratorRequest = codeGeneratorRequest {

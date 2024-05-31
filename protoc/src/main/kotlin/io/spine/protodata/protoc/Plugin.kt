@@ -30,11 +30,14 @@ package io.spine.protodata.protoc
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse
+import io.spine.type.toJson
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.util.*
 import kotlin.io.path.Path
+import kotlin.io.path.nameWithoutExtension
 import kotlin.io.path.writeBytes
+import kotlin.io.path.writeText
 import kotlin.text.Charsets.UTF_8
 
 /**
@@ -55,6 +58,10 @@ public fun main() {
     targetDir.mkdirs()
 
     requestFile.writeBytes(request.toByteArray(), CREATE, TRUNCATE_EXISTING)
+
+    val requestFileInJson = requestFile.run { resolveSibling("$nameWithoutExtension.pb.json") }
+    val json = request.toJson()
+    requestFileInJson.writeText(json)
 
     val emptyResponse = CodeGeneratorResponse.getDefaultInstance()
     emptyResponse.writeTo(System.out)
