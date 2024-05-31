@@ -32,20 +32,19 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse
 import io.spine.io.replaceExtension
 import io.spine.option.OptionsProvider
+import io.spine.string.decodeBase64
 import io.spine.type.toJson
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-import java.util.Base64
 import kotlin.io.path.Path
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
-import kotlin.text.Charsets.UTF_8
 
 /**
  * Stores received `CodeGeneratorRequest` message to the file the name of which is passed as
  * the value of the [parameter][CodeGeneratorRequest.getParameter] property of the request.
  *
- * The name of the file is [Base64] encoded.
+ * The name of the file is [Base64][java.util.Base64] encoded.
  *
  * The function returns empty [CodeGeneratorRequest] written to [System.out]
  * according to the `protoc` plugin
@@ -67,12 +66,4 @@ public fun main() {
 
     val emptyResponse = CodeGeneratorResponse.getDefaultInstance()
     emptyResponse.writeTo(System.out)
-}
-
-/**
- * Decodes a UTF-8 string encoded in Base64 in this string.
- */
-private fun String.decodeBase64(): String {
-    val bytes = Base64.getDecoder().decode(this)
-    return String(bytes, UTF_8)
 }
