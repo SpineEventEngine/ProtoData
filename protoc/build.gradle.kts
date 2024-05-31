@@ -25,10 +25,12 @@
  */
 
 import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Spine
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 dependencies {
     implementation(Protobuf.javaLib)
+    implementation(Spine.base)?.because("`MessageOrBuilder.toJson()` is needed.")
 }
 
 tasks.jar {
@@ -43,7 +45,7 @@ tasks.jar {
         }
     })
     exclude(
-        // Protobuf files.
+        // Protobuf proto source files.
         "google/**",
     )
     // We should provide a classifier or else Protobuf Gradle plugin will substitute it with
