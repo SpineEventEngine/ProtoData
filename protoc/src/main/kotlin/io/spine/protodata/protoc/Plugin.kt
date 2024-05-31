@@ -31,6 +31,7 @@ package io.spine.protodata.protoc
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse
 import io.spine.io.replaceExtension
+import io.spine.option.OptionsProvider
 import io.spine.type.toJson
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
@@ -51,7 +52,8 @@ import kotlin.text.Charsets.UTF_8
  * [protocol](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.compiler.plugin.pb/).
  */
 public fun main() {
-    val request = CodeGeneratorRequest.parseFrom(System.`in`)
+    val registry = OptionsProvider.registryWithAllOptions()
+    val request = CodeGeneratorRequest.parseFrom(System.`in`, registry)
     val requestFile = Path(request.parameter.decodeBase64())
 
     val targetDir = requestFile.toFile().parentFile

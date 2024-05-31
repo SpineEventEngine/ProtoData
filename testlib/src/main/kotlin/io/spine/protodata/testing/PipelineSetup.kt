@@ -27,9 +27,11 @@
 package io.spine.protodata.testing
 
 import com.google.common.annotations.VisibleForTesting
+import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.io.Resource
 import io.spine.io.ResourceDirectory
+import io.spine.option.OptionsProvider
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.plugin.Plugin
@@ -300,7 +302,7 @@ public class PipelineSetup(
                 classLoader
             )
             file.open().use {
-                val request = CodeGeneratorRequest.parseFrom(it)
+                val request = CodeGeneratorRequest.parseFrom(it, extensionRegistry)
                 return request
             }
         }
@@ -311,6 +313,10 @@ public class PipelineSetup(
             val dir = ResourceDirectory.get(dirName, classLoader)
             val inputRoot = dir.toPath()
             return inputRoot
+        }
+
+        private val extensionRegistry: ExtensionRegistry by lazy {
+            OptionsProvider.registryWithAllOptions()
         }
     }
 }
