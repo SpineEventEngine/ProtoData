@@ -38,7 +38,7 @@ package io.spine.internal.dependency
 )
 object ProtoTap {
     const val group = "io.spine.tools"
-    const val version = "0.8.3"
+    const val version = "0.8.5"
     const val gradlePluginId = "io.spine.prototap"
     const val api = "$group:prototap-api:$version"
     const val gradlePlugin = "$group:prototap-gradle-plugin:$version"
