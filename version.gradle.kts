@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -32,4 +32,4 @@
  *
  * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
  */
-val protoDataVersion: String by extra("0.25.2")
+val protoDataVersion: String by extra("0.25.3")
