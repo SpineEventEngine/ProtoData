@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.26.0</version>
+<version>0.25.3</version>
 
 <inceptionYear>2015</inceptionYear>
 
