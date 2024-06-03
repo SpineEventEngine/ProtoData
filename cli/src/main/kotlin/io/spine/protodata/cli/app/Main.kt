@@ -38,6 +38,7 @@ import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.code.proto.parse
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
@@ -59,7 +60,6 @@ import io.spine.string.Separator.Companion.nl
 import io.spine.string.pi
 import io.spine.string.ti
 import io.spine.tools.code.manifest.Version
-import io.spine.type.ExtensionRegistryHolder.extensionRegistry
 import java.io.File
 import java.io.File.pathSeparator
 import java.nio.file.Path
@@ -219,7 +219,7 @@ internal class Run(version: String) : CliktCommand(
 
     private fun loadRequest(): CodeGeneratorRequest {
         return codegenRequestFile.inputStream().use {
-            CodeGeneratorRequest.parseFrom(it, extensionRegistry)
+            CodeGeneratorRequest::class.parse(it)
         }
     }
 
