@@ -1,3 +1,5 @@
+import io.spine.internal.dependency.AutoService
+
 /*
  * Copyright 2023, TeamDev. All rights reserved.
  *
@@ -36,6 +38,9 @@ apply {
 }
 
 dependencies {
+    annotationProcessor(AutoService.processor)
+    compileOnly(AutoService.annotations)
+
     compileOnly("io.spine.protodata:backend")
     implementation("io.spine.protodata:java")
 }

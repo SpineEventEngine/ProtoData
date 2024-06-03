@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.internal.dependency.AutoService
 import io.spine.internal.dependency.Grpc
 
 plugins {
@@ -31,6 +32,9 @@ plugins {
 }
 
 dependencies {
+    annotationProcessor(AutoService.processor)
+    compileOnly(AutoService.annotations)
+
     implementation(project(":backend"))
     implementation(Grpc.stub)
     implementation(Grpc.protobuf)
