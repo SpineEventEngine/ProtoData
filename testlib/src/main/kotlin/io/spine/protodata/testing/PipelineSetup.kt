@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,11 +27,10 @@
 package io.spine.protodata.testing
 
 import com.google.common.annotations.VisibleForTesting
-import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.code.proto.parse
 import io.spine.io.Resource
 import io.spine.io.ResourceDirectory
-import io.spine.option.OptionsProvider
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.plugin.Plugin
@@ -302,7 +301,7 @@ public class PipelineSetup(
                 classLoader
             )
             file.open().use {
-                val request = CodeGeneratorRequest.parseFrom(it, extensionRegistry)
+                val request = CodeGeneratorRequest::class.parse(it)
                 return request
             }
         }
@@ -313,10 +312,6 @@ public class PipelineSetup(
             val dir = ResourceDirectory.get(dirName, classLoader)
             val inputRoot = dir.toPath()
             return inputRoot
-        }
-
-        private val extensionRegistry: ExtensionRegistry by lazy {
-            OptionsProvider.registryWithAllOptions()
         }
     }
 }

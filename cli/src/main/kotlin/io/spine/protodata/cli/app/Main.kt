@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -37,14 +37,12 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
-import com.google.protobuf.ExtensionRegistry
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.code.proto.FileSet
+import io.spine.code.proto.parse
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
-import io.spine.option.OptionsProvider
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.cli.DebugLoggingParam
 import io.spine.protodata.cli.InfoLoggingParam
@@ -199,8 +197,7 @@ internal class Run(version: String) : CliktCommand(
     private fun doRun() {
         val sources = createSourceFileSets()
         val plugins = loadPlugins()
-        val registry = createRegistry()
-        val request = loadRequest(registry)
+        val request = loadRequest()
         val dir = SettingsDirectory(settingsDir)
         logger.atDebug().log { """
             Starting code generation with the following arguments:
@@ -220,11 +217,9 @@ internal class Run(version: String) : CliktCommand(
         pipeline()
     }
 
-    private fun loadRequest(
-        extensions: ExtensionRegistry = ExtensionRegistry.getEmptyRegistry()
-    ): CodeGeneratorRequest {
+    private fun loadRequest(): CodeGeneratorRequest {
         return codegenRequestFile.inputStream().use {
-            CodeGeneratorRequest.parseFrom(it, extensions)
+            CodeGeneratorRequest::class.parse(it)
         }
     }
 
@@ -254,15 +249,6 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun loadPlugins() = load(PluginBuilder(), plugins)
-
-    private fun createRegistry(): ExtensionRegistry {
-        val registry = OptionsProvider.registryWithAllOptions()
-        val request = loadRequest()
-        val files: FileSet = FileSet.of(request.protoFileList)
-        val filesProvider = FileSetOptionsProvider(files)
-        filesProvider.registerIn(registry)
-        return registry
-    }
 
     private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {
         val classLoader = Thread.currentThread().contextClassLoader
