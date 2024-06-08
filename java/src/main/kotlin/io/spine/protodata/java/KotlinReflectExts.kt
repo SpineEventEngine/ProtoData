@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,6 +26,7 @@
 
 package io.spine.protodata.java
 
+import io.spine.tools.java.reference
 import kotlin.reflect.KClass
 
 /**
@@ -34,5 +35,11 @@ import kotlin.reflect.KClass
  * @return a simple class name for the class belonging to `java.lang` package.
  *         Otherwise, a canonical name is returned.
  */
+@Deprecated(
+    message = "Please use `io.spine.tools.kotlin.reference` instead.",
+    replaceWith = ReplaceWith("reference",
+        imports = ["io.spine.tools.kotlin.reference"]
+    )
+)
 public val <T: Any> KClass<T>.reference: String
     get() = java.reference

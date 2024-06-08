@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,9 +28,18 @@
 
 package io.spine.protodata.java
 
+import io.spine.tools.java.isJavaLang
+import io.spine.tools.java.reference
+
 /**
  * Tells if this class belongs to the "java.lang" package.
  */
+@Deprecated(
+    message = "Please use `io.spine.tools.java.isJavaLang` instead.",
+    replaceWith = ReplaceWith("isJavaLang",
+        imports = ["io.spine.tools.java.isJavaLang"]
+    )
+)
 public val Class<*>.isJavaLang: Boolean
     get() = name.contains("java.lang")
 
@@ -40,6 +49,12 @@ public val Class<*>.isJavaLang: Boolean
  * Since the receiver is the Java class, we check the presence of
  * [java.lang.annotation.Repeatable] annotation, not [kotlin.annotation.Repeatable].
  */
+@Deprecated(
+    message = "Please use `io.spine.tools.java.isRepeatable` instead.",
+    replaceWith = ReplaceWith("isRepeatable",
+        imports = ["io.spine.tools.java.isRepeatable"]
+    )
+)
 public val <T: Annotation> Class<T>.isRepeatable: Boolean
     get() = isAnnotationPresent(java.lang.annotation.Repeatable::class.java)
 
@@ -59,5 +74,11 @@ public val <T: Annotation> Class<T>.codeReference: String
  * @return a simple class name for the class belonging to `java.lang` package.
  *         Otherwise, a canonical name is returned.
  */
+@Deprecated(
+    message = "Please use `io.spine.tools.java.reference` instead.",
+    replaceWith = ReplaceWith("reference",
+        imports = ["io.spine.tools.java.reference"]
+    )
+)
 public val <T: Any> Class<T>.reference: String
     get() = if (isJavaLang) simpleName else canonicalName

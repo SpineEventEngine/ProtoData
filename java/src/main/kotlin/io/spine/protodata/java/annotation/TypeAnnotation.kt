@@ -29,11 +29,11 @@ import io.spine.protodata.java.ClassOrEnumName
 import io.spine.protodata.java.JavaRenderer
 import io.spine.protodata.java.file.BeforeNestedTypeDeclaration
 import io.spine.protodata.java.file.BeforePrimaryDeclaration
-import io.spine.protodata.java.isRepeatable
-import io.spine.protodata.java.reference
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.tools.java.isRepeatable
+import io.spine.tools.java.reference
 import java.lang.annotation.ElementType.TYPE
 import java.lang.annotation.Target
 import org.jetbrains.annotations.VisibleForTesting

@@ -25,6 +25,11 @@
  */
 
 import io.spine.internal.gradle.buildDirectory
+import java.io.File
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.getting
+import org.gradle.kotlin.dsl.jacoco
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
     jacoco
