@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -63,6 +63,10 @@ import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
+import io.spine.tools.code.AnyLanguage
+import io.spine.tools.code.Java
+import io.spine.tools.code.JavaScript
+import io.spine.tools.code.Kotlin
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.div
@@ -88,7 +92,7 @@ class PipelineSpec {
     private lateinit var targetFile: Path
     private lateinit var request: CodeGeneratorRequest
     private lateinit var renderer: UnderscorePrefixRenderer
-    private lateinit var overwritingSourceSet: SourceFileSet
+    private lateinit var overwritingSourceSet: SourceFileSet<*>
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
@@ -112,7 +116,7 @@ class PipelineSpec {
         codegenRequestFile.writeBytes(request.toByteArray())
         renderer = UnderscorePrefixRenderer()
 
-        overwritingSourceSet = SourceFileSet.create(srcRoot, targetRoot)
+        overwritingSourceSet = SourceFileSet.create(Java, srcRoot, targetRoot)
         targetFile = targetRoot.resolve(sourceFileName)
     }
 
@@ -153,7 +157,7 @@ class PipelineSpec {
         write(path, "foo bar")
         Pipeline(
             plugins = listOf(TestPlugin(), DeletingRenderer()),
-            sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
+            sources = listOf(SourceFileSet.create(Java, srcRoot, targetRoot)),
             request = request,
             settings = SettingsDirectory(settingsDir)
         )()
@@ -171,7 +175,7 @@ class PipelineSpec {
                 JavaGenericInsertionPointPrinter(),
                 renderer
             ),
-            sources = SourceFileSet.create(srcRoot, targetRoot),
+            sources = SourceFileSet.create(Java, srcRoot, targetRoot),
             request,
             settings = SettingsDirectory(settingsDir)
         )()
@@ -193,7 +197,7 @@ class PipelineSpec {
         val renderer = PrependingRenderer(NonExistingPoint)
         Pipeline(
             plugin = TestPlugin(renderer),
-            sources = SourceFileSet.create(srcRoot, targetRoot),
+            sources = SourceFileSet.create(Java, srcRoot, targetRoot),
             request,
             settings = SettingsDirectory(settingsDir)
         )()
@@ -212,12 +216,13 @@ class PipelineSpec {
         """.trimIndent())
         Pipeline(
             plugins = listOf(ImplicitPluginWithRenderers(
+                Java,
                 renderers = listOf(
                     AnnotationInsertionPointPrinter(),
                     NullableAnnotationRenderer()
                 )
             )),
-            sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
+            sources = listOf(SourceFileSet.create(Java, srcRoot, targetRoot)),
             request = CodeGeneratorRequest.getDefaultInstance(),
             settings = SettingsDirectory(settingsDir)
         )()
@@ -233,7 +238,7 @@ class PipelineSpec {
         val renderer = PrependingRenderer(NonExistingPoint, inline = true)
         Pipeline(
             plugin = TestPlugin(renderer),
-            sources = SourceFileSet.create(srcRoot, targetRoot),
+            sources = SourceFileSet.create(Java, srcRoot, targetRoot),
             request,
             settings = SettingsDirectory(settingsDir)
         )()
@@ -247,12 +252,15 @@ class PipelineSpec {
         write(jsPath, "alert('Hello')")
         write(ktPath, "println(\"Hello\")")
         Pipeline(
-            plugin = TestPlugin(
-                JsRenderer(),
-                KtRenderer()
+            plugins = listOf(
+                ImplicitPluginWithRenderers(JavaScript, JsRenderer()),
+                ImplicitPluginWithRenderers(Kotlin, KtRenderer()),
             ),
-            sources = SourceFileSet.create(srcRoot, targetRoot),
-            request,
+            sources = listOf(
+                SourceFileSet.create(JavaScript, srcRoot, targetRoot),
+                SourceFileSet.create(Kotlin, srcRoot, targetRoot)
+            ),
+            request = request,
             settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetRoot / jsPath).contains("Hello JavaScript")
@@ -262,12 +270,12 @@ class PipelineSpec {
     @Test
     fun `add insertion points`(@TempDir settingsDir: Path) {
         Pipeline(
-            plugin = TestPlugin(
-                JavaGenericInsertionPointPrinter(),
-                CatOutOfTheBoxEmancipator()
+            plugins = listOf(
+                ImplicitPluginWithRenderers(Java, JavaGenericInsertionPointPrinter()),
+                ImplicitPluginWithRenderers(AnyLanguage, CatOutOfTheBoxEmancipator()),
             ),
-            sources = overwritingSourceSet,
-            request,
+            sources = listOf(overwritingSourceSet),
+            request = request,
             settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetFile).run {
@@ -280,12 +288,12 @@ class PipelineSpec {
     @Test
     fun `not add insertion points if nobody touches the file contents`(@TempDir settingsDir: Path) {
         Pipeline(
-            plugin = TestPlugin(
-                JavaGenericInsertionPointPrinter(),
-                JsRenderer()
+            plugins = listOf(
+                ImplicitPluginWithRenderers(Java, JavaGenericInsertionPointPrinter()),
+                ImplicitPluginWithRenderers(JavaScript, JsRenderer())
             ),
-            sources = overwritingSourceSet,
-            request,
+            sources = listOf(overwritingSourceSet),
+            request = request,
             settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetFile).run {
@@ -301,7 +309,7 @@ class PipelineSpec {
         @TempDir destination: Path) {
         Pipeline(
             plugins = listOf(TestPlugin(), InternalAccessRenderer()),
-            sources = listOf(SourceFileSet.create(srcRoot, destination)),
+            sources = listOf(SourceFileSet.create(Java, srcRoot, destination)),
             request = request,
             settings = SettingsDirectory(settingsDir)
         )()
@@ -320,7 +328,7 @@ class PipelineSpec {
     fun `copy all sources into the new destination`(@TempDir settingsDir: Path) {
         Pipeline(
             plugins = listOf(TestPlugin(), NoOpRenderer()),
-            sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
+            sources = listOf(SourceFileSet.create(AnyLanguage, srcRoot, targetRoot)),
             request = request,
             settings = SettingsDirectory(settingsDir)
         )()
@@ -348,8 +356,8 @@ class PipelineSpec {
                     NoOpRenderer()
                 ),
                 sources = listOf(
-                    SourceFileSet.create(srcRoot, destination1),
-                    SourceFileSet.create(source2, destination2)
+                    SourceFileSet.create(AnyLanguage, srcRoot, destination1),
+                    SourceFileSet.create(AnyLanguage, source2, destination2)
                 ),
                 request = request,
                 settings = SettingsDirectory(settingsDir)
@@ -385,8 +393,8 @@ class PipelineSpec {
                     PlainStringRenderer()
                 ),
                 sources = listOf(
-                    SourceFileSet.create(srcRoot, destination1),
-                    SourceFileSet.create(source2, destination2)
+                    SourceFileSet.create(AnyLanguage, srcRoot, destination1),
+                    SourceFileSet.create(AnyLanguage, source2, destination2)
                 ),
                 request = request,
                 settings = settings
@@ -415,14 +423,14 @@ class PipelineSpec {
             Pipeline(
                 plugins = listOf(
                     TestPlugin(),
-                    ImplicitPluginWithRenderers(listOf(
+                    ImplicitPluginWithRenderers(Java, listOf(
                             JavaGenericInsertionPointPrinter(),
                             PrependingRenderer()
                     ))
                 ),
                 sources = listOf(
-                    SourceFileSet.create(srcRoot, destination1),
-                    SourceFileSet.create(source2, destination2)
+                    SourceFileSet.create(Java, srcRoot, destination1),
+                    SourceFileSet.create(Java, source2, destination2)
                 ),
                 request = request,
                 settings = SettingsDirectory(settingsDir)
@@ -445,6 +453,7 @@ class PipelineSpec {
             val pipeline = Pipeline(
                 plugins = listOf(
                     DocilePlugin(
+                        language = AnyLanguage,
                         views = setOf(viewClass),
                         viewRepositories = setOf(DeletedTypeRepository())
                     ),

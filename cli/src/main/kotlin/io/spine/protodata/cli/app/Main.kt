@@ -209,7 +209,7 @@ internal class Run(version: String) : CliktCommand(
               - settings dir: ${settingsDir}.
             """.ti()
         }
-        val pipeline = Pipeline<Java>(
+        val pipeline = Pipeline(
             plugins = plugins,
             sources = sources,
             request = request,
@@ -231,7 +231,7 @@ internal class Run(version: String) : CliktCommand(
         return sources
             ?.zip(targets)
             ?.filter { (s, _) -> s.exists() }
-            ?.map { (s, t) -> SourceFileSet.create(s, t) }
+            ?.map { (s, t) -> SourceFileSet.create(Java, s, t) }
             ?: targets.oneSetWithNoFiles()
     }
 
@@ -292,7 +292,7 @@ internal class Run(version: String) : CliktCommand(
  * Creates a list that contains a single, empty source set.
  */
 private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet<Java>> =
-    listOf(SourceFileSet.empty(first()))
+    listOf(SourceFileSet.empty(Java, first()))
 
 /**
  * Throws an [UsageError] with the result of calling [lazyMessage] if the [condition] isn't met.

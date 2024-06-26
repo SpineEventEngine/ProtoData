@@ -53,7 +53,7 @@ internal class SourceFileSpec {
             public class HelloWorld { }
             """.ti()
         )
-        val set = SourceFileSet.create<Java>(input, output)
+        val set = SourceFileSet.create(Java, input, output)
         sourceFile = set.file(file)
         sourceFile shouldNotBe null
     }

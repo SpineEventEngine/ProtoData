@@ -102,5 +102,5 @@ public class SuppressWarningsAnnotation :
     /**
      * A plugin for suppressing warnings in the generated code.
      */
-    public class Plugin: TypeAnnotationPlugin(listOf(SuppressWarningsAnnotation()))
+    public class Plugin : TypeAnnotationPlugin(listOf(SuppressWarningsAnnotation()))
 }

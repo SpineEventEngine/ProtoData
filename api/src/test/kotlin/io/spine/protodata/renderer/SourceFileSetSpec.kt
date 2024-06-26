@@ -31,7 +31,9 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.protodata.renderer.given.PlainTextConvention
 import io.spine.protodata.typeName
+import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Java
+import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -64,7 +66,7 @@ class SourceFileSetSpec {
                 textFile.writeText("this is a non-empty file")
             }
         }
-        set = SourceFileSet.create(input, output)
+        set = SourceFileSet.create(AnyLanguage, input, output)
     }
 
     @Test

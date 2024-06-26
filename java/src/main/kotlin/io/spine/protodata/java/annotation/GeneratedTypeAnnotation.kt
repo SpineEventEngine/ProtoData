@@ -153,5 +153,6 @@ public open class GeneratedTypeAnnotation(
      * A plugin which adds [@Generated][Generated] to the list of type annotations.
      */
     public class Plugin(renderer: GeneratedTypeAnnotation = GeneratedTypeAnnotation()) :
-        TypeAnnotationPlugin(listOf(renderer))
+        TypeAnnotationPlugin(listOf(renderer)) {
+    }
 }

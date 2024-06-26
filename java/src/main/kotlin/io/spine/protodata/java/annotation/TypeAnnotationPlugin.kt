@@ -46,6 +46,7 @@ public abstract class TypeAnnotationPlugin(
     viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
     policies: Set<Policy<*>> = setOf(),
 ) : AbstractPlugin<Java>(
+    Java,
     listOf(PrintBeforePrimaryDeclaration()) + renderers,
     views, viewRepositories, policies
 )

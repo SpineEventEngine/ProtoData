@@ -39,11 +39,16 @@ import io.spine.tools.code.Language
  */
 @VisibleForTesting
 public class ImplicitPluginWithRenderers<L : Language>(
+    override val language: L,
     private val renderers: List<Renderer<L>>
 ) : Plugin<L> {
 
-    public constructor(renderer: Renderer<L>) : this(listOf(renderer))
-    public constructor(vararg renderer: Renderer<L>) : this(renderer.toList())
+    public constructor(language: L, renderer: Renderer<L>) : this(language, listOf(renderer))
+
+    public constructor(language: L, vararg renderer: Renderer<L>) : this(
+        language,
+        renderer.toList()
+    )
 
     override fun renderers(): List<Renderer<L>> = renderers
 }

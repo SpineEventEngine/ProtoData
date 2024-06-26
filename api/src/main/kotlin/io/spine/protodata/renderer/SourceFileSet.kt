@@ -72,6 +72,15 @@ import org.apache.commons.codec.language.bm.Lang
 @Suppress("TooManyFunctions") // All parts of the public API.
 public class SourceFileSet<L : Language>
 internal constructor(
+
+    /**
+     * The language of the files in this set.
+     */
+    public val language: L,
+
+    /**
+     * The files of this file set.
+     */
     files: Set<SourceFile<L>>,
 
     /**
@@ -125,8 +134,12 @@ internal constructor(
             replaceWith = ReplaceWith("create"),
             level = ERROR
         )
-        public fun <L : Language> from(inputRoot: Path, outputRoot: Path): SourceFileSet<L> =
-            create(inputRoot, outputRoot)
+        public fun <L : Language> from(
+            language: L,
+            inputRoot: Path,
+            outputRoot: Path
+        ): SourceFileSet<L> =
+            create(language, inputRoot, outputRoot)
 
         /**
          * Collects a source set from the given [input][inputRoot], assigning
@@ -140,7 +153,11 @@ internal constructor(
          *         If different from the `sourceRoot`, the files in `sourceRoot`
          *         will not be changed.
          */
-        public fun <L : Language> create(inputRoot: Path, outputRoot: Path): SourceFileSet<L> {
+        public fun <L : Language> create(
+            language: L,
+            inputRoot: Path,
+            outputRoot: Path
+        ): SourceFileSet<L> {
             val source = inputRoot.canonical()
             val target = outputRoot.canonical()
             if (source != target) {
@@ -150,17 +167,17 @@ internal constructor(
                 .filter { it.isRegularFile() }
                 .map { SourceFile.read<L>(source, source.relativize(it)) }
                 .collect(toImmutableSet())
-            return SourceFileSet(files, source, target)
+            return SourceFileSet(language, files, source, target)
         }
 
         /**
          * Creates an empty source set which can be appended with new files and
          * written to the given target directory.
          */
-        public fun <L : Language> empty(target: Path): SourceFileSet<L> {
+        public fun <L : Language> empty(language: L, target: Path): SourceFileSet<L> {
             checkTarget(target)
             val files = setOf<SourceFile<L>>()
-            return SourceFileSet(files, target, target)
+            return SourceFileSet(language, files, target, target)
         }
     }
 
@@ -315,7 +332,7 @@ internal constructor(
  * matching the given [predicate].
  */
 internal fun <L: Language> SourceFileSet<L>.subsetWhere(predicate: (SourceFile<L>) -> Boolean) =
-    SourceFileSet(this.filter(predicate).toSet(), inputRoot, outputRoot)
+    SourceFileSet(language, this.filter(predicate).toSet(), inputRoot, outputRoot)
 
 /**
  * Obtains absolute [normalized][normalize] version of this path.
@@ -396,7 +413,7 @@ public class FileCreation<L: Language, N: ProtoDeclarationName>(
     ): FileCreationWithPath<L>? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
-        return path?.let { FileCreationWithPath<L>(sources, path) }
+        return path?.let { FileCreationWithPath(sources, path) }
     }
 }
 

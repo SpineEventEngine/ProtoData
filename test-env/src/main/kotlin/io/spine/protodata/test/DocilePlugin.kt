@@ -36,6 +36,7 @@ import io.spine.tools.code.AnyLanguage
  * A plugin which does whatever it's told.
  */
 public class DocilePlugin(
+    override val language: AnyLanguage,
     private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
     private val views: Set<Class<out View<*, *, *>>> = setOf(),
     private val policies: Set<Policy<*>> = setOf()

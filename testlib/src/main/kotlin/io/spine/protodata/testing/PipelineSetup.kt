@@ -154,6 +154,7 @@ import org.apache.commons.codec.language.bm.Lang
  * @see [io.spine.protodata.settings.LoadsSettings.consumerId]
  */
 public class PipelineSetup<L : Language>(
+    public val language: L,
     public val plugins: List<Plugin<L>>,
     inputDir: Path,
     outputDir: Path,
@@ -178,13 +179,13 @@ public class PipelineSetup<L : Language>(
         settingsDir.toFile().mkdirs()
         settings = SettingsDirectory(settingsDir)
         outputDir.toFile().mkdirs()
-        sourceFileSet = SourceFileSet.create(inputDir, outputDir)
+        sourceFileSet = SourceFileSet.create(language, inputDir, outputDir)
     }
 
     /**
      * Creates the pipeline.
      */
-    public fun createPipeline(): Pipeline<L> {
+    public fun createPipeline(): Pipeline {
         writeSettings(settings)
         val id = Pipeline.generateId()
         val pipeline = Pipeline(id, plugins, listOf(sourceFileSet), request, settings)
@@ -195,7 +196,7 @@ public class PipelineSetup<L : Language>(
         message = "Please use `createPipelineAndBlackBox()` instead.",
         replaceWith = ReplaceWith("createPipelineAndBlackBox()")
     )
-    public fun createPipelineAndBlackbox(): Pair<Pipeline<L>, BlackBox> =
+    public fun createPipelineAndBlackbox(): Pair<Pipeline, BlackBox> =
         createPipelineWithBlackBox()
 
     /**
@@ -208,7 +209,7 @@ public class PipelineSetup<L : Language>(
      *
      * @see BlackBox
      */
-    public fun createPipelineWithBlackBox(): Pair<Pipeline<L>, BlackBox> {
+    public fun createPipelineWithBlackBox(): Pair<Pipeline, BlackBox> {
         val pipeline = createPipeline()
         val codegenContext = (pipeline.codegenContext as CodeGenerationContext).context
         val blackbox = BlackBox.from(codegenContext)
@@ -234,7 +235,7 @@ public class PipelineSetup<L : Language>(
          *         a callback for writing plugin settings before the pipeline is created.
          */
         public fun <L : Language> byResources(
-            language: Language,
+            language: L,
             plugins: List<Plugin<L>>,
             outputRoot: Path,
             settingsDir: Path,
@@ -246,6 +247,7 @@ public class PipelineSetup<L : Language>(
             val outputDir = outputRoot.resolve(language.protocOutputDir())
             val request = loadRequest(classLoader)
             return PipelineSetup(
+                language,
                 plugins,
                 inputDir,
                 outputDir,
@@ -271,12 +273,12 @@ public class PipelineSetup<L : Language>(
          * @param writeSettings
          *         a callback for writing plugin settings before the pipeline is created.
          */
-        public fun <L : Language> byResources(
-            plugins: List<Plugin<L>>,
+        public fun byResources(
+            plugins: List<Plugin<Java>>,
             outputRoot: Path,
             settingsDir: Path,
             writeSettings: (SettingsDirectory) -> Unit
-        ): PipelineSetup<L> = byResources(Java, plugins, outputRoot, settingsDir, writeSettings)
+        ): PipelineSetup<Java> = byResources(Java, plugins, outputRoot, settingsDir, writeSettings)
 
         /**
          * Detects which class calls a method of [Pipeline.Companion].

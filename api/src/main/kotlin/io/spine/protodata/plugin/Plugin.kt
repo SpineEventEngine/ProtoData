@@ -54,6 +54,11 @@ import kotlin.reflect.KClass
 public interface Plugin<L : Language> {
 
     /**
+     * The programming language served by the plugin.
+     */
+    public val language: L
+
+    /**
      * Obtains the [renderers][Renderer] added by this plugin.
      *
      * The renderers are guaranteed to be called in the order of their declaration in the plugin.
@@ -128,6 +133,21 @@ public fun <L : Language> Plugin<L>.applyTo(context: BoundedContextBuilder) {
 }
 
 /**
+ * Filters the given list of source file sets obtaining the list with only file sets
+ * with the language of this plugin.
+ */
+@Suppress("UNCHECKED_CAST") //
+private fun <L : Language> Plugin<L>.filterByLanguage(
+    sources: Iterable<SourceFileSet<*>>
+): List<SourceFileSet<L>> {
+    val result = sources.filter { fileSet ->
+        fileSet.language == language
+    } as List<SourceFileSet<L>>
+
+    return result
+}
+
+/**
  * Renders source code via this Plugin's [Renderer]s.
  *
  * The renderers are guaranteed to be called in the order of their declaration in the plugin.
@@ -135,11 +155,12 @@ public fun <L : Language> Plugin<L>.applyTo(context: BoundedContextBuilder) {
 @Internal
 public fun <L : Language> Plugin<L>.render(
     codegenContext: CodegenContext,
-    sources: Iterable<SourceFileSet<L>>
+    sources: Iterable<SourceFileSet<*>>
 ) {
+    val sourcesByLanguage = filterByLanguage(sources)
     renderers().forEach { r ->
         r.registerWith(codegenContext)
-        sources.forEach(r::renderSources)
+        sourcesByLanguage.forEach(r::renderSources)
     }
 }
 

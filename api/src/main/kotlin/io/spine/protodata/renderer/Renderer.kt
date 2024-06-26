@@ -45,7 +45,7 @@ import io.spine.tools.code.Language
  */
 public abstract class Renderer<L : Language>
 protected constructor(
-    protected val language: L
+    public val language: L
 ) : LoadsSettings, ContextAware {
 
     private lateinit var _context: CodegenContext

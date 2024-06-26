@@ -46,6 +46,8 @@ public class TestPlugin(renderers: Iterable<Renderer<Java>>): Plugin<Java> {
 
     private val renderers: List<Renderer<Java>> = renderers.toList()
 
+    override val language: Java = Java
+
     override fun renderers(): List<Renderer<Java>> = renderers
 
     override fun viewRepositories(): Set<ViewRepository<*, *, *>> =

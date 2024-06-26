@@ -41,5 +41,6 @@ import io.spine.tools.code.Java
  * the ID.
  */
 public class JavaCodeStyleFormatterPlugin : AbstractPlugin<Java>(
+    Java,
     listOf(JavaCodeStyleFormatter())
 )

@@ -52,7 +52,8 @@ public const val ECHO_FILE: String = "name.txt"
  *
  * @param L the language served by the `Renderer`.
  */
-public abstract class SoloRenderer<L : Language>(language: L) : Renderer<L>(language), Plugin<L> {
+public abstract class SoloRenderer<L : Language>(language: L)
+    : Renderer<L>(language), Plugin<L> {
 
     override fun renderers(): List<Renderer<L>> = listOf(this)
 }

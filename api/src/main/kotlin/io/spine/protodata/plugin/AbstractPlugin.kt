@@ -36,6 +36,7 @@ import io.spine.tools.code.Language
  * the methods of the [Plugin] interface. That's why the methods of this class are `final`.
  */
 public abstract class AbstractPlugin<L : Language>(
+    final override val language: L,
     private val renderers: Iterable<Renderer<L>> = listOf(),
     private val views: Set<Class<out View<*, *, *>>> = setOf(),
     private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
