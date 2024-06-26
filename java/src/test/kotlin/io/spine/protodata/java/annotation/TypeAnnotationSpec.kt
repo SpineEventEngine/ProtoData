@@ -32,8 +32,8 @@ import given.annotation.Schedule
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.ClassOrEnumName
-import io.spine.protodata.java.reference
 import io.spine.protodata.renderer.SourceFile
+import io.spine.tools.java.reference
 import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
