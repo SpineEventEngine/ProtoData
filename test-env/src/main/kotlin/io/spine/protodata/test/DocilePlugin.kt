@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,6 +30,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.Policy
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
+import io.spine.tools.code.AnyLanguage
 
 /**
  * A plugin which does whatever it's told.
@@ -38,7 +39,7 @@ public class DocilePlugin(
     private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
     private val views: Set<Class<out View<*, *, *>>> = setOf(),
     private val policies: Set<Policy<*>> = setOf()
-) : Plugin {
+) : Plugin<AnyLanguage> {
 
     override fun viewRepositories(): Set<ViewRepository<*, *, *>> = viewRepositories
 

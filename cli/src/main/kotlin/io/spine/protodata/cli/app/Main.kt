@@ -59,6 +59,7 @@ import io.spine.string.Separator
 import io.spine.string.Separator.Companion.nl
 import io.spine.string.pi
 import io.spine.string.ti
+import io.spine.tools.code.Java
 import io.spine.tools.code.manifest.Version
 import java.io.File
 import java.io.File.pathSeparator
@@ -208,7 +209,7 @@ internal class Run(version: String) : CliktCommand(
               - settings dir: ${settingsDir}.
             """.ti()
         }
-        val pipeline = Pipeline(
+        val pipeline = Pipeline<Java>(
             plugins = plugins,
             sources = sources,
             request = request,
@@ -223,7 +224,7 @@ internal class Run(version: String) : CliktCommand(
         }
     }
 
-    private fun createSourceFileSets(): List<SourceFileSet> {
+    private fun createSourceFileSets(): List<SourceFileSet<Java>> {
         checkPaths()
         val sources = sourceRoots
         val targets = (targetRoots ?: sources)!!
@@ -290,7 +291,7 @@ internal class Run(version: String) : CliktCommand(
 /**
  * Creates a list that contains a single, empty source set.
  */
-private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet> =
+private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet<Java>> =
     listOf(SourceFileSet.empty(first()))
 
 /**

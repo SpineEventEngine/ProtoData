@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -36,6 +36,7 @@ import io.spine.protodata.java.ClassOrEnumName
 import io.spine.protodata.renderer.SourceFile
 import io.spine.string.Separator
 import io.spine.text.Text
+import io.spine.tools.code.Java
 import io.spine.tools.psi.convertLineSeparators
 import io.spine.tools.psi.java.Environment
 import io.spine.tools.psi.java.Parser
@@ -75,7 +76,7 @@ public fun Text.locate(name: ClassOrEnumName): PsiClass? {
     message = "Please use `psi()` instead",
     replaceWith = ReplaceWith("psi() as PsiJavaFile")
 )
-public fun SourceFile.toPsi(): PsiJavaFile {
+public fun SourceFile<Java>.toPsi(): PsiJavaFile {
     check(isJava) {
         "Unable to convert non-Java file `$relativePath` to ${PsiJavaFile::class.java.simpleName}."
     }
@@ -96,7 +97,7 @@ private object TextToPsiParser {
     }
 
     @Deprecated(message = "Please use `SourceFile.psi()` instead.")
-    fun get(file: SourceFile): PsiJavaFile {
+    fun get(file: SourceFile<Java>): PsiJavaFile {
         @Suppress("DEPRECATION")
         return cache.get(file.text())
     }

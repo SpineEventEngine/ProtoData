@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -32,6 +32,7 @@ import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.settings.defaultConsumerId
 import io.spine.protodata.settings.loadSettings
+import io.spine.tools.code.Java
 import io.spine.tools.psi.codeStyleManager
 import io.spine.tools.psi.codeStyleSettings
 import io.spine.tools.psi.content
@@ -82,14 +83,14 @@ public class JavaCodeStyleFormatter : JavaRenderer() {
         Parser(project)
     }
 
-    override fun render(sources: SourceFileSet) {
+    override fun render(sources: SourceFileSet<Java>) {
         applyStyleToIntelliJ()
         sources.forEach {
             reformat(it)
         }
     }
 
-    private fun reformat(file: SourceFile) {
+    private fun reformat(file: SourceFile<Java>) {
         val withAdjustedSeparators = file.code().convertLineSeparators()
         val outputFile = file.outputPath.toFile()
         val psiFile = parser.parse(withAdjustedSeparators, outputFile)

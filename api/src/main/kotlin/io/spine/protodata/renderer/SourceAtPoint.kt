@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import io.spine.protodata.InsertedPoint
 import io.spine.text.TextFactory
+import io.spine.tools.code.Language
 import io.spine.util.interlaced
 
 /**
@@ -60,8 +61,8 @@ internal object NoOp : SourceAtPoint {
  *
  * The points are defined by the insertion point specified via the [point].
  */
-internal class SpecificPoint(
-    private val file: SourceFile,
+internal class SpecificPoint<L : Language>(
+    private val file: SourceFile<L>,
     private val point: InsertedPoint
 ) : SourceAtPoint {
 

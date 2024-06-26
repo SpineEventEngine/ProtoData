@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,11 +29,12 @@ package io.spine.protodata.test
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.protodata.renderer.Renderer
+import io.spine.tools.code.Java
 
 /**
  * A test fixture for passing renderers to a [Pipeline][io.spine.protodata.backend.Pipeline].
  */
-public class TestPlugin(renderers: Iterable<Renderer<*>>): Plugin {
+public class TestPlugin(renderers: Iterable<Renderer<Java>>): Plugin<Java> {
 
     /**
      * A no-arg constructor to satisfy the contract for creating a [Plugin] by
@@ -41,11 +42,11 @@ public class TestPlugin(renderers: Iterable<Renderer<*>>): Plugin {
      */
     public constructor() : this(emptyList())
 
-    public constructor(vararg renderer: Renderer<*>) : this(renderer.toList())
+    public constructor(vararg renderer: Renderer<Java>) : this(renderer.toList())
 
-    private val renderers: List<Renderer<*>> = renderers.toList()
+    private val renderers: List<Renderer<Java>> = renderers.toList()
 
-    override fun renderers(): List<Renderer<*>> = renderers
+    override fun renderers(): List<Renderer<Java>> = renderers
 
     override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
         setOf(InternalMessageRepository(), DeletedTypeRepository())

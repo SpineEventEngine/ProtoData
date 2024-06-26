@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -32,6 +32,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.Policy
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
+import io.spine.tools.code.Java
 
 /**
  * An abstract base for plugins that generate code for type annotations.
@@ -44,7 +45,7 @@ public abstract class TypeAnnotationPlugin(
     views: Set<Class<out View<*, *, *>>> = setOf(),
     viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
     policies: Set<Policy<*>> = setOf(),
-) : AbstractPlugin(
+) : AbstractPlugin<Java>(
     listOf(PrintBeforePrimaryDeclaration()) + renderers,
     views, viewRepositories, policies
 )

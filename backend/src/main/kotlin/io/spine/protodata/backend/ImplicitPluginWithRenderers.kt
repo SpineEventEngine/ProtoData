@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,6 +29,7 @@ package io.spine.protodata.backend
 import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.Renderer
+import io.spine.tools.code.Language
 
 /**
  * An adapter plugin for gathering renderers that do not belong to a semantically defined plugin.
@@ -37,12 +38,12 @@ import io.spine.protodata.renderer.Renderer
  * It is not meant to be used for production.
  */
 @VisibleForTesting
-public class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
+public class ImplicitPluginWithRenderers<L : Language>(
+    private val renderers: List<Renderer<L>>
+) : Plugin<L> {
 
-    public constructor(renderer: Renderer<*>) : this(listOf(renderer))
-    public constructor(vararg renderer: Renderer<*>) : this(renderer.toList())
+    public constructor(renderer: Renderer<L>) : this(listOf(renderer))
+    public constructor(vararg renderer: Renderer<L>) : this(renderer.toList())
 
-    override fun renderers(): List<Renderer<*>> = renderers
+    override fun renderers(): List<Renderer<L>> = renderers
 }

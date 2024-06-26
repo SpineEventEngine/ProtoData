@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -33,6 +33,7 @@ import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
+import io.spine.tools.code.Language
 import kotlin.reflect.KClass
 
 /**
@@ -50,20 +51,20 @@ import kotlin.reflect.KClass
  * Implementing classes must provide a parameterless constructor so that
  * ProtoData can instantiate a plugin via its fully qualified class name.
  */
-public interface Plugin {
+public interface Plugin<L : Language> {
 
     /**
      * Obtains the [renderers][Renderer] added by this plugin.
      *
      * The renderers are guaranteed to be called in the order of their declaration in the plugin.
      */
-    public fun renderers(): List<Renderer<*>> = listOf()
+    public fun renderers(): List<Renderer<L>> = listOf()
 
     /**
      * Obtains the [views][View] added by this plugin represented via their classes.
      *
-     * A [View] may require a repository to route events. In such case, use
-     * [Plugin.viewRepositories] instead.
+     * A [View] may require a repository to route events.
+     * In such a case, please use [Plugin.viewRepositories] instead.
      */
     public fun views(): Set<Class<out View<*, *, *>>> = setOf()
 
@@ -114,7 +115,7 @@ public interface Plugin {
  * calls [Plugin.extend] method to allow the plugin to add additional components to the context.
  */
 @Internal
-public fun Plugin.applyTo(context: BoundedContextBuilder) {
+public fun <L : Language> Plugin<L>.applyTo(context: BoundedContextBuilder) {
     val repos = viewRepositories().toMutableList()
     val defaultRepos = views().map { ViewRepository.default(it) }
     repos.addAll(defaultRepos)
@@ -132,9 +133,9 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
  * The renderers are guaranteed to be called in the order of their declaration in the plugin.
  */
 @Internal
-public fun Plugin.render(
+public fun <L : Language> Plugin<L>.render(
     codegenContext: CodegenContext,
-    sources: Iterable<SourceFileSet>
+    sources: Iterable<SourceFileSet<L>>
 ) {
     renderers().forEach { r ->
         r.registerWith(codegenContext)
@@ -142,7 +143,9 @@ public fun Plugin.render(
     }
 }
 
-private fun Plugin.checkNoViewRepoDuplication(repos: MutableList<ViewRepository<*, *, *>>) {
+private fun <L : Language> Plugin<L>.checkNoViewRepoDuplication(
+    repos: MutableList<ViewRepository<*, *, *>>
+) {
     val repeatedView = repos.map { it.entityClass() }
         .groupingBy { it }
         .eachCount()

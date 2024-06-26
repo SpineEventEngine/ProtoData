@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,6 +27,7 @@
 package io.spine.protodata.plugin
 
 import io.spine.protodata.renderer.Renderer
+import io.spine.tools.code.Language
 
 /**
  * A default abstract implementation of the [Plugin] interface.
@@ -34,14 +35,14 @@ import io.spine.protodata.renderer.Renderer
  * This class is intended to be extended by the plugins which do not need to override
  * the methods of the [Plugin] interface. That's why the methods of this class are `final`.
  */
-public abstract class AbstractPlugin(
-    private val renderers: Iterable<Renderer<*>> = listOf(),
+public abstract class AbstractPlugin<L : Language>(
+    private val renderers: Iterable<Renderer<L>> = listOf(),
     private val views: Set<Class<out View<*, *, *>>> = setOf(),
     private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
     private val policies: Set<Policy<*>> = setOf(),
-): Plugin {
+): Plugin<L> {
 
-    final override fun renderers(): List<Renderer<*>> = renderers.toList()
+    final override fun renderers(): List<Renderer<L>> = renderers.toList()
 
     final override fun viewRepositories(): Set<ViewRepository<*, *, *>> = viewRepositories
 

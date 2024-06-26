@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -31,15 +31,16 @@ import io.spine.string.Indent
 import io.spine.string.Indent.Companion.DEFAULT_JAVA_INDENT_SIZE
 import io.spine.string.Separator
 import io.spine.string.atLevel
+import io.spine.tools.code.Language
 
 /**
  * A fluent builder for inserting code into pre-prepared insertion points.
  *
  * @see SourceFile.at
  */
-public class SourceAtLine
+public class SourceAtLine<L : Language>
 internal constructor(
-    private val file: SourceFile,
+    private val file: SourceFile<L>,
     private val point: InsertionPoint,
     private val indent: Indent = Indent(DEFAULT_JAVA_INDENT_SIZE)
 ) {
@@ -51,7 +52,7 @@ internal constructor(
      *
      * Each unit adds the number of spaces specified by the [indent] property.
      */
-    public fun withExtraIndentation(level: Int): SourceAtLine {
+    public fun withExtraIndentation(level: Int): SourceAtLine<L> {
         require(level >= 0) { "Indentation level cannot be negative." }
         indentLevel = level
         return this

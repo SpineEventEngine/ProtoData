@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -37,6 +37,7 @@ import io.spine.protodata.renderer.SourceFile.Companion.fromCode
 import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
+import io.spine.tools.code.Language
 import io.spine.tools.psi.convertLineSeparators
 import io.spine.tools.psi.java.Environment
 import java.lang.System.lineSeparator
@@ -65,7 +66,7 @@ import kotlin.io.path.writeText
     "TooManyFunctions"
     /* Those functions constitute the primary API and should not be represented as extensions. */
 )
-public class SourceFile
+public class SourceFile<L : Language>
 private constructor(
 
     /**
@@ -84,8 +85,8 @@ private constructor(
      */
     private var changed: Boolean = false
 ) {
-    private lateinit var sources: SourceFileSet
-    private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
+    private lateinit var sources: SourceFileSet<L>
+    private val preReadActions = mutableListOf<(SourceFile<L>) -> Unit>()
     private var alreadyRead = false
 
     /**
@@ -160,11 +161,11 @@ private constructor(
         /**
          * Reads the file from the given file system location.
          */
-        internal fun read(
+        internal fun <L : Language> read(
             sourceRoot: Path,
             relativePath: Path,
             charset: Charset = Charsets.UTF_8
-        ): SourceFile {
+        ): SourceFile<L> {
             val absolute = sourceRoot / relativePath
             val code = absolute.readText(charset)
             return SourceFile(code, relativePath)
@@ -180,7 +181,7 @@ private constructor(
          *         the source code.
          */
         @VisibleForTesting
-        public fun fromCode(relativePath: Path, code: String): SourceFile =
+        public fun <L : Language> fromCode(relativePath: Path, code: String): SourceFile<L> =
             SourceFile(code, relativePath, changed = true)
     }
 
@@ -197,7 +198,7 @@ private constructor(
      *
      * @see atInline
      */
-    public fun at(insertionPoint: InsertionPoint): SourceAtLine =
+    public fun at(insertionPoint: InsertionPoint): SourceAtLine<L> =
         SourceAtLine(this, insertionPoint)
 
     /**
@@ -265,7 +266,7 @@ private constructor(
     /**
      * Injects the given [sources].
      */
-    internal fun attachTo(sources: SourceFileSet) {
+    internal fun attachTo(sources: SourceFileSet<L>) {
         this.sources = sources
     }
 
@@ -343,7 +344,7 @@ private constructor(
     /**
      * Adds an action to be executed before obtaining the [code] of this source file.
      */
-    internal fun beforeRead(action: (SourceFile) -> Unit) {
+    internal fun beforeRead(action: (SourceFile<L>) -> Unit) {
         preReadActions.add(action)
         if (alreadyRead) {
             action(this)
@@ -366,7 +367,7 @@ private constructor(
 /**
  * Gets the type of this source file by using its name.
  */
-private fun SourceFile.psiFileType(): FileType {
+private fun <L: Language> SourceFile<L>.psiFileType(): FileType {
     // Ensure all the services are registered. This is fast to call repeatedly.
     Environment.setUp()
     val registry = FileTypeRegistry.getInstance()

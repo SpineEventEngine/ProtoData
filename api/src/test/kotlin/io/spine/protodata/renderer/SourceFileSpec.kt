@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,6 +30,7 @@ import com.intellij.psi.PsiJavaFile
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.string.ti
+import io.spine.tools.code.Java
 import java.nio.file.Path
 import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
@@ -41,7 +42,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("`SourceFile` should")
 internal class SourceFileSpec {
 
-    private lateinit var sourceFile: SourceFile
+    private lateinit var sourceFile: SourceFile<Java>
 
     @BeforeEach
     fun createSourceFile(@TempDir input: Path, @TempDir output: Path) {
@@ -52,7 +53,7 @@ internal class SourceFileSpec {
             public class HelloWorld { }
             """.ti()
         )
-        val set = SourceFileSet.create(input, output)
+        val set = SourceFileSet.create<Java>(input, output)
         sourceFile = set.file(file)
         sourceFile shouldNotBe null
     }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -47,6 +47,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
 import kotlin.text.Charsets.UTF_8
+import org.apache.commons.codec.language.bm.Lang
 
 /**
  * A mutable set of source files that participate in code generation workflow.
@@ -69,9 +70,9 @@ import kotlin.text.Charsets.UTF_8
  * @see SourceFile
  */
 @Suppress("TooManyFunctions") // All parts of the public API.
-public class SourceFileSet
+public class SourceFileSet<L : Language>
 internal constructor(
-    files: Set<SourceFile>,
+    files: Set<SourceFile<L>>,
 
     /**
      * A common root directory for all the files in this source set.
@@ -92,11 +93,11 @@ internal constructor(
      */
     @get:JvmName("outputRoot")
     public val outputRoot: Path
-) : Iterable<SourceFile> {
+) : Iterable<SourceFile<L>> {
 
-    private val files: MutableMap<Path, SourceFile>
-    private val deletedFiles = mutableSetOf<SourceFile>()
-    private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
+    private val files: MutableMap<Path, SourceFile<L>>
+    private val deletedFiles = mutableSetOf<SourceFile<L>>()
+    private val preReadActions = mutableListOf<(SourceFile<L>) -> Unit>()
     internal lateinit var querying: Querying
 
     /**
@@ -111,7 +112,7 @@ internal constructor(
         require(inputRoot.absolutePathString() != outputRoot.absolutePathString()) {
             "Input and output roots cannot be the same, but was '${inputRoot.absolutePathString()}'"
         }
-        val map = HashMap<Path, SourceFile>(files.size)
+        val map = HashMap<Path, SourceFile<L>>(files.size)
         this.files = files.associateByTo(map) { it.relativePath }
         this.files.values.forEach { it.attachTo(this) }
     }
@@ -124,7 +125,7 @@ internal constructor(
             replaceWith = ReplaceWith("create"),
             level = ERROR
         )
-        public fun from(inputRoot: Path, outputRoot: Path): SourceFileSet =
+        public fun <L : Language> from(inputRoot: Path, outputRoot: Path): SourceFileSet<L> =
             create(inputRoot, outputRoot)
 
         /**
@@ -139,7 +140,7 @@ internal constructor(
          *         If different from the `sourceRoot`, the files in `sourceRoot`
          *         will not be changed.
          */
-        public fun create(inputRoot: Path, outputRoot: Path): SourceFileSet {
+        public fun <L : Language> create(inputRoot: Path, outputRoot: Path): SourceFileSet<L> {
             val source = inputRoot.canonical()
             val target = outputRoot.canonical()
             if (source != target) {
@@ -147,7 +148,7 @@ internal constructor(
             }
             val files = walk(source)
                 .filter { it.isRegularFile() }
-                .map { SourceFile.read(source, source.relativize(it)) }
+                .map { SourceFile.read<L>(source, source.relativize(it)) }
                 .collect(toImmutableSet())
             return SourceFileSet(files, source, target)
         }
@@ -156,9 +157,9 @@ internal constructor(
          * Creates an empty source set which can be appended with new files and
          * written to the given target directory.
          */
-        public fun empty(target: Path): SourceFileSet {
+        public fun <L : Language> empty(target: Path): SourceFileSet<L> {
             checkTarget(target)
-            val files = setOf<SourceFile>()
+            val files = setOf<SourceFile<L>>()
             return SourceFileSet(files, target, target)
         }
     }
@@ -180,7 +181,7 @@ internal constructor(
      *
      * The [path] may be absolute or relative to the source root.
      */
-    public fun file(path: Path): SourceFile {
+    public fun file(path: Path): SourceFile<L> {
         val found = find(path)
         require(found != null) {
             """
@@ -199,7 +200,7 @@ internal constructor(
      *
      * @return the source file or `null` if the file is missing from this set.
      */
-    public fun find(path: Path): SourceFile? {
+    public fun find(path: Path): SourceFile<L>? {
         val file = files[path]
         if (file != null) {
             return file
@@ -214,23 +215,23 @@ internal constructor(
      *
      * @see find
      */
-    public fun findFile(path: Path): Optional<SourceFile> =
+    public fun findFile(path: Path): Optional<SourceFile<L>> =
         Optional.ofNullable(find(path))
 
     /**
      * Starts a file lookup for the given type name.
      */
-    public fun <N : ProtoDeclarationName> fileFor(name: N): FileLookup<N> =
+    public fun <N : ProtoDeclarationName> fileFor(name: N): FileLookup<L, N> =
         FileLookup(this, name)
 
-    public fun <N : ProtoDeclarationName> createFileFor(name: N): FileCreation<N> =
+    public fun <N : ProtoDeclarationName> createFileFor(name: N): FileCreation<L, N> =
         FileCreation(this, name)
 
     /**
      * Creates a new source file at the given [path] and contains the given [code].
      */
-    public fun createFile(path: Path, code: String): SourceFile {
-        val file = SourceFile.fromCode(path, code)
+    public fun createFile(path: Path, code: String): SourceFile<L> {
+        val file = SourceFile.fromCode<L>(path, code)
         files[file.relativePath] = file
         file.attachTo(this)
         preReadActions.forEach {
@@ -255,7 +256,7 @@ internal constructor(
      * Writes this source set to the file system.
      *
      * The sources existing on the file system at the moment are deleted,
-     * along with the whole directory structure and the new files are written.
+     * along with the whole directory structure, and the new files are written.
      */
     public fun write(charset: Charset = UTF_8) {
         deletedFiles.forEach {
@@ -275,7 +276,7 @@ internal constructor(
      * The action may change the code if necessary, for example,
      * by adding insertion points.
      */
-    internal fun prepareCode(action: (SourceFile) -> Unit) {
+    internal fun prepareCode(action: (SourceFile<L>) -> Unit) {
         files.values.forEach {
             it.beforeRead(action)
         }
@@ -285,7 +286,7 @@ internal constructor(
     /**
      * Merges the [other] source set into this one.
      */
-    internal fun mergeBack(other: SourceFileSet) {
+    internal fun mergeBack(other: SourceFileSet<L>) {
         files.putAll(other.files)
         deletedFiles.addAll(other.deletedFiles)
         other.deletedFiles.forEach {
@@ -300,7 +301,7 @@ internal constructor(
         this.querying = querying
     }
 
-    override fun iterator(): Iterator<SourceFile> =
+    override fun iterator(): Iterator<SourceFile<L>> =
         files.values.iterator()
 
     /**
@@ -313,7 +314,7 @@ internal constructor(
  * Creates a subset of this source set which contains only the files
  * matching the given [predicate].
  */
-internal fun SourceFileSet.subsetWhere(predicate: (SourceFile) -> Boolean) =
+internal fun <L: Language> SourceFileSet<L>.subsetWhere(predicate: (SourceFile<L>) -> Boolean) =
     SourceFileSet(this.filter(predicate).toSet(), inputRoot, outputRoot)
 
 /**
@@ -350,25 +351,25 @@ private fun checkTarget(targetRoot: Path) {
 /**
  * A marker interface for fluent API operation classes for creating or searching for a file.
  */
-public sealed interface FileOperation
+public sealed interface FileOperation<L : Language>
 
 /**
  * Part of the fluent API for finding source files.
  *
  * @param N the type of the Protobuf declaration name such as message, enum, or a service.
  */
-public class FileLookup<N: ProtoDeclarationName>(
-    private val sources: SourceFileSet,
+public class FileLookup<L: Language, N: ProtoDeclarationName>(
+    private val sources: SourceFileSet<L>,
     private val name: N
-) : FileOperation {
+) : FileOperation<L> {
 
     /**
      * Searches for a source file with for the given Proto type generated according to
      * the given [convention].
      */
-    public fun <L : Language, T : NameElement<L>> namedUsing(
+    public fun <T : NameElement<L>> namedUsing(
         convention: Convention<L, N, T>
-    ): SourceFile? {
+    ): SourceFile<L>? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
         return path?.let { sources.find(it) }
@@ -378,10 +379,10 @@ public class FileLookup<N: ProtoDeclarationName>(
 /**
  * Part of the fluent API for creating new source files.
  */
-public class FileCreation<N: ProtoDeclarationName>(
-    private val sources: SourceFileSet,
+public class FileCreation<L: Language, N: ProtoDeclarationName>(
+    private val sources: SourceFileSet<L>,
     private val name: N
-) : FileOperation {
+) : FileOperation<L> {
 
     /**
      * Attempts to create a file path for the given type name using the given [convention].
@@ -390,27 +391,27 @@ public class FileCreation<N: ProtoDeclarationName>(
      *
      * @param T the type of the Protobuf declaration name such as message, enum, or a service.
      */
-    public fun <L : Language, T : NameElement<L>> namedUsing(
+    public fun <T : NameElement<L>> namedUsing(
         convention: Convention<L, N, T>
-    ): FileCreationWithPath? {
+    ): FileCreationWithPath<L>? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
-        return path?.let { FileCreationWithPath(sources, path) }
+        return path?.let { FileCreationWithPath<L>(sources, path) }
     }
 }
 
 /**
  * Part of the fluent API for creating new source files.
  */
-public class FileCreationWithPath(
-    private val sources: SourceFileSet,
+public class FileCreationWithPath<L : Language>(
+    private val sources: SourceFileSet<L>,
     private val file: Path
-) : FileOperation {
+) : FileOperation<L> {
 
     /**
      * Writes the given [code] into the provided file.
      *
      * @return the new source file
      */
-    public fun withCode(code: String): SourceFile = sources.createFile(file, code)
+    public fun withCode(code: String): SourceFile<L> = sources.createFile(file, code)
 }

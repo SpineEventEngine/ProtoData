@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -70,7 +70,7 @@ protected constructor(
     /**
      * Performs required changes to the given source set.
      */
-    public fun renderSources(sources: SourceFileSet) {
+    public fun renderSources(sources: SourceFileSet<L>) {
         val relevantFiles = sources.subsetWhere { language.matches(it.relativePath) }
         relevantFiles.prepareForQueries(this)
         render(relevantFiles)
@@ -86,7 +86,7 @@ protected constructor(
      * This method may be called several times if ProtoData is called with multiple source and
      * target directories.
      */
-    protected abstract fun render(sources: SourceFileSet)
+    protected abstract fun render(sources: SourceFileSet<L>)
 
     /**
      * Creates a [QueryingClient] for obtaining entity states of the given type.

@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -52,15 +52,15 @@ public const val ECHO_FILE: String = "name.txt"
  *
  * @param L the language served by the `Renderer`.
  */
-public abstract class SoloRenderer<L : Language>(language: L) : Renderer<L>(language), Plugin {
+public abstract class SoloRenderer<L : Language>(language: L) : Renderer<L>(language), Plugin<L> {
 
-    override fun renderers(): List<Renderer<*>> = listOf(this)
+    override fun renderers(): List<Renderer<L>> = listOf(this)
 }
 
 /**
  * Abstract base for stub renders that need to be added to a stub pipeline in tests.
  */
-public abstract class StubSoloRenderer : SoloRenderer<AnyLanguage>(AnyLanguage), Plugin
+public abstract class StubSoloRenderer : SoloRenderer<AnyLanguage>(AnyLanguage), Plugin<AnyLanguage>
 
 
 /**
@@ -68,7 +68,7 @@ public abstract class StubSoloRenderer : SoloRenderer<AnyLanguage>(AnyLanguage),
  */
 public class EchoRenderer : StubSoloRenderer() {
 
-    override fun render(sources: SourceFileSet) {
+    override fun render(sources: SourceFileSet<AnyLanguage>) {
         val name = loadSettings<Name>()
         sources.createFile(Path(ECHO_FILE), name.value)
     }
@@ -79,7 +79,7 @@ public class EchoRenderer : StubSoloRenderer() {
  */
 public class ProtoEchoRenderer : StubSoloRenderer() {
 
-    override fun render(sources: SourceFileSet) {
+    override fun render(sources: SourceFileSet<AnyLanguage>) {
         val echo = loadSettings<Echo>()
         val message = buildString {
             with(echo) {
@@ -101,7 +101,7 @@ public class ProtoEchoRenderer : StubSoloRenderer() {
  */
 public class PlainStringRenderer : StubSoloRenderer() {
 
-    override fun render(sources: SourceFileSet) {
+    override fun render(sources: SourceFileSet<AnyLanguage>) {
         val echo = loadSettings<String>()
         sources.createFile(Path(ECHO_FILE), echo)
     }

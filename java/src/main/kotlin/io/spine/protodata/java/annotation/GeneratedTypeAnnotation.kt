@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -34,6 +34,7 @@ import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.renderer.SourceFile
 import io.spine.string.Separator
 import io.spine.time.toInstant
+import io.spine.tools.code.Java
 import java.time.OffsetDateTime
 import javax.annotation.processing.Generated
 
@@ -67,7 +68,7 @@ public open class GeneratedTypeAnnotation(
      * by the given [SourceFile]. The default value is `null`.
      * If not specified, the [comments][Generated.comments] parameter will not be used.
      */
-    protected val commenter: ((SourceFile) -> String)? = null
+    protected val commenter: ((SourceFile<Java>) -> String)? = null
 
 ) : TypeAnnotation<Generated>(Generated::class.java) {
 
@@ -78,14 +79,14 @@ public open class GeneratedTypeAnnotation(
      */
     public constructor() : this(CLI_APP_CLASS)
 
-    override fun renderAnnotationArguments(file: SourceFile): String {
+    override fun renderAnnotationArguments(file: SourceFile<Java>): String {
         if (!addTimestamp && commenter == null) {
             return "\"$generator\""
         }
         return multiLineArguments(file)
     }
 
-    private fun multiLineArguments(file: SourceFile): String {
+    private fun multiLineArguments(file: SourceFile<Java>): String {
         val date = date()
         val comments = renderComments(file)
         val nl = Separator.nl()
@@ -113,7 +114,7 @@ public open class GeneratedTypeAnnotation(
         }
     }
 
-    private fun renderComments(file: SourceFile): String {
+    private fun renderComments(file: SourceFile<Java>): String {
         return if (commenter != null) {
             val value = commenter.invoke(file)
             "comments = \"$value\""

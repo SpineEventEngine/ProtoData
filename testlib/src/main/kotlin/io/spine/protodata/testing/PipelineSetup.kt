@@ -47,6 +47,7 @@ import io.spine.tools.code.TypeScript
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
 import io.spine.tools.prototap.Paths.CODE_GENERATOR_REQUEST_FILE
 import java.nio.file.Path
+import org.apache.commons.codec.language.bm.Lang
 
 /**
  * Creates a [Pipeline] for testing given ProtoData [plugins].
@@ -152,8 +153,8 @@ import java.nio.file.Path
  * @see [SettingsDirectory]
  * @see [io.spine.protodata.settings.LoadsSettings.consumerId]
  */
-public class PipelineSetup(
-    public val plugins: List<Plugin>,
+public class PipelineSetup<L : Language>(
+    public val plugins: List<Plugin<L>>,
     inputDir: Path,
     outputDir: Path,
     public val request: CodeGeneratorRequest,
@@ -168,7 +169,7 @@ public class PipelineSetup(
     /**
      * The source file set used by the pipeline.
      */
-    public val sourceFileSet: SourceFileSet
+    public val sourceFileSet: SourceFileSet<L>
 
     init {
         require(plugins.isNotEmpty()) {
@@ -183,7 +184,7 @@ public class PipelineSetup(
     /**
      * Creates the pipeline.
      */
-    public fun createPipeline(): Pipeline {
+    public fun createPipeline(): Pipeline<L> {
         writeSettings(settings)
         val id = Pipeline.generateId()
         val pipeline = Pipeline(id, plugins, listOf(sourceFileSet), request, settings)
@@ -194,7 +195,7 @@ public class PipelineSetup(
         message = "Please use `createPipelineAndBlackBox()` instead.",
         replaceWith = ReplaceWith("createPipelineAndBlackBox()")
     )
-    public fun createPipelineAndBlackbox(): Pair<Pipeline, BlackBox> =
+    public fun createPipelineAndBlackbox(): Pair<Pipeline<L>, BlackBox> =
         createPipelineWithBlackBox()
 
     /**
@@ -207,7 +208,7 @@ public class PipelineSetup(
      *
      * @see BlackBox
      */
-    public fun createPipelineWithBlackBox(): Pair<Pipeline, BlackBox> {
+    public fun createPipelineWithBlackBox(): Pair<Pipeline<L>, BlackBox> {
         val pipeline = createPipeline()
         val codegenContext = (pipeline.codegenContext as CodeGenerationContext).context
         val blackbox = BlackBox.from(codegenContext)
@@ -232,13 +233,13 @@ public class PipelineSetup(
          * @param writeSettings
          *         a callback for writing plugin settings before the pipeline is created.
          */
-        public fun byResources(
+        public fun <L : Language> byResources(
             language: Language,
-            plugins: List<Plugin>,
+            plugins: List<Plugin<L>>,
             outputRoot: Path,
             settingsDir: Path,
             writeSettings: (SettingsDirectory) -> Unit
-        ): PipelineSetup {
+        ): PipelineSetup<L> {
             val callingClass = detectCallingClass()
             val classLoader = callingClass.classLoader
             val inputDir = inputRootOf(language, classLoader)
@@ -270,12 +271,12 @@ public class PipelineSetup(
          * @param writeSettings
          *         a callback for writing plugin settings before the pipeline is created.
          */
-        public fun byResources(
-            plugins: List<Plugin>,
+        public fun <L : Language> byResources(
+            plugins: List<Plugin<L>>,
             outputRoot: Path,
             settingsDir: Path,
             writeSettings: (SettingsDirectory) -> Unit
-        ): PipelineSetup = byResources(Java, plugins, outputRoot, settingsDir, writeSettings)
+        ): PipelineSetup<L> = byResources(Java, plugins, outputRoot, settingsDir, writeSettings)
 
         /**
          * Detects which class calls a method of [Pipeline.Companion].

@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -42,7 +42,7 @@ import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
-
+import io.spine.tools.code.Language
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -57,7 +57,8 @@ import io.spine.server.under
  * modifying, or deleting existing ones. Lastly, the source set is stored back onto the file system.
  */
 @Internal
-public class Pipeline(
+public class Pipeline<L : Language>(
+
     /**
      * The ID of the pipeline to be used for distinguishing contexts when
      * two or more pipelines are executed in the same JVM.
@@ -67,12 +68,12 @@ public class Pipeline(
     /**
      * The code generation plugins to be applied to the pipeline.
      */
-    public val plugins: List<Plugin>,
+    public val plugins: List<Plugin<L>>,
 
     /**
      * The source sets to be processed by the pipeline.
      */
-    public val sources: List<SourceFileSet>,
+    public val sources: List<SourceFileSet<L>>,
 
     /**
      * The Protobuf compiler request.
@@ -98,8 +99,8 @@ public class Pipeline(
      */
     @VisibleForTesting
     public constructor(
-        plugin: Plugin,
-        sources: SourceFileSet,
+        plugin: Plugin<L>,
+        sources: SourceFileSet<L>,
         request: CodeGeneratorRequest,
         settings: SettingsDirectory,
         id: String = generateId()

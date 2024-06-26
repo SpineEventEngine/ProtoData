@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -32,6 +32,7 @@ import io.spine.protodata.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
+import io.spine.tools.code.Java
 import io.spine.tools.java.isRepeatable
 import io.spine.tools.java.reference
 import java.lang.annotation.ElementType.TYPE
@@ -71,7 +72,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      *
      * If not `null`, the annotation is applied only to the top class of the specified file.
      */
-    protected val file: SourceFile? = null
+    protected val file: SourceFile<Java>? = null
 ) : JavaRenderer() {
 
     private val specific: Boolean = subject != null || file != null
@@ -92,7 +93,7 @@ public abstract class TypeAnnotation<T : Annotation>(
         }
     }
 
-    final override fun render(sources: SourceFileSet) {
+    final override fun render(sources: SourceFileSet<Java>) {
         if (!specific) {
             sources.forEach {
                 annotate(it)
@@ -103,7 +104,7 @@ public abstract class TypeAnnotation<T : Annotation>(
         }
     }
 
-    private fun subjectFileIn(sources: SourceFileSet): SourceFile {
+    private fun subjectFileIn(sources: SourceFileSet<Java>): SourceFile<Java> {
         val file = sources.find(subject!!.javaFile)
         check(file != null) {
             "Cannot find a file for the type `${subject.canonical}`."
@@ -112,7 +113,7 @@ public abstract class TypeAnnotation<T : Annotation>(
     }
 
     @VisibleForTesting
-    internal fun annotate(file: SourceFile) {
+    internal fun annotate(file: SourceFile<Java>) {
         if (shouldAnnotate(file)) {
             val line = file.at(insertionPoint())
             val annotationCode = annotationCode(file)
@@ -131,7 +132,7 @@ public abstract class TypeAnnotation<T : Annotation>(
             }
         }
 
-    private fun annotationCode(file: SourceFile): String =
+    private fun annotationCode(file: SourceFile<Java>): String =
         "@${annotationClass.reference}${annotationArguments(file)}"
 
     /**
@@ -149,7 +150,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      * If the annotation already exists, it returns `false`, `true` otherwise.
      */
     @Suppress("ReturnCount") // Cannot go lower here.
-    protected open fun shouldAnnotate(file: SourceFile): Boolean {
+    protected open fun shouldAnnotate(file: SourceFile<Java>): Boolean {
         val coordinates = insertionPoint().locateOccurrence(file.code())
         if (coordinates == nowhere) {
             return false
@@ -166,7 +167,7 @@ public abstract class TypeAnnotation<T : Annotation>(
         return !line.contains(annotationClass)
     }
 
-    private fun annotationArguments(file: SourceFile): String {
+    private fun annotationArguments(file: SourceFile<Java>): String {
         val args = renderAnnotationArguments(file)
         return if (args.isEmpty()) {
             return ""
@@ -180,7 +181,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      *
      * If there are no arguments to pass, the overriding method must return an empty string.
      */
-    protected abstract fun renderAnnotationArguments(file: SourceFile): String
+    protected abstract fun renderAnnotationArguments(file: SourceFile<Java>): String
 
     /**
      * Ensures that the [annotationClass] passed to the constructor satisfies

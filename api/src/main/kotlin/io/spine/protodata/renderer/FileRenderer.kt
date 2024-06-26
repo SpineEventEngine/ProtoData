@@ -24,22 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.java.style
+package io.spine.protodata.renderer
 
-import io.spine.protodata.plugin.AbstractPlugin
-import io.spine.tools.code.Java
+import io.spine.tools.code.Language
 
 /**
- * A ProtoData plugin which adds [JavaCodeStyleFormatter] to the processing pipeline.
- *
- * The plugin is useful when <em>several</em> ProtoData plugins generate the code which
- * is later need to be brought to the same style. In such a case, it is recommended to put
- * `JavaCodeStyleFormatterPlugin` plugin at the end of the list when passed to ProtoData.
- *
- * Java code style settings to be used by the plugin should be passed as a settings file
- * with an instance of [JavaCodeStyle] with the value of [JavaCodeStyleFormatter.settingsId] as
- * the ID.
+ * An abstract base for classes that augment a code of one source code file.
  */
-public class JavaCodeStyleFormatterPlugin : AbstractPlugin<Java>(
-    listOf(JavaCodeStyleFormatter())
-)
+public interface FileRenderer<L : Language> {
+
+    /**
+     * Renders the code in the given source file.
+     */
+    public fun render(file: SourceFile<L>)
+}
