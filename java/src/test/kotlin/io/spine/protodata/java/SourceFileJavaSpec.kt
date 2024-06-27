@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -37,6 +37,7 @@ import io.spine.protodata.java.TypedInsertionPoint.MESSAGE_IMPLEMENTS
 import io.spine.protodata.renderer.InsertionPoint
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.codeLine
+import io.spine.tools.code.Java
 import kotlin.io.path.Path
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -50,11 +51,12 @@ private val ACCOUNT_TYPE = typeName(PACKAGE, "AccountType")
 @DisplayName("`SourceFile` with Java should")
 internal class SourceFileJavaSpec : WithSourceFileSet() {
 
-    private lateinit var file: SourceFile
+    private lateinit var file: SourceFile<Java>
 
     @BeforeEach
     fun createFile() {
-        file = sources.first().file(Path(JAVA_FILE))
+        @Suppress("UNCHECKED_CAST") // Ensured by the file extension.
+        file = sources.first().file(Path(JAVA_FILE)) as SourceFile<Java>
     }
 
     @Nested
@@ -105,7 +107,7 @@ internal class SourceFileJavaSpec : WithSourceFileSet() {
     }
 }
 
-private fun SourceFile.lineNumberBy(suffix: String): Int =
+private fun SourceFile<*>.lineNumberBy(suffix: String): Int =
     lines()
         .mapIndexed { i, line -> i to line.trim() }
         .first { it.second.endsWith(suffix) }

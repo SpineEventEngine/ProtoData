@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -76,7 +76,7 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
         message = "Please use `javaFileOf()` instead.",
         ReplaceWith("javaFileOf")
     )
-    protected fun SourceFileSet.fileOf(msg: MessageType): SourceFile? {
+    protected fun SourceFileSet.fileOf(msg: MessageType): SourceFile<Java>? {
         return javaFileOf(msg)
     }
 
@@ -86,13 +86,14 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
      * @throws IllegalStateException
      *          if there is no Java file for the given message type in this source file set.
      */
-    protected fun SourceFileSet.javaFileOf(msg: MessageType): SourceFile {
+    protected fun SourceFileSet.javaFileOf(msg: MessageType): SourceFile<Java> {
         val javaFile = javaFileOf(type = msg.name, declaredIn = msg.file)
         val sourceFile = find(javaFile)
         check(sourceFile != null) {
             "Unable to locate the file for the message type `${msg.name.qualifiedName}`" +
                     " in the source set `$this`."
         }
-        return sourceFile
+        @Suppress("UNCHECKED_CAST") // Safe because we look for a Java file.
+        return sourceFile as SourceFile<Java>
     }
 }

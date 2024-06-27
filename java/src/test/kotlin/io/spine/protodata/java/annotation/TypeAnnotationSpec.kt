@@ -33,6 +33,7 @@ import io.kotest.matchers.shouldBe
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.ClassOrEnumName
 import io.spine.protodata.renderer.SourceFile
+import io.spine.tools.code.Java
 import io.spine.tools.java.reference
 import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
@@ -54,12 +55,13 @@ internal class TypeAnnotationSpec {
     @Test
     fun `reject simultaneously 'subject' and 'file' arguments`() {
         assertThrows<IllegalArgumentException> {
+            @Suppress("UNCHECKED_CAST") // Ensured by the file extension.
             StubAnnotation(SuppressWarnings::class.java,
                 ClassName("foo", "bar"),
                 SourceFile.fromCode(Paths.get("stub", "Source.java"), """
                     class Source { }    
                     """.trimIndent()
-                )
+                ) as SourceFile<Java>
             )
         }
     }
@@ -129,20 +131,20 @@ internal class TypeAnnotationSpec {
 private class StubAnnotation<T : Annotation>(
     annotationClass: Class<T>,
     subject: ClassOrEnumName? = null,
-    file: SourceFile? = null
+    file: SourceFile<Java>? = null
 ) :
     TypeAnnotation<T>(annotationClass, subject, file) {
 
-    override fun renderAnnotationArguments(file: SourceFile): String = ""
+    override fun renderAnnotationArguments(file: SourceFile<Java>): String = ""
 
     /**
      * Opens access for tests.
      */
     @VisibleForTesting
-    public override fun shouldAnnotate(file: SourceFile): Boolean = super.shouldAnnotate(file)
+    public override fun shouldAnnotate(file: SourceFile<Java>): Boolean = super.shouldAnnotate(file)
 }
 
-private fun SourceFile.countAnnotations(clsName: String): Int =
+private fun SourceFile<Java>.countAnnotations(clsName: String): Int =
     lines().count { it.contains(clsName) }
 
 /**
@@ -159,7 +161,8 @@ private val repeatableAnnotationClass = Schedule::class.java
 /**
  * A source file with a non-repeatable annotation.
  */
-private val fileWithAnnotation: SourceFile
+@Suppress("UNCHECKED_CAST") // Ensured by the file extension.
+private val fileWithAnnotation: SourceFile<Java>
     get() = SourceFile.fromCode(
     code = """
         package $PACKAGE_NAME;
@@ -172,9 +175,10 @@ private val fileWithAnnotation: SourceFile
         }
     """.trimIndent(),
     relativePath = path
-)
+) as SourceFile<Java>
 
-private val fileWithoutAnnotation: SourceFile
+@Suppress("UNCHECKED_CAST") // Ensured by the file extension.
+private val fileWithoutAnnotation: SourceFile<Java>
     get() = SourceFile.fromCode(
     code = """
         package $PACKAGE_NAME;
@@ -186,9 +190,10 @@ private val fileWithoutAnnotation: SourceFile
         }
     """.trimIndent(),
     relativePath = path
-)
+) as SourceFile<Java>
 
-private val fileWithRepeatableAnnotation: SourceFile
+@Suppress("UNCHECKED_CAST") // Ensured by the file extension.
+private val fileWithRepeatableAnnotation: SourceFile<Java>
     get() = SourceFile.fromCode(
     code = """
         package $PACKAGE_NAME;
@@ -201,9 +206,10 @@ private val fileWithRepeatableAnnotation: SourceFile
         }
     """.trimIndent(),
     relativePath = path
-)
+) as SourceFile<Java>
 
-private val fileWithoutInsertionPoint: SourceFile
+@Suppress("UNCHECKED_CAST") // Ensured by the file extension.
+private val fileWithoutInsertionPoint: SourceFile<Java>
     get() = SourceFile.fromCode(
     code = """
         /**
@@ -212,9 +218,10 @@ private val fileWithoutInsertionPoint: SourceFile
         package $PACKAGE_NAME;
     """.trimIndent(),
     relativePath = Paths.get("given", "java", "code", "package-info.java")
-)
+) as SourceFile<Java>
 
-private val fileWithNestedType: SourceFile
+@Suppress("UNCHECKED_CAST") // Ensured by the file extension.
+private val fileWithNestedType: SourceFile<Java>
     get() = SourceFile.fromCode(
     code = """
         package $PACKAGE_NAME;
@@ -230,4 +237,4 @@ private val fileWithNestedType: SourceFile
         }
     """.trimIndent(),
     relativePath = path
-)
+) as SourceFile<Java>
