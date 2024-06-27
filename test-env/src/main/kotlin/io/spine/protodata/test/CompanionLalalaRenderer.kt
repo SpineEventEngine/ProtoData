@@ -41,6 +41,10 @@ public class CompanionLalalaRenderer : Renderer<Kotlin>(Kotlin) {
     }
 
     override fun render(sources: SourceFileSet<Kotlin>) {
+        sources.forEach {
+            it.code()
+        }
+
         val insertionPoint = CompanionFrame()
         sources.forEach { file ->
             file.atInline(insertionPoint)
