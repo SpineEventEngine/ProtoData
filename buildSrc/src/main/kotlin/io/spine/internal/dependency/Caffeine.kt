@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,12 +30,10 @@ package io.spine.internal.dependency
  * A [high performance](https://github.com/ben-manes/caffeine/wiki/Benchmarks),
  * [near optimal](https://github.com/ben-manes/caffeine/wiki/Efficiency) caching library.
  *
- * This library is a transitive dependency for us via ErrorProne.
- *
  * @see <a href="https://github.com/ben-manes/caffeine">Caffeine at GitHub</a>
  */
 @Suppress("unused")
 object Caffeine {
-    private const val version = "3.0.5"
+    private const val version = "3.1.8"
     const val lib = "com.github.ben-manes.caffeine:caffeine:$version"
 }

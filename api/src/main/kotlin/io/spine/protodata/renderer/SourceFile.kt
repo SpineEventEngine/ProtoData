@@ -26,6 +26,8 @@
 
 package io.spine.protodata.renderer
 
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
@@ -47,6 +49,7 @@ import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.nio.file.StandardOpenOption.WRITE
 import java.time.Instant
+import java.util.concurrent.TimeUnit
 import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -158,6 +161,11 @@ private constructor(
 
     public companion object {
 
+        private val cache: Cache<Path, SourceFile<*>> = Caffeine.newBuilder()
+            .maximumSize(3_000)
+            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .build()
+
         /**
          * Reads the file from the given file system location.
          */
@@ -167,8 +175,14 @@ private constructor(
             charset: Charset = Charsets.UTF_8
         ): SourceFile<L> {
             val absolute = sourceRoot / relativePath
-            val code = absolute.readText(charset)
-            return SourceFile(code, relativePath)
+
+            @Suppress("UNCHECKED_CAST") // Yes, we are sure.
+            return synchronized(SourceFile::class.java) {
+                cache.get(absolute) {
+                    val code = absolute.readText(charset)
+                    SourceFile<L>(code, relativePath)
+                }
+            } as SourceFile<L>
         }
 
         /**
