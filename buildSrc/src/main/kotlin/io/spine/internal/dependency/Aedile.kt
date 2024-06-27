@@ -24,32 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.java.file
-
-import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.renderer.SourceFileSet
-import kotlin.io.path.extension
+package io.spine.internal.dependency
 
 /**
- * Tells if this is a Java source file.
+ * A Kotlin wrapper over [Caffeine].
+ *
+ * @see <a href="https://github.com/sksamuel/aedile">Aedile at GitHub</a>
  */
-public val SourceFile<*>.isJava: Boolean
-    get() = relativePath.extension == "java"
-
-/**
- * Tells if this source file set produces files that reside under the "java" directory.
- */
-public val SourceFileSet.hasJavaOutput: Boolean
-    get() = outputRoot.endsWith("java")
-
-/**
- * Tells if this source file set produces files that reside under the "grpc" directory.
- */
-public val SourceFileSet.hasGrpcOutput: Boolean
-    get() = outputRoot.endsWith("grpc")
-
-/**
- * Tells if this source file set has at least one Java file.
- */
-public val SourceFileSet.hasJavaFiles: Boolean
-    get() = any { it.isJava }
+@Suppress("unused")
+object Aedile {
+    private const val version = "1.3.1"
+    const val lib = "com.sksamuel.aedile:aedile-core:$version"
+}

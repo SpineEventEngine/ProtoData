@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -31,12 +31,19 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
+import com.sksamuel.aedile.core.cacheBuilder
 import io.spine.protodata.InsertedPoints
 import io.spine.protodata.file
-import io.spine.protodata.renderer.SourceFile.Companion.fromCode
 import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
+import io.spine.tools.code.AnyLanguage
+import io.spine.tools.code.Java
+import io.spine.tools.code.JavaScript
+import io.spine.tools.code.Kotlin
+import io.spine.tools.code.Language
+import io.spine.tools.code.Protobuf
+import io.spine.tools.code.TypeScript
 import io.spine.tools.psi.convertLineSeparators
 import io.spine.tools.psi.java.Environment
 import java.lang.System.lineSeparator
@@ -49,9 +56,10 @@ import java.time.Instant
 import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import kotlinx.coroutines.runBlocking
 
 /**
- * A file with source code.
+ * A file with the source code.
  *
  * This file is a part of a [source set][SourceFileSet]. It should be treated as
  * a part of a software module rather than a file system object.
@@ -59,33 +67,32 @@ import kotlin.io.path.writeText
  * a `SourceFile` may be read from one location on the file system and written
  * into another location.
  *
+ * @param L the language of this source code file.
+ * @property language
+ *            the programming language of this source file or [AnyLanguage], if the file is in
+ *            the language not currently supported.
+ * @property relativePath
+ *            the file system path to the file relative to the source root.
+ * @property code
+ *            the source code.
+ * @property changed
+ *            tells if the [code] was modified after it was loaded, or if the file was
+ *            created [from the code][fromCode].
  * @see SourceFileSet
  */
 @Suppress(
     "TooManyFunctions"
     /* Those functions constitute the primary API and should not be represented as extensions. */
 )
-public class SourceFile
+public class SourceFile<L: Language>
 private constructor(
-
-    /**
-     * The source code.
-     */
-    private var code: String,
-
-    /**
-     * The file system path to the file relative to the source root.
-     */
+    public val language: Language,
     public val relativePath: Path,
-
-    /**
-     * Tells if the [code] was modified after it was loaded, or if the file was
-     * created [from the code][fromCode].
-     */
+    private var code: String,
     private var changed: Boolean = false
 ) {
     private lateinit var sources: SourceFileSet
-    private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
+    private val preReadActions = mutableListOf<(SourceFile<L>) -> Unit>()
     private var alreadyRead = false
 
     /**
@@ -158,17 +165,59 @@ private constructor(
     public companion object {
 
         /**
+         * The cache of created [SourceFile] instances by their full paths.
+         *
+         * The cache is needed to make sure that two or more [SourceFileSet]s hold
+         * the same instance of [SourceFile] for the same file on the file system.
+         */
+        private val cache = cacheBuilder<Path, SourceFile<*>> {
+            initialCapacity = 100
+        }.build()
+
+        /**
+         * Clears the internal cache which maps full file paths to [SourceFile] instances.
+         *
+         * Clearing the cache may be useful in between tests to avoid stale instances obtained
+         * in cases of using the same full paths.
+         */
+        @VisibleForTesting
+        public fun clearCache() {
+            synchronized(this) {
+                cache.invalidateAll()
+            }
+        }
+
+        /**
          * Reads the file from the given file system location.
          */
         internal fun read(
             sourceRoot: Path,
             relativePath: Path,
             charset: Charset = Charsets.UTF_8
-        ): SourceFile {
+        ): SourceFile<*> {
             val absolute = sourceRoot / relativePath
-            val code = absolute.readText(charset)
-            return SourceFile(code, relativePath)
+            return synchronized(this) {
+                runBlocking {
+                    cache.get(absolute) {
+                        val lang = languageOf(absolute)
+                        val code = absolute.readText(charset)
+                        create(lang, relativePath, code)
+                    }
+                }
+            }
         }
+
+        /**
+         * Creates an instance of [SourceFile] with for the given language, path, and the code.
+         *
+         * This function is needed for passing the generic parameter to the constructor.
+         */
+        private fun <L: Language> create(
+            lang: L,
+            relativePath: Path,
+            code: String,
+            changed: Boolean = false
+        ): SourceFile<L> = SourceFile(lang, relativePath, code, changed)
 
         /**
          * Constructs a file from source code.
@@ -180,8 +229,11 @@ private constructor(
          *         the source code.
          */
         @VisibleForTesting
-        public fun fromCode(relativePath: Path, code: String): SourceFile =
-            SourceFile(code, relativePath, changed = true)
+        public fun fromCode(
+            relativePath: Path,
+            code: String
+        ): SourceFile<*> =
+            create(languageOf(relativePath), relativePath, code, changed = true)
     }
 
     /**
@@ -343,7 +395,7 @@ private constructor(
     /**
      * Adds an action to be executed before obtaining the [code] of this source file.
      */
-    internal fun beforeRead(action: (SourceFile) -> Unit) {
+    internal fun beforeRead(action: (SourceFile<*>) -> Unit) {
         preReadActions.add(action)
         if (alreadyRead) {
             action(this)
@@ -366,7 +418,7 @@ private constructor(
 /**
  * Gets the type of this source file by using its name.
  */
-private fun SourceFile.psiFileType(): FileType {
+private fun SourceFile<*>.psiFileType(): FileType {
     // Ensure all the services are registered. This is fast to call repeatedly.
     Environment.setUp()
     val registry = FileTypeRegistry.getInstance()
@@ -375,3 +427,16 @@ private fun SourceFile.psiFileType(): FileType {
     }
     return registry.getFileTypeByFileName(relativePath.toString())
 }
+
+private val languages: List<Language> by lazy {
+    listOf(
+        Java,
+        Kotlin,
+        JavaScript,
+        TypeScript,
+        Protobuf,
+        AnyLanguage
+    )
+}
+
+private fun languageOf(file: Path): Language = languages.first { it.matches(file) }

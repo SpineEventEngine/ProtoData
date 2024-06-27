@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,6 +28,7 @@ package io.spine.protodata.java.annotation
 
 import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.settings.loadSettings
+import io.spine.tools.code.Java
 
 /**
  * Suppresses warnings in the generated code.
@@ -49,7 +50,7 @@ public class SuppressWarningsAnnotation :
         public val ALL_WARNINGS: List<String> = listOf("ALL")
     }
 
-    override fun renderAnnotationArguments(file: SourceFile): String = "{${warningList()}}"
+    override fun renderAnnotationArguments(file: SourceFile<Java>): String = "{${warningList()}}"
 
     /**
      * Obtains the code for suppressing warnings.

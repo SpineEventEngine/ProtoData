@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -467,17 +467,21 @@ class PipelineSpec {
             request = request,
             settings = SettingsDirectory(settingsDir)
         )
+        var codegenContext: CodegenContext? = null
+        try {
+            // Ensure that the lazily evaluated property is created successfully.
+            codegenContext = assertDoesNotThrow {
+                pipeline.codegenContext
+            }
 
-        // Ensure that the lazily evaluated property is created successfully.
-        val codegenContext: CodegenContext = assertDoesNotThrow {
-            pipeline.codegenContext
+            // We do not expose the type behind the `codegenContext` property for additional
+            // safety of the usage. Knowing of the underlying type is used by the testing utility
+            // `io.spine.protodata.testing.PipelineSetup.createPipelineAndBlackbox()`.
+            // Please see the `testlib` module for details.
+            (codegenContext is CodeGenerationContext) shouldBe true
+        } finally {
+            codegenContext?.closeIfOpen()
         }
-
-        // We do not expose the type behind the `codegenContext` property for additional
-        // safety of the usage. Knowing of the underlying type is used by the testing utility
-        // `io.spine.protodata.testing.PipelineSetup.createPipelineAndBlackbox()`.
-        // Please see the `testlib` module for details.
-        (codegenContext is CodeGenerationContext) shouldBe true
     }
 }
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -71,7 +71,7 @@ import kotlin.text.Charsets.UTF_8
 @Suppress("TooManyFunctions") // All parts of the public API.
 public class SourceFileSet
 internal constructor(
-    files: Set<SourceFile>,
+    files: Set<SourceFile<*>>,
 
     /**
      * A common root directory for all the files in this source set.
@@ -92,11 +92,11 @@ internal constructor(
      */
     @get:JvmName("outputRoot")
     public val outputRoot: Path
-) : Iterable<SourceFile> {
+) : Iterable<SourceFile<*>> {
 
-    private val files: MutableMap<Path, SourceFile>
-    private val deletedFiles = mutableSetOf<SourceFile>()
-    private val preReadActions = mutableListOf<(SourceFile) -> Unit>()
+    private val files: MutableMap<Path, SourceFile<*>>
+    private val deletedFiles = mutableSetOf<SourceFile<*>>()
+    private val preReadActions = mutableListOf<(SourceFile<*>) -> Unit>()
     internal lateinit var querying: Querying
 
     /**
@@ -111,7 +111,7 @@ internal constructor(
         require(inputRoot.absolutePathString() != outputRoot.absolutePathString()) {
             "Input and output roots cannot be the same, but was '${inputRoot.absolutePathString()}'"
         }
-        val map = HashMap<Path, SourceFile>(files.size)
+        val map = HashMap<Path, SourceFile<*>>(files.size)
         this.files = files.associateByTo(map) { it.relativePath }
         this.files.values.forEach { it.attachTo(this) }
     }
@@ -158,7 +158,7 @@ internal constructor(
          */
         public fun empty(target: Path): SourceFileSet {
             checkTarget(target)
-            val files = setOf<SourceFile>()
+            val files = setOf<SourceFile<*>>()
             return SourceFileSet(files, target, target)
         }
     }
@@ -180,7 +180,7 @@ internal constructor(
      *
      * The [path] may be absolute or relative to the source root.
      */
-    public fun file(path: Path): SourceFile {
+    public fun file(path: Path): SourceFile<*> {
         val found = find(path)
         require(found != null) {
             """
@@ -199,7 +199,7 @@ internal constructor(
      *
      * @return the source file or `null` if the file is missing from this set.
      */
-    public fun find(path: Path): SourceFile? {
+    public fun find(path: Path): SourceFile<*>? {
         val file = files[path]
         if (file != null) {
             return file
@@ -214,7 +214,7 @@ internal constructor(
      *
      * @see find
      */
-    public fun findFile(path: Path): Optional<SourceFile> =
+    public fun findFile(path: Path): Optional<SourceFile<*>> =
         Optional.ofNullable(find(path))
 
     /**
@@ -229,7 +229,7 @@ internal constructor(
     /**
      * Creates a new source file at the given [path] and contains the given [code].
      */
-    public fun createFile(path: Path, code: String): SourceFile {
+    public fun createFile(path: Path, code: String): SourceFile<*> {
         val file = SourceFile.fromCode(path, code)
         files[file.relativePath] = file
         file.attachTo(this)
@@ -275,7 +275,7 @@ internal constructor(
      * The action may change the code if necessary, for example,
      * by adding insertion points.
      */
-    internal fun prepareCode(action: (SourceFile) -> Unit) {
+    internal fun prepareCode(action: (SourceFile<*>) -> Unit) {
         files.values.forEach {
             it.beforeRead(action)
         }
@@ -300,7 +300,7 @@ internal constructor(
         this.querying = querying
     }
 
-    override fun iterator(): Iterator<SourceFile> =
+    override fun iterator(): Iterator<SourceFile<*>> =
         files.values.iterator()
 
     /**
@@ -310,10 +310,24 @@ internal constructor(
 }
 
 /**
+ * Performs the given [action] of all the source code files of the language [L].
+ */
+public inline fun <reified L : Language> SourceFileSet.forEachOfLanguage(
+    action: (SourceFile<L>) -> Unit
+) {
+    filter {
+        it.language::class == L::class
+    }.forEach {
+        @Suppress("UNCHECKED_CAST") // Ensured by the filtering above.
+        action(it as SourceFile<L>)
+    }
+}
+
+/**
  * Creates a subset of this source set which contains only the files
  * matching the given [predicate].
  */
-internal fun SourceFileSet.subsetWhere(predicate: (SourceFile) -> Boolean) =
+internal fun SourceFileSet.subsetWhere(predicate: (SourceFile<*>) -> Boolean) =
     SourceFileSet(this.filter(predicate).toSet(), inputRoot, outputRoot)
 
 /**
@@ -368,7 +382,7 @@ public class FileLookup<N: ProtoDeclarationName>(
      */
     public fun <L : Language, T : NameElement<L>> namedUsing(
         convention: Convention<L, N, T>
-    ): SourceFile? {
+    ): SourceFile<*>? {
         val declaration = convention.declarationFor(name)
         val path = declaration?.path
         return path?.let { sources.find(it) }
@@ -412,5 +426,5 @@ public class FileCreationWithPath(
      *
      * @return the new source file
      */
-    public fun withCode(code: String): SourceFile = sources.createFile(file, code)
+    public fun withCode(code: String): SourceFile<*> = sources.createFile(file, code)
 }

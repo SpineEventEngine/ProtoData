@@ -24,32 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.java.file
+package io.spine.protodata.renderer
 
-import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.renderer.SourceFileSet
-import kotlin.io.path.extension
+import io.spine.tools.code.Language
 
 /**
- * Tells if this is a Java source file.
+ * A base interface for classes that modify the code of one source file.
+ *
+ * @param L the programming language supported by this renderer.
  */
-public val SourceFile<*>.isJava: Boolean
-    get() = relativePath.extension == "java"
+public interface FileRenderer<L : Language> {
 
-/**
- * Tells if this source file set produces files that reside under the "java" directory.
- */
-public val SourceFileSet.hasJavaOutput: Boolean
-    get() = outputRoot.endsWith("java")
-
-/**
- * Tells if this source file set produces files that reside under the "grpc" directory.
- */
-public val SourceFileSet.hasGrpcOutput: Boolean
-    get() = outputRoot.endsWith("grpc")
-
-/**
- * Tells if this source file set has at least one Java file.
- */
-public val SourceFileSet.hasJavaFiles: Boolean
-    get() = any { it.isJava }
+    /**
+     * Renders the code in the given source file.
+     */
+    public fun render(file: SourceFile<L>)
+}

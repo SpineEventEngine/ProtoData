@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -75,7 +75,7 @@ public fun Text.locate(name: ClassOrEnumName): PsiClass? {
     message = "Please use `psi()` instead",
     replaceWith = ReplaceWith("psi() as PsiJavaFile")
 )
-public fun SourceFile.toPsi(): PsiJavaFile {
+public fun SourceFile<*>.toPsi(): PsiJavaFile {
     check(isJava) {
         "Unable to convert non-Java file `$relativePath` to ${PsiJavaFile::class.java.simpleName}."
     }
@@ -96,7 +96,7 @@ private object TextToPsiParser {
     }
 
     @Deprecated(message = "Please use `SourceFile.psi()` instead.")
-    fun get(file: SourceFile): PsiJavaFile {
+    fun get(file: SourceFile<*>): PsiJavaFile {
         @Suppress("DEPRECATION")
         return cache.get(file.text())
     }
