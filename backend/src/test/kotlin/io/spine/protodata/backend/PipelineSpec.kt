@@ -33,6 +33,8 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.spine.environment.Environment
+import io.spine.environment.Tests
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.ConfigurationError
 import io.spine.protodata.renderer.SourceFileSet
@@ -61,6 +63,8 @@ import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
+import io.spine.server.ServerEnvironment
+import io.spine.server.delivery.Delivery
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
 import io.spine.tools.code.AnyLanguage
@@ -487,6 +491,8 @@ class PipelineSpec {
         // `io.spine.protodata.testing.PipelineSetup.createPipelineAndBlackbox()`.
         // Please see the `testlib` module for details.
         (codegenContext is CodeGenerationContext) shouldBe true
+
+        pipeline.codegenContext.closeIfOpen()
     }
 }
 
