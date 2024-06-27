@@ -59,7 +59,7 @@ import kotlin.io.path.writeText
 import kotlinx.coroutines.runBlocking
 
 /**
- * A file with source code.
+ * A file with the source code.
  *
  * This file is a part of a [source set][SourceFileSet]. It should be treated as
  * a part of a software module rather than a file system object.
@@ -67,6 +67,7 @@ import kotlinx.coroutines.runBlocking
  * a `SourceFile` may be read from one location on the file system and written
  * into another location.
  *
+ * @param L the language of this source code file.
  * @property language
  *            the programming language of this source file or [AnyLanguage], if the file is in
  *            the language not currently supported.
