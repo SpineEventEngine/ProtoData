@@ -440,4 +440,3 @@ private val languages: List<Language> by lazy {
 }
 
 private fun languageOf(file: Path): Language = languages.first { it.matches(file) }
-
