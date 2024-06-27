@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -31,6 +31,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
+import com.sksamuel.aedile.core.cacheBuilder
 import io.spine.protodata.InsertedPoints
 import io.spine.protodata.file
 import io.spine.protodata.renderer.SourceFile.Companion.fromCode
@@ -49,6 +50,7 @@ import java.time.Instant
 import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import kotlinx.coroutines.runBlocking
 
 /**
  * A file with source code.
@@ -158,6 +160,29 @@ private constructor(
     public companion object {
 
         /**
+         * The cache of created [SourceFile] instances by their full paths.
+         *
+         * The cache is needed to make sure that two or more [SourceFileSet]s hold
+         * the same instance of [SourceFile] for the same file on the file system.
+         */
+        private val cache = cacheBuilder<Path, SourceFile> {
+            initialCapacity = 100
+        }.build()
+
+        /**
+         * Clears the internal cache which maps full file paths to [SourceFile] instances.
+         *
+         * Clearing the cache may be useful in between tests to avoid stale instances obtained
+         * in cases of using the same full paths.
+         */
+        @VisibleForTesting
+        public fun clearCache() {
+            synchronized(this) {
+                cache.invalidateAll()
+            }
+        }
+
+        /**
          * Reads the file from the given file system location.
          */
         internal fun read(
@@ -166,8 +191,14 @@ private constructor(
             charset: Charset = Charsets.UTF_8
         ): SourceFile {
             val absolute = sourceRoot / relativePath
-            val code = absolute.readText(charset)
-            return SourceFile(code, relativePath)
+            return synchronized(this) {
+                runBlocking {
+                    cache.get(absolute) {
+                        val code = absolute.readText(charset)
+                        SourceFile(code, relativePath)
+                    }
+                }
+            }
         }
 
         /**

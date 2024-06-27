@@ -27,14 +27,12 @@
 package io.spine.internal.dependency
 
 /**
- * A [high performance](https://github.com/ben-manes/caffeine/wiki/Benchmarks),
- * [near optimal](https://github.com/ben-manes/caffeine/wiki/Efficiency) caching library.
+ * A Kotlin wrapper over [Caffeine].
  *
- * @see <a href="https://github.com/ben-manes/caffeine">Caffeine at GitHub</a>
- * @see Aedile
+ * @see <a href="https://github.com/sksamuel/aedile">Aedile at GitHub</a>
  */
 @Suppress("unused")
-object Caffeine {
-    private const val version = "3.0.5"
-    const val lib = "com.github.ben-manes.caffeine:caffeine:$version"
+object Aedile {
+    private const val version = "1.3.1"
+    const val lib = "com.sksamuel.aedile:aedile-core:$version"
 }
