@@ -37,13 +37,7 @@ import io.spine.protodata.file
 import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
-import io.spine.tools.code.AnyLanguage
-import io.spine.tools.code.Java
-import io.spine.tools.code.JavaScript
-import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
-import io.spine.tools.code.Protobuf
-import io.spine.tools.code.TypeScript
 import io.spine.tools.psi.convertLineSeparators
 import io.spine.tools.psi.java.Environment
 import java.lang.System.lineSeparator
@@ -199,7 +193,7 @@ private constructor(
             return synchronized(this) {
                 runBlocking {
                     cache.get(absolute) {
-                        val lang = languageOf(absolute)
+                        val lang = Language.of(absolute)
                         val code = absolute.readText(charset)
                         create(lang, relativePath, code)
                     }
@@ -233,7 +227,7 @@ private constructor(
             relativePath: Path,
             code: String
         ): SourceFile<*> =
-            create(languageOf(relativePath), relativePath, code, changed = true)
+            create(Language.of(relativePath), relativePath, code, changed = true)
     }
 
     /**
@@ -427,16 +421,3 @@ private fun SourceFile<*>.psiFileType(): FileType {
     }
     return registry.getFileTypeByFileName(relativePath.toString())
 }
-
-private val languages: List<Language> by lazy {
-    listOf(
-        Java,
-        Kotlin,
-        JavaScript,
-        TypeScript,
-        Protobuf,
-        AnyLanguage
-    )
-}
-
-private fun languageOf(file: Path): Language = languages.first { it.matches(file) }
