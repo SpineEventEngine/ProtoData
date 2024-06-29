@@ -36,7 +36,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.30.1</version>
+<version>0.40.0</version>
 
 <inceptionYear>2015</inceptionYear>
 
