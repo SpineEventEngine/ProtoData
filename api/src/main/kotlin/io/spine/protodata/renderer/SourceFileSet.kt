@@ -31,8 +31,6 @@ import com.intellij.openapi.project.Project
 import io.spine.annotation.Internal
 import io.spine.protodata.ProtoDeclarationName
 import io.spine.protodata.renderer.SourceFileSet.Companion.create
-import io.spine.protodata.type.Convention
-import io.spine.protodata.type.NameElement
 import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.tools.code.Language
@@ -43,6 +41,7 @@ import java.nio.file.Files.walk
 import java.nio.file.Path
 import java.util.*
 import kotlin.DeprecationLevel.ERROR
+import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
@@ -143,7 +142,7 @@ internal constructor(
             val source = inputRoot.canonical()
             val target = outputRoot.canonical()
             if (source != target) {
-                checkTarget(target)
+                target.check()
             }
             val files = walk(source)
                 .filter { it.isRegularFile() }
@@ -157,7 +156,7 @@ internal constructor(
          * written to the given target directory.
          */
         public fun empty(target: Path): SourceFileSet {
-            checkTarget(target)
+            target.check()
             val files = setOf<SourceFile<*>>()
             return SourceFileSet(files, target, target)
         }
@@ -324,6 +323,16 @@ public inline fun <reified L : Language> SourceFileSet.forEachOfLanguage(
 }
 
 /**
+ * Locates the file with the given [path] in this source file set.
+ *
+ * @throws IllegalStateException
+ *          if the file was not found.
+ */
+public fun SourceFileSet.file(path: String): SourceFile<*> {
+    return find(Path(path))?: error("Source file `$path` not found.")
+}
+
+/**
  * Creates a subset of this source set which contains only the files
  * matching the given [predicate].
  */
@@ -341,90 +350,24 @@ private fun Path.canonical(): Path {
  * Ensures that the target directory is empty.
  *
  * Throws an exception if the given path is a directory, which exists and is not empty.
- * Or, if the path exists, but is not a directory.
+ * Or, if the path exists but is not a directory.
  */
-private fun checkTarget(targetRoot: Path) {
-    if (targetRoot.exists()) {
-        val target = targetRoot.toFile()
-        require(target.isDirectory) {
-            "Target root `$targetRoot` must be a directory."
-        }
-        val children = target.list()!!
-        require(children.isEmpty()) {
-            val nl = System.lineSeparator()
-            val ls = children.joinToString(
-                separator = nl,
-                transform = { f -> "    $f" }
-            )
-            "Target directory `$targetRoot` must be empty. Found inside:$nl$ls"
-        }
+private fun Path.check() {
+    if (!exists()) {
+        return
     }
-}
 
-/**
- * A marker interface for fluent API operation classes for creating or searching for a file.
- */
-public sealed interface FileOperation
-
-/**
- * Part of the fluent API for finding source files.
- *
- * @param N the type of the Protobuf declaration name such as message, enum, or a service.
- */
-public class FileLookup<N: ProtoDeclarationName>(
-    private val sources: SourceFileSet,
-    private val name: N
-) : FileOperation {
-
-    /**
-     * Searches for a source file with for the given Proto type generated according to
-     * the given [convention].
-     */
-    public fun <L : Language, T : NameElement<L>> namedUsing(
-        convention: Convention<L, N, T>
-    ): SourceFile<*>? {
-        val declaration = convention.declarationFor(name)
-        val path = declaration?.path
-        return path?.let { sources.find(it) }
+    val target = toFile()
+    require(target.isDirectory) {
+        "Target root `$this` must be a directory."
     }
-}
-
-/**
- * Part of the fluent API for creating new source files.
- */
-public class FileCreation<N: ProtoDeclarationName>(
-    private val sources: SourceFileSet,
-    private val name: N
-) : FileOperation {
-
-    /**
-     * Attempts to create a file path for the given type name using the given [convention].
-     *
-     * If the convention does not define a declaration for the given type, returns `null`.
-     *
-     * @param T the type of the Protobuf declaration name such as message, enum, or a service.
-     */
-    public fun <L : Language, T : NameElement<L>> namedUsing(
-        convention: Convention<L, N, T>
-    ): FileCreationWithPath? {
-        val declaration = convention.declarationFor(name)
-        val path = declaration?.path
-        return path?.let { FileCreationWithPath(sources, path) }
+    val children = target.list()!!
+    require(children.isEmpty()) {
+        val nl = System.lineSeparator()
+        val ls = children.joinToString(
+            separator = nl,
+            transform = { f -> "    $f" }
+        )
+        "Target directory `$this` must be empty. Found inside:$nl$ls"
     }
-}
-
-/**
- * Part of the fluent API for creating new source files.
- */
-public class FileCreationWithPath(
-    private val sources: SourceFileSet,
-    private val file: Path
-) : FileOperation {
-
-    /**
-     * Writes the given [code] into the provided file.
-     *
-     * @return the new source file
-     */
-    public fun withCode(code: String): SourceFile<*> = sources.createFile(file, code)
 }

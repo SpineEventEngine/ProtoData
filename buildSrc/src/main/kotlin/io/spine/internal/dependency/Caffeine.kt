@@ -30,8 +30,9 @@ package io.spine.internal.dependency
  * A [high performance](https://github.com/ben-manes/caffeine/wiki/Benchmarks),
  * [near optimal](https://github.com/ben-manes/caffeine/wiki/Efficiency) caching library.
  *
+ * This library is a transitive dependency for us via ErrorProne.
+ *
  * @see <a href="https://github.com/ben-manes/caffeine">Caffeine at GitHub</a>
- * @see Aedile
  */
 @Suppress("unused")
 object Caffeine {
