@@ -26,6 +26,7 @@
 
 package io.spine.protodata.renderer
 
+import io.spine.protodata.CodegenMember
 import io.spine.tools.code.Language
 
 /**
@@ -33,10 +34,11 @@ import io.spine.tools.code.Language
  *
  * @param L the programming language supported by this renderer.
  */
-public interface FileRenderer<L : Language> {
+public abstract class FileRenderer<L : Language>
+protected constructor(language: L) : CodegenMember<L>(language) {
 
     /**
      * Renders the code in the given source file.
      */
-    public fun render(file: SourceFile<L>)
+    public abstract fun render(file: SourceFile<L>)
 }
