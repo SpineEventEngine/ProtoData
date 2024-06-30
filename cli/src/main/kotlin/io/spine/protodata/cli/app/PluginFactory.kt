@@ -26,6 +26,7 @@
 
 package io.spine.protodata.cli.app
 
+import io.spine.protodata.ReflectiveFactory
 import io.spine.protodata.plugin.Plugin
 
 /**

@@ -26,6 +26,6 @@
 
 package io.spine.protodata.cli.given
 
-import io.spine.protodata.cli.app.ReflectiveFactory
+import io.spine.protodata.ReflectiveFactory
 
 internal class TestReflectiveFactory : ReflectiveFactory<TestSpi>()

@@ -43,6 +43,7 @@ import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
+import io.spine.protodata.ReflectiveFactory
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.cli.DebugLoggingParam
 import io.spine.protodata.cli.InfoLoggingParam

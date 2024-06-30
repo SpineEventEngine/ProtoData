@@ -24,14 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.app
+package io.spine.protodata
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 import org.checkerframework.checker.signature.qual.FqBinaryName
 
 /**
- * A factory for creating instances of classes by their fully qualified names.
+ * A utility class for creating instances of classes by their fully qualified names.
  *
  * The class is loaded via a `ClassLoader` and an instance is created.
  * It is expected that the class has a `public` constructor with no parameters.
