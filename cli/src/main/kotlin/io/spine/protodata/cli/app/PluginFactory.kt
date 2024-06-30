@@ -52,6 +52,9 @@ internal class PluginFactory(
     private val printError: (String?) -> Unit
 ): Factory<Plugin>(classLoader) {
 
+    /**
+     * Creates plugins by their class names.
+     */
     fun load(classNames: List<String>): List<Plugin> {
         return classNames.map { tryCreate(it) }
     }
