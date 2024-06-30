@@ -28,7 +28,6 @@ package io.spine.protodata
 
 import io.spine.annotation.Internal
 import io.spine.base.EntityState
-import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.settings.LoadsSettings
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.query.QueryingClient
@@ -69,7 +68,7 @@ protected constructor(
      *
      * Is `null` if the type system is not yet available to this renderer.
      *
-     * This property is guaranteed to be non-`null` in [renderSources].
+     * This property is guaranteed to be non-`null` after [registerWith].
      */
     protected val typeSystem: TypeSystem?
         get() = context?.typeSystem
@@ -99,12 +98,12 @@ protected constructor(
     final override fun settingsAvailable(): Boolean = super.settingsAvailable()
 
     /**
-     * Injects the `Code Generation` context into this renderer.
+     * Injects the `Code Generation` context into this instance.
      *
      * The reference to the context is needed to query the state of entities.
      *
      * This method is `public` but is essentially `internal` to ProtoData SDK.
-     * It is not supposed to be called by authors of [Renderer]s directly.
+     * It is not supposed to be called by authors of plugins directly.
      *
      * @see [select]
      * @see [io.spine.protodata.backend.Pipeline]
@@ -113,10 +112,8 @@ protected constructor(
     public override fun registerWith(context: CodegenContext) {
         if (isRegistered()) {
             check(_context == context) {
-                "Unable to register the renderer `$this` with" +
-                        " `${context}`." +
-                        " The renderer is already registered with" +
-                        " `${this._context}`."
+                "Unable to register `$this` with `${context}` because" +
+                        " it is already registered with `${this._context}`."
             }
             return
         }
