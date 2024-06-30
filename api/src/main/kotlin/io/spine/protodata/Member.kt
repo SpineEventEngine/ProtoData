@@ -30,6 +30,7 @@ import io.spine.annotation.Internal
 import io.spine.base.EntityState
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.settings.LoadsSettings
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
 
@@ -62,6 +63,16 @@ protected constructor(
         } else {
             null
         }
+
+    /**
+     * A type system with the Protobuf types defined in the current code generation pipeline.
+     *
+     * Is `null` if the type system is not yet available to this renderer.
+     *
+     * This property is guaranteed to be non-`null` in [renderSources].
+     */
+    protected val typeSystem: TypeSystem?
+        get() = context?.typeSystem
 
     /**
      * Creates a [QueryingClient] for obtaining entity states of the given type.

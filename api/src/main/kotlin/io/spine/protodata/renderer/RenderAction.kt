@@ -30,15 +30,15 @@ import io.spine.protodata.Member
 import io.spine.tools.code.Language
 
 /**
- * A base interface for classes that modify the code of one source file.
+ * A base class for classes that modify the code of a single source file.
  *
- * @param L the programming language supported by this renderer.
+ * @param L the programming language supported by this action.
  */
-public abstract class FileRenderer<L : Language>
+public abstract class RenderAction<L : Language>
 protected constructor(language: L) : Member<L>(language) {
 
     /**
      * Renders the code in the given source file.
      */
-    public abstract fun render(file: SourceFile<L>)
+    public abstract fun run(file: SourceFile<L>)
 }

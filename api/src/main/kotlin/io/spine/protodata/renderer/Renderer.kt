@@ -38,18 +38,8 @@ import io.spine.tools.code.Language
  * Instances of `Renderer`s are usually created by
  * the [Plugin.renderers()][io.spine.protodata.plugin.Plugin.renderers] method.
  */
-public abstract class Renderer<L : Language> protected constructor(language: L) :
-    Member<L>(language) {
-
-    /**
-     * A type system with the Protobuf types defined in the current code generation pipeline.
-     *
-     * Is `null` if the type system is not yet available to this renderer.
-     *
-     * This property is guaranteed to be non-`null` in [renderSources].
-     */
-    protected val typeSystem: TypeSystem?
-        get() = context?.typeSystem
+public abstract class Renderer<L : Language>
+protected constructor(language: L) : Member<L>(language) {
 
     /**
      * Performs required changes to the given source set.
