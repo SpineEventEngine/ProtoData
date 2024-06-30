@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -36,6 +36,16 @@ import io.spine.protodata.settings.Format.PROTO_JSON
 import io.spine.protodata.settings.Format.YAML
 
 /**
+ * The part of the console output used for showing how to use the dollar sign for
+ * a nested binary class name.
+ *
+ * The backslash symbol (`\\`) preceding the dollar sign (`\$)` is used for escaping
+ * the dollar in the console input because otherwise it would be considered as
+ * a reference to a shell script variable.
+ */
+private const val escDollar: String = "\\\$"
+
+/**
  * The command-line parameter for specifying ProtoData plugins used in
  * the code generation process.
  */
@@ -43,9 +53,10 @@ public object PluginParam : Parameter(
     name = "--plugin",
     shortName = "-p",
     help = """
-        The name of a Java class, a subtype of `${Plugin::class.qualifiedName}`.
-        There can be multiple providers. To pass more than one value, type:
-           `<...> ${dash.p} com.foo.MyEntitiesPlugin ${dash.p} com.foo.OtherEntitiesPlugin`.
+        The name of a Java or a Kotlin class, a subtype of `${Plugin::class.qualifiedName}`.
+        For nested classes please use binary names, with the `$` delimiter before a nested class.
+        To pass more than one plugin class, type:
+           `<...> ${dash.p} com.foo.FirstPlugin ${dash.p} com.foo.Second${escDollar}NestedPlugin`.
         """
 )
 
