@@ -59,7 +59,7 @@ public open class ReflectiveFactory<T: Any> {
     }
 
     private fun create(cls: KClass<T>): T {
-        val ctor = cls.constructors.find { it.visibility.isPublic() && it.parameters.isEmpty() }
+        val ctor = cls.constructors.find { it.visibility.isPublic && it.parameters.isEmpty() }
         check(ctor != null) {
             "The class `${cls.qualifiedName}` should have a public zero-parameter constructor."
         }
@@ -70,4 +70,5 @@ public open class ReflectiveFactory<T: Any> {
 /**
  * Checks if this [KVisibility] is [public][KVisibility.PUBLIC].
  */
-private fun KVisibility?.isPublic() = this == KVisibility.PUBLIC
+private val KVisibility?.isPublic: Boolean
+    get() = this == KVisibility.PUBLIC
