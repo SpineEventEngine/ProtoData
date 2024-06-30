@@ -248,14 +248,14 @@ internal class Run(version: String) : CliktCommand(
         }
     }
 
-    private fun loadPlugins() = load(PluginBuilder(), plugins)
+    private fun loadPlugins() = load(PluginFactory(), plugins)
 
-    private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {
+    private fun <T: Any> load(builder: ReflectiveFactory<T>, classNames: List<String>): List<T> {
         val classLoader = Thread.currentThread().contextClassLoader
         return classNames.map { builder.tryCreate(it, classLoader) }
     }
 
-    private fun <T : Any> ReflectiveBuilder<T>.tryCreate(
+    private fun <T : Any> ReflectiveFactory<T>.tryCreate(
         className: String,
         classLoader: ClassLoader
     ): T {

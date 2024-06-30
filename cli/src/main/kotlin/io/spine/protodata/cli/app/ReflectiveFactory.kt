@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,14 +28,17 @@ package io.spine.protodata.cli.app
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
+import org.checkerframework.checker.signature.qual.FqBinaryName
 
 /**
- * A builder for creating instances of classes defined by the users of this library.
+ * A factory for creating instances of classes by their fully qualified names.
  *
- * The class is loaded via a `ClassLoader` and an instance is created. It is expected that
- * the class has a `public` constructor with no parameters.
+ * The class is loaded via a `ClassLoader` and an instance is created.
+ * It is expected that the class has a `public` constructor with no parameters.
+ *
+ * @param T the type of the objects created by this factory.
  */
-internal open class ReflectiveBuilder<T: Any> {
+public open class ReflectiveFactory<T: Any> {
 
     /**
      * Creates an instance of `T`.
@@ -48,7 +51,7 @@ internal open class ReflectiveBuilder<T: Any> {
      * @param classLoader
      *         the [ClassLoader] to load the class by its name
      */
-    fun createByName(className: String, classLoader: ClassLoader): T {
+    public fun createByName(className: @FqBinaryName String, classLoader: ClassLoader): T {
         val cls = classLoader.loadClass(className).kotlin
         @Suppress("UNCHECKED_CAST")
         val tClass = cls as KClass<T>
@@ -58,7 +61,7 @@ internal open class ReflectiveBuilder<T: Any> {
     private fun create(cls: KClass<T>): T {
         val ctor = cls.constructors.find { it.visibility.isPublic() && it.parameters.isEmpty() }
         check(ctor != null) {
-            "Class `${cls.qualifiedName}` should have a public zero-parameter constructor."
+            "The class `${cls.qualifiedName}` should have a public zero-parameter constructor."
         }
         return ctor.call()
     }
