@@ -26,7 +26,7 @@
 
 package io.spine.protodata.renderer
 
-import io.spine.protodata.CodegenMember
+import io.spine.protodata.Member
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Language
 
@@ -39,7 +39,7 @@ import io.spine.tools.code.Language
  * the [Plugin.renderers()][io.spine.protodata.plugin.Plugin.renderers] method.
  */
 public abstract class Renderer<L : Language> protected constructor(language: L) :
-    CodegenMember<L>(language) {
+    Member<L>(language) {
 
     /**
      * A type system with the Protobuf types defined in the current code generation pipeline.

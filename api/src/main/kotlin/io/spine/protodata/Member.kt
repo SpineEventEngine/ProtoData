@@ -34,11 +34,12 @@ import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
 
 /**
- * A part of [CodegenContext] which can load its settings.
+ * A part of [CodegenContext] which participates in the code generation process and
+ * may have settings it can load.
  *
  * @param L the programming language served by this member of the code generation process.
  */
-public abstract class CodegenMember<L : Language>
+public abstract class Member<L : Language>
 protected constructor(
     protected val language: L
 ) : LoadsSettings, ContextAware {
