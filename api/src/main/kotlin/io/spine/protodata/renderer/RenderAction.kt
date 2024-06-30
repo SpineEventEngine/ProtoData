@@ -38,9 +38,8 @@ import io.spine.tools.code.Language
  * @param P the type of the Protobuf declaration served by this action,
  *          such as [MessageType][io.spine.protodata.MessageType],
  *          [EnumType][io.spine.protodata.EnumType] or [Service][io.spine.protodata.Service].
- * @param C the type of the context used for passing additional data to the action.
  */
-public abstract class RenderAction<L : Language, P : ProtoDeclaration, C: Message>
+public abstract class RenderAction<L : Language, P : ProtoDeclaration>
 protected constructor(language: L) : Member<L>(language) {
 
     /**
@@ -53,5 +52,5 @@ protected constructor(language: L) : Member<L>(language) {
      * @param context
      *         additional data passed from the caller.
      */
-    public abstract fun run(subject: P, file: SourceFile<L>, context: C)
+    public abstract fun run(subject: P, file: SourceFile<L>)
 }
