@@ -43,6 +43,7 @@ import io.spine.protodata.settings.Format.YAML
  * the dollar in the console input because otherwise it would be considered as
  * a reference to a shell script variable.
  */
+@Suppress("TopLevelPropertyNaming") // for brevity.
 private const val escDollar: String = "\\\$"
 
 /**
