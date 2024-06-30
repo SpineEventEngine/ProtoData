@@ -122,7 +122,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-psi-java-bundle</artifactId>
-    <version>2.0.0-SNAPSHOT.216</version>
+    <version>2.0.0-SNAPSHOT.217</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -182,7 +182,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-testlib</artifactId>
-    <version>2.0.0-SNAPSHOT.216</version>
+    <version>2.0.0-SNAPSHOT.217</version>
     <scope>test</scope>
   </dependency>
   <dependency>
@@ -307,7 +307,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-base</artifactId>
-    <version>2.0.0-SNAPSHOT.216</version>
+    <version>2.0.0-SNAPSHOT.217</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
