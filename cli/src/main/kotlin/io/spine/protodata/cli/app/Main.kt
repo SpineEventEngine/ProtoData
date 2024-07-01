@@ -53,11 +53,10 @@ import io.spine.protodata.cli.SettingsDirParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
+import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.string.Separator
-import io.spine.string.Separator.Companion.nl
-import io.spine.string.pi
 import io.spine.string.ti
 import io.spine.tools.code.manifest.Version
 import java.io.File
@@ -111,7 +110,7 @@ private fun readVersion(): String = Version.fromManifestOf(Run::class.java).valu
  * Finally, the renderers apply required changes to the source set with the root path, supplied in
  * the `--source-root` parameter.
  */
-@Suppress("TooManyFunctions") // It is OK for `main` entry point.
+@Suppress("TooManyFunctions") // It is OK for the `main` entry point.
 internal class Run(version: String) : CliktCommand(
     name = "protodata",
     help = "ProtoData tool helps build better multi-platform code generation." +
@@ -248,37 +247,13 @@ internal class Run(version: String) : CliktCommand(
         }
     }
 
-    private fun loadPlugins() = load(PluginBuilder(), plugins)
-
-    private fun <T: Any> load(builder: ReflectiveBuilder<T>, classNames: List<String>): List<T> {
-        val classLoader = Thread.currentThread().contextClassLoader
-        return classNames.map { builder.tryCreate(it, classLoader) }
-    }
-
-    private fun <T : Any> ReflectiveBuilder<T>.tryCreate(
-        className: String,
-        classLoader: ClassLoader
-    ): T {
-        try {
-            return createByName(className, classLoader)
-        } catch (e: ClassNotFoundException) {
-            printError(e.stackTraceToString())
-            printAddingToClasspath(className)
-            exitProcess(1)
-        }
-    }
-
-    private fun printAddingToClasspath(className: String) {
-        printError("Please add the required class `$className` to the user classpath.")
-        if (classpath == null) {
-            printError("No user classpath was provided.")
-            return
-        }
-
-        printError("Provided user classpath:")
-        val cp = classpath!!
-        val cpStr = cp.joinToString(separator = nl()).pi(indent = " ".repeat(2))
-        printError(cpStr)
+    private fun loadPlugins(): List<Plugin> {
+        val factory = PluginFactory(
+            Thread.currentThread().contextClassLoader,
+            classpath,
+            ::printError
+        )
+        return factory.load(plugins)
     }
 
     /**

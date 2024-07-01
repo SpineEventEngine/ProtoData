@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,13 +26,8 @@
 
 package io.spine.protodata.renderer
 
-import io.spine.annotation.Internal
-import io.spine.base.EntityState
-import io.spine.protodata.CodegenContext
-import io.spine.protodata.ContextAware
-import io.spine.protodata.settings.LoadsSettings
+import io.spine.protodata.Member
 import io.spine.protodata.type.TypeSystem
-import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Language
 
 /**
@@ -42,30 +37,11 @@ import io.spine.tools.code.Language
  *
  * Instances of `Renderer`s are usually created by
  * the [Plugin.renderers()][io.spine.protodata.plugin.Plugin.renderers] method.
+ *
+ * @see RenderAction
  */
 public abstract class Renderer<L : Language>
-protected constructor(
-    protected val language: L
-) : LoadsSettings, ContextAware {
-
-    private lateinit var _context: CodegenContext
-
-    protected val context: CodegenContext?
-        get() = if (this::_context.isInitialized) {
-            _context
-        } else {
-            null
-        }
-
-    /**
-     * A type system with the Protobuf types defined in the current code generation pipeline.
-     *
-     * Is `null` if the type system is not yet available to this renderer.
-     *
-     * This property is guaranteed to be non-`null` in [renderSources].
-     */
-    protected val typeSystem: TypeSystem?
-        get() = context?.typeSystem
+protected constructor(language: L) : Member<L>(language) {
 
     /**
      * Performs required changes to the given source set.
@@ -87,58 +63,4 @@ protected constructor(
      * target directories.
      */
     protected abstract fun render(sources: SourceFileSet)
-
-    /**
-     * Creates a [QueryingClient] for obtaining entity states of the given type.
-     *
-     * @param S
-     *         the type of the entity state.
-     */
-    public inline fun <reified S : EntityState<*>> select(): QueryingClient<S> =
-        select(S::class.java)
-
-    /**
-     * Creates a [QueryingClient] for obtaining entity states of the given type.
-     *
-     * @param S
-     *         the type of the entity state.
-     * @param type
-     *         the class of the entity state.
-     */
-    public final override fun <S : EntityState<*>> select(type: Class<S>): QueryingClient<S> =
-        _context.select(type)
-
-    final override fun <T: Any> loadSettings(cls: Class<T>): T = super.loadSettings(cls)
-
-    final override fun settingsAvailable(): Boolean = super.settingsAvailable()
-
-    /**
-     * Injects the `Code Generation` context into this renderer.
-     *
-     * The reference to the context is needed to query the state of entities.
-     *
-     * This method is `public` but is essentially `internal` to ProtoData SDK.
-     * It is not supposed to be called by authors of [Renderer]s directly.
-     *
-     * @see [select]
-     * @see [io.spine.protodata.backend.Pipeline]
-     */
-    @Internal
-    public override fun registerWith(context: CodegenContext) {
-        if (isRegistered()) {
-            check(_context == context) {
-                "Unable to register the renderer `$this` with" +
-                        " `${context}`." +
-                        " The renderer is already registered with" +
-                        " `${this._context}`."
-            }
-            return
-        }
-        _context = context
-    }
-
-    @Internal
-    override fun isRegistered(): Boolean {
-        return this::_context.isInitialized
-    }
 }

@@ -48,7 +48,7 @@ import kotlin.io.path.isRegularFile
 import kotlin.text.Charsets.UTF_8
 
 /**
- * A mutable set of source files that participate in code generation workflow.
+ * A mutable set of source files that participate in the code generation workflow.
  *
  * The initial set of [files] is obtained when the source set is [loaded][create]
  * the [inputRoot] directory.
@@ -254,7 +254,7 @@ internal constructor(
      * Writes this source set to the file system.
      *
      * The sources existing on the file system at the moment are deleted,
-     * along with the whole directory structure and the new files are written.
+     * along with the whole directory structure, and the new files are written.
      */
     public fun write(charset: Charset = UTF_8) {
         deletedFiles.forEach {
