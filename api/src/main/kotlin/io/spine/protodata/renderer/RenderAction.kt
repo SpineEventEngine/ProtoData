@@ -38,20 +38,19 @@ import io.spine.tools.code.Language
  *
  * @param L the programming language supported by this action.
  * @param P the type of the Protobuf declaration served by this action,
- *          such as [MessageType][io.spine.protodata.MessageType],
- *          [EnumType][io.spine.protodata.EnumType] or [Service][io.spine.protodata.Service].
+ *   such as [MessageType][io.spine.protodata.MessageType],
+ *   [EnumType][io.spine.protodata.EnumType] or [Service][io.spine.protodata.Service].
+ * @param language the programming language served by this action.
+ * @property subject the Protobuf declaration served by this action.
  * @see Renderer
  */
 public abstract class RenderAction<L : Language, P : ProtoDeclaration>
-protected constructor(language: L) : Member<L>(language) {
+protected constructor(language: L, protected val subject: P) : Member<L>(language) {
 
     /**
      * Renders the code in the given source file.
      *
-     * @param subject
-     *         the Protobuf declaration served by this action.
-     * @param file
-     *         the source code file to be modified by this action.
+     * @param file the source code file to be modified by this action.
      */
-    public abstract fun run(subject: P, file: SourceFile<L>)
+    public abstract fun run(file: SourceFile<L>)
 }

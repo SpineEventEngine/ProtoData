@@ -43,7 +43,14 @@ import org.junit.jupiter.api.assertDoesNotThrow
 @DisplayName("`RenderAction` should")
 internal class RenderActionSpec {
 
-    private val action: RenderAction<Java, MessageType> = StubAction()
+    private val typeName = "MyType"
+
+    private val subject = messageType {
+        name = typeName { simpleName = typeName }
+        file = io.spine.protodata.file { path = "acme/example/my_type.proto" }
+    }
+
+    private val action: RenderAction<Java, MessageType> = StubAction(subject)
 
     @Test
     fun `be language-specific`() {
@@ -52,24 +59,19 @@ internal class RenderActionSpec {
 
     @Test
     fun `accept 'ProtoDeclaration' and 'SourceFile' as parameters for rendering`() {
-        val typeName = "MyType"
-        val subject = messageType {
-            name = typeName { simpleName = typeName }
-            file = io.spine.protodata.file { path = "acme/example/my_type.proto" }
-        }
         val sourceFile = SourceFile.byCode<Java>(Path("$typeName.java"), """
             public class $typeName {}
             """.trimIndent()
         )
         assertDoesNotThrow {
-            action.run(subject, sourceFile)
+            action.run(sourceFile)
         }
     }
 }
 
-private class StubAction: RenderAction<Java, MessageType>(Java) {
+private class StubAction(type: MessageType): RenderAction<Java, MessageType>(Java, type) {
 
-    override fun run(subject: MessageType, file: SourceFile<Java>) {
+    override fun run(file: SourceFile<Java>) {
         // Do nothing.
     }
 }
