@@ -26,7 +26,6 @@
 
 package io.spine.protodata.renderer
 
-import com.google.protobuf.Message
 import io.spine.protodata.Member
 import io.spine.protodata.ProtoDeclaration
 import io.spine.tools.code.Language
@@ -34,10 +33,14 @@ import io.spine.tools.code.Language
 /**
  * A base class for classes that modify the code of a single source file.
  *
+ * Render actions participate in the source code rendering process and
+ * are called by [Renderer]s either directly or indirectly.
+ *
  * @param L the programming language supported by this action.
  * @param P the type of the Protobuf declaration served by this action,
  *          such as [MessageType][io.spine.protodata.MessageType],
  *          [EnumType][io.spine.protodata.EnumType] or [Service][io.spine.protodata.Service].
+ * @see Renderer
  */
 public abstract class RenderAction<L : Language, P : ProtoDeclaration>
 protected constructor(language: L) : Member<L>(language) {
@@ -49,8 +52,6 @@ protected constructor(language: L) : Member<L>(language) {
      *         the Protobuf declaration served by this action.
      * @param file
      *         the source code file to be modified by this action.
-     * @param context
-     *         additional data passed from the caller.
      */
     public abstract fun run(subject: P, file: SourceFile<L>)
 }

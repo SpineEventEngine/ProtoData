@@ -37,6 +37,8 @@ import io.spine.tools.code.Language
  *
  * Instances of `Renderer`s are usually created by
  * the [Plugin.renderers()][io.spine.protodata.plugin.Plugin.renderers] method.
+ *
+ * @see RenderAction
  */
 public abstract class Renderer<L : Language>
 protected constructor(language: L) : Member<L>(language) {

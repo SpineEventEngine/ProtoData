@@ -40,9 +40,7 @@ import io.spine.tools.code.Language
  * @param L the programming language served by this member of the code generation process.
  */
 public abstract class Member<L : Language>
-protected constructor(
-    protected val language: L
-) : LoadsSettings, ContextAware {
+protected constructor(public val language: L) : LoadsSettings, ContextAware {
 
     /**
      * The backing field for the [context] property.

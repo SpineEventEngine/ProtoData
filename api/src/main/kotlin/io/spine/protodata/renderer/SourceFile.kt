@@ -223,11 +223,35 @@ private constructor(
          *         the source code.
          */
         @VisibleForTesting
-        public fun fromCode(
-            relativePath: Path,
-            code: String
-        ): SourceFile<*> =
+        public fun fromCode(relativePath: Path, code: String): SourceFile<*> =
             create(Language.of(relativePath), relativePath, code, changed = true)
+
+        /**
+         * Constructs a file from source code and casts the instance assuming the code
+         * belongs to the language specified by the generic parameter [L].
+         *
+         * The primary purpose of this function is to avoid casts at the call sites when
+         * the language is surely known. In other cases, please use [fromCode].
+         *
+         * @param L the programming language of the file.
+         *          It must match the extension of the file specified by [relativePath].
+         * @param relativePath
+         *         the file system path for the file relative to the source root;
+         *         the file might not exist on the file system.
+         * @param code
+         *         the source code.
+         * @throws ClassCastException
+         *          if the generic parameter [L] and the extension of the file in [relativePath]
+         *          do not [match][Language.of].
+         * @see Language.of
+         * @see fromCode
+         */
+        @VisibleForTesting
+        public fun <L : Language> byCode(relativePath: Path, code: String): SourceFile<L> {
+            val file = fromCode(relativePath, code)
+            @Suppress("UNCHECKED_CAST") // relying on callers.
+            return (file as SourceFile<L>)
+        }
     }
 
     /**
