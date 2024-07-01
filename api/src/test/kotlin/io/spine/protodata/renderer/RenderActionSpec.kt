@@ -55,6 +55,7 @@ internal class RenderActionSpec {
         val typeName = "MyType"
         val subject = messageType {
             name = typeName { simpleName = typeName }
+            file = io.spine.protodata.file { path = "acme/example/my_type.proto" }
         }
         val sourceFile = SourceFile.byCode<Java>(Path("$typeName.java"), """
             public class $typeName {}
