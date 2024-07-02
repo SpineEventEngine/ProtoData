@@ -26,8 +26,13 @@
 
 package io.spine.protodata.renderer
 
+import io.spine.protodata.CodegenContext
+import io.spine.protodata.EnumType
 import io.spine.protodata.Member
+import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoDeclaration
+import io.spine.protodata.Service
+import io.spine.protodata.TypeDeclaration
 import io.spine.tools.code.Language
 
 /**
@@ -38,20 +43,119 @@ import io.spine.tools.code.Language
  *
  * @param L the programming language supported by this action.
  * @param P the type of the Protobuf declaration served by this action,
- *          such as [MessageType][io.spine.protodata.MessageType],
- *          [EnumType][io.spine.protodata.EnumType] or [Service][io.spine.protodata.Service].
+ *   such as [MessageType][io.spine.protodata.MessageType],
+ *   [EnumType][io.spine.protodata.EnumType] or [Service][io.spine.protodata.Service].
+ *
+ * @param language the programming language served by this action.
+ * @param context the code generation context in which this action runs.
+ *
+ * @property subject the Protobuf declaration served by this action.
+ * @property file the source code file to be modified by this action.
+ *
  * @see Renderer
  */
 public abstract class RenderAction<L : Language, P : ProtoDeclaration>
-protected constructor(language: L) : Member<L>(language) {
+protected constructor(
+    language: L,
+    protected val subject: P,
+    protected val file: SourceFile<L>,
+    context: CodegenContext
+) : Member<L>(language) {
+
+    init {
+        registerWith(context)
+    }
 
     /**
      * Renders the code in the given source file.
-     *
-     * @param subject
-     *         the Protobuf declaration served by this action.
-     * @param file
-     *         the source code file to be modified by this action.
      */
-    public abstract fun run(subject: P, file: SourceFile<L>)
+    public abstract fun render()
 }
+
+/**
+ * A render action performed for a Protobuf type,
+ * such as [MessageType][io.spine.protodata.MessageType] or [EnumType][io.spine.protodata.EnumType].
+ *
+ * @param L the programming language supported by this action.
+ * @param T the type of the Protobuf declaration served by this action.
+ *
+ * @param language the programming language served by this action.
+ * @param context the code generation context in which this action runs.
+ *
+ * @property type the same as [subject], added for readability in generated code templates.
+ * @property file the source code file to be modified by this action.
+ *
+ * @see MessageAction
+ * @see EnumAction
+ */
+public abstract class TypeAction<L : Language, T : TypeDeclaration>
+protected constructor(
+    language: L,
+    protected val type: T,
+    file: SourceFile<L>,
+    context: CodegenContext
+) : RenderAction<L, T>(language, type, file, context)
+
+/**
+ * A render action performed for a [MessageType][io.spine.protodata.MessageType].
+ *
+ * @param L the programming language supported by this action.
+ * @param language the programming language served by this action.
+ *
+ * @param type the message type served by this action.
+ * @param context the code generation context in which this action runs.
+ *
+ * @property type the message type served by this action.
+ * @property file the source code file to be modified by this action.
+ *
+ * @see EnumAction
+ * @see ServiceAction
+ */
+public abstract class MessageAction<L : Language>(
+    language: L,
+    type: MessageType,
+    file: SourceFile<L>,
+    context: CodegenContext
+) : TypeAction<L, MessageType>(language, type, file, context)
+
+/**
+ * A render action performed for an [EnumType][io.spine.protodata.EnumType].
+ *
+ * @param L the programming language supported by this action.
+ *
+ * @param language the programming language served by this action.
+ * @param context the code generation context in which this action runs.
+ *
+ * @property type the enum type served by this action.
+ * @property file the source code file to be modified by this action.
+ *
+ * @see MessageAction
+ * @see ServiceAction
+ */
+public abstract class EnumAction<L : Language>(
+    language: L,
+    type: EnumType,
+    file: SourceFile<L>,
+    context: CodegenContext
+) : TypeAction<L, EnumType>(language, type, file, context)
+
+/**
+ * A render action performed for a [Service][io.spine.protodata.Service].
+ *
+ * @param L the programming language supported by this action.
+ *
+ * @param language the programming language served by this action.
+ * @param context the code generation context in which this action runs.
+ *
+ * @property service the same as [subject], added for readability in generated code templates.
+ * @property file the source code file to be modified by this action.
+ *
+ * @see MessageAction
+ * @see EnumAction
+ */
+public abstract class ServiceAction<L : Language>(
+    language: L,
+    protected val service: Service,
+    file: SourceFile<L>,
+    context: CodegenContext
+) : RenderAction<L, Service>(language, service, file, context)

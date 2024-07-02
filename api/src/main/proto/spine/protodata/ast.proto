@@ -107,7 +107,7 @@ message TypeName {
 
 // A Protobuf message type.
 message MessageType {
-    option (is).java_type = "ProtoDeclaration";
+    option (is).java_type = "TypeDeclaration";
 
     TypeName name = 1 [(required) = true];
 
@@ -157,7 +157,7 @@ message MessageType {
 
 // A Protobuf enum type.
 message EnumType {
-    option (is).java_type = "ProtoDeclaration";
+    option (is).java_type = "TypeDeclaration";
 
     TypeName name = 1 [(required) = true];
 

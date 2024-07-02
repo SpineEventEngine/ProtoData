@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.MessageType
+import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.messageType
 import io.spine.protodata.typeName
 import io.spine.tools.code.Java
@@ -40,10 +41,22 @@ import org.junit.jupiter.api.assertDoesNotThrow
  * The purpose of this test suite is to document the signature of the [RenderAction] class and
  * prevent accidental removal of this abstract class which is not (yet) otherwise used in the code.
  */
-@DisplayName("`RenderAction` should")
+@DisplayName("`MessageAction` should")
 internal class RenderActionSpec {
 
-    private val action: RenderAction<Java, MessageType> = StubAction()
+    private val typeName = "MyType"
+
+    private val subject = messageType {
+        name = typeName { simpleName = typeName }
+        file = io.spine.protodata.file { path = "acme/example/my_type.proto" }
+    }
+
+    val sourceFile = SourceFile.byCode<Java>(Path("$typeName.java"), """
+            public class $typeName {}
+            """.trimIndent()
+    )
+
+    private val action: MessageAction<Java> = StubAction(subject, sourceFile)
 
     @Test
     fun `be language-specific`() {
@@ -52,24 +65,18 @@ internal class RenderActionSpec {
 
     @Test
     fun `accept 'ProtoDeclaration' and 'SourceFile' as parameters for rendering`() {
-        val typeName = "MyType"
-        val subject = messageType {
-            name = typeName { simpleName = typeName }
-            file = io.spine.protodata.file { path = "acme/example/my_type.proto" }
-        }
-        val sourceFile = SourceFile.byCode<Java>(Path("$typeName.java"), """
-            public class $typeName {}
-            """.trimIndent()
-        )
         assertDoesNotThrow {
-            action.run(subject, sourceFile)
+            action.render()
         }
     }
 }
 
-private class StubAction: RenderAction<Java, MessageType>(Java) {
+private val context = CodeGenerationContext("fiz-buz")
 
-    override fun run(subject: MessageType, file: SourceFile<Java>) {
+private class StubAction(type: MessageType, file: SourceFile<Java>) :
+    MessageAction<Java>(Java, type, file, context) {
+
+    override fun render() {
         // Do nothing.
     }
 }
