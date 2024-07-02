@@ -64,14 +64,14 @@ internal class RenderActionSpec {
             """.trimIndent()
         )
         assertDoesNotThrow {
-            action.run(sourceFile)
+            action.render(sourceFile)
         }
     }
 }
 
 private class StubAction(type: MessageType): MessageAction<Java>(Java, type) {
 
-    override fun run(file: SourceFile<Java>) {
+    override fun render(file: SourceFile<Java>) {
         // Do nothing.
     }
 }

@@ -56,7 +56,7 @@ protected constructor(language: L, protected val subject: P) : Member<L>(languag
      *
      * @param file the source code file to be modified by this action.
      */
-    public abstract fun run(file: SourceFile<L>)
+    public abstract fun render(file: SourceFile<L>)
 }
 
 /**
