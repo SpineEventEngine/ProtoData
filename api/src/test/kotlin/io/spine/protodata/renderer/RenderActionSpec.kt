@@ -51,7 +51,12 @@ internal class RenderActionSpec {
         file = io.spine.protodata.file { path = "acme/example/my_type.proto" }
     }
 
-    private val action: MessageAction<Java> = StubAction(subject)
+    val sourceFile = SourceFile.byCode<Java>(Path("$typeName.java"), """
+            public class $typeName {}
+            """.trimIndent()
+    )
+
+    private val action: MessageAction<Java> = StubAction(subject, sourceFile)
 
     @Test
     fun `be language-specific`() {
@@ -60,21 +65,18 @@ internal class RenderActionSpec {
 
     @Test
     fun `accept 'ProtoDeclaration' and 'SourceFile' as parameters for rendering`() {
-        val sourceFile = SourceFile.byCode<Java>(Path("$typeName.java"), """
-            public class $typeName {}
-            """.trimIndent()
-        )
         assertDoesNotThrow {
-            action.render(sourceFile)
+            action.render()
         }
     }
 }
 
 private val context = CodeGenerationContext("fiz-buz")
 
-private class StubAction(type: MessageType): MessageAction<Java>(Java, type, context) {
+private class StubAction(type: MessageType, file: SourceFile<Java>) :
+    MessageAction<Java>(Java, type, file, context) {
 
-    override fun render(file: SourceFile<Java>) {
+    override fun render() {
         // Do nothing.
     }
 }
