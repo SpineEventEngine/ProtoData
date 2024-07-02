@@ -40,7 +40,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
  * The purpose of this test suite is to document the signature of the [RenderAction] class and
  * prevent accidental removal of this abstract class which is not (yet) otherwise used in the code.
  */
-@DisplayName("`RenderAction` should")
+@DisplayName("`MessageAction` should")
 internal class RenderActionSpec {
 
     private val typeName = "MyType"
@@ -50,7 +50,7 @@ internal class RenderActionSpec {
         file = io.spine.protodata.file { path = "acme/example/my_type.proto" }
     }
 
-    private val action: RenderAction<Java, MessageType> = StubAction(subject)
+    private val action: MessageAction<Java> = StubAction(subject)
 
     @Test
     fun `be language-specific`() {
@@ -69,7 +69,7 @@ internal class RenderActionSpec {
     }
 }
 
-private class StubAction(type: MessageType): RenderAction<Java, MessageType>(Java, type) {
+private class StubAction(type: MessageType): MessageAction<Java>(Java, type) {
 
     override fun run(file: SourceFile<Java>) {
         // Do nothing.
