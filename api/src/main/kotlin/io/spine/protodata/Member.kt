@@ -107,7 +107,7 @@ protected constructor(public val language: L) : LoadsSettings, ContextAware {
      * @see [io.spine.protodata.backend.Pipeline]
      */
     @Internal
-    public override fun registerWith(context: CodegenContext) {
+    public final override fun registerWith(context: CodegenContext) {
         if (isRegistered()) {
             check(_context == context) {
                 "Unable to register `$this` with `${context}` because" +
