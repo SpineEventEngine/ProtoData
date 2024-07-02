@@ -26,6 +26,7 @@
 
 package io.spine.protodata.renderer
 
+import io.spine.protodata.CodegenContext
 import io.spine.protodata.EnumType
 import io.spine.protodata.Member
 import io.spine.protodata.MessageType
@@ -46,10 +47,19 @@ import io.spine.tools.code.Language
  *   [EnumType][io.spine.protodata.EnumType] or [Service][io.spine.protodata.Service].
  * @param language the programming language served by this action.
  * @property subject the Protobuf declaration served by this action.
+ * @param context the code generation context in which this action runs.
  * @see Renderer
  */
 public abstract class RenderAction<L : Language, P : ProtoDeclaration>
-protected constructor(language: L, protected val subject: P) : Member<L>(language) {
+protected constructor(
+    language: L,
+    protected val subject: P,
+    context: CodegenContext
+) : Member<L>(language) {
+
+    init {
+        registerWith(context)
+    }
 
     /**
      * Renders the code in the given source file.
@@ -67,11 +77,16 @@ protected constructor(language: L, protected val subject: P) : Member<L>(languag
  * @param T the type of the Protobuf declaration served by this action.
  * @param language the programming language served by this action.
  * @property type the same as [subject], added for readability in generated code templates.
+ * @param context the code generation context in which this action runs.
  * @see MessageAction
  * @see EnumAction
  */
 public abstract class TypeAction<L : Language, T : TypeDeclaration>
-protected constructor(language: L, protected val type: T) : RenderAction<L, T>(language, type)
+protected constructor(
+    language: L,
+    protected val type: T,
+    context: CodegenContext
+) : RenderAction<L, T>(language, type, context)
 
 /**
  * A render action performed for a [MessageType][io.spine.protodata.MessageType].
@@ -79,11 +94,15 @@ protected constructor(language: L, protected val type: T) : RenderAction<L, T>(l
  * @param L the programming language supported by this action.
  * @param language the programming language served by this action.
  * @param type the message type served by this action.
+ * @param context the code generation context in which this action runs.
  * @see EnumAction
  * @see ServiceAction
  */
-public abstract class MessageAction<L : Language>(language: L, type: MessageType) :
-    TypeAction<L, MessageType>(language, type)
+public abstract class MessageAction<L : Language>(
+    language: L,
+    type: MessageType,
+    context: CodegenContext
+) : TypeAction<L, MessageType>(language, type, context)
 
 /**
  * A render action performed for an [EnumType][io.spine.protodata.EnumType].
@@ -94,8 +113,11 @@ public abstract class MessageAction<L : Language>(language: L, type: MessageType
  * @see MessageAction
  * @see ServiceAction
  */
-public abstract class EnumAction<L : Language>(language: L, type: EnumType) :
-    TypeAction<L, EnumType>(language, type)
+public abstract class EnumAction<L : Language>(
+    language: L,
+    type: EnumType,
+    context: CodegenContext
+) : TypeAction<L, EnumType>(language, type, context)
 
 /**
  * A render action performed for a [Service][io.spine.protodata.Service].
@@ -103,8 +125,12 @@ public abstract class EnumAction<L : Language>(language: L, type: EnumType) :
  * @param L the programming language supported by this action.
  * @param language the programming language served by this action.
  * @property service the same as [subject], added for readability in generated code templates.
+ * @param context the code generation context in which this action runs.
  * @see MessageAction
  * @see EnumAction
  */
-public abstract class ServiceAction<L : Language>(language: L, protected val service: Service) :
-    RenderAction<L, Service>(language, service)
+public abstract class ServiceAction<L : Language>(
+    language: L,
+    protected val service: Service,
+    context: CodegenContext
+) : RenderAction<L, Service>(language, service, context)

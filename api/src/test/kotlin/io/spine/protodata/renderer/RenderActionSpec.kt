@@ -28,6 +28,7 @@ package io.spine.protodata.renderer
 
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.MessageType
+import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.messageType
 import io.spine.protodata.typeName
 import io.spine.tools.code.Java
@@ -69,7 +70,9 @@ internal class RenderActionSpec {
     }
 }
 
-private class StubAction(type: MessageType): MessageAction<Java>(Java, type) {
+private val context = CodeGenerationContext("fiz-buz")
+
+private class StubAction(type: MessageType): MessageAction<Java>(Java, type, context) {
 
     override fun render(file: SourceFile<Java>) {
         // Do nothing.
