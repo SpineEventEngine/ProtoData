@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.50.0</version>
+<version>0.51.0</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -122,7 +122,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-psi-java-bundle</artifactId>
-    <version>2.0.0-SNAPSHOT.217</version>
+    <version>2.0.0-SNAPSHOT.218</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -134,7 +134,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.validation</groupId>
     <artifactId>spine-validation-java-runtime</artifactId>
-    <version>2.0.0-SNAPSHOT.133</version>
+    <version>2.0.0-SNAPSHOT.152</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -182,7 +182,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-testlib</artifactId>
-    <version>2.0.0-SNAPSHOT.217</version>
+    <version>2.0.0-SNAPSHOT.218</version>
     <scope>test</scope>
   </dependency>
   <dependency>
@@ -261,12 +261,12 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.protodata</groupId>
     <artifactId>protodata-fat-cli</artifactId>
-    <version>0.21.3</version>
+    <version>0.50.0</version>
   </dependency>
   <dependency>
     <groupId>io.spine.protodata</groupId>
     <artifactId>protodata-protoc</artifactId>
-    <version>0.21.3</version>
+    <version>0.50.0</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
@@ -275,39 +275,24 @@ all modules and does not describe the project structure per-subproject.
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
-    <artifactId>spine-mc-java-annotation</artifactId>
-    <version>2.0.0-SNAPSHOT.206</version>
-  </dependency>
-  <dependency>
-    <groupId>io.spine.tools</groupId>
-    <artifactId>spine-mc-java-base</artifactId>
-    <version>2.0.0-SNAPSHOT.206</version>
-  </dependency>
-  <dependency>
-    <groupId>io.spine.tools</groupId>
     <artifactId>spine-mc-java-checks</artifactId>
-    <version>2.0.0-SNAPSHOT.206</version>
+    <version>2.0.0-SNAPSHOT.213</version>
     <scope>provided</scope>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
-    <artifactId>spine-mc-java-entity</artifactId>
-    <version>2.0.0-SNAPSHOT.206</version>
-  </dependency>
-  <dependency>
-    <groupId>io.spine.tools</groupId>
     <artifactId>spine-mc-java-plugins</artifactId>
-    <version>2.0.0-SNAPSHOT.206</version>
+    <version>2.0.0-SNAPSHOT.213</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
-    <artifactId>spine-mc-java-rejection</artifactId>
-    <version>2.0.0-SNAPSHOT.206</version>
+    <artifactId>spine-mc-java-protoc</artifactId>
+    <version>2.0.0-SNAPSHOT.213</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-base</artifactId>
-    <version>2.0.0-SNAPSHOT.217</version>
+    <version>2.0.0-SNAPSHOT.218</version>
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
@@ -317,7 +302,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine.validation</groupId>
     <artifactId>spine-validation-java-bundle</artifactId>
-    <version>2.0.0-SNAPSHOT.132</version>
+    <version>2.0.0-SNAPSHOT.152</version>
   </dependency>
   <dependency>
     <groupId>org.jacoco</groupId>
