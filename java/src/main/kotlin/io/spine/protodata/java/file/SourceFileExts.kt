@@ -37,16 +37,30 @@ public val SourceFile<*>.isJava: Boolean
     get() = relativePath.extension == "java"
 
 /**
- * Tells if this source file set produces files that reside under the "java" directory.
+ * Tells if this source file set produces files that reside under the `java` directory.
  */
-public val SourceFileSet.hasJavaOutput: Boolean
+public val SourceFileSet.hasJavaRoot: Boolean
     get() = outputRoot.endsWith("java")
 
 /**
- * Tells if this source file set produces files that reside under the "grpc" directory.
+ * Tells if this source file set produces files that reside under the `java` directory.
  */
-public val SourceFileSet.hasGrpcOutput: Boolean
+@Deprecated(message = "Please use `hasJavaRoot` instead.", ReplaceWith("hasJavaRoot"))
+public val SourceFileSet.hasJavaOutput: Boolean
+    get() = hasJavaRoot
+
+/**
+ * Tells if this source file set produces files that reside under the `grpc` directory.
+ */
+public val SourceFileSet.hasGrpcRoot: Boolean
     get() = outputRoot.endsWith("grpc")
+
+/**
+ * Tells if this source file set produces files that reside under the `grpc` directory.
+ */
+@Deprecated(message = "Please use `hasGrpcRoot` instead.", ReplaceWith("hasGrpcRoot"))
+public val SourceFileSet.hasGrpcOutput: Boolean
+    get() = hasGrpcRoot
 
 /**
  * Tells if this source file set has at least one Java file.
