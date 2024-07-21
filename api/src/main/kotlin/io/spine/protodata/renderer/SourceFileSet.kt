@@ -305,7 +305,14 @@ internal constructor(
     /**
      * Returns a comma-separated list of all the files in this set.
      */
-    override fun toString(): String = toList().joinToString()
+    public fun enumerateFiles(): String = toList().joinToString()
+
+    /**
+     * Produces the diagnostic output for this source file set.
+     */
+    override fun toString(): String =
+        "SourceFileSet(inputRoot=$inputRoot, outputRoot=$outputRoot," +
+                " files=${files.size}, deletedFiles=${deletedFiles.size})"
 }
 
 /**
