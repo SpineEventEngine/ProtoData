@@ -59,3 +59,18 @@ public fun MessageType.nestedMessageTypes(typeSystem: TypeSystem): List<MessageT
         }
         type
     }
+
+/**
+ * Obtains the first field declared in the type.
+ *
+ * The index of the field is not taken into account.
+ *
+ * @throws IllegalStateException if the type does not declare fields.
+ */
+public val MessageType.firstField: Field
+    get() {
+        check(fieldCount != 0) {
+            "The type `${name.qualifiedName}` must have at least one field."
+        }
+        return getField(0)
+    }
