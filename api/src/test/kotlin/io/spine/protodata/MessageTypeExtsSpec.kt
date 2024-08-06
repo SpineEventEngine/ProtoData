@@ -30,6 +30,7 @@ import com.google.protobuf.Empty
 import com.google.protobuf.Timestamp
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.api.given.Project
+import io.spine.protodata.test.packageless.GlobalMessage
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -64,5 +65,14 @@ internal class MessageTypeExtsSpec {
             val empty = Empty.getDescriptor().toMessageType()
             empty.firstField
         }
+    }
+
+    @Test
+    fun `tell if the message is top-level`() {
+        val any = ProtoAny.getDescriptor().toMessageType()
+        any.isTopLevel shouldBe true
+
+        val nested = GlobalMessage.LocalMessage.getDescriptor().toMessageType()
+        nested.isTopLevel shouldBe false
     }
 }

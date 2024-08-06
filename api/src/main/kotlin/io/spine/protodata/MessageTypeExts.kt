@@ -74,3 +74,9 @@ public val MessageType.firstField: Field
         }
         return getField(0)
     }
+
+/**
+ * Tells if this type is not nested inside another one.
+ */
+public val MessageType.isTopLevel: Boolean
+    get() = !hasDeclaredIn()
