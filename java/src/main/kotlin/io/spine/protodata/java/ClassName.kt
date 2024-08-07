@@ -27,6 +27,7 @@
 package io.spine.protodata.java
 
 import kotlin.reflect.KClass
+import org.checkerframework.checker.signature.qual.FullyQualifiedName
 
 /**
  * A fully qualified Java class name.
@@ -95,4 +96,23 @@ public class ClassName(
     }
 
     override fun hashCode(): Int = binary.hashCode()
+
+    public companion object {
+
+        /**
+         * Returns a new [ClassName] instance for the given fully-qualified class name string.
+         *
+         * The function assumes that given name follows Java conventions for naming classes and
+         * packages with `lowercase` package names and `UpperCamelCase` class names.
+         */
+        public fun guess(name: @FullyQualifiedName String): ClassName {
+            require(name.isNotEmpty())
+            require(name.isNotBlank())
+            val packageSeparator = "."
+            val items = name.split(packageSeparator)
+            val packageName = items.filter { it[0].isLowerCase() }.joinToString(packageSeparator)
+            val simpleNames = items.filter { it[0].isUpperCase() }
+            return ClassName(packageName, simpleNames)
+        }
+    }
 }
