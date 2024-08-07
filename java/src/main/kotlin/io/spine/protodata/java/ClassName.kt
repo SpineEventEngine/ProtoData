@@ -107,7 +107,10 @@ public class ClassName(
 
     public companion object {
 
-        internal const val SEPARATOR = '.'
+        /**
+         * The separator in a package name.
+         */
+        internal const val SEPARATOR = "."
 
         /**
          * Returns a new [ClassName] instance for the given fully-qualified class name string.
@@ -120,9 +123,8 @@ public class ClassName(
         public fun guess(name: @FullyQualifiedName String): ClassName {
             require(name.isNotEmpty())
             require(name.isNotBlank())
-            val packageSeparator = "."
             val items = name.split(SEPARATOR)
-            val packageName = items.filter { it[0].isLowerCase() }.joinToString(packageSeparator)
+            val packageName = items.filter { it[0].isLowerCase() }.joinToString(SEPARATOR)
             val simpleNames = items.filter { it[0].isUpperCase() }
             return ClassName(packageName, simpleNames)
         }
