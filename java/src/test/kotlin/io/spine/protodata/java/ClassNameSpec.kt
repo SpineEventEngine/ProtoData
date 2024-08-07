@@ -119,4 +119,11 @@ internal class ClassNameSpec {
             assertThrows<IllegalArgumentException> { ClassName.guess("\n") }
         }
     }
+
+    @Test
+    fun `prohibit package separators in simple names`() {
+        assertThrows<IllegalArgumentException> {
+            ClassName("org.example", listOf("The", "Middle.Class", "Is", ".Dead"))
+        }
+    }
 }

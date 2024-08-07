@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -36,6 +36,14 @@ public class ClassName(
     packageName: String,
     simpleNames: List<String>
 ) : ClassOrEnumName(packageName, simpleNames) {
+
+    init {
+        simpleNames.forEach {
+            require(!it.contains(SEPARATOR)) {
+                "A simple name must not contain a package separator (`$it`)."
+            }
+        }
+    }
 
     /**
      * Creates a new class name from the given package name a class name.
@@ -99,17 +107,21 @@ public class ClassName(
 
     public companion object {
 
+        internal const val SEPARATOR = '.'
+
         /**
          * Returns a new [ClassName] instance for the given fully-qualified class name string.
          *
          * The function assumes that given name follows Java conventions for naming classes and
          * packages with `lowercase` package names and `UpperCamelCase` class names.
+         *
+         * This method of obtaining a class name should be
          */
         public fun guess(name: @FullyQualifiedName String): ClassName {
             require(name.isNotEmpty())
             require(name.isNotBlank())
             val packageSeparator = "."
-            val items = name.split(packageSeparator)
+            val items = name.split(SEPARATOR)
             val packageName = items.filter { it[0].isLowerCase() }.joinToString(packageSeparator)
             val simpleNames = items.filter { it[0].isUpperCase() }
             return ClassName(packageName, simpleNames)
