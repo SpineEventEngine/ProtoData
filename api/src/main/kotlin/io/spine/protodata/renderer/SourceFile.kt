@@ -62,16 +62,13 @@ import kotlinx.coroutines.runBlocking
  * into another location.
  *
  * @param L the language of this source code file.
- * @property language
- *            the programming language of this source file or [AnyLanguage], if the file is in
- *            the language not currently supported.
- * @property relativePath
- *            the file system path to the file relative to the source root.
- * @property code
- *            the source code.
- * @property changed
- *            tells if the [code] was modified after it was loaded, or if the file was
- *            created [from the code][fromCode].
+ * @property language the programming language of this source file or
+ *   [AnyLanguage][io.spine.tools.code.AnyLanguage], if the file is in the language
+ *   not currently supported.
+ * @property relativePath the file system path to the file relative to the source root.
+ * @property code the source code.
+ * @property changed tells if the [code] was modified after it was loaded, or
+ *   if the file was created [from the code][fromCode].
  * @see SourceFileSet
  */
 @Suppress(
@@ -161,7 +158,7 @@ private constructor(
         /**
          * The cache of created [SourceFile] instances by their full paths.
          *
-         * The cache is needed to make sure that two or more [SourceFileSet]s hold
+         * The cache is necessary to make sure that two or more [SourceFileSet]s hold
          * the same instance of [SourceFile] for the same file on the file system.
          */
         private val cache = cacheBuilder<Path, SourceFile<*>> {
@@ -204,7 +201,7 @@ private constructor(
         /**
          * Creates an instance of [SourceFile] with for the given language, path, and the code.
          *
-         * This function is needed for passing the generic parameter to the constructor.
+         * This function is necessary for passing the generic parameter to the constructor.
          */
         private fun <L: Language> create(
             lang: L,
@@ -216,11 +213,9 @@ private constructor(
         /**
          * Constructs a file from source code.
          *
-         * @param relativePath
-         *         the file system path for the file relative to the source root;
-         *         the file might not exist on the file system.
-         * @param code
-         *         the source code.
+         * @param relativePath the file system path for the file relative to the source root;
+         *   the file might not exist on the file system.
+         * @param code the source code.
          */
         @VisibleForTesting
         public fun fromCode(relativePath: Path, code: String): SourceFile<*> =
@@ -234,15 +229,12 @@ private constructor(
          * the language is surely known. In other cases, please use [fromCode].
          *
          * @param L the programming language of the file.
-         *          It must match the extension of the file specified by [relativePath].
-         * @param relativePath
-         *         the file system path for the file relative to the source root;
-         *         the file might not exist on the file system.
-         * @param code
-         *         the source code.
-         * @throws ClassCastException
-         *          if the generic parameter [L] and the extension of the file in [relativePath]
-         *          do not [match][Language.of].
+         *   It must match the extension of the file specified by [relativePath].
+         * @param relativePath the file system path for the file relative to the source root;
+         *   the file might not exist on the file system.
+         * @param code the source code.
+         * @throws ClassCastException if the generic parameter [L] and the extension of
+         *   the file in [relativePath] do not [match][Language.of].
          * @see Language.of
          * @see fromCode
          */
