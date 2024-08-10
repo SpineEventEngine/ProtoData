@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -36,7 +36,15 @@ import com.google.protobuf.Message
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto
 import io.spine.protobuf.TypeConverter
+import io.spine.protobuf.defaultInstance
 import io.spine.protobuf.pack
+import io.spine.protobuf.unpack
+
+/**
+ * Unpacks the value of this option using the specified generic type.
+ */
+public inline fun <reified T : Message> Option.unpack(): T =
+    value.unpack<T>()
 
 /**
  * Tells if this is a column option.
@@ -55,6 +63,19 @@ public val Option.isColumn: Boolean
 public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>): T? {
     val value = firstOrNull { it.name == optionName }?.value
     return value?.unpack(cls)
+}
+
+/**
+ * Looks up an option with the given type [T].
+ *
+ * @return the value of the option or `null` if the option is not found.
+ */
+public inline fun <reified T : Message> Iterable<Option>.find(): T? {
+    val cls = T::class.java
+    val typeName = cls.defaultInstance.descriptorForType.name()
+    val found = filter { it.type.isMessage }.firstOrNull { it.type.message == typeName }
+    val result = found?.unpack<T>()
+    return result
 }
 
 /**

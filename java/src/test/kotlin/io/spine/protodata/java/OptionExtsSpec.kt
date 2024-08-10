@@ -28,7 +28,7 @@ package io.spine.protodata.java
 
 import io.kotest.matchers.shouldBe
 import io.spine.option.IsOption
-import io.spine.protobuf.unpack
+import io.spine.protodata.find
 import io.spine.protodata.toHeader
 import io.spine.protodata.toMessageType
 import life.earth.Elephant
@@ -44,28 +44,19 @@ internal class OptionExtsSpec {
     `provide qualified Java type name for ` {
 
         private val fileHeader = MultipleFiles.getDescriptor().toHeader()
-        private val isOptionTypeName = IsOption.getDescriptor().toMessageType().name
 
         @Test
         fun `'every_is' option`() {
-            val packedOption = fileHeader.optionList.first {
-                it.type.message == isOptionTypeName
-            }
+            val isOption = fileHeader.optionList.find<IsOption>()
 
-            val isOption = packedOption.value.unpack<IsOption>()
-
-            isOption.qualifiedJavaType(fileHeader) shouldBe "life.earth.Animal"
+            isOption!!.qualifiedJavaType(fileHeader) shouldBe "life.earth.Animal"
         }
 
         @Test
         fun `'is' option`() {
-            val packedOption = Elephant.getDescriptor().toMessageType().optionList.first {
-                it.type.message == isOptionTypeName
-            }
+            val isOption = Elephant.getDescriptor().toMessageType().optionList.find<IsOption>()
 
-            val isOption = packedOption.value.unpack<IsOption>()
-
-            isOption.qualifiedJavaType(fileHeader) shouldBe isOption.javaType
+            isOption!!.qualifiedJavaType(fileHeader) shouldBe isOption.javaType
         }
     }
 }
