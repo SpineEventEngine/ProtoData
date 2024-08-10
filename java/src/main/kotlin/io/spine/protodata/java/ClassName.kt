@@ -128,11 +128,16 @@ public class ClassName(
          * The function assumes that given name follows Java conventions for naming classes and
          * packages with `lowercase` package names and `UpperCamelCase` class names.
          *
-         * This method of obtaining a class name should be
+         * @throws IllegalArgumentException when binary class name separator (`"$"`) is used
+         *  in the given name, or the given value is empty or blank.
          */
         public fun guess(name: @FullyQualifiedName String): ClassName {
             require(name.isNotEmpty())
             require(name.isNotBlank())
+            require(!name.contains(BINARY_SEPARATOR)) {
+                "The class name (`$name`) must not contain" +
+                        " a binary class name separator (`$BINARY_SEPARATOR`)."
+            }
             val items = name.split(PACKAGE_SEPARATOR)
             val packageName = items.filter { it[0].isLowerCase() }.joinToString(PACKAGE_SEPARATOR)
             val simpleNames = items.filter { it[0].isUpperCase() }

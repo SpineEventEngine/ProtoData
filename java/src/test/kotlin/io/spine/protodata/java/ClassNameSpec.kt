@@ -118,6 +118,13 @@ internal class ClassNameSpec {
             assertThrows<IllegalArgumentException> { ClassName.guess("  ") }
             assertThrows<IllegalArgumentException> { ClassName.guess("\n") }
         }
+
+        @Test
+        fun `prohibiting binary class name separate in the name`() {
+            assertThrows<IllegalArgumentException> {
+                ClassName.guess("org.example.Guess\$What")
+            }
+        }
     }
 
     @Test
