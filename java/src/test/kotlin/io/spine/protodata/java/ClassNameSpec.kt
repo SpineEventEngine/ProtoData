@@ -126,4 +126,11 @@ internal class ClassNameSpec {
             ClassName("org.example", listOf("The", "Middle.Class", "Is", ".Dead"))
         }
     }
+
+    @Test
+    fun `prohibit binary separators in simple names`() {
+        assertThrows<IllegalArgumentException> {
+            ClassName("org.example", listOf("The", "Middle\$Class", "Is", "\$Dead"))
+        }
+    }
 }

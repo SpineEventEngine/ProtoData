@@ -39,8 +39,13 @@ public class ClassName(
 
     init {
         simpleNames.forEach {
-            require(!it.contains(SEPARATOR)) {
-                "A simple name must not contain a package separator (`$it`)."
+            require(!it.contains(PACKAGE_SEPARATOR)) {
+                "A simple name must not contain a package separator" +
+                        " (`$PACKAGE_SEPARATOR`). Encountered: `$it`."
+            }
+            require(!it.contains(BINARY_SEPARATOR)) {
+                "A simple name must not contain a binary class name separator" +
+                        " (`$BINARY_SEPARATOR`). Encountered: `$it`."
             }
         }
     }
@@ -110,10 +115,15 @@ public class ClassName(
         /**
          * The separator in a package name.
          */
-        internal const val SEPARATOR = "."
+        internal const val PACKAGE_SEPARATOR = "."
 
         /**
-         * Returns a new [ClassName] instance for the given fully-qualified class name string.
+         * The separator in a binary class name.
+         */
+        internal const val BINARY_SEPARATOR = "$"
+
+        /**
+         * Returns a new [ClassName] instance for the given fully qualified class name string.
          *
          * The function assumes that given name follows Java conventions for naming classes and
          * packages with `lowercase` package names and `UpperCamelCase` class names.
@@ -123,8 +133,8 @@ public class ClassName(
         public fun guess(name: @FullyQualifiedName String): ClassName {
             require(name.isNotEmpty())
             require(name.isNotBlank())
-            val items = name.split(SEPARATOR)
-            val packageName = items.filter { it[0].isLowerCase() }.joinToString(SEPARATOR)
+            val items = name.split(PACKAGE_SEPARATOR)
+            val packageName = items.filter { it[0].isLowerCase() }.joinToString(PACKAGE_SEPARATOR)
             val simpleNames = items.filter { it[0].isUpperCase() }
             return ClassName(packageName, simpleNames)
         }
