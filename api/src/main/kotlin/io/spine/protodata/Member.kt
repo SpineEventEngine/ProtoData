@@ -74,8 +74,7 @@ protected constructor(public val language: L) : LoadsSettings, ContextAware {
     /**
      * Creates a [QueryingClient] for obtaining entity states of the given type.
      *
-     * @param S
-     *         the type of the entity state.
+     * @param S the type of the entity state.
      */
     public inline fun <reified S : EntityState<*>> select(): QueryingClient<S> =
         select(S::class.java)
@@ -83,10 +82,8 @@ protected constructor(public val language: L) : LoadsSettings, ContextAware {
     /**
      * Creates a [QueryingClient] for obtaining entity states of the given type.
      *
-     * @param S
-     *         the type of the entity state.
-     * @param type
-     *         the class of the entity state.
+     * @param S the type of the entity state.
+     * @param type the class of the entity state.
      */
     public final override fun <S : EntityState<*>> select(type: Class<S>): QueryingClient<S> =
         _context.select(type)
