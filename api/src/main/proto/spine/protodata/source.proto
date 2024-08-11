@@ -108,7 +108,7 @@ message ProtoFileHeader {
 // A Protobuf definitions file which is included into the module as a dependency.
 //
 // Unlike `ProtobufSourceFile`, `ProtobufDependency` should not result in any code generation.
-// Rather, it serves an informative purpose.
+// Rather, it serves for informative purposes.
 //
 message ProtobufDependency {
     option (entity).kind = VIEW;

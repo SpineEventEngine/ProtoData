@@ -24,19 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("ProtoFileHeaders")
-
 package io.spine.protodata
 
 /**
- * Obtains a name of this Protobuf file without the extension.
+ * Obtains a collection of message types from this source file paired with the file header.
  */
-public fun ProtoFileHeader.nameWithoutExtension(): String {
-    val name = file.path.split("/").last()
-    val index = name.indexOf(".")
-    return if (index > 0) {
-        name.substring(0, index)
-    } else {
-        name
+public fun ProtobufSourceFile.messages(): Collection<MessageInFile> =
+    typeMap.values.map {
+        messageInFile {
+            message = it
+            fileHeader = header
+        }
     }
-}
+
+/**
+ * Obtains a collection of enum types from this source file paired with the file header.
+ */
+public fun ProtobufSourceFile.enums(): Collection<EnumInFile> =
+    enumTypeMap.values.map {
+        enumInFile {
+            enum = it
+            fileHeader = header
+        }
+    }
+
+/**
+ * Obtains a collection of service declarations from this source file paired with the file header.
+ */
+public fun ProtobufSourceFile.services(): Collection<ServiceInFile> =
+    serviceMap.values.map {
+        serviceInFile {
+            service = it
+            fileHeader = header
+        }
+    }
