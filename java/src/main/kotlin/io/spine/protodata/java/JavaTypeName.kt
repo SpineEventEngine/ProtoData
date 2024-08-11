@@ -69,6 +69,28 @@ public abstract class JavaTypeName internal constructor(
          * A regular expression for a simple Java type name.
          */
         public val simpleNameRegex: Regex = Regex("^[a-zA-Z_$][a-zA-Z\\d_$]*$")
+
+        /**
+         * The separator in a package name.
+         */
+        public const val PACKAGE_SEPARATOR: String = "."
+
+        /**
+         * The separator in a binary class name.
+         */
+        public const val BINARY_SEPARATOR: String = "$"
+
+        /**
+         * The separator used between nested class names in a canonical name.
+         */
+        public const val CANONICAL_SEPARATOR: String = "."
+
+        /**
+         * The Unix style separator used to delimit directory names in a Java file name.
+         *
+         * This separator is compatible with IntelliJ PSI.
+         */
+        public const val PATH_SEPARATOR: String = "/"
     }
 }
 
@@ -90,16 +112,18 @@ public abstract class ClassOrEnumName internal constructor(
      * the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
      */
     @get:JvmName("canonical")
-    public val canonical: String = "$packagePrefix${simpleNames.joinToString(".")}"
+    public val canonical: String = "$packagePrefix${simpleNames.joinToString(CANONICAL_SEPARATOR)}"
 
     /**
      * The path to the Java source file of this type.
+     *
+     * The returned path uses the Unix path [separator][JavaTypeName.PATH_SEPARATOR] (`/`).
      */
     @get:JvmName("javaFile")
     public val javaFile: Path by lazy {
-        val dir = packageName.replace('.', '/')
+        val dir = packageName.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR)
         val topLevelClass = simpleNames.first()
-        Path("$dir/$topLevelClass.java")
+        Path("$dir$PATH_SEPARATOR$topLevelClass.java")
     }
 
     /**

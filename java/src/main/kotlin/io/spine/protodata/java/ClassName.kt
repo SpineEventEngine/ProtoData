@@ -113,16 +113,6 @@ public class ClassName(
     public companion object {
 
         /**
-         * The separator in a package name.
-         */
-        internal const val PACKAGE_SEPARATOR = "."
-
-        /**
-         * The separator in a binary class name.
-         */
-        internal const val BINARY_SEPARATOR = "$"
-
-        /**
          * Returns a new [ClassName] instance for the given fully qualified class name string.
          *
          * The function assumes that given name follows Java conventions for naming classes and
