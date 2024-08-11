@@ -49,25 +49,25 @@ internal class MethodDescriptorExtsSpec {
 
         @Test
         fun unary() {
-            val method = method("who")
+            val method = method("Who")
             method.cardinality shouldBe UNARY
         }
 
         @Test
         fun `server streaming`() {
-            val method = method("where_are_you")
+            val method = method("WhereAreYou")
             method.cardinality shouldBe SERVER_STREAMING
         }
 
         @Test
         fun `client streaming`() {
-            val method = method("rescue_call")
+            val method = method("RescueCall")
             method.cardinality shouldBe CLIENT_STREAMING
         }
 
         @Test
         fun `bidirectional streaming`() {
-            val method = method("which_actor")
+            val method = method("WhichActor")
             method.cardinality shouldBe BIDIRECTIONAL_STREAMING
         }
 
