@@ -39,34 +39,6 @@ import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "spine/protodata/file.proto";
 
-// A header of the Protobuf source code file which provides basic information about the file,
-// such as file-wide options applied to the file.
-message ProtoFileHeader {
-
-    // Path to the file in a file system.
-    File file = 1 [(required) = true];
-
-    // Name of the Protobuf package to which the declarations of the file belong.
-    string package_name = 2;
-
-    // The version of the Protobuf syntax.
-    SyntaxVersion syntax = 3;
-
-    // File-level options.
-    repeated Option option = 4 [(distinct) = true];
-
-    // The version of the Protobuf syntax, as defined in a Protobuf source file.
-    //
-    enum SyntaxVersion {
-
-        SV_UNDEFINED = 0;
-
-        PROTO2 = 1;
-
-        PROTO3 = 2;
-    }
-}
-
 // Name of a Protobuf type.
 //
 // Applicable to message and enum types.
