@@ -59,6 +59,7 @@ spinePublishing {
         .map { project -> project.name }
         .toSet()
         .minus("gradle-plugin")
+        .minus("api-tests")
 
     destinations = setOf(
         PublishingRepos.gitHub("ProtoData"),

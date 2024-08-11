@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,34 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.Validation
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.`java-test-fixtures`
 
-include(
-    "api",
-    "api-tests",
-    "backend",
-    "cli-api",
-    "cli",
-    "protoc",
-    "test-env",
-    "testlib",
-    "java",
-    "gradle-api",
-    "gradle-plugin"
-)
-
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
+plugins {
+    java
+    `java-test-fixtures`
 }
 
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
+dependencies {
+    arrayOf(
+        Spine.base,
+        Validation.runtime
+    ).forEach {
+        testFixturesImplementation(it)?.because(
+            """
+            We do not apply McJava Gradle plugin which adds the `implementation` dependency on
+            Validation runtime automatically (see `Project.configureValidation()` function in 
+            `ProtoDataConfigPlugin.kt`).
+            
+            In this test module we use vanilla `protoc` (via ProtoTap) and then run codegen
+            using ProtoData pipeline and ProtoData plugins of the module under the test.
+            Because of this we need to add the dependencies above explicitly for the
+            generated code of test fixtures to compile.                
+            """.trimIndent()
+        )
     }
 }

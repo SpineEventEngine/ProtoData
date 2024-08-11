@@ -1,3 +1,5 @@
+import io.spine.internal.dependency.Protobuf
+
 /*
  * Copyright 2024, TeamDev. All rights reserved.
  *
@@ -5,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,34 +26,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
-
-include(
-    "api",
-    "api-tests",
-    "backend",
-    "cli-api",
-    "cli",
-    "protoc",
-    "test-env",
-    "testlib",
-    "java",
-    "gradle-api",
-    "gradle-plugin"
-)
-
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
+plugins {
+    prototap
+    `test-module`
 }
 
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
+protobuf {
+    protoc { artifact = Protobuf.compiler }
+}
+
+dependencies {
+    arrayOf(
+        project(":api"),
+        project(":testlib")
+    ).forEach {
+        testImplementation(it)
     }
 }

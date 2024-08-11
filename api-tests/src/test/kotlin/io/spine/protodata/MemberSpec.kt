@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,34 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "ProtoData"
+package io.spine.protodata
 
-include(
-    "api",
-    "api-tests",
-    "backend",
-    "cli-api",
-    "cli",
-    "protoc",
-    "test-env",
-    "testlib",
-    "java",
-    "gradle-api",
-    "gradle-plugin"
-)
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+@DisplayName("`Member` should")
+internal class MemberSpec {
 
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
+    @Nested inner class
+    `provide extensions for` {
+        //TODO:2024-08-11:alexander.yevsyukov: Implement
     }
 }
