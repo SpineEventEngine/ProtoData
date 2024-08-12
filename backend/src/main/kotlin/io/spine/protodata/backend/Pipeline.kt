@@ -60,33 +60,20 @@ import io.spine.server.under
  * This may include creating new files, modifying, or deleting existing ones.
  *
  * Lastly, the source set is stored back onto the file system.
+ *
+ * @property id the ID of the pipeline to be used for distinguishing contexts when
+ *   two or more pipelines are executed in the same JVM. If not specified, the ID will be generated.
+ * @property plugins the code generation plugins to be applied to the pipeline.
+ * @property sources the source sets to be processed by the pipeline.
+ * @property request the Protobuf compiler request.
+ * @property settings the directory to which setting files for the [plugins] should be stored.
  */
 @Internal
 public class Pipeline(
-    /**
-     * The ID of the pipeline to be used for distinguishing contexts when
-     * two or more pipelines are executed in the same JVM.
-     */
     public val id: String = generateId(),
-
-    /**
-     * The code generation plugins to be applied to the pipeline.
-     */
     public val plugins: List<Plugin>,
-
-    /**
-     * The source sets to be processed by the pipeline.
-     */
     public val sources: List<SourceFileSet>,
-
-    /**
-     * The Protobuf compiler request.
-     */
     public val request: CodeGeneratorRequest,
-
-    /**
-     * The directory to which setting files for the [plugins] should be stored.
-     */
     public val settings: SettingsDirectory
 ) {
 
