@@ -171,7 +171,6 @@ private constructor(
          * Clearing the cache may be useful in between tests to avoid stale instances obtained
          * in cases of using the same full paths.
          */
-        @VisibleForTesting
         public fun clearCache() {
             synchronized(this) {
                 cache.invalidateAll()
