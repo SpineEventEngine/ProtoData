@@ -36,6 +36,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.server.delivery.Delivery
@@ -128,6 +129,10 @@ public class Pipeline(
      * should be single-threaded.
      */
     public operator fun invoke() {
+        // Clear the cache of previously parsed files to avoid repeated code generation
+        // when running from tests.
+        SourceFile.clearCache()
+
         codegenContext.use {
             ConfigurationContext(id).use { configuration ->
                 ProtobufCompilerContext(id).use { compiler ->
