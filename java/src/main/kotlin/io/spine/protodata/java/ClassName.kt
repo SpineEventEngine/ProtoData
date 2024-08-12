@@ -115,7 +115,7 @@ public class ClassName(
         /**
          * Returns a new [ClassName] instance for the given fully qualified class name string.
          *
-         * The function assumes that given name follows Java conventions for naming classes and
+         * The function assumes that the given name follows Java conventions for naming classes and
          * packages with `lowercase` package names and `UpperCamelCase` class names.
          *
          * @throws IllegalArgumentException when binary class name separator (`"$"`) is used

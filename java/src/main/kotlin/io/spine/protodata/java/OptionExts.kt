@@ -42,7 +42,7 @@ import org.checkerframework.checker.signature.qual.FullyQualifiedName
  */
 public fun IsOption.qualifiedJavaType(header: ProtoFileHeader): @FullyQualifiedName String {
     check(javaType.isNotEmpty() && javaType.isNotBlank()) {
-        "The value of `java_type` most not be empty or blank. Got: `\"$javaType\"`."
+        "The value of `java_type` must not be empty or blank. Got: `\"$javaType\"`."
     }
     return if (javaType.isQualified) {
         javaType
