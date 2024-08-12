@@ -40,6 +40,7 @@ protobuf {
 }
 
 dependencies {
+    api(gradleTestKit())
     api(Spine.testlib)
     api(Spine.CoreJava.testUtilServer)
     api(ProtoTap.api)
