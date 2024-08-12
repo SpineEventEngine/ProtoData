@@ -47,6 +47,14 @@ internal class MemberSpec {
 
         val probe = ProbeRenderer()
 
+        /**
+         * Creates and runs a pipeline with [ProbeRenderer].
+         *
+         * Java language is used in the pipeline for simplicity of the setup
+         * assisted by ProtoTap Gradle plugin.
+         *
+         * No Java codegen features are checked by this test suite.
+         */
         @BeforeAll
         @JvmStatic
         fun setup(@TempDir outputDir: Path, @TempDir settingsDir: Path) {
@@ -113,10 +121,8 @@ internal class MemberSpec {
 }
 
 /**
- * A diagnostic probe performs queries as [Member], but does not render anything.
- *
- * The class comes as a Java renderer to simplify the initialization arranged by ProtoTap.
- * No Java code generation features are checked in this test.
+ * A diagnostic probe which performs queries as a [Member] of code generation process,
+ * but does not render anything.
  */
 class ProbeRenderer : Renderer<Java>(Java) {
 
