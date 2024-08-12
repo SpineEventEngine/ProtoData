@@ -1,5 +1,3 @@
-import io.spine.internal.dependency.Protobuf
-
 /*
  * Copyright 2024, TeamDev. All rights reserved.
  *
@@ -25,6 +23,8 @@ import io.spine.internal.dependency.Protobuf
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+import io.spine.internal.dependency.Protobuf
 
 plugins {
     prototap
