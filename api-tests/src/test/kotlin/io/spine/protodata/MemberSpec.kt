@@ -26,14 +26,125 @@
 
 package io.spine.protodata
 
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldEndWith
+import io.spine.protodata.backend.ImplicitPluginWithRenderers
+import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.testing.PipelineSetup
+import io.spine.tools.code.Java
+import java.nio.file.Path
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("`Member` should")
 internal class MemberSpec {
 
+    companion object {
+
+        val probe = ProbeRenderer()
+
+        @BeforeAll
+        @JvmStatic
+        fun setup(@TempDir outputDir: Path, @TempDir settingsDir: Path) {
+            val setup = PipelineSetup.byResources(
+                Java,
+                listOf(ImplicitPluginWithRenderers(probe)),
+                outputDir,
+                settingsDir
+            ) {}
+
+            val pipeline = setup.createPipeline()
+            pipeline()
+        }
+    }
+
     @Nested inner class
     `provide extensions for` {
-        //TODO:2024-08-11:alexander.yevsyukov: Implement
+
+        @Test
+        fun `obtaining message types`() {
+            val messageTypes = probe.messageTypes
+
+            messageTypes.find("Person").let {
+                it shouldNotBe null
+                it!!.filePath shouldEndWith "common.proto"
+            }
+
+            messageTypes.find("Vote").let {
+                it shouldNotBe null
+                it!!.filePath shouldEndWith "election.proto"
+            }
+        }
+
+        @Test
+        fun `obtaining enum types`() {
+            val enumTypes = probe.enumTypes
+
+            enumTypes.find("Status").let {
+                it shouldNotBe null
+                it!!.filePath shouldEndWith "common.proto"
+            }
+
+            enumTypes.find("Choice").let {
+                it shouldNotBe null
+                it!!.filePath shouldEndWith "election.proto"
+            }
+        }
+
+        @Test
+        fun `obtaining services`() {
+            val services = probe.services
+
+            services.find("Moderation").let {
+                it shouldNotBe null
+                it!!.filePath shouldEndWith "common.proto"
+            }
+
+            services.find("Voting").let {
+                it shouldNotBe null
+                it!!.filePath shouldEndWith "election.proto"
+            }
+        }
     }
 }
+
+/**
+ * A diagnostic probe performs queries as [Member], but does not render anything.
+ *
+ * The class comes as a Java renderer to simplify the initialization arranged by ProtoTap.
+ * No Java code generation features are checked in this test.
+ */
+class ProbeRenderer : Renderer<Java>(Java) {
+
+    lateinit var messageTypes: Set<MessageInFile>
+    lateinit var enumTypes: Set<EnumInFile>
+    lateinit var services: Set<ServiceInFile>
+
+    override fun render(sources: SourceFileSet) {
+        messageTypes = findMessageTypes()
+        enumTypes = findEnumTypes()
+        services = findServices()
+    }
+}
+
+private fun Iterable<MessageInFile>.find(simpleName: String): MessageInFile? =
+    firstOrNull { it.message.name.simpleName == simpleName }
+
+private val MessageInFile.filePath: String
+    get() = fileHeader.file.path
+
+private fun Iterable<EnumInFile>.find(simpleName: String): EnumInFile? =
+    firstOrNull { it.enum.name.simpleName == simpleName }
+
+private val EnumInFile.filePath: String
+    get() = fileHeader.file.path
+
+private fun Iterable<ServiceInFile>.find(simpleName: String): ServiceInFile? =
+    firstOrNull { it.service.name.simpleName == simpleName }
+
+private val ServiceInFile.filePath: String
+    get() = fileHeader.file.path

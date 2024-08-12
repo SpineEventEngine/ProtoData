@@ -68,3 +68,11 @@ message Membership {
     }
 }
 
+message ModerationRequest {
+    GroupId group = 1 [(required) = true];
+    Membership membership = 2 [(required) = true];
+}
+
+service Moderation {
+    rpc Process(ModerationRequest) returns (Membership);
+}
