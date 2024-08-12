@@ -55,9 +55,9 @@ import io.spine.server.under
  * [Plugin]s. Then, the Protobuf compiler events are emitted and the subscribers in
  * the context receive them.
  *
- * Then, the [Renderer]s, which are able to query the states of entities in the `Code Generation`
- * context, alters the source set. This may include creating new files, modifying,
- * or deleting existing ones.
+ * Then, the [Renderer]s, which are able to query the states of entities
+ * in the `Code Generation` context, alter the source set.
+ * This may include creating new files, modifying, or deleting existing ones.
  *
  * Lastly, the source set is stored back onto the file system.
  */
