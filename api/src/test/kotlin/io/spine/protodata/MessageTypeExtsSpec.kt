@@ -26,10 +26,14 @@
 
 package io.spine.protodata
 
+import com.google.protobuf.Empty
+import com.google.protobuf.Timestamp
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.api.given.Project
+import io.spine.protodata.test.packageless.GlobalMessage
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import com.google.protobuf.Any as ProtoAny
 
 @DisplayName("`MessageType` extensions should")
@@ -49,5 +53,26 @@ internal class MessageTypeExtsSpec {
         columns.size shouldBe 2
         columns[0].name.value shouldBe "name"
         columns[1].name.value shouldBe "status"
+    }
+
+    @Test
+    fun `obtain the first field`() {
+        val type = Timestamp.getDescriptor().toMessageType()
+
+        type.firstField.name.value shouldBe "seconds"
+
+        assertThrows<IllegalStateException> {
+            val empty = Empty.getDescriptor().toMessageType()
+            empty.firstField
+        }
+    }
+
+    @Test
+    fun `tell if the message is top-level`() {
+        val any = ProtoAny.getDescriptor().toMessageType()
+        any.isTopLevel shouldBe true
+
+        val nested = GlobalMessage.LocalMessage.getDescriptor().toMessageType()
+        nested.isTopLevel shouldBe false
     }
 }

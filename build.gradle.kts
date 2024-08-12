@@ -55,10 +55,10 @@ plugins {
  * Publish all the modules, but `gradle-plugin`, which is published separately by its own.
  */
 spinePublishing {
-    modules = rootProject.subprojects
+    modules = productionModules
         .map { project -> project.name }
         .toSet()
-        .minus("gradle-plugin")
+        .minus("gradle-plugin") // because of custom publishing.
 
     destinations = setOf(
         PublishingRepos.gitHub("ProtoData"),

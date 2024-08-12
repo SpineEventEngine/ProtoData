@@ -24,12 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.54.0")
+import io.spine.internal.dependency.Protobuf
+
+plugins {
+    prototap
+    `test-module`
+}
+
+protobuf {
+    protoc { artifact = Protobuf.compiler }
+}
+
+dependencies {
+    arrayOf(
+        project(":api"),
+        project(":testlib")
+    ).forEach {
+        testImplementation(it)
+    }
+}

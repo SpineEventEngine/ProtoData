@@ -77,15 +77,15 @@ message Episode {
 
 service DoctorsPhone {
 
-    rpc who(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    rpc Who(google.protobuf.Empty) returns (google.protobuf.Empty) {
         option idempotency_level = NO_SIDE_EFFECTS;
     };
 
-    rpc rescue_call(stream PersonName) returns (Yes);
+    rpc RescueCall(stream PersonName) returns (Yes);
 
-    rpc where_are_you(google.protobuf.Empty) returns (stream google.protobuf.StringValue);
+    rpc WhereAreYou(google.protobuf.Empty) returns (stream google.protobuf.StringValue);
 
-    rpc which_actor(stream Episode) returns (stream PersonName);
+    rpc WhichActor(stream Episode) returns (stream PersonName);
 }
 
 message PersonName {

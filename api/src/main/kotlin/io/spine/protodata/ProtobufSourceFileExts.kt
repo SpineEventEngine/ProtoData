@@ -24,12 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Obtains a collection of message types from this source file paired with the file header.
  */
-val protoDataVersion: String by extra("0.54.0")
+public fun ProtobufSourceFile.messages(): Collection<MessageInFile> =
+    typeMap.values.map {
+        messageInFile {
+            message = it
+            fileHeader = header
+        }
+    }
+
+/**
+ * Obtains a collection of enum types from this source file paired with the file header.
+ */
+public fun ProtobufSourceFile.enums(): Collection<EnumInFile> =
+    enumTypeMap.values.map {
+        enumInFile {
+            enum = it
+            fileHeader = header
+        }
+    }
+
+/**
+ * Obtains a collection of service declarations from this source file paired with the file header.
+ */
+public fun ProtobufSourceFile.services(): Collection<ServiceInFile> =
+    serviceMap.values.map {
+        serviceInFile {
+            service = it
+            fileHeader = header
+        }
+    }

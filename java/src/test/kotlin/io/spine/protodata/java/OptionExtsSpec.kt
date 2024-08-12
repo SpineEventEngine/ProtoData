@@ -24,12 +24,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.54.0")
+package io.spine.protodata.java
+
+import io.kotest.matchers.shouldBe
+import io.spine.option.IsOption
+import io.spine.protodata.find
+import io.spine.protodata.toHeader
+import io.spine.protodata.toMessageType
+import life.earth.Elephant
+import life.earth.MultipleFiles
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+
+@DisplayName("Extensions of option classes should")
+internal class OptionExtsSpec {
+
+    @Nested inner class
+    `provide qualified Java type name for ` {
+
+        private val fileHeader = MultipleFiles.getDescriptor().toHeader()
+
+        @Test
+        fun `'every_is' option`() {
+            val isOption = fileHeader.optionList.find<IsOption>()
+
+            isOption!!.qualifiedJavaType(fileHeader) shouldBe "life.earth.Animal"
+        }
+
+        @Test
+        fun `'is' option`() {
+            val isOption = Elephant.getDescriptor().toMessageType().optionList.find<IsOption>()
+
+            isOption!!.qualifiedJavaType(fileHeader) shouldBe isOption.javaType
+        }
+    }
+}

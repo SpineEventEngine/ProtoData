@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -55,7 +55,7 @@ public abstract class JavaTypeName internal constructor(
         get() = simpleNames.last()
     
     /**
-     * A prefix to be used to refer this type as a fully qualified name.
+     * A prefix to be used to refer to this type as a fully qualified name.
      *
      * If [packageName] is empty, the prefix is also empty.
      * Otherwise, the prefix contains the package name followed by a dot (`.`).
@@ -69,6 +69,28 @@ public abstract class JavaTypeName internal constructor(
          * A regular expression for a simple Java type name.
          */
         public val simpleNameRegex: Regex = Regex("^[a-zA-Z_$][a-zA-Z\\d_$]*$")
+
+        /**
+         * The separator in a package name.
+         */
+        public const val PACKAGE_SEPARATOR: String = "."
+
+        /**
+         * The separator in a binary class name.
+         */
+        public const val BINARY_SEPARATOR: String = "$"
+
+        /**
+         * The separator used between nested class names in a canonical name.
+         */
+        public const val CANONICAL_SEPARATOR: String = "."
+
+        /**
+         * The Unix style separator used to delimit directory names in a Java file name.
+         *
+         * This separator is compatible with IntelliJ PSI.
+         */
+        public const val PATH_SEPARATOR: String = "/"
     }
 }
 
@@ -90,16 +112,18 @@ public abstract class ClassOrEnumName internal constructor(
      * the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
      */
     @get:JvmName("canonical")
-    public val canonical: String = "$packagePrefix${simpleNames.joinToString(".")}"
+    public val canonical: String = "$packagePrefix${simpleNames.joinToString(CANONICAL_SEPARATOR)}"
 
     /**
      * The path to the Java source file of this type.
+     *
+     * The returned path uses the Unix path [separator][JavaTypeName.PATH_SEPARATOR] (`/`).
      */
     @get:JvmName("javaFile")
     public val javaFile: Path by lazy {
-        val dir = packageName.replace('.', '/')
+        val dir = packageName.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR)
         val topLevelClass = simpleNames.first()
-        Path("$dir/$topLevelClass.java")
+        Path("$dir$PATH_SEPARATOR$topLevelClass.java")
     }
 
     /**

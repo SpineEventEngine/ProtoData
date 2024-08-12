@@ -74,8 +74,7 @@ protected constructor(public val language: L) : LoadsSettings, ContextAware {
     /**
      * Creates a [QueryingClient] for obtaining entity states of the given type.
      *
-     * @param S
-     *         the type of the entity state.
+     * @param S the type of the entity state.
      */
     public inline fun <reified S : EntityState<*>> select(): QueryingClient<S> =
         select(S::class.java)
@@ -83,10 +82,8 @@ protected constructor(public val language: L) : LoadsSettings, ContextAware {
     /**
      * Creates a [QueryingClient] for obtaining entity states of the given type.
      *
-     * @param S
-     *         the type of the entity state.
-     * @param type
-     *         the class of the entity state.
+     * @param S the type of the entity state.
+     * @param type the class of the entity state.
      */
     public final override fun <S : EntityState<*>> select(type: Class<S>): QueryingClient<S> =
         _context.select(type)
@@ -123,3 +120,51 @@ protected constructor(public val language: L) : LoadsSettings, ContextAware {
         return this::_context.isInitialized
     }
 }
+
+/**
+ * Obtains all Protobuf source code files passed to the current compilation process.
+ */
+public fun Member<*>.findAllFiles(): Collection<ProtobufSourceFile> =
+    select<ProtobufSourceFile>().all()
+
+/**
+ * Obtains all the message types that are parsed by the current compilation process
+ * along with the corresponding file headers.
+ *
+ * Message types that are dependencies of the compilation process are not included.
+ *
+ * @see ProtobufSourceFile
+ * @see ProtobufDependency
+ */
+public fun Member<*>.findMessageTypes(): Set<MessageInFile> =
+    findAllFiles()
+        .flatMap { it.messages() }
+        .toSet()
+
+/**
+ * Obtains all the enum types that are parsed by the current compilation process
+ * along with the corresponding file headers.
+ *
+ * Enum types that are dependencies of the compilation process are not included.
+ *
+ * @see ProtobufSourceFile
+ * @see ProtobufDependency
+ */
+public fun Member<*>.findEnumTypes(): Set<EnumInFile> =
+    findAllFiles()
+        .flatMap { it.enums() }
+        .toSet()
+
+/**
+ * Obtains all service declarations that are parsed by the current compilation process
+ * along with the corresponding file headers.
+ *
+ * Services that are dependencies of the compilation process are not included.
+ *
+ * @see ProtobufSourceFile
+ * @see ProtobufDependency
+ */
+public fun Member<*>.findServices(): Set<ServiceInFile> =
+    findAllFiles()
+        .flatMap { it.services() }
+        .toSet()

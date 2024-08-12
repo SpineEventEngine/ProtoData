@@ -28,10 +28,13 @@ package io.spine.protodata.java
 
 import assertCode
 import com.google.protobuf.Timestamp
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.test.Incarnation
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 @DisplayName("`ClassName` should")
 internal class ClassNameSpec {
@@ -85,5 +88,56 @@ internal class ClassNameSpec {
     @Test
     fun `obtain a nested name`() {
         ClassName(Timestamp::class).nested("Builder") shouldBe ClassName(Timestamp.Builder::class)
+    }
+
+    @Nested inner class
+    `offer best guess` {
+
+        @Test
+        fun `for a qualified name`() {
+            val className = ClassName.guess("com.example.My.Class")
+            className.run {
+                packageName shouldBe "com.example"
+                simpleNames shouldContainExactly listOf("My", "Class")
+            }
+        }
+
+        @Test
+        fun `for a simple name`() {
+            val className = ClassName.guess("MyClass")
+            className.run {
+                packageName shouldBe ""
+                simpleNames shouldContainExactly listOf("MyClass")
+                simpleName shouldBe "MyClass"
+            }
+        }
+
+        @Test
+        fun `prohibiting empty or blank names`() {
+            assertThrows<IllegalArgumentException> { ClassName.guess("") }
+            assertThrows<IllegalArgumentException> { ClassName.guess("  ") }
+            assertThrows<IllegalArgumentException> { ClassName.guess("\n") }
+        }
+
+        @Test
+        fun `prohibiting binary class name separate in the name`() {
+            assertThrows<IllegalArgumentException> {
+                ClassName.guess("org.example.Guess\$What")
+            }
+        }
+    }
+
+    @Test
+    fun `prohibit package separators in simple names`() {
+        assertThrows<IllegalArgumentException> {
+            ClassName("org.example", listOf("The", "Middle.Class", "Is", ".Dead"))
+        }
+    }
+
+    @Test
+    fun `prohibit binary separators in simple names`() {
+        assertThrows<IllegalArgumentException> {
+            ClassName("org.example", listOf("The", "Middle\$Class", "Is", "\$Dead"))
+        }
     }
 }

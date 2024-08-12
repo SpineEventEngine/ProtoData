@@ -77,10 +77,38 @@ message ProtobufSourceFile {
     map<string, Service> service = 5 [(distinct) = true];
 }
 
+// A header of the Protobuf source code file which provides basic information about the file,
+// such as file-wide options applied to the file.
+message ProtoFileHeader {
+
+    // Path to the file in a file system.
+    File file = 1 [(required) = true];
+
+    // Name of the Protobuf package to which the declarations of the file belong.
+    string package_name = 2;
+
+    // The version of the Protobuf syntax.
+    SyntaxVersion syntax = 3;
+
+    // File-level options.
+    repeated Option option = 4 [(distinct) = true];
+
+    // The version of the Protobuf syntax, as defined in a Protobuf source file.
+    //
+    enum SyntaxVersion {
+
+        SV_UNDEFINED = 0;
+
+        PROTO2 = 1;
+
+        PROTO3 = 2;
+    }
+}
+
 // A Protobuf definitions file which is included into the module as a dependency.
 //
 // Unlike `ProtobufSourceFile`, `ProtobufDependency` should not result in any code generation.
-// Rather, it serves an informative purpose.
+// Rather, it serves for informative purposes.
 //
 message ProtobufDependency {
     option (entity).kind = VIEW;

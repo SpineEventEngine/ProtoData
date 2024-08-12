@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,6 +27,7 @@
 package io.spine.protodata.java
 
 import kotlin.reflect.KClass
+import org.checkerframework.checker.signature.qual.FullyQualifiedName
 
 /**
  * A fully qualified Java class name.
@@ -35,6 +36,19 @@ public class ClassName(
     packageName: String,
     simpleNames: List<String>
 ) : ClassOrEnumName(packageName, simpleNames) {
+
+    init {
+        simpleNames.forEach {
+            require(!it.contains(PACKAGE_SEPARATOR)) {
+                "A simple name must not contain a package separator" +
+                        " (`$PACKAGE_SEPARATOR`). Encountered: `$it`."
+            }
+            require(!it.contains(BINARY_SEPARATOR)) {
+                "A simple name must not contain a binary class name separator" +
+                        " (`$BINARY_SEPARATOR`). Encountered: `$it`."
+            }
+        }
+    }
 
     /**
      * Creates a new class name from the given package name a class name.
@@ -95,4 +109,29 @@ public class ClassName(
     }
 
     override fun hashCode(): Int = binary.hashCode()
+
+    public companion object {
+
+        /**
+         * Returns a new [ClassName] instance for the given fully qualified class name string.
+         *
+         * The function assumes that the given name follows Java conventions for naming classes and
+         * packages with `lowercase` package names and `UpperCamelCase` class names.
+         *
+         * @throws IllegalArgumentException when binary class name separator (`"$"`) is used
+         *  in the given name, or the given value is empty or blank.
+         */
+        public fun guess(name: @FullyQualifiedName String): ClassName {
+            require(name.isNotEmpty())
+            require(name.isNotBlank())
+            require(!name.contains(BINARY_SEPARATOR)) {
+                "The class name (`$name`) must not contain" +
+                        " a binary class name separator (`$BINARY_SEPARATOR`)."
+            }
+            val items = name.split(PACKAGE_SEPARATOR)
+            val packageName = items.filter { it[0].isLowerCase() }.joinToString(PACKAGE_SEPARATOR)
+            val simpleNames = items.filter { it[0].isUpperCase() }
+            return ClassName(packageName, simpleNames)
+        }
+    }
 }

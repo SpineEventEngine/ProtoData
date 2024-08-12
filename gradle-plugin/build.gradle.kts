@@ -89,7 +89,7 @@ dependencies {
  */
 val functionalTest: Task by tasks.getting {
     val task = this
-    rootProject.subprojects.forEach { subproject ->
+    productionModules.forEach { subproject ->
         task.dependsOn(":${subproject.name}:publishToMavenLocal")
     }
 }

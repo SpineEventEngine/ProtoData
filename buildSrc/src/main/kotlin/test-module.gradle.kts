@@ -24,12 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.54.0")
+import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.Validation
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.`java-test-fixtures`
+
+plugins {
+    java
+    `java-test-fixtures`
+}
+
+dependencies {
+    arrayOf(
+        Spine.base,
+        Validation.runtime
+    ).forEach {
+        testFixturesImplementation(it)?.because(
+            """
+            We do not apply McJava Gradle plugin which adds the `implementation` dependency on
+            Validation runtime automatically (see `Project.configureValidation()` function in 
+            `ProtoDataConfigPlugin.kt`).
+            
+            In this test module we use vanilla `protoc` (via ProtoTap) and then run codegen
+            using ProtoData pipeline and ProtoData plugins of the module under the test.
+            Because of this we need to add the dependencies above explicitly for the
+            generated code of test fixtures to compile.                
+            """.trimIndent()
+        )
+    }
+}

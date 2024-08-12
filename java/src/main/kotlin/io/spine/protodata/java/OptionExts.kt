@@ -24,12 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.java
+
+import io.spine.option.IsOption
+import io.spine.protodata.ProtoFileHeader
+import io.spine.protodata.java.JavaTypeName.Companion.PACKAGE_SEPARATOR
+import org.checkerframework.checker.signature.qual.FullyQualifiedName
+
 /**
- * The version of the ProtoData to publish.
+ * Obtains a fully qualified name of a Java type corresponding the value
+ * of the `java_type` property of `is` or `every_is` options.
  *
- * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * @param header the header of the proto file to resolve the Java package if
+ *   a simple type name is specified.
+ * @throws IllegalStateException if the `java_type` property is empty or blank.
+ * @see IsOption
  */
-val protoDataVersion: String by extra("0.54.0")
+public fun IsOption.qualifiedJavaType(header: ProtoFileHeader): @FullyQualifiedName String {
+    check(javaType.isNotEmpty() && javaType.isNotBlank()) {
+        "The value of `java_type` must not be empty or blank. Got: `\"$javaType\"`."
+    }
+    return if (javaType.isQualified) {
+        javaType
+    } else {
+        "${header.javaPackage()}.$javaType"
+    }
+}
+
+private val String.isQualified: Boolean
+    get() = contains(PACKAGE_SEPARATOR)

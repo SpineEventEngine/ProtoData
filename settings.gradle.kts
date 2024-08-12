@@ -28,6 +28,7 @@ rootProject.name = "ProtoData"
 
 include(
     "api",
+    "api-tests",
     "backend",
     "cli-api",
     "cli",

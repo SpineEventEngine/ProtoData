@@ -27,7 +27,6 @@
 package io.spine.protodata.renderer
 
 import io.spine.protodata.Member
-import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Language
 
 /**

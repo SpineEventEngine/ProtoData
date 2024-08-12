@@ -36,6 +36,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
 import io.spine.protodata.renderer.Renderer
+import io.spine.protodata.renderer.SourceFile
 import io.spine.protodata.renderer.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.server.delivery.Delivery
@@ -52,36 +53,27 @@ import io.spine.server.under
  *
  * The pipeline starts by building the `Code Generation` bounded context with the supplied
  * [Plugin]s. Then, the Protobuf compiler events are emitted and the subscribers in
- * the context receive them. Then, the [Renderer]s, which are able to query the states of entities
- * in the `Code Generation` context, alters the source set. This may include creating new files,
- * modifying, or deleting existing ones. Lastly, the source set is stored back onto the file system.
+ * the context receive them.
+ *
+ * Then, the [Renderer]s, which are able to query the states of entities
+ * in the `Code Generation` context, alter the source set.
+ * This may include creating new files, modifying, or deleting existing ones.
+ *
+ * Lastly, the source set is stored back onto the file system.
+ *
+ * @property id the ID of the pipeline to be used for distinguishing contexts when
+ *   two or more pipelines are executed in the same JVM. If not specified, the ID will be generated.
+ * @property plugins the code generation plugins to be applied to the pipeline.
+ * @property sources the source sets to be processed by the pipeline.
+ * @property request the Protobuf compiler request.
+ * @property settings the directory to which setting files for the [plugins] should be stored.
  */
 @Internal
 public class Pipeline(
-    /**
-     * The ID of the pipeline to be used for distinguishing contexts when
-     * two or more pipelines are executed in the same JVM.
-     */
     public val id: String = generateId(),
-
-    /**
-     * The code generation plugins to be applied to the pipeline.
-     */
     public val plugins: List<Plugin>,
-
-    /**
-     * The source sets to be processed by the pipeline.
-     */
     public val sources: List<SourceFileSet>,
-
-    /**
-     * The Protobuf compiler request.
-     */
     public val request: CodeGeneratorRequest,
-
-    /**
-     * The directory to which setting files for the [plugins] should be stored.
-     */
     public val settings: SettingsDirectory
 ) {
 
@@ -128,6 +120,10 @@ public class Pipeline(
      * should be single-threaded.
      */
     public operator fun invoke() {
+        // Clear the cache of previously parsed files to avoid repeated code generation
+        // when running from tests.
+        SourceFile.clearCache()
+
         codegenContext.use {
             ConfigurationContext(id).use { configuration ->
                 ProtobufCompilerContext(id).use { compiler ->
