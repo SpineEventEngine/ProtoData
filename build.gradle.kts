@@ -27,6 +27,7 @@
 @file:Suppress("RemoveRedundantQualifierName")
 
 import io.spine.internal.dependency.Dokka
+import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.Spine
 import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.publish.PublishingRepos
@@ -36,6 +37,10 @@ import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
 import io.spine.internal.gradle.standardToSpineSdk
+import java.time.LocalDate
+import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.base.DokkaBaseConfiguration
+import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 
 buildscript {
     standardSpineSdkRepositories()
@@ -79,7 +84,7 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             force(
-                io.spine.internal.dependency.Grpc.ProtocPlugin.artifact,
+                Grpc.ProtocPlugin.artifact,
                 Spine.reflect,
                 Spine.base,
                 Spine.testlib,
@@ -141,3 +146,7 @@ val integrationTest by tasks.creating(RunBuild::class) {
  * The `check` task is done if `integrationTest` passes.
  */
 tasks["check"].dependsOn(integrationTest)
+
+val dokkaHtmlMultiModule by tasks.getting(DokkaMultiModuleTask::class) {
+    configureStyle()
+}
