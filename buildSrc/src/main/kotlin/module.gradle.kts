@@ -39,6 +39,7 @@ import io.spine.internal.gradle.report.license.LicenseReporter
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -76,7 +77,7 @@ project.run {
     configureKotlin()
 
     setupTests()
-    configureJavadoc()
+    configureDocTasks()
 
     applyGeneratedDirectories()
     configureTaskDependencies()
@@ -189,11 +190,15 @@ fun Module.configureKotlin() {
     }
 }
 
-fun Module.configureJavadoc() {
-    val dokkaJavadoc by tasks.getting(DokkaTask::class)
+fun Module.configureDocTasks() {
+    val dokkaJavadoc by tasks.getting(DokkaTaskPartial::class)
     tasks.register("javadocJar", Jar::class) {
         from(dokkaJavadoc.outputDirectory)
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
+    }
+
+    tasks.withType<DokkaTaskPartial>().configureEach {
+        configureForKotlin()
     }
 }
