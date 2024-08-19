@@ -26,7 +26,6 @@
 
 package io.spine.protodata.settings
 
-import io.spine.annotation.Internal
 import io.spine.protodata.ConfigurationError
 import io.spine.server.query.Querying
 import io.spine.server.query.select
@@ -34,11 +33,10 @@ import io.spine.server.query.select
 /**
  * A ProtoData component which accesses its settings via the [Settings] view.
  */
-@Internal
 public interface LoadsSettings : Querying, WithSettings {
 
     /**
-     * Obtains the ID of the settings consumer which is used for [loading settings][loadSettings].
+     * The ID of the settings consumer which is used for [loading settings][loadSettings].
      *
      * The default value is a canonical name of the Java class implementing this interface.
      */

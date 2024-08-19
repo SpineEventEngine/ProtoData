@@ -37,10 +37,20 @@ import io.spine.tools.code.Language
  * A part of [CodegenContext] which participates in the code generation process and
  * may have settings it can load.
  *
- * @param L the programming language served by this member of the code generation process.
+ * @param L The type of the programming language served by this member.
  */
 public abstract class Member<L : Language>
-protected constructor(public val language: L) : LoadsSettings, ContextAware {
+protected constructor(
+    /**
+     * The programming language served by this member.
+     *
+     * As most implementations of [Language] are Kotlin `object`s,
+     * like [io.spine.tools.code.Java] or [io.spine.tools.code.Kotlin], it is likely that
+     * the value passed to this parameter would repeat the argument specified
+     * for the generic parameter [L].
+     */
+    public val language: L
+) : LoadsSettings, ContextAware {
 
     /**
      * The backing field for the [context] property.
@@ -95,13 +105,16 @@ protected constructor(public val language: L) : LoadsSettings, ContextAware {
     /**
      * Injects the `Code Generation` context into this instance.
      *
-     * The reference to the context is needed to query the state of entities.
+     * The reference to the context is necessary to query the state of entities.
      *
-     * This method is `public` but is essentially `internal` to ProtoData SDK.
-     * It is not supposed to be called by authors of plugins directly.
+     * This method is `public` because it is inherited from the [ContextAware] interface.
+     * But it is essentially `internal` to ProtoData SDK, and is not supposed to be called
+     * by authors of plugins directly.
      *
      * @see [select]
      * @see [io.spine.protodata.backend.Pipeline]
+     *
+     * @suppress This function is not supposed to be used by plugin authors code.
      */
     @Internal
     public final override fun registerWith(context: CodegenContext) {
@@ -115,6 +128,12 @@ protected constructor(public val language: L) : LoadsSettings, ContextAware {
         _context = context
     }
 
+    /**
+     * Checks if this member is registered with the context.
+     *
+     * @suppress Similarly to [registerWith], this function is not supposed to be called by
+     *  plugin authors users.
+     */
     @Internal
     override fun isRegistered(): Boolean {
         return this::_context.isInitialized
