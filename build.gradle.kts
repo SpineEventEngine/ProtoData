@@ -26,6 +26,7 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
+import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.Spine
 import io.spine.internal.gradle.RunBuild
 import io.spine.internal.gradle.publish.PublishingRepos
@@ -68,6 +69,7 @@ spinePublishing {
 }
 
 allprojects {
+    apply(plugin = Dokka.GradlePlugin.id)
     apply(from = "$rootDir/version.gradle.kts")
     group = "io.spine.protodata"
     version = extra["protoDataVersion"]!!
