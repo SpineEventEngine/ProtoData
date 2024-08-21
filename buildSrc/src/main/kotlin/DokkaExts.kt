@@ -100,6 +100,7 @@ fun AbstractDokkaTask.configureStyle() {
         footerMessage = "Copyright ${LocalDate.now().year}, TeamDev"
     }
 }
+
 private fun AbstractDokkaLeafTask.configureFor(language: String) {
     dokkaSourceSets.configureEach {
         /**
