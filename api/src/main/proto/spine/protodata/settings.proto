@@ -108,7 +108,7 @@ enum Format {
     PLAIN = 5 [(extension) = "txt"];
 }
 
-// A list of code generation actions associated with the parameters passed to these actions.
+// A collection of code generation actions associated with the parameters passed to these actions.
 //
 // Some code generation scenarios may be solved by applying combination of render actions.
 // For example, we want to make messages declared in proto files named `command.proto`
@@ -125,12 +125,23 @@ enum Format {
 // This type addresses the need #2 above, for having parametrised rendering actions in settings
 // passed to ProtoData plugins.
 //
+// Code generation actions listed in this collection serve the same programming language and
+// are applied to Protobuf declarations of the same kind. For example, we may have actions
+// serving code generation in Java for certain `MessageType`s.
+//
 // @see io.spine.protodata.renderer.RenderAction
+// @see io.spine.tools.code.Language
+// @see io.spine.protodata.ProtoDeclaration
 //
 message Actions {
 
     // Maps a fully-qualified name of a render action class to a parameter
     // passed to the action.
+    //
+    // The types, names of which come as the keys in the map, must serve the same
+    // programming language and the same type of Protobuf declaration.
+    // The instances of actions are created reflectively. If the above rule is not
+    // followed a runtime action will occur during creation of an action.
     //
     // The type of the parameter wrapped into `Any` must match the type of
     // the parameter accepted by the action. Otherwise, a runtime error will occur.
