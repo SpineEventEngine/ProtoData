@@ -149,5 +149,5 @@ message Actions {
     // If the action does not accept a parameter, the map entry value may contain
     // either a default instance of `Any` or wrapped instance of `Empty`.
     //
-    map<string, google.protobuf.Any> map = 1 [(required) = true];
+    map<string, google.protobuf.Any> action = 1 [(required) = true];
 }
