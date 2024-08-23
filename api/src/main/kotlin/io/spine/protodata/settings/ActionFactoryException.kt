@@ -73,8 +73,8 @@ public class ActionFactoryException private constructor(message: String, cause: 
             actionLanguage: Language
         ): Nothing {
             throw ActionFactoryException(
-                "The action class `$actionClassName` serves the language `$actionLanguage` is not " +
-                        "compatible with the language for which the factory was created " +
+                "The action class `$actionClassName` serves the language `$actionLanguage`" +
+                        " is not compatible with the language for which the factory was created " +
                         "(`$factoryLanguage`)."
             )
         }
