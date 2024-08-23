@@ -27,6 +27,8 @@
 package io.spine.protodata.settings.given
 
 import com.google.protobuf.Empty
+import com.google.protobuf.Message
+import com.google.protobuf.StringValue
 import io.spine.base.EntityState
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.MessageType
@@ -39,7 +41,6 @@ import io.spine.server.integration.ThirdPartyContext
 import io.spine.server.query.QueryingClient
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
-
 
 /**
  * The class constructor of which matches the expectation of [RenderAction]
@@ -54,7 +55,7 @@ class JustMatchingConstructor(
 /**
  * A stub render action implemented for Kotlin.
  */
-class RendererInKotlin(
+class RenderInKotlin(
     type: MessageType,
     file: SourceFile<Kotlin>,
     context: CodegenContext
@@ -69,6 +70,47 @@ class RendererInKotlin(
         // Do nothing
     }
 }
+
+/**
+ * Abstract base for render actions which exposes the [parameter] property for tests.
+ *
+ * It also implements the [render] method doing nothing for the brevity of descendants.
+ */
+abstract class ExposeParam<P: Message>(
+    type: MessageType,
+    file: SourceFile<Java>,
+    param: P,
+    context: CodegenContext
+) : RenderAction<Java, MessageType, P>(Java, type, file, param, context) {
+
+    /** Exposes the `parameter` property for tests. */
+    fun param(): P {
+        return parameter
+    }
+
+    override fun render() {
+        // Do nothing
+    }
+}
+
+/**
+ * A stab render action implemented for Java which has no parameter.
+ */
+class ActionNoParam(
+    type: MessageType,
+    file: SourceFile<Java>,
+    context: CodegenContext
+) : ExposeParam<Empty>(type, file, Empty.getDefaultInstance(), context)
+
+/**
+ * A stab render action implemented for Java which has [StringValue] parameter.
+ */
+class ActionStringParams(
+    type: MessageType,
+    file: SourceFile<Java>,
+    param: StringValue,
+    context: CodegenContext
+) : ExposeParam<StringValue>(type, file, param, context)
 
 /**
  * A stub implementation of [CodegenContext] to be passed to [ActionFactory.create].

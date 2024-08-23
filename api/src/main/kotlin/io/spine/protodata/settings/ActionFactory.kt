@@ -47,7 +47,7 @@ import com.google.protobuf.Any as ProtoAny
  *
  * The classes names of which are specified in the given [actions] must satisfy
  * the following criteria:
- *  1. Be `public` so that their instances can be created reflectively by this factory.
+ *  1. Be `public` so that this factory can create their instances reflectively.
  *  2. Serve the language defined by the generic parameter [L].
  *  3. Serve the Protobuf declaration specified by the generic parameter [D].
  *
@@ -66,8 +66,9 @@ import com.google.protobuf.Any as ProtoAny
  *  2. `SourceFile<L>` — the file to be handled by the action.
  *  3. [CodegenContext].
  *
- * @param actions The rendering actions to create.
- * @param classLoader The class loader to use for obtaining action classes.
+ * @property language The language the created actions will serve.
+ * @property actions The rendering actions to create.
+ * @param classLoader The class loader to obtain action classes.
  *
  * @see Actions
  * @see io.spine.protodata.settings.add
@@ -93,7 +94,7 @@ public class ActionFactory<L : Language, D : ProtoDeclaration>(
         declaration: D,
         file: SourceFile<L>,
         context: CodegenContext
-    ): Iterable<RenderAction<L, D, *>> {
+    ): List<RenderAction<L, D, *>> {
         val result = buildList {
             actions.actionMap.forEach { (className, packedParameter) ->
                 val parameter = packedParameter.unpackParameter()

@@ -26,13 +26,21 @@
 
 package io.spine.protodata.settings
 
+import com.google.protobuf.Empty
+import com.google.protobuf.stringValue
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.MessageType
 import io.spine.protodata.renderer.RenderAction
 import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.settings.given.ActionNoParam
+import io.spine.protodata.settings.given.ActionStringParams
+import io.spine.protodata.settings.given.JavaActionNoParam
+import io.spine.protodata.settings.given.JavaActionWithParam
 import io.spine.protodata.settings.given.JustMatchingConstructor
-import io.spine.protodata.settings.given.RendererInKotlin
+import io.spine.protodata.settings.given.RenderInKotlin
 import io.spine.protodata.settings.given.StubContext
 import io.spine.protodata.toMessageType
 import io.spine.tools.code.Java
@@ -78,6 +86,36 @@ internal class ActionFactorySpec {
         }
     }
 
+    @Test
+    fun `render actions with and without parameters`() {
+        val expectedParam = "FooBar"
+        val actions = actions {
+            add(ActionNoParam::class)
+            add(ActionStringParams::class, expectedParam)
+            add(JavaActionNoParam::class.java)
+            add(JavaActionWithParam::class.java, expectedParam)
+        }
+
+        val createdActions = createActions(actions)
+        createdActions.size shouldBe 4
+
+        createdActions[0].shouldBeInstanceOf<ActionNoParam>().let {
+            it.param() shouldBe Empty.getDefaultInstance()
+        }
+
+        createdActions[1].shouldBeInstanceOf<ActionStringParams>().let {
+            it.param() shouldBe stringValue { value = expectedParam }
+        }
+
+        createdActions[2].shouldBeInstanceOf<JavaActionNoParam>().let {
+            it.param() shouldBe Empty.getDefaultInstance()
+        }
+
+        createdActions[3].shouldBeInstanceOf<JavaActionWithParam>().let {
+            it.param() shouldBe stringValue { value = expectedParam }
+        }
+    }
+
     @Nested inner class
     `Provide diagnostics for` {
 
@@ -119,7 +157,7 @@ internal class ActionFactorySpec {
         @Test
         fun `an action serving incompatible language`() {
             val actions = actions {
-                add(RendererInKotlin::class)
+                add(RenderInKotlin::class)
             }
 
             val e = assertThrows<ActionFactoryException> {
@@ -127,19 +165,19 @@ internal class ActionFactorySpec {
             }
 
             e.message.let {
-                it shouldContain RendererInKotlin::class.reference
+                it shouldContain RenderInKotlin::class.reference
                 it shouldContain "is not compatible with the language for which the factory"
                 it shouldContain Kotlin.toString()
             }
         }
+    }
 
-        /**
-         * Creates an instance of [ActionFactory] and attempts to create actions
-         * for the given settings using stubs defined above.
-         */
-        private fun createActions(actions: Actions) {
-            val factory = ActionFactory<Java, MessageType>(Java, actions, classLoader)
-            factory.create(messageType, sourceFile, stubContext)
-        }
+    /**
+     * Creates an instance of [ActionFactory] and attempts to create actions
+     * for the given settings using stubs defined above.
+     */
+    private fun createActions(actions: Actions): List<RenderAction<Java, MessageType, *>> {
+        val factory = ActionFactory<Java, MessageType>(Java, actions, classLoader)
+        return factory.create(messageType, sourceFile, stubContext)
     }
 }

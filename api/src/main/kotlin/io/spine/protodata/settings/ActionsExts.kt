@@ -29,30 +29,96 @@ package io.spine.protodata.settings
 import com.google.protobuf.Any
 import com.google.protobuf.Empty
 import com.google.protobuf.Message
+import com.google.protobuf.StringValue
+import com.google.protobuf.stringValue
 import io.spine.protobuf.pack
 import io.spine.protodata.ProtoDeclaration
 import io.spine.protodata.renderer.RenderAction
 import io.spine.tools.code.Language
-import io.spine.tools.java.reference
 import io.spine.tools.kotlin.reference
 import kotlin.reflect.KClass
 
+/**
+ * Adds an action which accepts the given [parameter].
+ *
+ * @param L The language served by the action.
+ * @param D The Protobuf declaration handled by the action.
+ * @param P The type of the parameters passed to the action.
+ *
+ * @param cls The class of the render action.
+ * @param parameter The parameter passed to the action.
+ */
 public fun <A : RenderAction<L, D, P>, L : Language, D : ProtoDeclaration, P : Message>
         ActionsKt.Dsl.add(cls: KClass<out A>, parameter: P) {
     action.put(cls.reference, parameter.pack())
 }
 
+/**
+ * Adds an action which accepts a [StringValue] parameter.
+ *
+ * @param L The language served by the action.
+ * @param D The Protobuf declaration handled by the action.
+ *
+ * @param cls The class of the render action.
+ * @param parameter The [value][StringValue.getValue] of the parameter to be passed to the action.
+ */
+public fun <A : RenderAction<L, D, StringValue>, L : Language, D : ProtoDeclaration>
+        ActionsKt.Dsl.add(cls: KClass<out A>, parameter: String) {
+    val value = stringValue { value = parameter }
+    add(cls, value)
+}
+
+/**
+ * Adds an action which has no parameter.
+ *
+ * @param L The language served by the action.
+ * @param D The Protobuf declaration handled by the action.
+ *
+ * @param cls The class of the render action.
+ */
 public fun <A : RenderAction<L, D, Empty>, L : Language, D : ProtoDeclaration>
         ActionsKt.Dsl.add(cls: KClass<out A>) {
     action.put(cls.reference, Any.getDefaultInstance())
 }
 
+/**
+ * Adds an action which accepts the given [parameter].
+ *
+ * @param L The language served by the action.
+ * @param D The Protobuf declaration handled by the action.
+ * @param P The type of the parameters passed to the action.
+ *
+ * @param cls The class of the render action.
+ * @param parameter The parameter passed to the action.
+ */
 public fun <A : RenderAction<L, D, P>, L : Language, D : ProtoDeclaration, P : Message>
         ActionsKt.Dsl.add(cls: Class<out A>, parameter: P) {
-    action.put(cls.reference, parameter.pack())
+    add(cls.kotlin, parameter)
 }
 
+/**
+ * Adds an action which accepts a [StringValue] parameter.
+ *
+ * @param L The language served by the action.
+ * @param D The Protobuf declaration handled by the action.
+ *
+ * @param cls The class of the render action.
+ * @param parameter The [value][StringValue.getValue] of the parameter to be passed to the action.
+ */
+public fun <A : RenderAction<L, D, StringValue>, L : Language, D : ProtoDeclaration>
+        ActionsKt.Dsl.add(cls: Class<out A>, parameter: String) {
+    add(cls.kotlin, parameter)
+}
+
+/**
+ * Adds an action which has no parameter.
+ *
+ * @param L The language served by the action.
+ * @param D The Protobuf declaration handled by the action.
+ *
+ * @param cls The class of the render action.
+ */
 public fun <A : RenderAction<L, D, Empty>, L : Language, D : ProtoDeclaration>
         ActionsKt.Dsl.add(cls: Class<out A>) {
-    action.put(cls.reference, Any.getDefaultInstance())
+    add(cls.kotlin)
 }
