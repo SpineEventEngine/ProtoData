@@ -52,7 +52,7 @@ class JustMatchingConstructor(
 )
 
 /**
- * A stub
+ * A stub render action implemented for Kotlin.
  */
 class RendererInKotlin(
     type: MessageType,

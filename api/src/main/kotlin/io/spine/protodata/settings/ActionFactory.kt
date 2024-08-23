@@ -26,7 +26,6 @@
 
 package io.spine.protodata.settings
 
-import com.google.protobuf.Any
 import com.google.protobuf.Empty
 import com.google.protobuf.Message
 import io.spine.protobuf.AnyPacker
@@ -37,6 +36,7 @@ import io.spine.protodata.renderer.SourceFile
 import io.spine.reflect.Factory
 import io.spine.tools.code.Language
 import org.checkerframework.checker.signature.qual.FqBinaryName
+import com.google.protobuf.Any as ProtoAny
 
 /**
  * Creates instances of [RenderAction] specified in the given [actions].
@@ -66,13 +66,14 @@ import org.checkerframework.checker.signature.qual.FqBinaryName
  *  2. `SourceFile<L>` — the file to be handled by the action.
  *  3. [CodegenContext].
  *
- * @param actions the rendering actions to create.
- * @param classLoader the class loader to use for obtaining action classes.
+ * @param actions The rendering actions to create.
+ * @param classLoader The class loader to use for obtaining action classes.
  *
  * @see Actions
- * @see io.spine.protodata.settings.put
+ * @see io.spine.protodata.settings.add
  */
 public class ActionFactory<L : Language, D : ProtoDeclaration>(
+    private val language: L,
     private val actions: Actions,
     classLoader: ClassLoader
 ) : Factory<RenderAction<L, D, *>>(classLoader) {
@@ -93,11 +94,12 @@ public class ActionFactory<L : Language, D : ProtoDeclaration>(
         file: SourceFile<L>,
         context: CodegenContext
     ): Iterable<RenderAction<L, D, *>> {
-        val result = mutableListOf<RenderAction<L, D, *>>()
-        actions.actionMap.forEach { (className, packedParameter) ->
-            val parameter = packedParameter.unpackParameter()
-            val action = tryCreate(className, declaration, file, parameter, context)
-            result.add(action)
+        val result = buildList {
+            actions.actionMap.forEach { (className, packedParameter) ->
+                val parameter = packedParameter.unpackParameter()
+                val action = tryCreate(className, declaration, file, parameter, context)
+                add(action)
+            }
         }
         return result
     }
@@ -117,22 +119,27 @@ public class ActionFactory<L : Language, D : ProtoDeclaration>(
                 create(className, declaration, file, parameter, context)
             }
         } catch (e: Throwable) {
-            val msg = when (e) {
-                is ClassNotFoundException -> {
-                    "Unable to create an instance of the class: `$className`. " +
-                    "Please make sure that the class is available in the classpath."
-                }
-                is ClassCastException -> {
-                    val actionClass = RenderAction::class.java.canonicalName
-                    "The class `$className` cannot be cast to `$actionClass`."
-                }
-                else -> {
-                    "Unable to create an instance of the class: `$className`."
-                }
-            }
-            throw ActionFactoryException(msg, e)
+            ActionFactoryException.propagate(className, e)
         }
+        checkMatchingLanguage(className, action)
         return action
+    }
+
+    /**
+     * Verifies if the language served by the [action] is the same of the one
+     * for which the factory is created or is a subtype of the language.
+     *
+     * @throws ActionFactoryException if the language of the action is not compatible with
+     *   the language of the factory.
+     */
+    private fun checkMatchingLanguage(
+        className: @FqBinaryName String,
+        action: RenderAction<L, D, out Message>
+    ) {
+        val actionLanguage = action.language
+        if (!language::class.java.isInstance(actionLanguage)) {
+            ActionFactoryException.incompatibleLanguage(className, language, actionLanguage)
+        }
     }
 }
 
@@ -142,22 +149,9 @@ public class ActionFactory<L : Language, D : ProtoDeclaration>(
  *
  * @see Actions.getActionMap
  */
-private fun Any.unpackParameter(): Message {
-    if (this == Any.getDefaultInstance()) {
+private fun ProtoAny.unpackParameter(): Message {
+    if (this == ProtoAny.getDefaultInstance()) {
         return Empty.getDefaultInstance()
     }
     return AnyPacker.unpack(this)
-}
-
-/**
- * Thrown when [ActionFactory] cannot instantiate an instance
- * of [RenderAction][io.spine.protodata.renderer.RenderAction].
- */
-public class ActionFactoryException(message: String, cause: Throwable)
-    : ReflectiveOperationException(message, cause) {
-
-    private companion object {
-        @Suppress("ConstPropertyName") // To conform Java convention.
-        private const val serialVersionUID: Long = -3922823622064715639L
-    }
 }

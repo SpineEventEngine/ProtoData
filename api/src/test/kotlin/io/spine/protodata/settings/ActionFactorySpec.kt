@@ -36,9 +36,9 @@ import io.spine.protodata.settings.given.RendererInKotlin
 import io.spine.protodata.settings.given.StubContext
 import io.spine.protodata.toMessageType
 import io.spine.tools.code.Java
+import io.spine.tools.code.Kotlin
 import io.spine.tools.kotlin.reference
 import kotlin.io.path.Path
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -74,7 +74,7 @@ internal class ActionFactorySpec {
     @Test
     fun `prohibit empty 'Actions' instance`() {
         assertThrows<IllegalArgumentException> {
-            ActionFactory<Java, MessageType>(Actions.getDefaultInstance(), classLoader)
+            ActionFactory<Java, MessageType>(Java, Actions.getDefaultInstance(), classLoader)
         }
     }
 
@@ -117,8 +117,7 @@ internal class ActionFactorySpec {
         }
 
         @Test
-        @Disabled("Until we figure out how to obtain an object by generic parameter")
-        fun `an action service another language`() {
+        fun `an action serving incompatible language`() {
             val actions = actions {
                 add(RendererInKotlin::class)
             }
@@ -129,8 +128,8 @@ internal class ActionFactorySpec {
 
             e.message.let {
                 it shouldContain RendererInKotlin::class.reference
-                it shouldContain "cannot be cast to"
-                it shouldContain RenderAction::class.java.canonicalName
+                it shouldContain "is not compatible with the language for which the factory"
+                it shouldContain Kotlin.toString()
             }
         }
 
@@ -139,7 +138,7 @@ internal class ActionFactorySpec {
          * for the given settings using stubs defined above.
          */
         private fun createActions(actions: Actions) {
-            val factory = ActionFactory<Java, MessageType>(actions, classLoader)
+            val factory = ActionFactory<Java, MessageType>(Java, actions, classLoader)
             factory.create(messageType, sourceFile, stubContext)
         }
     }
