@@ -31,8 +31,8 @@ import io.spine.tools.code.Language
 import org.checkerframework.checker.signature.qual.FqBinaryName
 
 /**
- * Thrown when [ActionFactory] cannot instantiate an instance
- * of [RenderAction][io.spine.protodata.renderer.RenderAction].
+ * Thrown when [ActionFactory] cannot instantiate
+ * a [RenderAction][io.spine.protodata.renderer.RenderAction].
  */
 public class ActionFactoryException private constructor(message: String, cause: Throwable?)
     : ReflectiveOperationException(message, cause) {

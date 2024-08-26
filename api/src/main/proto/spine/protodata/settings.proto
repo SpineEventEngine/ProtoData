@@ -122,7 +122,7 @@ enum Format {
 //  3) Create a ProtoData plugin with a renderer which would load the settings and
 //     run corresponding actions.
 //
-// This type addresses the need #2 above, for having parametrised rendering actions in settings
+// This type addresses the need #2 above, for having parameterised rendering actions in settings
 // passed to ProtoData plugins.
 //
 // Code generation actions listed in this collection serve the same programming language and
@@ -147,7 +147,7 @@ message Actions {
     // the parameter accepted by the action. Otherwise, a runtime error will occur.
     //
     // If the action does not accept a parameter, the map entry value may contain
-    // either a default instance of `Any` or wrapped instance of `Empty`.
+    // either a default instance of `Any` or a packed instance of `Empty`.
     //
     map<string, google.protobuf.Any> action = 1 [(required) = true];
 }
