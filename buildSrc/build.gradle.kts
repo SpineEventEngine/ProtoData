@@ -114,7 +114,7 @@ val protobufPluginVersion = "0.9.4"
  * @see <a href="https://github.com/Kotlin/dokka/releases">
  *     Dokka Releases</a>
  */
-val dokkaVersion = "1.9.10"
+val dokkaVersion = "1.9.20"
 
 /**
  * The version of Detekt Gradle Plugin.

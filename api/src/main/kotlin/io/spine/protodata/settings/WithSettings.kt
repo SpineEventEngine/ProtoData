@@ -42,9 +42,9 @@ public interface WithSettings {
      * the given binary/JSON.
      *
      * For JSON/YAML configuration, we use [Jackson](https://github.com/FasterXML/jackson) to
-     * deserialize values. Users may use Jackson's API, such as annotations and modules to define
-     * classes to represent the configuration. Modules will be included automatically via classpath
-     * scanning.
+     * deserialize values. Users may use Jackson's API, such as annotations and modules,
+     * to define classes to represent the configuration. Modules will be included automatically via
+     * classpath scanning.
      *
      * In Kotlin, the simplest way to define a type compatible with a configuration is a data class.
      * Jackson is capable of working with Kotlin `val`-s, so the data class can be immutable.
@@ -66,8 +66,8 @@ public interface WithSettings {
 /**
  * Obtains the settings provided by the user as an instance of the given class.
  *
- * This is Kotlin-specific convenience API.
- * See [the general API][WithSettings.loadSettings] for more.
+ * This is the Kotlin-specific convenience API.
+ * See [the general API][WithSettings.loadSettings] for details.
  */
 public inline fun <reified T: Any> WithSettings.loadSettings(): T =
     loadSettings(T::class.java)

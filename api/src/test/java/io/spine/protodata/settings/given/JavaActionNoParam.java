@@ -24,19 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata.settings.given;
 
-package spine.protodata;
+import com.google.protobuf.Empty;
+import io.spine.protodata.CodegenContext;
+import io.spine.protodata.MessageType;
+import io.spine.protodata.renderer.SourceFile;
+import io.spine.tools.code.Java;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import "spine/options.proto";
+/**
+ * A stub rendering action implemented in Java which accepts no parameter.
+ */
+public class JavaActionNoParam extends ExposeParam<Empty> {
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata";
-option java_outer_classname = "StyleProto";
-option java_multiple_files = true;
-
-// Indentation options common to all programming languages.
-message IndentOptions {
-    uint32 indent_size = 1;
-    uint32 continuation_indent_size = 2;
+    public JavaActionNoParam(
+            @NonNull MessageType type,
+            @NonNull SourceFile<Java> file,
+            @NonNull CodegenContext context) {
+        super(type, file, Empty.getDefaultInstance(), context);
+    }
 }

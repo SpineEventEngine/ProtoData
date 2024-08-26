@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,13 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.dokka
+package io.spine.protodata.settings.given;
 
-import org.gradle.api.tasks.TaskContainer
-import org.jetbrains.dokka.gradle.DokkaTask
+import com.google.protobuf.StringValue;
+import io.spine.protodata.CodegenContext;
+import io.spine.protodata.MessageType;
+import io.spine.protodata.renderer.SourceFile;
+import io.spine.tools.code.Java;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Finds the `dokkaHtml` Gradle task.
+ * A stub rendering action implemented in Java which accepts {@link StringValue} as the parameter.
  */
-@Suppress("unused")
-fun TaskContainer.dokkaHtmlTask() = this.getByName("dokkaHtml") as DokkaTask
+public class JavaActionWithParam extends ExposeParam<StringValue> {
+
+    public JavaActionWithParam(
+            @NonNull MessageType type,
+            @NonNull SourceFile<Java> file,
+            @NonNull StringValue param,
+            @NonNull CodegenContext context) {
+        super(type, file, param, context);
+    }
+}

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -35,19 +35,20 @@ option java_package = "io.spine.protodata.settings";
 option java_outer_classname = "SettingsProto";
 option java_multiple_files = true;
 
+import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/descriptor.proto";
 import "spine/protodata/file.proto";
 
 // A view on the ProtoData user configuration.
 //
-// Describes the parameters passed by the user to ProtoData. The user may then obtain those
-// parameters by finding the instance of this view.
+// Describes parameters passed to a component of the code generation process.
+// The user may then obtain those parameters by finding the instance of this view.
 //
-// There can only ever be one `Config` instance.
+// @see io.spine.protodata.settings.LoadsSettings
 //
 message Settings {
-    option (entity).kind = PROJECTION;
+    option (entity).kind = VIEW;
 
     // A name of a ProtoData component which is going to consume the settings.
     string consumer = 1;
@@ -75,9 +76,9 @@ extend google.protobuf.EnumValueOptions {
     repeated string extension = 73980 [(internal) = true];
 }
 
-// The format of a protobuf message stored in a file.
+// The format of a Protobuf message stored in a file.
 //
-// Configuration files for ProtoData and its plugins could be stored in one of these formats.
+// Files with settings for ProtoData and its plugins should be stored in one of these formats.
 //
 enum Format {
 
@@ -105,4 +106,48 @@ enum Format {
 
     // A plain string value.
     PLAIN = 5 [(extension) = "txt"];
+}
+
+// A collection of code generation actions associated with the parameters passed to these actions.
+//
+// Some code generation scenarios may be solved by applying combination of render actions.
+// For example, we want to make messages declared in proto files named `command.proto`
+// implement the `CommandMessage` interface, and messages declared in files named `event.proto`
+// implement the `EventMessage` interface. Implementation will involve the following steps:
+//
+//  1) Create a render action called `ImplementInterface`. The action would accept the name
+//     of the interface as the parameter.
+//  2) Create Protobuf type for settings that would match a file pattern with the action and
+//     the corresponding parameter with the name of the interface.
+//  3) Create a ProtoData plugin with a renderer which would load the settings and
+//     run corresponding actions.
+//
+// This type addresses the need #2 above, for having parameterised rendering actions in settings
+// passed to ProtoData plugins.
+//
+// Code generation actions listed in this collection serve the same programming language and
+// are applied to Protobuf declarations of the same kind. For example, we may have actions
+// serving code generation in Java for certain `MessageType`s.
+//
+// @see io.spine.protodata.renderer.RenderAction
+// @see io.spine.tools.code.Language
+// @see io.spine.protodata.ProtoDeclaration
+//
+message Actions {
+
+    // Maps a fully-qualified name of a render action class to a parameter
+    // passed to the action.
+    //
+    // The types, names of which come as the keys in the map, must serve the same
+    // programming language and the same type of Protobuf declaration.
+    // The instances of actions are created reflectively. If the above rule is not
+    // followed a runtime action will occur during creation of an action.
+    //
+    // The type of the parameter wrapped into `Any` must match the type of
+    // the parameter accepted by the action. Otherwise, a runtime error will occur.
+    //
+    // If the action does not accept a parameter, the map entry value may contain
+    // either a default instance of `Any` or a packed instance of `Empty`.
+    //
+    map<string, google.protobuf.Any> action = 1 [(required) = true];
 }

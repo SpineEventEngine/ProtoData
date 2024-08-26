@@ -26,6 +26,7 @@
 
 package io.spine.protodata.renderer
 
+import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.MessageType
 import io.spine.protodata.backend.CodeGenerationContext
@@ -56,7 +57,7 @@ internal class RenderActionSpec {
             """.trimIndent()
     )
 
-    private val action: MessageAction<Java> = StubAction(subject, sourceFile)
+    private val action: MessageAction<Java, Empty> = StubAction(subject, sourceFile)
 
     @Test
     fun `be language-specific`() {
@@ -74,7 +75,7 @@ internal class RenderActionSpec {
 private val context = CodeGenerationContext("fiz-buz")
 
 private class StubAction(type: MessageType, file: SourceFile<Java>) :
-    MessageAction<Java>(Java, type, file, context) {
+    MessageAction<Java, Empty>(Java, type, file, Empty.getDefaultInstance(), context) {
 
     override fun render() {
         // Do nothing.

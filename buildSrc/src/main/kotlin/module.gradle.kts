@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -39,6 +39,7 @@ import io.spine.internal.gradle.report.license.LicenseReporter
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -76,7 +77,7 @@ project.run {
     configureKotlin()
 
     setupTests()
-    configureJavadoc()
+    configureDocTasks()
 
     applyGeneratedDirectories()
     configureTaskDependencies()
@@ -189,11 +190,15 @@ fun Module.configureKotlin() {
     }
 }
 
-fun Module.configureJavadoc() {
+fun Module.configureDocTasks() {
     val dokkaJavadoc by tasks.getting(DokkaTask::class)
     tasks.register("javadocJar", Jar::class) {
         from(dokkaJavadoc.outputDirectory)
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
+    }
+
+    tasks.withType<DokkaTaskPartial>().configureEach {
+        configureForKotlin()
     }
 }
