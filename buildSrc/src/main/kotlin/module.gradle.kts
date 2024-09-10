@@ -35,6 +35,7 @@ import io.spine.internal.gradle.javac.configureErrorProne
 import io.spine.internal.gradle.javac.configureJavac
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
+import io.spine.internal.gradle.publish.IncrementGuard
 import io.spine.internal.gradle.report.license.LicenseReporter
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.kotlin.dsl.invoke
@@ -56,6 +57,7 @@ apply {
     plugin(Protobuf.GradlePlugin.id)
 }
 
+apply<IncrementGuard>()
 LicenseReporter.generateReportIn(project)
 
 object BuildSettings {
