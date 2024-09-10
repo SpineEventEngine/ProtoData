@@ -75,4 +75,16 @@ internal class MessageTypeExtsSpec {
         val nested = GlobalMessage.LocalMessage.getDescriptor().toMessageType()
         nested.isTopLevel shouldBe false
     }
+
+    @Test
+    fun `obtain a field by a short name`() {
+        val type = Timestamp.getDescriptor().toMessageType()
+        val fieldName = "seconds"
+        val field = type.field(fieldName)
+        field.name.value shouldBe fieldName
+
+        assertThrows<IllegalStateException> {
+            type.field("minutes")
+        }
+    }
 }

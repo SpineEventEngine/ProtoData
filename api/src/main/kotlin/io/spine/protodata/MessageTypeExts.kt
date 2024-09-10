@@ -80,3 +80,12 @@ public val MessageType.firstField: Field
  */
 public val MessageType.isTopLevel: Boolean
     get() = !hasDeclaredIn()
+
+/**
+ * Returns a field declared in this [MessageType] with the given short [name].
+ *
+ * @throws IllegalStateException if the type doesn't have a field with the given name.
+ */
+public fun MessageType.field(name: String): Field =
+    fieldList.find { it.name.value == name }
+        ?: error("Field `$name` not found in `$this`.")
