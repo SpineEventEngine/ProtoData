@@ -60,12 +60,6 @@ apply {
 apply<IncrementGuard>()
 LicenseReporter.generateReportIn(project)
 
-object BuildSettings {
-    private const val JAVA_VERSION = 11
-
-    val javaVersion: JavaLanguageVersion = JavaLanguageVersion.of(JAVA_VERSION)
-}
-
 /**
  * The alias for typed extensions functions related to modules of this project.
  */
