@@ -86,6 +86,6 @@ public val MessageType.isTopLevel: Boolean
  *
  * @throws IllegalStateException if the type doesn't have a field with the given name.
  */
-private fun MessageType.field(name: String): Field =
+public fun MessageType.field(name: String): Field =
     fieldList.find { it.name.value == name }
         ?: error("Field `$name` not found in `$this`.")
