@@ -28,7 +28,7 @@
  * The version of the ProtoData to publish.
  *
  * This version also used by integration test projects.
- * E.g. see `test/consumer/build.gradle.kts`.
+ * E.g. see `tests/consumer/build.gradle.kts`.
  *
  * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
  */
