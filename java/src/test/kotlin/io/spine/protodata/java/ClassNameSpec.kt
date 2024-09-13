@@ -28,7 +28,6 @@ package io.spine.protodata.java
 
 import assertCode
 import com.google.protobuf.Timestamp
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.test.Incarnation
@@ -94,13 +93,7 @@ internal class ClassNameSpec {
     @Test
     fun `obtain an outer name`() {
         ClassName(Timestamp.Builder::class).outer() shouldBe ClassName(Timestamp::class)
-    }
-
-    @Test
-    fun `fail obtaining an outer name`() {
-        shouldThrow<IllegalStateException> {
-            ClassName(Timestamp::class).outer()
-        }
+        ClassName(Timestamp::class).outer() shouldBe null
     }
 
     @Nested inner class

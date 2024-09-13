@@ -107,13 +107,13 @@ public class ClassName(
      * The method is useful for obtaining names for outer classes,
      * e.g. `Message` from `Message.Builder`.
      *
-     * @throws IllegalStateException When the current class name is the top level class name.
+     * @return  A new `ClassName` if the current class name is not the top-level class.
+     *          Otherwise, `null` is returned.
      */
-    public fun outer(): ClassName {
-        check(simpleNames.size > 1) {
-            "Cannot obtain outer class name for the top level class name."
-        }
-        return ClassName(packageName, simpleNames.dropLast(1))
+    public fun outer(): ClassName? {
+        return if (simpleNames.size > 1)
+            ClassName(packageName, simpleNames.dropLast(1))
+        else null
     }
 
     override fun equals(other: Any?): Boolean {
