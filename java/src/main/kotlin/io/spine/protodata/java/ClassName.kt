@@ -107,7 +107,7 @@ public class ClassName(
      * The method is useful for obtaining names for outer classes,
      * e.g. `Message` from `Message.Builder`.
      *
-     * @throws IllegalStateException when the current class name is the top level class name.
+     * @throws IllegalStateException When the current class name is the top level class name.
      */
     public fun outer(): ClassName {
         check(simpleNames.size > 1) {
