@@ -101,6 +101,21 @@ public class ClassName(
     public fun nested(simpleClassName: String): ClassName =
         ClassName(packageName, simpleNames + simpleClassName)
 
+    /**
+     * Obtains a new `ClassName` with the last element removed from the list of simple names.
+     *
+     * The method is useful for obtaining names for outer classes,
+     * e.g. `Message` from `Message.Builder`.
+     *
+     * @return  A new `ClassName` if the current class name is not the top-level class.
+     *          Otherwise, `null` is returned.
+     */
+    public fun outer(): ClassName? {
+        return if (simpleNames.size > 1)
+            ClassName(packageName, simpleNames.dropLast(1))
+        else null
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ClassName) return false

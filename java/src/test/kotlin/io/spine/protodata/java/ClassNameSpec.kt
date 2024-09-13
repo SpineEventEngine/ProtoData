@@ -90,6 +90,12 @@ internal class ClassNameSpec {
         ClassName(Timestamp::class).nested("Builder") shouldBe ClassName(Timestamp.Builder::class)
     }
 
+    @Test
+    fun `obtain an outer name`() {
+        ClassName(Timestamp.Builder::class).outer() shouldBe ClassName(Timestamp::class)
+        ClassName(Timestamp::class).outer() shouldBe null
+    }
+
     @Nested inner class
     `offer best guess` {
 
