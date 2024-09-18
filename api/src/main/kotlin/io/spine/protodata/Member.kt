@@ -141,6 +141,12 @@ protected constructor(
 }
 
 /**
+ * Obtains the header of the proto file with the given [path].
+ */
+public fun Member<*>.findHeader(path: File): ProtoFileHeader? =
+    select<ProtobufSourceFile>().findById(path)?.header
+
+/**
  * Obtains all Protobuf source code files passed to the current compilation process.
  */
 public fun Member<*>.findAllFiles(): Collection<ProtobufSourceFile> =

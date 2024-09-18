@@ -28,9 +28,8 @@ package io.spine.protodata.java
 
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
+import io.spine.protodata.findHeader
 import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFile
@@ -61,13 +60,6 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
         val header = findHeader(declaredIn)!!
         return type.javaFile(header)
     }
-
-    /**
-     * Obtains the header of the proto file with the given [path].
-     */
-    protected fun findHeader(path: File): ProtoFileHeader? =
-        select(ProtobufSourceFile::class.java)
-            .findById(path)?.header
 
     /**
      * Locates a Java source file for the given message in this [SourceFileSet].
