@@ -28,9 +28,8 @@ package io.spine.protodata.java
 
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.ProtobufSourceFile
 import io.spine.protodata.TypeName
+import io.spine.protodata.findHeader
 import io.spine.protodata.qualifiedName
 import io.spine.protodata.renderer.Renderer
 import io.spine.protodata.renderer.SourceFile
@@ -48,7 +47,7 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
      */
     protected fun classNameOf(type: TypeName, declaredIn: File): ClassName {
         val header = findHeader(declaredIn)
-        return type.javaClassName(header)
+        return type.javaClassName(header!!)
     }
 
     /**
@@ -58,26 +57,8 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
      * files in a [SourceSet][io.spine.protodata.renderer.SourceFileSet].
      */
     protected fun javaFileOf(type: TypeName, declaredIn: File): Path {
-        val header = findHeader(declaredIn)
+        val header = findHeader(declaredIn)!!
         return type.javaFile(header)
-    }
-
-    private fun findHeader(path: File): ProtoFileHeader =
-        select(ProtobufSourceFile::class.java)
-            .findById(path)!!
-            .header
-
-    /** 
-     * Locates a source file for the given message in this [SourceFileSet].
-     *
-     * @return the found file or `null` if not found.
-     */
-    @Deprecated(
-        message = "Please use `javaFileOf()` instead.",
-        ReplaceWith("javaFileOf")
-    )
-    protected fun SourceFileSet.fileOf(msg: MessageType): SourceFile<Java>? {
-        return javaFileOf(msg)
     }
 
     /**
