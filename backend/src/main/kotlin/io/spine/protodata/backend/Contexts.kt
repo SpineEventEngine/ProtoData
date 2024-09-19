@@ -30,7 +30,6 @@ import com.google.common.annotations.VisibleForTesting
 import io.spine.base.EntityState
 import io.spine.base.EventMessage
 import io.spine.core.userId
-import io.spine.protodata.InsertionPointsView
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.plugin.add
 import io.spine.protodata.type.TypeSystem
