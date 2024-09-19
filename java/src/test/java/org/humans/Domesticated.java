@@ -23,25 +23,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package options;
+package org.humans;
 
-import "spine/options.proto";
-
-option (type_url_prefix) = "type.earth.life";
-option java_package = "life.earth";
-option java_multiple_files = true;
-
-option (every_is).java_type = "Animal";
-option (every_is).generate = true;
-
-message Lizard {
-}
-
-message Octopus {
-}
-
-message Elephant {
-    option (is).java_type = "org.humans.Domesticated";
+/**
+ * The interface used in the {@code (is)} proto option.
+ */
+public interface Domesticated {
 }
