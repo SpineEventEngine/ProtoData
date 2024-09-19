@@ -35,6 +35,7 @@ import io.spine.protodata.CodegenContext
 import io.spine.protodata.MessageType
 import io.spine.protodata.render.ActionFactory
 import io.spine.protodata.render.ActionFactoryException
+import io.spine.protodata.render.Actions
 import io.spine.protodata.render.RenderAction
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.render.actions
@@ -86,7 +87,7 @@ internal class ActionFactorySpec {
     @Test
     fun `prohibit empty 'Actions' instance`() {
         assertThrows<IllegalArgumentException> {
-            ActionFactory<Java, MessageType>(Java, io.spine.protodata.render.Actions.getDefaultInstance(), classLoader)
+            ActionFactory<Java, MessageType>(Java, Actions.getDefaultInstance(), classLoader)
         }
     }
 
@@ -180,7 +181,7 @@ internal class ActionFactorySpec {
      * Creates an instance of [ActionFactory] and attempts to create actions
      * for the given settings using stubs defined above.
      */
-    private fun createActions(actions: io.spine.protodata.render.Actions): List<RenderAction<Java, MessageType, *>> {
+    private fun createActions(actions: Actions): List<RenderAction<Java, MessageType, *>> {
         val factory = ActionFactory<Java, MessageType>(Java, actions, classLoader)
         return factory.create(messageType, sourceFile, stubContext)
     }
