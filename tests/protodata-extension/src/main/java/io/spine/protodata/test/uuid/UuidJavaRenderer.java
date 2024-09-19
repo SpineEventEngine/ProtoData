@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableList;
 import io.spine.protodata.File;
 import io.spine.protodata.TypeName;
 import io.spine.protodata.java.ClassName;
-import io.spine.protodata.java.JavaRenderer;
+import io.spine.protodata.java.render.JavaRenderer;
 import io.spine.protodata.render.InsertionPoint;
 import io.spine.protodata.render.SourceFileSet;
 import io.spine.protodata.test.UuidType;

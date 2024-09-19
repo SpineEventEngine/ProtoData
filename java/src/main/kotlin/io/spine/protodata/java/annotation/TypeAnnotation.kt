@@ -26,7 +26,7 @@
 package io.spine.protodata.java.annotation
 
 import io.spine.protodata.java.ClassOrEnumName
-import io.spine.protodata.java.JavaRenderer
+import io.spine.protodata.java.render.JavaRenderer
 import io.spine.protodata.java.file.BeforeNestedTypeDeclaration
 import io.spine.protodata.java.file.BeforePrimaryDeclaration
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere

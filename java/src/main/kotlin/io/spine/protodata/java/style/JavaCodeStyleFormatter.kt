@@ -27,7 +27,7 @@
 package io.spine.protodata.java.style
 
 import com.intellij.psi.codeStyle.JavaCodeStyleSettings
-import io.spine.protodata.java.JavaRenderer
+import io.spine.protodata.java.render.JavaRenderer
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.render.forEachOfLanguage

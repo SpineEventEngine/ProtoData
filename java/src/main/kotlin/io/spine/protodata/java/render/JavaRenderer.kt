@@ -24,12 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.java
+package io.spine.protodata.java.render
 
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.TypeName
 import io.spine.protodata.findHeader
+import io.spine.protodata.java.ClassName
+import io.spine.protodata.java.javaClassName
+import io.spine.protodata.java.javaFile
 import io.spine.protodata.qualifiedName
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFile
