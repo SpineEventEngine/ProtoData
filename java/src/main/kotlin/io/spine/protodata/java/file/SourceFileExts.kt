@@ -26,8 +26,8 @@
 
 package io.spine.protodata.java.file
 
-import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.render.SourceFile
+import io.spine.protodata.render.SourceFileSet
 import kotlin.io.path.extension
 
 /**

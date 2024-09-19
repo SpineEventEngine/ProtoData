@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata.render
 
 import io.spine.protodata.ProtoDeclarationName
 import io.spine.protodata.type.Convention

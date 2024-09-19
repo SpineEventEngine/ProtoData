@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata.render
 
 import io.spine.logging.WithLogging
 import io.spine.protodata.TypeName
@@ -35,7 +35,7 @@ import io.spine.text.TextCoordinates
 /**
  * A point is a source file, where more code may be inserted.
  */
-public interface InsertionPoint : CoordinatesFactory, WithLogging {
+public interface InsertionPoint : io.spine.protodata.render.CoordinatesFactory, WithLogging {
 
     /**
      * The name of this insertion point.
@@ -84,7 +84,7 @@ public interface InsertionPoint : CoordinatesFactory, WithLogging {
  *
  * Implementations should use [locateOccurrence] instead of [locate].
  */
-public interface NonRepeatingInsertionPoint : InsertionPoint {
+public interface NonRepeatingInsertionPoint : io.spine.protodata.render.InsertionPoint {
 
     /**
      * Locates the site where the insertion point should be added.
@@ -131,8 +131,8 @@ public interface NonRepeatingInsertionPoint : InsertionPoint {
  * @return the code line that represents this insertion point or empty string if
  *         the label of the insertion point is empty.
  */
-public val InsertionPoint.codeLine: String
-    get() = if (this is ProtocInsertionPoint) {
+public val io.spine.protodata.render.InsertionPoint.codeLine: String
+    get() = if (this is io.spine.protodata.render.ProtocInsertionPoint) {
         protocStyleCodeLine
     } else {
         if (label.isEmpty()) "" else "INSERT:'${label}'"
@@ -155,7 +155,7 @@ public val InsertionPoint.codeLine: String
  */
 public class ProtocInsertionPoint(
     public override val label: String
-) : InsertionPoint {
+) : io.spine.protodata.render.InsertionPoint {
 
     /**
      * Creates a Protobuf compiler-style insertion point by the standard formula:

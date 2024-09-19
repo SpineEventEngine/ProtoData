@@ -24,13 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata.render
 
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import com.intellij.openapi.project.Project
 import io.spine.annotation.Internal
 import io.spine.protodata.ProtoDeclarationName
-import io.spine.protodata.renderer.SourceFileSet.Companion.create
+import io.spine.protodata.render.SourceFileSet.Companion.create
 import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.tools.code.Language

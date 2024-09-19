@@ -29,10 +29,10 @@ import io.spine.protodata.java.ClassOrEnumName
 import io.spine.protodata.java.JavaRenderer
 import io.spine.protodata.java.file.BeforeNestedTypeDeclaration
 import io.spine.protodata.java.file.BeforePrimaryDeclaration
-import io.spine.protodata.renderer.CoordinatesFactory.Companion.nowhere
-import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.renderer.forEachOfLanguage
+import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
+import io.spine.protodata.render.SourceFile
+import io.spine.protodata.render.SourceFileSet
+import io.spine.protodata.render.forEachOfLanguage
 import io.spine.tools.code.Java
 import io.spine.tools.java.isRepeatable
 import io.spine.tools.java.reference

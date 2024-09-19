@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.ImplicitPluginWithRenderers
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.renderer.codeLine
+import io.spine.protodata.render.SourceFileSet
+import io.spine.protodata.render.codeLine
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.CompanionFramer
@@ -164,7 +163,7 @@ class InsertionPointsSpec {
 
     @Test
     fun `return empty 'codeLine' for empty 'label'`() {
-        val insertionPoint = object: InsertionPoint {
+        val insertionPoint = object: io.spine.protodata.render.InsertionPoint {
             override val label: String = ""
             override fun locate(text: String): Set<TextCoordinates> = setOf()
         }

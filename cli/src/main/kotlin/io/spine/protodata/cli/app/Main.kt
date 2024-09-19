@@ -54,7 +54,7 @@ import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.string.Separator
 import io.spine.string.ti

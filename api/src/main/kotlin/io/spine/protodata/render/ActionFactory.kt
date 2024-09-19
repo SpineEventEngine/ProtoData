@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata.render
 
 import com.google.protobuf.Any
 import com.google.protobuf.Empty
@@ -73,7 +73,7 @@ import org.checkerframework.checker.signature.qual.FqBinaryName
  */
 public class ActionFactory<L : Language, D : ProtoDeclaration>(
     private val language: L,
-    private val actions: Actions,
+    private val actions: io.spine.protodata.render.Actions,
     classLoader: ClassLoader
 ) : Factory<RenderAction<L, D, *>>(classLoader) {
 

@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,14 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer.given
+package io.spine.protodata.render.given
 
-import io.spine.protodata.type.NameElement
+import io.spine.protodata.TypeName
+import io.spine.protodata.type.Convention
+import io.spine.protodata.type.Declaration
+import io.spine.tools.code.AnyLanguage
 import io.spine.tools.code.Language
+import kotlin.io.path.Path
 
-class PlainTextName(
-    private val name: String
-) : NameElement<Language> {
+object PlainTextConvention : Convention<Language, TypeName, PlainTextName> {
 
-    override fun toCode(): String = name
+    override fun declarationFor(name: TypeName): Declaration<Language, PlainTextName> {
+        val generatedName = PlainTextName(name.simpleName)
+        val packageDir = name.packageName.replace('.', '/')
+        return Declaration(
+            generatedName,
+            Path("$packageDir/${name.simpleName.lowercase()}.txt")
+        )
+    }
+
+    override val language: Language = AnyLanguage
 }

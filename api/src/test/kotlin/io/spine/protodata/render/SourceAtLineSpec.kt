@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,38 +24,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata.render
 
-import io.spine.text.TextCoordinates
-import io.spine.tools.code.Java
+import io.kotest.matchers.shouldBe
+import io.spine.string.Indent
+import io.spine.string.Separator
+import io.spine.string.ti
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
-@DisplayName("`InsertionPointPrinter` should")
-class InsertionPointPrinterSpec {
+@DisplayName("`SourceAtLine` should")
+internal class SourceAtLineSpec {
 
-    /**
-     * Tests that the printer does not accept points without labels passed to the constructor.
-     *
-     * It is still possible to pass such points when overriding the deprecated method
-     * [InsertionPointPrinter.supportedInsertionPoints].
-     *
-     * Currently, the implementation of [InsertionPointPrinter.render] filters out such points.
-     * We aim to remove the printing of insertion points as PSI-based code parsing
-     * gets more ground.
-     */
     @Test
-    fun `not accept points without labels`() {
-        assertThrows<IllegalArgumentException> {
-            object : InsertionPointPrinter<Java>(Java, listOf(StubPoint())) {
-                // No-op.
-            }
-        }
+    fun `indent lines`() {
+        val source = """
+            line 1
+            line 2
+            line 3
+        """.ti().lines()
+
+        source.indent(Indent(size = 2), level = 2) shouldBe """
+            |    line 1
+            |    line 2
+            |    line 3
+        """.tm()
+
+        source.indent(Indent(size = 3), level = 0) shouldBe """
+            |line 1
+            |line 2
+            |line 3
+        """.tm()
     }
 }
 
-private class StubPoint: InsertionPoint {
-    override val label: String = ""
-    override fun locate(text: String): Set<TextCoordinates> = emptySet()
-}
+/**
+ * The same as [trimMargin] but with system-dependent line separator, for
+ * compatibility with Windows.
+ *
+ * This should be migrated to `io.spine.string` package, once it is
+ * [available](https://github.com/SpineEventEngine/base/issues/808).
+ */
+private fun String.tm() = trimMargin().replace(Separator.LF.value, Separator.nl())

@@ -26,7 +26,7 @@
 
 package io.spine.protodata.java.annotation
 
-import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.render.SourceFile
 import io.spine.protodata.settings.loadSettings
 import io.spine.tools.code.Java
 

@@ -33,7 +33,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import io.spine.protodata.java.ClassOrEnumName
-import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.render.SourceFile
 import io.spine.string.Separator
 import io.spine.text.Text
 import io.spine.tools.psi.convertLineSeparators

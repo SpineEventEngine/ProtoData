@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata.render
 
 import com.google.common.annotations.VisibleForTesting
 import io.spine.string.Indent
@@ -40,7 +40,7 @@ import io.spine.string.atLevel
 public class SourceAtLine
 internal constructor(
     private val file: SourceFile<*>,
-    private val point: InsertionPoint,
+    private val point: io.spine.protodata.render.InsertionPoint,
     private val indent: Indent = Indent(DEFAULT_JAVA_INDENT_SIZE)
 ) {
 

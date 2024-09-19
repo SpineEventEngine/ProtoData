@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.renderer
+package io.spine.protodata.render
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.fileTypes.FileType
@@ -34,6 +34,7 @@ import com.intellij.psi.PsiFileFactory
 import com.sksamuel.aedile.core.cacheBuilder
 import io.spine.protodata.InsertedPoints
 import io.spine.protodata.file
+import io.spine.protodata.render.SourceFile.Companion.fromCode
 import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
@@ -258,7 +259,7 @@ private constructor(
      *
      * @see atInline
      */
-    public fun at(insertionPoint: InsertionPoint): SourceAtLine =
+    public fun at(insertionPoint: io.spine.protodata.render.InsertionPoint): SourceAtLine =
         SourceAtLine(this, insertionPoint)
 
     /**
@@ -276,7 +277,7 @@ private constructor(
      *
      * @see at
      */
-    public fun atInline(insertionPoint: InsertionPoint): SourceAtPoint {
+    public fun atInline(insertionPoint: io.spine.protodata.render.InsertionPoint): SourceAtPoint {
         val points = sources.querying.select<InsertedPoints>()
             .findById(file { path = relativePath.toString() })
         val point = points?.pointList?.firstOrNull { it.label == insertionPoint.label }

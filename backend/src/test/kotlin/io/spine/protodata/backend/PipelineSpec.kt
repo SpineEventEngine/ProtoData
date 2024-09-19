@@ -35,8 +35,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.ConfigurationError
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.renderer.codeLine
+import io.spine.protodata.render.SourceFileSet
+import io.spine.protodata.render.codeLine
 import io.spine.protodata.settings.Format
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.settings.defaultConsumerId

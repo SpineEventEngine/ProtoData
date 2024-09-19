@@ -29,7 +29,7 @@ package io.spine.protodata.settings.given;
 import com.google.protobuf.StringValue;
 import io.spine.protodata.CodegenContext;
 import io.spine.protodata.MessageType;
-import io.spine.protodata.renderer.SourceFile;
+import io.spine.protodata.render.SourceFile;
 import io.spine.tools.code.Java;
 import org.checkerframework.checker.nullness.qual.NonNull;
 

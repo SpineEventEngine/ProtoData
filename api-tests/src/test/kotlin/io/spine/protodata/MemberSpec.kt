@@ -29,8 +29,8 @@ package io.spine.protodata
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldEndWith
 import io.spine.protodata.backend.ImplicitPluginWithRenderers
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.render.Renderer
+import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.testing.PipelineSetup
 import io.spine.tools.code.Java
 import java.nio.file.Path

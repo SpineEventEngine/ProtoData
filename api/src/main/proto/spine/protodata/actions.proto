@@ -31,7 +31,7 @@ package spine.protodata;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.renderer";
+option java_package = "io.spine.protodata.render";
 option java_outer_classname = "ActionsProto";
 option java_multiple_files = true;
 

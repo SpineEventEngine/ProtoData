@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,8 +29,8 @@ package io.spine.protodata.test
 import com.google.protobuf.StringValue
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.render.Renderer
+import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.loadSettings
 import io.spine.time.toInstant
 import io.spine.tools.code.AnyLanguage

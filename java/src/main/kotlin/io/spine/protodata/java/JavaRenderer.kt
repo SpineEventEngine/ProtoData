@@ -31,9 +31,9 @@ import io.spine.protodata.MessageType
 import io.spine.protodata.TypeName
 import io.spine.protodata.findHeader
 import io.spine.protodata.qualifiedName
-import io.spine.protodata.renderer.Renderer
-import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.render.Renderer
+import io.spine.protodata.render.SourceFile
+import io.spine.protodata.render.SourceFileSet
 import io.spine.tools.code.Java
 import java.nio.file.Path
 
