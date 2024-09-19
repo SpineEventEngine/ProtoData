@@ -33,8 +33,13 @@ import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.MessageType
+import io.spine.protodata.renderer.ActionFactory
+import io.spine.protodata.renderer.ActionFactoryException
+import io.spine.protodata.renderer.Actions
 import io.spine.protodata.renderer.RenderAction
 import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.renderer.actions
+import io.spine.protodata.renderer.add
 import io.spine.protodata.settings.given.ActionNoParam
 import io.spine.protodata.settings.given.ActionStringParams
 import io.spine.protodata.settings.given.JavaActionNoParam

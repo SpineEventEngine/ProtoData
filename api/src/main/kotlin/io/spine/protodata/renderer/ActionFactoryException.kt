@@ -24,9 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.settings
+package io.spine.protodata.renderer
 
-import io.spine.protodata.renderer.RenderAction
 import io.spine.tools.code.Language
 import org.checkerframework.checker.signature.qual.FqBinaryName
 

@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.settings
+package io.spine.protodata.renderer
 
 import com.google.protobuf.Any
 import com.google.protobuf.Empty
@@ -33,7 +33,6 @@ import com.google.protobuf.StringValue
 import com.google.protobuf.stringValue
 import io.spine.protobuf.pack
 import io.spine.protodata.ProtoDeclaration
-import io.spine.protodata.renderer.RenderAction
 import io.spine.tools.code.Language
 import io.spine.tools.kotlin.reference
 import kotlin.reflect.KClass

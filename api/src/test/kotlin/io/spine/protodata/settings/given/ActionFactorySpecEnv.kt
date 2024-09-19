@@ -34,7 +34,7 @@ import io.spine.protodata.CodegenContext
 import io.spine.protodata.MessageType
 import io.spine.protodata.renderer.RenderAction
 import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.settings.ActionFactory
+import io.spine.protodata.renderer.ActionFactory
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.entity.Entity
 import io.spine.server.integration.ThirdPartyContext

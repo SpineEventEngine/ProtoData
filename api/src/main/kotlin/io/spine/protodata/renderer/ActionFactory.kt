@@ -24,19 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.settings
+package io.spine.protodata.renderer
 
+import com.google.protobuf.Any
 import com.google.protobuf.Empty
 import com.google.protobuf.Message
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.CodegenContext
 import io.spine.protodata.ProtoDeclaration
-import io.spine.protodata.renderer.RenderAction
-import io.spine.protodata.renderer.SourceFile
 import io.spine.reflect.Factory
 import io.spine.tools.code.Language
 import org.checkerframework.checker.signature.qual.FqBinaryName
-import com.google.protobuf.Any as ProtoAny
 
 /**
  * Creates instances of [RenderAction] specified in the given [actions].
@@ -150,8 +148,8 @@ public class ActionFactory<L : Language, D : ProtoDeclaration>(
  *
  * @see Actions.getActionMap
  */
-private fun ProtoAny.unpackParameter(): Message {
-    if (this == ProtoAny.getDefaultInstance()) {
+private fun Any.unpackParameter(): Message {
+    if (this == Any.getDefaultInstance()) {
         return Empty.getDefaultInstance()
     }
     return AnyPacker.unpack(this)
