@@ -32,7 +32,6 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.sksamuel.aedile.core.cacheBuilder
-import io.spine.protodata.InsertedPoints
 import io.spine.protodata.file
 import io.spine.protodata.render.SourceFile.Companion.fromCode
 import io.spine.server.query.select

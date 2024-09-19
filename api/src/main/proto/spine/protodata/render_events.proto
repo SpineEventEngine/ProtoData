@@ -1,0 +1,61 @@
+/*
+* Copyright 2024, TeamDev. All rights reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.apache.org/licenses/LICENSE-2.0
+*
+* Redistribution and use in source and/or binary forms, with or without
+* modification, must retain the above copyright notice and the following
+* disclaimer.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+* A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+* OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+syntax = "proto3";
+
+package spine.protodata;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.render.event";
+option java_outer_classname = "RenderEventsProto";
+option java_multiple_files = true;
+
+import "spine/protodata/file.proto";
+
+// Emitted when an insertion point printer adds an insertion point to a code file.
+message InsertionPointPrinted {
+
+    // Path to the code file.
+    //
+    // This path is relative to the source file set which contains the file.
+    //
+    File file = 1 [(required) = true];
+
+    // The insertion point label.
+    //
+    // This is a unique text that allows ProtoData to find insertion points in the text later.
+    //
+    string label = 2 [(required) = true];
+
+    // The appearance of the insertion point in the code.
+    //
+    // This is typically a comment which contains the insertion point label and possibly some other
+    // syntax. New code can be inserted right after this substring in the code file.
+    //
+    string representation_in_code = 3 [(required) = true];
+}

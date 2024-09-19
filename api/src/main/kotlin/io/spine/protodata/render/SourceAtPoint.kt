@@ -26,7 +26,6 @@
 
 package io.spine.protodata.render
 
-import io.spine.protodata.InsertedPoint
 import io.spine.text.TextFactory
 import io.spine.util.interlaced
 
