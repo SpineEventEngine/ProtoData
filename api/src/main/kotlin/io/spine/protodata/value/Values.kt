@@ -26,7 +26,7 @@
 
 @file:JvmName("Values")
 
-package io.spine.protodata
+package io.spine.protodata.value
 
 import com.google.protobuf.BoolValue
 import com.google.protobuf.ByteString
@@ -45,8 +45,8 @@ import com.google.protobuf.MapEntry
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import io.spine.protobuf.pack
-import io.spine.protodata.MapValueKt.entry
-import io.spine.protodata.NullValue.NULL_VALUE
+import io.spine.protodata.value.MapValueKt.entry
+import io.spine.protodata.value.NullValue.NULL_VALUE
 import io.spine.protodata.protobuf.name
 
 import com.google.protobuf.Any as ProtoAny

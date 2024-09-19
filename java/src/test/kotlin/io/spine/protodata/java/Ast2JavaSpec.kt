@@ -32,9 +32,9 @@ import com.google.protobuf.Value
 import io.kotest.matchers.shouldBe
 import io.spine.protobuf.field
 import io.spine.protodata.Field
-import io.spine.protodata.ListValue
 import io.spine.protodata.fieldName
 import io.spine.protodata.protobuf.toField
+import io.spine.protodata.value.ListValue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

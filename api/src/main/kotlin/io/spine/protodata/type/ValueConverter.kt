@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,17 +27,17 @@
 package io.spine.protodata.type
 
 import io.spine.protodata.Type
-import io.spine.protodata.Value
-import io.spine.protodata.Value.KindCase.BOOL_VALUE
-import io.spine.protodata.Value.KindCase.BYTES_VALUE
-import io.spine.protodata.Value.KindCase.DOUBLE_VALUE
-import io.spine.protodata.Value.KindCase.ENUM_VALUE
-import io.spine.protodata.Value.KindCase.INT_VALUE
-import io.spine.protodata.Value.KindCase.LIST_VALUE
-import io.spine.protodata.Value.KindCase.MAP_VALUE
-import io.spine.protodata.Value.KindCase.MESSAGE_VALUE
-import io.spine.protodata.Value.KindCase.NULL_VALUE
-import io.spine.protodata.Value.KindCase.STRING_VALUE
+import io.spine.protodata.value.Value
+import io.spine.protodata.value.Value.KindCase.BOOL_VALUE
+import io.spine.protodata.value.Value.KindCase.BYTES_VALUE
+import io.spine.protodata.value.Value.KindCase.DOUBLE_VALUE
+import io.spine.protodata.value.Value.KindCase.ENUM_VALUE
+import io.spine.protodata.value.Value.KindCase.INT_VALUE
+import io.spine.protodata.value.Value.KindCase.LIST_VALUE
+import io.spine.protodata.value.Value.KindCase.MAP_VALUE
+import io.spine.protodata.value.Value.KindCase.MESSAGE_VALUE
+import io.spine.protodata.value.Value.KindCase.NULL_VALUE
+import io.spine.protodata.value.Value.KindCase.STRING_VALUE
 import io.spine.tools.code.Language
 
 /**
