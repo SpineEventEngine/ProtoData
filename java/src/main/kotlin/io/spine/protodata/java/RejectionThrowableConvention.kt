@@ -38,6 +38,7 @@ import io.spine.tools.code.Java
  * The convention only defines a declaration for rejection message types. Any other types are
  * undefined and thus result in the [declarationFor] method returning `null`.
  */
+@Deprecated("Please use the class from McJava instead.")
 public class RejectionThrowableConvention(
     typeSystem: TypeSystem
 ) : BaseJavaConvention<TypeName, ClassName>(typeSystem) {
