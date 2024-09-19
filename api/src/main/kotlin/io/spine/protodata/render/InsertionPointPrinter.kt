@@ -50,13 +50,13 @@ import io.spine.tools.code.Language
  */
 public abstract class InsertionPointPrinter<L: Language>(
     protected val target: L,
-    points: Iterable<io.spine.protodata.render.InsertionPoint>
+    points: Iterable<InsertionPoint>
 ) : Renderer<L>(target) {
 
     @Deprecated("Please pass the insertion points to the constructor.")
     public constructor(target: L) : this(target, emptyList())
 
-    protected val points: Set<io.spine.protodata.render.InsertionPoint>
+    protected val points: Set<InsertionPoint>
 
     init {
         points.forEach {
@@ -73,7 +73,7 @@ public abstract class InsertionPointPrinter<L: Language>(
      * The property getter may use [Renderer.select] to find out more info about the message types.
      */
     @Deprecated("Please pass the insertion points to the constructor.", ReplaceWith("points"))
-    protected open fun supportedInsertionPoints(): Set<io.spine.protodata.render.InsertionPoint> = points
+    protected open fun supportedInsertionPoints(): Set<InsertionPoint> = points
 
     final override fun render(sources: SourceFileSet) {
         sources.prepareCode { file ->
@@ -88,7 +88,7 @@ public abstract class InsertionPointPrinter<L: Language>(
 
     private fun print(
         file: SourceFile<*>,
-        point: io.spine.protodata.render.InsertionPoint
+        point: InsertionPoint
     ) {
         val text = file.code()
         val coords = point.locate(text)
@@ -108,7 +108,7 @@ public abstract class InsertionPointPrinter<L: Language>(
     private fun renderWholeLinePoint(
         coordinates: Set<TextCoordinates>,
         lines: MutableList<String>,
-        point: io.spine.protodata.render.InsertionPoint,
+        point: InsertionPoint,
         file: SourceFile<*>
     ) {
         val comment = target.comment(point.codeLine)
@@ -133,7 +133,7 @@ public abstract class InsertionPointPrinter<L: Language>(
     private fun renderInlinePoint(
         coordinates: Set<TextCoordinates>,
         lines: MutableList<String>,
-        point: io.spine.protodata.render.InsertionPoint,
+        point: InsertionPoint,
         file: SourceFile<*>
     ) {
         val cursors = coordinates.map { it.inline }
@@ -227,8 +227,10 @@ private fun Iterable<TextCoordinates>.precedentType(): TextCoordinates.KindCase?
  * Checks if all the receiver coordinates are [compatible][compatibleWith]
  * the given [precedentType].
  */
-private fun Iterable<TextCoordinates>.ensureSameType(insertionPoint: io.spine.protodata.render.InsertionPoint,
-                                                     precedentType: TextCoordinates.KindCase) {
+private fun Iterable<TextCoordinates>.ensureSameType(
+    insertionPoint: InsertionPoint,
+    precedentType: TextCoordinates.KindCase
+) {
     forEach { coords ->
         if (!coords.compatibleWith(precedentType)) {
             throw RenderingException(
