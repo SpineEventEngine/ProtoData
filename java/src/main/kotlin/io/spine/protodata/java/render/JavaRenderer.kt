@@ -29,7 +29,7 @@ package io.spine.protodata.java.render
 import io.spine.protodata.File
 import io.spine.protodata.MessageType
 import io.spine.protodata.TypeName
-import io.spine.protodata.findHeader
+import io.spine.protodata.context.findHeader
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.javaClassName
 import io.spine.protodata.java.javaFile

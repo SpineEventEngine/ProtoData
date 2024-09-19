@@ -30,8 +30,8 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.environment.DefaultMode
-import io.spine.protodata.CodegenContext
 import io.spine.protodata.backend.event.CompilerEvents
+import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render

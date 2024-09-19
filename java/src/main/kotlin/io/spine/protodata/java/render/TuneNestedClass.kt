@@ -29,8 +29,8 @@ package io.spine.protodata.java.render
 import com.google.protobuf.StringValue
 import com.google.protobuf.stringValue
 import com.intellij.psi.PsiClass
-import io.spine.protodata.CodegenContext
 import io.spine.protodata.MessageType
+import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.render.SourceFile
 import io.spine.tools.code.Java
 

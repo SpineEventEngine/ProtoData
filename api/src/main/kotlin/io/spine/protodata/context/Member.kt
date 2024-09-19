@@ -24,10 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.context
 
 import io.spine.annotation.Internal
 import io.spine.base.EntityState
+import io.spine.protodata.EnumInFile
+import io.spine.protodata.File
+import io.spine.protodata.MessageInFile
+import io.spine.protodata.ProtoFileHeader
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.ServiceInFile
+import io.spine.protodata.enums
+import io.spine.protodata.messages
+import io.spine.protodata.services
 import io.spine.protodata.settings.LoadsSettings
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.query.QueryingClient

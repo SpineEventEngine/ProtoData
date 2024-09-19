@@ -28,8 +28,8 @@ package io.spine.protodata.render
 
 import io.kotest.matchers.shouldBe
 import io.spine.base.EntityState
-import io.spine.protodata.CodegenContext
 import io.spine.protodata.backend.CodeGenerationContext
+import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.query.Querying

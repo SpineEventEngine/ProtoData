@@ -26,11 +26,11 @@
 
 package io.spine.protodata.java.render
 
-import io.spine.protodata.CodegenContext
 import io.spine.protodata.MessageType
-import io.spine.protodata.render.SourceFile
+import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.render.ActionFactory
 import io.spine.protodata.render.Actions
+import io.spine.protodata.render.SourceFile
 import io.spine.tools.code.Java
 
 /**

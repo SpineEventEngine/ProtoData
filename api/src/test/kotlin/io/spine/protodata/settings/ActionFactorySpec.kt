@@ -31,8 +31,9 @@ import com.google.protobuf.stringValue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.spine.protodata.CodegenContext
 import io.spine.protodata.MessageType
+import io.spine.protodata.context.CodegenContext
+import io.spine.protodata.protobuf.toMessageType
 import io.spine.protodata.render.ActionFactory
 import io.spine.protodata.render.ActionFactoryException
 import io.spine.protodata.render.Actions
@@ -47,7 +48,6 @@ import io.spine.protodata.settings.given.JavaActionWithParam
 import io.spine.protodata.settings.given.JustMatchingConstructor
 import io.spine.protodata.settings.given.RenderInKotlin
 import io.spine.protodata.settings.given.StubContext
-import io.spine.protodata.protobuf.toMessageType
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.kotlin.reference

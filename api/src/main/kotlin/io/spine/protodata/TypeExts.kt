@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -32,10 +32,9 @@ import io.spine.protodata.type.TypeSystem
 import io.spine.type.shortDebugString
 
 /**
- * Obtains a simple name of the type, if represents a message or an enum.
+ * Obtains a simple name of the type if represents a message or an enum.
  *
- * @throws IllegalStateException
- *          if this is a primitive type.
+ * @throws IllegalStateException If this is a primitive type.
  */
 public val Type.simpleName: String
     get() = typeName.simpleName

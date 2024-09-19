@@ -27,13 +27,13 @@
 package io.spine.protodata.render
 
 import com.google.protobuf.Message
-import io.spine.protodata.CodegenContext
 import io.spine.protodata.EnumType
-import io.spine.protodata.Member
 import io.spine.protodata.MessageType
 import io.spine.protodata.ProtoDeclaration
 import io.spine.protodata.Service
 import io.spine.protodata.TypeDeclaration
+import io.spine.protodata.context.CodegenContext
+import io.spine.protodata.context.Member
 import io.spine.tools.code.Language
 
 /**

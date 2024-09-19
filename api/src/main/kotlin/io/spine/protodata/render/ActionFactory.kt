@@ -30,8 +30,8 @@ import com.google.protobuf.Any
 import com.google.protobuf.Empty
 import com.google.protobuf.Message
 import io.spine.protobuf.AnyPacker
-import io.spine.protodata.CodegenContext
 import io.spine.protodata.ProtoDeclaration
+import io.spine.protodata.context.CodegenContext
 import io.spine.reflect.Factory
 import io.spine.tools.code.Language
 import org.checkerframework.checker.signature.qual.FqBinaryName
