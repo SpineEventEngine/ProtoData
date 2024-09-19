@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -36,14 +36,11 @@ import io.spine.protodata.type.TypeSystem
  * The given [messageType] is not considered as dependency (for itself), unless it is used
  * recursively in one of the immediate or nested fields.
  *
- * @param messageType
- *         the type for which we collect dependencies.
- * @param cardinality
- *         the cardinality of fields taken into account when traversing the types.
- *         `null` value means that all fields, including `repeated` and `map` ones will be
- *         taken into account when collecting types.
- * @param typeSystem
- *         the type system to obtain a `MessageType` by its name.
+ * @param messageType The type for which we collect dependencies.
+ * @param cardinality The cardinality of fields taken into account when traversing the types.
+ *    `null` value means that all fields, including `repeated` and `map` ones will be
+ *    taken into account when collecting types.
+ * @param typeSystem The type system to obtain a `MessageType` by its name.
  */
 public class MessageTypeDependencies(
     private val messageType: MessageType,

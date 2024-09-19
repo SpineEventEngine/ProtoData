@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.protobuf
 
 import com.google.protobuf.Descriptors.FileDescriptor
 
@@ -93,7 +93,7 @@ private class FdComparator : Comparator<FileDescriptor> {
 
     @Suppress("ReturnCount")
     override fun compare(f1: FileDescriptor, f2: FileDescriptor): Int {
-        // Sort by number of dependencies first.
+        // Sort by the number of dependencies first.
         var result = f1.importCount.compareTo(f2.importCount)
         if (result != 0) return result
 

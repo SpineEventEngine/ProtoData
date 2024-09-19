@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,14 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.protobuf
 
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.Descriptors.FileDescriptor
 import io.spine.option.OptionsProto
+import io.spine.protodata.EnumType
+import io.spine.protodata.File
+import io.spine.protodata.MessageType
+import io.spine.protodata.ProtoDeclaration
+import io.spine.protodata.ProtoFileHeader
 import io.spine.protodata.ProtoFileHeader.SyntaxVersion
 import io.spine.protodata.ProtoFileHeader.SyntaxVersion.PROTO2
 import io.spine.protodata.ProtoFileHeader.SyntaxVersion.PROTO3
+import io.spine.protodata.ProtobufSourceFile
+import io.spine.protodata.Service
+import io.spine.protodata.file
+import io.spine.protodata.protoFileHeader
+import io.spine.protodata.protobufSourceFile
+import io.spine.protodata.toList
 
 /**
  * Obtains the syntax version of the given [FileDescriptor].

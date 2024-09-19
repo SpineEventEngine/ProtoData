@@ -47,7 +47,7 @@ import io.spine.protodata.settings.given.JavaActionWithParam
 import io.spine.protodata.settings.given.JustMatchingConstructor
 import io.spine.protodata.settings.given.RenderInKotlin
 import io.spine.protodata.settings.given.StubContext
-import io.spine.protodata.toMessageType
+import io.spine.protodata.protobuf.toMessageType
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.kotlin.reference

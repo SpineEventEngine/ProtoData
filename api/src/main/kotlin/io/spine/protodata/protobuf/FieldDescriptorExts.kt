@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.protobuf
 
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.BOOL
@@ -46,7 +46,11 @@ import com.google.protobuf.Descriptors.FieldDescriptor.Type.STRING
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT32
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT64
 import com.google.protobuf.Empty
+import io.spine.protodata.Field
+import io.spine.protodata.FieldKt
 import io.spine.protodata.FieldKt.ofMap
+import io.spine.protodata.FieldName
+import io.spine.protodata.PrimitiveType
 import io.spine.protodata.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.PrimitiveType.TYPE_BYTES
 import io.spine.protodata.PrimitiveType.TYPE_DOUBLE
@@ -62,6 +66,13 @@ import io.spine.protodata.PrimitiveType.TYPE_SINT64
 import io.spine.protodata.PrimitiveType.TYPE_STRING
 import io.spine.protodata.PrimitiveType.TYPE_UINT32
 import io.spine.protodata.PrimitiveType.TYPE_UINT64
+import io.spine.protodata.Type
+import io.spine.protodata.asType
+import io.spine.protodata.copy
+import io.spine.protodata.field
+import io.spine.protodata.fieldName
+import io.spine.protodata.toList
+import io.spine.protodata.type
 
 /**
  * Obtains the name of this field as a [FieldName].

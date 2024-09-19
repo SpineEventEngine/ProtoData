@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,7 +30,7 @@ import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.buildConstant
+import io.spine.protodata.protobuf.buildConstant
 import io.spine.protodata.constantName
 import io.spine.protodata.event.EnumConstantEntered
 import io.spine.protodata.event.EnumConstantExited
@@ -43,9 +43,9 @@ import io.spine.protodata.event.enumDiscovered
 import io.spine.protodata.event.enumEntered
 import io.spine.protodata.event.enumExited
 import io.spine.protodata.event.enumOptionDiscovered
-import io.spine.protodata.name
+import io.spine.protodata.protobuf.name
 import io.spine.protodata.produceOptionEvents
-import io.spine.protodata.toEnumType
+import io.spine.protodata.protobuf.toEnumType
 
 /**
  * Produces events for an enum.

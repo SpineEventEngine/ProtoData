@@ -29,8 +29,8 @@ package io.spine.protodata.java
 import io.kotest.matchers.shouldBe
 import io.spine.option.IsOption
 import io.spine.protodata.find
-import io.spine.protodata.toHeader
-import io.spine.protodata.toMessageType
+import io.spine.protodata.protobuf.toHeader
+import io.spine.protodata.protobuf.toMessageType
 import life.earth.Elephant
 import life.earth.MultipleFiles
 import org.junit.jupiter.api.DisplayName

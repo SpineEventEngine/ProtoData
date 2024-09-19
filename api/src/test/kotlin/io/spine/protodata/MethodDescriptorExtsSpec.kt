@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -32,6 +32,7 @@ import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
 import io.spine.protodata.CallCardinality.CLIENT_STREAMING
 import io.spine.protodata.CallCardinality.SERVER_STREAMING
 import io.spine.protodata.CallCardinality.UNARY
+import io.spine.protodata.protobuf.cardinality
 import io.spine.protodata.test.DoctorProto
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested

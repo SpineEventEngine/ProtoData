@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -37,10 +37,10 @@ import io.spine.protodata.event.dependencyDiscovered
 import io.spine.protodata.event.fileEntered
 import io.spine.protodata.event.fileExited
 import io.spine.protodata.event.fileOptionDiscovered
-import io.spine.protodata.file
+import io.spine.protodata.protobuf.file
 import io.spine.protodata.produceOptionEvents
-import io.spine.protodata.toHeader
-import io.spine.protodata.toPbSourceFile
+import io.spine.protodata.protobuf.toHeader
+import io.spine.protodata.protobuf.toPbSourceFile
 
 /**
  * A factory for Protobuf compiler events.

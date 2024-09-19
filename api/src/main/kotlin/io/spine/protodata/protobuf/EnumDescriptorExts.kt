@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,10 +25,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.protobuf
 
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
+import io.spine.protodata.EnumConstant
+import io.spine.protodata.EnumType
+import io.spine.protodata.TypeName
+import io.spine.protodata.constantName
+import io.spine.protodata.copy
+import io.spine.protodata.enumConstant
+import io.spine.protodata.enumType
+import io.spine.protodata.toList
 
 /**
  * Obtains the name of this enum type as a [TypeName].

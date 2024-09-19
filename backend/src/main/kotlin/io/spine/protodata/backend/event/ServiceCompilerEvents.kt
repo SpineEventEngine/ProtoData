@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,7 +30,7 @@ import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.buildRpc
+import io.spine.protodata.protobuf.buildRpc
 import io.spine.protodata.event.ServiceEntered
 import io.spine.protodata.event.ServiceExited
 import io.spine.protodata.event.rpcEntered
@@ -40,9 +40,9 @@ import io.spine.protodata.event.serviceDiscovered
 import io.spine.protodata.event.serviceEntered
 import io.spine.protodata.event.serviceExited
 import io.spine.protodata.event.serviceOptionDiscovered
-import io.spine.protodata.name
+import io.spine.protodata.protobuf.name
 import io.spine.protodata.produceOptionEvents
-import io.spine.protodata.toService
+import io.spine.protodata.protobuf.toService
 
 /**
  * Produces events for a service.

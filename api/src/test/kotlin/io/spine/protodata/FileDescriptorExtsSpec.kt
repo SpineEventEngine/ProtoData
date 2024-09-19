@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,6 +29,8 @@ package io.spine.protodata
 import com.google.protobuf.AnyProto
 import com.google.protobuf.TimestampProto
 import io.kotest.matchers.shouldBe
+import io.spine.protodata.protobuf.importCount
+import io.spine.protodata.protobuf.isImportedBy
 import io.spine.protodata.test.ImportsTestProto
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

@@ -39,6 +39,8 @@ import io.spine.protobuf.TypeConverter
 import io.spine.protobuf.defaultInstance
 import io.spine.protobuf.pack
 import io.spine.protobuf.unpack
+import io.spine.protodata.protobuf.name
+import io.spine.protodata.protobuf.type
 
 /**
  * Unpacks the value of this option using the specified generic type.
