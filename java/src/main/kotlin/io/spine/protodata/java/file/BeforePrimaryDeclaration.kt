@@ -27,6 +27,7 @@
 package io.spine.protodata.java.file
 
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
+import io.spine.protodata.render.NonRepeatingInsertionPoint
 import io.spine.string.ti
 import io.spine.text.TextCoordinates
 import io.spine.text.TextFactory.text
@@ -47,7 +48,7 @@ import io.spine.tools.psi.java.lineNumber
  *
  * @see BeforeNestedTypeDeclaration
  */
-internal object BeforePrimaryDeclaration : io.spine.protodata.render.NonRepeatingInsertionPoint {
+internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint {
 
     override val label: String
         get() = this.javaClass.simpleName
