@@ -33,6 +33,7 @@ import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
 import io.spine.protodata.ast.TypeInstances
+import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
 import io.spine.protodata.ast.oneofName
@@ -122,7 +123,7 @@ private val IMMUTABLE_MAP = ImmutableMap::class.qualifiedName!!
 private fun Field.access() =
     MessageReference("msg").field(this)
 
-private val stubType: io.spine.protodata.ast.TypeName = typeName {
+private val stubType: TypeName = typeName {
     simpleName = "StubType"
     packageName = "given.stub.type"
 }
