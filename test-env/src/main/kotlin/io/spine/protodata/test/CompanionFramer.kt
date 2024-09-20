@@ -26,6 +26,7 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.render.InsertionPoint
 import io.spine.protodata.render.InsertionPointPrinter
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Kotlin
@@ -41,7 +42,7 @@ private const val COMPANION_MARKER = " companion "
  * An insertion point that frames the word `companion` in companion object declarations
  * from both sides.
  */
-public class CompanionFrame : io.spine.protodata.render.InsertionPoint {
+public class CompanionFrame : InsertionPoint {
 
     override val label: String
         get() = "CompanionFrame"
