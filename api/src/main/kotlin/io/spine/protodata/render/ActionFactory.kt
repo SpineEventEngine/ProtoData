@@ -26,7 +26,6 @@
 
 package io.spine.protodata.render
 
-import com.google.protobuf.Any
 import com.google.protobuf.Empty
 import com.google.protobuf.Message
 import io.spine.protobuf.AnyPacker
@@ -35,6 +34,7 @@ import io.spine.protodata.context.CodegenContext
 import io.spine.reflect.Factory
 import io.spine.tools.code.Language
 import org.checkerframework.checker.signature.qual.FqBinaryName
+import com.google.protobuf.Any as ProtoAny
 
 /**
  * Creates instances of [RenderAction] specified in the given [actions].
@@ -148,8 +148,8 @@ public class ActionFactory<L : Language, D : ProtoDeclaration>(
  *
  * @see Actions.getActionMap
  */
-private fun Any.unpackParameter(): Message {
-    if (this == Any.getDefaultInstance()) {
+private fun ProtoAny.unpackParameter(): Message {
+    if (this == ProtoAny.getDefaultInstance()) {
         return Empty.getDefaultInstance()
     }
     return AnyPacker.unpack(this)
