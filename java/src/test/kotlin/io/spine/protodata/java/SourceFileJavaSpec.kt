@@ -34,6 +34,7 @@ import io.spine.protodata.java.TypedInsertionPoint.BUILDER_SCOPE
 import io.spine.protodata.java.TypedInsertionPoint.CLASS_SCOPE
 import io.spine.protodata.java.TypedInsertionPoint.ENUM_SCOPE
 import io.spine.protodata.java.TypedInsertionPoint.MESSAGE_IMPLEMENTS
+import io.spine.protodata.render.InsertionPoint
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.render.codeLine
 import io.spine.tools.code.Java
@@ -91,7 +92,7 @@ internal class SourceFileJavaSpec : WithSourceFileSet() {
             checkPoint(BUILDER_IMPLEMENTS.forType(PERSON_NAME))
         }
 
-        private fun checkPoint(point: io.spine.protodata.render.InsertionPoint) {
+        private fun checkPoint(point: InsertionPoint) {
             val comment = "// This is Protoc standard insertion point."
             file.at(point)
                 .add(comment)
