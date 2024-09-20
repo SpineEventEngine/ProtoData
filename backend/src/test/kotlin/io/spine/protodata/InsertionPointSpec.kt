@@ -35,6 +35,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.ImplicitPluginWithRenderers
 import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.render.InsertionPoint
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.render.codeLine
 import io.spine.protodata.settings.SettingsDirectory
@@ -163,7 +164,7 @@ class InsertionPointsSpec {
 
     @Test
     fun `return empty 'codeLine' for empty 'label'`() {
-        val insertionPoint = object: io.spine.protodata.render.InsertionPoint {
+        val insertionPoint = object: InsertionPoint {
             override val label: String = ""
             override fun locate(text: String): Set<TextCoordinates> = setOf()
         }
