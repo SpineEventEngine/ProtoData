@@ -30,13 +30,14 @@ import io.spine.protodata.render.CoordinatesFactory.Companion.endOfFile
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.render.CoordinatesFactory.Companion.startOfFile
 import io.spine.protodata.render.InsertionPointPrinter
+import io.spine.protodata.render.NonRepeatingInsertionPoint
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
 
 public class JavaGenericInsertionPointPrinter :
     InsertionPointPrinter<Java>(Java, GenericInsertionPoint.values().toSet())
 
-public enum class GenericInsertionPoint : io.spine.protodata.render.NonRepeatingInsertionPoint {
+public enum class GenericInsertionPoint : NonRepeatingInsertionPoint {
 
     FILE_START {
         override fun locateOccurrence(text: String): TextCoordinates = startOfFile
