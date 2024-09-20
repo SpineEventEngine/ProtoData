@@ -28,6 +28,7 @@ package io.spine.protodata.test
 
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.render.InsertionPointPrinter
+import io.spine.protodata.render.NonRepeatingInsertionPoint
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
@@ -41,7 +42,7 @@ public class AnnotationInsertionPointPrinter :
 /**
  * Insertion points that help renderers annotate certain parts of a Java file.
  */
-public enum class AnnotationInsertionPoint : io.spine.protodata.render.NonRepeatingInsertionPoint {
+public enum class AnnotationInsertionPoint : NonRepeatingInsertionPoint {
 
     /**
      * An insertion point in the imports black.
