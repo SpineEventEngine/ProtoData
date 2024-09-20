@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,16 +29,16 @@
 package io.spine.protodata.java
 
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.File
-import io.spine.protodata.Option
-import io.spine.protodata.enumType
-import io.spine.protodata.file
+import io.spine.protodata.ast.File
+import io.spine.protodata.ast.Option
+import io.spine.protodata.ast.enumType
+import io.spine.protodata.ast.file
+import io.spine.protodata.ast.messageType
+import io.spine.protodata.ast.protoFileHeader
+import io.spine.protodata.ast.typeName
 import io.spine.protodata.java.file.javaMultipleFiles
 import io.spine.protodata.java.file.javaOuterClassName
 import io.spine.protodata.java.file.javaPackage
-import io.spine.protodata.messageType
-import io.spine.protodata.protoFileHeader
-import io.spine.protodata.typeName
 import java.io.File.separatorChar
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested

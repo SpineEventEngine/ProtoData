@@ -29,8 +29,8 @@ package io.spine.protodata.render
 import io.kotest.matchers.optional.shouldBePresent
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.spine.protodata.ast.typeName
 import io.spine.protodata.render.given.PlainTextConvention
-import io.spine.protodata.typeName
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.div

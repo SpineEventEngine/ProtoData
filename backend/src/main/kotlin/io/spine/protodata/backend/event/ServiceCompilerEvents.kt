@@ -29,19 +29,19 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.ProtoFileHeader
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.event.ServiceEntered
+import io.spine.protodata.ast.event.ServiceExited
+import io.spine.protodata.ast.event.rpcEntered
+import io.spine.protodata.ast.event.rpcExited
+import io.spine.protodata.ast.event.rpcOptionDiscovered
+import io.spine.protodata.ast.event.serviceDiscovered
+import io.spine.protodata.ast.event.serviceEntered
+import io.spine.protodata.ast.event.serviceExited
+import io.spine.protodata.ast.event.serviceOptionDiscovered
+import io.spine.protodata.ast.produceOptionEvents
 import io.spine.protodata.protobuf.buildRpc
-import io.spine.protodata.event.ServiceEntered
-import io.spine.protodata.event.ServiceExited
-import io.spine.protodata.event.rpcEntered
-import io.spine.protodata.event.rpcExited
-import io.spine.protodata.event.rpcOptionDiscovered
-import io.spine.protodata.event.serviceDiscovered
-import io.spine.protodata.event.serviceEntered
-import io.spine.protodata.event.serviceExited
-import io.spine.protodata.event.serviceOptionDiscovered
 import io.spine.protodata.protobuf.name
-import io.spine.protodata.produceOptionEvents
 import io.spine.protodata.protobuf.toService
 
 /**

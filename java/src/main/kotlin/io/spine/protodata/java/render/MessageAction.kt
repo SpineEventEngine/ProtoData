@@ -30,7 +30,7 @@ import com.google.protobuf.Message
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaFile
 import io.spine.logging.WithLogging
-import io.spine.protodata.MessageType
+import io.spine.protodata.ast.MessageType
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.javaClassName

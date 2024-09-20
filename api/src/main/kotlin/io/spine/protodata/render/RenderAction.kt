@@ -27,11 +27,11 @@
 package io.spine.protodata.render
 
 import com.google.protobuf.Message
-import io.spine.protodata.EnumType
-import io.spine.protodata.MessageType
-import io.spine.protodata.ProtoDeclaration
-import io.spine.protodata.Service
-import io.spine.protodata.TypeDeclaration
+import io.spine.protodata.ast.EnumType
+import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.ProtoDeclaration
+import io.spine.protodata.ast.Service
+import io.spine.protodata.ast.TypeDeclaration
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.context.Member
 import io.spine.tools.code.Language
@@ -44,8 +44,9 @@ import io.spine.tools.code.Language
  *
  * @param L The type of the programming language served by this action.
  * @param D The type of the Protobuf declaration, such as
- *   [MessageType][io.spine.protodata.MessageType], [EnumType][io.spine.protodata.EnumType] or
- *   [Service][io.spine.protodata.Service], for which this action generates the code.
+ *   [MessageType][io.spine.protodata.ast.MessageType],
+ *   [EnumType][io.spine.protodata.ast.EnumType] or
+ *   [Service][io.spine.protodata.ast.Service], for which this action generates the code.
  * @param P The type of the parameter passed to the action.
  *   If the action does not have a parameter, please use [com.google.protobuf.Empty].
  *
@@ -77,11 +78,13 @@ public abstract class RenderAction<L : Language, D : ProtoDeclaration, P : Messa
 
 /**
  * A render action performed for a Protobuf type,
- * such as [MessageType][io.spine.protodata.MessageType] or [EnumType][io.spine.protodata.EnumType].
+ * such as [MessageType][io.spine.protodata.ast.MessageType] or
+ * [EnumType][io.spine.protodata.ast.EnumType].
  *
  * @param L The type of the programming language served by this action.
  * @param T The type of the Protobuf type declaration, such as
- *   [MessageType][io.spine.protodata.MessageType] or [EnumType][io.spine.protodata.EnumType],
+ *   [MessageType][io.spine.protodata.ast.MessageType] or
+ *   [EnumType][io.spine.protodata.ast.EnumType],
  *   for which this action generates the code.
  * @param P The type of the parameter passed to the action.
  *   If the action does not have a parameter, please use [com.google.protobuf.Empty].
@@ -107,7 +110,7 @@ protected constructor(
 ) : RenderAction<L, T, P>(language, type, file, parameter, context)
 
 /**
- * A render action performed for a [MessageType][io.spine.protodata.MessageType].
+ * A render action performed for a [MessageType][io.spine.protodata.ast.MessageType].
  *
  * @param L The type of the programming language served by this action.
  * @param P The type of the parameter passed to the action.
@@ -131,7 +134,7 @@ public abstract class MessageAction<L : Language, P : Message>(
 ) : TypeAction<L, MessageType, P>(language, type, file, parameter, context)
 
 /**
- * A render action performed for an [EnumType][io.spine.protodata.EnumType].
+ * A render action performed for an [EnumType][io.spine.protodata.ast.EnumType].
  *
  * @param L the programming language supported by this action.
  * @param P the type of the parameter passed to the action.
@@ -155,7 +158,7 @@ public abstract class EnumAction<L : Language, P : Message>(
 ) : TypeAction<L, EnumType, P>(language, type, file, parameter, context)
 
 /**
- * A render action performed for a [Service][io.spine.protodata.Service].
+ * A render action performed for a [Service][io.spine.protodata.ast.Service].
  *
  * @param L the programming language supported by this action.
  *

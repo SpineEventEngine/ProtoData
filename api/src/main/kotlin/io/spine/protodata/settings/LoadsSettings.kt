@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,7 +26,6 @@
 
 package io.spine.protodata.settings
 
-import io.spine.protodata.ConfigurationError
 import io.spine.server.query.Querying
 import io.spine.server.query.select
 
@@ -60,7 +59,7 @@ public interface LoadsSettings : Querying, WithSettings {
 }
 
 private fun LoadsSettings.missingSettings(): Nothing {
-    throw ConfigurationError("Could not find settings for `$consumerId`.")
+    error("Could not find settings for `$consumerId`.")
 }
 
 /**

@@ -27,18 +27,18 @@
 package io.spine.protodata.protobuf
 
 import com.google.protobuf.Descriptors.MethodDescriptor
-import io.spine.protodata.CallCardinality
-import io.spine.protodata.CallCardinality.BIDIRECTIONAL_STREAMING
-import io.spine.protodata.CallCardinality.CLIENT_STREAMING
-import io.spine.protodata.CallCardinality.SERVER_STREAMING
-import io.spine.protodata.CallCardinality.UNARY
-import io.spine.protodata.Rpc
-import io.spine.protodata.RpcName
-import io.spine.protodata.ServiceName
-import io.spine.protodata.copy
-import io.spine.protodata.rpc
-import io.spine.protodata.rpcName
-import io.spine.protodata.toList
+import io.spine.protodata.ast.CallCardinality
+import io.spine.protodata.ast.CallCardinality.BIDIRECTIONAL_STREAMING
+import io.spine.protodata.ast.CallCardinality.CLIENT_STREAMING
+import io.spine.protodata.ast.CallCardinality.SERVER_STREAMING
+import io.spine.protodata.ast.CallCardinality.UNARY
+import io.spine.protodata.ast.Rpc
+import io.spine.protodata.ast.RpcName
+import io.spine.protodata.ast.ServiceName
+import io.spine.protodata.ast.copy
+import io.spine.protodata.ast.rpc
+import io.spine.protodata.ast.rpcName
+import io.spine.protodata.ast.toList
 
 /**
  * Obtains the name of this RPC method as an [RpcName].

@@ -29,14 +29,14 @@ package io.spine.protodata.protobuf
 
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
-import io.spine.protodata.EnumConstant
-import io.spine.protodata.EnumType
-import io.spine.protodata.TypeName
-import io.spine.protodata.constantName
-import io.spine.protodata.copy
-import io.spine.protodata.enumConstant
-import io.spine.protodata.enumType
-import io.spine.protodata.toList
+import io.spine.protodata.ast.EnumConstant
+import io.spine.protodata.ast.EnumType
+import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.constantName
+import io.spine.protodata.ast.copy
+import io.spine.protodata.ast.enumConstant
+import io.spine.protodata.ast.enumType
+import io.spine.protodata.ast.toList
 
 /**
  * Obtains the name of this enum type as a [TypeName].

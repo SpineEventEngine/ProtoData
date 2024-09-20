@@ -27,9 +27,9 @@
 package io.spine.protodata.render
 
 import io.spine.core.userId
-import io.spine.protodata.render.event.insertionPointPrinted
-import io.spine.protodata.file
+import io.spine.protodata.ast.file
 import io.spine.protodata.render.CoordinatesFactory.Companion.endOfFile
+import io.spine.protodata.render.event.insertionPointPrinted
 import io.spine.text.TextCoordinates
 import io.spine.text.TextCoordinates.KindCase.END_OF_TEXT
 import io.spine.text.TextCoordinates.KindCase.INLINE

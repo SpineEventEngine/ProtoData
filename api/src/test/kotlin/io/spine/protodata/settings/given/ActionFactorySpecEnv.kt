@@ -30,7 +30,7 @@ import com.google.protobuf.Empty
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import io.spine.base.EntityState
-import io.spine.protodata.MessageType
+import io.spine.protodata.ast.MessageType
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.render.ActionFactory
 import io.spine.protodata.render.RenderAction

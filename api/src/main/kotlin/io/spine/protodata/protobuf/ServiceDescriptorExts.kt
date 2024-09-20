@@ -27,11 +27,11 @@
 package io.spine.protodata.protobuf
 
 import com.google.protobuf.Descriptors.ServiceDescriptor
-import io.spine.protodata.Service
-import io.spine.protodata.ServiceName
-import io.spine.protodata.service
-import io.spine.protodata.serviceName
-import io.spine.protodata.toList
+import io.spine.protodata.ast.Service
+import io.spine.protodata.ast.ServiceName
+import io.spine.protodata.ast.service
+import io.spine.protodata.ast.serviceName
+import io.spine.protodata.ast.toList
 
 /**
  * Obtains the name of this service as a [ServiceName].

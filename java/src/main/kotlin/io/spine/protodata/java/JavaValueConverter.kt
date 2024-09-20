@@ -26,12 +26,12 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.Type
-import io.spine.protodata.Type.KindCase.ENUMERATION
-import io.spine.protodata.Type.KindCase.MESSAGE
-import io.spine.protodata.Type.KindCase.PRIMITIVE
-import io.spine.protodata.value.Value
+import io.spine.protodata.ast.Type
+import io.spine.protodata.ast.Type.KindCase.ENUMERATION
+import io.spine.protodata.ast.Type.KindCase.MESSAGE
+import io.spine.protodata.ast.Type.KindCase.PRIMITIVE
 import io.spine.protodata.type.ValueConverter
+import io.spine.protodata.value.Value
 import io.spine.tools.code.Java
 
 /**

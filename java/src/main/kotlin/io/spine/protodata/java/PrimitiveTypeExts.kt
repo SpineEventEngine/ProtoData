@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,24 +29,24 @@
 package io.spine.protodata.java
 
 import com.google.protobuf.ByteString
-import io.spine.protodata.PrimitiveType
-import io.spine.protodata.PrimitiveType.PT_UNKNOWN
-import io.spine.protodata.PrimitiveType.TYPE_BOOL
-import io.spine.protodata.PrimitiveType.TYPE_BYTES
-import io.spine.protodata.PrimitiveType.TYPE_DOUBLE
-import io.spine.protodata.PrimitiveType.TYPE_FIXED32
-import io.spine.protodata.PrimitiveType.TYPE_FIXED64
-import io.spine.protodata.PrimitiveType.TYPE_FLOAT
-import io.spine.protodata.PrimitiveType.TYPE_INT32
-import io.spine.protodata.PrimitiveType.TYPE_INT64
-import io.spine.protodata.PrimitiveType.TYPE_SFIXED32
-import io.spine.protodata.PrimitiveType.TYPE_SFIXED64
-import io.spine.protodata.PrimitiveType.TYPE_SINT32
-import io.spine.protodata.PrimitiveType.TYPE_SINT64
-import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.PrimitiveType.TYPE_UINT32
-import io.spine.protodata.PrimitiveType.TYPE_UINT64
-import io.spine.protodata.PrimitiveType.UNRECOGNIZED
+import io.spine.protodata.ast.PrimitiveType
+import io.spine.protodata.ast.PrimitiveType.PT_UNKNOWN
+import io.spine.protodata.ast.PrimitiveType.TYPE_BOOL
+import io.spine.protodata.ast.PrimitiveType.TYPE_BYTES
+import io.spine.protodata.ast.PrimitiveType.TYPE_DOUBLE
+import io.spine.protodata.ast.PrimitiveType.TYPE_FIXED32
+import io.spine.protodata.ast.PrimitiveType.TYPE_FIXED64
+import io.spine.protodata.ast.PrimitiveType.TYPE_FLOAT
+import io.spine.protodata.ast.PrimitiveType.TYPE_INT32
+import io.spine.protodata.ast.PrimitiveType.TYPE_INT64
+import io.spine.protodata.ast.PrimitiveType.TYPE_SFIXED32
+import io.spine.protodata.ast.PrimitiveType.TYPE_SFIXED64
+import io.spine.protodata.ast.PrimitiveType.TYPE_SINT32
+import io.spine.protodata.ast.PrimitiveType.TYPE_SINT64
+import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
+import io.spine.protodata.ast.PrimitiveType.TYPE_UINT32
+import io.spine.protodata.ast.PrimitiveType.TYPE_UINT64
+import io.spine.protodata.ast.PrimitiveType.UNRECOGNIZED
 import kotlin.reflect.KClass
 
 /**

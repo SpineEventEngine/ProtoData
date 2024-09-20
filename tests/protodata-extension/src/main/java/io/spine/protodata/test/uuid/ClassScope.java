@@ -28,14 +28,14 @@ package io.spine.protodata.test.uuid;
 
 import com.google.common.base.Objects;
 import io.spine.text.TextCoordinates;
-import io.spine.protodata.TypeName;
+import io.spine.protodata.ast.TypeName;
 import io.spine.protodata.render.NonRepeatingInsertionPoint;
 import io.spine.text.Text;
 
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.protodata.TypeNames.getQualifiedName;
+import static io.spine.protodata.ast.TypeNames.getQualifiedName;
 import static io.spine.protodata.render.CoordinatesFactory.nowhere;
 import static java.lang.String.format;
 import static kotlin.text.StringsKt.lines;

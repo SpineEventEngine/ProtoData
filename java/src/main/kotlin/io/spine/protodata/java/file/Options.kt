@@ -28,10 +28,10 @@
 
 package io.spine.protodata.java.file
 
-import io.spine.protodata.Option
-import io.spine.protodata.TypeInstances.boolean
-import io.spine.protodata.TypeInstances.string
-import io.spine.protodata.option
+import io.spine.protodata.ast.Option
+import io.spine.protodata.ast.TypeInstances.boolean
+import io.spine.protodata.ast.TypeInstances.string
+import io.spine.protodata.ast.option
 import io.spine.protodata.value.pack
 import io.spine.protodata.value.packedTrue
 

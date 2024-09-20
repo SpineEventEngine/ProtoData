@@ -28,15 +28,15 @@ package io.spine.protodata.context
 
 import io.spine.annotation.Internal
 import io.spine.base.EntityState
-import io.spine.protodata.EnumInFile
-import io.spine.protodata.File
-import io.spine.protodata.MessageInFile
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.ServiceInFile
-import io.spine.protodata.enums
-import io.spine.protodata.messages
-import io.spine.protodata.services
+import io.spine.protodata.ast.EnumInFile
+import io.spine.protodata.ast.File
+import io.spine.protodata.ast.MessageInFile
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.ProtobufSourceFile
+import io.spine.protodata.ast.ServiceInFile
+import io.spine.protodata.ast.enums
+import io.spine.protodata.ast.messages
+import io.spine.protodata.ast.services
 import io.spine.protodata.settings.LoadsSettings
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.query.QueryingClient
@@ -168,7 +168,7 @@ public fun Member<*>.findAllFiles(): Collection<ProtobufSourceFile> =
  * Message types that are dependencies of the compilation process are not included.
  *
  * @see ProtobufSourceFile
- * @see ProtobufDependency
+ * @see io.spine.protodata.ast.ProtobufDependency
  */
 public fun Member<*>.findMessageTypes(): Set<MessageInFile> =
     findAllFiles()
@@ -182,7 +182,7 @@ public fun Member<*>.findMessageTypes(): Set<MessageInFile> =
  * Enum types that are dependencies of the compilation process are not included.
  *
  * @see ProtobufSourceFile
- * @see ProtobufDependency
+ * @see io.spine.protodata.ast.ProtobufDependency
  */
 public fun Member<*>.findEnumTypes(): Set<EnumInFile> =
     findAllFiles()

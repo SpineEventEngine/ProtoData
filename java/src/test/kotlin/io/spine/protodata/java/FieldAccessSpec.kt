@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,13 +30,13 @@ import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.Field
-import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.TypeInstances
-import io.spine.protodata.field
-import io.spine.protodata.fieldName
-import io.spine.protodata.oneofName
-import io.spine.protodata.typeName
+import io.spine.protodata.ast.Field
+import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
+import io.spine.protodata.ast.TypeInstances
+import io.spine.protodata.ast.field
+import io.spine.protodata.ast.fieldName
+import io.spine.protodata.ast.oneofName
+import io.spine.protodata.ast.typeName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -122,7 +122,7 @@ private val IMMUTABLE_MAP = ImmutableMap::class.qualifiedName!!
 private fun Field.access() =
     MessageReference("msg").field(this)
 
-private val stubType: io.spine.protodata.TypeName = typeName {
+private val stubType: io.spine.protodata.ast.TypeName = typeName {
     simpleName = "StubType"
     packageName = "given.stub.type"
 }

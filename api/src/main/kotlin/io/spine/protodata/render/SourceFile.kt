@@ -32,7 +32,7 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.sksamuel.aedile.core.cacheBuilder
-import io.spine.protodata.file
+import io.spine.protodata.ast.file
 import io.spine.protodata.render.SourceFile.Companion.fromCode
 import io.spine.server.query.select
 import io.spine.text.Text
@@ -258,7 +258,7 @@ private constructor(
      *
      * @see atInline
      */
-    public fun at(insertionPoint: io.spine.protodata.render.InsertionPoint): SourceAtLine =
+    public fun at(insertionPoint: InsertionPoint): SourceAtLine =
         SourceAtLine(this, insertionPoint)
 
     /**
@@ -276,7 +276,7 @@ private constructor(
      *
      * @see at
      */
-    public fun atInline(insertionPoint: io.spine.protodata.render.InsertionPoint): SourceAtPoint {
+    public fun atInline(insertionPoint: InsertionPoint): SourceAtPoint {
         val points = sources.querying.select<InsertedPoints>()
             .findById(file { path = relativePath.toString() })
         val point = points?.pointList?.firstOrNull { it.label == insertionPoint.label }

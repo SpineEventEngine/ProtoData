@@ -27,7 +27,7 @@
 package io.spine.protodata.settings.given;
 
 import com.google.protobuf.StringValue;
-import io.spine.protodata.MessageType;
+import io.spine.protodata.ast.MessageType;
 import io.spine.protodata.context.CodegenContext;
 import io.spine.protodata.render.SourceFile;
 import io.spine.tools.code.Java;

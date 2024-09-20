@@ -28,10 +28,11 @@ package io.spine.protodata.render
 
 import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.MessageType
+import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.file
+import io.spine.protodata.ast.messageType
+import io.spine.protodata.ast.typeName
 import io.spine.protodata.backend.CodeGenerationContext
-import io.spine.protodata.messageType
-import io.spine.protodata.typeName
 import io.spine.tools.code.Java
 import kotlin.io.path.Path
 import org.junit.jupiter.api.DisplayName
@@ -49,10 +50,10 @@ internal class RenderActionSpec {
 
     private val subject = messageType {
         name = typeName { simpleName = typeName }
-        file = io.spine.protodata.file { path = "acme/example/my_type.proto" }
+        file = file { path = "acme/example/my_type.proto" }
     }
 
-    val sourceFile = SourceFile.byCode<Java>(Path("$typeName.java"), """
+    private val sourceFile = SourceFile.byCode<Java>(Path("$typeName.java"), """
             public class $typeName {}
             """.trimIndent()
     )

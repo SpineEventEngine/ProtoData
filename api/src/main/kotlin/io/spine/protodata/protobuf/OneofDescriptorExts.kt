@@ -27,11 +27,11 @@
 package io.spine.protodata.protobuf
 
 import com.google.protobuf.Descriptors.OneofDescriptor
-import io.spine.protodata.OneofGroup
-import io.spine.protodata.OneofName
-import io.spine.protodata.oneofGroup
-import io.spine.protodata.oneofName
-import io.spine.protodata.toList
+import io.spine.protodata.ast.OneofGroup
+import io.spine.protodata.ast.OneofName
+import io.spine.protodata.ast.oneofGroup
+import io.spine.protodata.ast.oneofName
+import io.spine.protodata.ast.toList
 
 /**
  * Obtains the name of this `oneof` as a [OneofName].

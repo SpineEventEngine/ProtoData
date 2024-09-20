@@ -28,11 +28,11 @@ package io.spine.protodata.backend
 
 import io.spine.core.External
 import io.spine.core.Subscribe
-import io.spine.protodata.File
+import io.spine.protodata.ast.File
 import io.spine.protodata.plugin.View
 import io.spine.protodata.render.InsertedPoints
-import io.spine.protodata.render.insertedPoint
 import io.spine.protodata.render.event.InsertionPointPrinted
+import io.spine.protodata.render.insertedPoint
 import io.spine.server.entity.alter
 
 /**

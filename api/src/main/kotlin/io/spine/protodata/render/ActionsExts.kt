@@ -32,7 +32,7 @@ import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.stringValue
 import io.spine.protobuf.pack
-import io.spine.protodata.ProtoDeclaration
+import io.spine.protodata.ast.ProtoDeclaration
 import io.spine.tools.code.Language
 import io.spine.tools.kotlin.reference
 import kotlin.reflect.KClass

@@ -28,8 +28,8 @@ package io.spine.protodata.java.render
 
 import com.google.protobuf.Message
 import io.spine.base.EntityState
-import io.spine.protodata.File
-import io.spine.protodata.MessageType
+import io.spine.protodata.ast.File
+import io.spine.protodata.ast.MessageType
 import io.spine.protodata.render.SourceFile
 import io.spine.tools.code.Java
 

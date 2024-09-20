@@ -29,20 +29,20 @@ package io.spine.protodata.protobuf
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.Descriptors.FileDescriptor
 import io.spine.option.OptionsProto
-import io.spine.protodata.EnumType
-import io.spine.protodata.File
-import io.spine.protodata.MessageType
-import io.spine.protodata.ProtoDeclaration
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.ProtoFileHeader.SyntaxVersion
-import io.spine.protodata.ProtoFileHeader.SyntaxVersion.PROTO2
-import io.spine.protodata.ProtoFileHeader.SyntaxVersion.PROTO3
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.Service
-import io.spine.protodata.file
-import io.spine.protodata.protoFileHeader
-import io.spine.protodata.protobufSourceFile
-import io.spine.protodata.toList
+import io.spine.protodata.ast.EnumType
+import io.spine.protodata.ast.File
+import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.ProtoDeclaration
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.ProtoFileHeader.SyntaxVersion
+import io.spine.protodata.ast.ProtoFileHeader.SyntaxVersion.PROTO2
+import io.spine.protodata.ast.ProtoFileHeader.SyntaxVersion.PROTO3
+import io.spine.protodata.ast.ProtobufSourceFile
+import io.spine.protodata.ast.Service
+import io.spine.protodata.ast.file
+import io.spine.protodata.ast.protoFileHeader
+import io.spine.protodata.ast.protobufSourceFile
+import io.spine.protodata.ast.toList
 
 /**
  * Obtains the syntax version of the given [FileDescriptor].

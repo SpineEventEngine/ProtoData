@@ -30,12 +30,12 @@ import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.GenericDescriptor
-import io.spine.protodata.Documentation
-import io.spine.protodata.Field
-import io.spine.protodata.MessageType
-import io.spine.protodata.TypeName
-import io.spine.protodata.messageType
-import io.spine.protodata.toList
+import io.spine.protodata.ast.Documentation
+import io.spine.protodata.ast.Field
+import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.messageType
+import io.spine.protodata.ast.toList
 
 /**
  * Obtains documentation of this [GenericDescriptor].

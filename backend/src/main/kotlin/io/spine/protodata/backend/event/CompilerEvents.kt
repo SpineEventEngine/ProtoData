@@ -30,15 +30,15 @@ import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
-import io.spine.protodata.Documentation
-import io.spine.protodata.event.FileEntered
-import io.spine.protodata.event.FileExited
-import io.spine.protodata.event.dependencyDiscovered
-import io.spine.protodata.event.fileEntered
-import io.spine.protodata.event.fileExited
-import io.spine.protodata.event.fileOptionDiscovered
+import io.spine.protodata.ast.Documentation
+import io.spine.protodata.ast.event.FileEntered
+import io.spine.protodata.ast.event.FileExited
+import io.spine.protodata.ast.event.dependencyDiscovered
+import io.spine.protodata.ast.event.fileEntered
+import io.spine.protodata.ast.event.fileExited
+import io.spine.protodata.ast.event.fileOptionDiscovered
+import io.spine.protodata.ast.produceOptionEvents
 import io.spine.protodata.protobuf.file
-import io.spine.protodata.produceOptionEvents
 import io.spine.protodata.protobuf.toHeader
 import io.spine.protodata.protobuf.toPbSourceFile
 

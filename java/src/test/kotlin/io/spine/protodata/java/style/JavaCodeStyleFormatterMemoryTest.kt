@@ -30,10 +30,10 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import copyResource
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.indentOptions
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.Format
 import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.style.indentOptions
 import io.spine.type.toJson
 import java.nio.file.Files.readString
 import java.nio.file.Path

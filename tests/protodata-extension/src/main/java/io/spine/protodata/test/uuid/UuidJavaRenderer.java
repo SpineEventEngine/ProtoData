@@ -27,8 +27,8 @@
 package io.spine.protodata.test.uuid;
 
 import com.google.common.collect.ImmutableList;
-import io.spine.protodata.File;
-import io.spine.protodata.TypeName;
+import io.spine.protodata.ast.File;
+import io.spine.protodata.ast.TypeName;
 import io.spine.protodata.java.ClassName;
 import io.spine.protodata.java.render.JavaRenderer;
 import io.spine.protodata.render.InsertionPoint;

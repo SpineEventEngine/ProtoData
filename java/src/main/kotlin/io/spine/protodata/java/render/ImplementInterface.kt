@@ -26,7 +26,7 @@
 
 package io.spine.protodata.java.render
 
-import io.spine.protodata.MessageType
+import io.spine.protodata.ast.MessageType
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.render.SourceFile

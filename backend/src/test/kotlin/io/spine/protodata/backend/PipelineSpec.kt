@@ -33,8 +33,8 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.ConfigurationError
 import io.spine.protodata.context.CodegenContext
+import io.spine.protodata.plugin.ConfigurationError
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.render.codeLine
 import io.spine.protodata.settings.Format
@@ -80,7 +80,7 @@ import org.junit.jupiter.api.io.TempDir
 
 @Suppress("TooManyFunctions") // This class has many test cases.
 @DisplayName("`Pipeline` should")
-class PipelineSpec {
+internal class PipelineSpec {
 
     private lateinit var srcRoot : Path
     private lateinit var targetRoot : Path

@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -41,30 +41,30 @@ import io.kotest.matchers.shouldNotBe
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto
 import io.spine.protobuf.unpackGuessingType
-import io.spine.protodata.event.EnumConstantEntered
-import io.spine.protodata.event.EnumConstantExited
-import io.spine.protodata.event.EnumEntered
-import io.spine.protodata.event.EnumExited
-import io.spine.protodata.event.FieldEntered
-import io.spine.protodata.event.FieldExited
-import io.spine.protodata.event.FieldOptionDiscovered
-import io.spine.protodata.event.FileEntered
-import io.spine.protodata.event.FileExited
-import io.spine.protodata.event.FileOptionDiscovered
-import io.spine.protodata.event.OneofGroupEntered
-import io.spine.protodata.event.OneofGroupExited
-import io.spine.protodata.event.RpcEntered
-import io.spine.protodata.event.RpcExited
-import io.spine.protodata.event.RpcOptionDiscovered
-import io.spine.protodata.event.ServiceEntered
-import io.spine.protodata.event.ServiceExited
-import io.spine.protodata.event.TypeDiscovered
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.event.TypeExited
-import io.spine.protodata.file
-import io.spine.protodata.messageType
+import io.spine.protodata.ast.event.EnumConstantEntered
+import io.spine.protodata.ast.event.EnumConstantExited
+import io.spine.protodata.ast.event.EnumEntered
+import io.spine.protodata.ast.event.EnumExited
+import io.spine.protodata.ast.event.FieldEntered
+import io.spine.protodata.ast.event.FieldExited
+import io.spine.protodata.ast.event.FieldOptionDiscovered
+import io.spine.protodata.ast.event.FileEntered
+import io.spine.protodata.ast.event.FileExited
+import io.spine.protodata.ast.event.FileOptionDiscovered
+import io.spine.protodata.ast.event.OneofGroupEntered
+import io.spine.protodata.ast.event.OneofGroupExited
+import io.spine.protodata.ast.event.RpcEntered
+import io.spine.protodata.ast.event.RpcExited
+import io.spine.protodata.ast.event.RpcOptionDiscovered
+import io.spine.protodata.ast.event.ServiceEntered
+import io.spine.protodata.ast.event.ServiceExited
+import io.spine.protodata.ast.event.TypeDiscovered
+import io.spine.protodata.ast.event.TypeEntered
+import io.spine.protodata.ast.event.TypeExited
+import io.spine.protodata.ast.file
+import io.spine.protodata.ast.messageType
+import io.spine.protodata.ast.typeName
 import io.spine.protodata.test.DoctorProto
-import io.spine.protodata.typeName
 import io.spine.testing.Correspondences
 import io.spine.type.KnownTypes
 import kotlin.reflect.KClass

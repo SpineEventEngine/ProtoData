@@ -27,15 +27,15 @@
 package io.spine.protodata.render
 
 import io.spine.logging.WithLogging
-import io.spine.protodata.TypeName
-import io.spine.protodata.qualifiedName
+import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.qualifiedName
 import io.spine.text.Text
 import io.spine.text.TextCoordinates
 
 /**
  * A point is a source file, where more code may be inserted.
  */
-public interface InsertionPoint : io.spine.protodata.render.CoordinatesFactory, WithLogging {
+public interface InsertionPoint : CoordinatesFactory, WithLogging {
 
     /**
      * The name of this insertion point.
@@ -84,7 +84,7 @@ public interface InsertionPoint : io.spine.protodata.render.CoordinatesFactory, 
  *
  * Implementations should use [locateOccurrence] instead of [locate].
  */
-public interface NonRepeatingInsertionPoint : io.spine.protodata.render.InsertionPoint {
+public interface NonRepeatingInsertionPoint : InsertionPoint {
 
     /**
      * Locates the site where the insertion point should be added.
@@ -131,8 +131,8 @@ public interface NonRepeatingInsertionPoint : io.spine.protodata.render.Insertio
  * @return the code line that represents this insertion point or empty string if
  *         the label of the insertion point is empty.
  */
-public val io.spine.protodata.render.InsertionPoint.codeLine: String
-    get() = if (this is io.spine.protodata.render.ProtocInsertionPoint) {
+public val InsertionPoint.codeLine: String
+    get() = if (this is ProtocInsertionPoint) {
         protocStyleCodeLine
     } else {
         if (label.isEmpty()) "" else "INSERT:'${label}'"
@@ -155,7 +155,7 @@ public val io.spine.protodata.render.InsertionPoint.codeLine: String
  */
 public class ProtocInsertionPoint(
     public override val label: String
-) : io.spine.protodata.render.InsertionPoint {
+) : InsertionPoint {
 
     /**
      * Creates a Protobuf compiler-style insertion point by the standard formula:

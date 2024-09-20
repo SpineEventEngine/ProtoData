@@ -27,8 +27,7 @@
 package io.spine.protodata.java.render
 
 import com.google.protobuf.Message
-import io.spine.annotation.GeneratedMixin
-import io.spine.protodata.MessageType
+import io.spine.protodata.ast.MessageType
 import io.spine.protodata.render.WithActions
 
 /**

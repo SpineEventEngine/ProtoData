@@ -27,7 +27,6 @@
 package io.spine.protodata.plugin
 
 import io.spine.annotation.Internal
-import io.spine.protodata.ConfigurationError
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet

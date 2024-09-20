@@ -29,7 +29,7 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.TypeName
+import io.spine.protodata.ast.TypeName
 import io.spine.protodata.render.InsertionPoint
 
 /**

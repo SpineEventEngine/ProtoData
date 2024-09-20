@@ -31,7 +31,7 @@ package spine.protodata;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.event";
+option java_package = "io.spine.protodata.ast.event";
 option java_outer_classname = "EventsProto";
 option java_multiple_files = true;
 
@@ -39,7 +39,7 @@ import "spine/protodata/file.proto";
 import "spine/protodata/ast.proto";
 import "spine/protodata/source.proto";
 
-option (every_is).java_type = "io.spine.protodata.FileAware";
+option (every_is).java_type = "io.spine.protodata.ast.FileAware";
 
 // Emitted when processing of a file begins.
 message FileEntered {
@@ -56,7 +56,7 @@ message FileEntered {
 
 // Emitted when a file-level option is found.
 message FileOptionDiscovered {
-    option (is).java_type = "io.spine.protodata.OptionAware";
+    option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
     // The file, option of which was found.
     File file = 1 [(required) = true];
@@ -94,7 +94,7 @@ message TypeEntered {
 
 // Emitted when a message-level option is found.
 message TypeOptionDiscovered {
-    option (is).java_type = "io.spine.protodata.OptionAware";
+    option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
     // The file in which the type is defined.
     File file = 1 [(required) = true];
@@ -131,7 +131,7 @@ message OneofGroupEntered {
 
 // Emitted when a `oneof`-level option is found.
 message OneofOptionDiscovered {
-    option (is).java_type = "io.spine.protodata.OptionAware";
+    option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
     // The file in which the `oneof` group is defined.
     File file = 1 [(required) = true];
@@ -174,7 +174,7 @@ message FieldEntered {
 
 // Emitted when a field-level option is found.
 message FieldOptionDiscovered {
-    option (is).java_type = "io.spine.protodata.OptionAware";
+    option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
     // The file in which the field is defined.
     File file = 1 [(required) = true];
@@ -224,7 +224,7 @@ message EnumEntered {
 
 // Emitted when an enum-level option is found.
 message EnumOptionDiscovered {
-    option (is).java_type = "io.spine.protodata.OptionAware";
+    option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
     // The file in which the enum is defined.
     File file = 1 [(required) = true];
@@ -251,7 +251,7 @@ message EnumConstantEntered {
 
 // Emitted when an enum constant-level option is found.
 message EnumConstantOptionDiscovered {
-    option (is).java_type = "io.spine.protodata.OptionAware";
+    option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
     // The file in which the enum is defined.
     File file = 1 [(required) = true];
@@ -311,7 +311,7 @@ message ServiceEntered {
 
 // Emitted when an service-level option is found.
 message ServiceOptionDiscovered {
-    option (is).java_type = "io.spine.protodata.OptionAware";
+    option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
     // The file in which the service is defined.
     File file = 1 [(required) = true];
@@ -348,7 +348,7 @@ message RpcEntered {
 
 // Emitted when an RPC-level option is found.
 message RpcOptionDiscovered {
-    option (is).java_type = "io.spine.protodata.OptionAware";
+    option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
     // The file in which the RPC is defined.
     File file = 1 [(required) = true];

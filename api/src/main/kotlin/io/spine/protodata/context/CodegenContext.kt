@@ -45,7 +45,7 @@ public interface CodegenContext : Querying, Closeable {
 
     /**
      * The `Insertion Points` context which generates events when
-     * [InsertionPoint][io.spine.protodata.renderer.InsertionPoint]s are added to the code.
+     * [InsertionPoint][io.spine.protodata.render.InsertionPoint]s are added to the code.
      */
     public val insertionPointsContext: ThirdPartyContext
 

@@ -26,7 +26,7 @@
 
 package io.spine.protodata.type
 
-import io.spine.protodata.Type
+import io.spine.protodata.ast.Type
 import io.spine.protodata.value.Value
 import io.spine.protodata.value.Value.KindCase.BOOL_VALUE
 import io.spine.protodata.value.Value.KindCase.BYTES_VALUE

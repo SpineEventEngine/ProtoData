@@ -26,14 +26,14 @@
 
 package io.spine.protodata.java.render
 
-import io.spine.protodata.File
-import io.spine.protodata.MessageType
-import io.spine.protodata.TypeName
+import io.spine.protodata.ast.File
+import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.context.findHeader
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.javaClassName
 import io.spine.protodata.java.javaFile
-import io.spine.protodata.qualifiedName
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.render.SourceFileSet

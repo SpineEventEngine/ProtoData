@@ -26,9 +26,9 @@
 
 package io.spine.protodata.settings
 
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.settings.event.SettingsFileDiscovered
 import io.spine.protodata.settings.event.settingsFileDiscovered
-import io.spine.protodata.toProto
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries

@@ -26,7 +26,7 @@
 
 package io.spine.protodata.test
 
-import io.spine.protodata.qualifiedName
+import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.render.SourceFileSet
 import io.spine.tools.code.Java
 import java.io.File

@@ -29,22 +29,22 @@ package io.spine.protodata.backend.event
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.ProtoFileHeader
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.constantName
+import io.spine.protodata.ast.event.EnumConstantEntered
+import io.spine.protodata.ast.event.EnumConstantExited
+import io.spine.protodata.ast.event.EnumEntered
+import io.spine.protodata.ast.event.EnumExited
+import io.spine.protodata.ast.event.enumConstantEntered
+import io.spine.protodata.ast.event.enumConstantExited
+import io.spine.protodata.ast.event.enumConstantOptionDiscovered
+import io.spine.protodata.ast.event.enumDiscovered
+import io.spine.protodata.ast.event.enumEntered
+import io.spine.protodata.ast.event.enumExited
+import io.spine.protodata.ast.event.enumOptionDiscovered
+import io.spine.protodata.ast.produceOptionEvents
 import io.spine.protodata.protobuf.buildConstant
-import io.spine.protodata.constantName
-import io.spine.protodata.event.EnumConstantEntered
-import io.spine.protodata.event.EnumConstantExited
-import io.spine.protodata.event.EnumEntered
-import io.spine.protodata.event.EnumExited
-import io.spine.protodata.event.enumConstantEntered
-import io.spine.protodata.event.enumConstantExited
-import io.spine.protodata.event.enumConstantOptionDiscovered
-import io.spine.protodata.event.enumDiscovered
-import io.spine.protodata.event.enumEntered
-import io.spine.protodata.event.enumExited
-import io.spine.protodata.event.enumOptionDiscovered
 import io.spine.protodata.protobuf.name
-import io.spine.protodata.produceOptionEvents
 import io.spine.protodata.protobuf.toEnumType
 
 /**

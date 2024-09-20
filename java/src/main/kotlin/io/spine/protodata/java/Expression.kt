@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -32,11 +32,11 @@ import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import com.google.protobuf.ByteString
 import io.spine.protobuf.TypeConverter
-import io.spine.protodata.Field
-import io.spine.protodata.Field.CardinalityCase
-import io.spine.protodata.Field.CardinalityCase.SINGLE
-import io.spine.protodata.FieldName
-import io.spine.protodata.fieldName
+import io.spine.protodata.ast.Field
+import io.spine.protodata.ast.Field.CardinalityCase
+import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
+import io.spine.protodata.ast.FieldName
+import io.spine.protodata.ast.fieldName
 import io.spine.protodata.java.MethodCall.Companion.OF
 
 /**

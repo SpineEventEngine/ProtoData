@@ -26,7 +26,7 @@
 
 package io.spine.protodata.render
 
-import io.spine.protodata.ProtoDeclarationName
+import io.spine.protodata.ast.ProtoDeclarationName
 import io.spine.protodata.type.Convention
 import io.spine.protodata.type.NameElement
 import io.spine.tools.code.Language

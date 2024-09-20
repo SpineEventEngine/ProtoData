@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,20 +26,20 @@
 
 package io.spine.protodata.type
 
-import io.spine.protodata.EnumType
-import io.spine.protodata.MessageType
-import io.spine.protodata.ProtoDeclaration
-import io.spine.protodata.ProtoDeclarationName
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.ProtobufDependency
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.Service
-import io.spine.protodata.ServiceName
-import io.spine.protodata.Type
-import io.spine.protodata.TypeName
-import io.spine.protodata.isEnum
-import io.spine.protodata.isMessage
-import io.spine.protodata.typeName
+import io.spine.protodata.ast.EnumType
+import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.ProtoDeclaration
+import io.spine.protodata.ast.ProtoDeclarationName
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.ProtobufDependency
+import io.spine.protodata.ast.ProtobufSourceFile
+import io.spine.protodata.ast.Service
+import io.spine.protodata.ast.ServiceName
+import io.spine.protodata.ast.Type
+import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.isEnum
+import io.spine.protodata.ast.isMessage
+import io.spine.protodata.ast.typeName
 import io.spine.server.query.Querying
 import io.spine.server.query.select
 import io.spine.type.shortDebugString

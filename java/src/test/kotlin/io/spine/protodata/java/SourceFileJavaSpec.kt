@@ -28,7 +28,7 @@ package io.spine.protodata.java
 
 import com.google.common.truth.Truth.assertThat
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.TypeName
+import io.spine.protodata.ast.TypeName
 import io.spine.protodata.java.TypedInsertionPoint.BUILDER_IMPLEMENTS
 import io.spine.protodata.java.TypedInsertionPoint.BUILDER_SCOPE
 import io.spine.protodata.java.TypedInsertionPoint.CLASS_SCOPE
