@@ -26,12 +26,13 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.render.InsertionPoint
 import io.spine.text.TextCoordinates
 
 /**
  * An insertion point that can never be added to a file.
  */
-public object NonExistingPoint : io.spine.protodata.render.InsertionPoint {
+public object NonExistingPoint : InsertionPoint {
 
     override val label: String = "NonExistingPoint"
 

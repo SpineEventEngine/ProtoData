@@ -26,6 +26,7 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.render.InsertionPoint
 import io.spine.protodata.render.InsertionPointPrinter
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
@@ -34,7 +35,7 @@ import kotlin.text.RegexOption.DOT_MATCHES_ALL
 /**
  * An insertion point marking a public non-void instance method.
  */
-public class NonVoidMethod : io.spine.protodata.render.InsertionPoint {
+public class NonVoidMethod : InsertionPoint {
 
     private companion object {
         @Suppress("MaxLineLength")

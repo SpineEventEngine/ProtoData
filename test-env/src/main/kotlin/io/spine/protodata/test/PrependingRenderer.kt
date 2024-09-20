@@ -26,6 +26,7 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.render.InsertionPoint
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.GenericInsertionPoint.FILE_START
@@ -37,7 +38,7 @@ import kotlin.io.path.name
  * A renderer that writes preset text into a given insertion point.
  */
 public class PrependingRenderer(
-    private val insertionPoint: io.spine.protodata.render.InsertionPoint = FILE_START,
+    private val insertionPoint: InsertionPoint = FILE_START,
     private val inline: Boolean = false
 ) : Renderer<Java>(Java) {
 

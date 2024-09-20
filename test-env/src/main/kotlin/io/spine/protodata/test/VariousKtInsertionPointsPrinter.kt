@@ -29,13 +29,14 @@ package io.spine.protodata.test
 import io.spine.protodata.render.CoordinatesFactory.Companion.endOfFile
 import io.spine.protodata.render.CoordinatesFactory.Companion.startOfFile
 import io.spine.protodata.render.InsertionPointPrinter
+import io.spine.protodata.render.NonRepeatingInsertionPoint
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Kotlin
 
 public class VariousKtInsertionPointsPrinter :
     InsertionPointPrinter<Kotlin>(Kotlin, KotlinInsertionPoint.values().toSet())
 
-public enum class KotlinInsertionPoint : io.spine.protodata.render.NonRepeatingInsertionPoint {
+public enum class KotlinInsertionPoint : NonRepeatingInsertionPoint {
 
     FILE_START {
         override fun locateOccurrence(text: String): TextCoordinates = startOfFile
