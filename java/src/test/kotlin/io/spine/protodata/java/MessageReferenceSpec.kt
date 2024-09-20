@@ -32,6 +32,7 @@ import io.spine.protodata.ast.FieldKt.ofMap
 import io.spine.protodata.ast.FieldName
 import io.spine.protodata.ast.PrimitiveType
 import io.spine.protodata.ast.TypeInstances
+import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
 import io.spine.protodata.ast.typeName
@@ -96,7 +97,7 @@ private val fieldName: FieldName = fieldName {
     value = "baz"
 }
 
-private val typeName: io.spine.protodata.ast.TypeName = typeName {
+private val typeName: TypeName = typeName {
     simpleName = "StubType"
     packageName = "given.message"
 }
