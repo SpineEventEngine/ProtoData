@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata
+package io.spine.protodata.render
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.assertions.withClue
@@ -35,9 +35,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.ImplicitPluginWithRenderers
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.render.InsertionPoint
-import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.render.codeLine
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.CompanionFramer
