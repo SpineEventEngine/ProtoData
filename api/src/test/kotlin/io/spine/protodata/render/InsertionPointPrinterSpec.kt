@@ -55,7 +55,7 @@ class InsertionPointPrinterSpec {
     }
 }
 
-private class StubPoint: io.spine.protodata.render.InsertionPoint {
+private class StubPoint: InsertionPoint {
     override val label: String = ""
     override fun locate(text: String): Set<TextCoordinates> = emptySet()
 }
