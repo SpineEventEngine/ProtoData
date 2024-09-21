@@ -41,7 +41,7 @@ import io.spine.tools.code.Java
  *
  * @param V The type of the view state which gathers messages types served by this renderer.
  *  The type is an [EntityState] that has [File] as its identifier and
- *  implements the [io.spine.tools.mc.java.TypeListActions] interface.
+ *  implements the [TypeListActions] interface.
  * @param S The type of the settings used by the renderer.
  *
  * @see TypeRenderer
