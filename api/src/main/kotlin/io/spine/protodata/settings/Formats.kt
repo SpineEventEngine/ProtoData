@@ -53,7 +53,7 @@ public val Format.extensions: List<String>
 /**
  * Obtains a [Format] from the file extension of the given configuration file.
  *
- * @throws IllegalStateException if the format is not recognized
+ * @throws IllegalStateException If the format is not recognized.
  */
 public fun formatOf(file: Path): Format =
     Format.values().find { it.matches(file) }

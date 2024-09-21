@@ -39,10 +39,10 @@ import io.spine.tools.code.Java
  * This class applies multiple render actions to multiple types.
  * For applying rendering actions to one type, please see [TypeRenderer].
  *
- * @param V the type of the view state which gathers messages types served by this renderer.
+ * @param V The type of the view state which gathers messages types served by this renderer.
  *  The type is an [EntityState] that has [File] as its identifier and
  *  implements the [io.spine.tools.mc.java.TypeListActions] interface.
- * @param S the type of the settings used by the renderer.
+ * @param S The type of the settings used by the renderer.
  *
  * @see TypeRenderer
  */
