@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,9 +27,9 @@
 package io.spine.protodata.test
 
 import com.google.protobuf.StringValue
-import io.spine.protodata.ProtobufSourceFile
-import io.spine.protodata.find
-import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.ast.ProtobufSourceFile
+import io.spine.protodata.ast.find
+import io.spine.protodata.render.SourceFileSet
 import io.spine.tools.code.Java
 import kotlin.io.path.Path
 import kotlin.io.path.div

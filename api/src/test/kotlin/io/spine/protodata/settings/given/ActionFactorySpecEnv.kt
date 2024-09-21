@@ -30,11 +30,11 @@ import com.google.protobuf.Empty
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import io.spine.base.EntityState
-import io.spine.protodata.CodegenContext
-import io.spine.protodata.MessageType
-import io.spine.protodata.renderer.RenderAction
-import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.settings.ActionFactory
+import io.spine.protodata.ast.MessageType
+import io.spine.protodata.context.CodegenContext
+import io.spine.protodata.render.ActionFactory
+import io.spine.protodata.render.RenderAction
+import io.spine.protodata.render.SourceFile
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.entity.Entity
 import io.spine.server.integration.ThirdPartyContext

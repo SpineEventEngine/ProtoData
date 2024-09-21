@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,7 +27,7 @@
 package io.spine.protodata.java
 
 import io.spine.protobuf.isNotDefault
-import io.spine.protodata.TypeName
+import io.spine.protodata.ast.TypeName
 import io.spine.protodata.type.Declaration
 import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Java
@@ -38,6 +38,7 @@ import io.spine.tools.code.Java
  * The convention only defines a declaration for rejection message types. Any other types are
  * undefined and thus result in the [declarationFor] method returning `null`.
  */
+@Deprecated("Please use the class from McJava instead.")
 public class RejectionThrowableConvention(
     typeSystem: TypeSystem
 ) : BaseJavaConvention<TypeName, ClassName>(typeSystem) {

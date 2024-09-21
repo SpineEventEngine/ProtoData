@@ -44,5 +44,4 @@ message Octopus {
 
 message Elephant {
     option (is).java_type = "org.humans.Domesticated";
-    option (is).generate = true;
 }

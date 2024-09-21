@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,9 +30,9 @@ package io.spine.protodata.java
 
 import com.google.protobuf.BoolValue
 import com.google.protobuf.StringValue
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.find
-import io.spine.protodata.nameWithoutExtension
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.find
+import io.spine.protodata.ast.nameWithoutExtension
 import io.spine.string.camelCase
 
 /**

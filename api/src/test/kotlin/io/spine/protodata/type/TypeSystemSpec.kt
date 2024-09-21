@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,16 +29,16 @@ package io.spine.protodata.type
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.spine.protodata.EnumType
-import io.spine.protodata.MessageType
-import io.spine.protodata.Service
-import io.spine.protodata.serviceName
+import io.spine.protodata.ast.EnumType
+import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.Service
+import io.spine.protodata.ast.serviceName
+import io.spine.protodata.ast.typeName
 import io.spine.protodata.test.TypesTestEnv.enumTypeName
 import io.spine.protodata.test.TypesTestEnv.messageTypeName
 import io.spine.protodata.test.TypesTestEnv.multipleFilesHeader
 import io.spine.protodata.test.TypesTestEnv.serviceNameMultiple
 import io.spine.protodata.test.TypesTestEnv.typeSystem
-import io.spine.protodata.typeName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -77,6 +77,7 @@ class TypeSystemSpec {
             messageType.shouldBeInstanceOf<MessageType>()
         }
 
+        @Test
         fun `service by name`() {
             val (service, _) = typeSystem.findService(serviceNameMultiple)!!
             service.shouldBeInstanceOf<Service>()

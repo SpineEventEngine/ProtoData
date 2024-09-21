@@ -31,7 +31,7 @@ import io.spine.base.Time
 import io.spine.base.Time.currentTime
 import io.spine.base.Time.currentTimeZone
 import io.spine.protodata.Constants.CLI_APP_CLASS
-import io.spine.protodata.renderer.SourceFile
+import io.spine.protodata.render.SourceFile
 import io.spine.string.Separator
 import io.spine.time.toInstant
 import io.spine.tools.code.Java

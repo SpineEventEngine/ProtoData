@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,11 +28,11 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.Type
-import io.spine.protodata.isEnum
-import io.spine.protodata.isMessage
-import io.spine.protodata.isPrimitive
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.Type
+import io.spine.protodata.ast.isEnum
+import io.spine.protodata.ast.isMessage
+import io.spine.protodata.ast.isPrimitive
 import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.type.findHeader
 import io.spine.type.shortDebugString

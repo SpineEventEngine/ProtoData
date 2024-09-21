@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,9 +29,8 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.TypeName
-import io.spine.protodata.renderer.InsertionPoint
-import io.spine.protodata.renderer.ProtocInsertionPoint
+import io.spine.protodata.ast.TypeName
+import io.spine.protodata.render.InsertionPoint
 
 /**
  * Standard [InsertionPoint]s generated for a message, or an enum type by the Protobuf compiler.
@@ -88,9 +87,9 @@ public enum class TypedInsertionPoint {
     /**
      * Obtains the [InsertionPoint] of the associated scope for the given type.
      */
-    public fun forType(typeName: TypeName): InsertionPoint {
+    public fun forType(typeName: TypeName): io.spine.protodata.render.InsertionPoint {
         val scopeName = name.lowercase()
-        return ProtocInsertionPoint(scopeName, typeName)
+        return io.spine.protodata.render.ProtocInsertionPoint(scopeName, typeName)
     }
 }
 
@@ -100,4 +99,5 @@ public enum class TypedInsertionPoint {
  *
  * Note that the insertion point is identical for each outer class.
  */
-public val OUTER_CLASS_SCOPE: InsertionPoint = ProtocInsertionPoint("outer_class_scope")
+public val OUTER_CLASS_SCOPE: io.spine.protodata.render.InsertionPoint =
+    io.spine.protodata.render.ProtocInsertionPoint("outer_class_scope")

@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,29 +30,29 @@ import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.Documentation
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.buildField
-import io.spine.protodata.event.FieldEntered
-import io.spine.protodata.event.FieldExited
-import io.spine.protodata.event.OneofGroupEntered
-import io.spine.protodata.event.OneofGroupExited
-import io.spine.protodata.event.TypeEntered
-import io.spine.protodata.event.TypeExited
-import io.spine.protodata.event.fieldEntered
-import io.spine.protodata.event.fieldExited
-import io.spine.protodata.event.fieldOptionDiscovered
-import io.spine.protodata.event.oneofGroupEntered
-import io.spine.protodata.event.oneofGroupExited
-import io.spine.protodata.event.oneofOptionDiscovered
-import io.spine.protodata.event.typeDiscovered
-import io.spine.protodata.event.typeEntered
-import io.spine.protodata.event.typeExited
-import io.spine.protodata.event.typeOptionDiscovered
-import io.spine.protodata.name
-import io.spine.protodata.oneofGroup
-import io.spine.protodata.produceOptionEvents
-import io.spine.protodata.toMessageType
+import io.spine.protodata.ast.Documentation
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.event.FieldEntered
+import io.spine.protodata.ast.event.FieldExited
+import io.spine.protodata.ast.event.OneofGroupEntered
+import io.spine.protodata.ast.event.OneofGroupExited
+import io.spine.protodata.ast.event.TypeEntered
+import io.spine.protodata.ast.event.TypeExited
+import io.spine.protodata.ast.event.fieldEntered
+import io.spine.protodata.ast.event.fieldExited
+import io.spine.protodata.ast.event.fieldOptionDiscovered
+import io.spine.protodata.ast.event.oneofGroupEntered
+import io.spine.protodata.ast.event.oneofGroupExited
+import io.spine.protodata.ast.event.oneofOptionDiscovered
+import io.spine.protodata.ast.event.typeDiscovered
+import io.spine.protodata.ast.event.typeEntered
+import io.spine.protodata.ast.event.typeExited
+import io.spine.protodata.ast.event.typeOptionDiscovered
+import io.spine.protodata.ast.oneofGroup
+import io.spine.protodata.ast.produceOptionEvents
+import io.spine.protodata.protobuf.buildField
+import io.spine.protodata.protobuf.name
+import io.spine.protodata.protobuf.toMessageType
 
 /**
  * Produces events for a message.

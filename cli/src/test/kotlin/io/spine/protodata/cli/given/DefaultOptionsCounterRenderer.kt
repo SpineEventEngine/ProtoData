@@ -27,7 +27,7 @@
 package io.spine.protodata.cli.given
 
 import io.spine.protodata.cli.test.DefaultOptionsCounter
-import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.StubSoloRenderer
 import kotlin.io.path.Path
 

@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,8 +28,8 @@ package io.spine.protodata.test
 
 import io.spine.core.External
 import io.spine.core.Subscribe
-import io.spine.protodata.TypeName
-import io.spine.protodata.event.TypeDiscovered
+import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.event.TypeDiscovered
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.entity.update

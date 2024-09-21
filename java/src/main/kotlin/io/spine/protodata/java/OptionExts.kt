@@ -27,7 +27,7 @@
 package io.spine.protodata.java
 
 import io.spine.option.IsOption
-import io.spine.protodata.ProtoFileHeader
+import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.java.JavaTypeName.Companion.PACKAGE_SEPARATOR
 import org.checkerframework.checker.signature.qual.FullyQualifiedName
 

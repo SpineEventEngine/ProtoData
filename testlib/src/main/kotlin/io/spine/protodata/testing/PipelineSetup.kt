@@ -34,7 +34,7 @@ import io.spine.io.ResourceDirectory
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.renderer.SourceFileSet
+import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.PipelineSetup.Companion.byResources
 import io.spine.reflect.CallerFinder.findCallerOf

@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,12 +26,12 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.Field
-import io.spine.protodata.Field.CardinalityCase
-import io.spine.protodata.Field.CardinalityCase.LIST
-import io.spine.protodata.Field.CardinalityCase.MAP
-import io.spine.protodata.Field.CardinalityCase.SINGLE
-import io.spine.protodata.FieldName
+import io.spine.protodata.ast.Field
+import io.spine.protodata.ast.Field.CardinalityCase
+import io.spine.protodata.ast.Field.CardinalityCase.LIST
+import io.spine.protodata.ast.Field.CardinalityCase.MAP
+import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
+import io.spine.protodata.ast.FieldName
 import io.spine.string.camelCase
 
 /**

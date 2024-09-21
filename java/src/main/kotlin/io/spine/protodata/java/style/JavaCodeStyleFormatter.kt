@@ -27,10 +27,10 @@
 package io.spine.protodata.java.style
 
 import com.intellij.psi.codeStyle.JavaCodeStyleSettings
-import io.spine.protodata.java.JavaRenderer
-import io.spine.protodata.renderer.SourceFile
-import io.spine.protodata.renderer.SourceFileSet
-import io.spine.protodata.renderer.forEachOfLanguage
+import io.spine.protodata.java.render.JavaRenderer
+import io.spine.protodata.render.SourceFile
+import io.spine.protodata.render.SourceFileSet
+import io.spine.protodata.render.forEachOfLanguage
 import io.spine.protodata.settings.defaultConsumerId
 import io.spine.protodata.settings.loadSettings
 import io.spine.tools.code.Java

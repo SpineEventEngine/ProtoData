@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -32,34 +32,34 @@ import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_OUTER_CLASSNAME_FIE
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_PACKAGE_FIELD_NUMBER
 import com.google.protobuf.Empty
 import io.spine.protobuf.pack
-import io.spine.protodata.EnumConstant
-import io.spine.protodata.EnumType
-import io.spine.protodata.Field
-import io.spine.protodata.File
-import io.spine.protodata.MessageType
-import io.spine.protodata.Option
-import io.spine.protodata.PrimitiveType.TYPE_BOOL
-import io.spine.protodata.PrimitiveType.TYPE_STRING
-import io.spine.protodata.ProtoFileHeader
-import io.spine.protodata.Service
-import io.spine.protodata.ServiceName
-import io.spine.protodata.TypeName
-import io.spine.protodata.constantName
-import io.spine.protodata.enumConstant
-import io.spine.protodata.fieldName
-import io.spine.protodata.file
-import io.spine.protodata.messageType
-import io.spine.protodata.option
-import io.spine.protodata.pack
-import io.spine.protodata.protoFileHeader
-import io.spine.protodata.protobufSourceFile
-import io.spine.protodata.service
-import io.spine.protodata.serviceName
-import io.spine.protodata.type
+import io.spine.protodata.ast.EnumConstant
+import io.spine.protodata.ast.EnumType
+import io.spine.protodata.ast.Field
+import io.spine.protodata.ast.File
+import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.Option
+import io.spine.protodata.ast.PrimitiveType.TYPE_BOOL
+import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.Service
+import io.spine.protodata.ast.ServiceName
+import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.constantName
+import io.spine.protodata.ast.enumConstant
+import io.spine.protodata.ast.fieldName
+import io.spine.protodata.ast.file
+import io.spine.protodata.ast.messageType
+import io.spine.protodata.ast.option
+import io.spine.protodata.ast.protoFileHeader
+import io.spine.protodata.ast.protobufSourceFile
+import io.spine.protodata.ast.service
+import io.spine.protodata.ast.serviceName
+import io.spine.protodata.ast.type
+import io.spine.protodata.ast.typeName
 import io.spine.protodata.type.TypeSystem
-import io.spine.protodata.typeName
-import io.spine.protodata.enumType as newEnumType
-import io.spine.protodata.field as newField
+import io.spine.protodata.value.pack
+import io.spine.protodata.ast.enumType as newEnumType
+import io.spine.protodata.ast.field as newField
 
 public object TypesTestEnv {
 

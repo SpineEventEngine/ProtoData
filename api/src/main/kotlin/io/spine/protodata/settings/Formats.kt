@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,7 +27,6 @@
 package io.spine.protodata.settings
 
 import io.spine.io.Glob
-import io.spine.protodata.ConfigurationError
 import io.spine.protodata.settings.Format.UNRECOGNIZED
 import java.nio.file.Path
 import kotlin.io.path.name
@@ -54,11 +53,11 @@ public val Format.extensions: List<String>
 /**
  * Obtains a [Format] from the file extension of the given configuration file.
  *
- * @throws ConfigurationError if the format is not recognized
+ * @throws IllegalStateException If the format is not recognized.
  */
 public fun formatOf(file: Path): Format =
     Format.values().find { it.matches(file) }
-        ?: throw ConfigurationError("Unrecognized settings format: `${file.name}`.")
+        ?: error("Unrecognized settings format: `${file.name}`.")
 
 /**
  * Tells if this file is a settings file.

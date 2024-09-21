@@ -34,6 +34,7 @@ import com.squareup.javapoet.CodeBlock
 /**
  * Splits this `CodeBlock` into lines.
  */
+@Deprecated("Please use PSI-based code generation instead.")
 public fun CodeBlock.lines(): ImmutableList<String> {
     val code = this.toString()
     if (code.isEmpty()) {
