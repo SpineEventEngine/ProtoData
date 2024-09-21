@@ -33,7 +33,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.sksamuel.aedile.core.cacheBuilder
 import io.spine.protodata.ast.file
-import io.spine.protodata.render.SourceFile.Companion.fromCode
 import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
