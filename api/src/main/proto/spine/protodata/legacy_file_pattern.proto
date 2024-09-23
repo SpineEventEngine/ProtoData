@@ -24,12 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.61.1")
+syntax = "proto3";
+
+// Have the legacy `FilePattern` type under a nested package to avoid the conflict
+// with the new type.
+package spine.protodata.legacy;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+
+// The package for the generated type we have before introducing the `ast` subpackage.
+option java_package = "io.spine.protodata";
+
+option java_outer_classname = "FileProto";
+option java_multiple_files = true;
+
+// A pattern matching file paths.
+message FilePattern {
+
+    oneof kind {
+        option (is_required) = true;
+
+        // The path must end with this string.
+        string suffix = 1;
+
+        // The path must start with this string.
+        string prefix = 2;
+
+        // The path must match this regular expression.
+        string regex = 3;
+    }
+}

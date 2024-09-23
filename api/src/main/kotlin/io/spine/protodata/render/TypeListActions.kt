@@ -24,20 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.java.render
+package io.spine.protodata.render
 
 import com.google.protobuf.Message
 import io.spine.protodata.ast.MessageType
-import io.spine.protodata.render.WithActions
 
 /**
- * An interface common to view states that contain a list of render actions
- * to be applied to a message type.
+ * An interface common to view states that gather message types.
  */
-public interface TypeActions : Message, WithActions {
+public interface TypeListActions : Message, WithActions {
 
     /**
-     * The type for which we apply render actions.
+     * Returns the list of gathered message types.
      */
-    public fun getType(): MessageType
+    public fun getTypeList(): List<MessageType>
 }

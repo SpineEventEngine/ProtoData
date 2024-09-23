@@ -31,6 +31,7 @@ import io.spine.base.EntityState
 import io.spine.protodata.ast.File
 import io.spine.protodata.ast.MessageType
 import io.spine.protodata.render.SourceFile
+import io.spine.protodata.render.TypeListActions
 import io.spine.tools.code.Java
 
 /**
