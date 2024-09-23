@@ -37,7 +37,7 @@ option (type_url_prefix) = "type.spine.io";
 // The package for the generated type we have before introducing the `ast` subpackage.
 option java_package = "io.spine.protodata";
 
-option java_outer_classname = "LegacyPatternProto";
+option java_outer_classname = "FileProto";
 option java_multiple_files = true;
 
 // A pattern matching file paths.
