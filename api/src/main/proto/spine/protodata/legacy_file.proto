@@ -40,8 +40,26 @@ option java_package = "io.spine.protodata";
 option java_outer_classname = "FileProto";
 option java_multiple_files = true;
 
+// Represents a file in an arbitrary OS.
+//
+// In most cases it is going to be a relative path.
+// In some cases it may be an absolute path.
+//
+// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
+// the current operating system. This value holds this exact format of the path.
+//
+message File {
+    // Use `spine.protodata.File` instead.
+    option deprecated = true;
+
+    // The path to the file, separating directories with slash (`/`) symbol.
+    string path = 1 [(required) = true];
+}
+
 // A pattern matching file paths.
 message FilePattern {
+    // Use `spine.protodata.FilePattern` instead.
+    option deprecated = true;
 
     oneof kind {
         option (is_required) = true;
