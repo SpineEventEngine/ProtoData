@@ -66,3 +66,5 @@ dependencies {
     // For using `CodeGenerationContext` in stubs.
     testImplementation(project(":backend"))
 }
+
+protoDataRemoteDebug(enabled = false)
