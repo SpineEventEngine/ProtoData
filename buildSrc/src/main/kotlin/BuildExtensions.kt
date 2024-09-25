@@ -38,6 +38,7 @@ import io.spine.internal.dependency.Protobuf
 import io.spine.internal.gradle.standardToSpineSdk
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.ScriptHandlerScope
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
@@ -205,3 +206,42 @@ fun Project.configureTaskDependencies() {
  */
 val Project.productionModules: Iterable<Project>
     get() = rootProject.subprojects.filter { !it.name.contains("-tests") }
+
+
+/**
+ * Sets the remote debug option for this task.
+ *
+ * The port number is `5566`.
+ *
+ * @param enabled If `true` the task will be suspended.
+ */
+fun Task.remoteDebug(enabled: Boolean = true) { this as JavaExec
+    debugOptions {
+        this@debugOptions.enabled.set(enabled)
+        port.set(5566)
+        server.set(true)
+        suspend.set(true)
+    }
+}
+
+/**
+ * Sets remote debug options for the `launchProtoData` task.
+ *
+ * @param enabled if `true` the task will be suspended.
+ *
+ * @see remoteDebug
+ */
+fun Project.protoDataRemoteDebug(enabled: Boolean = true) {
+    tasks.findByName("launchProtoData")?.remoteDebug(enabled)
+}
+
+/**
+ * Sets remote debug options for the `launchTestProtoData` task.
+ *
+ * @param enabled if `true` the task will be suspended.
+ *
+ * @see remoteDebug
+ */
+fun Project.testProtoDataRemoteDebug(enabled: Boolean = true) {
+    tasks.findByName("launchTestProtoData")?.remoteDebug(enabled)
+}
