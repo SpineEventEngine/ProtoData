@@ -27,12 +27,32 @@
 package io.spine.internal.dependency
 
 /**
- * Helps optimize Gradle Builds by ensuring recommendations at build time.
+ * Dependencies on Spine Model Compiler for Java.
  *
- * See [plugin site](https://runningcode.github.io/gradle-doctor) for features and usage.
+ * See [mc-java](https://github.com/SpineEventEngine/mc-java).
  */
-@Suppress("unused", "ConstPropertyName")
-object GradleDoctor {
-    const val version = "0.10.0"
-    const val pluginId = "com.osacky.doctor"
+@Suppress(
+    "MemberVisibilityCanBePrivate" /* `pluginLib()` is used by subprojects. */,
+    "ConstPropertyName"
+)
+object McJava {
+    const val group = Spine.toolsGroup
+
+    /** The version used to in the build classpath. */
+    const val dogfoodingVersion = "2.0.0-SNAPSHOT.241"
+
+    /** The version to be used for integration tests. */
+    const val version = "2.0.0-SNAPSHOT.241"
+
+    const val pluginId = "io.spine.mc-java"
+
+    val pluginLib = pluginLib(dogfoodingVersion)
+    fun pluginLib(version: String): String = "$group:spine-mc-java-plugins:$version:all"
+
+    /** The artifact reference for forcing in configurations. */
+    @Suppress("unused")
+    const val pluginsArtifact: String = "$group:spine-mc-java-plugins:$version"
+
+    val base = base(version)
+    fun base(version: String): String = "$group:spine-mc-java-base:$version"
 }
