@@ -1,11 +1,11 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2022, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,12 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.internal.gradle.dokka
+
+import java.io.File
+import org.gradle.api.file.FileCollection
+import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
+
 /**
- * The version of the ProtoData to publish.
+ * Returns only Java source roots out of all present in the source set.
  *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * It is a helper method for generating documentation by Dokka only for Java code.
+ * It is helpful when both Java and Kotlin source files are present in a source set.
+ * Dokka can properly generate documentation for either Kotlin or Java depending on
+ * the configuration, but not both.
  */
-val protoDataVersion: String by extra("0.61.3")
+@Suppress("unused")
+internal fun GradleDokkaSourceSetBuilder.onlyJavaSources(): FileCollection {
+    return sourceRoots.filter(File::isJavaSourceDirectory)
+}
+
+private fun File.isJavaSourceDirectory(): Boolean {
+    return isDirectory && name == "java"
+}

@@ -27,7 +27,8 @@
 @file:Suppress("RemoveRedundantQualifierName")
 
 import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Spine.McJava
+import io.spine.internal.dependency.McJava
+import io.spine.internal.dependency.Spine
 
 /**
  * The dependency onto Spine Validation causes the circular dependency in this Gradle project.
@@ -42,4 +43,13 @@ apply {
 
 dependencies {
     Protobuf.libs.forEach { "api"(it) }
+}
+
+configurations.all {
+    if(name.endsWith("ProtoPath")) {
+        System.err.println(" --- Configuring `$name` with `${Spine.baseForBuildScript}`. ---")
+        resolutionStrategy.force(
+            Spine.baseForBuildScript
+        )
+    }
 }

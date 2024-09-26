@@ -54,9 +54,8 @@ internal class MarkdownReportRenderer(
     }
 
     private fun outputFile(project: Project): File {
-        val config =
-            project.extensions.findByName("licenseReport") as LicenseReportExtension
-        return File(config.outputDir).resolve(filename)
+        val ext = project.extensions.findByName("licenseReport") as LicenseReportExtension
+        return File(ext.outputDir).resolve(filename)
     }
 }
 

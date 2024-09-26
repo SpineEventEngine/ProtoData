@@ -24,12 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.internal.dependency
+
 /**
- * The version of the ProtoData to publish.
+ * Dependencies on Spine Model Compiler for Java.
  *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * See [mc-java](https://github.com/SpineEventEngine/mc-java).
  */
-val protoDataVersion: String by extra("0.61.3")
+@Suppress(
+    "MemberVisibilityCanBePrivate" /* `pluginLib()` is used by subprojects. */,
+    "ConstPropertyName"
+)
+object McJava {
+    const val group = Spine.toolsGroup
+
+    /** The version used to in the build classpath. */
+    const val dogfoodingVersion = "2.0.0-SNAPSHOT.241"
+
+    /** The version to be used for integration tests. */
+    const val version = "2.0.0-SNAPSHOT.241"
+
+    const val pluginId = "io.spine.mc-java"
+
+    val pluginLib = pluginLib(dogfoodingVersion)
+    fun pluginLib(version: String): String = "$group:spine-mc-java-plugins:$version:all"
+
+    /** The artifact reference for forcing in configurations. */
+    @Suppress("unused")
+    const val pluginsArtifact: String = "$group:spine-mc-java-plugins:$version"
+
+    val base = base(version)
+    fun base(version: String): String = "$group:spine-mc-java-base:$version"
+}

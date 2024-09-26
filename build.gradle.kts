@@ -41,9 +41,18 @@ import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 
 buildscript {
     standardSpineSdkRepositories()
+    val baseForBuildScript = io.spine.internal.dependency.Spine.baseForBuildScript
     dependencies {
         classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
-        classpath(io.spine.internal.dependency.Spine.McJava.pluginLib)
+        classpath(baseForBuildScript)
+        classpath(mcJava.pluginLib) {
+            excludeSpineBase()
+        }
+    }
+    configurations.all {
+        resolutionStrategy {
+            force(baseForBuildScript)
+        }
     }
 }
 

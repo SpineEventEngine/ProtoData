@@ -26,6 +26,7 @@
 
 package io.spine.protodata.java
 
+import io.spine.option.EveryIsOption
 import io.spine.option.IsOption
 import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.java.JavaTypeName.Companion.PACKAGE_SEPARATOR
@@ -33,23 +34,36 @@ import org.checkerframework.checker.signature.qual.FullyQualifiedName
 
 /**
  * Obtains a fully qualified name of a Java type corresponding the value
- * of the `java_type` property of `is` or `every_is` options.
+ * of the `java_type` property of the `is` option.
  *
- * @param header the header of the proto file to resolve the Java package if
+ * @param header The header of the proto file to resolve the Java package if
  *   a simple type name is specified.
- * @throws IllegalStateException if the `java_type` property is empty or blank.
+ * @throws IllegalStateException If the `java_type` property is empty or blank.
  * @see IsOption
  */
-public fun IsOption.qualifiedJavaType(header: ProtoFileHeader): @FullyQualifiedName String {
+public fun IsOption.qualifiedJavaType(header: ProtoFileHeader): @FullyQualifiedName String =
+    header.toQualified(javaType)
+
+/**
+ * Obtains a fully qualified name of a Java type corresponding the value
+ * of the `java_type` property of the `every_is` option.
+ *
+ * @param header The header of the proto file to resolve the Java package if
+ *   a simple type name is specified.
+ * @throws IllegalStateException If the `java_type` property is empty or blank.
+ * @see EveryIsOption
+ */
+public fun EveryIsOption.qualifiedJavaType(header: ProtoFileHeader): @FullyQualifiedName String =
+    header.toQualified(javaType)
+
+private fun ProtoFileHeader.toQualified(javaType: String): @FullyQualifiedName String {
     check(javaType.isNotEmpty() && javaType.isNotBlank()) {
         "The value of `java_type` must not be empty or blank. Got: `\"$javaType\"`."
     }
-    return if (javaType.isQualified) {
+    val isQualified = javaType.contains(PACKAGE_SEPARATOR)
+    return if (isQualified) {
         javaType
     } else {
-        "${header.javaPackage()}.$javaType"
+        "${javaPackage()}.$javaType"
     }
 }
-
-private val String.isQualified: Boolean
-    get() = contains(PACKAGE_SEPARATOR)
