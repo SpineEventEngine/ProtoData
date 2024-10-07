@@ -45,7 +45,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/base">spine-base</a>
          */
-        const val base = "2.0.0-SNAPSHOT.211"
+        const val base = "2.0.0-SNAPSHOT.212"
         const val dogfoodingBase = "2.0.0-SNAPSHOT.208"
 
         /**
@@ -118,7 +118,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/tool-base">spine-tool-base</a>
          */
-        const val toolBase = "2.0.0-SNAPSHOT.225"
+        const val toolBase = "2.0.0-SNAPSHOT.226"
 
         /**
          * The version of [Spine.javadocFilter].
