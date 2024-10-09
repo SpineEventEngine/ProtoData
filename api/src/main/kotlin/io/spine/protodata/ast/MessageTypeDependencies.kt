@@ -37,14 +37,14 @@ import io.spine.protodata.type.TypeSystem
  * recursively in one of the immediate or nested fields.
  *
  * @param messageType The type for which we collect dependencies.
- * @param cardinality The cardinality of fields taken into account when traversing the types.
- *    `null` value means that all fields, including `repeated` and `map` ones will be
+ * @param cardinalities The cardinalities of fields taken into account when traversing the types.
+ *    Empty set means that all fields, including `repeated` and `map` ones will be
  *    taken into account when collecting types.
  * @param typeSystem The type system to obtain a `MessageType` by its name.
  */
 public class MessageTypeDependencies(
     private val messageType: MessageType,
-    private val cardinality: CardinalityCase?,
+    private val cardinalities: Set<CardinalityCase>,
     private val typeSystem: TypeSystem
 ) {
     /**
@@ -71,8 +71,8 @@ public class MessageTypeDependencies(
             .toSet()
 
     private fun Field.matchesCardinality(): Boolean =
-        if (cardinality != null) {
-            cardinalityCase == cardinality
+        if (cardinalities.isNotEmpty()) {
+            cardinalities.contains(cardinalityCase)
         } else {
             true
         }

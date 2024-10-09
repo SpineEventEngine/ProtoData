@@ -93,8 +93,8 @@ internal class EventContextDependenciesTest {
     @Test
     fun `full dependencies`() {
         val eventContext = messageTypeOf<EventContext>()
-        val deps = MessageTypeDependencies(eventContext, SINGLE, typeSystem).asSet()
-            .union(MessageTypeDependencies(eventContext, ONEOF_NAME, typeSystem).asSet())
+        val deps =
+            MessageTypeDependencies(eventContext, setOf(SINGLE, ONEOF_NAME), typeSystem).asSet()
 
         val expected = setOf(
             messageTypeOf<ActorContext>(),

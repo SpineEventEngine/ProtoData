@@ -36,11 +36,18 @@ option java_outer_classname = "MessageTypeDependenciesSpecProto";
 option java_multiple_files = true;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 // A message type with multi-level nested `Message`-typed fields structure.
 message Magazine {
     MagazineTitle name = 1;
     MagazineNumber number = 2;
+
+    oneof inlay {
+        google.protobuf.Empty none = 3;
+        Magazine promo = 4;
+        string coupon_code = 5;
+    }
 }
 
 message MagazineTitle {
