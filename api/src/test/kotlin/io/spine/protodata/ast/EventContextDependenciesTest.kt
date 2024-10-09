@@ -55,6 +55,8 @@ import io.spine.core.UserId
 import io.spine.core.UserIdProto
 import io.spine.core.Version
 import io.spine.core.VersionProto
+import io.spine.net.EmailAddress
+import io.spine.net.InternetDomain
 import io.spine.protodata.ast.Field.CardinalityCase.ONEOF_NAME
 import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
 import io.spine.protodata.protobuf.toPbSourceFile
@@ -104,10 +106,12 @@ internal class EventContextDependenciesTest {
             messageTypeOf<CommandContext>(),
             messageTypeOf<CommandId>(),
             messageTypeOf<Duration>(),
+            messageTypeOf<EmailAddress>(),
             messageTypeOf<Enrichment.Container>(),
             messageTypeOf<Enrichment>(),
             messageTypeOf<EventContext>(),
             messageTypeOf<EventId>(),
+            messageTypeOf<InternetDomain>(),
             messageTypeOf<MessageId>(),
             messageTypeOf<Origin>(),
             messageTypeOf<ProtoAny>(),
