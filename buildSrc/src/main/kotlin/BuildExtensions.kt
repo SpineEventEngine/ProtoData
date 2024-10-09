@@ -88,7 +88,7 @@ val PluginDependenciesSpec.mcJava: McJava
     get() = McJava
 
 /**
- * Shortcut to [ProtoData] dependency object for using under `buildScript`.
+ * Shortcut to [ProtoData] dependency object for using under `buildscript`.
  */
 val ScriptHandlerScope.protoData: ProtoData
     get() = ProtoData
@@ -211,14 +211,14 @@ val Project.productionModules: Iterable<Project>
 /**
  * Sets the remote debug option for this task.
  *
- * The port number is `5566`.
+ * The port number is [5566][BuildSettings.REMOTE_DEBUG_PORT].
  *
  * @param enabled If `true` the task will be suspended.
  */
 fun Task.remoteDebug(enabled: Boolean = true) { this as JavaExec
     debugOptions {
         this@debugOptions.enabled.set(enabled)
-        port.set(5566)
+        port.set(BuildSettings.REMOTE_DEBUG_PORT)
         server.set(true)
         suspend.set(true)
     }
