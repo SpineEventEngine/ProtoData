@@ -62,26 +62,6 @@ public class MessageTypeDependencies(
         return seq.toSet()
     }
 
-    /**
-     * Obtains the dependencies found in the [messageType].
-     */
-    @Deprecated(
-        message = "Please use `asSet()` instead.",
-        replaceWith = ReplaceWith("asSet()")
-    )
-    public val set: Set<MessageType> by lazy {
-        asSet()
-    }
-
-    /**
-     * Obtains the dependencies found in the [messageType].
-     */
-    @Deprecated(
-        message = "Please use `asSet()` instead.",
-        replaceWith = ReplaceWith("asSet()")
-    )
-    public fun scan(): Set<MessageType> = asSet()
-
     private fun MessageType.matchingFieldTypes(): Iterable<MessageType> =
         fieldList.asSequence()
             .filter { it.matchesCardinality() }
