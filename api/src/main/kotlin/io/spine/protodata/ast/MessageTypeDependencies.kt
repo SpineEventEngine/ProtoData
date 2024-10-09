@@ -47,6 +47,25 @@ public class MessageTypeDependencies(
     private val cardinalities: Set<CardinalityCase>,
     private val typeSystem: TypeSystem
 ) {
+
+    /**
+     * Creates an instance for collecting all the dependencies of the given
+     * [messageType] using the given [typeSystem].
+     */
+    public constructor(messageType: MessageType, typeSystem: TypeSystem) :
+            this(messageType, emptySet(), typeSystem)
+
+    /**
+     * Creates an instance for collecting the dependencies of the given
+     * [messageType] for fields with the specified [cardinality] using
+     * the given [typeSystem].
+     */
+    public constructor(
+        messageType: MessageType,
+        cardinality: CardinalityCase,
+        typeSystem: TypeSystem
+    ) : this(messageType, setOf(cardinality), typeSystem)
+
     /**
      * The guard set against recursive type definitions.
      */

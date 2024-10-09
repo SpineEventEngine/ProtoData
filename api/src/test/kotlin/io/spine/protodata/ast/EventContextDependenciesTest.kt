@@ -56,7 +56,9 @@ import io.spine.core.UserIdProto
 import io.spine.core.Version
 import io.spine.core.VersionProto
 import io.spine.net.EmailAddress
+import io.spine.net.EmailAddressProto
 import io.spine.net.InternetDomain
+import io.spine.net.InternetDomainProto
 import io.spine.protodata.ast.Field.CardinalityCase.ONEOF_NAME
 import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
 import io.spine.protodata.protobuf.toPbSourceFile
@@ -75,18 +77,20 @@ internal class EventContextDependenciesTest {
 
     private val typeSystem: TypeSystem by lazy {
         val protoSources = setOf(
+            ActorContextProto.getDescriptor(),
             AnyProto.getDescriptor(),
-            UserIdProto.getDescriptor(),
-            TenantIdProto.getDescriptor(),
-            TimeProto.getDescriptor(),
-            LanguageProto.getDescriptor(),
             CommandProto.getDescriptor(),
+            DiagnosticsProto.getDescriptor(),
+            DurationProto.getDescriptor(),
+            EmailAddressProto.getDescriptor(),
             EnrichmentProto.getDescriptor(),
             EventProto.getDescriptor(),
+            InternetDomainProto.getDescriptor(),
+            LanguageProto.getDescriptor(),
+            TenantIdProto.getDescriptor(),
+            TimeProto.getDescriptor(),
             TimestampProto.getDescriptor(),
-            DurationProto.getDescriptor(),
-            ActorContextProto.getDescriptor(),
-            DiagnosticsProto.getDescriptor(),
+            UserIdProto.getDescriptor(),
             VersionProto.getDescriptor(),
         ).map { it.toPbSourceFile() }.toSet()
         TypeSystem(protoSources)

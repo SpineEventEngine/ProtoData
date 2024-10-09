@@ -111,7 +111,7 @@ internal class MessageTypeDependenciesSpec {
     @Test
     fun `collect types referenced from types of fields`() {
         val projectView = messageTypeOf<ProjectView>()
-        val deps = MessageTypeDependencies(projectView, setOf(SINGLE), typeSystem).asSet()
+        val deps = MessageTypeDependencies(projectView, SINGLE, typeSystem).asSet()
         deps.shouldContainExactlyInAnyOrder(
             messageTypeOf<ProjectId>(),
             messageTypeOf<ProjectName>(),
@@ -142,7 +142,7 @@ internal class MessageTypeDependenciesSpec {
 
         @Test
         fun `all fields`() {
-            val allTypes = MessageTypeDependencies(funnyType, emptySet(), typeSystem).asSet()
+            val allTypes = MessageTypeDependencies(funnyType, typeSystem).asSet()
 
             allTypes.shouldContainExactlyInAnyOrder(
                 jungleType,
@@ -154,19 +154,19 @@ internal class MessageTypeDependenciesSpec {
 
         @Test
         fun `single fields`() {
-            val singleTypes = MessageTypeDependencies(funnyType, setOf(SINGLE), typeSystem).asSet()
+            val singleTypes = MessageTypeDependencies(funnyType, SINGLE, typeSystem).asSet()
             singleTypes.shouldContainExactly(jungleType)
         }
 
         @Test
         fun `map fields`() {
-            val mapTypes = MessageTypeDependencies(funnyType, setOf(MAP), typeSystem).asSet()
+            val mapTypes = MessageTypeDependencies(funnyType, MAP, typeSystem).asSet()
             mapTypes.shouldContainExactly(gorillaType)
         }
 
         @Test
         fun `repeated fields`() {
-            val repeatedTypes = MessageTypeDependencies(funnyType, setOf(LIST), typeSystem).asSet()
+            val repeatedTypes = MessageTypeDependencies(funnyType, LIST, typeSystem).asSet()
 
             repeatedTypes.shouldContainExactlyInAnyOrder(treeType, bananaType)
         }
