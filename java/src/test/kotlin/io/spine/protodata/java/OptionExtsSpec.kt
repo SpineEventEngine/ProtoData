@@ -27,6 +27,7 @@
 package io.spine.protodata.java
 
 import io.kotest.matchers.shouldBe
+import io.spine.option.EveryIsOption
 import io.spine.option.IsOption
 import io.spine.protodata.ast.find
 import io.spine.protodata.protobuf.toHeader
@@ -47,7 +48,7 @@ internal class OptionExtsSpec {
 
         @Test
         fun `'every_is' option`() {
-            val isOption = fileHeader.optionList.find<IsOption>()
+            val isOption = fileHeader.optionList.find<EveryIsOption>()
 
             isOption!!.qualifiedJavaType(fileHeader) shouldBe "life.earth.Animal"
         }

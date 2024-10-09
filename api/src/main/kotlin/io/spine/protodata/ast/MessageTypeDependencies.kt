@@ -37,16 +37,35 @@ import io.spine.protodata.type.TypeSystem
  * recursively in one of the immediate or nested fields.
  *
  * @param messageType The type for which we collect dependencies.
- * @param cardinality The cardinality of fields taken into account when traversing the types.
- *    `null` value means that all fields, including `repeated` and `map` ones will be
+ * @param cardinalities The cardinalities of fields taken into account when traversing the types.
+ *    Empty set means that all fields, including `repeated` and `map` ones will be
  *    taken into account when collecting types.
  * @param typeSystem The type system to obtain a `MessageType` by its name.
  */
 public class MessageTypeDependencies(
     private val messageType: MessageType,
-    private val cardinality: CardinalityCase?,
+    private val cardinalities: Set<CardinalityCase>,
     private val typeSystem: TypeSystem
 ) {
+
+    /**
+     * Creates an instance for collecting all the dependencies of the given
+     * [messageType] using the given [typeSystem].
+     */
+    public constructor(messageType: MessageType, typeSystem: TypeSystem) :
+            this(messageType, emptySet(), typeSystem)
+
+    /**
+     * Creates an instance for collecting the dependencies of the given
+     * [messageType] for fields with the specified [cardinality] using
+     * the given [typeSystem].
+     */
+    public constructor(
+        messageType: MessageType,
+        cardinality: CardinalityCase,
+        typeSystem: TypeSystem
+    ) : this(messageType, setOf(cardinality), typeSystem)
+
     /**
      * The guard set against recursive type definitions.
      */
@@ -62,26 +81,6 @@ public class MessageTypeDependencies(
         return seq.toSet()
     }
 
-    /**
-     * Obtains the dependencies found in the [messageType].
-     */
-    @Deprecated(
-        message = "Please use `asSet()` instead.",
-        replaceWith = ReplaceWith("asSet()")
-    )
-    public val set: Set<MessageType> by lazy {
-        asSet()
-    }
-
-    /**
-     * Obtains the dependencies found in the [messageType].
-     */
-    @Deprecated(
-        message = "Please use `asSet()` instead.",
-        replaceWith = ReplaceWith("asSet()")
-    )
-    public fun scan(): Set<MessageType> = asSet()
-
     private fun MessageType.matchingFieldTypes(): Iterable<MessageType> =
         fieldList.asSequence()
             .filter { it.matchesCardinality() }
@@ -91,8 +90,8 @@ public class MessageTypeDependencies(
             .toSet()
 
     private fun Field.matchesCardinality(): Boolean =
-        if (cardinality != null) {
-            cardinalityCase == cardinality
+        if (cardinalities.isNotEmpty()) {
+            cardinalities.contains(cardinalityCase)
         } else {
             true
         }

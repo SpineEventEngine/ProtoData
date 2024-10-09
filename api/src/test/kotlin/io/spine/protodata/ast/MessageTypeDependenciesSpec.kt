@@ -26,21 +26,29 @@
 
 package io.spine.protodata.ast
 
+import com.google.protobuf.Empty
+import com.google.protobuf.EmptyProto
+import com.google.protobuf.Timestamp
+import com.google.protobuf.TimestampProto
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.Field.CardinalityCase.LIST
 import io.spine.protodata.ast.Field.CardinalityCase.MAP
+import io.spine.protodata.ast.Field.CardinalityCase.ONEOF_NAME
 import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.type.TypeSystem
 import io.spine.test.type.Article
 import io.spine.test.type.Author
 import io.spine.test.type.AuthorName
+import io.spine.test.type.Issue
 import io.spine.test.type.Jungle
+import io.spine.test.type.Magazine
 import io.spine.test.type.MagazineCover
+import io.spine.test.type.MagazineNumber
+import io.spine.test.type.MagazineTitle
 import io.spine.test.type.MessageTypeDependenciesSpecProto
 import io.spine.test.type.OopFun
 import io.spine.test.type.Photo
@@ -63,12 +71,14 @@ internal class MessageTypeDependenciesSpec {
         val protoSources = setOf(
             MessageTypeDependenciesSpecProto.getDescriptor().toPbSourceFile(),
             ProjectProto.getDescriptor().toPbSourceFile(),
+            EmptyProto.getDescriptor().toPbSourceFile(),
+            TimestampProto.getDescriptor().toPbSourceFile(),
         )
         TypeSystem(protoSources)
     }
 
     private fun allDependenciesOf(type: MessageType): Set<MessageType> =
-        MessageTypeDependencies(type, null, typeSystem).asSet()
+        MessageTypeDependencies(type, emptySet(), typeSystem).asSet()
 
     @Test
     fun `collect no types if there are no fields with message type`() {
@@ -81,7 +91,6 @@ internal class MessageTypeDependenciesSpec {
     fun `collect nested types`() {
         val coverType = messageTypeOf<MagazineCover>()
         val found = allDependenciesOf(coverType)
-        found shouldHaveSize 4
         found.shouldContainExactlyInAnyOrder(
             messageTypeOf<MagazineCover.Headline>(),
             messageTypeOf<Photo>(),
@@ -93,7 +102,7 @@ internal class MessageTypeDependenciesSpec {
     @Test
     fun `obtain the same result in repeated calls`() {
         val coverType = messageTypeOf<MagazineCover>()
-        val deps = MessageTypeDependencies(coverType, null, typeSystem)
+        val deps = MessageTypeDependencies(coverType, emptySet(), typeSystem)
         val found = deps.asSet()
         val foundNextTime = deps.asSet()
         found shouldBe foundNextTime
@@ -103,7 +112,6 @@ internal class MessageTypeDependenciesSpec {
     fun `collect types referenced from types of fields`() {
         val projectView = messageTypeOf<ProjectView>()
         val deps = MessageTypeDependencies(projectView, SINGLE, typeSystem).asSet()
-        deps shouldHaveSize 5
         deps.shouldContainExactlyInAnyOrder(
             messageTypeOf<ProjectId>(),
             messageTypeOf<ProjectName>(),
@@ -117,7 +125,6 @@ internal class MessageTypeDependenciesSpec {
     fun `collect a single instance of type in case of circular field references`() {
         val authorType = messageTypeOf<Author>()
         val found = allDependenciesOf(authorType)
-        found shouldHaveSize 2
         found.shouldContainExactlyInAnyOrder(
             authorType,
             messageTypeOf<AuthorName>()
@@ -135,9 +142,8 @@ internal class MessageTypeDependenciesSpec {
 
         @Test
         fun `all fields`() {
-            val allTypes = MessageTypeDependencies(funnyType, null, typeSystem).asSet()
+            val allTypes = MessageTypeDependencies(funnyType, typeSystem).asSet()
 
-            allTypes shouldHaveSize 4
             allTypes.shouldContainExactlyInAnyOrder(
                 jungleType,
                 treeType,
@@ -149,22 +155,40 @@ internal class MessageTypeDependenciesSpec {
         @Test
         fun `single fields`() {
             val singleTypes = MessageTypeDependencies(funnyType, SINGLE, typeSystem).asSet()
-            singleTypes shouldHaveSize 1
-            singleTypes shouldContain jungleType
+            singleTypes.shouldContainExactly(jungleType)
         }
 
         @Test
         fun `map fields`() {
             val mapTypes = MessageTypeDependencies(funnyType, MAP, typeSystem).asSet()
-            mapTypes shouldHaveSize 1
-            mapTypes shouldContain gorillaType
+            mapTypes.shouldContainExactly(gorillaType)
         }
+
         @Test
         fun `repeated fields`() {
             val repeatedTypes = MessageTypeDependencies(funnyType, LIST, typeSystem).asSet()
-            repeatedTypes shouldHaveSize 2
-            repeatedTypes shouldContain treeType
-            repeatedTypes shouldContain bananaType
+
+            repeatedTypes.shouldContainExactlyInAnyOrder(treeType, bananaType)
+        }
+
+        @Test
+        fun `combination of fields`() {
+            val magazine = messageTypeOf<Magazine>()
+            val combination =
+                MessageTypeDependencies(magazine, setOf(SINGLE, ONEOF_NAME), typeSystem)
+                    .asSet().map { it.qualifiedName }
+
+            val expected = setOf(
+                messageTypeOf<Magazine>(),
+                messageTypeOf<Empty>(),
+                messageTypeOf<Volume>(),
+                messageTypeOf<Issue>(),
+                messageTypeOf<Timestamp>(),
+                messageTypeOf<MagazineTitle>(),
+                messageTypeOf<MagazineNumber>(),
+            ).map { it.qualifiedName }
+
+            combination.shouldContainExactlyInAnyOrder(expected)
         }
     }
 }
