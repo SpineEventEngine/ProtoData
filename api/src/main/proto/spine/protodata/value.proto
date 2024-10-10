@@ -35,6 +35,7 @@ option java_package = "io.spine.protodata.value";
 option java_outer_classname = "ValueProto";
 option java_multiple_files = true;
 
+import "spine/base/field_path.proto";
 import "spine/protodata/ast.proto";
 
 // This file contains definitions which describe Protobuf message, enum, and scalar
@@ -45,8 +46,8 @@ import "spine/protodata/ast.proto";
 //
 // These definitions are inspired by the `google/protobuf/struct.proto`.
 //
-// Unlike types defined in `struct.proto`, these definitions keep strict typing at runtime.
-// Values are bound to their precise types.
+// Unlike types defined in `struct.proto`, these definitions keep type
+// information using `Type` fields.
 //
 // Also, unlike `struct.proto`, these definitions do not have special treatment
 // when converting to JSON. Consider using Google's types when JSON printing is required.
@@ -57,43 +58,47 @@ import "spine/protodata/ast.proto";
 // Absence of any kind of value indicates an error.
 //
 message Value {
-    // The kind of value.
+    // The kind of the value.
     oneof kind {
         option (is_required) = true;
 
-        // Represents a `null` value.
+        // The `null` value.
         NullValue null_value = 1;
 
-        // Represents a boolean value.
+        // The boolean value.
         bool bool_value = 2;
 
-        // Represents a floating point number.
+        // The floating point number.
         double double_value = 3;
 
-        // Represents an integer number.
+        // The integer number.
         int64 int_value = 4;
 
-        // Represents a string value.
+        // The string value.
         string string_value = 5;
 
+        // The byte array value.
         bytes bytes_value = 6;
 
-        // Represents a structured value.
+        // The structured value.
         MessageValue message_value = 7;
 
-        // Represents an enum constant `Value`.
+        // The enum constant `Value`.
         EnumValue enum_value = 8;
 
-        // Represents a repeated `Value`.
+        // The repeated `Value`.
         ListValue list_value = 9;
 
-        // Represents a map `Value`.
+        // The map `Value`.
         MapValue map_value = 10;
+
+        // The reference to a value of the field with the given path.
+        base.FieldPath reference = 11;
     }
 
-    reserved 11 to 20; // For possible extra options in the `kind` oneof.
+    reserved 12 to 20; // For possible extra options in the `kind` oneof.
 
-    // The concrete Protobuf type of this value.
+    // The Protobuf type of this value.
     //
     // Can be used, for example, to distinguish between number values.
     //
