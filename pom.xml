@@ -10,7 +10,7 @@ all modules and does not describe the project structure per-subproject.
  -->
 <groupId>io.spine.protodata</groupId>
 <artifactId>ProtoData</artifactId>
-<version>0.61.5</version>
+<version>0.61.6</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -104,7 +104,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>io.spine</groupId>
     <artifactId>spine-server</artifactId>
-    <version>2.0.0-SNAPSHOT.176</version>
+    <version>2.0.0-SNAPSHOT.177</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -123,6 +123,12 @@ all modules and does not describe the project structure per-subproject.
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-psi-java-bundle</artifactId>
     <version>2.0.0-SNAPSHOT.226</version>
+    <scope>compile</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.spine.tools</groupId>
+    <artifactId>spine-testutil-server</artifactId>
+    <version>2.0.0-SNAPSHOT.177</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
@@ -183,12 +189,6 @@ all modules and does not describe the project structure per-subproject.
     <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-testlib</artifactId>
     <version>2.0.0-SNAPSHOT.226</version>
-    <scope>test</scope>
-  </dependency>
-  <dependency>
-    <groupId>io.spine.tools</groupId>
-    <artifactId>spine-testutil-server</artifactId>
-    <version>2.0.0-SNAPSHOT.176</version>
     <scope>test</scope>
   </dependency>
   <dependency>
