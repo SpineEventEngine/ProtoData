@@ -113,12 +113,9 @@ public class Literal(value: Any) : Expression(value.toString())
 /**
  * Constructs a call to a static method of this class.
  *
- * @param name
- *         the name of the method.
- * @param arguments
- *         the method arguments.
- * @param generics
- *         the method type parameters.
+ * @param name The name of the method.
+ * @param arguments The method arguments.
+ * @param generics The method type parameters.
  */
 @JvmOverloads
 public fun ClassOrEnumName.call(
@@ -176,7 +173,7 @@ public class MessageReference(label: String) : Expression(label) {
 /**
  * A selector for an access method for a Protobuf message field.
  *
- * Depending on the field type, may allow to generate getters and setters for the field.
+ * Depending on the field type, may allow generating getters and setters for the field.
  */
 public class FieldAccess
 internal constructor(
@@ -186,7 +183,7 @@ internal constructor(
 ) : FieldConventions(name, cardinality) {
 
     /**
-     * Constructs a field access for the given [message] and [name].
+     * Constructs field access for the given [message] and [name].
      */
     internal constructor(
         message: Expression,
@@ -261,15 +258,11 @@ public class MethodCall
 /**
  * Creates a new `MethodCall`.
  *
- * @param scope
- *         the scope of the method invocation: an instance receiving the method call, or
- *         the name of the class declaring a static method.
- * @param name
- *         the name of the method.
- * @param arguments
- *         the list of the arguments passed to the method.
- * @param generics
- *         the list of the type arguments passed to the method.
+ * @param scope The scope of the method invocation: an instance receiving the method call, or
+ *   the name of the class declaring a static method.
+ * @param name The name of the method.
+ * @param arguments The list of the arguments passed to the method.
+ * @param generics The list of the type arguments passed to the method.
  */
 @JvmOverloads constructor(
     scope: JavaElement,
@@ -283,13 +276,10 @@ public class MethodCall
     /**
      * Creates a new, non-generified, method call with the given [arguments].
      *
-     * @param scope
-     *         the scope of the method invocation: an instance receiving the method call, or
-     *         the name of the class declaring a static method.
-     * @param name
-     *         the name of the method.
-     * @param arguments
-     *         the list of the arguments passed to the method.
+     * @param scope The scope of the method invocation: an instance receiving the method call, or
+     *   the name of the class declaring a static method.
+     * @param name The name of the method.
+     * @param arguments The list of the arguments passed to the method.
      */
     public constructor(
         scope: JavaElement,
@@ -356,14 +346,11 @@ public fun listExpression(vararg expressions: Expression): MethodCall =
  *
  * The resulting expression always yields an instance of Guava `ImmutableMap`.
  *
- * @param expressions
- *         the expressions representing the entries.
- * @param keyType
- *         the type of the keys of the map;
- *         must be non-`null` if the map is not empty, may be `null` otherwise.
- * @param valueType
- *         the type of the values of the map;
- *         must be non-`null` if the map is not empty, may be `null` otherwise.
+ * @param expressions The expressions representing the entries.
+ * @param keyType The type of the keys of the map;
+ *   must be non-`null` if the map is not empty, may be `null` otherwise.
+ * @param valueType The type of the values of the map;
+ *   must be non-`null` if the map is not empty, may be `null` otherwise.
  */
 public fun mapExpression(
     expressions: Map<Expression, Expression>,
