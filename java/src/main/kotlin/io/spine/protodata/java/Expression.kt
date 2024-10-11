@@ -128,7 +128,8 @@ public fun ClassOrEnumName.call(
 /**
  * Constructs an expression which creates a new builder for this class.
  *
- * Example: `ClassName("com.acme.Bird").newBuilder()` yields "`com.acme.Bird.newBuilder()`".
+ * Example: `ClassName("com.acme.Bird").newBuilder()` yields
+ * `"com.acme.Bird.newBuilder()"`.
  */
 public fun ClassName.newBuilder(): MethodCall =
     call("newBuilder")
@@ -137,17 +138,17 @@ public fun ClassName.newBuilder(): MethodCall =
  * Constructs an expression which obtains the default instance for this class.
  *
  * Example: `ClassName("com.acme.Bird").getDefaultInstance()` yields
- * "`com.acme.Bird.getDefaultInstance()`".
+ * `"com.acme.Bird.getDefaultInstance()"`.
  */
 public fun ClassName.getDefaultInstance(): MethodCall =
     call("getDefaultInstance")
 
 /**
- * Constructs an expression which obtains the Protobuf enum value by the given number from this
- * class.
+ * Constructs an expression which obtains the Protobuf enum value by
+ * the given number from this class.
  *
  * Example: `ClassName("com.acme.Bird").enumValue(1)` yields
- * "`com.acme.Bird.forNumber(1)`".
+ * `"com.acme.Bird.forNumber(1)"`.
  */
 public fun EnumName.enumValue(number: Int): MethodCall =
     call("forNumber", listOf(Literal(number)))
@@ -291,28 +292,28 @@ public class MethodCall
      * Constructs an expression of calling another method on the result of this method call.
      */
     @JvmOverloads
-    public fun chain(name: String, arguments: List<Expression> = listOf()): MethodCall =
-        MethodCall(this, name, arguments)
+    public fun chain(method: String, arguments: List<Expression> = listOf()): MethodCall =
+        MethodCall(this, method, arguments)
 
     /**
      * Constructs an expression chaining a setter call.
      */
-    public fun chainSet(name: String, value: Expression): MethodCall =
-        fieldAccess(name).setter(value)
+    public fun chainSet(field: String, value: Expression): MethodCall =
+        fieldAccess(field).setter(value)
 
     /**
      * Constructs an expression chaining a call of an `addField(...)` method.
      */
-    public fun chainAdd(name: String, value: Expression): MethodCall =
-        fieldAccess(name).add(value)
+    public fun chainAdd(field: String, value: Expression): MethodCall =
+        fieldAccess(field).add(value)
 
     /**
      * Constructs an expression chaining a call of an `addAllField(...)` method.
      */
-    public fun chainAddAll(name: String, value: Expression): MethodCall =
-        fieldAccess(name).addAll(value)
+    public fun chainAddAll(field: String, value: Expression): MethodCall =
+        fieldAccess(field).addAll(value)
 
-    private fun fieldAccess(name: String) = FieldAccess(this, name)
+    private fun fieldAccess(fieldName: String) = FieldAccess(this, fieldName)
 
     /**
      * Constructs an expression chaining a call of the `build()` method.
@@ -347,9 +348,9 @@ public fun listExpression(vararg expressions: Expression): MethodCall =
  * The resulting expression always yields an instance of Guava `ImmutableMap`.
  *
  * @param expressions The expressions representing the entries.
- * @param keyType The type of the keys of the map;
+ * @param keyType The type of the keys in the map;
  *   must be non-`null` if the map is not empty, may be `null` otherwise.
- * @param valueType The type of the values of the map;
+ * @param valueType The type of the values in the map;
  *   must be non-`null` if the map is not empty, may be `null` otherwise.
  */
 public fun mapExpression(
