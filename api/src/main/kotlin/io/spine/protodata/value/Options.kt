@@ -87,6 +87,15 @@ private class OptionValue(
     private companion object {
         private val INTEGER = Regex("^-?\\d+$")
         private val DOUBLE = Regex("^-?\\d+\\.\\d+$")
+
+        /**
+         * The regex for field references which could be fields in the same type or
+         * nested fields.
+         *
+         * We deliberately relax the expression to allow references starting from capital
+         * letters as well. This is to allow users to use custom field conventions should
+         * they have such a need.
+         */
         private val REFERENCE = Regex("^[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$")
     }
 }
