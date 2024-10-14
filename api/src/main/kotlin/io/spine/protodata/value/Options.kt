@@ -33,21 +33,26 @@ import io.spine.base.fieldPath
 import io.spine.option.MaxOption
 import io.spine.option.MinOption
 import io.spine.protodata.ast.Field
+import io.spine.protodata.ast.field
+import io.spine.protodata.ast.isMessage
 import io.spine.protodata.ast.qualifiedName
+import io.spine.protodata.type.TypeSystem
 
 /**
  * Parses the value of this `(min)` option into an instance of [Value].
  *
  * The value could be an integer, double, or a reference to another field.
  */
-public fun MinOption.parse(field: Field): Value = OptionValue("min", value, field).parse()
+public fun MinOption.parse(field: Field, typeSystem: TypeSystem): Value =
+    OptionValue("min", value, field, typeSystem).parse()
 
 /**
  * Parses the value of this `(min)` option into an instance of [Value].
  *
  * The value could be an integer, double, or a reference to another field.
  */
-public fun MaxOption.parse(field: Field): Value = OptionValue("max", value, field).parse()
+public fun MaxOption.parse(field: Field, typeSystem: TypeSystem): Value =
+    OptionValue("max", value, field, typeSystem).parse()
 
 /**
  * Parses the value of the option into an instance of [Value].
@@ -58,7 +63,8 @@ public fun MaxOption.parse(field: Field): Value = OptionValue("max", value, fiel
 private class OptionValue(
     private val optionName: String,
     private val value: String,
-    private val field: Field
+    private val field: Field,
+    private val typeSystem: TypeSystem
 ) {
     init {
         check(value.isNotEmpty()) {
@@ -73,7 +79,7 @@ private class OptionValue(
             value.matches(REFERENCE) -> value {
                 reference = reference {
                     type = field.type
-                    target = value.toFieldPath()
+                    target = ensureField(value.toFieldPath())
                 }
             }
             else -> error("${optionPath()} has the value with unexpected format (`$value`).")
@@ -83,6 +89,30 @@ private class OptionValue(
     private fun optionPath() =
         "The `($optionName)` option declared in the field `${field.name.value}` of" +
                 " the type `${field.type.message.qualifiedName}`"
+
+    private fun ensureField(path: FieldPath): FieldPath {
+        var typeName = field.declaringType
+        var remaining = path
+        while (remaining.fieldNameList.isNotEmpty()) {
+            val message = typeSystem.findMessage(typeName)!!.first
+            val current = remaining.fieldNameList.first()
+            check(message.fieldList.any { it.name.value == current }) {
+                "Unable to find the field named `$current`" +
+                        " in the message type `${message.qualifiedName}`."
+            }
+            remaining = remaining.stepInto()
+            if (remaining.isEmpty()) {
+                continue
+            }
+            val nextField = message.field(current)
+            check(nextField.isMessage) {
+                "The field `$current` declared in the message type `${message.qualifiedName}`" +
+                    " is not of a message type and cannot be used for referencing a nested field."
+            }
+            typeName = nextField.type.message
+        }
+        return path
+    }
 
     private companion object {
         private val INTEGER = Regex("^-?\\d+$")
@@ -103,3 +133,10 @@ private class OptionValue(
 private fun String.toFieldPath(): FieldPath = fieldPath {
     split(".").forEach { fieldName.add(it) }
 }
+
+private fun FieldPath.stepInto(): FieldPath = fieldPath {
+    val withoutFirst = fieldNameList.toMutableList().also { it.removeAt(0) }
+    fieldName.addAll(withoutFirst)
+}
+
+private fun FieldPath.isEmpty(): Boolean = fieldNameList.isEmpty()

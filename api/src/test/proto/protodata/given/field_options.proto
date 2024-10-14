@@ -72,6 +72,19 @@ message NumberGenerated {
 // Types with negative cases
 //
 
+// The cases of wrong field references.
+message Misreferences {
+
+    // Here the option references the field which is not declared in this message type.
+    int32 wrongDirect = 1 [(min).value = "missing"];
+
+    // Here the option references the missing nested field.
+    int32 wrongIndirect = 2 [(max).value = "range.top"];
+
+    // The field for checking nested paths.
+    Range range = 10 [(required) = true];
+}
+
 // See https://protobuf.dev/programming-guides/proto3/#scalar
 message IntBucket {
     int32 int32_value = 1;

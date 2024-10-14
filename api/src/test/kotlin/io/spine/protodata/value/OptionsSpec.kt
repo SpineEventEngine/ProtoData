@@ -33,15 +33,28 @@ import io.spine.option.MaxOption
 import io.spine.option.MinOption
 import io.spine.protodata.ast.find
 import io.spine.protodata.given.value.DiceRoll
+import io.spine.protodata.given.value.FieldOptionsProto
 import io.spine.protodata.given.value.KelvinTemperature
+import io.spine.protodata.given.value.Misreferences
 import io.spine.protodata.given.value.NumberGenerated
 import io.spine.protodata.given.value.Range
 import io.spine.protodata.protobuf.toField
+import io.spine.protodata.protobuf.toPbSourceFile
+import io.spine.protodata.type.TypeSystem
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 @DisplayName("Extensions for option types should")
 internal class OptionsSpec {
+
+    private val typeSystem: TypeSystem by lazy {
+        val protoSources = setOf(
+            FieldOptionsProto.getDescriptor()
+        ).map { it.toPbSourceFile() }.toSet()
+        TypeSystem(protoSources)
+    }
 
     @Test
     fun `parse integer values`() {
@@ -52,10 +65,10 @@ internal class OptionsSpec {
         minOption shouldNotBe null
         maxOption shouldNotBe null
 
-        minOption!!.parse(field) shouldBe value {
+        minOption!!.parse(field, typeSystem) shouldBe value {
             intValue = 1
         }
-        maxOption!!.parse(field) shouldBe value {
+        maxOption!!.parse(field, typeSystem) shouldBe value {
             intValue = 6
         }
     }
@@ -66,7 +79,7 @@ internal class OptionsSpec {
         val option = field.optionList.find<MinOption>()
 
         option shouldNotBe null
-        option!!.parse(field) shouldBe value {
+        option!!.parse(field, typeSystem) shouldBe value {
             doubleValue = 0.0
         }
     }
@@ -77,7 +90,7 @@ internal class OptionsSpec {
         val option = field.optionList.find<MaxOption>()
 
         option shouldNotBe null
-        option!!.parse(field) shouldBe value {
+        option!!.parse(field, typeSystem) shouldBe value {
             reference = reference {
                 type = field.type
                 target = fieldPath {
@@ -96,7 +109,7 @@ internal class OptionsSpec {
         minOption shouldNotBe null
         maxOption shouldNotBe null
 
-        minOption!!.parse(field) shouldBe value {
+        minOption!!.parse(field, typeSystem) shouldBe value {
             reference = reference {
                 type = field.type
                 target = fieldPath {
@@ -106,13 +119,37 @@ internal class OptionsSpec {
             }
         }
 
-        maxOption!!.parse(field) shouldBe value {
+        maxOption!!.parse(field, typeSystem) shouldBe value {
             reference = reference {
                 type = field.type
                 target = fieldPath {
                     fieldName.add("range")
                     fieldName.add("max_value")
                 }
+            }
+        }
+    }
+
+    @Nested inner class
+    `prohibit missing references` {
+
+        @Test
+        fun `of top level fields`() {
+            val field = Misreferences.getDescriptor().fields[0].toField()
+            val option = field.optionList.find<MinOption>()
+
+            assertThrows<IllegalStateException> {
+                option!!.parse(field, typeSystem)
+            }
+        }
+
+        @Test
+        fun `of top nested fields`() {
+            val field = Misreferences.getDescriptor().fields[1].toField()
+            val option = field.optionList.find<MaxOption>()
+
+            assertThrows<IllegalStateException> {
+                option!!.parse(field, typeSystem)
             }
         }
     }
