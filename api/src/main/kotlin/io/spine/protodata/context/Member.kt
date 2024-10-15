@@ -73,7 +73,7 @@ protected constructor(
      *
      * @see registerWith
      */
-    protected val context: CodegenContext?
+    protected open val context: CodegenContext?
         get() = if (this::_context.isInitialized) {
             _context
         } else {
@@ -87,7 +87,7 @@ protected constructor(
      *
      * This property is guaranteed to be non-`null` after [registerWith].
      */
-    protected val typeSystem: TypeSystem?
+    protected open val typeSystem: TypeSystem?
         get() = context?.typeSystem
 
     /**
