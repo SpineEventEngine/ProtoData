@@ -78,7 +78,7 @@ class DefaultOptionsCounterView
         override fun setupEventRouting(routing: EventRouting<TypeName>) {
             super.setupEventRouting(routing)
             routing.route(FieldOptionDiscovered::class.java) { event, _ ->
-                EventRoute.withId(event.subject.type.typeName)
+                EventRoute.withId(event.subject.declaringType)
             }
         }
     }
