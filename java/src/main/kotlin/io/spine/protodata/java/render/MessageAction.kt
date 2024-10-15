@@ -67,7 +67,7 @@ public abstract class MessageAction<P : Message>(
      * The name of the message class for which this action runs.
      */
     protected val messageClass: ClassName by lazy {
-        type.javaClassName(typeSystem!!)
+        type.javaClassName(typeSystem)
     }
 
     /**
