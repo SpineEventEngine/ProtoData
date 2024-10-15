@@ -44,7 +44,7 @@ class CustomFieldView : View<FieldName, CustomField, CustomField.Builder>() {
     internal fun on(@External @Where(field = "option.name", equals = "custom")
                         event: FieldOptionDiscovered
     ) = alter {
-        field = event.field
+        field = event.subject.name
     }
 
     class Repository : ViewRepository<FieldName, CustomFieldView, CustomField>() {
@@ -52,7 +52,7 @@ class CustomFieldView : View<FieldName, CustomField, CustomField.Builder>() {
         override fun setupEventRouting(routing: EventRouting<FieldName>) {
             super.setupEventRouting(routing)
             routing.route(FieldOptionDiscovered::class.java) { event, _ ->
-                withId(event.field)
+                withId(event.subject.name)
             }
         }
     }
