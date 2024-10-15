@@ -38,6 +38,28 @@ public fun ProtobufSourceFile.messages(): Collection<MessageInFile> =
     }
 
 /**
+ * Finds a message type declared in this Protobuf file.
+ *
+ * @param simpleName The simple name of the type.
+ * @param nestedNames If the type with [simpleName] is nested, the list types enclosing it,
+ *  starting from the outermost.
+ * @return The message type or `null`, if there is no such declaration.
+ * @see TypeName.getNestingTypeNameList
+ */
+public fun ProtobufSourceFile.findMessage(
+    simpleName: String,
+    vararg nestedNames: String
+): MessageType? =
+    typeMap.values.find {
+        val simpleNamesMatch = (it.name.simpleName == simpleName)
+        if (nestedNames.isEmpty()) {
+            it.isTopLevel && simpleNamesMatch
+        } else {
+            simpleNamesMatch && it.name.nestingTypeNameList.toList() == nestedNames.toList()
+        }
+    }
+
+/**
  * Obtains a collection of enum types from this source file paired with the file header.
  */
 public fun ProtobufSourceFile.enums(): Collection<EnumInFile> =

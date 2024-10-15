@@ -62,3 +62,18 @@ public fun MessageType.javaClassName(typeSystem: TypeSystem): ClassName {
     val className = javaClassName(header)
     return className
 }
+
+/**
+ * Returns the [Class] instance for this [MessageType], if any.
+ *
+ * The function returns a non-`null` result if a class denoted by this [ClassName]
+ * is present on the classpath.
+ */
+public fun MessageType.javaClass(accordingTo: ProtoFileHeader): Class<*>? {
+    val name = name.javaClassName(accordingTo)
+    return try {
+        Class.forName(name.canonical)
+    } catch (ignored: ClassNotFoundException) {
+        null
+    }
+}
