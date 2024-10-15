@@ -64,16 +64,29 @@ public fun MessageType.javaClassName(typeSystem: TypeSystem): ClassName {
 }
 
 /**
- * Returns the [Class] instance for this [MessageType], if any.
+ * Obtains the [Class] instance for this [MessageType], if any.
  *
- * The function returns a non-`null` result if a class denoted by this [ClassName]
- * is present on the classpath.
+ * The function returns a non-`null` result if a Java class denoted by this
+ * [MessageType] is present on the classpath.
+ *
+ * @param accordingTo The proto file header, according to which the Java class
+ *  name is determined.
  */
 public fun MessageType.javaClass(accordingTo: ProtoFileHeader): Class<*>? {
-    val name = name.javaClassName(accordingTo)
-    return try {
-        Class.forName(name.canonical)
-    } catch (ignored: ClassNotFoundException) {
-        null
-    }
+    val name = javaClassName(accordingTo)
+    return name.javaClass()
+}
+
+/**
+ * Obtains the [Class] instance for this [MessageType], if any.
+ *
+ * The function returns a non-`null` result if a class denoted by this
+ * [MessageType] is present on the classpath.
+ *
+ * @param typeSystem The type system to be used for obtaining the header for the proto
+ *  file in which this message type is declared.
+ */
+public fun MessageType.javaClass(typeSystem: TypeSystem): Class<*>? {
+    val name = javaClassName(typeSystem)
+    return name.javaClass()
 }

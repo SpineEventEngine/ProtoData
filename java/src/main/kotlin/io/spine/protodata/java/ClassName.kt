@@ -150,3 +150,16 @@ public class ClassName(
         }
     }
 }
+
+/**
+ * Returns the [Class] instance for this [ClassName], if any.
+ *
+ * The function returns a non-`null` result if a Java class denoted by this
+ * [ClassName] is present on the classpath.
+ */
+public fun ClassName.javaClass(): Class<*>? =
+    try {
+        Class.forName(canonical)
+    } catch (ignored: ClassNotFoundException) {
+        null
+    }
