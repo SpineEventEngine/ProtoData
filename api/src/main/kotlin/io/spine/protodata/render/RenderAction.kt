@@ -34,6 +34,7 @@ import io.spine.protodata.ast.Service
 import io.spine.protodata.ast.TypeDeclaration
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.context.Member
+import io.spine.protodata.type.TypeSystem
 import io.spine.tools.code.Language
 
 /**
@@ -54,7 +55,7 @@ import io.spine.tools.code.Language
  * @property subject The Protobuf declaration served by this action.
  * @property file The source code file to be modified by this action.
  * @property parameter The parameter passed to the action.
- * @param context The code generation context in which this action operates.
+ * @property context The code generation context in which this action operates.
  *
  * @see Renderer
  */
@@ -63,12 +64,17 @@ public abstract class RenderAction<L : Language, D : ProtoDeclaration, P : Messa
     protected val subject: D,
     protected val file: SourceFile<L>,
     protected val parameter: P,
-    context: CodegenContext
+    protected final override val context: CodegenContext
 ) : Member<L>(language) {
 
     init {
         registerWith(context)
     }
+
+    /**
+     * A type system with the Protobuf types defined in the current code generation pipeline.
+     */
+    protected final override val typeSystem: TypeSystem by lazy { context.typeSystem }
 
     /**
      * Renders the code in the given source file.
