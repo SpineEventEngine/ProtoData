@@ -29,14 +29,15 @@
 package io.spine.protodata.value
 
 import io.spine.base.FieldPath
-import io.spine.base.fieldPath
+import io.spine.base.FieldPathConstants
 import io.spine.option.MaxOption
 import io.spine.option.MinOption
 import io.spine.protodata.ast.Field
-import io.spine.protodata.ast.field
-import io.spine.protodata.ast.isMessage
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.type.TypeSystem
+import io.spine.protodata.type.resolve
+import io.spine.protodata.value.OptionValue.Companion.DOUBLE
+import io.spine.protodata.value.OptionValue.Companion.INTEGER
 
 /**
  * Parses the value of this `(min)` option into an instance of [Value].
@@ -57,7 +58,7 @@ public fun MaxOption.parse(field: Field, typeSystem: TypeSystem): Value =
 /**
  * Parses the value of the option into an instance of [Value].
  *
- * Supported value formats are [INTEGER], [DOUBLE], and [REFERENCE].
+ * Supported value formats are [INTEGER], [DOUBLE], and [FieldPathConstants.REGEX].
  * Values in other formats will cause [IllegalStateException].
  */
 private class OptionValue(
@@ -76,10 +77,10 @@ private class OptionValue(
         return when {
             value.matches(INTEGER) -> value { intValue = value.toLong() }
             value.matches(DOUBLE) -> value { doubleValue = value.toDouble() }
-            value.matches(REFERENCE) -> value {
+            value.matches(FieldPathConstants.REGEX) -> value {
                 reference = reference {
                     type = field.type
-                    target = ensureField(value.toFieldPath())
+                    target = ensureField(FieldPath(value))
                 }
             }
             else -> error("${optionPath()} has the value with unexpected format (`$value`).")
@@ -91,52 +92,15 @@ private class OptionValue(
                 " the type `${field.type.message.qualifiedName}`"
 
     private fun ensureField(path: FieldPath): FieldPath {
-        var typeName = field.declaringType
-        var remaining = path
-        while (remaining.fieldNameList.isNotEmpty()) {
-            val message = typeSystem.findMessage(typeName)!!.first
-            val current = remaining.fieldNameList.first()
-            check(message.fieldList.any { it.name.value == current }) {
-                "Unable to find the field named `$current`" +
-                        " in the message type `${message.qualifiedName}`."
-            }
-            remaining = remaining.stepInto()
-            if (remaining.isEmpty()) {
-                continue
-            }
-            val nextField = message.field(current)
-            check(nextField.isMessage) {
-                "The field `$current` declared in the message type `${message.qualifiedName}`" +
-                    " is not of a message type and cannot be used for referencing a nested field."
-            }
-            typeName = nextField.type.message
-        }
+        val typeName = field.declaringType
+        val message = typeSystem.findMessage(typeName)!!.first
+        // Check if the path is resolvable.
+        typeSystem.resolve(path, message)
         return path
     }
 
     private companion object {
         private val INTEGER = Regex("^-?\\d+$")
         private val DOUBLE = Regex("^-?\\d+\\.\\d+$")
-
-        /**
-         * The regex for field references which could be fields in the same type or
-         * nested fields.
-         *
-         * We deliberately relax the expression to allow references starting from capital
-         * letters as well. This is to allow users to use custom field conventions should
-         * they have such a need.
-         */
-        private val REFERENCE = Regex("^[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$")
     }
 }
-
-private fun String.toFieldPath(): FieldPath = fieldPath {
-    split(".").forEach { fieldName.add(it) }
-}
-
-private fun FieldPath.stepInto(): FieldPath = fieldPath {
-    val withoutFirst = fieldNameList.toMutableList().also { it.removeAt(0) }
-    fieldName.addAll(withoutFirst)
-}
-
-private fun FieldPath.isEmpty(): Boolean = fieldNameList.isEmpty()

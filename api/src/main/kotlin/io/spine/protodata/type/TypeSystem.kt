@@ -26,7 +26,12 @@
 
 package io.spine.protodata.type
 
+import io.spine.base.FieldPath
+import io.spine.base.isNotNested
+import io.spine.base.root
+import io.spine.base.stepInto
 import io.spine.protodata.ast.EnumType
+import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.MessageType
 import io.spine.protodata.ast.ProtoDeclaration
 import io.spine.protodata.ast.ProtoDeclarationName
@@ -37,8 +42,10 @@ import io.spine.protodata.ast.Service
 import io.spine.protodata.ast.ServiceName
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.field
 import io.spine.protodata.ast.isEnum
 import io.spine.protodata.ast.isMessage
+import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.ast.typeName
 import io.spine.server.query.Querying
 import io.spine.server.query.select
@@ -122,4 +129,39 @@ public fun TypeSystem.findHeader(type: Type): ProtoFileHeader? {
         else -> null // Cannot happen.
     }
     return found?.second
+}
+
+/**
+ * Resolves the given [FieldPath] against the given [MessageType] within this [TypeSystem].
+ *
+ * This method recursively navigates through the nested messages and fields as specified by
+ * the [fieldPath], returning the final [Field] that the path points to.
+ *
+ * @param fieldPath The field path to resolve.
+ * @param message The message where the root of the [fieldPath] is declared.
+ * @throws IllegalStateException if one of the components of the field path represents
+ *  a non-message message field. Or, if the type system could not find an instance of
+ *  [MessageType] referenced by the field type.
+ */
+public fun TypeSystem.resolve(fieldPath: FieldPath, message: MessageType): Field {
+    val currentField = message.field(fieldPath.root)
+    if (fieldPath.isNotNested) {
+        return currentField
+    }
+
+    check(currentField.type.isMessage) {
+        "Can't resolve the field path `$fieldPath` because `${currentField.name}` segment" +
+                " does not denote a message field. The type of this field is" +
+                " `${currentField.type}`. Only messages can have nested field."
+    }
+
+    val currentFieldMessage = currentField.type.message
+    val nextMessageInfo = findMessage(currentFieldMessage)
+    check(nextMessageInfo != null) {
+        "`${currentFieldMessage.qualifiedName}` was not found in the passed proto files" +
+                " or their dependencies."
+    }
+    val remainingPath = fieldPath.stepInto()
+    val nextMessage = nextMessageInfo.first
+    return resolve(remainingPath, nextMessage)
 }
