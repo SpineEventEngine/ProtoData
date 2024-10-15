@@ -64,7 +64,7 @@ public abstract class RenderAction<L : Language, D : ProtoDeclaration, P : Messa
     protected val subject: D,
     protected val file: SourceFile<L>,
     protected val parameter: P,
-    final override val context: CodegenContext
+    protected final override val context: CodegenContext
 ) : Member<L>(language) {
 
     init {
@@ -74,7 +74,7 @@ public abstract class RenderAction<L : Language, D : ProtoDeclaration, P : Messa
     /**
      * A type system with the Protobuf types defined in the current code generation pipeline.
      */
-    final override val typeSystem: TypeSystem = context.typeSystem
+    protected final override val typeSystem: TypeSystem by lazy { context.typeSystem }
 
     /**
      * Renders the code in the given source file.
