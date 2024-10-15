@@ -67,4 +67,6 @@ dependencies {
     testImplementation(project(":backend"))
 }
 
+forceSpineBase()
+
 protoDataRemoteDebug(enabled = false)
