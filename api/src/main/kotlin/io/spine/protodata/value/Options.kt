@@ -117,7 +117,7 @@ private class OptionValue(
                     " of the field `$sourceFieldName` of the type `$messageTypeName`" +
                     " is of type `${referencedField.type.name}`" +
                     " but the field `$sourceFieldName` is of type `${field.type.name}`." +
-                    " Please correct the field reference of change the type of `$sourceFieldName`."
+                    " Please correct the field reference or change the type of `$sourceFieldName`."
         }
         return path
     }
