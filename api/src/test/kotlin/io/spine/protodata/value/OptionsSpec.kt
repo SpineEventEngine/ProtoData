@@ -28,6 +28,7 @@ package io.spine.protodata.value
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
 import io.spine.base.fieldPath
 import io.spine.option.MaxOption
 import io.spine.option.MinOption
@@ -137,6 +138,7 @@ internal class OptionsSpec {
         fun `of top level fields`() {
             val field = Misreferences.getDescriptor().fields[0].toField()
             val option = field.optionList.find<MinOption>()
+            field.name.value shouldBe "wrong_direct"
 
             assertThrows<IllegalStateException> {
                 option!!.parse(field, typeSystem)
@@ -147,10 +149,30 @@ internal class OptionsSpec {
         fun `of top nested fields`() {
             val field = Misreferences.getDescriptor().fields[1].toField()
             val option = field.optionList.find<MaxOption>()
+            field.name.value shouldBe "wrong_indirect"
 
             assertThrows<IllegalStateException> {
                 option!!.parse(field, typeSystem)
             }
+        }
+    }
+
+    @Test
+    fun `require same field type for reference`() {
+        val field = Misreferences.getDescriptor().fields[2].toField()
+        field.name.value shouldBe "wrong_type"
+
+        val option = field.optionList.find<MaxOption>()
+
+        val e = assertThrows<IllegalStateException> {
+            option!!.parse(field, typeSystem)
+        }
+        e.message.let {
+            it shouldContain "(max).value"
+            it shouldContain field.name.value
+            it shouldContain "range.max_value"
+            it shouldContain "int64"
+            it shouldContain "int32"
         }
     }
 }
