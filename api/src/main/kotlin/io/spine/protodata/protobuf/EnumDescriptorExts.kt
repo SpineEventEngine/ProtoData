@@ -31,12 +31,14 @@ import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.protodata.ast.EnumConstant
 import io.spine.protodata.ast.EnumType
+import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.constantName
 import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.enumType
 import io.spine.protodata.ast.toList
+import io.spine.protodata.ast.type
 
 /**
  * Obtains the name of this enum type as a [TypeName].
@@ -45,6 +47,8 @@ public fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containin
 
 /**
  * Converts this enum descriptor into [EnumType] instance.
+ *
+ * @see toType
  */
 public fun EnumDescriptor.toEnumType(): EnumType =
     enumType {
@@ -59,6 +63,15 @@ public fun EnumDescriptor.toEnumType(): EnumType =
         }
         doc = docs.forEnum(this@toEnumType)
     }
+
+/**
+ * Converts this enum descriptor into an instance of [Type].
+ *
+ * @see toEnumType
+ */
+public fun EnumDescriptor.toType(): Type = type {
+    enumeration = name()
+}
 
 /**
  * Converts this enum value descriptor into an [EnumConstant] with options.

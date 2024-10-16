@@ -37,44 +37,39 @@ import io.spine.protodata.java.file.javaOuterClassName
 import io.spine.protodata.java.file.javaPackage
 import io.spine.protodata.protobuf.toPbSourceFile
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("`MessageType` extensions for Java should")
 internal class MessageTypeExtsSpec {
 
-    @Nested inner class
-    `find its class` {
+    @Test
+    fun `find its class, if it is present`() {
+        val protoFile = Empty.getDescriptor().file.toPbSourceFile()
+        val messageType = protoFile.findMessage("Empty")!!
 
-        @Test
-        fun `if its present`() {
-            val protoFile = Empty.getDescriptor().file.toPbSourceFile()
-            val messageType = protoFile.findMessage("Empty")!!
+        messageType.javaClass(protoFile.header) shouldBe Empty::class.java
+    }
 
-            messageType.javaClass(protoFile.header) shouldBe Empty::class.java
+    @Test
+    fun `return 'null', if the class is not available`() {
+        val fileName = file {
+            path = "given/types/synthetic.proto"
+        }
+        val type = messageType {
+            name = typeName {
+                packageName = "given.types"
+                simpleName = "Synthetic"
+            }
+            file = fileName
+        }
+        val header = protoFileHeader {
+            file = fileName
+            option.apply {
+                add(javaPackage("org.example.given.types"))
+                add(javaOuterClassName("SyntheticProto"))
+            }
         }
 
-        @Test
-        fun `return 'null' if not present`() {
-            val fileName = file {
-                path = "given/types/synthetic.proto"
-            }
-            val type = messageType {
-                name = typeName {
-                    packageName = "given.types"
-                    simpleName = "Synthetic"
-                }
-                file = fileName
-            }
-            val header = protoFileHeader {
-                file = fileName
-                option.apply {
-                    add(javaPackage("org.example.given.types"))
-                    add(javaOuterClassName("SyntheticProto"))
-                }
-            }
-
-            type.javaClass(header) shouldBe null
-        }
+        type.javaClass(header) shouldBe null
     }
 }

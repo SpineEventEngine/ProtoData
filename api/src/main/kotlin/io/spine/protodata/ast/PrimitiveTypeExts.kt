@@ -28,9 +28,33 @@
 
 package io.spine.protodata.ast
 
+import io.spine.protodata.ast.PrimitiveType.TYPE_BOOL
+
 /**
  * Obtains a [Type] wrapping this `PrimitiveType`.
  */
-public fun PrimitiveType.asType(): Type = type {
-    primitive = this@asType
+public fun PrimitiveType.toType(): Type = type {
+    primitive = this@toType
 }
+
+/**
+ * Obtains a [Type] wrapping this `PrimitiveType`.
+ */
+@Deprecated(message = "Please use `toType()` instead.", replaceWith = ReplaceWith("toType()"))
+public fun PrimitiveType.asType(): Type = toType()
+
+/**
+ * Obtains a name of a field type declared in a message.
+ */
+public val PrimitiveType.protoName: String
+    get() {
+        if (this == TYPE_BOOL) {
+            return "boolean"
+        }
+        val knownPrefix = "TYPE_"
+        return if (name.startsWith(knownPrefix)) {
+            name.removePrefix(knownPrefix).lowercase()
+        } else {
+            name
+        }
+    }

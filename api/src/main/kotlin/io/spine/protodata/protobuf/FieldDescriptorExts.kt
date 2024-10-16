@@ -67,11 +67,11 @@ import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
 import io.spine.protodata.ast.PrimitiveType.TYPE_UINT32
 import io.spine.protodata.ast.PrimitiveType.TYPE_UINT64
 import io.spine.protodata.ast.Type
-import io.spine.protodata.ast.asType
 import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
 import io.spine.protodata.ast.toList
+import io.spine.protodata.ast.toType
 import io.spine.protodata.ast.type
 
 /**
@@ -142,7 +142,7 @@ public fun FieldDescriptor.type(): Type {
         ENUM -> enum(this)
         MESSAGE -> message(this)
         GROUP -> error("Cannot process the field `$fullName` of type `$type`.")
-        else -> primitiveType().asType()
+        else -> primitiveType().toType()
     }
 }
 

@@ -30,9 +30,11 @@ package io.spine.protodata.value
 
 import io.spine.base.FieldPath
 import io.spine.base.FieldPathConstants
+import io.spine.base.joined
 import io.spine.option.MaxOption
 import io.spine.option.MinOption
 import io.spine.protodata.ast.Field
+import io.spine.protodata.ast.name
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.type.resolve
@@ -48,7 +50,7 @@ public fun MinOption.parse(field: Field, typeSystem: TypeSystem): Value =
     OptionValue("min", value, field, typeSystem).parse()
 
 /**
- * Parses the value of this `(min)` option into an instance of [Value].
+ * Parses the value of this `(max)` option into an instance of [Value].
  *
  * The value could be an integer, double, or a reference to another field.
  */
@@ -80,22 +82,43 @@ private class OptionValue(
             value.matches(FieldPathConstants.REGEX) -> value {
                 reference = reference {
                     type = field.type
-                    target = ensureField(FieldPath(value))
+                    target = checkFieldReference(FieldPath(value))
                 }
             }
             else -> error("${optionPath()} has the value with unexpected format (`$value`).")
         }
     }
 
-    private fun optionPath() =
-        "The `($optionName)` option declared in the field `${field.name.value}` of" +
-                " the type `${field.type.message.qualifiedName}`"
+    private val sourceFieldName: String by lazy {
+        field.name.value
+    }
 
-    private fun ensureField(path: FieldPath): FieldPath {
+    private val messageTypeName: String by lazy {
+        field.type.message.qualifiedName
+    }
+
+    private fun optionPath() =
+        "The `($optionName)` option declared for the field `$sourceFieldName` of" +
+                " the type `$messageTypeName`"
+
+    /**
+     * Ensures that the field specified in the [path] exists and is of
+     * the same type as [field].
+     *
+     * @throws IllegalStateException if one of the conditions above is not met.
+     */
+    private fun checkFieldReference(path: FieldPath): FieldPath {
         val typeName = field.declaringType
         val message = typeSystem.findMessage(typeName)!!.first
-        // Check if the path is resolvable.
-        typeSystem.resolve(path, message)
+        val referencedField = typeSystem.resolve(path, message)
+        check(referencedField.type == field.type) {
+            val referencedFieldPath = path.joined
+            "The field `$referencedFieldPath` referenced in the `($optionName).value` option" +
+                    " of the field `$sourceFieldName` of the type `$messageTypeName`" +
+                    " is of type `${referencedField.type.name}`" +
+                    " but the field `$sourceFieldName` is of type `${field.type.name}`." +
+                    " Please correct the field reference of change the type of `$sourceFieldName`."
+        }
         return path
     }
 
