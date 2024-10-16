@@ -174,9 +174,11 @@ internal class MessageCompilerEvents(
      * Yields compiler events for the given field.
      *
      * Opens with an [FieldEntered] event.
-     * Then go the events regarding the field options.
+     * Then events regarding the field options are emitted.
      * At last, closes with an [FieldExited] event.
      */
+    @Suppress("DEPRECATION") /* Populate deprecated fields in `FieldOptionDiscovered`
+        for backward compatibility. */
     private suspend fun SequenceScope<EventMessage>.produceFieldEvents(
         desc: FieldDescriptor
     ) {
@@ -196,6 +198,7 @@ internal class MessageCompilerEvents(
                 file = path
                 type = typeName
                 field = fieldName
+                subject = theField
                 option = it
             }
         }

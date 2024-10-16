@@ -180,13 +180,22 @@ message FieldOptionDiscovered {
     File file = 1 [(required) = true];
 
     // The type in which the field is defined.
-    TypeName type = 2 [(required) = true];
+    //
+    // Deprecated: please use `subject` instead.
+    //
+    TypeName type = 2 [deprecated = true];
 
     // The field in which the option is discovered.
-    FieldName field = 3 [(required) = true];
+    //
+    // Deprecated: please use `subject` instead.
+    //
+    FieldName field = 3 [deprecated = true];
+
+    // The field in which the option is discovered.
+    Field subject = 6 [(required) = true];
 
     // The option discovered.
-    Option option = 4 [(required) = true];
+    Option option = 5 [(required) = true];
 }
 
 // Emitted when a field is completely discovered including the options.

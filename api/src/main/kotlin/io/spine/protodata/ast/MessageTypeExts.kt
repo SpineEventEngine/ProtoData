@@ -48,8 +48,7 @@ public val MessageType.columns: List<Field>
 /**
  * Obtains message types nested into this one.
  *
- * @param typeSystem
- *         the type system used to resolve types by their names.
+ * @param typeSystem The type system used to resolve types by their names.
  */
 public fun MessageType.nestedMessageTypes(typeSystem: TypeSystem): List<MessageType> =
     nestedMessagesList.map { typeName ->

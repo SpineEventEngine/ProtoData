@@ -45,10 +45,9 @@ import com.google.protobuf.MapEntry
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import io.spine.protobuf.pack
+import io.spine.protodata.protobuf.name
 import io.spine.protodata.value.MapValueKt.entry
 import io.spine.protodata.value.NullValue.NULL_VALUE
-import io.spine.protodata.protobuf.name
-
 import com.google.protobuf.Any as ProtoAny
 
 /**
@@ -59,11 +58,13 @@ import com.google.protobuf.Any as ProtoAny
  * into `Value`s.
  */
 public fun Message.toValue(): Value = value {
-    messageValue = messageValue {
-        type = descriptorForType.name()
-        allFields.forEach { (k, v) ->
-            fields.put(k.name, k.toValue(v))
-        }
+    messageValue = toMessageValue()
+}
+
+private fun Message.toMessageValue(): MessageValue = messageValue {
+    type = descriptorForType.name()
+    allFields.forEach { (k, v) ->
+        fields.put(k.name, k.toValue(v))
     }
 }
 
@@ -76,23 +77,33 @@ private fun FieldDescriptor.toValue(raw: Any): Value = when {
     else -> singularValue(raw)
 }
 
-private fun FieldDescriptor.singularValue(raw: Any) = when (javaType) {
-    INT -> value { intValue = (raw as Int).toLong() }
-    LONG -> value { intValue = raw as Long }
-    FLOAT -> value { doubleValue = (raw as Float).toDouble() }
-    DOUBLE -> value { doubleValue = raw as Double }
-    BOOLEAN -> value { boolValue = raw as Boolean }
-    STRING -> value { stringValue = raw as String }
-    BYTE_STRING -> value { bytesValue = raw as ByteString }
-    ENUM -> value {
-        val enumDescriptor = raw as EnumValueDescriptor
-        enumValue = enumValue {
-            type = enumType.name()
-            constNumber = enumDescriptor.number
+/**
+ * Converts the given [raw] value into an instace of [Value] by taking type
+ * information from this [FieldDescriptor].
+ *
+ * @see com.google.protobuf.Descriptors.FieldDescriptor.JavaType
+ */
+private fun FieldDescriptor.singularValue(raw: Any) = value {
+    when (javaType) {
+        INT -> intValue = (raw as Int).toLong()
+        LONG -> intValue = raw as Long
+        FLOAT -> doubleValue = (raw as Float).toDouble()
+        DOUBLE -> doubleValue = raw as Double
+        BOOLEAN -> boolValue = raw as Boolean
+        STRING -> stringValue = raw as String
+        BYTE_STRING -> bytesValue = raw as ByteString
+        ENUM -> {
+            val enumDescriptor = raw as EnumValueDescriptor
+            enumValue = enumValue {
+                type = enumType.name()
+                constNumber = enumDescriptor.number
+            }
         }
+        MESSAGE -> messageValue = (raw as Message).toMessageValue()
+        // This is a safety net for the unlikely case of extending
+        // `com.google.protobuf.Descriptors.FieldDescriptor.JavaType` enum with new entries.
+        else -> error("Unable to create `Value` instance for `$raw`.")
     }
-    MESSAGE -> (raw as Message).toValue()
-    else -> NULL
 }
 
 private fun FieldDescriptor.fromMap(rawValue: Any): Value {

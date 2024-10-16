@@ -24,49 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Aedile
-import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.Spine
-import io.spine.internal.dependency.Validation
+syntax = "proto3";
 
-plugins {
-    `build-proto-model`
-    `java-test-fixtures`
-}
+package spine.protodata.given;
 
-dependencies {
-    listOf(
-        Spine.base,
-        Spine.text,
-        Spine.CoreJava.server,
-        Spine.toolBase,
-        Spine.psiJavaBundle
-    ).forEach {
-        api(it)
-    }
+import "spine/options.proto";
 
-    api(Spine.Logging.lib)
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.given.type";
+option java_outer_classname = "DeeplyNestedProto";
+option java_multiple_files = true;
 
-    implementation(Spine.reflect)
-    implementation(Aedile.lib)
-
-    with(Jackson) {
-        implementation(databind)
-        implementation(dataformatYaml)
-        runtimeOnly(moduleKotlin)
-    }
-
-    arrayOf(Spine.base, Validation.runtime)
-        .forEach {
-            testFixturesImplementation(it)
+message Outer {
+    message Inner {
+        message YetInner {
         }
-
-    testImplementation(project(":test-env"))
-
-    // For using `CodeGenerationContext` in stubs.
-    testImplementation(project(":backend"))
+    }
 }
-
-forceSpineBase()
-
-protoDataRemoteDebug(enabled = false)

@@ -26,10 +26,15 @@
 
 package io.spine.protodata.ast
 
+import com.google.protobuf.Empty
 import com.google.protobuf.Value
 import io.kotest.matchers.shouldBe
 import io.spine.base.ListOfAnys
+import io.spine.protodata.ast.PrimitiveType.TYPE_BOOL
+import io.spine.protodata.ast.PrimitiveType.TYPE_DOUBLE
+import io.spine.protodata.ast.PrimitiveType.TYPE_SFIXED64
 import io.spine.protodata.protobuf.field
+import io.spine.protodata.protobuf.toType
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -39,7 +44,7 @@ import org.junit.jupiter.api.assertThrows
 internal class TypeExtsSpec {
 
     @Nested inner class
-    `Obtain simple type name` {
+    `obtain simple type name` {
 
         private val messageType: Type
         private val enumType: Type
@@ -71,6 +76,29 @@ internal class TypeExtsSpec {
             assertThrows<IllegalStateException> {
                 primitiveType.simpleName
             }
+        }
+    }
+
+    @Nested inner class
+    `obtain a type name of` {
+
+        @Test
+        fun message() {
+            val msg = Empty.getDescriptor()
+            msg.toType().name shouldBe msg.fullName
+        }
+
+        @Test
+        fun enum() {
+            val enum = PrimitiveType.getDescriptor()
+            enum.toType().name shouldBe enum.fullName
+        }
+
+        @Test
+        fun primitive() {
+            TYPE_BOOL.toType().name shouldBe "boolean"
+            TYPE_DOUBLE.toType().name shouldBe "double"
+            TYPE_SFIXED64.toType().name shouldBe "sfixed64"
         }
     }
 }

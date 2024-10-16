@@ -33,9 +33,11 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import io.spine.protodata.ast.Documentation
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.messageType
 import io.spine.protodata.ast.toList
+import io.spine.protodata.ast.type
 
 /**
  * Obtains documentation of this [GenericDescriptor].
@@ -67,10 +69,17 @@ public fun Descriptor.toMessageType(): MessageType =
     }
 
 /**
+ * Converts the `Descriptor` into [Type] instance with the [message][Type.getMessage]
+ * property initialized.
+ */
+public fun Descriptor.toType(): Type = type {
+    message = name()
+}
+
+/**
  * Obtains a field with the given [name].
  *
- * @throws IllegalStateException
- *          if there is no such a field in this message type.
+ * @throws IllegalStateException If there is no such a field in this message type.
  */
 public fun Descriptor.field(name: String): Field {
     val field: FieldDescriptor? = findFieldByName(name)
@@ -84,12 +93,10 @@ public fun Descriptor.field(name: String): Field {
 /**
  * Create a type name for a type with the given [simpleName].
  *
- * @param simpleName
- *         a simple name of the type.
- * @param file
- *         the file in which the type is declared.
- * @param containingDeclaration
- *         if specified, a descriptor of a message type under which the type is declared.
+ * @param simpleName The simple name of the type.
+ * @param file The file in which the type is declared.
+ * @param containingDeclaration If specified, a descriptor of a message type under
+ *   which the type is declared.
  */
 internal fun buildTypeName(
     simpleName: String,
@@ -115,10 +122,10 @@ internal fun buildTypeName(
 /**
  * Produces a sequence by walking through all the nested message definitions staring with [type].
  *
- * @param type
- *         the message definition which may contain nested message definition to walk through.
- * @param extractorFun
- *         a function that, given a message definition, extracts the items of interest.
+ * @param type The message definition which may contain a nested message definition
+ *   to walk through.
+ * @param extractorFun The function that, given a message definition, extracts
+ *   the items of interest.
  * @return results of the calls to [extractorFun] flattened into one sequence.
  */
 internal fun <T> walkMessage(

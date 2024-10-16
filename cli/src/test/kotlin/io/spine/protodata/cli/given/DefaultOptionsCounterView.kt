@@ -32,6 +32,7 @@ import io.spine.core.Where
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.event.FieldOptionDiscovered
+import io.spine.protodata.ast.typeName
 import io.spine.protodata.cli.test.DefaultOptionsCounter
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
@@ -65,7 +66,7 @@ class DefaultOptionsCounterView
         event: FieldOptionDiscovered
     ) = alter {
         requiredFieldForTestEncountered = requiredFieldForTestEncountered ||
-                event.field.value.equals("required_field_for_test")
+                event.subject.name.value.equals("required_field_for_test")
     }
 
     private fun readTimeOption(event: FieldOptionDiscovered): TimeOption =
@@ -77,7 +78,7 @@ class DefaultOptionsCounterView
         override fun setupEventRouting(routing: EventRouting<TypeName>) {
             super.setupEventRouting(routing)
             routing.route(FieldOptionDiscovered::class.java) { event, _ ->
-                EventRoute.withId(event.type)
+                EventRoute.withId(event.subject.declaringType)
             }
         }
     }
