@@ -36,7 +36,6 @@ import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
-import io.spine.protodata.plugin.use
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFile
@@ -133,17 +132,7 @@ public class Pipeline(
         // Clear the cache of previously parsed files to avoid repeated code generation
         // when running from tests.
         SourceFile.clearCache()
-        injectTypeSystem()
         emitEventsAndRenderSources()
-    }
-
-    /**
-     * Makes the [plugins] use the [typeSystem].
-     */
-    private fun injectTypeSystem() {
-        plugins.forEach { plugin ->
-            plugin.use(typeSystem)
-        }
     }
 
     private fun emitEventsAndRenderSources() {
@@ -163,7 +152,7 @@ public class Pipeline(
     private fun assembleCodegenContext(): CodegenContext =
         CodeGenerationContext(id, typeSystem) {
             plugins.forEach {
-                it.applyTo(this)
+                it.applyTo(this, typeSystem)
             }
         }
 

@@ -113,7 +113,7 @@ public interface Plugin {
  * calls [Plugin.extend] method to allow the plugin to add additional components to the context.
  */
 @Internal
-public fun Plugin.applyTo(context: BoundedContextBuilder) {
+public fun Plugin.applyTo(context: BoundedContextBuilder, typeSystem: TypeSystem) {
     val repos = viewRepositories().toMutableList()
     val defaultRepos = views().map { ViewRepository.default(it) }
     repos.addAll(defaultRepos)
@@ -121,23 +121,9 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
     repos.forEach(context::add)
     policies().forEach {
         context.addEventDispatcher(it)
-    }
-    extend(context)
-}
-
-/**
- * The callback which allows the plugin to propagate the given [TypeSystem] instance
- * to its parts.
- *
- * This method is internal and called by [io.spine.protodata.backend.Pipeline.invoke] before
- * [CodeGeneratorRequest][com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest] is
- * parsed for emitting events.
- */
-@Internal
-public fun Plugin.use(typeSystem: TypeSystem) {
-    policies().forEach {
         it.use(typeSystem)
     }
+    extend(context)
 }
 
 /**

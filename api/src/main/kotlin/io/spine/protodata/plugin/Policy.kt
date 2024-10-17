@@ -92,8 +92,8 @@ public abstract class Policy<E : EventMessage> : Policy<E>(), LoadsSettings {
     /**
      * The type system for resolving type information for generating events.
      *
-     * The property is available after [Plugin.use] is called.
-     * Accessing the property before it will result in a run-time error.
+     * A non-null value is available in
+     * a [rendering pipeline][io.spine.protodata.backend.Pipeline.invoke].
      */
     protected open val typeSystem: TypeSystem?
         get() = if (this::_typeSystem.isInitialized) {
