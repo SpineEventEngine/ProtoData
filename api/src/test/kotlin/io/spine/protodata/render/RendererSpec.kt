@@ -27,13 +27,9 @@
 package io.spine.protodata.render
 
 import io.kotest.matchers.shouldBe
-import io.spine.base.EntityState
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.type.TypeSystem
-import io.spine.server.BoundedContext
-import io.spine.server.query.Querying
-import io.spine.server.query.QueryingClient
 import io.spine.tools.code.AnyLanguage
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -46,8 +42,7 @@ import org.junit.jupiter.api.assertThrows
 internal class RendererSpec {
 
     /**
-     * An instance of `"Code Generation"` context to be used for
-     * [creating][createTypeSystem] a [typeSystem].
+     * A stub instance of `"Code Generation"` context to be used when needed in parameters.
      *
      * We do not pass any custom entity classes or repositories to the context builder,
      * as we do not need them in tests.
@@ -90,17 +85,6 @@ internal class RendererSpec {
                 renderer.registerWith(it)
             }
         }
-    }
-
-    companion object {
-
-        /**
-         * Creates an instance of [TypeSystem] for testing.
-         */
-        fun createTypeSystem(context: BoundedContext) = TypeSystem.serving(object : Querying {
-            override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> =
-                QueryingClient(context, type, this::javaClass.name)
-        })
     }
 }
 

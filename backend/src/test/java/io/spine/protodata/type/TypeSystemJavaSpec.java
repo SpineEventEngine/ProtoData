@@ -39,7 +39,7 @@ class TypeSystemJavaSpec {
     @DisplayName("create an instance with a static method")
     void createStatic() {
         try (var context = CodeGenerationContext.newInstance()) {
-            var ts = TypeSystem.serving(new FakeQuerying(context));
+            var ts = context.getTypeSystem();
             assertThat(ts).isNotNull();
         }
     }

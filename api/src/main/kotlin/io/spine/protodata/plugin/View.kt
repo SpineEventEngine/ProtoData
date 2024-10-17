@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -96,9 +96,9 @@ import kotlin.reflect.KClass
  * Views have repositories which are responsible for storing states and for delivering correct
  * events to the correct views. See [ViewRepository] for more.
  *
- * @param I the type of the view ID; can be a Protobuf message, a String, an int, or a long.
- * @param M the type of the view's state; must be a Protobuf message implementing [EntityState].
- * @param B the type of the view's state builder; must match `<M>`.
+ * @param I The type of the view ID; can be a Protobuf message, a String, an int, or a long.
+ * @param M The type of the view's state; must be a Protobuf message implementing [EntityState].
+ * @param B The type of the view's state builder; must match `<M>`.
  */
 public open class View<I : Any, M : EntityState<I>, B : ValidatingBuilder<M>> :
     Projection<I, M, B>()

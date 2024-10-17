@@ -30,6 +30,7 @@ import io.spine.annotation.Internal
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
 import kotlin.reflect.KClass
@@ -92,8 +93,7 @@ public interface Plugin {
      * [reacts][io.spine.server.event.React] on `FileEntered` and `FileExited` events
      * to perform actions on the whole content of a proto file.
      *
-     * @param context
-     *         the `BoundedContextBuilder` to extend.
+     * @param context The `BoundedContextBuilder` to extend.
      */
     public fun extend(context: BoundedContextBuilder) {}
 }
@@ -113,7 +113,7 @@ public interface Plugin {
  * calls [Plugin.extend] method to allow the plugin to add additional components to the context.
  */
 @Internal
-public fun Plugin.applyTo(context: BoundedContextBuilder) {
+public fun Plugin.applyTo(context: BoundedContextBuilder, typeSystem: TypeSystem) {
     val repos = viewRepositories().toMutableList()
     val defaultRepos = views().map { ViewRepository.default(it) }
     repos.addAll(defaultRepos)
@@ -121,6 +121,7 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
     repos.forEach(context::add)
     policies().forEach {
         context.addEventDispatcher(it)
+        it.use(typeSystem)
     }
     extend(context)
 }

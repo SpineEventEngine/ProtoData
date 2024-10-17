@@ -36,7 +36,6 @@ import io.spine.protodata.ast.MessageType
 import io.spine.protodata.ast.ProtoDeclaration
 import io.spine.protodata.ast.ProtoDeclarationName
 import io.spine.protodata.ast.ProtoFileHeader
-import io.spine.protodata.ast.ProtobufDependency
 import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.Service
 import io.spine.protodata.ast.ServiceName
@@ -47,8 +46,6 @@ import io.spine.protodata.ast.isEnum
 import io.spine.protodata.ast.isMessage
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.ast.typeName
-import io.spine.server.query.Querying
-import io.spine.server.query.select
 import io.spine.type.shortDebugString
 
 /**
@@ -57,21 +54,6 @@ import io.spine.type.shortDebugString
 public class TypeSystem(
     private val files: Set<ProtobufSourceFile>
 ) {
-
-    public companion object {
-
-        /**
-         * Builds a new `TypeSystem` by finding definitions via
-         * the given [client][Querying] instance.
-         */
-        @JvmStatic
-        public fun serving(client: Querying): TypeSystem {
-            val files = client.select<ProtobufSourceFile>().all()
-            val deps = client.select<ProtobufDependency>().all().map { it.source }
-            return TypeSystem(files + deps)
-        }
-    }
-
     /**
      * Looks up a message type by its name.
      */
