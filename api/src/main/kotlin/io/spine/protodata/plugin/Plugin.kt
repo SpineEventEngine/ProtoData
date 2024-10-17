@@ -30,6 +30,7 @@ import io.spine.annotation.Internal
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContextBuilder
 import io.spine.server.entity.Entity
 import kotlin.reflect.KClass
@@ -92,8 +93,7 @@ public interface Plugin {
      * [reacts][io.spine.server.event.React] on `FileEntered` and `FileExited` events
      * to perform actions on the whole content of a proto file.
      *
-     * @param context
-     *         the `BoundedContextBuilder` to extend.
+     * @param context The `BoundedContextBuilder` to extend.
      */
     public fun extend(context: BoundedContextBuilder) {}
 }
@@ -123,6 +123,21 @@ public fun Plugin.applyTo(context: BoundedContextBuilder) {
         context.addEventDispatcher(it)
     }
     extend(context)
+}
+
+/**
+ * The callback which allows the plugin to propagate the given [TypeSystem] instance
+ * to its parts.
+ *
+ * This method is internal and called by [io.spine.protodata.backend.Pipeline.invoke] before
+ * [CodeGeneratorRequest][com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest] is
+ * parsed for emitting events.
+ */
+@Internal
+public fun Plugin.use(typeSystem: TypeSystem) {
+    policies().forEach {
+        it.use(typeSystem)
+    }
 }
 
 /**

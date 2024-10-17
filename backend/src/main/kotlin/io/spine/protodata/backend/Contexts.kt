@@ -58,11 +58,21 @@ public class CodeGenerationContext(
      */
     private val pipelineId: String,
 
+    override val typeSystem: TypeSystem,
+
     /**
      * An optional setup function for the context.
      */
     setup: BoundedContextBuilder.() -> Unit = { }
 ) : CodegenContext {
+
+    /**
+     * Creates a stub instance of the context with empty [TypeSystem].
+     *
+     * This is a test-only constructor for the cases when resolving of types is unnecessary.
+     */
+    @VisibleForTesting
+    public constructor(pipelineId: String) : this(pipelineId, TypeSystem(emptySet()))
 
     /**
      * The underlying instance of the `Code Generation` bounded context.
@@ -78,10 +88,6 @@ public class CodeGenerationContext(
         }
         builder.setup()
         context = builder.build()
-    }
-
-    override val typeSystem: TypeSystem by lazy {
-        TypeSystem.serving(this)
     }
 
     /**
@@ -124,8 +130,7 @@ public class CodeGenerationContext(
         @VisibleForTesting
         public fun newInstance(
             pipelineId: String = Pipeline.generateId()
-        ): CodeGenerationContext =
-            CodeGenerationContext(pipelineId)
+        ): CodeGenerationContext = CodeGenerationContext(pipelineId)
     }
 }
 

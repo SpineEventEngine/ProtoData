@@ -196,7 +196,7 @@ public fun Member<*>.findEnumTypes(): Set<EnumInFile> =
  * Services that are dependencies of the compilation process are not included.
  *
  * @see ProtobufSourceFile
- * @see ProtobufDependency
+ * @see io.spine.protodata.ast.ProtobufDependency
  */
 public fun Member<*>.findServices(): Set<ServiceInFile> =
     findAllFiles()
