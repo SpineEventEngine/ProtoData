@@ -35,6 +35,7 @@ import io.spine.logging.WithLogging
 import io.spine.option.OptionsProto
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
+import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
@@ -121,7 +122,7 @@ class LoggingLevelSpec {
 
     private fun launchWithLoggingParams(vararg argv: String) {
         val params = mutableListOf(
-            "-p", LoggingLevelAsserter::class.jvmName,
+            "-p", LoggingLevelAsserterPlugin::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
@@ -147,3 +148,5 @@ class LoggingLevelAsserter: StubSoloRenderer(), WithLogging {
         internal var infoEnabled: Boolean = false
     }
 }
+
+class LoggingLevelAsserterPlugin : Plugin(renderers = listOf(LoggingLevelAsserter()))

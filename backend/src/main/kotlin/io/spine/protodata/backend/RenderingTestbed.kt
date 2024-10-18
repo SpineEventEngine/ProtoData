@@ -37,12 +37,7 @@ import io.spine.protodata.render.Renderer
  * It is not meant to be used for production.
  */
 @VisibleForTesting
-public class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
-
+public class RenderingTestbed(renderers: List<Renderer<*>>) : Plugin(renderers) {
     public constructor(renderer: Renderer<*>) : this(listOf(renderer))
     public constructor(vararg renderer: Renderer<*>) : this(renderer.toList())
-
-    override fun renderers(): List<Renderer<*>> = renderers
 }

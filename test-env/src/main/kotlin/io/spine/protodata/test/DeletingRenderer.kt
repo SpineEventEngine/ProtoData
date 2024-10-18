@@ -29,6 +29,7 @@ package io.spine.protodata.test
 import com.google.protobuf.StringValue
 import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.find
+import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.tools.code.Java
 import kotlin.io.path.Path
@@ -37,7 +38,7 @@ import kotlin.io.path.div
 /**
  * A renderer that deletes Java classes generated from message types marked as deleted.
  */
-public class DeletingRenderer : SoloRenderer<Java>(Java) {
+public class DeletingRenderer : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val types = select<DeletedType>().all()

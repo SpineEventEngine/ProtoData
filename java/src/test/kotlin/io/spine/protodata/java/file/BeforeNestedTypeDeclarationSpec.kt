@@ -30,7 +30,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.backend.ImplicitPluginWithRenderers
+import io.spine.protodata.backend.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.ClassOrEnumName
@@ -112,7 +112,7 @@ class BeforeNestedTypeDeclarationSpec {
             }
 
             Pipeline(
-                plugin = ImplicitPluginWithRenderers(
+                plugin = RenderingTestbed(
                     SuppressWarningsAnnotation(deeplyNestedClassName),
                     SuppressWarningsAnnotation(nestedEnum),
                     SuppressWarningsAnnotation(nestedInterface),

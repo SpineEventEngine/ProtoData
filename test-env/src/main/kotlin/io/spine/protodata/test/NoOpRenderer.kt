@@ -26,6 +26,7 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.SourceFileSet
 
 public class NoOpRenderer : StubSoloRenderer() {
@@ -34,3 +35,5 @@ public class NoOpRenderer : StubSoloRenderer() {
         // Do nothing.
     }
 }
+
+public class NoOpRendererPlugin : Plugin(renderers = listOf(NoOpRenderer()))

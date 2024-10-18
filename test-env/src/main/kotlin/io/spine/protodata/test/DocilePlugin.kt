@@ -30,19 +30,19 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.Policy
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
+import io.spine.protodata.render.Renderer
 
 /**
  * A plugin which does whatever it's told.
  */
 public class DocilePlugin(
-    private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
-    private val views: Set<Class<out View<*, *, *>>> = setOf(),
-    private val policies: Set<Policy<*>> = setOf()
-) : Plugin {
-
-    override fun viewRepositories(): Set<ViewRepository<*, *, *>> = viewRepositories
-
-    override fun views(): Set<Class<out View<*, *, *>>> = views
-
-    override fun policies(): Set<Policy<*>> = policies
-}
+    renderers: List<Renderer<*>> = listOf(),
+    viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
+    views: Set<Class<out View<*, *, *>>> = setOf(),
+    policies: Set<Policy<*>> = setOf()
+) : Plugin(
+    renderers = renderers,
+    views = views,
+    viewRepositories = viewRepositories,
+    policies = policies
+)

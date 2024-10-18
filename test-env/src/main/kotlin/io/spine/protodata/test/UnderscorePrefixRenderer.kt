@@ -26,6 +26,7 @@
 
 package io.spine.protodata.test
 
+import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.tools.code.Java
@@ -33,7 +34,7 @@ import io.spine.tools.code.Java
 /**
  * A test [Renderer] which prepends underscore before an [InternalType] in all source files.
  */
-public class UnderscorePrefixRenderer : SoloRenderer<Java>(Java) {
+public class UnderscorePrefixRenderer : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
         val internalTypes = select<InternalType>().all()
@@ -46,3 +47,5 @@ public class UnderscorePrefixRenderer : SoloRenderer<Java>(Java) {
         }
     }
 }
+
+public class UnderscorePrefixRendererPlugin : Plugin(renderers = listOf(UnderscorePrefixRenderer()))

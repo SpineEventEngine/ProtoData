@@ -31,7 +31,7 @@ import io.kotest.matchers.string.shouldEndWith
 import io.spine.protodata.ast.EnumInFile
 import io.spine.protodata.ast.MessageInFile
 import io.spine.protodata.ast.ServiceInFile
-import io.spine.protodata.backend.ImplicitPluginWithRenderers
+import io.spine.protodata.backend.RenderingTestbed
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.testing.PipelineSetup
@@ -63,7 +63,7 @@ internal class MemberSpec {
         fun setup(@TempDir outputDir: Path, @TempDir settingsDir: Path) {
             val setup = PipelineSetup.byResources(
                 Java,
-                listOf(ImplicitPluginWithRenderers(probe)),
+                listOf(RenderingTestbed(probe)),
                 outputDir,
                 settingsDir
             ) {}

@@ -26,6 +26,8 @@
 
 package io.spine.protodata;
 
+import com.google.common.collect.ImmutableList;
+import com.google.protobuf.Message;
 import io.spine.protodata.test.Postcard;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,8 @@ class ValuesJavaSpec {
     @Test
     @DisplayName("convert a `Message` into a `Value` via a static method")
     void createStatic() {
+        var list = ImmutableList.<Message>of();
+
         var value = toValue(
                 Postcard.newBuilder()
                         .setCongratulation("Happy retirement")

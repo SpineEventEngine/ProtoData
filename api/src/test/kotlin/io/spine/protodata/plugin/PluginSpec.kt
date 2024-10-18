@@ -55,12 +55,7 @@ internal class PluginSpec {
     }
 }
 
-private class StubPlugin(vararg policies: Policy<*>) : Plugin {
-
-    private val policies: Set<Policy<*>> = policies.toSet()
-
-    override fun policies(): Set<Policy<*>> = policies
-}
+private class StubPlugin(vararg policies: Policy<*>) : Plugin(policies = policies.toSet())
 
 private class StubPolicy1 : TsStubPolicy<FieldEntered>() {
     @React
