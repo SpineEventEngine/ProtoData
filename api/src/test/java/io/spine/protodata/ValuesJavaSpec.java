@@ -26,8 +26,6 @@
 
 package io.spine.protodata;
 
-import com.google.common.collect.ImmutableList;
-import com.google.protobuf.Message;
 import io.spine.protodata.test.Postcard;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
