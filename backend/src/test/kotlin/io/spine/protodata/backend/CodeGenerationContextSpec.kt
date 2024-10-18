@@ -48,8 +48,8 @@ import io.spine.protobuf.AnyPacker
 import io.spine.protodata.ast.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ast.ProtobufDependency
 import io.spine.protodata.ast.ProtobufSourceFile
-import io.spine.protodata.ast.asType
 import io.spine.protodata.ast.option
+import io.spine.protodata.ast.toType
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.protobuf.file
@@ -176,7 +176,7 @@ class CodeGenerationContextSpec {
             journeyType.optionList should containExactly(option {
                 name = "beta_type"
                 number = BETA_TYPE_FIELD_NUMBER
-                type = TYPE_BOOL.asType()
+                type = TYPE_BOOL.toType()
                 value = AnyPacker.pack(BoolValue.of(true))
             })
             // 4 regular fields and 2 fields under `oneof`.
