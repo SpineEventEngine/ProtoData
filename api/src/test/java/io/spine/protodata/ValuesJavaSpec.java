@@ -41,8 +41,6 @@ class ValuesJavaSpec {
     @Test
     @DisplayName("convert a `Message` into a `Value` via a static method")
     void createStatic() {
-        var list = ImmutableList.<Message>of();
-
         var value = toValue(
                 Postcard.newBuilder()
                         .setCongratulation("Happy retirement")
