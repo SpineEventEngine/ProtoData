@@ -46,7 +46,7 @@ repositories {
 
 protoData {
     plugins(
-        "io.spine.protodata.test.NoOpRenderer",
+        "io.spine.protodata.test.NoOpRendererPlugin",
         "io.spine.protodata.test.TestPlugin"
     )
 }

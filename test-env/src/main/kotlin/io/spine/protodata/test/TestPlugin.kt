@@ -27,14 +27,15 @@
 package io.spine.protodata.test
 
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.plugin.ViewRepository
 import io.spine.protodata.render.Renderer
 
 /**
  * A test fixture for passing renderers to a [Pipeline][io.spine.protodata.backend.Pipeline].
  */
-public class TestPlugin(renderers: Iterable<Renderer<*>>): Plugin {
-
+public class TestPlugin(renderers: List<Renderer<*>>): Plugin(
+    renderers = renderers,
+    viewRepositories = setOf(InternalMessageRepository(), DeletedTypeRepository())
+) {
     /**
      * A no-arg constructor to satisfy the contract for creating a [Plugin] by
      * its name via reflection.
@@ -42,11 +43,4 @@ public class TestPlugin(renderers: Iterable<Renderer<*>>): Plugin {
     public constructor() : this(emptyList())
 
     public constructor(vararg renderer: Renderer<*>) : this(renderer.toList())
-
-    private val renderers: List<Renderer<*>> = renderers.toList()
-
-    override fun renderers(): List<Renderer<*>> = renderers
-
-    override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
-        setOf(InternalMessageRepository(), DeletedTypeRepository())
 }

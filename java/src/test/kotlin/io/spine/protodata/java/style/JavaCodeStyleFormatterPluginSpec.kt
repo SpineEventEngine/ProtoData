@@ -38,7 +38,7 @@ internal class JavaCodeStyleFormatterPluginSpec {
     @Test
     fun `have only the 'JavaCodeStyleFormatter' renderer`() {
         val plugin = JavaCodeStyleFormatterPlugin()
-        plugin.renderers() shouldHaveSize 1
-        (plugin.renderers().theOnly() is JavaCodeStyleFormatter) shouldBe true
+        plugin.renderers shouldHaveSize 1
+        (plugin.renderers.theOnly() is JavaCodeStyleFormatter) shouldBe true
     }
 }

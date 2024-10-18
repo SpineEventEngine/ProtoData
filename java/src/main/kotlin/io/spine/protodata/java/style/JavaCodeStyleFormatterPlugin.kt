@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,7 +26,7 @@
 
 package io.spine.protodata.java.style
 
-import io.spine.protodata.plugin.AbstractPlugin
+import io.spine.protodata.plugin.Plugin
 
 /**
  * A ProtoData plugin which adds [JavaCodeStyleFormatter] to the processing pipeline.
@@ -39,6 +39,6 @@ import io.spine.protodata.plugin.AbstractPlugin
  * with an instance of [JavaCodeStyle] with the value of [JavaCodeStyleFormatter.settingsId] as
  * the ID.
  */
-public class JavaCodeStyleFormatterPlugin : AbstractPlugin(
+public class JavaCodeStyleFormatterPlugin : Plugin(
     listOf(JavaCodeStyleFormatter())
 )

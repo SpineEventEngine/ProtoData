@@ -38,18 +38,23 @@ import io.spine.option.OptionsProto
 import io.spine.protobuf.pack
 import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
 import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
+import io.spine.protodata.cli.given.DefaultOptionsCounterRendererPlugin
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.settings.Format
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.EchoRenderer
+import io.spine.protodata.test.EchoRendererPlugin
 import io.spine.protodata.test.PlainStringRenderer
+import io.spine.protodata.test.PlainStringRendererPlugin
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.ProtoEchoRenderer
+import io.spine.protodata.test.ProtoEchoRendererPlugin
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
+import io.spine.protodata.test.UnderscorePrefixRendererPlugin
 import io.spine.protodata.test.echo
 import io.spine.string.ti
 import io.spine.time.LocalDates
@@ -116,7 +121,7 @@ class MainSpec {
     fun `render enhanced code`(@TempDir dir: Path) {
         launchApp(
             "-p", TestPlugin::class.jvmName,
-            "-p", UnderscorePrefixRenderer::class.jvmName,
+            "-p", UnderscorePrefixRendererPlugin::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
@@ -129,7 +134,7 @@ class MainSpec {
     fun `provide Spine options by default`(@TempDir dir: Path) {
         launchApp(
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
-            "-p", DefaultOptionsCounterRenderer::class.jvmName,
+            "-p", DefaultOptionsCounterRendererPlugin::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
@@ -152,7 +157,7 @@ class MainSpec {
             )
 
             launchApp(
-                "-p", EchoRenderer::class.jvmName,
+                "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -170,7 +175,7 @@ class MainSpec {
                 """.ti()
             )
             launchApp(
-                "-p", EchoRenderer::class.jvmName,
+                "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -192,7 +197,7 @@ class MainSpec {
                 """.ti()
             )
             launchApp(
-                "-p", EchoRenderer::class.jvmName,
+                "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -214,7 +219,7 @@ class MainSpec {
             settings.writeFor<ProtoEchoRenderer>(Format.PROTO_JSON, json)
 
             launchApp(
-                "-p", ProtoEchoRenderer::class.jvmName,
+                "-p", ProtoEchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -240,7 +245,7 @@ class MainSpec {
             settings.writeFor<ProtoEchoRenderer>(Format.PROTO_BINARY, bytes)
 
             launchApp(
-                "-p", ProtoEchoRenderer::class.jvmName,
+                "-p", ProtoEchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -264,7 +269,7 @@ class MainSpec {
             )
 
             launchApp(
-                "-p", EchoRenderer::class.jvmName,
+                "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
@@ -279,7 +284,7 @@ class MainSpec {
             SettingsDirectory(configDir).writeFor<PlainStringRenderer>(Format.PLAIN, plainString)
 
             launchApp(
-                "-p", PlainStringRenderer::class.jvmName,
+                "-p", PlainStringRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),

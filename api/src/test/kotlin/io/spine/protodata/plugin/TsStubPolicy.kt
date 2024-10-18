@@ -26,26 +26,18 @@
 
 package io.spine.protodata.plugin
 
-import io.spine.protodata.render.Renderer
+import com.google.common.annotations.VisibleForTesting
+import io.spine.base.EventMessage
+import io.spine.protodata.type.TypeSystem
 
 /**
- * A default abstract implementation of the [Plugin] interface.
- *
- * This class is intended to be extended by the plugins which do not need to override
- * the methods of the [Plugin] interface. That's why the methods of this class are `final`.
+ * The abstract base for stub policy classes used in tests related to injecting [TypeSystem].
  */
-public abstract class AbstractPlugin(
-    private val renderers: Iterable<Renderer<*>> = listOf(),
-    private val views: Set<Class<out View<*, *, *>>> = setOf(),
-    private val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
-    private val policies: Set<Policy<*>> = setOf(),
-): Plugin {
+internal abstract class TsStubPolicy<E : EventMessage> : Policy<E>() {
 
-    final override fun renderers(): List<Renderer<*>> = renderers.toList()
-
-    final override fun viewRepositories(): Set<ViewRepository<*, *, *>> = viewRepositories
-
-    final override fun views(): Set<Class<out View<*, *, *>>> = views
-
-    final override fun policies(): Set<Policy<*>> = policies
+    /**
+     * Opens access to the protected [typeSystem] property.
+     */
+    @VisibleForTesting
+    fun typeSystem(): TypeSystem? = typeSystem
 }

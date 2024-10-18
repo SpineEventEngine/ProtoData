@@ -49,38 +49,28 @@ import kotlin.reflect.KClass
  *
  * Implementing classes must provide a parameterless constructor so that
  * ProtoData can instantiate a plugin via its fully qualified class name.
+ *
+ * @property renderers The [renderers][Renderer] added by this plugin.
+ *   The renderers are guaranteed to be called in the order of their declaration in the plugin.
+ *
+ * @property views The [views][View] added by this plugin represented via their classes.
+ *   A [View] may require a repository to route events.
+ *   In such a case, please use [Plugin.viewRepositories] instead.
+ *
+ * @property viewRepositories The [views][View] added by this plugin represented via their
+ *   [repositories][ViewRepository].
+ *   If passing events to a [View] does not require custom routing,
+ *   the view may not have a need for repository.
+ *   In such a case, please use [Plugin.views] instead.
+ *
+ * @property policies The [policies][Policy] added by this plugin.
  */
-public interface Plugin {
-
-    /**
-     * Obtains the [renderers][Renderer] added by this plugin.
-     *
-     * The renderers are guaranteed to be called in the order of their declaration in the plugin.
-     */
-    public fun renderers(): List<Renderer<*>> = listOf()
-
-    /**
-     * Obtains the [views][View] added by this plugin represented via their classes.
-     *
-     * A [View] may require a repository to route events. In such case, use
-     * [Plugin.viewRepositories] instead.
-     */
-    public fun views(): Set<Class<out View<*, *, *>>> = setOf()
-
-    /**
-     * Obtains the [views][View] added by this plugin represented via their
-     * [repositories][ViewRepository].
-     *
-     * A [View] may not have a need for repository.
-     * In such a case, please use [Plugin.views] instead.
-     */
-    public fun viewRepositories(): Set<ViewRepository<*, *, *>> = setOf()
-
-    /**
-     * Obtains the [policies][Policy] added by this plugin.
-     */
-    public fun policies(): Set<Policy<*>> = setOf()
-
+public abstract class Plugin(
+    public val renderers: List<Renderer<*>> = listOf(),
+    public val views: Set<Class<out View<*, *, *>>> = setOf(),
+    public val viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
+    public val policies: Set<Policy<*>> = setOf(),
+) {
     /**
      * Extends the given bounded context being built with additional functionality.
      *
@@ -95,7 +85,9 @@ public interface Plugin {
      *
      * @param context The `BoundedContextBuilder` to extend.
      */
-    public fun extend(context: BoundedContextBuilder) {}
+    public fun extend(@Suppress("UNUSED_PARAMETER") context: BoundedContextBuilder) {
+        // no-op
+    }
 }
 
 /**
@@ -114,12 +106,12 @@ public interface Plugin {
  */
 @Internal
 public fun Plugin.applyTo(context: BoundedContextBuilder, typeSystem: TypeSystem) {
-    val repos = viewRepositories().toMutableList()
-    val defaultRepos = views().map { ViewRepository.default(it) }
+    val repos = viewRepositories.toMutableList()
+    val defaultRepos = views.map { ViewRepository.default(it) }
     repos.addAll(defaultRepos)
     checkNoViewRepoDuplication(repos)
     repos.forEach(context::add)
-    policies().forEach {
+    policies.forEach {
         context.addEventDispatcher(it)
         it.use(typeSystem)
     }
@@ -136,7 +128,7 @@ public fun Plugin.render(
     codegenContext: CodegenContext,
     sources: Iterable<SourceFileSet>
 ) {
-    renderers().forEach { r ->
+    renderers.forEach { r ->
         r.registerWith(codegenContext)
         sources.forEach(r::renderSources)
     }

@@ -27,7 +27,6 @@
 package io.spine.protodata.java.annotation
 
 import io.spine.protodata.java.file.PrintBeforePrimaryDeclaration
-import io.spine.protodata.plugin.AbstractPlugin
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.Policy
 import io.spine.protodata.plugin.View
@@ -44,7 +43,7 @@ public abstract class TypeAnnotationPlugin(
     views: Set<Class<out View<*, *, *>>> = setOf(),
     viewRepositories: Set<ViewRepository<*, *, *>> = setOf(),
     policies: Set<Policy<*>> = setOf(),
-) : AbstractPlugin(
+) : Plugin(
     listOf(PrintBeforePrimaryDeclaration()) + renderers,
     views, viewRepositories, policies
 )

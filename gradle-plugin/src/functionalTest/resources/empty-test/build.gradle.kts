@@ -54,7 +54,7 @@ protobuf {
 
 protoData {
     plugins(
-        "io.spine.protodata.test.UnderscorePrefixRenderer",
+        "io.spine.protodata.test.UnderscorePrefixRendererPlugin",
         "io.spine.protodata.test.TestPlugin"
     )
 }

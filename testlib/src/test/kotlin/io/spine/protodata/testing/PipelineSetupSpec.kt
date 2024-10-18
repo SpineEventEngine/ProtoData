@@ -186,6 +186,6 @@ private fun setupByResources(
     settingsDir,
 ) { _ -> }
 
-internal class StubPlugin: Plugin
+internal class StubPlugin: Plugin()
 
 private fun Path.fileCount() = toFile().list()!!.size

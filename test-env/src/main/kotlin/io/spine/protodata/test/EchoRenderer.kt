@@ -34,34 +34,14 @@ import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.loadSettings
 import io.spine.time.toInstant
 import io.spine.tools.code.AnyLanguage
-import io.spine.tools.code.Language
 import kotlin.io.path.Path
 
 public const val ECHO_FILE: String = "name.txt"
 
 /**
- * A test environment renderer that is also a [Plugin] and can be added to a `Pipeline` directly.
- *
- * This abstract base is a convenience for adding a `Renderer` into a `Pipeline`
- * without creating an instance of
- * [ImplicitPluginWithRenderers][io.spine.protodata.backend.ImplicitPluginWithRenderers]
- * with only one renderer.
- *
- * A more realistic use case is a `Renderer` that is a part of a `Plugin`.
- * This is why we do not make this class a part of the production code.
- *
- * @param L the language served by the `Renderer`.
- */
-public abstract class SoloRenderer<L : Language>(language: L) : Renderer<L>(language), Plugin {
-
-    override fun renderers(): List<Renderer<*>> = listOf(this)
-}
-
-/**
  * Abstract base for stub renders that need to be added to a stub pipeline in tests.
  */
-public abstract class StubSoloRenderer : SoloRenderer<AnyLanguage>(AnyLanguage), Plugin
-
+public abstract class StubSoloRenderer : Renderer<AnyLanguage>(AnyLanguage)
 
 /**
  * A renderer that writes the contents of its Java-class-style configuration into a file.
@@ -73,6 +53,11 @@ public class EchoRenderer : StubSoloRenderer() {
         sources.createFile(Path(ECHO_FILE), name.value)
     }
 }
+
+/**
+ * The plugin which exposes [EchoRenderer] as the only render.
+ */
+public class EchoRendererPlugin : Plugin(renderers = listOf(EchoRenderer()))
 
 /**
  * A renderer that writes the contents of its Protobuf-style configuration into a file.
@@ -96,6 +81,10 @@ public class ProtoEchoRenderer : StubSoloRenderer() {
     }
 }
 
+public class ProtoEchoRendererPlugin : Plugin(
+    renderers = listOf(ProtoEchoRenderer()),
+)
+
 /**
  * A renderer that writes the contents of its plain string configuration into a file.
  */
@@ -106,6 +95,13 @@ public class PlainStringRenderer : StubSoloRenderer() {
         sources.createFile(Path(ECHO_FILE), echo)
     }
 }
+
+/**
+ * The plugin which exposes only [PlainStringRenderer].
+ */
+public class PlainStringRendererPlugin : Plugin(
+    renderers = listOf(PlainStringRenderer())
+)
 
 /**
  * A wrapper type for a ProtoData configuration.

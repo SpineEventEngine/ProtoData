@@ -42,6 +42,7 @@ dependencies {
 
     testImplementation(JavaX.annotations)
     testImplementation(Spine.testUtilTime)
+    testImplementation(project(":testlib"))
     testImplementation(project(":test-env"))
 }
 

@@ -41,19 +41,16 @@ import java.util.List;
  * The plugin which supplies the {@link UuidType} view.
  */
 @SuppressWarnings("unused") // Accessed reflectively.
-public final class UuidPlugin implements Plugin {
+public final class UuidPlugin extends Plugin {
 
-    @Override
-    public List<Renderer<?>> renderers() {
-        return ImmutableList.of(
-                new ClassScopePrinter(),
-                new UuidJavaRenderer(),
-                new PrintBeforePrimaryDeclaration()
+    public UuidPlugin() {
+        super(ImmutableList.of(
+                      new ClassScopePrinter(),
+                      new UuidJavaRenderer(),
+                      new PrintBeforePrimaryDeclaration()),
+              ImmutableSet.of() /* views */,
+              ImmutableSet.of(new UuidTypeRepository()),
+              ImmutableSet.of() /* policies */
         );
-    }
-
-    @Override
-    public Set<ViewRepository<?, ?, ?>> viewRepositories() {
-        return ImmutableSet.of(new UuidTypeRepository());
     }
 }

@@ -24,9 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend
+package io.spine.protodata.testing
 
-import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.Renderer
 
@@ -36,13 +35,7 @@ import io.spine.protodata.render.Renderer
  * This plugin is useful for testing ProtoData and renderers in particular.
  * It is not meant to be used for production.
  */
-@VisibleForTesting
-public class ImplicitPluginWithRenderers(
-    private val renderers: List<Renderer<*>>
-) : Plugin {
-
+public class RenderingTestbed(renderers: List<Renderer<*>>) : Plugin(renderers) {
     public constructor(renderer: Renderer<*>) : this(listOf(renderer))
     public constructor(vararg renderer: Renderer<*>) : this(renderer.toList())
-
-    override fun renderers(): List<Renderer<*>> = renderers
 }

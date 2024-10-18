@@ -43,7 +43,7 @@ import javax.annotation.processing.Generated
  * in the source set.
  *
  * Deriving classes are likely to inherit the class to pass values to the properties, providing
- * a no-argument constructor, as required for a [Renderer][io.spine.protodata.renderer.Renderer].
+ * a no-argument constructor, as required for a [Renderer][io.spine.protodata.render.Renderer].
  *
  * @see io.spine.protodata.java.annotation.TypeAnnotation
  */

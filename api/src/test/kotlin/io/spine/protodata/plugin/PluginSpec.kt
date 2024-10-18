@@ -27,31 +27,42 @@
 package io.spine.protodata.plugin
 
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.ast.event.TypeDiscovered
+import io.spine.protodata.ast.event.FieldEntered
+import io.spine.protodata.ast.event.FieldExited
 import io.spine.protodata.type.TypeSystem
+import io.spine.server.BoundedContext
 import io.spine.server.event.Just
 import io.spine.server.event.NoReaction
 import io.spine.server.event.React
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`Policy` should")
-internal class PolicySpec {
+@DisplayName("`Plugin` should")
+internal class PluginSpec {
 
     @Test
-    fun `obtain 'TypeSystem' after injected`() {
-        val policy = StubPolicy()
+    fun `propagate 'TypeSystem' into its policies`() {
+        val policy1 = StubPolicy1()
+        val policy2 = StubPolicy2()
 
-        policy.typeSystem() shouldBe null
-
+        val plugin = StubPlugin(policy1, policy2)
+        val ctx = BoundedContext.singleTenant("Stubs")
         val typeSystem = TypeSystem(emptySet())
-        policy.use(typeSystem)
+        plugin.applyTo(ctx, typeSystem)
 
-        policy.typeSystem() shouldBe typeSystem
+        policy1.typeSystem() shouldBe typeSystem
+        policy2.typeSystem() shouldBe typeSystem
     }
 }
 
-private class StubPolicy : TsStubPolicy<TypeDiscovered>() {
+private class StubPlugin(vararg policies: Policy<*>) : Plugin(policies = policies.toSet())
+
+private class StubPolicy1 : TsStubPolicy<FieldEntered>() {
     @React
-    override fun whenever(event: TypeDiscovered): Just<NoReaction> = Just.noReaction
+    override fun whenever(event: FieldEntered): Just<NoReaction> = Just.noReaction
+}
+
+private class StubPolicy2 : TsStubPolicy<FieldExited>() {
+    @React
+    override fun whenever(event: FieldExited): Just<NoReaction> = Just.noReaction
 }
