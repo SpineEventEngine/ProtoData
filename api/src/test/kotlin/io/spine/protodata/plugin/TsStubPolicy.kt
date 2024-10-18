@@ -26,32 +26,18 @@
 
 package io.spine.protodata.plugin
 
-import io.kotest.matchers.shouldBe
-import io.spine.protodata.ast.event.TypeDiscovered
+import com.google.common.annotations.VisibleForTesting
+import io.spine.base.EventMessage
 import io.spine.protodata.type.TypeSystem
-import io.spine.server.event.Just
-import io.spine.server.event.NoReaction
-import io.spine.server.event.React
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 
-@DisplayName("`Policy` should")
-internal class PolicySpec {
+/**
+ * The abstract base for stub policy classes used in tests related to injecting [TypeSystem].
+ */
+internal abstract class TsStubPolicy<E : EventMessage> : Policy<E>() {
 
-    @Test
-    fun `obtain 'TypeSystem' after injected`() {
-        val policy = StubPolicy()
-
-        policy.typeSystem() shouldBe null
-
-        val typeSystem = TypeSystem(emptySet())
-        policy.use(typeSystem)
-
-        policy.typeSystem() shouldBe typeSystem
-    }
-}
-
-private class StubPolicy : TsStubPolicy<TypeDiscovered>() {
-    @React
-    override fun whenever(event: TypeDiscovered): Just<NoReaction> = Just.noReaction
+    /**
+     * Opens access to the protected [typeSystem] property.
+     */
+    @VisibleForTesting
+    fun typeSystem(): TypeSystem? = typeSystem
 }
