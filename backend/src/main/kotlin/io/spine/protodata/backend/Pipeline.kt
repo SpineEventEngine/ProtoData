@@ -29,21 +29,23 @@ package io.spine.protodata.backend
 import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
+import io.spine.code.proto.FileSet
 import io.spine.environment.DefaultMode
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
+import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
-
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -61,12 +63,12 @@ import io.spine.server.under
  *
  * Lastly, the source set is stored back onto the file system.
  *
- * @property id the ID of the pipeline to be used for distinguishing contexts when
+ * @property id The ID of the pipeline to be used for distinguishing contexts when
  *   two or more pipelines are executed in the same JVM. If not specified, the ID will be generated.
- * @property plugins the code generation plugins to be applied to the pipeline.
- * @property sources the source sets to be processed by the pipeline.
- * @property request the Protobuf compiler request.
- * @property settings the directory to which setting files for the [plugins] should be stored.
+ * @property plugins The code generation plugins to be applied to the pipeline.
+ * @property sources The source sets to be processed by the pipeline.
+ * @property request The Protobuf compiler request.
+ * @property settings The directory to which setting files for the [plugins] should be stored.
  */
 @Internal
 public class Pipeline(
@@ -76,6 +78,13 @@ public class Pipeline(
     public val request: CodeGeneratorRequest,
     public val settings: SettingsDirectory
 ) {
+
+    /**
+     * The type system passed to the plugins at the start of the pipeline.
+     */
+    private val typeSystem: TypeSystem by lazy {
+        request.toTypeSystem()
+    }
 
     /**
      * Obtains code generation context used by this pipeline.
@@ -123,7 +132,10 @@ public class Pipeline(
         // Clear the cache of previously parsed files to avoid repeated code generation
         // when running from tests.
         SourceFile.clearCache()
+        emitEventsAndRenderSources()
+    }
 
+    private fun emitEventsAndRenderSources() {
         codegenContext.use {
             ConfigurationContext(id).use { configuration ->
                 ProtobufCompilerContext(id).use { compiler ->
@@ -138,9 +150,9 @@ public class Pipeline(
      * Assembles the `Code Generation` context by applying given [plugins].
      */
     private fun assembleCodegenContext(): CodegenContext =
-        CodeGenerationContext(id) {
+        CodeGenerationContext(id, typeSystem) {
             plugins.forEach {
-                it.applyTo(this)
+                it.applyTo(this, typeSystem)
             }
         }
 
@@ -170,4 +182,13 @@ public class Pipeline(
         @JvmStatic
         public fun generateId(): String = SecureRandomString.generate()
     }
+}
+
+/**
+ * Converts this code generation request into [TypeSystem] taking all the proto files.
+ */
+private fun CodeGeneratorRequest.toTypeSystem(): TypeSystem {
+    val fileDescriptors = FileSet.of(protoFileList).files()
+    val protoFiles = fileDescriptors.map { it.toPbSourceFile() }
+    return TypeSystem(protoFiles.toSet())
 }

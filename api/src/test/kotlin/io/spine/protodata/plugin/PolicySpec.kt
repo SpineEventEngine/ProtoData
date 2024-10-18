@@ -24,12 +24,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.plugin
+
+import com.google.common.annotations.VisibleForTesting
+import io.kotest.matchers.shouldBe
+import io.spine.core.External
+import io.spine.protodata.ast.event.TypeDiscovered
+import io.spine.protodata.type.TypeSystem
+import io.spine.server.event.Just
+import io.spine.server.event.NoReaction
+import io.spine.server.event.React
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+
+@DisplayName("`Policy` should")
+internal class PolicySpec {
+
+    @Test
+    fun `obtain 'TypeSystem' after injected`() {
+        val policy = StubPolicy()
+
+        policy.typeSystem() shouldBe null
+
+        val typeSystem = TypeSystem(emptySet())
+        policy.use(typeSystem)
+
+        policy.typeSystem() shouldBe typeSystem
+    }
+}
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * A stub policy for testing access to the [typeSystem] property.
  */
-val protoDataVersion: String by extra("0.62.0")
+private class StubPolicy : Policy<TypeDiscovered>() {
+
+    @React
+    override fun whenever(@External event: TypeDiscovered): Just<NoReaction> = Just.noReaction
+
+    /**
+     * Opens access to the protected [typeSystem] property.
+     */
+    @VisibleForTesting
+    fun typeSystem(): TypeSystem? = typeSystem
+}

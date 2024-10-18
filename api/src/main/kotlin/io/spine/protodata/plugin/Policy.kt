@@ -29,6 +29,7 @@ package io.spine.protodata.plugin
 import io.spine.base.EntityState
 import io.spine.base.EventMessage
 import io.spine.protodata.settings.LoadsSettings
+import io.spine.protodata.type.TypeSystem
 import io.spine.server.event.Policy
 import io.spine.server.query.QueryingClient
 
@@ -82,6 +83,31 @@ import io.spine.server.query.QueryingClient
  * information in the code generation domain. Thus, we directly convert between events.
  */
 public abstract class Policy<E : EventMessage> : Policy<E>(), LoadsSettings {
+
+    /**
+     * The backing field for the [typeSystem] property.
+     */
+    private lateinit var _typeSystem: TypeSystem
+
+    /**
+     * The type system for resolving type information for generating events.
+     *
+     * A non-null value is available in
+     * a [rendering pipeline][io.spine.protodata.backend.Pipeline.invoke].
+     */
+    protected open val typeSystem: TypeSystem?
+        get() = if (this::_typeSystem.isInitialized) {
+            _typeSystem
+        } else {
+            null
+        }
+
+    /**
+     * Assigns the type system to the policy.
+     */
+    internal fun use(typeSystem: TypeSystem) {
+        _typeSystem = typeSystem
+    }
 
     final override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> {
         return QueryingClient(context, type, javaClass.name)
