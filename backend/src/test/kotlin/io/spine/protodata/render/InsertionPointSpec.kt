@@ -33,7 +33,7 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.backend.RenderingTestbed
+import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator

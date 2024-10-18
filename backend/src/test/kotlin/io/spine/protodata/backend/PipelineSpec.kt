@@ -61,6 +61,7 @@ import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
+import io.spine.protodata.testing.RenderingTestbed
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
 import java.nio.file.Path

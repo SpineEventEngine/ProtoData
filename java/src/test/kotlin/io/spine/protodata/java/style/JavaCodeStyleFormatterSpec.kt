@@ -31,7 +31,7 @@ package io.spine.protodata.java.style
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import copyResource
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.backend.RenderingTestbed
+import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.Format
