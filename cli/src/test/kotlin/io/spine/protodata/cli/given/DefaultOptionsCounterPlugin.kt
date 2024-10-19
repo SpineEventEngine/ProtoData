@@ -27,10 +27,6 @@
 package io.spine.protodata.cli.given
 
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.plugin.ViewRepository
 
-class DefaultOptionsCounterPlugin : Plugin {
-
-    override fun viewRepositories(): Set<ViewRepository<*, *, *>> =
-        setOf(DefaultOptionsCounterView.Repository())
-}
+class DefaultOptionsCounterPlugin :
+    Plugin(viewRepositories = setOf(DefaultOptionsCounterView.Repository()))

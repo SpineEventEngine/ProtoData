@@ -45,6 +45,7 @@ dependencies {
         runtimeOnly(moduleKotlin)
     }
 
+    testImplementation(project(":testlib"))
     testImplementation(project(":test-env"))
     testImplementation(JUnit.params)
 }

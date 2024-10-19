@@ -41,20 +41,17 @@ import java.util.List;
  * A plugin which exposes the {@code Annotated} view.
  */
 @SuppressWarnings("unused") // Accessed reflectively by ProtoData.
-public final class AnnotationPlugin implements Plugin {
+public final class AnnotationPlugin extends Plugin {
 
-    @Override
-    public List<Renderer<?>> renderers() {
-        return ImmutableList.of(
-                new PrintFieldGetter(),
-                new PrintMessageClass(),
-                new AnnotationRenderer(),
-                new GeneratedTypeAnnotation()
+    public AnnotationPlugin() {
+        super(ImmutableList.<Renderer<?>>of(
+                      new PrintFieldGetter(),
+                      new PrintMessageClass(),
+                      new AnnotationRenderer(),
+                      new GeneratedTypeAnnotation()),
+              ImmutableSet.of() /* views */,
+              ImmutableSet.of(new AnnotatedView.Repo()),
+              ImmutableSet.of() /* policies */
         );
-    }
-
-    @Override
-    public Set<ViewRepository<?, ?, ?>> viewRepositories() {
-        return ImmutableSet.of(new AnnotatedView.Repo());
     }
 }

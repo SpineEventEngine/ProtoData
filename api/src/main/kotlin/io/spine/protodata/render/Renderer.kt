@@ -35,7 +35,7 @@ import io.spine.tools.code.Language
  * deleting unwanted files.
  *
  * Instances of `Renderer`s are usually created by
- * the [Plugin.renderers()][io.spine.protodata.plugin.Plugin.renderers] method.
+ * the [Plugin.renderers][io.spine.protodata.plugin.Plugin.renderers] method.
  *
  * @see RenderAction
  */

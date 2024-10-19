@@ -27,6 +27,7 @@
 package io.spine.protodata.cli.given
 
 import io.spine.protodata.cli.test.DefaultOptionsCounter
+import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.StubSoloRenderer
 import kotlin.io.path.Path
@@ -48,3 +49,6 @@ class DefaultOptionsCounterRenderer : StubSoloRenderer() {
         )
     }
 }
+class DefaultOptionsCounterRendererPlugin : Plugin(
+    renderers = listOf(DefaultOptionsCounterRenderer())
+)

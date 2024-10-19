@@ -61,6 +61,7 @@ import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
+import io.spine.protodata.testing.RenderingTestbed
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
 import java.nio.file.Path
@@ -126,7 +127,7 @@ internal class PipelineSpec {
     @Test
     fun `render enhanced code`(@TempDir settingsDir: Path) {
         Pipeline(
-            plugins = listOf(TestPlugin(), renderer),
+            plugins = listOf(TestPlugin(), RenderingTestbed(renderer)),
             sources = listOf(overwritingSourceSet),
             request = request,
             settings = SettingsDirectory(settingsDir)
@@ -137,7 +138,7 @@ internal class PipelineSpec {
     @Test
     fun `generate new files`(@TempDir settingsDir: Path) {
         Pipeline(
-            plugins = listOf(TestPlugin(), InternalAccessRenderer()),
+            plugins = listOf(TestPlugin(), RenderingTestbed(InternalAccessRenderer())),
             sources = listOf(overwritingSourceSet),
             request = request,
             settings = SettingsDirectory(settingsDir)
@@ -152,7 +153,7 @@ internal class PipelineSpec {
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, "foo bar")
         Pipeline(
-            plugins = listOf(TestPlugin(), DeletingRenderer()),
+            plugins = listOf(TestPlugin(), RenderingTestbed(DeletingRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = request,
             settings = SettingsDirectory(settingsDir)
@@ -211,7 +212,7 @@ internal class PipelineSpec {
             }
         """.trimIndent())
         Pipeline(
-            plugins = listOf(ImplicitPluginWithRenderers(
+            plugins = listOf(RenderingTestbed(
                 renderers = listOf(
                     AnnotationInsertionPointPrinter(),
                     NullableAnnotationRenderer()
@@ -300,7 +301,7 @@ internal class PipelineSpec {
         @TempDir settingsDir: Path,
         @TempDir destination: Path) {
         Pipeline(
-            plugins = listOf(TestPlugin(), InternalAccessRenderer()),
+            plugins = listOf(TestPlugin(), RenderingTestbed(InternalAccessRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, destination)),
             request = request,
             settings = SettingsDirectory(settingsDir)
@@ -319,7 +320,7 @@ internal class PipelineSpec {
     @Test
     fun `copy all sources into the new destination`(@TempDir settingsDir: Path) {
         Pipeline(
-            plugins = listOf(TestPlugin(), NoOpRenderer()),
+            plugins = listOf(TestPlugin(), RenderingTestbed(NoOpRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = request,
             settings = SettingsDirectory(settingsDir)
@@ -345,7 +346,7 @@ internal class PipelineSpec {
             Pipeline(
                 plugins = listOf(
                     TestPlugin(),
-                    NoOpRenderer()
+                    RenderingTestbed(NoOpRenderer())
                 ),
                 sources = listOf(
                     SourceFileSet.create(srcRoot, destination1),
@@ -382,7 +383,7 @@ internal class PipelineSpec {
             Pipeline(
                 plugins = listOf(
                     TestPlugin(),
-                    PlainStringRenderer()
+                    RenderingTestbed(PlainStringRenderer())
                 ),
                 sources = listOf(
                     SourceFileSet.create(srcRoot, destination1),
@@ -415,7 +416,7 @@ internal class PipelineSpec {
             Pipeline(
                 plugins = listOf(
                     TestPlugin(),
-                    ImplicitPluginWithRenderers(listOf(
+                    RenderingTestbed(listOf(
                             JavaGenericInsertionPointPrinter(),
                             PrependingRenderer()
                     ))
@@ -448,7 +449,7 @@ internal class PipelineSpec {
                         views = setOf(viewClass),
                         viewRepositories = setOf(DeletedTypeRepository())
                     ),
-                    renderer
+                    RenderingTestbed(renderer)
                 ),
                 sources = listOf(overwritingSourceSet),
                 request = request,
@@ -462,7 +463,7 @@ internal class PipelineSpec {
     @Test
     fun `expose 'codegenContext' property for testing purposes`(@TempDir settingsDir: Path) {
         val pipeline = Pipeline(
-            plugins = listOf(TestPlugin(), renderer),
+            plugins = listOf(TestPlugin(), RenderingTestbed(renderer)),
             sources = listOf(overwritingSourceSet),
             request = request,
             settings = SettingsDirectory(settingsDir)
