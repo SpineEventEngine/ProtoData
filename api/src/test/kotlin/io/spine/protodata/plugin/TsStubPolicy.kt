@@ -43,7 +43,7 @@ internal abstract class TsStubPolicy<E : EventMessage> : Policy<E>() {
     fun typeSystem(): TypeSystem? = typeSystem
 
     /**
-     * Opens access to the protected [context] property.]
+     * Opens access to the protected [context] property.
      */
     @VisibleForTesting
     fun context(): BoundedContext {
