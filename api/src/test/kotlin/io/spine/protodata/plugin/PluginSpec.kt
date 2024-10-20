@@ -26,36 +26,95 @@
 
 package io.spine.protodata.plugin
 
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldStartWith
 import io.spine.protodata.ast.event.FieldEntered
 import io.spine.protodata.ast.event.FieldExited
+import io.spine.protodata.backend.CodeGenerationContext
+import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.render.SourceFileSet
+import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
+import io.spine.server.BoundedContextBuilder
 import io.spine.server.event.Just
 import io.spine.server.event.NoReaction
 import io.spine.server.event.React
+import java.nio.file.Path
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("`Plugin` should")
 internal class PluginSpec {
 
+    private lateinit var policy1: StubPolicy1
+    private lateinit var policy2: StubPolicy2
+    private lateinit var plugin: Plugin
+
+    @BeforeEach
+    fun createStubs() {
+        policy1 = StubPolicy1()
+        policy2 = StubPolicy2()
+        plugin = StubPlugin(policy1, policy2)
+    }
+
     @Test
     fun `propagate 'TypeSystem' into its policies`() {
-        val policy1 = StubPolicy1()
-        val policy2 = StubPolicy2()
-
-        val plugin = StubPlugin(policy1, policy2)
         val ctx = BoundedContext.singleTenant("Stubs")
         val typeSystem = TypeSystem(emptySet())
         plugin.applyTo(ctx, typeSystem)
-
         policy1.typeSystem() shouldBe typeSystem
         policy2.typeSystem() shouldBe typeSystem
     }
+
+    @Test
+    fun `register policies with a 'CodegenContext'`(
+        @TempDir src: Path,
+        @TempDir target: Path,
+        @TempDir settingsDir: Path
+    ) {
+        runPipeline(src, target, settingsDir)
+
+        policy1.context() shouldNotBe null
+        policy1.context().name().value shouldStartWith CodeGenerationContext.NAME_PREFIX
+        policy2.context() shouldBe policy1.context()
+    }
+
+    @Test
+    fun `extend a given context via its builder`(
+        @TempDir src: Path,
+        @TempDir target: Path,
+        @TempDir settingsDir: Path
+    ) {
+        runPipeline(src, target, settingsDir)
+        (plugin as StubPlugin).contextBuilder shouldNotBe null
+    }
+
+    private fun runPipeline(src: Path, target: Path, settingsDir: Path) {
+        val fileSet = SourceFileSet.create(src, target)
+        val pipeline = Pipeline(
+            plugin,
+            fileSet,
+            CodeGeneratorRequest.getDefaultInstance(),
+            SettingsDirectory(settingsDir)
+        )
+        pipeline()
+    }
 }
 
-private class StubPlugin(vararg policies: Policy<*>) : Plugin(policies = policies.toSet())
+private class StubPlugin(vararg policies: Policy<*>) : Plugin(policies = policies.toSet()) {
+
+    lateinit var contextBuilder: BoundedContextBuilder
+
+    override fun extend(context: BoundedContextBuilder) {
+        super.extend(context)
+        contextBuilder = context
+    }
+}
 
 private class StubPolicy1 : TsStubPolicy<FieldEntered>() {
     @React

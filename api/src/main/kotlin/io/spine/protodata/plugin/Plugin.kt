@@ -85,8 +85,8 @@ public abstract class Plugin(
      *
      * @param context The `BoundedContextBuilder` to extend.
      */
-    public fun extend(@Suppress("UNUSED_PARAMETER") context: BoundedContextBuilder) {
-        // no-op
+    public open fun extend(context: BoundedContextBuilder) {
+        // No-op by default.
     }
 }
 
