@@ -29,6 +29,7 @@ package io.spine.protodata.plugin
 import com.google.common.annotations.VisibleForTesting
 import io.spine.base.EventMessage
 import io.spine.protodata.type.TypeSystem
+import io.spine.server.BoundedContext
 
 /**
  * The abstract base for stub policy classes used in tests related to injecting [TypeSystem].
@@ -40,4 +41,12 @@ internal abstract class TsStubPolicy<E : EventMessage> : Policy<E>() {
      */
     @VisibleForTesting
     fun typeSystem(): TypeSystem? = typeSystem
+
+    /**
+     * Opens access to the protected [context] property.
+     */
+    @VisibleForTesting
+    fun context(): BoundedContext {
+        return context
+    }
 }

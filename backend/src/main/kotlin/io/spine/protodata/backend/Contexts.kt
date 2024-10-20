@@ -80,7 +80,7 @@ public class CodeGenerationContext(
     public val context: BoundedContext
 
     init {
-        val builder = singleTenant("Code Generation-$pipelineId").apply {
+        val builder = singleTenant("$NAME_PREFIX$pipelineId").apply {
             add<ProtoSourceFileView>()
             add<DependencyView>()
             add<InsertionPointsView>()
@@ -120,6 +120,14 @@ public class CodeGenerationContext(
     }
 
     public companion object {
+
+        /**
+         * The prefix for the context names.
+         *
+         * The prefix is followed by the [pipelineId] in the generated context name.
+         */
+        @VisibleForTesting
+        public const val NAME_PREFIX: String = "Code Generation-"
 
         /**
          * Creates a new instance of the `Code Generation` bounded context with
