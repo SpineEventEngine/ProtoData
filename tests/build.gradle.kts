@@ -28,7 +28,9 @@ import com.google.protobuf.gradle.protobuf
 import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Jackson
+import io.spine.internal.dependency.Caffeine
 import io.spine.internal.dependency.Kotlin
+import io.spine.internal.dependency.KotlinX
 import io.spine.internal.dependency.ProtoData
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
@@ -76,6 +78,8 @@ subprojects {
                 @Suppress("DEPRECATION") // To force `Kotlin.stdLibJdk7`.
                 force(
                     Kotlin.stdLibJdk7,
+                    KotlinX.Coroutines.jdk8,
+                    Caffeine.lib,
                     Grpc.api,
                     Spine.base,
                     Spine.toolBase,
