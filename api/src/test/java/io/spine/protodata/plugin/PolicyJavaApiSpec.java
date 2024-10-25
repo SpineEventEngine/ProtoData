@@ -24,12 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
- */
-val protoDataVersion: String by extra("0.63.2")
+package io.spine.protodata.plugin;
+
+import io.spine.core.External;
+import io.spine.protodata.ast.event.TypeEntered;
+import io.spine.server.event.NoReaction;
+import io.spine.server.event.React;
+import io.spine.server.tuple.EitherOf2;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
+
+@DisplayName("`Policy` Java API should")
+class PolicyJavaApiSpec {
+
+    /**
+     * This test merely makes the {@link Policy#ignore} method used without making any
+     * meaningful assertions.
+     *
+     * <p>It creates a {@link Policy} which calls the `protected` method of the companion object
+     * showing the usage scenario.
+     *
+     * @see PolicySpec#allowIgnoring() the test for Kotlin API
+     */
+    @Test
+    @DisplayName("have static factory method for ignoring incoming events")
+    void allowIgnoring() {
+        var policy = new Policy<TypeEntered>() {
+            @React
+            @Override
+            protected EitherOf2<TypeEntered, NoReaction> whenever(
+                    @External TypeEntered entered) {
+                return ignore();
+            }
+        };
+        assertThat(policy).isNotNull();
+    }
+}

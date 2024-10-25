@@ -30,8 +30,11 @@ import io.spine.base.EntityState
 import io.spine.base.EventMessage
 import io.spine.protodata.settings.LoadsSettings
 import io.spine.protodata.type.TypeSystem
+import io.spine.server.event.NoReaction
 import io.spine.server.event.Policy
+import io.spine.server.event.asB
 import io.spine.server.query.QueryingClient
+import io.spine.server.tuple.EitherOf2
 
 /**
  * A policy converts one event into zero to many other events.
@@ -116,4 +119,15 @@ public abstract class Policy<E : EventMessage> : Policy<E>(), LoadsSettings {
     final override fun <T: Any> loadSettings(cls: Class<T>): T = super.loadSettings(cls)
 
     final override fun settingsAvailable(): Boolean = super.settingsAvailable()
+
+    protected companion object {
+
+        /**
+         * Creates an instance of [EitherOf2] with [NoReaction] in the `B` slot.
+         */
+        @JvmStatic
+        public fun <E : EventMessage> ignore(): EitherOf2<E, NoReaction> {
+            return NoReaction.getDefaultInstance().asB()
+        }
+    }
 }

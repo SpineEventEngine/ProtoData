@@ -25,11 +25,11 @@
  */
 
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * Tests for Java API of {@link Policy}.
  */
-val protoDataVersion: String by extra("0.63.2")
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.protodata.plugin;
+
+import com.google.errorprone.annotations.CheckReturnValue;
+import javax.annotation.ParametersAreNonnullByDefault;
