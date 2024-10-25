@@ -40,10 +40,10 @@ import static com.google.common.truth.Truth.assertThat;
 class PolicyJavaApiSpec {
 
     /**
-     * This test merely makes the [Policy.ignore] method used without making any
+     * This test merely makes the {@link Policy#ignore} method used without making any
      * meaningful assertions.
      *
-     * <p>It creates a [Policy] which calls the `protected` method of the companion object
+     * <p>It creates a {@link Policy} which calls the `protected` method of the companion object
      * showing the usage scenario.
      *
      * @see PolicySpec#allowIgnoring() the test for Kotlin API
