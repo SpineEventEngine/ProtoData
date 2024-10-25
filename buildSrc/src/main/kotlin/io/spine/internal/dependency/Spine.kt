@@ -118,7 +118,7 @@ object Spine {
          *
          * @see <a href="https://github.com/SpineEventEngine/tool-base">spine-tool-base</a>
          */
-        const val toolBase = "2.0.0-SNAPSHOT.226"
+        const val toolBase = ToolBase.version
 
         /**
          * The version of [Spine.javadocFilter].
@@ -139,11 +139,18 @@ object Spine {
 
     const val testlib = "$toolsGroup:spine-testlib:${ArtifactVersion.testlib}"
     const val testUtilTime = "$toolsGroup:spine-testutil-time:${ArtifactVersion.time}"
+
+    @Deprecated(message = "Please use `ToolBase.psiJava` instead`.")
     const val psiJava = "$toolsGroup:spine-psi-java:${ArtifactVersion.toolBase}"
+    @Deprecated(message = "Please use `ToolBase.psiJava` instead`.")
     const val psiJavaBundle = "$toolsGroup:spine-psi-java-bundle:${ArtifactVersion.toolBase}"
+    @Deprecated(message = "Please use `ToolBase.lib` instead`.")
     const val toolBase = "$toolsGroup:spine-tool-base:${ArtifactVersion.toolBase}"
+    @Deprecated(message = "Please use `ToolBase.pluginBase` instead`.")
     const val pluginBase = "$toolsGroup:spine-plugin-base:${ArtifactVersion.toolBase}"
+    @Deprecated(message = "Please use `ToolBase.pluginTestlib` instead`.")
     const val pluginTestlib = "$toolsGroup:spine-plugin-testlib:${ArtifactVersion.toolBase}"
+
     const val modelCompiler = "$toolsGroup:spine-model-compiler:${ArtifactVersion.mc}"
 
     @Deprecated(message = "Please use top level `McJava` object instead.")

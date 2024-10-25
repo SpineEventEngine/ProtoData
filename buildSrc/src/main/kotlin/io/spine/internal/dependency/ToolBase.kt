@@ -24,50 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Aedile
-import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.Spine
-import io.spine.internal.dependency.ToolBase
-import io.spine.internal.dependency.Validation
+package io.spine.internal.dependency
 
-plugins {
-    `build-proto-model`
-    `java-test-fixtures`
+/**
+ * Artifacts of the `tool-base` module.
+ *
+ * @see <a href="https://github.com/SpineEventEngine/tool-base">spine-tool-base</a>
+ */
+@Suppress("ConstPropertyName", "unused")
+object ToolBase {
+    const val group = Spine.toolsGroup
+    const val version = "2.0.0-SNAPSHOT.226"
+
+    const val lib = "$group:spine-tool-base:$version"
+    const val pluginBase = "$group:spine-plugin-base:$version"
+    const val pluginTestlib = "$group:spine-plugin-testlib:$version"
+
+    const val intellijPlatformJava = "$group:intellij-platform-java:$version"
+
+    const val psiJava = "$group:spine-psi-java:$version"
 }
-
-dependencies {
-    listOf(
-        Spine.base,
-        Spine.text,
-        Spine.CoreJava.server,
-        ToolBase.lib,
-        ToolBase.psiJava
-    ).forEach {
-        api(it)
-    }
-
-    api(Spine.Logging.lib)
-
-    implementation(Spine.reflect)
-    implementation(Aedile.lib)
-
-    with(Jackson) {
-        implementation(databind)
-        implementation(dataformatYaml)
-        runtimeOnly(moduleKotlin)
-    }
-
-    arrayOf(Spine.base, Validation.runtime)
-        .forEach {
-            testFixturesImplementation(it)
-        }
-
-    testImplementation(project(":test-env"))
-
-    // For using `CodeGenerationContext` in stubs.
-    testImplementation(project(":backend"))
-}
-
-forceSpineBase()
-
-protoDataRemoteDebug(enabled = false)
