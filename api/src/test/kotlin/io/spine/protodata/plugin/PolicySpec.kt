@@ -27,11 +27,15 @@
 package io.spine.protodata.plugin
 
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.spine.core.External
 import io.spine.protodata.ast.event.TypeDiscovered
+import io.spine.protodata.ast.event.TypeEntered
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.event.Just
 import io.spine.server.event.NoReaction
 import io.spine.server.event.React
+import io.spine.server.tuple.EitherOf2
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -49,9 +53,30 @@ internal class PolicySpec {
 
         policy.typeSystem() shouldBe typeSystem
     }
+
+    /**
+     * This test merely makes the [Policy.ignore] method used without making any
+     * meaningful assertions.
+     *
+     * It creates a [Policy] which calls the `protected` method of the companion object
+     * showing the usage scenario.
+     *
+     * @see PolicyJavaApiSpec.allowIgnoring the test for Java API.
+     */
+    @Test
+    @JvmName("allowIgnoring")
+    fun `have a shortcut for ignoring incoming events`() {
+        val policy = object : Policy<TypeEntered>() {
+            @React
+            override fun whenever(
+                @External event: TypeEntered
+            ): EitherOf2<TypeEntered, NoReaction> = ignore()
+        }
+        policy shouldNotBe null
+    }
 }
 
 private class StubPolicy : TsStubPolicy<TypeDiscovered>() {
     @React
-    override fun whenever(event: TypeDiscovered): Just<NoReaction> = Just.noReaction
+    override fun whenever(@External event: TypeDiscovered): Just<NoReaction> = Just.noReaction
 }
