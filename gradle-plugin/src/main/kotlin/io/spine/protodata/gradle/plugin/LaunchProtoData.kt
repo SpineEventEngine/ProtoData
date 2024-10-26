@@ -142,7 +142,7 @@ public abstract class LaunchProtoData : JavaExec() {
         mainClass.set(CLI_APP_CLASS)
 
         System.err.println("*** Executing command line:")
-        System.err.println(command)
+        System.err.println(command.joinToString(separator = " "))
         args(command)
     }
 
