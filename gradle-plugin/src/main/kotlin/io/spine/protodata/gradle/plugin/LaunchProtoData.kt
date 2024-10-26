@@ -140,6 +140,9 @@ public abstract class LaunchProtoData : JavaExec() {
         classpath(protoDataConfiguration)
         classpath(userClasspathConfiguration)
         mainClass.set(CLI_APP_CLASS)
+
+        System.err.println("*** Executing command line:")
+        System.err.println(command)
         args(command)
     }
 
