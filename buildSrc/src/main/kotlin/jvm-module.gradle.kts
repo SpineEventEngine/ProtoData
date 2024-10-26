@@ -25,7 +25,6 @@
  */
 
 import BuildSettings.javaVersion
-import Jvm_module_gradle.Module
 import io.spine.internal.dependency.CheckerFramework
 import io.spine.internal.dependency.Dokka
 import io.spine.internal.dependency.ErrorProne
