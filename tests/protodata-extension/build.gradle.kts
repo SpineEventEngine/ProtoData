@@ -29,7 +29,7 @@ import io.spine.internal.dependency.AutoService
 buildscript {
     standardSpineSdkRepositories()
     dependencies {
-        classpath(io.spine.internal.dependency.Spine.McJava.pluginLib)
+        classpath(io.spine.internal.dependency.spine.McJava.pluginLib)
     }
 }
 

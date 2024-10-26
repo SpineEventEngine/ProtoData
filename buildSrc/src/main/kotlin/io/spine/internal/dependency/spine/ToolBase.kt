@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.dependency.spine
 
 /**
  * Artifacts of the `tool-base` module.
@@ -34,7 +34,7 @@ package io.spine.internal.dependency
 @Suppress("ConstPropertyName", "unused")
 object ToolBase {
     const val group = Spine.toolsGroup
-    const val version = "2.0.0-SNAPSHOT.226"
+    const val version = "2.0.0-SNAPSHOT.231"
 
     const val lib = "$group:spine-tool-base:$version"
     const val pluginBase = "$group:spine-plugin-base:$version"

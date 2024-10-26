@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,7 +26,8 @@
 
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.spine.CoreJava
+import io.spine.internal.dependency.spine.ToolBase
 import io.spine.internal.gradle.publish.CheckVersionIncrement
 import io.spine.internal.gradle.publish.IncrementGuard
 import io.spine.internal.gradle.publish.PublishingRepos
@@ -36,8 +37,8 @@ plugins {
 }
 
 dependencies {
-    api(Spine.server)
-    api(Spine.toolBase)
+    api(CoreJava.server)
+    api(ToolBase.lib)
     api(project(":api"))
     with(Jackson) {
         api(databind)

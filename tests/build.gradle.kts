@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,17 +25,19 @@
  */
 
 import com.google.protobuf.gradle.protobuf
+import io.spine.internal.dependency.Caffeine
 import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.Caffeine
 import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.KotlinX
-import io.spine.internal.dependency.ProtoData
 import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
-import io.spine.internal.dependency.Validation
+import io.spine.internal.dependency.spine.Logging
+import io.spine.internal.dependency.spine.ProtoData
+import io.spine.internal.dependency.spine.Spine
+import io.spine.internal.dependency.spine.ToolBase
+import io.spine.internal.dependency.spine.Validation
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
@@ -82,9 +84,11 @@ subprojects {
                     Caffeine.lib,
                     Grpc.api,
                     Spine.base,
-                    Spine.toolBase,
+                    ToolBase.lib,
                     Validation.runtime,
-                    Spine.Logging.lib,
+                    Logging.lib,
+                    Logging.libJvm,
+                    Logging.middleware,
                     Spine.reflect,
                     ProtoData.backend,
                     ProtoData.java,

@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,7 +27,8 @@
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Kotlin
 import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.spine.Spine
+import io.spine.internal.dependency.spine.ToolBase
 import io.spine.internal.gradle.isSnapshot
 
 plugins {
@@ -49,8 +50,8 @@ testing {
                 implementation(Kotlin.gradlePluginLib)
                 implementation(gradleKotlinDsl())
                 implementation(Protobuf.GradlePlugin.lib)
-                implementation(Spine.pluginBase)
-                implementation(Spine.pluginTestlib)
+                implementation(ToolBase.pluginBase)
+                implementation(ToolBase.pluginTestlib)
             }
         }
 
@@ -59,9 +60,9 @@ testing {
             dependencies {
                 implementation(Kotlin.gradlePluginLib)
                 implementation(Kotlin.testJUnit5)
-                implementation(Spine.pluginBase)
+                implementation(ToolBase.pluginBase)
                 implementation(Spine.testlib)
-                implementation(Spine.pluginTestlib)
+                implementation(ToolBase.pluginTestlib)
                 implementation(project(":gradle-plugin"))
             }
         }
@@ -78,8 +79,8 @@ dependencies {
 
     implementation(project(":api"))
     implementation(project(":cli-api"))
-    implementation(Spine.toolBase)
-    implementation(Spine.pluginBase)
+    implementation(ToolBase.lib)
+    implementation(ToolBase.pluginBase)
     implementation(Kotlin.gradlePluginApi)
 }
 

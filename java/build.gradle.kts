@@ -26,7 +26,8 @@
 
 import io.spine.internal.dependency.JavaPoet
 import io.spine.internal.dependency.JavaX
-import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.spine.Spine
+import io.spine.internal.dependency.spine.ToolBase
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 plugins {
@@ -38,7 +39,7 @@ plugins {
 dependencies {
     api(project(":backend"))
     api(JavaPoet.lib)
-    api(Spine.psiJavaBundle)
+    api(ToolBase.psiJava)
 
     testImplementation(JavaX.annotations)
     testImplementation(Spine.testUtilTime)

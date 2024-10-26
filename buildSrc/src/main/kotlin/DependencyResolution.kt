@@ -50,8 +50,8 @@ import io.spine.internal.dependency.OpenTest4J
 import io.spine.internal.dependency.Plexus
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Slf4J
-import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Truth
+import io.spine.internal.dependency.spine.Spine
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration

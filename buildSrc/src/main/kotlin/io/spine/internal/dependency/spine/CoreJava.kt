@@ -24,30 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.spine.Spine
-import io.spine.internal.dependency.spine.Validation
+package io.spine.internal.dependency.spine
 
-plugins {
-    java
-    `java-test-fixtures`
-}
-
-dependencies {
-    arrayOf(
-        Spine.base,
-        Validation.runtime
-    ).forEach {
-        testFixturesImplementation(it)?.because(
-            """
-            We do not apply McJava Gradle plugin which adds the `implementation` dependency on
-            Validation runtime automatically (see `Project.configureValidation()` function in 
-            `ProtoDataConfigPlugin.kt`).
-            
-            In this test module we use vanilla `protoc` (via ProtoTap) and then run codegen
-            using ProtoData pipeline and ProtoData plugins of the module under the test.
-            Because of this we need to add the dependencies above explicitly for the
-            generated code of test fixtures to compile.                
-            """.trimIndent()
-        )
-    }
+/**
+ * Dependencies on `core-java` modules.
+ *
+ * See [`SpineEventEngine/core-java`](https://github.com/SpineEventEngine/core-java/).
+ */
+@Suppress("ConstPropertyName")
+object CoreJava {
+    const val group = Spine.group
+    const val version = "2.0.0-SNAPSHOT.177"
+    const val core = "$group:spine-core:$version"
+    const val client = "$group:spine-client:$version"
+    const val server = "$group:spine-server:$version"
+    const val testUtilServer = "${Spine.toolsGroup}:spine-testutil-server:$version"
 }
