@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,7 +26,8 @@
 
 package io.spine.internal.gradle.javadoc
 
-import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.spine.ArtifactVersion
+import io.spine.internal.dependency.spine.Spine
 import io.spine.internal.gradle.javadoc.ExcludeInternalDoclet.Companion.taskName
 import io.spine.internal.gradle.sourceSets
 import org.gradle.api.Project
@@ -40,7 +41,7 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
 @Suppress("ConstPropertyName")
 class ExcludeInternalDoclet(
     @Deprecated("`Spine.ArtifactVersion.javadocTools` is used instead.")
-    val version: String = Spine.ArtifactVersion.javadocTools
+    val version: String = ArtifactVersion.javadocTools
 ) {
 
     private val dependency = Spine.javadocFilter

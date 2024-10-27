@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,7 +25,7 @@
  */
 
 import io.spine.internal.dependency.Clikt
-import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.spine.Logging
 import io.spine.internal.gradle.publish.SpinePublishing
 
 plugins {
@@ -41,7 +41,8 @@ dependencies {
     listOf(
         kotlin("reflect"),
         Clikt.lib,
-        Spine.Logging.lib,
+        Logging.lib,
+        Logging.libJvm,
     ).forEach { implementation(it) }
 
     listOf(

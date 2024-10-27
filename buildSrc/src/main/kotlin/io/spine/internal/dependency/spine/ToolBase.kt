@@ -24,35 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.dependency.spine
 
 /**
- * Dependencies on Spine Model Compiler for Java.
+ * Artifacts of the `tool-base` module.
  *
- * See [mc-java](https://github.com/SpineEventEngine/mc-java).
+ * @see <a href="https://github.com/SpineEventEngine/tool-base">spine-tool-base</a>
  */
-@Suppress(
-    "MemberVisibilityCanBePrivate" /* `pluginLib()` is used by subprojects. */,
-    "ConstPropertyName"
-)
-object McJava {
+@Suppress("ConstPropertyName", "unused")
+object ToolBase {
     const val group = Spine.toolsGroup
+    const val version = "2.0.0-SNAPSHOT.233"
 
-    /** The version used to in the build classpath. */
-    const val dogfoodingVersion = "2.0.0-SNAPSHOT.244"
+    const val lib = "$group:spine-tool-base:$version"
+    const val pluginBase = "$group:spine-plugin-base:$version"
+    const val pluginTestlib = "$group:spine-plugin-testlib:$version"
 
-    /** The version to be used for integration tests. */
-    const val version = "2.0.0-SNAPSHOT.244"
+    const val intellijPlatformJava = "$group:intellij-platform-java:$version"
 
-    const val pluginId = "io.spine.mc-java"
-
-    val pluginLib = pluginLib(dogfoodingVersion)
-    fun pluginLib(version: String): String = "$group:spine-mc-java-plugins:$version:all"
-
-    /** The artifact reference for forcing in configurations. */
-    @Suppress("unused")
-    const val pluginsArtifact: String = "$group:spine-mc-java-plugins:$version"
-
-    val base = base(version)
-    fun base(version: String): String = "$group:spine-mc-java-base:$version"
+    const val psiJava = "$group:spine-psi-java:$version"
 }

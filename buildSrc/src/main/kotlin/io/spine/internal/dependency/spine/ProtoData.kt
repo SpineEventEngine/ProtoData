@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.dependency.spine
 
 /**
  * Dependencies on ProtoData modules.
@@ -73,7 +73,7 @@ object ProtoData {
      * The version of ProtoData dependencies.
      */
     val version: String
-    private const val fallbackVersion = "0.61.8"
+    private const val fallbackVersion = "0.64.0"
 
     /**
      * The distinct version of ProtoData used by other build tools.

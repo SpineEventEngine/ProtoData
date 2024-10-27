@@ -24,31 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.dependency.spine
 
 /**
- * Dependencies on Spine Validation SDK.
+ * Dependencies on ProtoTap plugins.
  *
- * See [`SpineEventEngine/validation`](https://github.com/SpineEventEngine/validation/).
+ * See [`SpineEventEngine/ProtoTap`](https://github.com/SpineEventEngine/ProtoTap/).
  */
-@Suppress("unused", "ConstPropertyName")
-object Validation {
-    /**
-     * The version of the Validation library artifacts.
-     */
-    const val version = "2.0.0-SNAPSHOT.160"
-
-    const val group = "io.spine.validation"
-    private const val prefix = "spine-validation"
-
-    const val runtime = "$group:$prefix-java-runtime:$version"
-    const val java = "$group:$prefix-java:$version"
-
-    /** Obtains the artifact for the `java-bundle` artifact of the given version. */
-    fun javaBundle(version: String) = "$group:$prefix-java-bundle:$version"
-
-    val javaBundle = javaBundle(version)
-
-    const val model = "$group:$prefix-model:$version"
-    const val config = "$group:$prefix-configuration:$version"
+@Suppress(
+    "unused" /* Some subprojects do not use ProtoData directly. */,
+    "ConstPropertyName" /* We use custom convention for artifact properties. */,
+    "MemberVisibilityCanBePrivate" /* The properties are used directly by other subprojects. */,
+)
+object ProtoTap {
+    const val group = "io.spine.tools"
+    const val version = "0.8.7"
+    const val gradlePluginId = "io.spine.prototap"
+    const val api = "$group:prototap-api:$version"
+    const val gradlePlugin = "$group:prototap-gradle-plugin:$version"
+    const val protocPlugin = "$group:prototap-protoc-plugin:$version"
 }

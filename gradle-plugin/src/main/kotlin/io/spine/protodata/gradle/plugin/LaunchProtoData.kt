@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,6 +26,7 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.intellij.openapi.util.io.FileUtil
 import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RequestParam
@@ -161,7 +162,9 @@ public abstract class LaunchProtoData : JavaExec() {
             }
             sourceDirs.asSequence()
                 .zip(targetDirs.asSequence())
-                .filter { (s, t) -> s != t }
+                .filter { (s, t) ->
+                    !FileUtil.filesEqual(s, t) /* Honor case-sensitivity under macOS. */
+                }
                 .map { it.second }
                 .filter { it.exists() && it.list()!!.isNotEmpty() }
                 .forEach {

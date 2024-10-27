@@ -24,30 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.spine.Spine
-import io.spine.internal.dependency.spine.Validation
+package io.spine.internal.dependency.spine
 
-plugins {
-    java
-    `java-test-fixtures`
-}
+/**
+ * Dependencies on Spine Validation SDK.
+ *
+ * See [`SpineEventEngine/validation`](https://github.com/SpineEventEngine/validation/).
+ */
+@Suppress("unused", "ConstPropertyName")
+object Validation {
+    /**
+     * The version of the Validation library artifacts.
+     */
+    const val version = "2.0.0-SNAPSHOT.160"
 
-dependencies {
-    arrayOf(
-        Spine.base,
-        Validation.runtime
-    ).forEach {
-        testFixturesImplementation(it)?.because(
-            """
-            We do not apply McJava Gradle plugin which adds the `implementation` dependency on
-            Validation runtime automatically (see `Project.configureValidation()` function in 
-            `ProtoDataConfigPlugin.kt`).
-            
-            In this test module we use vanilla `protoc` (via ProtoTap) and then run codegen
-            using ProtoData pipeline and ProtoData plugins of the module under the test.
-            Because of this we need to add the dependencies above explicitly for the
-            generated code of test fixtures to compile.                
-            """.trimIndent()
-        )
-    }
+    const val group = "io.spine.validation"
+    private const val prefix = "spine-validation"
+
+    const val runtime = "$group:$prefix-java-runtime:$version"
+    const val java = "$group:$prefix-java:$version"
+
+    /** Obtains the artifact for the `java-bundle` artifact of the given version. */
+    fun javaBundle(version: String) = "$group:$prefix-java-bundle:$version"
+
+    val javaBundle = javaBundle(version)
+
+    const val model = "$group:$prefix-model:$version"
+    const val config = "$group:$prefix-configuration:$version"
 }

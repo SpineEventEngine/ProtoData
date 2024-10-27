@@ -24,23 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+package io.spine.internal.dependency.spine
 
 /**
- * Dependencies on ProtoTap plugins.
+ * Dependencies on the artifacts of the Spine Logging library.
  *
- * See [`SpineEventEngine/ProtoTap`](https://github.com/SpineEventEngine/ProtoTap/).
+ * @see <a href="https://github.com/SpineEventEngine/logging">spine-logging</a>
  */
-@Suppress(
-    "unused" /* Some subprojects do not use ProtoData directly. */,
-    "ConstPropertyName" /* We use custom convention for artifact properties. */,
-    "MemberVisibilityCanBePrivate" /* The properties are used directly by other subprojects. */,
-)
-object ProtoTap {
-    const val group = "io.spine.tools"
-    const val version = "0.8.7"
-    const val gradlePluginId = "io.spine.prototap"
-    const val api = "$group:prototap-api:$version"
-    const val gradlePlugin = "$group:prototap-gradle-plugin:$version"
-    const val protocPlugin = "$group:prototap-protoc-plugin:$version"
+@Suppress("ConstPropertyName", "unused")
+object Logging {
+    const val version = "2.0.0-SNAPSHOT.240"
+    const val group = Spine.group
+    const val lib = "$group:spine-logging:$version"
+    const val libJvm = "$group:spine-logging-jvm:$version"
+
+    const val log4j2Backend = "$group:spine-logging-log4j2-backend:$version"
+    const val stdContext = "$group:spine-logging-std-context:$version"
+    const val grpcContext = "$group:spine-logging-grpc-context:$version"
+    const val smokeTest = "$group:spine-logging-smoke-test:$version"
+
+    // Transitive dependencies.
+    // Make `public` and use them to force a version in a particular repository, if needed.
+    internal const val julBackend = "$group:spine-logging-jul-backend:$version"
+    const val middleware = "$group:spine-logging-middleware:$version"
+    internal const val platformGenerator = "$group:spine-logging-platform-generator:$version"
+    internal const val jvmDefaultPlatform = "$group:spine-logging-jvm-default-platform:$version"
 }

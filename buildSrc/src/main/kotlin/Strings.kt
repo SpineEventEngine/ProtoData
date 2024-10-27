@@ -24,30 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.spine.Spine
-import io.spine.internal.dependency.spine.Validation
+import org.gradle.configurationcache.extensions.capitalized
 
-plugins {
-    java
-    `java-test-fixtures`
+/**
+ * This file provides extensions to `String` and `CharSequence` that wrap
+ * analogues from standard Kotlin runtime.
+ *
+ * It helps in switching between versions of Gradle which have different versions of
+ * the Kotlin runtime. Please see the bodies of the extension functions for details on
+ * switching the implementations depending on the Kotlin version at hand.
+ *
+ * Once we migrate to newer Gradle, these wrappers should be inlined with
+ * the subsequent removal of this source file.
+ */
+@Suppress("unused")
+private const val ABOUT = ""
+
+/**
+ * Makes the first character come in the title case.
+ */
+fun String.titleCaseFirstChar(): String {
+    // return replaceFirstChar { it.titlecase() }
+    // OR for earlier Kotlin versions:
+    //   1. add import of `org.gradle.configurationcache.extensions.capitalized`
+    //   2. call `capitalized()` instead of `replaceFirstChar` above.
+    return capitalized()
 }
 
-dependencies {
-    arrayOf(
-        Spine.base,
-        Validation.runtime
-    ).forEach {
-        testFixturesImplementation(it)?.because(
-            """
-            We do not apply McJava Gradle plugin which adds the `implementation` dependency on
-            Validation runtime automatically (see `Project.configureValidation()` function in 
-            `ProtoDataConfigPlugin.kt`).
-            
-            In this test module we use vanilla `protoc` (via ProtoTap) and then run codegen
-            using ProtoData pipeline and ProtoData plugins of the module under the test.
-            Because of this we need to add the dependencies above explicitly for the
-            generated code of test fixtures to compile.                
-            """.trimIndent()
-        )
-    }
+/**
+ * Converts this string to lowercase.
+ */
+fun String.lowercased(): String {
+    //    return lowercase()
+    // OR for earlier Kotlin versions call:
+    return toLowerCase()
 }

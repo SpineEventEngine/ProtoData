@@ -24,8 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.ProtoTap
-import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.spine.CoreJava
+import io.spine.internal.dependency.spine.ProtoTap
+import io.spine.internal.dependency.spine.Spine
 
 plugins {
     protobuf
@@ -42,7 +43,7 @@ protobuf {
 dependencies {
     api(gradleTestKit())
     api(Spine.testlib)
-    api(Spine.CoreJava.testUtilServer)
+    api(CoreJava.testUtilServer)
     api(ProtoTap.api)
     api(project(":api"))
     api(project(":backend"))

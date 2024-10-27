@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -34,12 +34,12 @@ import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSet
-import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.get
 import org.gradle.plugins.ide.idea.GenerateIdeaModule
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.plugins.ide.idea.model.IdeaModule
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import titleCaseFirstChar
 
 /**
  * Obtains the name of the `generated` directory under the project root directory.
@@ -262,7 +262,9 @@ private fun GenerateProtoTask.dependOnProcessResourcesTask() {
  * Obtains the name of the `processResource` task for the given source set name.
  */
 private fun processResourceTaskName(sourceSetName: String): String {
-    val infix = if (sourceSetName == "main") "" else sourceSetName.capitalized()
+    val infix =
+        if (sourceSetName == "main") ""
+        else sourceSetName.titleCaseFirstChar()
     return "process${infix}Resources"
 }
 
