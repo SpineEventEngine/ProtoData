@@ -26,6 +26,7 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.intellij.openapi.util.io.FileUtil
 import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.RequestParam
@@ -140,9 +141,6 @@ public abstract class LaunchProtoData : JavaExec() {
         classpath(protoDataConfiguration)
         classpath(userClasspathConfiguration)
         mainClass.set(CLI_APP_CLASS)
-
-        System.err.println("*** Executing command line:")
-        System.err.println(command.joinToString(separator = " "))
         args(command)
     }
 
@@ -164,7 +162,9 @@ public abstract class LaunchProtoData : JavaExec() {
             }
             sourceDirs.asSequence()
                 .zip(targetDirs.asSequence())
-                .filter { (s, t) -> s != t }
+                .filter { (s, t) ->
+                    !FileUtil.filesEqual(s, t) /* Honor case-sensitivity under macOS. */
+                }
                 .map { it.second }
                 .filter { it.exists() && it.list()!!.isNotEmpty() }
                 .forEach {
