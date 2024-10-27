@@ -198,7 +198,7 @@ fun Project.forceSpineBase() {
 @Suppress("unused")
 fun Project.forceBaseInProtoTasks() {
     configurations.configureEach {
-        if (name.toLowerCase().contains("proto")) {
+        if (name.lowercased().contains("proto")) {
             resolutionStrategy {
                 force(Spine.baseForBuildScript)
             }

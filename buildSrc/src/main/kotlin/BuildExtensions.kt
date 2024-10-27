@@ -31,10 +31,10 @@ import io.spine.internal.dependency.GradleDoctor
 import io.spine.internal.dependency.Kotest
 import io.spine.internal.dependency.Kover
 import io.spine.internal.dependency.Ksp
+import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.spine.McJava
 import io.spine.internal.dependency.spine.ProtoData
 import io.spine.internal.dependency.spine.ProtoTap
-import io.spine.internal.dependency.Protobuf
 import io.spine.internal.gradle.standardToSpineSdk
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -111,7 +111,7 @@ val PluginDependenciesSpec.protoData: ProtoData
  * declared in auto-generated `org.gradle.kotlin.dsl.PluginAccessors.kt` file.
  * It conflicts with our own declarations.
  *
- * Declaring of top-level shortcuts eliminates the need of applying plugins
+ * Declaring of top-level shortcuts eliminates the need in applying plugins
  * using fully qualified name of dependency objects.
  *
  * It is still possible to apply a plugin with a custom version, if needed.
