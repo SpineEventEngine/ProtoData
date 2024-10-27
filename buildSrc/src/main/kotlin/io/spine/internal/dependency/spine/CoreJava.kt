@@ -31,7 +31,7 @@ package io.spine.internal.dependency.spine
  *
  * See [`SpineEventEngine/core-java`](https://github.com/SpineEventEngine/core-java/).
  */
-@Suppress("ConstPropertyName")
+@Suppress("ConstPropertyName", "unused")
 object CoreJava {
     const val group = Spine.group
     const val version = "2.0.0-SNAPSHOT.177"

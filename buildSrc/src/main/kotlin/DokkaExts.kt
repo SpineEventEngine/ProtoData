@@ -70,8 +70,10 @@ fun DependencyHandlerScope.useDokkaWithSpineExtensions() {
 private fun DependencyHandler.dokkaPlugin(dependencyNotation: Any): Dependency? =
     add("dokkaPlugin", dependencyNotation)
 
-private fun Project.dokkaOutput(language: String): File =
-    buildDir.resolve("docs/dokka${language.capitalized()}")
+private fun Project.dokkaOutput(language: String): File {
+    val lng = language.capitalized()
+    return layout.buildDirectory.dir("docs/dokka$lng").get().asFile
+}
 
 fun Project.dokkaConfigFile(file: String): File {
     val dokkaConfDir = project.rootDir.resolve("buildSrc/src/main/resources/dokka")
@@ -183,7 +185,7 @@ fun Project.dokkaKotlinJar(): TaskProvider<Jar> = tasks.getOrCreate("dokkaKotlin
  * The task `"publishToMavenLocal"` is excluded from the check because it is a part of
  * the local testing workflow.
  */
-fun DokkaTask.isInPublishingGraph(): Boolean =
+fun AbstractDokkaTask.isInPublishingGraph(): Boolean =
     project.gradle.taskGraph.allTasks.any {
         with(it.name) {
             startsWith("publish") && !startsWith("publishToMavenLocal")
