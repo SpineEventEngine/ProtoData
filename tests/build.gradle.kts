@@ -25,29 +25,29 @@
  */
 
 import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Caffeine
-import io.spine.internal.dependency.Grpc
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.Kotlin
-import io.spine.internal.dependency.KotlinX
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Truth
-import io.spine.internal.dependency.spine.Logging
-import io.spine.internal.dependency.spine.ProtoData
-import io.spine.internal.dependency.spine.Spine
-import io.spine.internal.dependency.spine.ToolBase
-import io.spine.internal.dependency.spine.Validation
-import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
-import io.spine.internal.gradle.standardToSpineSdk
-import io.spine.internal.gradle.testing.configureLogging
+import io.spine.dependency.lib.Caffeine
+import io.spine.dependency.lib.Grpc
+import io.spine.dependency.test.JUnit
+import io.spine.dependency.lib.Jackson
+import io.spine.dependency.lib.Kotlin
+import io.spine.dependency.lib.KotlinX
+import io.spine.dependency.lib.Protobuf
+import io.spine.dependency.test.Truth
+import io.spine.dependency.local.Logging
+import io.spine.dependency.local.ProtoData
+import io.spine.dependency.local.Spine
+import io.spine.dependency.local.ToolBase
+import io.spine.dependency.local.Validation
+import io.spine.gradle.kotlin.setFreeCompilerArgs
+import io.spine.gradle.standardToSpineSdk
+import io.spine.gradle.testing.configureLogging
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
     dependencies {
-        classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
-        classpath(io.spine.internal.dependency.Kotlin.gradlePluginLib)
+        classpath(io.spine.dependency.lib.Protobuf.GradlePlugin.lib)
+        classpath(io.spine.dependency.lib.Kotlin.gradlePluginLib)
     }
 }
 

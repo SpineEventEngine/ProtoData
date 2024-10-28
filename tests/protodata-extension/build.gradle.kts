@@ -24,12 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.AutoService
+import io.spine.dependency.lib.AutoService
 
 buildscript {
     standardSpineSdkRepositories()
     dependencies {
-        classpath(io.spine.internal.dependency.spine.McJava.pluginLib)
+        classpath(io.spine.dependency.local.McJava.pluginLib)
     }
 }
 

@@ -26,7 +26,7 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
-import io.spine.internal.dependency.JavaX
+import io.spine.dependency.lib.JavaX
 import io.spine.protodata.gradle.CodegenSettings
 
 buildscript {

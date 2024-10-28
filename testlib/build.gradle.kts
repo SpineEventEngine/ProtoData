@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.spine.CoreJava
-import io.spine.internal.dependency.spine.ProtoTap
-import io.spine.internal.dependency.spine.Spine
+import io.spine.dependency.local.CoreJava
+import io.spine.dependency.local.ProtoTap
+import io.spine.dependency.local.Spine
 
 plugins {
     protobuf
@@ -36,7 +36,7 @@ plugins {
 
 protobuf {
     protoc {
-        artifact = io.spine.internal.dependency.Protobuf.compiler
+        artifact = io.spine.dependency.lib.Protobuf.compiler
     }
 }
 

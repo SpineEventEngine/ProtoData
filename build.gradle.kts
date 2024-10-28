@@ -26,25 +26,25 @@
 
 @file:Suppress("RemoveRedundantQualifierName")
 
-import io.spine.internal.dependency.Dokka
-import io.spine.internal.dependency.Grpc
-import io.spine.internal.dependency.spine.CoreJava
-import io.spine.internal.dependency.spine.Spine
-import io.spine.internal.gradle.RunBuild
-import io.spine.internal.gradle.publish.PublishingRepos
-import io.spine.internal.gradle.publish.SpinePublishing
-import io.spine.internal.gradle.publish.spinePublishing
-import io.spine.internal.gradle.report.coverage.JacocoConfig
-import io.spine.internal.gradle.report.license.LicenseReporter
-import io.spine.internal.gradle.report.pom.PomGenerator
-import io.spine.internal.gradle.standardToSpineSdk
+import io.spine.dependency.build.Dokka
+import io.spine.dependency.lib.Grpc
+import io.spine.dependency.local.CoreJava
+import io.spine.dependency.local.Spine
+import io.spine.gradle.RunBuild
+import io.spine.gradle.publish.PublishingRepos
+import io.spine.gradle.publish.SpinePublishing
+import io.spine.gradle.publish.spinePublishing
+import io.spine.gradle.report.coverage.JacocoConfig
+import io.spine.gradle.report.license.LicenseReporter
+import io.spine.gradle.report.pom.PomGenerator
+import io.spine.gradle.standardToSpineSdk
 import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 
 buildscript {
     standardSpineSdkRepositories()
-    val baseForBuildScript = io.spine.internal.dependency.spine.Spine.baseForBuildScript
+    val baseForBuildScript = io.spine.dependency.local.Spine.baseForBuildScript
     dependencies {
-        classpath(io.spine.internal.dependency.Protobuf.GradlePlugin.lib)
+        classpath(io.spine.dependency.lib.Protobuf.GradlePlugin.lib)
         classpath(baseForBuildScript)
         classpath(mcJava.pluginLib) {
             excludeSpineBase()

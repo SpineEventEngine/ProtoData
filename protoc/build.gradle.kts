@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.spine.Spine
+import io.spine.dependency.lib.Protobuf
+import io.spine.dependency.local.Spine
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 dependencies {

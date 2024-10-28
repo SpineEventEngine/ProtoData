@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Dokka
-import io.spine.internal.gradle.publish.getOrCreate
+import io.spine.dependency.build.Dokka
+import io.spine.gradle.publish.getOrCreate
 import java.io.File
 import java.time.LocalDate
 import org.gradle.api.Project

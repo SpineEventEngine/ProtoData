@@ -24,10 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JavaPoet
-import io.spine.internal.dependency.JavaX
-import io.spine.internal.dependency.spine.Spine
-import io.spine.internal.dependency.spine.ToolBase
+import io.spine.dependency.lib.JavaPoet
+import io.spine.dependency.lib.JavaX
+import io.spine.dependency.local.Spine
+import io.spine.dependency.local.ToolBase
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 
 plugins {

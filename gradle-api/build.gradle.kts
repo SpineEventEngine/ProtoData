@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.spine.ToolBase
+import io.spine.dependency.local.ToolBase
 
 dependencies {
     compileOnly(gradleApi())

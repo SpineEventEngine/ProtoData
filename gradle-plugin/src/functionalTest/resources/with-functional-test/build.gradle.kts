@@ -25,8 +25,8 @@
  */
 
 import com.google.protobuf.gradle.protobuf
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.gradle.standardToSpineSdk
+import io.spine.dependency.lib.Protobuf
+import io.spine.gradle.standardToSpineSdk
 import org.gradle.api.plugins.jvm.JvmTestSuite
 
 buildscript {
@@ -58,7 +58,7 @@ dependencies {
 
 protobuf {
     protoc {
-        artifact = io.spine.internal.dependency.Protobuf.compiler
+        artifact = io.spine.dependency.lib.Protobuf.compiler
     }
 }
 
