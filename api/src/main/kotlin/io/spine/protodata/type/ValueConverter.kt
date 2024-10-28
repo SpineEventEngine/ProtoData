@@ -41,7 +41,7 @@ import io.spine.protodata.value.Value.KindCase.STRING_VALUE
 import io.spine.tools.code.Language
 
 /**
- * A factory of language-specific code, that represents a Protobuf value.
+ * A factory of language-specific code that represents a Protobuf value.
  *
  * @param L the programming language served by this converter.
  * @param C the type of the code elements produced by this converter.
