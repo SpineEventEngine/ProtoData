@@ -87,6 +87,11 @@ public object This : Expression("this") {
 }
 
 /**
+ * The assumed reference to `this` when calling from a method of an instance.
+ */
+public object InstanceScope : Expression("")
+
+/**
  * A string literal.
  *
  * Represented as the same value as the given string, wrapped in quotation marks.
