@@ -26,7 +26,13 @@
 
 package io.spine.protodata.type
 
+import com.google.protobuf.ByteString
 import io.spine.protodata.ast.Type
+import io.spine.protodata.value.EnumValue
+import io.spine.protodata.value.ListValue
+import io.spine.protodata.value.MapValue
+import io.spine.protodata.value.MessageValue
+import io.spine.protodata.value.Reference
 import io.spine.protodata.value.Value
 import io.spine.protodata.value.Value.KindCase.BOOL_VALUE
 import io.spine.protodata.value.Value.KindCase.BYTES_VALUE
@@ -54,66 +60,71 @@ public abstract class ValueConverter<L: Language, C: CodeElement<L>> {
      */
     public fun valueToCode(value: Value): C =
         when (value.kindCase) {
-            NULL_VALUE -> toNull(value.type)
-            BOOL_VALUE -> toBool(value)
-            DOUBLE_VALUE -> toDouble(value)
-            INT_VALUE -> toInt(value)
-            STRING_VALUE -> toString(value)
-            BYTES_VALUE -> toBytes(value)
-            MESSAGE_VALUE -> toMessage(value)
-            ENUM_VALUE -> toEnum(value)
-            LIST_VALUE -> toList(value)
-            MAP_VALUE -> toMap(value)
+            NULL_VALUE -> nullToCode(value.type)
+            BOOL_VALUE -> toCode(value.boolValue)
+            DOUBLE_VALUE -> toCode(value.doubleValue)
+            INT_VALUE -> toCode(value.intValue)
+            STRING_VALUE -> this.toCode(value.stringValue)
+            BYTES_VALUE -> this.toCode(value.bytesValue)
+            MESSAGE_VALUE -> this.toCode(value.messageValue)
+            ENUM_VALUE -> this.toCode(value.enumValue)
+            LIST_VALUE -> toList(value.listValue)
+            MAP_VALUE -> this.toCode(value.mapValue)
             else -> throw IllegalArgumentException("Unsupported value kind: `${value.kindCase}`.")
         }
 
     /**
      * Converts the `null` value of the given type into a language-specific `null` representation.
      */
-    protected abstract fun toNull(type: Type): C
+    protected abstract fun nullToCode(type: Type): C
 
     /**
      * Converts the given `bool` value into a language-specific `bool` representation.
      */
-    protected abstract fun toBool(value: Value): C
+    protected abstract fun toCode(value: Boolean): C
 
     /**
      * Converts the given `double` value into a language-specific `double` representation.
      */
-    protected abstract fun toDouble(value: Value): C
+    protected abstract fun toCode(value: Double): C
 
     /**
-     * Converts the given `int` value into a language-specific `int` representation.
+     * Converts the given `int` value into a language-specific representation.
      */
-    protected abstract fun toInt(value: Value): C
+    protected abstract fun toCode(value: Long): C
 
     /**
      * Converts the given `string` value into a language-specific `string` representation.
      */
-    protected abstract fun toString(value: Value): C
+    protected abstract fun toCode(value: String): C
 
     /**
-     * Converts the given `bytes` value into a language-specific syte string representation.
+     * Converts the given `bytes` value into a language-specific byte string representation.
      */
-    protected abstract fun toBytes(value: Value): C
+    protected abstract fun toCode(value: ByteString): C
 
     /**
      * Converts the given message value into a language-specific message representation.
      */
-    protected abstract fun toMessage(value: Value): C
+    protected abstract fun toCode(value: MessageValue): C
 
     /**
      * Converts the given enum constant into a language-specific enum representation.
      */
-    protected abstract fun toEnum(value: Value): C
+    protected abstract fun toCode(value: EnumValue): C
 
     /**
      * Converts the given list into a language-specific representation of a list of values.
      */
-    protected abstract fun toList(value: Value): C
+    protected abstract fun toList(value: ListValue): C
 
     /**
      * Converts the given map into a language-specific map.
      */
-    protected abstract fun toMap(value: Value): C
+    protected abstract fun toCode(value: MapValue): C
+
+    /**
+     * Converts the given field reference to a language-specific accessor of the referenced field.
+     */
+    protected abstract fun toCode(reference: Reference): C
 }
