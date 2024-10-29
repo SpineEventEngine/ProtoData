@@ -28,10 +28,10 @@ package io.spine.protodata.java
 
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.Field.CardinalityCase
-import io.spine.protodata.ast.Field.CardinalityCase.LIST
-import io.spine.protodata.ast.Field.CardinalityCase.MAP
-import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
 import io.spine.protodata.ast.FieldName
+import io.spine.protodata.ast.FieldType
+import io.spine.protodata.ast.camelCase
+import io.spine.protodata.ast.toCardinalityCase
 import io.spine.string.camelCase
 
 /**
@@ -39,25 +39,28 @@ import io.spine.string.camelCase
  */
 public abstract class FieldConventions(
     protected val name: FieldName,
-    protected val cardinality: CardinalityCase = SINGLE
+    protected val kind: FieldType.KindCase
 ) {
+    @Deprecated("Use `FieldType` instead")
+    protected val cardinality: CardinalityCase = kind.toCardinalityCase()
+
     protected val getterName: String
-        get() = when (cardinality) {
-            LIST -> getListName
-            MAP -> getMapName
+        get() = when (kind) {
+            FieldType.KindCase.LIST -> getListName
+            FieldType.KindCase.MAP -> getMapName
             else -> prefixed("get")
         }
 
     private val getListName: String
-        get() = "get${name.value.camelCase()}List"
+        get() = "get${name.camelCase}List"
 
     private val getMapName: String
-        get() = "get${name.value.camelCase()}Map"
+        get() = "get${name.camelCase}Map"
 
     protected val setterName: String
-        get() = when (cardinality) {
-            LIST -> addAllName
-            MAP -> putAllName
+        get() = when (kind) {
+            FieldType.KindCase.LIST -> addAllName
+            FieldType.KindCase.MAP -> putAllName
             else -> prefixed("set")
         }
 
@@ -81,14 +84,14 @@ public abstract class FieldConventions(
         if (other !is FieldConventions) return false
 
         if (name != other.name) return false
-        if (cardinality != other.cardinality) return false
+        if (kind != other.kind) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + cardinality.hashCode()
+        result = 31 * result + kind.hashCode()
         return result
     }
 }
@@ -99,8 +102,12 @@ public abstract class FieldConventions(
  * The class is made `open` for accessing `protected` properties of
  * [FieldConventions] via inheriting this class.
  */
-public open class FieldMethods(public val field: Field) :
-    FieldConventions(field.name, field.cardinalityCase) {
+public open class FieldMethods(
+    name: FieldName,
+    kind: FieldType.KindCase
+) : FieldConventions(name, kind) {
+
+    public constructor(field: Field): this(field.name, field.fieldType.kindCase)
 
     /**
      * The name of the primary method which sets a value of the field.
@@ -117,14 +124,12 @@ public open class FieldMethods(public val field: Field) :
         if (other !is FieldMethods) return false
         if (!super.equals(other)) return false
 
-        if (field != other.field) return false
-
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + field.hashCode()
+        result = 31 * result + name.hashCode()
         return result
     }
 }

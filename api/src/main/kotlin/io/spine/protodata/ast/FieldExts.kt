@@ -28,6 +28,9 @@
 
 package io.spine.protodata.ast
 
+import io.spine.protodata.ast.Field.CardinalityCase
+import io.spine.string.camelCase
+
 /**
  * Tells if this field is a Protobuf message.
  */
@@ -75,3 +78,38 @@ public val Field.isPartOfOneof: Boolean
 public val Field.qualifiedName: String
     get() = "${declaringType.qualifiedName}.${name.value}"
 
+
+/**
+ * Obtains a `CamelCase` version of this field name.
+ */
+public val FieldName.camelCase: String
+    get() = value.camelCase()
+
+/**
+ * Converts this [FieldType.KindCase] to [CardinalityCase],
+ */
+public fun FieldType.KindCase.toCardinalityCase(): CardinalityCase = when (this) {
+    FieldType.KindCase.MESSAGE -> CardinalityCase.SINGLE
+    FieldType.KindCase.ENUMERATION -> CardinalityCase.SINGLE
+    FieldType.KindCase.PRIMITIVE -> CardinalityCase.SINGLE
+    FieldType.KindCase.LIST -> CardinalityCase.LIST
+    FieldType.KindCase.MAP -> CardinalityCase.MAP
+    else -> error("Unable to transform `$this` to `CardinalityCase`.")
+}
+
+/**
+ * Obtains a cardinality of this field type.
+ *
+ * @see Cardinality
+ */
+public val FieldType.cardinality: Cardinality
+    get() {
+        return when (kindCase) {
+            FieldType.KindCase.MESSAGE,
+            FieldType.KindCase.ENUMERATION,
+            FieldType.KindCase.PRIMITIVE -> Cardinality.SINGLE
+            FieldType.KindCase.LIST -> Cardinality.LIST
+            FieldType.KindCase.MAP -> Cardinality.MAP
+            else -> error("Unable to convert `$this` to `Cardinality`.")
+        }
+    }
