@@ -26,11 +26,13 @@
 
 package io.spine.protodata.java
 
+import io.spine.protodata.ast.Cardinality
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.Field.CardinalityCase
 import io.spine.protodata.ast.FieldName
-import io.spine.protodata.ast.FieldType
 import io.spine.protodata.ast.camelCase
+import io.spine.protodata.ast.cardinality
+import io.spine.protodata.ast.fieldName
 import io.spine.protodata.ast.toCardinalityCase
 import io.spine.string.camelCase
 
@@ -39,15 +41,15 @@ import io.spine.string.camelCase
  */
 public abstract class FieldConventions(
     protected val name: FieldName,
-    protected val kind: FieldType.KindCase
+    protected val kind: Cardinality
 ) {
     @Deprecated("Use `FieldType` instead")
     protected val cardinality: CardinalityCase = kind.toCardinalityCase()
 
     protected val getterName: String
         get() = when (kind) {
-            FieldType.KindCase.LIST -> getListName
-            FieldType.KindCase.MAP -> getMapName
+            Cardinality.LIST -> getListName
+            Cardinality.MAP -> getMapName
             else -> prefixed("get")
         }
 
@@ -59,8 +61,8 @@ public abstract class FieldConventions(
 
     protected val setterName: String
         get() = when (kind) {
-            FieldType.KindCase.LIST -> addAllName
-            FieldType.KindCase.MAP -> putAllName
+            Cardinality.LIST -> addAllName
+            Cardinality.MAP -> putAllName
             else -> prefixed("set")
         }
 
@@ -104,10 +106,10 @@ public abstract class FieldConventions(
  */
 public open class FieldMethods(
     name: FieldName,
-    kind: FieldType.KindCase
+    kind: Cardinality
 ) : FieldConventions(name, kind) {
 
-    public constructor(field: Field): this(field.name, field.fieldType.kindCase)
+    public constructor(field: Field): this(field.name, field.fieldType.cardinality)
 
     /**
      * The name of the primary method which sets a value of the field.
@@ -131,5 +133,15 @@ public open class FieldMethods(
         var result = super.hashCode()
         result = 31 * result + name.hashCode()
         return result
+    }
+
+    public companion object {
+
+        /**
+         * Obtains the name of the getter
+         */
+        public fun getterOf(fieldName: String, cardinality: Cardinality): String {
+            return FieldMethods(fieldName { value = fieldName }, cardinality).getter
+        }
     }
 }

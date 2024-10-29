@@ -27,12 +27,13 @@
 package io.spine.protodata.java
 
 import com.google.protobuf.ByteString
+import io.spine.protodata.ast.Cardinality
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.Type.KindCase.ENUMERATION
 import io.spine.protodata.ast.Type.KindCase.MESSAGE
 import io.spine.protodata.ast.Type.KindCase.PRIMITIVE
-import io.spine.protodata.ast.fieldName
-import io.spine.protodata.java.FieldAccessor.Companion.accessorOf
+import io.spine.protodata.ast.cardinality
+import io.spine.protodata.java.FieldMethods.Companion.getterOf
 import io.spine.protodata.type.ValueConverter
 import io.spine.protodata.value.EnumValue
 import io.spine.protodata.value.ListValue
@@ -49,19 +50,19 @@ public class JavaValueConverter(
     private val convention: MessageOrEnumConvention
 ) : ValueConverter<Java, Expression>() {
 
-    override fun nullToCode(type: Type): Expression = Null
+    override fun nullToCode(type: Type): Null = Null
 
-    override fun toCode(value: Boolean): Expression = Literal(value)
+    override fun toCode(value: Boolean): Literal = Literal(value)
 
-    override fun toCode(value: Double): Expression = Literal(value)
+    override fun toCode(value: Double): Literal = Literal(value)
 
-    override fun toCode(value: Long): Expression = Literal(value)
+    override fun toCode(value: Long): Literal = Literal(value)
 
-    override fun toCode(value: String): Expression = LiteralString(value)
+    override fun toCode(value: String): LiteralString = LiteralString(value)
 
-    override fun toCode(value: ByteString): Expression = LiteralBytes(value)
+    override fun toCode(value: ByteString): LiteralBytes = LiteralBytes(value)
 
-    override fun toCode(value: MessageValue): Expression {
+    override fun toCode(value: MessageValue): MethodCall {
         val type = value.type
         val className = convention.declarationFor(type).name as ClassName
         return if (value.fieldsMap.isEmpty()) {
@@ -81,7 +82,7 @@ public class JavaValueConverter(
         return enumClassName.enumValue(value.constNumber)
     }
 
-    override fun toList(value: ListValue): Expression {
+    override fun toList(value: ListValue): MethodCall {
         val expressions = value.valuesList.map(this::valueToCode)
         return listExpression(expressions)
     }
@@ -99,13 +100,32 @@ public class JavaValueConverter(
         return mapExpression(valuesMap, keyClass, valueClass)
     }
 
-    override fun toCode(reference: Reference): Expression {
+    override fun toCode(reference: Reference): MethodCall {
         val path = reference.target.fieldNameList.toMutableList()
+
+        // If the field reference contains only one element, take the cardinality of the field type.
+        // We will have only one getter call.
+        val startCardinality = if (path.size == 1) {
+            reference.fieldType.cardinality
+        } else {
+            // Otherwise, only message types fields are expected in the path until the last entry.
+            Cardinality.SINGLE
+        }
         val start = path.removeFirst()
-        var call = MethodCall(InstanceScope, accessorOf(start))
+
+        // Assume we generate the call in a scope of a message method.
+        var call = MethodCall(InstanceScope, getterOf(start, startCardinality))
+
         // The remaining path (if any) would be chained method calls.
-        path.forEach { field ->
-            call = call.chain(accessorOf(field))
+        path.forEachIndexed() { index, field ->
+            // For all fields but last we can have only message type fields.
+            call = if (index == path.size - 1) {
+                call.chain(getterOf(field, Cardinality.SINGLE))
+            } else {
+                // The last field in the path has the type (and
+                // the cardinality) of the "source" one.
+                call.chain(getterOf(field, reference.fieldType.cardinality))
+            }
         }
         return call
     }
@@ -115,15 +135,5 @@ public class JavaValueConverter(
         ENUMERATION -> convention.declarationFor(enumeration).name
         PRIMITIVE -> primitive.toJavaClass()
         else -> error("Expected a valid type.")
-    }
-}
-
-/**
- * A simple implementation of [FieldConventions] for getting the name of the accessor.
- */
-private class FieldAccessor(fieldName: String) :
-    FieldConventions(name = fieldName { value = fieldName }) {
-    companion object {
-        fun accessorOf(fieldName: String): String = FieldAccessor(fieldName).getterName
     }
 }

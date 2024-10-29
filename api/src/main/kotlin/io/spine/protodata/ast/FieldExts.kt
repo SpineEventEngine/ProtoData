@@ -97,6 +97,13 @@ public fun FieldType.KindCase.toCardinalityCase(): CardinalityCase = when (this)
     else -> error("Unable to transform `$this` to `CardinalityCase`.")
 }
 
+public fun Cardinality.toCardinalityCase(): CardinalityCase = when (this) {
+    Cardinality.SINGLE -> CardinalityCase.SINGLE
+    Cardinality.LIST -> CardinalityCase.LIST
+    Cardinality.MAP -> CardinalityCase.MAP
+    else -> error("Unable to transform `$this` to `CardinalityCase`.")
+}
+
 /**
  * Obtains a cardinality of this field type.
  *
