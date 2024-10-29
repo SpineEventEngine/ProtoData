@@ -24,12 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Kotlin
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.spine.Spine
-import io.spine.internal.dependency.spine.ToolBase
-import io.spine.internal.gradle.isSnapshot
+import io.spine.dependency.test.JUnit
+import io.spine.dependency.lib.Kotlin
+import io.spine.dependency.lib.Protobuf
+import io.spine.dependency.local.Spine
+import io.spine.dependency.local.ToolBase
+import io.spine.gradle.isSnapshot
 
 plugins {
     `java-gradle-plugin`

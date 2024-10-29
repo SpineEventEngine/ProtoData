@@ -24,13 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.spine.CoreJava
-import io.spine.internal.dependency.spine.ToolBase
-import io.spine.internal.gradle.publish.CheckVersionIncrement
-import io.spine.internal.gradle.publish.IncrementGuard
-import io.spine.internal.gradle.publish.PublishingRepos
+import io.spine.dependency.test.JUnit
+import io.spine.dependency.lib.Jackson
+import io.spine.dependency.local.CoreJava
+import io.spine.dependency.local.ToolBase
+import io.spine.gradle.publish.CheckVersionIncrement
+import io.spine.gradle.publish.IncrementGuard
+import io.spine.gradle.publish.PublishingRepos
 
 plugins {
     `build-proto-model`

@@ -26,7 +26,7 @@
 
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.id
-import io.spine.internal.gradle.standardToSpineSdk
+import io.spine.gradle.standardToSpineSdk
 
 buildscript {
     standardSpineSdkRepositories()
@@ -53,7 +53,7 @@ dependencies {
 
 protobuf {
     protoc {
-        artifact = io.spine.internal.dependency.Protobuf.compiler
+        artifact = io.spine.dependency.lib.Protobuf.compiler
     }
     plugins {
         id("grpc") {

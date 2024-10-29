@@ -24,13 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Aedile
-import io.spine.internal.dependency.Jackson
-import io.spine.internal.dependency.spine.CoreJava
-import io.spine.internal.dependency.spine.Logging
-import io.spine.internal.dependency.spine.Spine
-import io.spine.internal.dependency.spine.ToolBase
-import io.spine.internal.dependency.spine.Validation
+import io.spine.dependency.lib.Aedile
+import io.spine.dependency.lib.Jackson
+import io.spine.dependency.local.CoreJava
+import io.spine.dependency.local.Logging
+import io.spine.dependency.local.Spine
+import io.spine.dependency.local.ToolBase
+import io.spine.dependency.local.Validation
 
 plugins {
     `build-proto-model`

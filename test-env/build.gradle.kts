@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.AutoService
-import io.spine.internal.dependency.Grpc
+import io.spine.dependency.lib.AutoService
+import io.spine.dependency.lib.Grpc
 
 plugins {
     `build-proto-model`

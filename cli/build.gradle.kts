@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Clikt
-import io.spine.internal.dependency.spine.Logging
-import io.spine.internal.gradle.publish.SpinePublishing
+import io.spine.dependency.lib.Clikt
+import io.spine.dependency.local.Logging
+import io.spine.gradle.publish.SpinePublishing
 
 plugins {
     application

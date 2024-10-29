@@ -30,6 +30,6 @@
  * This version also used by integration test projects.
  * E.g. see `tests/consumer/build.gradle.kts`.
  *
- * For dependencies on Spine SDK module please see [io.spine.internal.dependency.Spine].
+ * For dependencies on Spine SDK module please see [io.spine.dependency.local.Spine].
  */
-val protoDataVersion: String by extra("0.64.0")
+val protoDataVersion: String by extra("0.64.1")
