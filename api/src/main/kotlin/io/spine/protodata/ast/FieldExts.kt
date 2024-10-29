@@ -110,13 +110,11 @@ public fun Cardinality.toCardinalityCase(): CardinalityCase = when (this) {
  * @see Cardinality
  */
 public val FieldType.cardinality: Cardinality
-    get() {
-        return when (kindCase) {
-            FieldType.KindCase.MESSAGE,
-            FieldType.KindCase.ENUMERATION,
-            FieldType.KindCase.PRIMITIVE -> Cardinality.SINGLE
-            FieldType.KindCase.LIST -> Cardinality.LIST
-            FieldType.KindCase.MAP -> Cardinality.MAP
-            else -> error("Unable to convert `$this` to `Cardinality`.")
-        }
+    get() = when (kindCase) {
+        FieldType.KindCase.MESSAGE,
+        FieldType.KindCase.ENUMERATION,
+        FieldType.KindCase.PRIMITIVE -> Cardinality.SINGLE
+        FieldType.KindCase.LIST -> Cardinality.LIST
+        FieldType.KindCase.MAP -> Cardinality.MAP
+        else -> error("Unable to convert `$kindCase` to `Cardinality`.")
     }
