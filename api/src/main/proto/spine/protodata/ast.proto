@@ -227,11 +227,58 @@ message Type {
     }
 }
 
+// A type of a message field.
+message FieldType {
+
+    oneof kind {
+        option (is_required) = true;
+
+        // The field holds a message.
+        TypeName message = 1;
+
+        // The field holds an enumeration item.
+        TypeName enumeration = 2;
+
+        // The field is of the primitive type.
+        PrimitiveType primitive = 3;
+
+        // The field is declared as `repeated`.
+        Type list = 4;
+
+        // The field is a `map`.
+        MapEntryType map = 5;
+    }
+}
+
+// The type of entries in a map.
+message MapEntryType {
+
+    // The type of the keys.
+    PrimitiveType key_type = 1 [(required) = true];
+
+    // The type of values.
+    Type value_type = 2 [(required) = true];
+}
+
 // A name of a field in a message.
 message FieldName {
 
     // Short name of the field.
     string value = 1 [(required) = true];
+}
+
+// The cardinality of a field.
+enum Cardinality {
+    C_UNDEFINED = 0;
+
+    // The field holds one value.
+    SINGLE = 1;
+
+    // The field is `repeated`.
+    LIST = 2;
+
+    // The field is a `map`.
+    MAP = 3;
 }
 
 // A Protobuf message field.
@@ -241,16 +288,21 @@ message Field {
 
     // The type of data stored in the field.
     //
+    // DEPRECATED: Please use `field_type` instead.
+    //
     // Semantic of which depends on the field's `cardinality`:
     //  * `single` -- the field holds a single value of the this type.
     //  * `list` -- the field holds a list of values of the given type.
     //  * `map` -- the field holds a map of key-value pairs, and the type of keys is defined by
     //             `map.key_type`, and this field contains the type of values.
     //
-    Type type = 2 [(required) = true];
+    Type type = 2 [(required) = true, deprecated = true];
 
     // The type in which the field is declared.
     TypeName declaring_type = 3 [(required) = true];
+
+    // The type of the field.
+    FieldType field_type = 12/* [(required) = true]*/;
 
     // The field number.
     //
@@ -289,28 +341,37 @@ message Field {
         //
         // See also: `list`, `map`.
         //
-        google.protobuf.Empty single = 6;
+        google.protobuf.Empty single = 6 [deprecated = true];
 
         // The flag telling if the field is a list.
         //
         // A list is any `repeated` field which is not a `map`.
         //
-        google.protobuf.Empty list = 7;
+        google.protobuf.Empty list = 7 [deprecated = true];
 
         // The details of this map field type.
         //
         // Only set if this field is a map.
         //
-        OfMap map = 8;
+        OfMap map = 8 [deprecated = true];
 
         // If this field is declared in a field group, the name of the group.
+        //
+        // DEPRECATED: Please use `group_name` instead.
         //
         // Otherwise, must be empty.
         //
         // `repeated` and `map` fields cannot be a part of a `oneof`.
         //
-        OneofName oneof_name = 9;
+        OneofName oneof_name = 9 [deprecated = true];
     }
+
+    // The name of the `oneof` group (if any) to which this field belongs.
+    //
+    // `repeated` and `map` fields cannot be a part of a `oneof`.
+    // Therefore, this field can be populated only if the value in `field_type` allows it.
+    //
+    OneofName group_name = 13;
 
     // Field-level options.
     repeated Option option = 10 [(distinct) = true];
