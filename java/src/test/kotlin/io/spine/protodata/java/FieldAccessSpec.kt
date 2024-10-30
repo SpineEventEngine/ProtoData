@@ -28,15 +28,17 @@ package io.spine.protodata.java
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
-import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.Field
-import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
+import io.spine.protodata.ast.PrimitiveType
 import io.spine.protodata.ast.TypeInstances
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
+import io.spine.protodata.ast.fieldType
+import io.spine.protodata.ast.mapEntryType
 import io.spine.protodata.ast.oneofName
+import io.spine.protodata.ast.toFieldType
 import io.spine.protodata.ast.typeName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -130,29 +132,33 @@ private val stubType: TypeName = typeName {
 
 private fun singleField() = field {
     name = fieldName { value = "incarnation" }
-    single = Empty.getDefaultInstance()
-    type = TypeInstances.string
+    fieldType = TypeInstances.string.toFieldType()
     declaringType = stubType
 }
 
 private fun listField() = field {
     name = fieldName { value = "route" }
-    type = TypeInstances.string
-    list = Empty.getDefaultInstance()
+    fieldType = fieldType {
+        list = TypeInstances.string
+    }
     declaringType = stubType
 }
 
 private fun mapField() = field {
     name = fieldName { value = "attributes" }
-    type = TypeInstances.string
-    map = Field.OfMap.newBuilder().setKeyType(TYPE_STRING).build()
+    fieldType = fieldType {
+        map = mapEntryType {
+            keyType = PrimitiveType.TYPE_STRING
+            valueType = TypeInstances.string
+        }
+    }
     declaringType = stubType
 }
 
 private fun oneofField() = field {
     name = fieldName { value = "sidekick" }
-    type = TypeInstances.string
-    oneofName = oneofName { value = "crew" }
+    fieldType = TypeInstances.string.toFieldType()
+    enclosingOneof = oneofName { value = "crew" }
     declaringType = stubType
 }
 

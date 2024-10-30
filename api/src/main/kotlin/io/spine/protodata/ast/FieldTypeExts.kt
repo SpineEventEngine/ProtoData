@@ -58,7 +58,7 @@ public fun FieldType.toType(): Type = type {
         isMessage -> dsl.message = self.message
         isEnum -> dsl.enumeration = self.enumeration
         isPrimitive -> dsl.primitive = self.primitive
-        else -> error("Cannot convert $self to `Type`.")
+        else -> error("Cannot convert $self to `${Type::class.simpleName}`.")
     }
 }
 

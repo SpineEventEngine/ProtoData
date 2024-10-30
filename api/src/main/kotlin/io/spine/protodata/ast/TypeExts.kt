@@ -126,6 +126,22 @@ public fun Type.toMessageType(typeSystem: TypeSystem): MessageType {
 }
 
 /**
+ * Converts this type into [FieldType] instance.
+ */
+public fun Type.toFieldType(): FieldType = fieldType {
+    val self = this@toFieldType
+    val dsl = this@fieldType
+    when {
+        isMessage -> dsl.message = self.message
+        isEnum -> dsl.enumeration = self.enumeration
+        isPrimitive -> dsl.primitive = self.primitive
+        // This is a safety net for the unlikely extension of `Type`
+        // becoming wider than `FieldType`.
+        else -> error("Cannot convert `$self` to `${FieldType::class.simpleName}`.")
+    }
+}
+
+/**
  * A collection of types used by ProtoData.
  */
 public object TypeInstances {
