@@ -31,10 +31,11 @@ package io.spine.protodata.java
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.PrimitiveType
 import io.spine.protodata.ast.Type
+import io.spine.protodata.ast.isList
 import io.spine.protodata.ast.isMap
 import io.spine.protodata.ast.isPrimitive
-import io.spine.protodata.ast.isRepeated
 import io.spine.protodata.ast.simpleName
+import io.spine.protodata.ast.toType
 import io.spine.protodata.type.TypeSystem
 
 /**
@@ -53,9 +54,9 @@ public val Field.getterName: String
  * Tells if the type of this field corresponds to a primitive type in Java.
  */
 public val Field.isJavaPrimitive: Boolean
-    get() = if (!type.isPrimitive) {
+    get() = if (!fieldType.isPrimitive) {
         false
-    } else when (type.primitive) {
+    } else when (fieldType.primitive) {
         PrimitiveType.TYPE_STRING, PrimitiveType.TYPE_BYTES -> false
         else -> true
     }
@@ -65,16 +66,14 @@ public val Field.isJavaPrimitive: Boolean
  *
  * The returned type may have generic parameters, if the field is `repeated` or a `map`.
  *
- * @param typeSystem
- *         the type system to use for resolving the Java type.
+ * @param typeSystem The type system to use for resolving the Java type.
  * @return the fully qualified reference to the Java type of the field.
- * @throws IllegalStateException
- *         if the field type cannot be converted to a Java counterpart.
+ * @throws IllegalStateException Tf the field type cannot be converted to a Java counterpart.
  */
 public fun Field.javaType(typeSystem: TypeSystem): String = when {
-    isMap -> typeSystem.mapType(map.keyType, type)
-    isRepeated -> typeSystem.repeatedType(type)
-    else -> type.javaType(typeSystem)
+    isMap -> typeSystem.mapType(fieldType.map.keyType, fieldType.map.valueType)
+    isList -> typeSystem.listOf(fieldType.list)
+    else -> fieldType.toType().javaType(typeSystem)
 }
 
 private fun TypeSystem.mapType(key: PrimitiveType, value: Type): String {
@@ -83,7 +82,7 @@ private fun TypeSystem.mapType(key: PrimitiveType, value: Type): String {
     return "${java.util.Map::class.java.canonicalName}<$keyType, $valueType>"
 }
 
-private fun TypeSystem.repeatedType(element: Type): String {
+private fun TypeSystem.listOf(element: Type): String {
     val javaType = element.javaType(this)
     return "${java.util.List::class.java.canonicalName}<$javaType>"
 }
@@ -91,18 +90,20 @@ private fun TypeSystem.repeatedType(element: Type): String {
 /**
  * Obtains a reference the type of this field in the context of the given [entityState] class.
  *
- * @param entityState
- *         the name of the entity state class in which the field is going to be accessed.
- * @param typeSystem
- *         the type system to resolve the Java type of the field.
- * @return a simple class name if 1) the field type is either message or an enum, and
- *         2) the type belongs to the same package as the entity state class.
- *         Otherwise, a fully qualified name is returned.
+ * @param entityState The name of the entity state class in which the field is going to be accessed.
+ * @param typeSystem The type system to resolve the Java type of the field.
+ * @return a simple class name if:
+ *
+ *  1. the field type is either a message or an enum, and
+ *  2. the type belongs to the same package as the entity state class.
+ *
+ * Otherwise, a fully qualified name is returned.
  */
 @Suppress("ReturnCount")
 public fun Field.typeReference(entityState: ClassName, typeSystem: TypeSystem): String {
     val qualifiedName = javaType(typeSystem)
-    if (isMap || isRepeated || type.isPrimitive) {
+    val type = fieldType.toType()
+    if (isMap || isList || type.isPrimitive) {
         return qualifiedName
     }
     // Let's see if we can refer to the field type using its simple name.
