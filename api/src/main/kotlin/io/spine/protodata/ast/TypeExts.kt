@@ -122,11 +122,7 @@ public val Type.isAny: Boolean
  */
 public fun Type.toMessageType(typeSystem: TypeSystem): MessageType {
     check(isMessage)
-    val found = typeSystem.findMessage(message)?.first
-    check(found != null) {
-        "Unable to find `${MessageType::class.simpleName}` for the type `${shortDebugString()}`."
-    }
-    return found
+    return message.toMessageType(typeSystem)
 }
 
 /**

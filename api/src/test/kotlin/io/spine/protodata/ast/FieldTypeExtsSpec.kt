@@ -24,46 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("TypeNames")
-
 package io.spine.protodata.ast
 
-import com.google.protobuf.Message
-import io.spine.protobuf.defaultInstance
+import io.kotest.matchers.shouldBe
+import io.spine.protodata.ast.Cardinality.LIST
+import io.spine.protodata.ast.Cardinality.MAP
+import io.spine.protodata.ast.Cardinality.SINGLE
 import io.spine.protodata.protobuf.toMessageType
-import io.spine.protodata.type.TypeSystem
-import io.spine.type.shortDebugString
+import io.spine.test.type.OopFun
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-/**
- * Obtains a fully qualified name of a `TypeName` or its builder.
- */
-public val TypeNameOrBuilder.qualifiedName: String
-    get() {
-        val names = buildList<String> {
-            add(packageName)
-            addAll(nestingTypeNameList)
-            add(simpleName)
+@DisplayName("`FieldType` extensions should")
+internal class FieldTypeExtsSpec {
+
+    @Nested inner class
+    `obtain cardinality for`  {
+
+        val type = OopFun.getDescriptor().toMessageType()
+
+        @Test
+        fun `map fields`() {
+            cardinalityOf("gorillas") shouldBe MAP
         }
-        return names.filter { it.isNotEmpty() }.joinToString(separator = ".")
-    }
 
-/**
- * Obtains a [MessageType] that corresponds to the message class
- * specified in the generic parameter [T].
- */
-public inline fun <reified T: Message> messageTypeOf(): MessageType {
-    return T::class.java.defaultInstance.descriptorForType.toMessageType()
-}
+        @Test
+        fun `list fields`() {
+            cardinalityOf("tree") shouldBe LIST
+        }
 
-/**
- * Converts this type name to an instance of [MessageType] finding it using the given [typeSystem].
- *
- * @throws IllegalStateException If the type system does not have a corresponding `MessageType`.
- */
-public fun TypeName.toMessageType(typeSystem: TypeSystem): MessageType {
-    val found = typeSystem.findMessage(this)?.first
-    check(found != null) {
-        "Unable to find `${MessageType::class.simpleName}` for the type `${shortDebugString()}`."
+        @Test
+        fun `single fields`() {
+            cardinalityOf("jungle") shouldBe SINGLE
+        }
+
+        private fun cardinalityOf(fieldName: String): Cardinality =
+            type.field(fieldName).fieldType.cardinality
     }
-    return found
 }

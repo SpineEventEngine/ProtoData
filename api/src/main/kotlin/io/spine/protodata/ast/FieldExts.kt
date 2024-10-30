@@ -28,14 +28,20 @@
 
 package io.spine.protodata.ast
 
-import io.spine.protodata.ast.Field.CardinalityCase
 import io.spine.string.camelCase
+
+/**
+ * Obtains the type of this field as [Type] instance.
+ *
+ * @throws IllegalStateException If the field is a list or a map.
+ */
+public fun Field.type(): Type = fieldType.toType()
 
 /**
  * Tells if this field is a Protobuf message.
  */
 public val Field.isMessage: Boolean
-    get() = type.isMessage
+    get() = fieldType.isMessage
 
 /**
  * Shows if this field is a `map`.
@@ -44,7 +50,7 @@ public val Field.isMessage: Boolean
  * the `Field.map.key_type` contains the type the map key.
  */
 public val Field.isMap: Boolean
-    get() = hasMap()
+    get() = fieldType.isMap
 
 /**
  * Shows if this field is a list.
@@ -54,13 +60,19 @@ public val Field.isMap: Boolean
  * We use the term "list" for repeated fields which are not maps.
  */
 public val Field.isList: Boolean
-    get() = hasList()
+    get() = fieldType.isList
 
 /**
  * Shows if this field repeated.
  *
  * Can be declared in Protobuf either as a `map` or a `repeated` field.
  */
+@Suppress("DeprecatedCallableAddReplaceWith") // Cannot have replacement in this case.
+@Deprecated("Please use either `isList` or `isMap`.") /*
+    We do not want this duality in our code. Also, this introduces confusion with the Protobuf
+    declaration `repeated`. The fact that maps are implemented internally as repeated entries
+    should not leak into public API.
+*/
 public val Field.isRepeated: Boolean
     get() = isMap || isList
 
@@ -70,7 +82,7 @@ public val Field.isRepeated: Boolean
  * If the field is a part of a `oneof`, the `Field.oneof_name` contains the name of that `oneof`.
  */
 public val Field.isPartOfOneof: Boolean
-    get() = hasOneofName()
+    get() = hasEnclosingOneof()
 
 /**
  * The field name containing a qualified name of the declaring type.
@@ -84,37 +96,3 @@ public val Field.qualifiedName: String
  */
 public val FieldName.camelCase: String
     get() = value.camelCase()
-
-/**
- * Converts this [FieldType.KindCase] to [CardinalityCase],
- */
-public fun FieldType.KindCase.toCardinalityCase(): CardinalityCase = when (this) {
-    FieldType.KindCase.MESSAGE -> CardinalityCase.SINGLE
-    FieldType.KindCase.ENUMERATION -> CardinalityCase.SINGLE
-    FieldType.KindCase.PRIMITIVE -> CardinalityCase.SINGLE
-    FieldType.KindCase.LIST -> CardinalityCase.LIST
-    FieldType.KindCase.MAP -> CardinalityCase.MAP
-    else -> error("Unable to transform `$this` to `CardinalityCase`.")
-}
-
-public fun Cardinality.toCardinalityCase(): CardinalityCase = when (this) {
-    Cardinality.SINGLE -> CardinalityCase.SINGLE
-    Cardinality.LIST -> CardinalityCase.LIST
-    Cardinality.MAP -> CardinalityCase.MAP
-    else -> error("Unable to transform `$this` to `CardinalityCase`.")
-}
-
-/**
- * Obtains a cardinality of this field type.
- *
- * @see Cardinality
- */
-public val FieldType.cardinality: Cardinality
-    get() = when (kindCase) {
-        FieldType.KindCase.MESSAGE,
-        FieldType.KindCase.ENUMERATION,
-        FieldType.KindCase.PRIMITIVE -> Cardinality.SINGLE
-        FieldType.KindCase.LIST -> Cardinality.LIST
-        FieldType.KindCase.MAP -> Cardinality.MAP
-        else -> error("Unable to convert `$kindCase` to `Cardinality`.")
-    }

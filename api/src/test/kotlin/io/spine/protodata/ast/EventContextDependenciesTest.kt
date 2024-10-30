@@ -59,8 +59,7 @@ import io.spine.net.EmailAddress
 import io.spine.net.EmailAddressProto
 import io.spine.net.InternetDomain
 import io.spine.net.InternetDomainProto
-import io.spine.protodata.ast.Field.CardinalityCase.ONEOF_NAME
-import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
+import io.spine.protodata.ast.Cardinality.SINGLE
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.type.TypeSystem
 import io.spine.time.TimeProto
@@ -100,7 +99,7 @@ internal class EventContextDependenciesTest {
     fun `full dependencies`() {
         val eventContext = messageTypeOf<EventContext>()
         val deps =
-            MessageTypeDependencies(eventContext, setOf(SINGLE, ONEOF_NAME), typeSystem).asSet()
+            MessageTypeDependencies(eventContext, setOf(SINGLE), typeSystem).asSet()
 
         val expected = setOf(
             messageTypeOf<ActorContext>(),

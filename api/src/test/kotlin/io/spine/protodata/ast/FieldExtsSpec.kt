@@ -38,35 +38,39 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 @DisplayName("`Field` extensions should")
 internal class FieldExtsSpec {
 
-    @Nested
-    inner class
-    `Check if a field is` {
+    @Nested inner class
+    `check if a field is` {
 
         @Test
-        fun `repeated if list`() {
+        fun list() {
             val field = Field.newBuilder()
-                .setList(Empty.getDefaultInstance())
+                .setFieldType(fieldType {
+                    list = PrimitiveType.TYPE_STRING.toType()
+                })
                 .buildPartial()
 
-            field.isRepeated shouldBe true
+            field.isList shouldBe true
         }
 
         @Test
-        fun `repeated if map`() {
+        fun map() {
             val field = Field.newBuilder()
-                .setMap(
-                    Field.OfMap.newBuilder()
-                        .setKeyType(PrimitiveType.TYPE_STRING)
-                        .build())
+                .setFieldType(fieldType {
+                    map = mapEntryType {
+                        keyType = PrimitiveType.TYPE_STRING
+                        valueType = PrimitiveType.TYPE_STRING.toType()
+                    }
+                })
                 .buildPartial()
 
-            field.isRepeated shouldBe true
+            field.isMap shouldBe true
         }
 
+        @Suppress("DEPRECATION") // testing deprecated API.
         @Test
         fun `not repeated`() {
             val field = Field.newBuilder()
-                .setSingle(Empty.getDefaultInstance())
+                .setFieldType(fieldType { primitive = PrimitiveType.TYPE_STRING })
                 .buildPartial()
 
             field.isRepeated shouldBe false

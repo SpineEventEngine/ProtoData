@@ -50,6 +50,8 @@ import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.FieldKt
 import io.spine.protodata.ast.FieldKt.ofMap
 import io.spine.protodata.ast.FieldName
+import io.spine.protodata.ast.FieldType
+import io.spine.protodata.ast.MapEntryType
 import io.spine.protodata.ast.PrimitiveType
 import io.spine.protodata.ast.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ast.PrimitiveType.TYPE_BYTES
@@ -67,12 +69,16 @@ import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
 import io.spine.protodata.ast.PrimitiveType.TYPE_UINT32
 import io.spine.protodata.ast.PrimitiveType.TYPE_UINT64
 import io.spine.protodata.ast.Type
+import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
+import io.spine.protodata.ast.fieldType
+import io.spine.protodata.ast.mapEntryType
 import io.spine.protodata.ast.toList
 import io.spine.protodata.ast.toType
 import io.spine.protodata.ast.type
+import kotlin.reflect.KClass
 
 /**
  * Obtains the name of this field as a [FieldName].
@@ -87,7 +93,7 @@ public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
 public fun FieldDescriptor.toField(): Field {
     val field = buildField(this)
     return field.copy {
-        // There are several similar expressions in this file like
+        // There are several similar expressions in this file, like
         // the `option.addAll()` call below. Sadly, these duplicates
         // could not be refactored into a common function because
         // they have no common compile-time type.
@@ -110,13 +116,22 @@ public fun buildField(desc: FieldDescriptor): Field =
         doc = desc.fileDoc.forField(desc)
         number = desc.number
         declaringType = declaredIn
+
+        // Support for older, deprecated API.
         copyTypeAndCardinality(desc)
+
+        // New `FieldType` and `group_name` API.
+        fieldType = desc.toFieldType()
+        desc.realContainingOneof?.let {
+            enclosingOneof = it.name()
+        }
     }
 
 /**
  * Converts the field type and cardinality (`map`/`list`/`oneof_name`/`single`) from
  * the given descriptor to the receiver DSL-style builder.
  */
+@Suppress("DEPRECATION") // supporting older API.
 private fun FieldKt.Dsl.copyTypeAndCardinality(
     desc: FieldDescriptor
 ) {
@@ -141,7 +156,7 @@ public fun FieldDescriptor.type(): Type {
     return when (type) {
         ENUM -> enum(this)
         MESSAGE -> message(this)
-        GROUP -> error("Cannot process the field `$fullName` of type `$type`.")
+        GROUP -> cannotConvertTo(Type::class)
         else -> primitiveType().toType()
     }
 }
@@ -154,35 +169,48 @@ private fun message(field: FieldDescriptor): Type = type {
 }
 
 /**
- * Converts this field type into an instance of [PrimitiveType], or
- * throws an exception if this type is not primitive.
+ * Maps [FieldDescriptor.Type] to [PrimitiveType].
  */
-@Suppress("ComplexMethod") // ... not really, performing plain conversion.
-public fun FieldDescriptor.Type.toPrimitiveType(): PrimitiveType =
-    when (this) {
-        BOOL -> TYPE_BOOL
-        BYTES -> TYPE_BYTES
-        DOUBLE -> TYPE_DOUBLE
-        FIXED32 -> TYPE_FIXED32
-        FIXED64 -> TYPE_FIXED64
-        FLOAT -> TYPE_FLOAT
-        INT32 -> TYPE_INT32
-        INT64 -> TYPE_INT64
-        SFIXED32 -> TYPE_SFIXED32
-        SFIXED64 -> TYPE_SFIXED64
-        SINT32 -> TYPE_SINT32
-        SINT64 -> TYPE_SINT64
-        STRING -> TYPE_STRING
-        UINT32 -> TYPE_UINT32
-        UINT64 -> TYPE_UINT64
-        else -> error("`$this` is not a primitive type.")
-    }
+private val primitiveTypeMap = buildMap {
+    put(BOOL, TYPE_BOOL)
+    put(BYTES, TYPE_BYTES)
+    put(DOUBLE, TYPE_DOUBLE)
+    put(FIXED32, TYPE_FIXED32)
+    put(FIXED64, TYPE_FIXED64)
+    put(FLOAT, TYPE_FLOAT)
+    put(INT32, TYPE_INT32)
+    put(INT64, TYPE_INT64)
+    put(SFIXED32, TYPE_SFIXED32)
+    put(SFIXED64, TYPE_SFIXED64)
+    put(SINT32, TYPE_SINT32)
+    put(SINT64, TYPE_SINT64)
+    put(STRING, TYPE_STRING)
+    put(UINT32, TYPE_UINT32)
+    put(UINT64, TYPE_UINT64)
+}
+
+/**
+ * Converts this field type into an instance of [PrimitiveType], or
+ * `null` if the type is not primitive
+ */
+public fun FieldDescriptor.Type.toPrimitiveType(): PrimitiveType? = primitiveTypeMap[this]
 
 /**
  * Obtains the type of this field as a [PrimitiveType] or throws an exception
  * if the type is not primitive.
  */
-public fun FieldDescriptor.primitiveType(): PrimitiveType = type.toPrimitiveType()
+public fun FieldDescriptor.primitiveType(): PrimitiveType {
+    val result = type.toPrimitiveType()
+    check(result != null) {
+        "Unable to convert the type `$this` to `PrimitiveType`."
+    }
+    return result
+}
+
+private fun FieldDescriptor.cannotConvertTo(destination: KClass<*>): Nothing = error(
+    "Cannot convert the field descriptor `$fullName`" +
+            " (type: `$type`) to `${destination.simpleName}`."
+)
 
 /**
  * Obtains the type of the given [field] as an enum type.
@@ -195,3 +223,51 @@ private fun enum(field: FieldDescriptor): Type = type {
  * Transforms this `Iterable` of field descriptors into an `Iterable` with [Field] instances.
  */
 internal fun Iterable<FieldDescriptor>.mapped(): Iterable<Field> = map { it.toField() }
+
+public fun FieldDescriptor.toFieldType(): FieldType = fieldType {
+    when {
+        isMessage -> message = toTypeName()
+        isEnum -> enumeration = toTypeName()
+        isPrimitive -> primitive = type.toPrimitiveType()!!
+        isMap -> map = toMapEntryType()
+        /* The order of checking is important here. Maps are also `isRepeated`.
+           Checking after `isMap` above ensures we get the "pure" list type. */
+        isRepeated /*&& !isMap*/ -> list = type()
+        else -> cannotConvertTo(FieldType::class)
+    }
+}
+
+/** Tells if this field is of a singular message type. */
+private val FieldDescriptor.isMessage: Boolean
+    get() = (type == MESSAGE) && !isRepeated
+
+/** Tells if this field is of a singular enum type. */
+private val FieldDescriptor.isEnum: Boolean
+    get() = (type == ENUM) && !isRepeated
+
+/** Tells if this field has a primitive type. */
+private val FieldDescriptor.isPrimitive: Boolean
+    get() = (type.toPrimitiveType() != null) && !isRepeated
+
+/** Tells if this field is a map. */
+private val FieldDescriptor.isMap: Boolean
+    get() = isMapField
+
+/** Obtains a type name for a singular message or enum field. */
+private fun FieldDescriptor.toTypeName(): TypeName {
+    return when {
+        isMessage -> messageType.name()
+        isEnum -> enumType.name()
+        else -> cannotConvertTo(TypeName::class)
+    }
+}
+
+/** Obtains an entry type for a map field. */
+private fun FieldDescriptor.toMapEntryType(): MapEntryType {
+    check(isMap) { "The field `$fullName` is not a map." }
+    val (keyField, valueField) = messageType.fields
+    return mapEntryType {
+        keyType = keyField.primitiveType()
+        valueType = valueField.type()
+    }
+}

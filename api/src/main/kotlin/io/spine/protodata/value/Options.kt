@@ -81,7 +81,7 @@ private class OptionValue(
             value.matches(DOUBLE) -> value { doubleValue = value.toDouble() }
             value.matches(FieldPathConstants.REGEX) -> value {
                 reference = reference {
-                    type = field.type
+                    fieldType = field.fieldType
                     target = checkFieldReference(FieldPath(value))
                 }
             }
@@ -94,7 +94,7 @@ private class OptionValue(
     }
 
     private val messageTypeName: String by lazy {
-        field.type.message.qualifiedName
+        field.fieldType.message.qualifiedName
     }
 
     private fun optionPath() =
@@ -111,12 +111,14 @@ private class OptionValue(
         val typeName = field.declaringType
         val message = typeSystem.findMessage(typeName)!!.first
         val referencedField = typeSystem.resolve(path, message)
-        check(referencedField.type == field.type) {
+        val sourceFieldType = field.fieldType
+        val referencedFieldType = referencedField.fieldType
+        check(referencedFieldType == sourceFieldType) {
             val referencedFieldPath = path.joined
             "The field `$referencedFieldPath` referenced in the `($optionName).value` option" +
                     " of the field `$sourceFieldName` of the type `$messageTypeName`" +
-                    " is of type `${referencedField.type.name}`" +
-                    " but the field `$sourceFieldName` is of type `${field.type.name}`." +
+                    " is of type `${referencedFieldType.name}`" +
+                    " but the field `$sourceFieldName` is of type `${sourceFieldType.name}`." +
                     " Please correct the field reference or change the type of `$sourceFieldName`."
         }
         return path

@@ -34,10 +34,9 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.ast.Field.CardinalityCase.LIST
-import io.spine.protodata.ast.Field.CardinalityCase.MAP
-import io.spine.protodata.ast.Field.CardinalityCase.ONEOF_NAME
-import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
+import io.spine.protodata.ast.Cardinality.LIST
+import io.spine.protodata.ast.Cardinality.MAP
+import io.spine.protodata.ast.Cardinality.SINGLE
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.type.TypeSystem
 import io.spine.test.type.Article
@@ -175,7 +174,7 @@ internal class MessageTypeDependenciesSpec {
         fun `combination of fields`() {
             val magazine = messageTypeOf<Magazine>()
             val combination =
-                MessageTypeDependencies(magazine, setOf(SINGLE, ONEOF_NAME), typeSystem)
+                MessageTypeDependencies(magazine, setOf(SINGLE), typeSystem)
                     .asSet().map { it.qualifiedName }
 
             val expected = setOf(

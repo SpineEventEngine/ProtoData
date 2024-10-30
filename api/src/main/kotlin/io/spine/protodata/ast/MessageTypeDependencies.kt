@@ -26,7 +26,6 @@
 
 package io.spine.protodata.ast
 
-import io.spine.protodata.ast.Field.CardinalityCase
 import io.spine.protodata.type.TypeSystem
 
 /**
@@ -44,7 +43,7 @@ import io.spine.protodata.type.TypeSystem
  */
 public class MessageTypeDependencies(
     private val messageType: MessageType,
-    private val cardinalities: Set<CardinalityCase>,
+    private val cardinalities: Set<Cardinality>,
     private val typeSystem: TypeSystem
 ) {
 
@@ -62,7 +61,7 @@ public class MessageTypeDependencies(
      */
     public constructor(
         messageType: MessageType,
-        cardinality: CardinalityCase,
+        cardinality: Cardinality,
         typeSystem: TypeSystem
     ) : this(messageType, setOf(cardinality), typeSystem)
 
@@ -84,14 +83,13 @@ public class MessageTypeDependencies(
     private fun MessageType.matchingFieldTypes(): Iterable<MessageType> =
         fieldList.asSequence()
             .filter { it.matchesCardinality() }
-            .map { it.type }
-            .filter { it.isMessage }
-            .map { it.toMessageType(typeSystem) }
+            .map { it.fieldType }
+            .mapNotNull { it.toMessageType(typeSystem) }
             .toSet()
 
     private fun Field.matchesCardinality(): Boolean =
         if (cardinalities.isNotEmpty()) {
-            cardinalities.contains(cardinalityCase)
+            cardinalities.contains(fieldType.cardinality)
         } else {
             true
         }
@@ -115,3 +113,19 @@ public class MessageTypeDependencies(
     }
 }
 
+/**
+ * Converts this field type into [MessageType] or `null`
+ * if this field type is not a message, or if it does not refer to message being a list or a map.
+ */
+private fun FieldType.toMessageType(typeSystem: TypeSystem): MessageType? = when {
+    isMessage -> message.toMessageType(typeSystem)
+    isList -> list.maybeMessageType(typeSystem)
+    isMap -> map.valueType.maybeMessageType(typeSystem)
+    else -> null
+}
+
+/**
+ * Optionally converts this type into [MessageType] if this type is a message.
+ */
+private fun Type.maybeMessageType(typeSystem: TypeSystem): MessageType? =
+    if (isMessage) toMessageType(typeSystem) else null
