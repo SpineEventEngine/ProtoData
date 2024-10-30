@@ -182,7 +182,7 @@ message Reference {
     //
     // DEPRECATED: Please use `field_type` instead.
     //
-    protodata.Type type = 1 [(required) = true, deprecated = true];
+    protodata.Type type = 1 [deprecated = true];
 
     // The type of the referenced value.
     //

@@ -296,7 +296,7 @@ message Field {
     //  * `map` -- the field holds a map of key-value pairs, and the type of keys is defined by
     //             `map.key_type`, and this field contains the type of values.
     //
-    Type type = 2 [(required) = true, deprecated = true];
+    Type type = 2 [deprecated = true];
 
     // The type in which the field is declared.
     TypeName declaring_type = 3 [(required) = true];
