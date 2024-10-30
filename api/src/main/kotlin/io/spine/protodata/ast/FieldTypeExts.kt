@@ -52,11 +52,13 @@ public val FieldType.name: String
  * @throws IllegalStateException If this is field type is a list or a map.
  */
 public fun FieldType.toType(): Type = type {
+    val self = this@toType
+    val dsl = this@type
     when {
-        isMessage -> this@type.message = this@toType.message
-        isEnum -> this@type.enumeration = this@toType.enumeration
-        isPrimitive -> this@type.primitive = this@toType.primitive
-        else -> error("Cannot convert $this to `Type`.")
+        isMessage -> dsl.message = self.message
+        isEnum -> dsl.enumeration = self.enumeration
+        isPrimitive -> dsl.primitive = self.primitive
+        else -> error("Cannot convert $self to `Type`.")
     }
 }
 
