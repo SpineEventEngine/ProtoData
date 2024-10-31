@@ -250,12 +250,10 @@ private val FieldDescriptor.isMap: Boolean
     get() = isMapField
 
 /** Obtains a type name for a singular message or enum field. */
-private fun FieldDescriptor.toTypeName(): TypeName {
-    return when {
-        isMessage -> messageType.name()
-        isEnum -> enumType.name()
-        else -> cannotConvertTo(TypeName::class)
-    }
+private fun FieldDescriptor.toTypeName(): TypeName = when {
+    isMessage -> messageType.name()
+    isEnum -> enumType.name()
+    else -> cannotConvertTo(TypeName::class)
 }
 
 /** Obtains an entry type for a map field. */
