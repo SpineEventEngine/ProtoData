@@ -27,6 +27,7 @@
 package io.spine.protodata.ast
 
 import io.kotest.matchers.shouldBe
+import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -44,7 +45,7 @@ internal class FieldExtsSpec {
         fun list() {
             val field = Field.newBuilder()
                 .setType(fieldType {
-                    list = PrimitiveType.TYPE_STRING.toType()
+                    list = TYPE_STRING.toType()
                 })
                 .buildPartial()
 
@@ -56,8 +57,8 @@ internal class FieldExtsSpec {
             val field = Field.newBuilder()
                 .setType(fieldType {
                     map = mapEntryType {
-                        keyType = PrimitiveType.TYPE_STRING
-                        valueType = PrimitiveType.TYPE_STRING.toType()
+                        keyType = TYPE_STRING
+                        valueType = TYPE_STRING.toType()
                     }
                 })
                 .buildPartial()
@@ -69,7 +70,7 @@ internal class FieldExtsSpec {
         @Test
         fun `not repeated`() {
             val field = Field.newBuilder()
-                .setType(fieldType { primitive = PrimitiveType.TYPE_STRING })
+                .setType(fieldType { primitive = TYPE_STRING })
                 .buildPartial()
 
             field.isRepeated shouldBe false
