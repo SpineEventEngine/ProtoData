@@ -88,9 +88,9 @@ private fun TypeSystem.listOf(element: Type): String {
 }
 
 /**
- * Obtains a reference the type of this field in the context of the given [entityState] class.
+ * Obtains a reference the type of this field in the context of the given [message] class.
  *
- * @param entityState The name of the entity state class in which the field is going to be accessed.
+ * @param message The name of the class in which the field is going to be accessed.
  * @param typeSystem The type system to resolve the Java type of the field.
  * @return a simple class name if:
  *
@@ -100,7 +100,7 @@ private fun TypeSystem.listOf(element: Type): String {
  * Otherwise, a fully qualified name is returned.
  */
 @Suppress("ReturnCount")
-public fun Field.typeReference(entityState: ClassName, typeSystem: TypeSystem): String {
+public fun Field.typeReference(message: ClassName, typeSystem: TypeSystem): String {
     val qualifiedName = javaType(typeSystem)
     val type = type.toType()
     if (isMap || isList || type.isPrimitive) {
@@ -108,12 +108,12 @@ public fun Field.typeReference(entityState: ClassName, typeSystem: TypeSystem): 
     }
     // Let's see if we can refer to the field type using its simple name.
     val simpleName = type.simpleName
-    val statePackage = entityState.packageName
+    val statePackage = message.packageName
     val samePackage = qualifiedName == "$statePackage.$simpleName"
     if (samePackage) {
         return simpleName
     }
-    val nested = qualifiedName == "${entityState.canonical}.$simpleName"
+    val nested = qualifiedName == "${message.canonical}.$simpleName"
     if (nested) {
         return simpleName
     }
