@@ -269,16 +269,16 @@ message FieldName {
 
 // A cardinality of values stored a field.
 enum Cardinality {
-    C_UNDEFINED = 0;
+    CARDINALITY_UNDEFINED = 0;
 
     // The field holds one value.
-    SINGLE = 1;
+    CARDINALITY_SINGLE = 1;
 
     // The field is declared as `repeated` and can hold several values.
-    LIST = 2;
+    CARDINALITY_LIST = 2;
 
     // The field is a `map` and can hold several key-value pairs.
-    MAP = 3;
+    CARDINALITY_MAP = 3;
 }
 
 // A Protobuf message field.
@@ -286,10 +286,10 @@ message Field {
 
     FieldName name = 1 [(required) = true];
 
-    // The type of data stored in the field.
+    // A type of data stored in the field.
     FieldType type = 2 [(required) = true];
 
-    // The type in which the field is declared.
+    // A type in which the field is declared.
     TypeName declaring_type = 3 [(required) = true];
 
     // The field number.

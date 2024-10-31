@@ -109,7 +109,7 @@ public class JavaValueConverter(
             reference.type.cardinality
         } else {
             // Otherwise, only message types fields are expected in the path until the last entry.
-            Cardinality.SINGLE
+            Cardinality.CARDINALITY_SINGLE
         }
         val start = path.removeFirst()
 
@@ -120,7 +120,7 @@ public class JavaValueConverter(
         path.forEachIndexed() { index, field ->
             // For all fields but last we can have only message type fields.
             call = if (index == path.size - 1) {
-                call.chain(getterOf(field, Cardinality.SINGLE))
+                call.chain(getterOf(field, Cardinality.CARDINALITY_SINGLE))
             } else {
                 // The last field in the path has the type (and
                 // the cardinality) of the "source" one.

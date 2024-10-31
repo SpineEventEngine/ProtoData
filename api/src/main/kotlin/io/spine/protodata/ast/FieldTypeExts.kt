@@ -100,8 +100,8 @@ public val FieldType.cardinality: Cardinality
     get() = when (kindCase) {
         MESSAGE,
         ENUMERATION,
-        PRIMITIVE -> Cardinality.SINGLE
-        LIST -> Cardinality.LIST
-        MAP -> Cardinality.MAP
+        PRIMITIVE -> Cardinality.CARDINALITY_SINGLE
+        LIST -> Cardinality.CARDINALITY_LIST
+        MAP -> Cardinality.CARDINALITY_MAP
         else -> error("Unable to convert `$kindCase` to `Cardinality`.")
     }

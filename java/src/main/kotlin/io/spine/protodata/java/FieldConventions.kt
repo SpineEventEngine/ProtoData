@@ -43,8 +43,8 @@ public abstract class FieldConventions(
 ) {
     protected val getterName: String
         get() = when (kind) {
-            Cardinality.LIST -> getListName
-            Cardinality.MAP -> getMapName
+            Cardinality.CARDINALITY_LIST -> getListName
+            Cardinality.CARDINALITY_MAP -> getMapName
             else -> prefixed("get")
         }
 
@@ -56,8 +56,8 @@ public abstract class FieldConventions(
 
     protected val setterName: String
         get() = when (kind) {
-            Cardinality.LIST -> addAllName
-            Cardinality.MAP -> putAllName
+            Cardinality.CARDINALITY_LIST -> addAllName
+            Cardinality.CARDINALITY_MAP -> putAllName
             else -> prefixed("set")
         }
 

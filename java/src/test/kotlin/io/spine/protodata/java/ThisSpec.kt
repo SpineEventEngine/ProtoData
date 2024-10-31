@@ -28,7 +28,6 @@ package io.spine.protodata.java
 
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.Cardinality
-import io.spine.protodata.ast.Field
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -38,7 +37,7 @@ class ThisSpec {
     @Test
     fun `convert to a 'MessageReference'`() {
         val msg = This.asMessage
-        val field = msg.field("foo", Cardinality.SINGLE)
+        val field = msg.field("foo", Cardinality.CARDINALITY_SINGLE)
         field.getter.toCode() shouldBe "this.getFoo()"
     }
 }

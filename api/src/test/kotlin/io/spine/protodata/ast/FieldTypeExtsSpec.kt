@@ -27,9 +27,9 @@
 package io.spine.protodata.ast
 
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.ast.Cardinality.LIST
-import io.spine.protodata.ast.Cardinality.MAP
-import io.spine.protodata.ast.Cardinality.SINGLE
+import io.spine.protodata.ast.Cardinality.CARDINALITY_LIST
+import io.spine.protodata.ast.Cardinality.CARDINALITY_MAP
+import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.protobuf.toMessageType
 import io.spine.test.type.OopFun
 import org.junit.jupiter.api.DisplayName
@@ -46,17 +46,17 @@ internal class FieldTypeExtsSpec {
 
         @Test
         fun `map fields`() {
-            cardinalityOf("gorillas") shouldBe MAP
+            cardinalityOf("gorillas") shouldBe CARDINALITY_MAP
         }
 
         @Test
         fun `list fields`() {
-            cardinalityOf("tree") shouldBe LIST
+            cardinalityOf("tree") shouldBe CARDINALITY_LIST
         }
 
         @Test
         fun `single fields`() {
-            cardinalityOf("jungle") shouldBe SINGLE
+            cardinalityOf("jungle") shouldBe CARDINALITY_SINGLE
         }
 
         private fun cardinalityOf(fieldName: String): Cardinality =

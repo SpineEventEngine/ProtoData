@@ -194,7 +194,7 @@ internal constructor(
     internal constructor(
         message: Expression,
         name: String,
-        kind: Cardinality = Cardinality.SINGLE
+        kind: Cardinality = Cardinality.CARDINALITY_SINGLE
     ) : this(message, fieldName { value = name }, kind)
 
     /**
