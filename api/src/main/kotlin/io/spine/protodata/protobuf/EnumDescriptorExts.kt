@@ -38,7 +38,6 @@ import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.enumType
 import io.spine.protodata.ast.toList
-import io.spine.protodata.ast.toType
 import io.spine.protodata.ast.type
 
 /**
@@ -49,7 +48,7 @@ public fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containin
 /**
  * Converts this enum descriptor into [EnumType] instance.
  *
- * @see toType
+ * @see EnumDescriptor.toType
  */
 public fun EnumDescriptor.toEnumType(): EnumType =
     enumType {
@@ -68,7 +67,7 @@ public fun EnumDescriptor.toEnumType(): EnumType =
 /**
  * Converts this enum descriptor into an instance of [Type].
  *
- * @see toEnumType
+ * @see EnumDescriptor.toEnumType
  */
 public fun EnumDescriptor.toType(): Type = type {
     enumeration = name()
