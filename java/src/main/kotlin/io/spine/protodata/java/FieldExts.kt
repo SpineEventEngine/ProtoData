@@ -94,8 +94,8 @@ private fun TypeSystem.listOf(element: Type): String {
  * @param typeSystem The type system to resolve the Java type of the field.
  * @return a simple class name if:
  *
- *  1. the field type is either a message or an enum, and
- *  2. the type belongs to the same package as the entity state class.
+ *  1. The field type is either a message or an enum, and
+ *  2. The type belongs to the same package as the message class.
  *
  * Otherwise, a fully qualified name is returned.
  */
