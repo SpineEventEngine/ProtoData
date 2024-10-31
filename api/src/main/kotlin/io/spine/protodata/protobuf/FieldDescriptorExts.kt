@@ -172,6 +172,7 @@ private fun message(field: FieldDescriptor): Type = type {
  * Converts this field type into an instance of [PrimitiveType], or
  * `null` if the type is not primitive
  */
+@Suppress("CyclomaticComplexMethod")
 public fun FieldDescriptor.Type.toPrimitiveType(): PrimitiveType? = when (this) {
     BOOL -> TYPE_BOOL
     BYTES -> TYPE_BYTES
