@@ -27,6 +27,8 @@
 package io.spine.protodata.java
 
 import io.spine.protodata.ast.Cardinality
+import io.spine.protodata.ast.Cardinality.CARDINALITY_LIST
+import io.spine.protodata.ast.Cardinality.CARDINALITY_MAP
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.FieldName
 import io.spine.protodata.ast.camelCase
@@ -43,8 +45,8 @@ public abstract class FieldConventions(
 ) {
     protected val getterName: String
         get() = when (kind) {
-            Cardinality.CARDINALITY_LIST -> getListName
-            Cardinality.CARDINALITY_MAP -> getMapName
+            CARDINALITY_LIST -> getListName
+            CARDINALITY_MAP -> getMapName
             else -> prefixed("get")
         }
 
@@ -56,8 +58,8 @@ public abstract class FieldConventions(
 
     protected val setterName: String
         get() = when (kind) {
-            Cardinality.CARDINALITY_LIST -> addAllName
-            Cardinality.CARDINALITY_MAP -> putAllName
+            CARDINALITY_LIST -> addAllName
+            CARDINALITY_MAP -> putAllName
             else -> prefixed("set")
         }
 

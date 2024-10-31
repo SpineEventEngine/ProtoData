@@ -26,6 +26,9 @@
 
 package io.spine.protodata.ast
 
+import io.spine.protodata.ast.Cardinality.CARDINALITY_LIST
+import io.spine.protodata.ast.Cardinality.CARDINALITY_MAP
+import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.ast.FieldType.KindCase.ENUMERATION
 import io.spine.protodata.ast.FieldType.KindCase.LIST
 import io.spine.protodata.ast.FieldType.KindCase.MAP
@@ -100,8 +103,8 @@ public val FieldType.cardinality: Cardinality
     get() = when (kindCase) {
         MESSAGE,
         ENUMERATION,
-        PRIMITIVE -> Cardinality.CARDINALITY_SINGLE
-        LIST -> Cardinality.CARDINALITY_LIST
-        MAP -> Cardinality.CARDINALITY_MAP
+        PRIMITIVE -> CARDINALITY_SINGLE
+        LIST -> CARDINALITY_LIST
+        MAP -> CARDINALITY_MAP
         else -> error("Unable to convert `$kindCase` to `Cardinality`.")
     }

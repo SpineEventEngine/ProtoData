@@ -27,7 +27,7 @@
 package io.spine.protodata.java
 
 import com.google.protobuf.ByteString
-import io.spine.protodata.ast.Cardinality
+import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.Type.KindCase.ENUMERATION
 import io.spine.protodata.ast.Type.KindCase.MESSAGE
@@ -109,7 +109,7 @@ public class JavaValueConverter(
             reference.type.cardinality
         } else {
             // Otherwise, only message types fields are expected in the path until the last entry.
-            Cardinality.CARDINALITY_SINGLE
+            CARDINALITY_SINGLE
         }
         val start = path.removeFirst()
 
@@ -120,7 +120,7 @@ public class JavaValueConverter(
         path.forEachIndexed() { index, field ->
             // For all fields but last we can have only message type fields.
             call = if (index == path.size - 1) {
-                call.chain(getterOf(field, Cardinality.CARDINALITY_SINGLE))
+                call.chain(getterOf(field, CARDINALITY_SINGLE))
             } else {
                 // The last field in the path has the type (and
                 // the cardinality) of the "source" one.

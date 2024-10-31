@@ -33,6 +33,7 @@ import com.google.common.collect.ImmutableMap
 import com.google.protobuf.ByteString
 import io.spine.protobuf.TypeConverter
 import io.spine.protodata.ast.Cardinality
+import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.FieldName
 import io.spine.protodata.ast.cardinality
@@ -194,7 +195,7 @@ internal constructor(
     internal constructor(
         message: Expression,
         name: String,
-        kind: Cardinality = Cardinality.CARDINALITY_SINGLE
+        kind: Cardinality = CARDINALITY_SINGLE
     ) : this(message, fieldName { value = name }, kind)
 
     /**
