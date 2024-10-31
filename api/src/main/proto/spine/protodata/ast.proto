@@ -267,17 +267,17 @@ message FieldName {
     string value = 1 [(required) = true];
 }
 
-// The cardinality of a field.
+// The cardinality of values stored a field.
 enum Cardinality {
     C_UNDEFINED = 0;
 
     // The field holds one value.
     SINGLE = 1;
 
-    // The field is `repeated`.
+    // The field is declared as `repeated` and can hold several values.
     LIST = 2;
 
-    // The field is a `map`.
+    // The field is a `map` and can hold several key-value pairs.
     MAP = 3;
 }
 
