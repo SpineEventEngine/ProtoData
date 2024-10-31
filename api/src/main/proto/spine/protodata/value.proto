@@ -184,7 +184,7 @@ message Reference {
     // The referenced field must have the same type as the field where the option is used.
     // If this is not the case, a compilation error will occur.
     //
-    protodata.Type type = 1 [(required) = true];
+    FieldType type = 1 [(required) = true];
 
     // The path to the referenced field.
     base.FieldPath target = 2 [(required) = true];

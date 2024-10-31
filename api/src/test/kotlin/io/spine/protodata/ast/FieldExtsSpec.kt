@@ -26,8 +26,8 @@
 
 package io.spine.protodata.ast
 
-import com.google.protobuf.Empty
 import io.kotest.matchers.shouldBe
+import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -38,35 +38,39 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 @DisplayName("`Field` extensions should")
 internal class FieldExtsSpec {
 
-    @Nested
-    inner class
-    `Check if a field is` {
+    @Nested inner class
+    `check if a field is` {
 
         @Test
-        fun `repeated if list`() {
+        fun list() {
             val field = Field.newBuilder()
-                .setList(Empty.getDefaultInstance())
+                .setType(fieldType {
+                    list = TYPE_STRING.toType()
+                })
                 .buildPartial()
 
-            field.isRepeated shouldBe true
+            field.isList shouldBe true
         }
 
         @Test
-        fun `repeated if map`() {
+        fun map() {
             val field = Field.newBuilder()
-                .setMap(
-                    Field.OfMap.newBuilder()
-                        .setKeyType(PrimitiveType.TYPE_STRING)
-                        .build())
+                .setType(fieldType {
+                    map = mapEntryType {
+                        keyType = TYPE_STRING
+                        valueType = TYPE_STRING.toType()
+                    }
+                })
                 .buildPartial()
 
-            field.isRepeated shouldBe true
+            field.isMap shouldBe true
         }
 
+        @Suppress("DEPRECATION") // testing deprecated API.
         @Test
         fun `not repeated`() {
             val field = Field.newBuilder()
-                .setSingle(Empty.getDefaultInstance())
+                .setType(fieldType { primitive = TYPE_STRING })
                 .buildPartial()
 
             field.isRepeated shouldBe false

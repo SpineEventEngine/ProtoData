@@ -227,6 +227,39 @@ message Type {
     }
 }
 
+// A type of a message field.
+message FieldType {
+
+    oneof kind {
+        option (is_required) = true;
+
+        // The field holds a message.
+        TypeName message = 1;
+
+        // The field holds an enumeration item.
+        TypeName enumeration = 2;
+
+        // The field is of the primitive type.
+        PrimitiveType primitive = 3;
+
+        // The field is declared as `repeated` and items are of the given type.
+        Type list = 4;
+
+        // The field is a `map` with the entries of the given type.
+        MapEntryType map = 5;
+    }
+}
+
+// A type of entries in a map.
+message MapEntryType {
+
+    // A type of the key.
+    PrimitiveType key_type = 1 [(required) = true];
+
+    // A type of the value.
+    Type value_type = 2 [(required) = true];
+}
+
 // A name of a field in a message.
 message FieldName {
 
@@ -234,22 +267,29 @@ message FieldName {
     string value = 1 [(required) = true];
 }
 
+// A cardinality of values stored a field.
+enum Cardinality {
+    CARDINALITY_UNDEFINED = 0;
+
+    // The field holds one value.
+    CARDINALITY_SINGLE = 1;
+
+    // The field is declared as `repeated` and can hold several values.
+    CARDINALITY_LIST = 2;
+
+    // The field is a `map` and can hold several key-value pairs.
+    CARDINALITY_MAP = 3;
+}
+
 // A Protobuf message field.
 message Field {
 
     FieldName name = 1 [(required) = true];
 
-    // The type of data stored in the field.
-    //
-    // Semantic of which depends on the field's `cardinality`:
-    //  * `single` -- the field holds a single value of the this type.
-    //  * `list` -- the field holds a list of values of the given type.
-    //  * `map` -- the field holds a map of key-value pairs, and the type of keys is defined by
-    //             `map.key_type`, and this field contains the type of values.
-    //
-    Type type = 2 [(required) = true];
+    // A type of data stored in the field.
+    FieldType type = 2 [(required) = true];
 
-    // The type in which the field is declared.
+    // A type in which the field is declared.
     TypeName declaring_type = 3 [(required) = true];
 
     // The field number.
@@ -282,51 +322,18 @@ message Field {
     //
     uint32 order_of_declaration = 5;
 
-    oneof cardinality {
-        option (is_required) = true;
-
-        // The flag telling if the field holds just a single value.
-        //
-        // See also: `list`, `map`.
-        //
-        google.protobuf.Empty single = 6;
-
-        // The flag telling if the field is a list.
-        //
-        // A list is any `repeated` field which is not a `map`.
-        //
-        google.protobuf.Empty list = 7;
-
-        // The details of this map field type.
-        //
-        // Only set if this field is a map.
-        //
-        OfMap map = 8;
-
-        // If this field is declared in a field group, the name of the group.
-        //
-        // Otherwise, must be empty.
-        //
-        // `repeated` and `map` fields cannot be a part of a `oneof`.
-        //
-        OneofName oneof_name = 9;
-    }
+    // The name of the `oneof` (if any) to which this field belongs.
+    //
+    // `repeated` and `map` fields cannot be a part of a `oneof`.
+    // Therefore, this field can be populated only if the value in `field_type` allows it.
+    //
+    OneofName enclosing_oneof = 6;
 
     // Field-level options.
-    repeated Option option = 10 [(distinct) = true];
+    repeated Option option = 7 [(distinct) = true];
 
     // Documentation of this field.
-    Doc doc = 11;
-
-    // Additional type details for map fields.
-    message OfMap {
-
-        // The type of the key in the map.
-        //
-        // The type of the value is reflected in `Field.type`.
-        //
-        PrimitiveType key_type = 1 [(required) = true];
-    }
+    Doc doc = 8;
 }
 
 // Name of a group of fields.

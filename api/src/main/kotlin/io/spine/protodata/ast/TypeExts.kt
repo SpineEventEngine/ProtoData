@@ -122,11 +122,23 @@ public val Type.isAny: Boolean
  */
 public fun Type.toMessageType(typeSystem: TypeSystem): MessageType {
     check(isMessage)
-    val found = typeSystem.findMessage(message)?.first
-    check(found != null) {
-        "Unable to find `${MessageType::class.simpleName}` for the type `${shortDebugString()}`."
+    return message.toMessageType(typeSystem)
+}
+
+/**
+ * Converts this type into [FieldType] instance.
+ */
+public fun Type.toFieldType(): FieldType = fieldType {
+    val self = this@toFieldType
+    val dsl = this@fieldType
+    when {
+        isMessage -> dsl.message = self.message
+        isEnum -> dsl.enumeration = self.enumeration
+        isPrimitive -> dsl.primitive = self.primitive
+        // This is a safety net for the unlikely extension of `Type`
+        // becoming wider than `FieldType`.
+        else -> error("Cannot convert `$self` to `${FieldType::class.simpleName}`.")
     }
-    return found
 }
 
 /**

@@ -26,12 +26,20 @@
 
 package io.spine.protodata.java
 
+import com.google.protobuf.ByteString
+import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.Type.KindCase.ENUMERATION
 import io.spine.protodata.ast.Type.KindCase.MESSAGE
 import io.spine.protodata.ast.Type.KindCase.PRIMITIVE
+import io.spine.protodata.ast.cardinality
+import io.spine.protodata.java.FieldMethods.Companion.getterOf
 import io.spine.protodata.type.ValueConverter
-import io.spine.protodata.value.Value
+import io.spine.protodata.value.EnumValue
+import io.spine.protodata.value.ListValue
+import io.spine.protodata.value.MapValue
+import io.spine.protodata.value.MessageValue
+import io.spine.protodata.value.Reference
 import io.spine.tools.code.Java
 
 /**
@@ -42,57 +50,84 @@ public class JavaValueConverter(
     private val convention: MessageOrEnumConvention
 ) : ValueConverter<Java, Expression>() {
 
-    override fun toNull(type: Type): Expression = Null
+    override fun nullToCode(type: Type): Null = Null
 
-    override fun toBool(value: Value): Expression = Literal(value.boolValue)
+    override fun toCode(value: Boolean): Literal = Literal(value)
 
-    override fun toDouble(value: Value): Expression = Literal(value.doubleValue)
+    override fun toCode(value: Double): Literal = Literal(value)
 
-    override fun toInt(value: Value): Expression = Literal(value.intValue)
+    override fun toCode(value: Long): Literal = Literal(value)
 
-    override fun toString(value: Value): Expression = LiteralString(value.stringValue)
+    override fun toCode(value: String): LiteralString = LiteralString(value)
 
-    override fun toBytes(value: Value): Expression = LiteralBytes(value.bytesValue)
+    override fun toCode(value: ByteString): LiteralBytes = LiteralBytes(value)
 
-    override fun toMessage(value: Value): Expression {
-        val messageValue = value.messageValue
-        val type = messageValue.type
+    override fun toCode(value: MessageValue): MethodCall {
+        val type = value.type
         val className = convention.declarationFor(type).name as ClassName
-        return if (messageValue.fieldsMap.isEmpty()) {
+        return if (value.fieldsMap.isEmpty()) {
             className.getDefaultInstance()
         } else {
             var builder = className.newBuilder()
-            messageValue.fieldsMap.forEach { (k, v) ->
+            value.fieldsMap.forEach { (k, v) ->
                 builder = builder.chainSet(k, valueToCode(v))
             }
             builder.chainBuild()
         }
     }
 
-    override fun toEnum(value: Value): MethodCall {
-        val enumValue = value.enumValue
-        val type = enumValue.type
+    override fun toCode(value: EnumValue): MethodCall {
+        val type = value.type
         val enumClassName = convention.declarationFor(type).name as EnumName
-        return enumClassName.enumValue(enumValue.constNumber)
+        return enumClassName.enumValue(value.constNumber)
     }
 
-    override fun toList(value: Value): Expression {
-        val expressions = value.listValue
-            .valuesList
-            .map(this::valueToCode)
+    override fun toList(value: ListValue): MethodCall {
+        val expressions = value.valuesList.map(this::valueToCode)
         return listExpression(expressions)
     }
 
-    override fun toMap(value: Value): MethodCall {
-        val firstEntry = value.mapValue.valueList.firstOrNull()
+    override fun toCode(value: MapValue): MethodCall {
+        val valueList = value.valueList
+        val firstEntry = valueList.firstOrNull()
         val firstKey = firstEntry?.key
         val keyClass = firstKey?.type?.toClass() as ClassName?
         val firstValue = firstEntry?.value
         val valueClass = firstValue?.type?.toClass() as ClassName?
-        val valuesMap = value.mapValue.valueList.associate {
+        val valuesMap = valueList.associate {
             valueToCode(it.key) to valueToCode(it.value)
         }
         return mapExpression(valuesMap, keyClass, valueClass)
+    }
+
+    override fun toCode(reference: Reference): MethodCall {
+        val path = reference.target.fieldNameList.toMutableList()
+
+        // If the field reference contains only one element, take the cardinality of the field type.
+        // We will have only one getter call.
+        val startCardinality = if (path.size == 1) {
+            reference.type.cardinality
+        } else {
+            // Otherwise, only message types fields are expected in the path until the last entry.
+            CARDINALITY_SINGLE
+        }
+        val start = path.removeFirst()
+
+        // Assume we generate the call in a scope of a message method.
+        var call = MethodCall(InstanceScope, getterOf(start, startCardinality))
+
+        // The remaining path (if any) would be chained method calls.
+        path.forEachIndexed() { index, field ->
+            // For all fields but last we can have only message type fields.
+            call = if (index == path.size - 1) {
+                call.chain(getterOf(field, CARDINALITY_SINGLE))
+            } else {
+                // The last field in the path has the type (and
+                // the cardinality) of the "source" one.
+                call.chain(getterOf(field, reference.type.cardinality))
+            }
+        }
+        return call
     }
 
     private fun Type.toClass(): ClassOrEnumName = when (kindCase) {

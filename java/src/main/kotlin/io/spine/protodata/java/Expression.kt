@@ -32,10 +32,11 @@ import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import com.google.protobuf.ByteString
 import io.spine.protobuf.TypeConverter
+import io.spine.protodata.ast.Cardinality
+import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.ast.Field
-import io.spine.protodata.ast.Field.CardinalityCase
-import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
 import io.spine.protodata.ast.FieldName
+import io.spine.protodata.ast.cardinality
 import io.spine.protodata.ast.fieldName
 import io.spine.protodata.java.MethodCall.Companion.OF
 
@@ -85,6 +86,11 @@ public object This : Expression("this") {
     @get:JvmName("asMessage")
     public val asMessage: MessageReference = MessageReference(this.toCode())
 }
+
+/**
+ * The assumed reference to `this` when calling from a method of an instance.
+ */
+public object InstanceScope : Expression("")
 
 /**
  * A string literal.
@@ -162,12 +168,12 @@ public class MessageReference(label: String) : Expression(label) {
      * Obtains a [FieldAccess] to the [field] of this message.
      */
     public fun field(field: Field): FieldAccess =
-        FieldAccess(this, field.name, field.cardinalityCase)
+        FieldAccess(this, field.name, field.type.cardinality)
 
     /**
      * Obtains a [FieldAccess] to the field of this message with the given [fieldName].
      */
-    public fun field(fieldName: String, cardinality: CardinalityCase): FieldAccess =
+    public fun field(fieldName: String, cardinality: Cardinality): FieldAccess =
         FieldAccess(this, fieldName, cardinality)
 }
 
@@ -180,8 +186,8 @@ public class FieldAccess
 internal constructor(
     private val message: Expression,
     name: FieldName,
-    cardinality: CardinalityCase = SINGLE
-) : FieldConventions(name, cardinality) {
+    kind: Cardinality,
+) : FieldConventions(name, kind) {
 
     /**
      * Constructs field access for the given [message] and [name].
@@ -189,8 +195,8 @@ internal constructor(
     internal constructor(
         message: Expression,
         name: String,
-        cardinality: CardinalityCase = SINGLE
-    ) : this(message, fieldName { value = name }, cardinality)
+        kind: Cardinality = CARDINALITY_SINGLE
+    ) : this(message, fieldName { value = name }, kind)
 
     /**
      * A getter expression for the associated field.

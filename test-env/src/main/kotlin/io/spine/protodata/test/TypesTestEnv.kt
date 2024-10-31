@@ -30,7 +30,6 @@ import com.google.protobuf.BoolValue
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_MULTIPLE_FILES_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_OUTER_CLASSNAME_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.FileOptions.JAVA_PACKAGE_FIELD_NUMBER
-import com.google.protobuf.Empty
 import io.spine.protobuf.pack
 import io.spine.protodata.ast.EnumConstant
 import io.spine.protodata.ast.EnumType
@@ -47,6 +46,8 @@ import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.constantName
 import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.fieldName
+import io.spine.protodata.ast.fieldType
+import io.spine.protodata.ast.type
 import io.spine.protodata.ast.file
 import io.spine.protodata.ast.messageType
 import io.spine.protodata.ast.option
@@ -54,7 +55,6 @@ import io.spine.protodata.ast.protoFileHeader
 import io.spine.protodata.ast.protobufSourceFile
 import io.spine.protodata.ast.service
 import io.spine.protodata.ast.serviceName
-import io.spine.protodata.ast.type
 import io.spine.protodata.ast.typeName
 import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.value.pack
@@ -113,16 +113,17 @@ public object TypesTestEnv {
         simpleName = "CannotDrawCartoon"
         typeUrlPrefix = "type.spine.io"
     }
+    private val stringFieldType = fieldType {
+        primitive = TYPE_STRING
+    }
     public val stringField: Field = newField {
-        type = type { primitive = TYPE_STRING }
+        type = stringFieldType
         name = fieldName { value = "bar" }
-        single = Empty.getDefaultInstance()
         declaringType = messageTypeName
     }
     public val idField: Field = newField {
-        type = type { primitive = TYPE_STRING }
+        type = stringFieldType
         name = fieldName { value = "uuid" }
-        single = Empty.getDefaultInstance()
         declaringType = messageTypeName
     }
     public val messageType: MessageType = messageType {

@@ -24,20 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.java
+package io.spine.protodata.ast
 
 import io.kotest.matchers.shouldBe
+import io.spine.protodata.ast.Cardinality.CARDINALITY_LIST
+import io.spine.protodata.ast.Cardinality.CARDINALITY_MAP
 import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
+import io.spine.protodata.protobuf.toMessageType
+import io.spine.test.type.OopFun
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-@DisplayName("`This` should")
-class ThisSpec {
+@DisplayName("`FieldType` extensions should")
+internal class FieldTypeExtsSpec {
 
-    @Test
-    fun `convert to a 'MessageReference'`() {
-        val msg = This.asMessage
-        val field = msg.field("foo", CARDINALITY_SINGLE)
-        field.getter.toCode() shouldBe "this.getFoo()"
+    @Nested inner class
+    `obtain cardinality for`  {
+
+        val type = OopFun.getDescriptor().toMessageType()
+
+        @Test
+        fun `map fields`() {
+            cardinalityOf("gorillas") shouldBe CARDINALITY_MAP
+        }
+
+        @Test
+        fun `list fields`() {
+            cardinalityOf("tree") shouldBe CARDINALITY_LIST
+        }
+
+        @Test
+        fun `single fields`() {
+            cardinalityOf("jungle") shouldBe CARDINALITY_SINGLE
+        }
+
+        private fun cardinalityOf(fieldName: String): Cardinality =
+            type.field(fieldName).type.cardinality
     }
 }

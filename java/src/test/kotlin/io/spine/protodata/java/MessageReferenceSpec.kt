@@ -27,14 +27,15 @@
 package io.spine.protodata.java
 
 import assertCode
-import com.google.protobuf.Empty
-import io.spine.protodata.ast.FieldKt.ofMap
 import io.spine.protodata.ast.FieldName
 import io.spine.protodata.ast.PrimitiveType
 import io.spine.protodata.ast.TypeInstances
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
+import io.spine.protodata.ast.fieldType
+import io.spine.protodata.ast.mapEntryType
+import io.spine.protodata.ast.toFieldType
 import io.spine.protodata.ast.typeName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -54,9 +55,8 @@ internal class MessageReferenceSpec {
         val messageReference = MessageReference(LABEL)
         val field = field {
             name = fieldName
-            type = TypeInstances.string
+            type =TypeInstances.string.toFieldType()
             declaringType = typeName
-            single = Empty.getDefaultInstance()
         }
         val fieldAccess = messageReference.field(field)
         assertCode(fieldAccess.getter, "$LABEL.getBaz()")
@@ -67,9 +67,8 @@ internal class MessageReferenceSpec {
         val messageReference = MessageReference(LABEL)
         val field = field {
             name = fieldName
-            type = TypeInstances.string
+            type = fieldType { list = TypeInstances.string }
             declaringType = typeName
-            list = Empty.getDefaultInstance()
         }
         val fieldAccess = messageReference.field(field)
         assertCode(fieldAccess.getter, "$LABEL.getBazList()")
@@ -80,11 +79,13 @@ internal class MessageReferenceSpec {
         val messageReference = MessageReference(LABEL)
         val field = field {
             name = fieldName
-            type = TypeInstances.string
-            declaringType = typeName
-            map = ofMap {
-                keyType = PrimitiveType.TYPE_STRING
+            type = fieldType {
+                map = mapEntryType {
+                    keyType = PrimitiveType.TYPE_STRING
+                    valueType = TypeInstances.string
+                }
             }
+            declaringType = typeName
         }
         val fieldAccess = messageReference.field(field)
         assertCode(fieldAccess.getter, "$LABEL.getBazMap()")

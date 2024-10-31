@@ -31,6 +31,8 @@ package io.spine.protodata.ast
 import com.google.protobuf.Message
 import io.spine.protobuf.defaultInstance
 import io.spine.protodata.protobuf.toMessageType
+import io.spine.protodata.type.TypeSystem
+import io.spine.type.shortDebugString
 
 /**
  * Obtains a fully qualified name of a `TypeName` or its builder.
@@ -51,4 +53,17 @@ public val TypeNameOrBuilder.qualifiedName: String
  */
 public inline fun <reified T: Message> messageTypeOf(): MessageType {
     return T::class.java.defaultInstance.descriptorForType.toMessageType()
+}
+
+/**
+ * Converts this type name to an instance of [MessageType] finding it using the given [typeSystem].
+ *
+ * @throws IllegalStateException If the type system does not have a corresponding `MessageType`.
+ */
+public fun TypeName.toMessageType(typeSystem: TypeSystem): MessageType {
+    val found = typeSystem.findMessage(this)?.first
+    check(found != null) {
+        "Unable to find `${MessageType::class.simpleName}` for the type `${shortDebugString()}`."
+    }
+    return found
 }

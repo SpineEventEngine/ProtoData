@@ -34,10 +34,9 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.ast.Field.CardinalityCase.LIST
-import io.spine.protodata.ast.Field.CardinalityCase.MAP
-import io.spine.protodata.ast.Field.CardinalityCase.ONEOF_NAME
-import io.spine.protodata.ast.Field.CardinalityCase.SINGLE
+import io.spine.protodata.ast.Cardinality.CARDINALITY_LIST
+import io.spine.protodata.ast.Cardinality.CARDINALITY_MAP
+import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.type.TypeSystem
 import io.spine.test.type.Article
@@ -111,7 +110,7 @@ internal class MessageTypeDependenciesSpec {
     @Test
     fun `collect types referenced from types of fields`() {
         val projectView = messageTypeOf<ProjectView>()
-        val deps = MessageTypeDependencies(projectView, SINGLE, typeSystem).asSet()
+        val deps = MessageTypeDependencies(projectView, CARDINALITY_SINGLE, typeSystem).asSet()
         deps.shouldContainExactlyInAnyOrder(
             messageTypeOf<ProjectId>(),
             messageTypeOf<ProjectName>(),
@@ -154,19 +153,21 @@ internal class MessageTypeDependenciesSpec {
 
         @Test
         fun `single fields`() {
-            val singleTypes = MessageTypeDependencies(funnyType, SINGLE, typeSystem).asSet()
+            val singleTypes =
+                MessageTypeDependencies(funnyType, CARDINALITY_SINGLE, typeSystem).asSet()
             singleTypes.shouldContainExactly(jungleType)
         }
 
         @Test
         fun `map fields`() {
-            val mapTypes = MessageTypeDependencies(funnyType, MAP, typeSystem).asSet()
+            val mapTypes = MessageTypeDependencies(funnyType, CARDINALITY_MAP, typeSystem).asSet()
             mapTypes.shouldContainExactly(gorillaType)
         }
 
         @Test
         fun `repeated fields`() {
-            val repeatedTypes = MessageTypeDependencies(funnyType, LIST, typeSystem).asSet()
+            val repeatedTypes =
+                MessageTypeDependencies(funnyType, CARDINALITY_LIST, typeSystem).asSet()
 
             repeatedTypes.shouldContainExactlyInAnyOrder(treeType, bananaType)
         }
@@ -175,7 +176,7 @@ internal class MessageTypeDependenciesSpec {
         fun `combination of fields`() {
             val magazine = messageTypeOf<Magazine>()
             val combination =
-                MessageTypeDependencies(magazine, setOf(SINGLE, ONEOF_NAME), typeSystem)
+                MessageTypeDependencies(magazine, setOf(CARDINALITY_SINGLE), typeSystem)
                     .asSet().map { it.qualifiedName }
 
             val expected = setOf(
