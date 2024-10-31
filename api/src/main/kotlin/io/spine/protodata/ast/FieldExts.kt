@@ -35,7 +35,7 @@ import io.spine.string.camelCase
  *
  * @throws IllegalStateException If the field is a list or a map.
  */
-public fun Field.type(): Type = type.toType()
+public fun Field.toType(): Type = type.toType()
 
 /**
  * Tells if this field is a Protobuf message.

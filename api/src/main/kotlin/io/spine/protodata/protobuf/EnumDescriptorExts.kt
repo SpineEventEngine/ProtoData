@@ -39,6 +39,7 @@ import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.enumType
 import io.spine.protodata.ast.toList
 import io.spine.protodata.ast.type
+import io.spine.protodata.ast.toType
 
 /**
  * Obtains the name of this enum type as a [TypeName].

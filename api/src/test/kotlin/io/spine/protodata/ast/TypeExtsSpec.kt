@@ -54,9 +54,9 @@ internal class TypeExtsSpec {
 
         init {
             val msg = io.spine.base.Error.getDescriptor()
-            messageType = msg.field("details").type()
-            enumType = Value.getDescriptor().field("null_value").type()
-            primitiveType = msg.field("code").type()
+            messageType = msg.field("details").toType()
+            enumType = Value.getDescriptor().field("null_value").toType()
+            primitiveType = msg.field("code").toType()
             mapType = msg.field("attributes").type.map.valueType
             repeatedType = ListOfAnys.getDescriptor().field("value").type.list
         }

@@ -55,7 +55,6 @@ import io.spine.protodata.ast.protoFileHeader
 import io.spine.protodata.ast.protobufSourceFile
 import io.spine.protodata.ast.service
 import io.spine.protodata.ast.serviceName
-import io.spine.protodata.ast.type
 import io.spine.protodata.ast.typeName
 import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.value.pack
