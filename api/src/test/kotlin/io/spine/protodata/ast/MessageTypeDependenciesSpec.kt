@@ -153,7 +153,8 @@ internal class MessageTypeDependenciesSpec {
 
         @Test
         fun `single fields`() {
-            val singleTypes = MessageTypeDependencies(funnyType, CARDINALITY_SINGLE, typeSystem).asSet()
+            val singleTypes =
+                MessageTypeDependencies(funnyType, CARDINALITY_SINGLE, typeSystem).asSet()
             singleTypes.shouldContainExactly(jungleType)
         }
 
@@ -165,7 +166,8 @@ internal class MessageTypeDependenciesSpec {
 
         @Test
         fun `repeated fields`() {
-            val repeatedTypes = MessageTypeDependencies(funnyType, CARDINALITY_LIST, typeSystem).asSet()
+            val repeatedTypes =
+                MessageTypeDependencies(funnyType, CARDINALITY_LIST, typeSystem).asSet()
 
             repeatedTypes.shouldContainExactlyInAnyOrder(treeType, bananaType)
         }
