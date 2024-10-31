@@ -169,31 +169,27 @@ private fun message(field: FieldDescriptor): Type = type {
 }
 
 /**
- * Maps [FieldDescriptor.Type] to [PrimitiveType].
- */
-private val primitiveTypeMap = buildMap {
-    put(BOOL, TYPE_BOOL)
-    put(BYTES, TYPE_BYTES)
-    put(DOUBLE, TYPE_DOUBLE)
-    put(FIXED32, TYPE_FIXED32)
-    put(FIXED64, TYPE_FIXED64)
-    put(FLOAT, TYPE_FLOAT)
-    put(INT32, TYPE_INT32)
-    put(INT64, TYPE_INT64)
-    put(SFIXED32, TYPE_SFIXED32)
-    put(SFIXED64, TYPE_SFIXED64)
-    put(SINT32, TYPE_SINT32)
-    put(SINT64, TYPE_SINT64)
-    put(STRING, TYPE_STRING)
-    put(UINT32, TYPE_UINT32)
-    put(UINT64, TYPE_UINT64)
-}
-
-/**
  * Converts this field type into an instance of [PrimitiveType], or
  * `null` if the type is not primitive
  */
-public fun FieldDescriptor.Type.toPrimitiveType(): PrimitiveType? = primitiveTypeMap[this]
+public fun FieldDescriptor.Type.toPrimitiveType(): PrimitiveType? = when (this) {
+    BOOL -> TYPE_BOOL
+    BYTES -> TYPE_BYTES
+    DOUBLE -> TYPE_DOUBLE
+    FIXED32 -> TYPE_FIXED32
+    FIXED64 -> TYPE_FIXED64
+    FLOAT -> TYPE_FLOAT
+    INT32 -> TYPE_INT32
+    INT64 -> TYPE_INT64
+    SFIXED32 -> TYPE_SFIXED32
+    SFIXED64 -> TYPE_SFIXED64
+    SINT32 -> TYPE_SINT32
+    SINT64 -> TYPE_SINT64
+    STRING -> TYPE_STRING
+    UINT32 -> TYPE_UINT32
+    UINT64 -> TYPE_UINT64
+    else -> null
+}
 
 /**
  * Obtains the type of this field as a [PrimitiveType] or throws an exception
