@@ -93,7 +93,7 @@ internal class OptionsSpec {
         option shouldNotBe null
         option!!.parse(field, typeSystem) shouldBe value {
             reference = reference {
-                fieldType = field.type
+                type = field.type
                 target = fieldPath {
                     fieldName.add("max_value")
                 }
@@ -112,7 +112,7 @@ internal class OptionsSpec {
 
         minOption!!.parse(field, typeSystem) shouldBe value {
             reference = reference {
-                fieldType = field.type
+                type = field.type
                 target = fieldPath {
                     fieldName.add("range")
                     fieldName.add("min_value")
@@ -122,7 +122,7 @@ internal class OptionsSpec {
 
         maxOption!!.parse(field, typeSystem) shouldBe value {
             reference = reference {
-                fieldType = field.type
+                type = field.type
                 target = fieldPath {
                     fieldName.add("range")
                     fieldName.add("max_value")
