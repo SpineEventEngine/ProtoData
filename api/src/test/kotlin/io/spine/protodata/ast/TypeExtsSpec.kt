@@ -57,8 +57,8 @@ internal class TypeExtsSpec {
             messageType = msg.field("details").type()
             enumType = Value.getDescriptor().field("null_value").type()
             primitiveType = msg.field("code").type()
-            mapType = msg.field("attributes").fieldType.map.valueType
-            repeatedType = ListOfAnys.getDescriptor().field("value").fieldType.list
+            mapType = msg.field("attributes").type.map.valueType
+            repeatedType = ListOfAnys.getDescriptor().field("value").type.list
         }
 
         @Test

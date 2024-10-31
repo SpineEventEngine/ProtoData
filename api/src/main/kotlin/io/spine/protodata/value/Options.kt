@@ -81,7 +81,7 @@ private class OptionValue(
             value.matches(DOUBLE) -> value { doubleValue = value.toDouble() }
             value.matches(FieldPathConstants.REGEX) -> value {
                 reference = reference {
-                    fieldType = field.fieldType
+                    type = field.type
                     target = checkFieldReference(FieldPath(value))
                 }
             }
@@ -94,7 +94,7 @@ private class OptionValue(
     }
 
     private val messageTypeName: String by lazy {
-        field.fieldType.message.qualifiedName
+        field.type.message.qualifiedName
     }
 
     private fun optionPath() =
@@ -111,8 +111,8 @@ private class OptionValue(
         val typeName = field.declaringType
         val message = typeSystem.findMessage(typeName)!!.first
         val referencedField = typeSystem.resolve(path, message)
-        val sourceFieldType = field.fieldType
-        val referencedFieldType = referencedField.fieldType
+        val sourceFieldType = field.type
+        val referencedFieldType = referencedField.type
         check(referencedFieldType == sourceFieldType) {
             val referencedFieldPath = path.joined
             "The field `$referencedFieldPath` referenced in the `($optionName).value` option" +

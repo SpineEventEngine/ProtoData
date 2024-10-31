@@ -167,7 +167,7 @@ public class MessageReference(label: String) : Expression(label) {
      * Obtains a [FieldAccess] to the [field] of this message.
      */
     public fun field(field: Field): FieldAccess =
-        FieldAccess(this, field.name, field.fieldType.cardinality)
+        FieldAccess(this, field.name, field.type.cardinality)
 
     /**
      * Obtains a [FieldAccess] to the field of this message with the given [fieldName].

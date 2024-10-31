@@ -26,7 +26,6 @@
 
 package io.spine.protodata.ast
 
-import io.spine.protodata.ast.Field.CardinalityCase
 import io.spine.protodata.ast.FieldType.KindCase.ENUMERATION
 import io.spine.protodata.ast.FieldType.KindCase.LIST
 import io.spine.protodata.ast.FieldType.KindCase.MAP
@@ -106,16 +105,3 @@ public val FieldType.cardinality: Cardinality
         MAP -> Cardinality.MAP
         else -> error("Unable to convert `$kindCase` to `Cardinality`.")
     }
-
-/**
- * Converts this [FieldType.KindCase] to [CardinalityCase],
- */
-@Suppress("DEPRECATION") // supporting older API
-public fun FieldType.KindCase.toCardinalityCase(): CardinalityCase = when (this) {
-    MESSAGE -> CardinalityCase.SINGLE
-    ENUMERATION -> CardinalityCase.SINGLE
-    PRIMITIVE -> CardinalityCase.SINGLE
-    LIST -> CardinalityCase.LIST
-    MAP -> CardinalityCase.MAP
-    else -> error("Unable to transform `$this` to `CardinalityCase`.")
-}

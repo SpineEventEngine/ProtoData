@@ -109,7 +109,7 @@ public open class FieldMethods(
     kind: Cardinality
 ) : FieldConventions(name, kind) {
 
-    public constructor(field: Field): this(field.name, field.fieldType.cardinality)
+    public constructor(field: Field): this(field.name, field.type.cardinality)
 
     /**
      * The name of the primary method which sets a value of the field.

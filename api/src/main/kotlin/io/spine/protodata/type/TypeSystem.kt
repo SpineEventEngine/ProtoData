@@ -131,13 +131,13 @@ public fun TypeSystem.resolve(fieldPath: FieldPath, message: MessageType): Field
         return currentField
     }
 
-    check(currentField.fieldType.isMessage) {
+    check(currentField.type.isMessage) {
         "Can't resolve the field path `$fieldPath` because `${currentField.name}` segment" +
                 " does not denote a message field. The type of this field is" +
-                " `${currentField.fieldType}`. Only messages can have nested field."
+                " `${currentField.type}`. Only messages can have nested field."
     }
 
-    val currentFieldMessage = currentField.fieldType.message
+    val currentFieldMessage = currentField.type.message
     val nextMessageInfo = findMessage(currentFieldMessage)
     check(nextMessageInfo != null) {
         "`${currentFieldMessage.qualifiedName}` was not found in the passed proto files" +

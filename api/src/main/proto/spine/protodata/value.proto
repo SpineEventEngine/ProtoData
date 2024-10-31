@@ -180,17 +180,11 @@ message Reference {
 
     // The type of the referenced value.
     //
-    // DEPRECATED: Please use `field_type` instead.
-    //
-    protodata.Type type = 1 [deprecated = true];
-
-    // The type of the referenced value.
-    //
     // If the reference is obtained by parsing a "source" field option.
     // The referenced field must have the same type as the field where the option is used.
     // If this is not the case, a compilation error will occur.
     //
-    FieldType field_type = 3;
+    FieldType type = 1 [(required) = true];
 
     // The path to the referenced field.
     base.FieldPath target = 2 [(required) = true];

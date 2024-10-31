@@ -35,7 +35,7 @@ import io.spine.protodata.ast.TypeInstances
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
-import io.spine.protodata.ast.fieldType
+import io.spine.protodata.ast.type
 import io.spine.protodata.ast.mapEntryType
 import io.spine.protodata.ast.oneofName
 import io.spine.protodata.ast.toFieldType

@@ -45,10 +45,7 @@ import com.google.protobuf.Descriptors.FieldDescriptor.Type.SINT64
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.STRING
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT32
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.UINT64
-import com.google.protobuf.Empty
 import io.spine.protodata.ast.Field
-import io.spine.protodata.ast.FieldKt
-import io.spine.protodata.ast.FieldKt.ofMap
 import io.spine.protodata.ast.FieldName
 import io.spine.protodata.ast.FieldType
 import io.spine.protodata.ast.MapEntryType
@@ -117,37 +114,12 @@ public fun buildField(desc: FieldDescriptor): Field =
         number = desc.number
         declaringType = declaredIn
 
-        // Support for older, deprecated API.
-        copyTypeAndCardinality(desc)
-
         // New `FieldType` and `group_name` API.
-        fieldType = desc.toFieldType()
+        type = desc.toFieldType()
         desc.realContainingOneof?.let {
             enclosingOneof = it.name()
         }
     }
-
-/**
- * Converts the field type and cardinality (`map`/`list`/`oneof_name`/`single`) from
- * the given descriptor to the receiver DSL-style builder.
- */
-@Suppress("DEPRECATION") // supporting older API.
-private fun FieldKt.Dsl.copyTypeAndCardinality(
-    desc: FieldDescriptor
-) {
-    if (desc.isMapField) {
-        val (keyField, valueField) = desc.messageType.fields
-        map = ofMap { keyType = keyField.primitiveType() }
-        type = valueField.type()
-    } else {
-        type = desc.type()
-        when {
-            desc.isRepeated -> list = Empty.getDefaultInstance()
-            desc.realContainingOneof != null -> oneofName = desc.realContainingOneof.name()
-            else -> single = Empty.getDefaultInstance()
-        }
-    }
-}
 
 /**
  * Constructs a [Type] of the receiver field.

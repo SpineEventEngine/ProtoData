@@ -35,13 +35,13 @@ import io.spine.string.camelCase
  *
  * @throws IllegalStateException If the field is a list or a map.
  */
-public fun Field.type(): Type = fieldType.toType()
+public fun Field.type(): Type = type.toType()
 
 /**
  * Tells if this field is a Protobuf message.
  */
 public val Field.isMessage: Boolean
-    get() = fieldType.isMessage
+    get() = type.isMessage
 
 /**
  * Shows if this field is a `map`.
@@ -50,7 +50,7 @@ public val Field.isMessage: Boolean
  * the `Field.map.key_type` contains the type the map key.
  */
 public val Field.isMap: Boolean
-    get() = fieldType.isMap
+    get() = type.isMap
 
 /**
  * Shows if this field is a list.
@@ -60,7 +60,7 @@ public val Field.isMap: Boolean
  * We use the term "list" for repeated fields which are not maps.
  */
 public val Field.isList: Boolean
-    get() = fieldType.isList
+    get() = type.isList
 
 /**
  * Shows if this field repeated.

@@ -54,9 +54,9 @@ public val Field.getterName: String
  * Tells if the type of this field corresponds to a primitive type in Java.
  */
 public val Field.isJavaPrimitive: Boolean
-    get() = if (!fieldType.isPrimitive) {
+    get() = if (!type.isPrimitive) {
         false
-    } else when (fieldType.primitive) {
+    } else when (type.primitive) {
         PrimitiveType.TYPE_STRING, PrimitiveType.TYPE_BYTES -> false
         else -> true
     }
@@ -71,9 +71,9 @@ public val Field.isJavaPrimitive: Boolean
  * @throws IllegalStateException Tf the field type cannot be converted to a Java counterpart.
  */
 public fun Field.javaType(typeSystem: TypeSystem): String = when {
-    isMap -> typeSystem.mapType(fieldType.map.keyType, fieldType.map.valueType)
-    isList -> typeSystem.listOf(fieldType.list)
-    else -> fieldType.toType().javaType(typeSystem)
+    isMap -> typeSystem.mapType(type.map.keyType, type.map.valueType)
+    isList -> typeSystem.listOf(type.list)
+    else -> type.toType().javaType(typeSystem)
 }
 
 private fun TypeSystem.mapType(key: PrimitiveType, value: Type): String {
@@ -102,7 +102,7 @@ private fun TypeSystem.listOf(element: Type): String {
 @Suppress("ReturnCount")
 public fun Field.typeReference(entityState: ClassName, typeSystem: TypeSystem): String {
     val qualifiedName = javaType(typeSystem)
-    val type = fieldType.toType()
+    val type = type.toType()
     if (isMap || isList || type.isPrimitive) {
         return qualifiedName
     }

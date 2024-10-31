@@ -46,7 +46,7 @@ import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.constantName
 import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.fieldName
-import io.spine.protodata.ast.fieldType
+import io.spine.protodata.ast.type
 import io.spine.protodata.ast.file
 import io.spine.protodata.ast.messageType
 import io.spine.protodata.ast.option

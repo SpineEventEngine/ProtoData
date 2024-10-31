@@ -60,6 +60,6 @@ internal class FieldTypeExtsSpec {
         }
 
         private fun cardinalityOf(fieldName: String): Cardinality =
-            type.field(fieldName).fieldType.cardinality
+            type.field(fieldName).type.cardinality
     }
 }

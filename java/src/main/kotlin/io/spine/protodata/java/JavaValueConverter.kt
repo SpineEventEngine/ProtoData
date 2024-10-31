@@ -106,7 +106,7 @@ public class JavaValueConverter(
         // If the field reference contains only one element, take the cardinality of the field type.
         // We will have only one getter call.
         val startCardinality = if (path.size == 1) {
-            reference.fieldType.cardinality
+            reference.type.cardinality
         } else {
             // Otherwise, only message types fields are expected in the path until the last entry.
             Cardinality.SINGLE
@@ -124,7 +124,7 @@ public class JavaValueConverter(
             } else {
                 // The last field in the path has the type (and
                 // the cardinality) of the "source" one.
-                call.chain(getterOf(field, reference.fieldType.cardinality))
+                call.chain(getterOf(field, reference.type.cardinality))
             }
         }
         return call

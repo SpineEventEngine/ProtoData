@@ -83,13 +83,13 @@ public class MessageTypeDependencies(
     private fun MessageType.matchingFieldTypes(): Iterable<MessageType> =
         fieldList.asSequence()
             .filter { it.matchesCardinality() }
-            .map { it.fieldType }
+            .map { it.type }
             .mapNotNull { it.toMessageType(typeSystem) }
             .toSet()
 
     private fun Field.matchesCardinality(): Boolean =
         if (cardinalities.isNotEmpty()) {
-            cardinalities.contains(fieldType.cardinality)
+            cardinalities.contains(type.cardinality)
         } else {
             true
         }
