@@ -33,7 +33,7 @@ import io.spine.protodata.ast.TypeInstances
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
-import io.spine.protodata.ast.type
+import io.spine.protodata.ast.fieldType
 import io.spine.protodata.ast.mapEntryType
 import io.spine.protodata.ast.toFieldType
 import io.spine.protodata.ast.typeName
@@ -55,7 +55,7 @@ internal class MessageReferenceSpec {
         val messageReference = MessageReference(LABEL)
         val field = field {
             name = fieldName
-            fieldType = TypeInstances.string.toFieldType()
+            type =TypeInstances.string.toFieldType()
             declaringType = typeName
         }
         val fieldAccess = messageReference.field(field)
@@ -67,7 +67,7 @@ internal class MessageReferenceSpec {
         val messageReference = MessageReference(LABEL)
         val field = field {
             name = fieldName
-            fieldType = fieldType { list = TypeInstances.string }
+            type = fieldType { list = TypeInstances.string }
             declaringType = typeName
         }
         val fieldAccess = messageReference.field(field)
@@ -79,7 +79,7 @@ internal class MessageReferenceSpec {
         val messageReference = MessageReference(LABEL)
         val field = field {
             name = fieldName
-            fieldType = fieldType {
+            type = fieldType {
                 map = mapEntryType {
                     keyType = PrimitiveType.TYPE_STRING
                     valueType = TypeInstances.string

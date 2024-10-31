@@ -35,7 +35,7 @@ import io.spine.protodata.ast.TypeInstances
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
-import io.spine.protodata.ast.type
+import io.spine.protodata.ast.fieldType
 import io.spine.protodata.ast.mapEntryType
 import io.spine.protodata.ast.oneofName
 import io.spine.protodata.ast.toFieldType
@@ -132,13 +132,13 @@ private val stubType: TypeName = typeName {
 
 private fun singleField() = field {
     name = fieldName { value = "incarnation" }
-    fieldType = TypeInstances.string.toFieldType()
+    type = TypeInstances.string.toFieldType()
     declaringType = stubType
 }
 
 private fun listField() = field {
     name = fieldName { value = "route" }
-    fieldType = fieldType {
+    type = fieldType {
         list = TypeInstances.string
     }
     declaringType = stubType
@@ -146,7 +146,7 @@ private fun listField() = field {
 
 private fun mapField() = field {
     name = fieldName { value = "attributes" }
-    fieldType = fieldType {
+    type = fieldType {
         map = mapEntryType {
             keyType = PrimitiveType.TYPE_STRING
             valueType = TypeInstances.string
@@ -157,7 +157,7 @@ private fun mapField() = field {
 
 private fun oneofField() = field {
     name = fieldName { value = "sidekick" }
-    fieldType = TypeInstances.string.toFieldType()
+    type = TypeInstances.string.toFieldType()
     enclosingOneof = oneofName { value = "crew" }
     declaringType = stubType
 }
