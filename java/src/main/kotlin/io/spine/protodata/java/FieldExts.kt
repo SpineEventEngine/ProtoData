@@ -68,7 +68,7 @@ public val Field.isJavaPrimitive: Boolean
  *
  * @param typeSystem The type system to use for resolving the Java type.
  * @return the fully qualified reference to the Java type of the field.
- * @throws IllegalStateException Tf the field type cannot be converted to a Java counterpart.
+ * @throws IllegalStateException If the field type cannot be converted to a Java counterpart.
  */
 public fun Field.javaType(typeSystem: TypeSystem): String = when {
     isMap -> typeSystem.mapType(type.map.keyType, type.map.valueType)
