@@ -28,12 +28,10 @@ package io.spine.protodata.java
 
 import io.spine.protodata.ast.Cardinality
 import io.spine.protodata.ast.Field
-import io.spine.protodata.ast.Field.CardinalityCase
 import io.spine.protodata.ast.FieldName
 import io.spine.protodata.ast.camelCase
 import io.spine.protodata.ast.cardinality
 import io.spine.protodata.ast.fieldName
-import io.spine.protodata.ast.toCardinalityCase
 import io.spine.string.camelCase
 
 /**
@@ -43,9 +41,6 @@ public abstract class FieldConventions(
     protected val name: FieldName,
     protected val kind: Cardinality
 ) {
-    @Deprecated("Use `FieldType` instead")
-    protected val cardinality: CardinalityCase = kind.toCardinalityCase()
-
     protected val getterName: String
         get() = when (kind) {
             Cardinality.LIST -> getListName

@@ -46,6 +46,7 @@ import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.constantName
 import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.fieldName
+import io.spine.protodata.ast.fieldType
 import io.spine.protodata.ast.type
 import io.spine.protodata.ast.file
 import io.spine.protodata.ast.messageType
@@ -117,12 +118,12 @@ public object TypesTestEnv {
         primitive = TYPE_STRING
     }
     public val stringField: Field = newField {
-        fieldType = stringFieldType
+        type = stringFieldType
         name = fieldName { value = "bar" }
         declaringType = messageTypeName
     }
     public val idField: Field = newField {
-        fieldType = stringFieldType
+        type = stringFieldType
         name = fieldName { value = "uuid" }
         declaringType = messageTypeName
     }
