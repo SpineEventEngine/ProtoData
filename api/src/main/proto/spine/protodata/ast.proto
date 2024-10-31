@@ -250,13 +250,13 @@ message FieldType {
     }
 }
 
-// The type of entries in a map.
+// A type of entries in a map.
 message MapEntryType {
 
-    // The type of the keys.
+    // A type of the key.
     PrimitiveType key_type = 1 [(required) = true];
 
-    // The type of values.
+    // A type of the value.
     Type value_type = 2 [(required) = true];
 }
 
@@ -267,7 +267,7 @@ message FieldName {
     string value = 1 [(required) = true];
 }
 
-// The cardinality of values stored a field.
+// A cardinality of values stored a field.
 enum Cardinality {
     C_UNDEFINED = 0;
 
