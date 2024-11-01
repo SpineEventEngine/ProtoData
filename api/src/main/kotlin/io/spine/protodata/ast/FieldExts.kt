@@ -67,12 +67,12 @@ public val Field.isList: Boolean
  *
  * Can be declared in Protobuf either as a `map` or a `repeated` field.
  */
+@Suppress("DeprecatedCallableAddReplaceWith")
 @Deprecated(
     message = "Please use either `isList` or `isMap`." /*
         We do not want this duality in our code. Also, this introduces confusion with the Protobuf
         declaration `repeated`. The fact that maps are implemented internally as repeated entries
-        should not leak into public API. */,
-    replaceWith = ReplaceWith("type.isSingular.not()")
+        should not leak into public API. */
 )
 public val Field.isRepeated: Boolean
     get() = isMap || isList
