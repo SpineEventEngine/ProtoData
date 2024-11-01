@@ -40,26 +40,26 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@DisplayName("`Type` extensions should")
-internal class TypeExtsSpec {
+@DisplayName("`Type` should")
+internal class TypeSpec {
+
+    private val messageType: Type
+    private val enumType: Type
+    private val primitiveType: Type
+    private val mapValueType: Type
+    private val listItemType: Type
+
+    init {
+        val msg = io.spine.base.Error.getDescriptor()
+        messageType = msg.field("details").toType()
+        enumType = Value.getDescriptor().field("null_value").toType()
+        primitiveType = msg.field("code").toType()
+        mapValueType = msg.field("attributes").type.map.valueType
+        listItemType = ListOfAnys.getDescriptor().field("value").type.list
+    }
 
     @Nested inner class
     `obtain simple type name` {
-
-        private val messageType: Type
-        private val enumType: Type
-        private val primitiveType: Type
-        private val mapType: Type
-        private val repeatedType: Type
-
-        init {
-            val msg = io.spine.base.Error.getDescriptor()
-            messageType = msg.field("details").toType()
-            enumType = Value.getDescriptor().field("null_value").toType()
-            primitiveType = msg.field("code").toType()
-            mapType = msg.field("attributes").type.map.valueType
-            repeatedType = ListOfAnys.getDescriptor().field("value").type.list
-        }
 
         @Test
         fun `of 'Message' type`() {

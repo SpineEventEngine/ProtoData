@@ -36,13 +36,13 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-@DisplayName("`FieldType` extensions should")
-internal class FieldTypeExtsSpec {
+@DisplayName("`FieldType` should")
+internal class FieldTypeSpec {
+
+    private val messageType = OopFun.getDescriptor().toMessageType()
 
     @Nested inner class
     `obtain cardinality for`  {
-
-        val type = OopFun.getDescriptor().toMessageType()
 
         @Test
         fun `map fields`() {
@@ -60,6 +60,15 @@ internal class FieldTypeExtsSpec {
         }
 
         private fun cardinalityOf(fieldName: String): Cardinality =
-            type.field(fieldName).type.cardinality
+            field(fieldName).type.cardinality
     }
+
+    @Test
+    fun `tell if it is singular`() {
+        field("gorillas").type.isSingular shouldBe false
+        field("tree").type.isSingular shouldBe false
+        field("jungle").type.isSingular shouldBe true
+    }
+
+    private fun field(fieldName: String) = messageType.field(fieldName)
 }

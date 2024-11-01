@@ -38,6 +38,12 @@ import io.spine.string.shortly
 import io.spine.string.simply
 
 /**
+ * Tells if this type holds one value such as primitive, message, or enum item.
+ */
+public val FieldType.isSingular: Boolean
+    get() = isMessage || isEnum || isPrimitive
+
+/**
  * Obtains a human-readable name of this field type.
  */
 public val FieldType.name: String

@@ -28,6 +28,9 @@ package io.spine.protodata.ast
 
 import com.google.protobuf.Message
 
+/**
+ * The common interface for [Type] and [FieldType].
+ */
 public interface TypeBase: Message {
 
     public fun hasMessage(): Boolean
@@ -63,7 +66,6 @@ public interface TypeBase: Message {
      * [default instance][TypeName.getDefaultInstance] otherwise.
      */
     public val message: TypeName
-
 
     /**
      * Obtains the enum type name if this type is a message, or
