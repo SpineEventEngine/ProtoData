@@ -33,7 +33,6 @@ import io.spine.protodata.ast.PrimitiveType
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.isList
 import io.spine.protodata.ast.isMap
-import io.spine.protodata.ast.isPrimitive
 import io.spine.protodata.ast.simpleName
 import io.spine.protodata.ast.toType
 import io.spine.protodata.type.TypeSystem

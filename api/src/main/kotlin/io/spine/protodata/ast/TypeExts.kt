@@ -89,32 +89,6 @@ public val Type.messageOrEnumName: TypeName?
     }
 
 /**
- * Tells if this type is a Protobuf primitive type.
- */
-public val Type.isPrimitive: Boolean
-    get() = hasPrimitive()
-
-/**
- * Tells if this type represents a Protobuf message.
- */
-public val Type.isMessage: Boolean
-    get() = hasMessage()
-
-/**
- * Tells if this type represents a Protobuf `enum`.
- */
-public val Type.isEnum: Boolean
-    get() = hasEnumeration()
-
-/**
- * Tells if this type is `google.protobuf.Any`.
- */
-public val Type.isAny: Boolean
-    get() = isMessage
-            && message.packageName.equals("google.protobuf")
-            && message.simpleName.equals("Any")
-
-/**
  * Converts this type to an instance of [MessageType] finding it using the given [typeSystem].
  *
  * @throws IllegalStateException if this type is not a message type, or

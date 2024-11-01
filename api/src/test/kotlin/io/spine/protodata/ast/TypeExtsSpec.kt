@@ -101,4 +101,14 @@ internal class TypeExtsSpec {
             TYPE_SFIXED64.toType().name shouldBe "sfixed64"
         }
     }
+
+    /**
+     * This test checks the returned value supporting the reference in
+     * the documentation of [TypeBase.primitive].
+     */
+    @Test
+    fun `return 'PT_UNKNOWN' when is not primitive`() {
+        val msg = com.google.protobuf.Any.getDescriptor()
+        msg.toType().primitive shouldBe PrimitiveType.PT_UNKNOWN
+    }
 }

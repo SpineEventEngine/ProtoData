@@ -42,8 +42,6 @@ import io.spine.protodata.ast.ServiceName
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
-import io.spine.protodata.ast.isEnum
-import io.spine.protodata.ast.isMessage
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.ast.typeName
 import io.spine.type.shortDebugString

@@ -34,6 +34,9 @@ import io.spine.protodata.ast.FieldType.KindCase.LIST
 import io.spine.protodata.ast.FieldType.KindCase.MAP
 import io.spine.protodata.ast.FieldType.KindCase.MESSAGE
 import io.spine.protodata.ast.FieldType.KindCase.PRIMITIVE
+import io.spine.protodata.type.TypeSystem
+import io.spine.string.shortly
+import io.spine.string.simply
 
 /**
  * Obtains a human-readable name of this field type.
@@ -60,27 +63,9 @@ public fun FieldType.toType(): Type = type {
         isMessage -> dsl.message = self.message
         isEnum -> dsl.enumeration = self.enumeration
         isPrimitive -> dsl.primitive = self.primitive
-        else -> error("Cannot convert $self to `${Type::class.simpleName}`.")
+        else -> error("Cannot convert ${self.shortly()} to `${simply<Type>()}`.")
     }
 }
-
-/**
- * Tells if this field type represents a message.
- */
-public val FieldType.isMessage: Boolean
-    get() = hasMessage()
-
-/**
- * Tells if this field type represents an enum.
- */
-public val FieldType.isEnum: Boolean
-    get() = hasEnumeration()
-
-/**
- * Tells if this field type represents a primitive value.
- */
-public val FieldType.isPrimitive: Boolean
-    get() = hasPrimitive()
 
 /**
  * Tells if this field is `repeated`, but not a `map`.
@@ -108,3 +93,14 @@ public val FieldType.cardinality: Cardinality
         MAP -> CARDINALITY_MAP
         else -> error("Unable to convert `$kindCase` to `Cardinality`.")
     }
+
+/**
+ * Converts this type to an instance of [MessageType] finding it using the given [typeSystem].
+ *
+ * @throws IllegalStateException if this type is not a message type, or
+ *   if the type system does not have a corresponding `MessageType`.
+ */
+public fun FieldType.toMessageType(typeSystem: TypeSystem): MessageType {
+    check(isMessage)
+    return message.toMessageType(typeSystem)
+}
