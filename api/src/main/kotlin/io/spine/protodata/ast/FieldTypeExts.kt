@@ -34,7 +34,6 @@ import io.spine.protodata.ast.FieldType.KindCase.LIST
 import io.spine.protodata.ast.FieldType.KindCase.MAP
 import io.spine.protodata.ast.FieldType.KindCase.MESSAGE
 import io.spine.protodata.ast.FieldType.KindCase.PRIMITIVE
-import io.spine.protodata.type.TypeSystem
 import io.spine.string.shortly
 import io.spine.string.simply
 
@@ -93,14 +92,3 @@ public val FieldType.cardinality: Cardinality
         MAP -> CARDINALITY_MAP
         else -> error("Unable to convert `$kindCase` to `Cardinality`.")
     }
-
-/**
- * Converts this type to an instance of [MessageType] finding it using the given [typeSystem].
- *
- * @throws IllegalStateException if this type is not a message type, or
- *   if the type system does not have a corresponding `MessageType`.
- */
-public fun FieldType.toMessageType(typeSystem: TypeSystem): MessageType {
-    check(isMessage)
-    return message.toMessageType(typeSystem)
-}

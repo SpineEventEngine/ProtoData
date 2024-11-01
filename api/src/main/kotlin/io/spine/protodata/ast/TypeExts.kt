@@ -28,19 +28,9 @@
 
 package io.spine.protodata.ast
 
-import io.spine.protodata.ast.Type.KindCase.MESSAGE
 import io.spine.protodata.ast.Type.KindCase.ENUMERATION
+import io.spine.protodata.ast.Type.KindCase.MESSAGE
 import io.spine.protodata.ast.Type.KindCase.PRIMITIVE
-import io.spine.protodata.type.TypeSystem
-import io.spine.type.shortDebugString
-
-/**
- * Obtains a simple name of the type if represents a message or an enum.
- *
- * @throws IllegalStateException if this is a primitive type.
- */
-public val Type.simpleName: String
-    get() = typeName.simpleName
 
 /**
  * Obtains a human-readable name of this type.
@@ -55,49 +45,6 @@ public val Type.name: String
         PRIMITIVE -> primitive.protoName
         else -> kindCase.name
     }
-
-/**
- * Converts a message or an enum type to its [TypeName].
- *
- * @throws IllegalStateException if this type is not a message or an enum type.
- */
-public val Type.typeName: TypeName
-    get() {
-        messageOrEnumName?.let {
-            return it
-        }
-        val unable = "Unable to obtain `${TypeName::class.simpleName}`"
-        if (isPrimitive) {
-            error("$unable for the primitive type `${primitive.name}`.")
-        } else {
-            // This is a safety net in case `Type` is extended with more `oneof` cases.
-            error("$unable for the type `${shortDebugString()}`.")
-        }
-    }
-
-/**
- * The type name of this type, given that the type is a complex type and
- * not a Protobuf primitive type.
- *
- * If the type is primitive, this value is `null`.
- */
-public val Type.messageOrEnumName: TypeName?
-    get() = when {
-        isMessage -> message
-        isEnum -> enumeration
-        else -> null
-    }
-
-/**
- * Converts this type to an instance of [MessageType] finding it using the given [typeSystem].
- *
- * @throws IllegalStateException if this type is not a message type, or
- *   if the type system does not have a corresponding `MessageType`.
- */
-public fun Type.toMessageType(typeSystem: TypeSystem): MessageType {
-    check(isMessage)
-    return message.toMessageType(typeSystem)
-}
 
 /**
  * Converts this type into [FieldType] instance.

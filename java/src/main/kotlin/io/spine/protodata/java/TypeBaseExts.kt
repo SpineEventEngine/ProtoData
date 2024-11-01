@@ -29,7 +29,7 @@
 package io.spine.protodata.java
 
 import io.spine.protodata.ast.ProtoFileHeader
-import io.spine.protodata.ast.Type
+import io.spine.protodata.ast.TypeBase
 import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.type.findHeader
 import io.spine.type.shortDebugString
@@ -37,14 +37,14 @@ import io.spine.type.shortDebugString
 /**
  * Obtains a fully qualified name of this type in the context of the given [TypeSystem].
  *
- * If this type [isPrimitive], its name does not depend on [TypeSystem] and
+ * If this type [isPrimitive][TypeBase.isPrimitive], its name does not depend on [TypeSystem] and
  * the result of [toPrimitiveName][io.spine.protodata.ast.PrimitiveType.toPrimitiveName]
  * is returned.
  *
  * @param typeSystem The type system to use for resolving the Java type.
  * @throws IllegalStateException If the field type cannot be converted to a Java counterpart.
  */
-public fun Type.javaType(typeSystem: TypeSystem): String {
+public fun TypeBase.javaType(typeSystem: TypeSystem): String {
     if (isPrimitive) {
         return primitiveClassName()
     }
@@ -55,7 +55,7 @@ public fun Type.javaType(typeSystem: TypeSystem): String {
     return javaClassName(declaredIn)
 }
 
-private fun Type.primitiveClassName(): String {
+private fun TypeBase.primitiveClassName(): String {
     check(isPrimitive) {
         error("The type is not primitive: `${shortDebugString()}`.")
     }
@@ -65,7 +65,7 @@ private fun Type.primitiveClassName(): String {
 /**
  * Obtains a name of a Java class which corresponds to values with this type.
  */
-public fun Type.javaClassName(accordingTo: ProtoFileHeader): String = when {
+public fun TypeBase.javaClassName(accordingTo: ProtoFileHeader): String = when {
     isPrimitive -> primitiveClassName()
     isMessage -> message.javaClassName(accordingTo).canonical
     isEnum -> enumeration.javaClassName(accordingTo).canonical
