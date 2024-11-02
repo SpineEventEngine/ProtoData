@@ -43,7 +43,6 @@ public interface TypeBase: Message {
      */
     public fun hasMessage(): Boolean
 
-
     /**
      * A mix-in method for being implemented by the generated class,indicating whether
      * this type is an enum.
@@ -51,7 +50,6 @@ public interface TypeBase: Message {
      * @see isEnum
      */
     public fun hasEnumeration(): Boolean
-
 
     /**
      * A mix-in method for being implemented by the generated class, indicating whether
