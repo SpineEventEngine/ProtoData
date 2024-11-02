@@ -30,7 +30,7 @@ import io.spine.protodata.type.TypeSystem
 import io.spine.string.shortly
 
 /**
- * Obtains a simple name of the type if represents a message or an enum.
+ * Obtains a simple name of the type if it represents a message or an enum.
  *
  * @throws IllegalStateException If this is a primitive type.
  */
