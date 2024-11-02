@@ -24,42 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.ast
+/**
+ * This package provides the data types and functions needed to work
+ * with the structure of Protobuf files.
+ */
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.protodata.ast;
 
-import io.kotest.matchers.shouldBe
-import io.spine.protodata.ast.Cardinality.CARDINALITY_LIST
-import io.spine.protodata.ast.Cardinality.CARDINALITY_MAP
-import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
-import io.spine.protodata.protobuf.toMessageType
-import io.spine.test.type.OopFun
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
+import com.google.errorprone.annotations.CheckReturnValue;
 
-@DisplayName("`FieldType` extensions should")
-internal class FieldTypeExtsSpec {
-
-    @Nested inner class
-    `obtain cardinality for`  {
-
-        val type = OopFun.getDescriptor().toMessageType()
-
-        @Test
-        fun `map fields`() {
-            cardinalityOf("gorillas") shouldBe CARDINALITY_MAP
-        }
-
-        @Test
-        fun `list fields`() {
-            cardinalityOf("tree") shouldBe CARDINALITY_LIST
-        }
-
-        @Test
-        fun `single fields`() {
-            cardinalityOf("jungle") shouldBe CARDINALITY_SINGLE
-        }
-
-        private fun cardinalityOf(fieldName: String): Cardinality =
-            type.field(fieldName).type.cardinality
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

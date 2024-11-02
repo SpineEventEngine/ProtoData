@@ -35,6 +35,12 @@ import io.spine.protodata.type.TypeSystem
 import io.spine.type.shortDebugString
 
 /**
+ * Tells if this type is `google.protobuf.Any`.
+ */
+public val TypeNameOrBuilder.isAny: Boolean
+    get() = packageName == "google.protobuf" && simpleName == "Any"
+
+/**
  * Obtains a fully qualified name of a `TypeName` or its builder.
  */
 public val TypeNameOrBuilder.qualifiedName: String

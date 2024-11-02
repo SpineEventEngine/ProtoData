@@ -84,7 +84,7 @@ public class MessageTypeDependencies(
         fieldList.asSequence()
             .filter { it.matchesCardinality() }
             .map { it.type }
-            .mapNotNull { it.toMessageType(typeSystem) }
+            .mapNotNull { it.extractMessageType(typeSystem) }
             .toSet()
 
     private fun Field.matchesCardinality(): Boolean =
@@ -112,20 +112,3 @@ public class MessageTypeDependencies(
         }
     }
 }
-
-/**
- * Converts this field type into [MessageType] or `null`
- * if this field type is not a message, or if it does not refer to message being a list or a map.
- */
-private fun FieldType.toMessageType(typeSystem: TypeSystem): MessageType? = when {
-    isMessage -> message.toMessageType(typeSystem)
-    isList -> list.maybeMessageType(typeSystem)
-    isMap -> map.valueType.maybeMessageType(typeSystem)
-    else -> null
-}
-
-/**
- * Optionally converts this type into [MessageType] if this type is a message.
- */
-private fun Type.maybeMessageType(typeSystem: TypeSystem): MessageType? =
-    if (isMessage) toMessageType(typeSystem) else null

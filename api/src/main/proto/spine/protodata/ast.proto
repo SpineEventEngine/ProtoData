@@ -215,6 +215,7 @@ enum PrimitiveType {
 
 // A Protobuf type.
 message Type {
+    option (is).java_type = "TypeBase";
 
     oneof kind {
         option (is_required) = true;
@@ -229,6 +230,7 @@ message Type {
 
 // A type of a message field.
 message FieldType {
+    option (is).java_type = "TypeBase";
 
     oneof kind {
         option (is_required) = true;

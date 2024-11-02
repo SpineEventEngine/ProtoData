@@ -39,11 +39,9 @@ import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.Service
 import io.spine.protodata.ast.ServiceName
-import io.spine.protodata.ast.Type
+import io.spine.protodata.ast.TypeBase
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
-import io.spine.protodata.ast.isEnum
-import io.spine.protodata.ast.isMessage
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.ast.typeName
 import io.spine.type.shortDebugString
@@ -100,7 +98,7 @@ public class TypeSystem(
  * @throws IllegalArgumentException
  *          if the given type is not a message or an enum.
  */
-public fun TypeSystem.findHeader(type: Type): ProtoFileHeader? {
+public fun TypeSystem.findHeader(type: TypeBase): ProtoFileHeader? {
     require(type.isMessage || type.isEnum) {
         "The type must be either a message or an enum. Passed: `${type.shortDebugString()}`."
     }
