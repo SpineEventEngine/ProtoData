@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:JvmName("FieldTypes")
+
 package io.spine.protodata.ast
 
 import io.spine.protodata.ast.Cardinality.CARDINALITY_LIST
