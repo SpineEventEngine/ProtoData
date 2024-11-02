@@ -122,7 +122,7 @@ private fun Type.maybeMessageType(typeSystem: TypeSystem): MessageType? =
     if (isMessage) toMessageType(typeSystem) else null
 
 /**
- * Obtains a name of a field type if it is a message or an enum.
+ * Obtains a name of the field type if it is a message or an enum.
  *
  * @return the name of the message or enum type, or `null` otherwise.
  */
