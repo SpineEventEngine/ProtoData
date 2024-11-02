@@ -28,7 +28,6 @@
  * This package provides the data types and functions needed to work
  * with the structure of Protobuf files.
  */
-
 @CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.protodata.ast;
