@@ -27,14 +27,38 @@
 package io.spine.protodata.ast
 
 import com.google.protobuf.Message
+import io.spine.annotation.GeneratedMixin
 
 /**
  * The common interface for [Type] and [FieldType].
  */
+@GeneratedMixin
 public interface TypeBase: Message {
 
+    /**
+     * A mix-in method for being implemented by the generated class, indicating whether
+     * this type is a message.
+     *
+     * @see isMessage
+     */
     public fun hasMessage(): Boolean
+
+
+    /**
+     * A mix-in method for being implemented by the generated class,indicating whether
+     * this type is an enum.
+     *
+     * @see isEnum
+     */
     public fun hasEnumeration(): Boolean
+
+
+    /**
+     * A mix-in method for being implemented by the generated class, indicating whether
+     * this is a primitive type.
+     *
+     * @see isPrimitive
+     */
     public fun hasPrimitive(): Boolean
 
     /**
