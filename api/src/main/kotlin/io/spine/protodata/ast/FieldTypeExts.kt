@@ -142,3 +142,22 @@ private fun Type.maybeTypeName(): TypeName? = when {
     isEnum -> enumeration
     else -> null
 }
+
+/**
+ * Obtains the primitive type this field type refers to directly,
+ * or via the type of list or map values.
+ *
+ * @return the name of the message or enum type, or `null` otherwise.
+ */
+public fun FieldType.extractPrimitiveType(): PrimitiveType? = when {
+    isPrimitive -> primitive
+    isList -> list.maybePrimitiveType()
+    isMap -> map.valueType.maybePrimitiveType()
+    else -> null
+}
+
+/**
+ * Obtains the value of the [PrimitiveType] this type is such, or `null` otherwise.
+ */
+private fun Type.maybePrimitiveType(): PrimitiveType? =
+    if (isPrimitive) primitive else null
