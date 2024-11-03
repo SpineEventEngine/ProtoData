@@ -75,10 +75,13 @@ enum Priority {
     PRIORITY_LOW = 3;
 }
 
-// A collection of fields with `Any` and without.
+// A collection of fields with `Any`, and without.
 message Anybody {
     google.protobuf.Any home = 1;
     repeated google.protobuf.Any neighbourhood = 2;
     google.protobuf.Empty nobody = 3;
-    bool out_there = 4;
+    repeated google.protobuf.Empty void = 4;
+    bool out_there = 5;
+    map<string, google.protobuf.Any> lottery = 6;
+    map<string, google.protobuf.Empty> mockery = 7;
 }

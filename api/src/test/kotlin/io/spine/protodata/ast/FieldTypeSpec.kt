@@ -30,6 +30,7 @@ import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.Cardinality.CARDINALITY_LIST
 import io.spine.protodata.ast.Cardinality.CARDINALITY_MAP
 import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
+import io.spine.protodata.ast.FieldType.KindCase
 import io.spine.protodata.ast.PrimitiveType.TYPE_INT32
 import io.spine.protodata.ast.PrimitiveType.TYPE_SINT64
 import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
@@ -80,6 +81,11 @@ internal class FieldTypeSpec {
         @Test
         fun `map with values of a message type`() =
             nameOf("sorted") shouldBe "map<int32, given.type.Email>"
+
+        @Test
+        fun `returning the name of 'kindCase' otherwise`() {
+            FieldType.getDefaultInstance().name shouldBe KindCase.KIND_NOT_SET.name
+        }
     }
 
     @Test
@@ -116,6 +122,8 @@ internal class FieldTypeSpec {
         isSingular("names") shouldBe false
         isSingular("priorities") shouldBe false
         isSingular("histogram") shouldBe false
+
+        FieldType.getDefaultInstance().isSingular shouldBe false
     }
 
     @Nested inner class
@@ -131,6 +139,13 @@ internal class FieldTypeSpec {
 
         @Test
         fun `map fields`() = cardinalityOf("histogram") shouldBe CARDINALITY_MAP
+
+        @Test
+        fun `throwing when no type information available`() {
+            assertThrows<IllegalStateException> {
+                FieldType.getDefaultInstance().cardinality
+            }
+        }
     }
 
     @Nested inner class
@@ -220,6 +235,7 @@ internal class FieldTypeSpec {
         
         @Test
         fun `returning 'null' for other types`() {
+            typeNameOf("count") shouldBe null
             typeNameOf("names") shouldBe null
             typeNameOf("names") shouldBe null
             typeNameOf("histogram") shouldBe null
@@ -279,7 +295,7 @@ internal class FieldTypeSpec {
         @Test
         fun `throwing when type info is not available`() {
             assertThrows<IllegalStateException> {
-                FieldType.getDefaultInstance().toType()
+                FieldType.getDefaultInstance().extractType()
             }
         }
     }
@@ -304,8 +320,12 @@ internal class FieldTypeSpec {
 
         refersToAny("home") shouldBe true
         refersToAny("neighbourhood") shouldBe true
+        refersToAny("lottery") shouldBe true
+
         refersToAny("nobody") shouldBe false
         refersToAny("out_there") shouldBe false
+        refersToAny("void") shouldBe false
+        refersToAny("mockery") shouldBe false
     }
 }
 
