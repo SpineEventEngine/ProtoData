@@ -49,24 +49,33 @@ public val FieldType.name: String
         ENUMERATION -> enumeration.qualifiedName
         PRIMITIVE -> primitive.protoName
         LIST -> "repeated ${list.name}"
-        MAP -> "map<${map.keyType.name}, ${map.valueType.name}"
+        MAP -> "map<${map.keyType.protoName}, ${map.valueType.name}>"
         else -> kindCase.name
     }
 
 /**
  * Indicates if this field is `repeated`, but not a `map`.
+ *
+ * @see isSingular
+ * @see isMap
  */
 public val FieldType.isList: Boolean
     get() = hasList()
 
 /**
  * Indicates if this field type represents a message.
+ *
+ * @see isSingular
+ * @see isList
  */
 public val FieldType.isMap: Boolean
     get() = hasMap()
 
 /**
  * Indicates if this type holds one value such as primitive, message, or enum item.
+ *
+ * @see isList
+ * @see isMap
  */
 public val FieldType.isSingular: Boolean
     get() = isMessage || isEnum || isPrimitive
@@ -90,6 +99,8 @@ public val FieldType.cardinality: Cardinality
  * Converts this field type to [Type].
  *
  * @throws IllegalStateException If this is field type is a list or a map.
+ *
+ * @see extractType
  */
 public fun FieldType.toType(): Type = type {
     val self = this@toType
@@ -109,6 +120,9 @@ public fun FieldType.toType(): Type = type {
  *
  * @return the message type instance or `null` if this field type is not a message,
  *   or if it does not refer to message being a list or a map.
+ *
+ * @see extractType
+ * @see extractPrimitiveType
  */
 public fun FieldType.extractMessageType(typeSystem: TypeSystem): MessageType? = when {
     isMessage -> message.toMessageType(typeSystem)
@@ -127,6 +141,8 @@ private fun Type.maybeMessageType(typeSystem: TypeSystem): MessageType? =
  * Obtains a name of the field type if it is a message or an enum.
  *
  * @return the name of the message or enum type, or `null` otherwise.
+ *
+ * @see extractType
  */
 public fun FieldType.extractTypeName(): TypeName? = when {
     isMessage -> message
@@ -163,3 +179,43 @@ public fun FieldType.extractPrimitiveType(): PrimitiveType? = when {
  */
 private fun Type.maybePrimitiveType(): PrimitiveType? =
     if (isPrimitive) primitive else null
+
+/**
+ * Extracts direct or element type information from this field type.
+ *
+ * @see extractTypeName
+ * @see extractMessageType
+ */
+public fun FieldType.extractType(): Type = when {
+    isMessage -> toType()
+    isEnum -> toType()
+    isPrimitive -> toType()
+    isMap -> map.valueType
+    isList -> list
+    else -> error("Cannot get type info from the field type ${this.shortly()}.")
+}
+
+/**
+ * Indicates if this field type is a message, or it refers to a message type being
+ * a list or a map with such.
+ *
+ * @see refersToAny
+ */
+public fun FieldType.refersToMessage(): Boolean = when {
+    isMessage -> true
+    isMap -> map.valueType.isMessage
+    isList -> list.isMessage
+    else -> false
+}
+
+/**
+ * Indicates if this field type refers to [com.google.protobuf.Any].
+ *
+ * @see refersToMessage
+ */
+public fun FieldType.refersToAny(): Boolean = when {
+    isAny -> true
+    isMap -> map.valueType.isAny
+    isList -> list.isAny
+    else -> false
+}
