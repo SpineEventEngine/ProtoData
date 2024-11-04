@@ -1,0 +1,87 @@
+/*
+ * Copyright 2024, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+syntax = "proto3";
+
+package given.type;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.test.type";
+option java_outer_classname = "FieldTypeSpecProto";
+option java_multiple_files = true;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// Provides various types of fields.
+//
+// We deliberately violate our custom conventions for naming repeated and map fields
+// for brevity and clarity of underlying tests. Please follow the conventions in other types.
+//
+// See: https://github.com/SpineEventEngine/documentation/wiki/Protobuf-code-style#naming-repeated-and-map-fields
+//
+message FieldSamples {
+    int32 count = 1;
+    repeated uint64 counts = 2;
+
+    string name = 3;
+    repeated string names = 4;
+
+    Email email = 5;
+    repeated Email emails = 6;
+
+    Priority assumed = 7;
+    repeated Priority priorities = 8;
+
+    map<string, sint64> histogram = 9;
+    map<int32, Email> sorted = 10;
+}
+
+message Email {
+    string subject = 1;
+    string text = 2;
+}
+
+enum Priority {
+    PRIORITY_UNKNOWN = 0;
+    PRIORITY_HIGH = 1;
+    PRIORITY_NORMAL = 2;
+    PRIORITY_LOW = 3;
+}
+
+// A collection of fields with `Any`, and without.
+message Anybody {
+    google.protobuf.Any home = 1;
+    repeated google.protobuf.Any neighbourhood = 2;
+    google.protobuf.Empty nobody = 3;
+    repeated google.protobuf.Empty void = 4;
+    bool out_there = 5;
+    map<string, google.protobuf.Any> lottery = 6;
+    map<string, google.protobuf.Empty> mockery = 7;
+}
