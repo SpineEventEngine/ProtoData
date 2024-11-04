@@ -181,7 +181,7 @@ private fun Type.maybePrimitiveType(): PrimitiveType? =
     if (isPrimitive) primitive else null
 
 /**
- * Extracts direct or element type information from this field type.
+ * Extracts the information about the direct type or the type of elements from this field type.
  *
  * @see extractTypeName
  * @see extractMessageType
@@ -192,7 +192,7 @@ public fun FieldType.extractType(): Type = when {
     isPrimitive -> toType()
     isMap -> map.valueType
     isList -> list
-    else -> error("Cannot get type info from the field type ${this.shortly()}.")
+    else -> error("Cannot get type info from the field type `${this.shortly()}`.")
 }
 
 /**
