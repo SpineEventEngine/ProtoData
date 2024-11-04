@@ -54,32 +54,32 @@ import org.junit.jupiter.api.assertThrows
 internal class FieldTypeSpec {
 
     @Nested inner class
-    `provide a name of a` : TypeTest() {
+    `provide type name for diagnostics` : TypeTest() {
 
         /** Obtains a type name of the field with the given name. */
         private fun nameOf(fieldName: String) = typeOf(fieldName).name
 
         @Test
-        fun `primitive field`() = nameOf("count") shouldBe "int32"
+        fun `when primitive`() = nameOf("count") shouldBe "int32"
 
         @Test
-        fun `message field`() = nameOf("email") shouldBe "given.type.Email"
+        fun `when message`() = nameOf("email") shouldBe "given.type.Email"
 
         @Test
-        fun `enum field`() = nameOf("assumed") shouldBe "given.type.Priority"
+        fun `when enum`() = nameOf("assumed") shouldBe "given.type.Priority"
 
         @Test
-        fun `repeated primitive field`() = nameOf("counts") shouldBe "repeated uint64"
+        fun `when repeated primitive`() = nameOf("counts") shouldBe "repeated uint64"
 
         @Test
-        fun `repeated message field`() = nameOf("emails") shouldBe "repeated given.type.Email"
+        fun `when repeated message`() = nameOf("emails") shouldBe "repeated given.type.Email"
 
         @Test
-        fun `map with values of a primitive type`() =
+        fun `when map with primitive values`() =
             nameOf("histogram") shouldBe "map<string, sint64>"
 
         @Test
-        fun `map with values of a message type`() =
+        fun `when map with message values`() =
             nameOf("sorted") shouldBe "map<int32, given.type.Email>"
 
         @Test
