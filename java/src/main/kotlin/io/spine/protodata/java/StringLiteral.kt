@@ -24,31 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.java.expression
-
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
+package io.spine.protodata.java
 
 /**
- * A piece of Java code.
+ * A string literal.
+ *
+ * Represented as the same value as the given string, wrapped in quotation marks.
+ * No extra character escaping is performed.
  */
-public interface JavaElement: CodeElement<Java> {
-
-    /**
-     * Creates a new instance of [JavaElement] from the given Java [code].
-     */
-    public fun of(code: String): JavaElement = ArbitraryElement(code)
-}
-
-/**
- * An arbitrary piece of Java code.
- */
-public class ArbitraryElement(private val code: String) : JavaElement {
-
-    override fun toCode(): String = code
-
-    override fun equals(other: Any?): Boolean =
-        other is ArbitraryElement && this.code == other.code
-
-    override fun hashCode(): Int = code.hashCode()
-}
+public class StringLiteral(value: String) :
+    ArbitraryExpression<JavaString>("\"$value\"", JavaString::class)
