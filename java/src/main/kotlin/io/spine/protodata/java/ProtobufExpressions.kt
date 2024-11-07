@@ -67,13 +67,3 @@ public class BuilderMethodCall @JvmOverloads constructor(
 
     private fun fieldAccess(fieldName: String) = FieldAccess(scope, fieldName)
 }
-
-/**
- * An expression which yields the given [ByteString].
- */
-public class LiteralBytes(bytes: ByteString) : ArbitraryExpression<ByteString>(
-    code = "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})",
-    type = ByteString::class
-)
-
-private val ByteStringClass = ByteString::class.qualifiedName!!

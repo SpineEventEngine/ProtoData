@@ -26,6 +26,7 @@
 
 package io.spine.protodata.java
 
+import com.google.protobuf.ByteString
 import kotlin.reflect.KClass
 
 /**
@@ -58,3 +59,13 @@ public class Literal<T : Any>(value: T, type: KClass<T>) : ArbitraryExpression<T
  */
 public class StringLiteral(value: String) :
     ArbitraryExpression<String>("\"$value\"", String::class)
+
+/**
+ * An expression which yields the given Protobuf [ByteString].
+ */
+public class LiteralBytes(bytes: ByteString) : ArbitraryExpression<ByteString>(
+    code = "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})",
+    type = ByteString::class
+)
+
+private val ByteStringClass = ByteString::class.qualifiedName!!
