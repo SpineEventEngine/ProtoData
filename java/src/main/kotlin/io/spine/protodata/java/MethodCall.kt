@@ -26,6 +26,7 @@
 
 package io.spine.protodata.java
 
+import com.google.protobuf.Message
 import kotlin.reflect.KClass
 
 /**
@@ -49,7 +50,7 @@ public object InstanceScope : ArbitraryExpression<Any>("", Any::class)
  * @param generics The list of the type arguments passed to the method.
  */
 public open class MethodCall<T : Any> @JvmOverloads constructor(
-    scope: JavaElement,
+    private val scope: JavaElement,
     name: String,
     returnedType: KClass<T>,
     arguments: List<Expression<*>> = listOf(),
@@ -75,8 +76,13 @@ public open class MethodCall<T : Any> @JvmOverloads constructor(
             arguments: List<Expression<*>> = listOf(),
             generics: List<ClassName> = listOf()
         ): MethodCall<T> = MethodCall(scope, name, T::class, arguments, generics)
-    }
 
+        public inline operator fun <reified T : Any> invoke(
+            scope: JavaElement,
+            name: String,
+            argument: Expression<*>
+        ): MethodCall<T> = MethodCall(scope, name, T::class, listOf(argument))
+    }
 
     /**
      * Constructs an expression of calling another method on the result of this method call.
@@ -86,6 +92,36 @@ public open class MethodCall<T : Any> @JvmOverloads constructor(
         method: String,
         arguments: List<Expression<*>> = listOf(),
     ): MethodCall<R> = MethodCall(this, method, R::class, arguments)
+
+    /**
+     * Constructs an expression chaining a call of the `build()` method.
+     */
+    public fun chainBuild(): MethodCall<Message> = chain<Message>("build")
+
+    /**
+     * Constructs an expression chaining a setter call.
+     */
+    public fun chainSet(field: String, value: Expression<*>): MethodCall<ProtoBuilder> =
+        fieldAccess(field).setter(value)
+
+    /**
+     * Constructs an expression chaining a call of an `addField(...)` method.
+     */
+    public fun chainAdd(field: String, value: Expression<*>): MethodCall<ProtoBuilder> =
+        fieldAccess(field).add(value)
+
+    /**
+     * Constructs an expression chaining a call of an `addAllField(...)` method.
+     */
+    public fun chainAddAll(field: String, value: Expression<*>): MethodCall<ProtoBuilder> =
+        fieldAccess(field).addAll(value)
+
+    private fun fieldAccess(fieldName: String) = FieldAccess(
+        // Would take a lot of time otherwise.
+        // There should be `MethodCall` and a separate `BuilderMethodCall`.
+        ArbitraryExpression<Message>(scope.toCode()),
+        fieldName
+    )
 }
 
 /**

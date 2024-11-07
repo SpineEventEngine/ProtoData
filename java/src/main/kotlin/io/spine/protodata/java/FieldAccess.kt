@@ -61,32 +61,32 @@ internal constructor(
     /**
      * Constructs a setter expression for the associated field.
      */
-    public fun setter(value: Expression<*>): BuilderMethodCall =
-        BuilderMethodCall(message, setterName, value)
+    public fun setter(value: Expression<*>): MethodCall<ProtoBuilder> =
+        MethodCall(message, setterName, value)
 
     /**
      * Constructs an `addField(..)` expression for the associated field.
      */
-    public fun add(value: Expression<*>): BuilderMethodCall =
-        BuilderMethodCall(message, addName, value)
+    public fun add(value: Expression<*>): MethodCall<ProtoBuilder> =
+        MethodCall(message, addName, value)
 
     /**
      * Constructs an `addAllField(..)` expression for the associated field.
      */
-    public fun addAll(value: Expression<*>): BuilderMethodCall =
-        BuilderMethodCall(message, addAllName, value)
+    public fun addAll(value: Expression<*>): MethodCall<ProtoBuilder> =
+        MethodCall(message, addAllName, value)
 
     /**
      * Constructs an `putField(..)` expression for the associated field.
      */
-    public fun put(key: Expression<*>, value: Expression<*>): BuilderMethodCall =
-        BuilderMethodCall(message, putName, listOf(key, value))
+    public fun put(key: Expression<*>, value: Expression<*>): MethodCall<ProtoBuilder> =
+        MethodCall(message, putName, listOf(key, value))
 
     /**
      * Constructs an `putAllField(..)` expression for the associated field.
      */
-    public fun putAll(value: Expression<*>): BuilderMethodCall =
-        BuilderMethodCall(message, putAllName, value)
+    public fun putAll(value: Expression<*>): MethodCall<ProtoBuilder> =
+        MethodCall(message, putAllName, value)
 
     override fun toString(): String {
         return "FieldAccess[$message#${name.value}]"

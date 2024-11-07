@@ -27,6 +27,7 @@
 package io.spine.protodata.java
 
 import com.google.protobuf.ByteString
+import com.google.protobuf.Message
 import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.Type.KindCase.ENUMERATION
@@ -48,7 +49,7 @@ import io.spine.tools.code.Java
 @Suppress("TooManyFunctions")
 public class JavaValueConverter(
     private val convention: MessageOrEnumConvention
-) : ValueConverter<Java, Expression>() {
+) : ValueConverter<Java, Expression<*>>() {
 
     override fun nullToCode(type: Type): Null = Null
 
@@ -62,7 +63,7 @@ public class JavaValueConverter(
 
     override fun toCode(value: ByteString): LiteralBytes = LiteralBytes(value)
 
-    override fun toCode(value: MessageValue): MethodCall {
+    override fun toCode(value: MessageValue): MethodCall<Message> {
         val type = value.type
         val className = convention.declarationFor(type).name as ClassName
         return if (value.fieldsMap.isEmpty()) {
