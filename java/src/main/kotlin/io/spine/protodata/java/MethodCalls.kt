@@ -26,7 +26,11 @@
 
 package io.spine.protodata.java
 
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableMap
 import com.google.protobuf.Message
+
+internal const val OF = "of"
 
 /**
  * Constructs a call to a static method of this class.
@@ -69,3 +73,54 @@ public fun ClassName.getDefaultInstance(): MethodCall<Message> =
  */
 public fun EnumName.enumValue(number: Int): MethodCall<Message> =
     call("forNumber", listOf(Literal(number)))
+
+/**
+ * Constructs an expression of a list from the given list of [expressions].
+ *
+ * The resulting expression always yields an instance of Guava `ImmutableList`.
+ */
+public fun listExpression(expressions: List<Expression<*>>): MethodCall<ImmutableList<*>> =
+    ClassName(ImmutableList::class).call(OF, expressions)
+
+/**
+ * Constructs an expression of a list of the given [expressions].
+ *
+ * The resulting expression always yields an instance of Guava `ImmutableList`.
+ */
+public fun listExpression(vararg expressions: Expression<*>): MethodCall<ImmutableList<*>> =
+    listExpression(expressions.toList())
+
+/**
+ * Constructs an expression of a map of the given [expressions].
+ *
+ * The resulting expression always yields an instance of Guava `ImmutableMap`.
+ *
+ * @param expressions The expressions representing the entries.
+ * @param keyType The type of the keys in the map;
+ *   must be non-`null` if the map is not empty, may be `null` otherwise.
+ * @param valueType The type of the values in the map;
+ *   must be non-`null` if the map is not empty, may be `null` otherwise.
+ */
+public fun mapExpression(
+    expressions: Map<Expression<*>, Expression<*>>,
+    keyType: ClassName?,
+    valueType: ClassName?
+): MethodCall<ImmutableMap<*, *>> {
+    val immutableMapClass = ClassName(ImmutableMap::class)
+    if (expressions.isEmpty()) {
+        return immutableMapClass.call(OF)
+    }
+
+    checkNotNull(keyType) { "Map key type is not set." }
+    checkNotNull(valueType) { "Map value type is not set." }
+
+    var call = immutableMapClass.call<ImmutableMap.Builder<*, *>>(
+        "builder",
+        generics = listOf(keyType, valueType)
+    )
+    expressions.forEach { (k, v) ->
+        call = call.chain("put", listOf(k, v))
+    }
+
+    return call.chainBuild()
+}

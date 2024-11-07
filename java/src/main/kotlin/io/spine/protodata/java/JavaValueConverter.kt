@@ -26,6 +26,8 @@
 
 package io.spine.protodata.java
 
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableMap
 import com.google.protobuf.ByteString
 import com.google.protobuf.Message
 import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
@@ -77,18 +79,18 @@ public class JavaValueConverter(
         }
     }
 
-    override fun toCode(value: EnumValue): MethodCall {
+    override fun toCode(value: EnumValue): MethodCall<Message> {
         val type = value.type
         val enumClassName = convention.declarationFor(type).name as EnumName
         return enumClassName.enumValue(value.constNumber)
     }
 
-    override fun toList(value: ListValue): MethodCall {
+    override fun toList(value: ListValue): MethodCall<ImmutableList<*>> {
         val expressions = value.valuesList.map(this::valueToCode)
         return listExpression(expressions)
     }
 
-    override fun toCode(value: MapValue): MethodCall {
+    override fun toCode(value: MapValue): MethodCall<ImmutableMap<*, *>> {
         val valueList = value.valueList
         val firstEntry = valueList.firstOrNull()
         val firstKey = firstEntry?.key

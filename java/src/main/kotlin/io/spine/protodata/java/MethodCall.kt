@@ -96,7 +96,7 @@ public open class MethodCall<T : Any> @JvmOverloads constructor(
     /**
      * Constructs an expression chaining a call of the `build()` method.
      */
-    public fun chainBuild(): MethodCall<Message> = chain<Message>("build")
+    public inline fun <reified R : Any> chainBuild(): MethodCall<R> = chain<R>("build")
 
     /**
      * Constructs an expression chaining a setter call.
