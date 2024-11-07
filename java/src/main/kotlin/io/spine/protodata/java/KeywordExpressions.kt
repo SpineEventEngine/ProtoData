@@ -45,7 +45,7 @@ public object Null : ArbitraryExpression<JavaNull>("null", JavaNull::class)
  * val this2 = This<JavaObject>()
  * ```
  */
-public class This<T : JavaType>(type: KClass<T>) : Expression<T> {
+public class This<T : JavaType>(type: KClass<T>) : ArbitraryExpression<T>("this", type) {
 
     public companion object {
 
@@ -59,12 +59,4 @@ public class This<T : JavaType>(type: KClass<T>) : Expression<T> {
          */
         public inline operator fun <reified T : JavaType> invoke(): This<T> = This(T::class)
     }
-
-    private val expression = ArbitraryExpression("this", type)
-
-    override fun toCode(): String = expression.toCode()
-
-    override fun equals(other: Any?): Boolean = other is This<*> && expression == other.expression
-
-    override fun hashCode(): Int = expression.hashCode()
 }
