@@ -29,9 +29,12 @@ package io.spine.protodata.java.expression
 /**
  * A Java type.
  *
- * @see SingularTypes
- * @see ArrayTypes
- * @see ListTypes
+ * The default coverage includes [singular][SingularTypes], [array][ArrayTypes]
+ * and [list][ListTypes] types.
+ *
+ * To introduce a new type locally, prefer declaring an enum class implementing
+ * this interface. Such may be useful when it is possible to add a more specific
+ * type for your domain, or introduce a domain-specific types.
  */
 public interface JavaType {
 
@@ -43,6 +46,9 @@ public interface JavaType {
 
 /**
  * A singular Java type.
+ *
+ * Please note, although [MESSAGE] type is not Java-specific, within our codebase
+ * Protobuf messages are used a lot.
  */
 public enum class SingularTypes : JavaType {
     BYTE,
