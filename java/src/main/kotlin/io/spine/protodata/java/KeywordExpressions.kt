@@ -45,7 +45,7 @@ public object Null : ArbitraryExpression<JavaNull>("null", JavaNull::class)
  * val this2 = This<JavaObject>()
  * ```
  */
-public class This<T : JavaType>(type: KClass<T>) : ArbitraryExpression<T>("this", type) {
+public class This<T : Any>(type: KClass<T>) : ArbitraryExpression<T>("this", type) {
 
     public companion object {
 
@@ -57,6 +57,6 @@ public class This<T : JavaType>(type: KClass<T>) : ArbitraryExpression<T>("this"
          *
          * @param T The type of the returned value.
          */
-        public inline operator fun <reified T : JavaType> invoke(): This<T> = This(T::class)
+        public inline operator fun <reified T : Any> invoke(): This<T> = This(T::class)
     }
 }

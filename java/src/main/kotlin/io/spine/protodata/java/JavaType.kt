@@ -27,33 +27,6 @@
 package io.spine.protodata.java
 
 /**
- * A Java type.
+ * An [Expression] return type that returns a `null`.
  */
-public interface JavaType
-
-/**
- * A singular, non-iterable Java type.
- */
-public sealed class SingularType : JavaType
-
-/**
- * An object Java type.
- */
-public sealed class ObjectType : SingularType()
-public object JavaObject : ObjectType()
-public object JavaNull : ObjectType()
-public object ProtoMessage : ObjectType()
-public object ProtoAny : ObjectType()
-
-/**
- * A primitive Java type.
- */
-public sealed class PrimitiveType : SingularType()
-public object JavaString : PrimitiveType()
-public object JavaInteger : PrimitiveType()
-public object JavaLong : PrimitiveType()
-public object JavaBoolean : PrimitiveType()
-public object JavaByte : PrimitiveType()
-
-
-
+public object JavaNull

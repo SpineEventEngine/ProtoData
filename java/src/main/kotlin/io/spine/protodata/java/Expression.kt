@@ -35,7 +35,7 @@ import kotlin.reflect.KClass
  *
  * @param T The type of the returned value.
  */
-public interface Expression<T : JavaType> : JavaElement
+public interface Expression<T> : JavaElement
 
 /**
  * An arbitrary Java expression that yields a value.
@@ -51,7 +51,7 @@ public interface Expression<T : JavaType> : JavaElement
  * @param code Java code denoting an expression.
  * @param type The class denoting the returned type of the expression.
  */
-public open class ArbitraryExpression<T : JavaType>(
+public open class ArbitraryExpression<T : Any>(
     private val code: String,
     private val type: KClass<T>
 ) : Expression<T> {
@@ -66,7 +66,7 @@ public open class ArbitraryExpression<T : JavaType>(
          *
          * @param T The type of the returned value.
          */
-        public inline operator fun <reified T : JavaType> invoke(code: String): ArbitraryExpression<T> =
+        public inline operator fun <reified T : Any> invoke(code: String): ArbitraryExpression<T> =
             ArbitraryExpression(code, T::class)
     }
 

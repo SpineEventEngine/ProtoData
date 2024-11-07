@@ -31,7 +31,7 @@ import kotlin.reflect.KClass
 /**
  * The assumed reference to `this` when calling a method within an instance.
  */
-public object InstanceScope : ArbitraryExpression<JavaObject>("", JavaObject::class)
+public object InstanceScope : ArbitraryExpression<Any>("", Any::class)
 
 /**
  * An expression of a Java method call.
@@ -47,7 +47,7 @@ public object InstanceScope : ArbitraryExpression<JavaObject>("", JavaObject::cl
  * @param arguments The list of the arguments passed to the method.
  * @param generics The list of the type arguments passed to the method.
  */
-public class MethodCall<T : JavaType> @JvmOverloads constructor(
+public class MethodCall<T : Any> @JvmOverloads constructor(
     scope: JavaElement,
     name: String,
     returnedType: KClass<T>,
@@ -62,7 +62,7 @@ public class MethodCall<T : JavaType> @JvmOverloads constructor(
      * Constructs an expression of calling another method on the result of this method call.
      */
     @JvmOverloads
-    public fun <T : JavaType> chain(
+    public fun <T : Any> chain(
         method: String,
         arguments: List<Expression<*>> = listOf(),
         returnedType: KClass<T>

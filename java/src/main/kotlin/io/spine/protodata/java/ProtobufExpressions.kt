@@ -26,11 +26,14 @@
 
 package io.spine.protodata.java
 
+import com.google.protobuf.ByteString
+
 /**
- * A string literal.
- *
- * Represented as the same value as the given string, wrapped in quotation marks.
- * No extra character escaping is performed.
+ * An expression which yields the given [ByteString].
  */
-public class StringLiteral(value: String) :
-    ArbitraryExpression<String>("\"$value\"", String::class)
+public class LiteralBytes(bytes: ByteString) : ArbitraryExpression<ByteString>(
+    code = "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})",
+    type = ByteString::class
+)
+
+private val ByteStringClass = ByteString::class.qualifiedName!!
