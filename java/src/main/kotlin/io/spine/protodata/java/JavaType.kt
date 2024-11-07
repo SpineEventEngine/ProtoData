@@ -36,13 +36,24 @@ public interface JavaType
  */
 public sealed class SingularType : JavaType
 
-public object JavaString : SingularType()
-public object JavaInteger : SingularType()
-public object JavaLong : SingularType()
-public object JavaBoolean : SingularType()
-public object JavaByte : SingularType()
+/**
+ * An object Java type.
+ */
+public sealed class ObjectType : SingularType()
+public object JavaObject : ObjectType()
+public object JavaNull : ObjectType()
+public object ProtoMessage : ObjectType()
+public object ProtoAny : ObjectType()
 
-public object JavaObject : SingularType()
+/**
+ * A primitive Java type.
+ */
+public sealed class PrimitiveType : SingularType()
+public object JavaString : PrimitiveType()
+public object JavaInteger : PrimitiveType()
+public object JavaLong : PrimitiveType()
+public object JavaBoolean : PrimitiveType()
+public object JavaByte : PrimitiveType()
 
-public object ProtoMessage : SingularType()
-public object ProtoAny : SingularType()
+
+
