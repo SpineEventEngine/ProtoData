@@ -59,14 +59,33 @@ public open class MethodCall<T : Any> @JvmOverloads constructor(
     type = returnedType
 ) {
 
+    public companion object {
+
+        /**
+         * Creates a new instance of [MethodCall] from the given parameters.
+         *
+         * This factory method is an alternative to passing [KClass] to the constructor.
+         * See the class docs for the example usage.
+         *
+         * @param T The type of the returned value.
+         */
+        public inline operator fun <reified T : Any> invoke(
+            scope: JavaElement,
+            name: String,
+            arguments: List<Expression<*>> = listOf(),
+            generics: List<ClassName> = listOf()
+        ): MethodCall<T> = MethodCall(scope, name, T::class, arguments, generics)
+    }
+
+
     /**
      * Constructs an expression of calling another method on the result of this method call.
      */
     @JvmOverloads
-    public inline fun <reified T : Any> chain(
+    public inline fun <reified R : Any> chain(
         method: String,
         arguments: List<Expression<*>> = listOf(),
-    ): MethodCall<T> = MethodCall(this, method, T::class, arguments)
+    ): MethodCall<R> = MethodCall(this, method, R::class, arguments)
 }
 
 /**
