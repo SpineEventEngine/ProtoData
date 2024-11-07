@@ -27,6 +27,11 @@
 package io.spine.protodata.java
 
 /**
- * An [Expression] return type that returns a `null`.
+ * An [Expression] return type stub that denotes a `null`.
  */
 public object JavaNull
+
+/**
+ * An [Expression] return type stub that denotes a Protobuf message builder.
+ */
+public object ProtoBuilder
