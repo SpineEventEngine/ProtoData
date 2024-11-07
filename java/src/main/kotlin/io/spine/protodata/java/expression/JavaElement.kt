@@ -43,7 +43,7 @@ public interface JavaElement: CodeElement<Java> {
 /**
  * An arbitrary piece of Java code.
  */
-public open class ArbitraryElement(public val code: String) : JavaElement {
+public class ArbitraryElement(private val code: String) : JavaElement {
 
     override fun toCode(): String = code
 
