@@ -28,13 +28,6 @@ package io.spine.protodata.java.expression
 
 /**
  * A Java type.
- *
- * The default coverage includes [singular][SingularTypes], [array][ArrayTypes]
- * and [list][ListTypes] types.
- *
- * To introduce a new type locally, prefer declaring an enum class implementing
- * this interface. Such may be useful when it is possible to add a more specific
- * type for your domain, or introduce a domain-specific types.
  */
 public interface JavaType {
 
@@ -45,43 +38,16 @@ public interface JavaType {
 }
 
 /**
- * A singular Java type.
- *
- * Please note, although [MESSAGE] type is not Java-specific, within our codebase
- * Protobuf messages are used a lot.
+ * A singular Java, non-iterable Java type.
  */
-public enum class SingularTypes : JavaType {
-    BYTE,
-    INTEGER,
-    LONG,
-    STRING,
-    BOOLEAN,
-    OBJECT,
-    MESSAGE,
+public sealed class SingularType : JavaType {
+    override val name: String = this::class.java.simpleName
 }
 
-/**
- * A typed Java array.
- */
-public enum class ArrayTypes : JavaType {
-    BYTES_ARRAY,
-    INTEGER_ARRAY,
-    LONG_ARRAY,
-    STRING_ARRAY,
-    BOOLEAN_ARRAY,
-    OBJECT_ARRAY,
-    MESSAGES_ARRAY,
-}
-
-/**
- * A typed Java list.
- */
-public enum class ListTypes : JavaType {
-    BYTES_LIST,
-    INTEGER_LIST,
-    LONG_LIST,
-    STRING_LIST,
-    BOOLEAN_LIST,
-    OBJECT_LIST,
-    MESSAGES_LIST,
-}
+public object JavaByte : SingularType()
+public object JavaInteger : SingularType()
+public object JavaLong : SingularType()
+public object JavaString : SingularType()
+public object JavaBoolean : SingularType()
+public object JavaObject : SingularType()
+public object ProtoMessage : SingularType()
