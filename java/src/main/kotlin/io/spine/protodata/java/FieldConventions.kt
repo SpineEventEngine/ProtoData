@@ -43,7 +43,7 @@ public abstract class FieldConventions(
     protected val name: FieldName,
     protected val kind: Cardinality
 ) {
-    protected val getterName: String
+    public val getterName: String
         get() = when (kind) {
             CARDINALITY_LIST -> getListName
             CARDINALITY_MAP -> getMapName
@@ -56,23 +56,23 @@ public abstract class FieldConventions(
     private val getMapName: String
         get() = "get${name.camelCase}Map"
 
-    protected val setterName: String
+    public val setterName: String
         get() = when (kind) {
             CARDINALITY_LIST -> addAllName
             CARDINALITY_MAP -> putAllName
             else -> prefixed("set")
         }
 
-    protected val addName: String
+    public val addName: String
         get() = prefixed("add")
 
-    protected val addAllName: String
+    public val addAllName: String
         get() = prefixed("addAll")
 
-    protected val putName: String
+    public val putName: String
         get() = prefixed("put")
 
-    protected val putAllName: String
+    public val putAllName: String
         get() = prefixed("putAll")
 
     private fun prefixed(prefix: String): String =
