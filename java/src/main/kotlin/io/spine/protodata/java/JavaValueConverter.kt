@@ -103,7 +103,7 @@ public class JavaValueConverter(
         return mapExpression(valuesMap, keyClass, valueClass)
     }
 
-    override fun toCode(reference: Reference): MethodCall {
+    override fun toCode(reference: Reference): MethodCall<Any> {
         val path = reference.target.fieldNameList.toMutableList()
 
         // If the field reference contains only one element, take the cardinality of the field type.
@@ -117,7 +117,7 @@ public class JavaValueConverter(
         val start = path.removeFirst()
 
         // Assume we generate the call in the scope of a message method.
-        var call = MethodCall(InstanceScope, getterOf(start, startCardinality))
+        var call = MethodCall<Any>(InstanceScope, getterOf(start, startCardinality))
 
         // The remaining path (if any) would be chained method calls.
         path.forEachIndexed() { index, field ->
