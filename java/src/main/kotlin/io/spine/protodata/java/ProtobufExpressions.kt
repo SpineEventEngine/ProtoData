@@ -27,6 +27,46 @@
 package io.spine.protodata.java
 
 import com.google.protobuf.ByteString
+import com.google.protobuf.Message
+
+public class BuilderMethodCall @JvmOverloads constructor(
+    private val scope: Expression<Message>,
+    name: String,
+    arguments: List<Expression<*>> = listOf(),
+    generics: List<ClassName> = listOf()
+) : MethodCall<ProtoBuilder>(scope, name, ProtoBuilder::class, arguments, generics) {
+
+    public constructor(
+        scope: Expression<Message>,
+        name: String,
+        argument: Expression<*>
+    ) : this(scope, name, listOf(argument))
+
+    /**
+     * Constructs an expression chaining a call of the `build()` method.
+     */
+    public fun chainBuild(): MethodCall<Message> = chain<Message>("build")
+
+    /**
+     * Constructs an expression chaining a setter call.
+     */
+    public fun chainSet(field: String, value: Expression<*>): BuilderMethodCall =
+        fieldAccess(field).setter(value)
+
+    /**
+     * Constructs an expression chaining a call of an `addField(...)` method.
+     */
+    public fun chainAdd(field: String, value: Expression<*>): BuilderMethodCall =
+        fieldAccess(field).add(value)
+
+    /**
+     * Constructs an expression chaining a call of an `addAllField(...)` method.
+     */
+    public fun chainAddAll(field: String, value: Expression<*>): BuilderMethodCall =
+        fieldAccess(field).addAll(value)
+
+    private fun fieldAccess(fieldName: String) = FieldAccess(scope, fieldName)
+}
 
 /**
  * An expression which yields the given [ByteString].

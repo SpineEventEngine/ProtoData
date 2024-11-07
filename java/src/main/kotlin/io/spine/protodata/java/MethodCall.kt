@@ -40,6 +40,7 @@ public object InstanceScope : ArbitraryExpression<Any>("", Any::class)
  * In the case of the latter — an object reference.
  *
  * @param T The returned type.
+ *
  * @param scope The scope of the method invocation: an instance receiving the method call, or
  *   the name of the class declaring a static method.
  * @param name The name of the method.
@@ -47,7 +48,7 @@ public object InstanceScope : ArbitraryExpression<Any>("", Any::class)
  * @param arguments The list of the arguments passed to the method.
  * @param generics The list of the type arguments passed to the method.
  */
-public class MethodCall<T : Any> @JvmOverloads constructor(
+public open class MethodCall<T : Any> @JvmOverloads constructor(
     scope: JavaElement,
     name: String,
     returnedType: KClass<T>,
@@ -62,11 +63,10 @@ public class MethodCall<T : Any> @JvmOverloads constructor(
      * Constructs an expression of calling another method on the result of this method call.
      */
     @JvmOverloads
-    public fun <T : Any> chain(
+    public inline fun <reified T : Any> chain(
         method: String,
         arguments: List<Expression<*>> = listOf(),
-        returnedType: KClass<T>
-    ): MethodCall<*> = MethodCall(this, method, returnedType, arguments)
+    ): MethodCall<T> = MethodCall(this, method, T::class, arguments)
 }
 
 /**
