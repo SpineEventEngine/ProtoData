@@ -52,13 +52,13 @@ public class JavaValueConverter(
 
     override fun nullToCode(type: Type): Null = Null
 
-    override fun toCode(value: Boolean): Literal = Literal(value)
+    override fun toCode(value: Boolean): Expression<Boolean> = Literal(value)
 
-    override fun toCode(value: Double): Literal = Literal(value)
+    override fun toCode(value: Double): Expression<Double> = Literal(value)
 
-    override fun toCode(value: Long): Literal = Literal(value)
+    override fun toCode(value: Long): Expression<Long> = Literal(value)
 
-    override fun toCode(value: String): LiteralString = LiteralString(value)
+    override fun toCode(value: String): StringLiteral = StringLiteral(value)
 
     override fun toCode(value: ByteString): LiteralBytes = LiteralBytes(value)
 
@@ -113,7 +113,7 @@ public class JavaValueConverter(
         }
         val start = path.removeFirst()
 
-        // Assume we generate the call in a scope of a message method.
+        // Assume we generate the call in the scope of a message method.
         var call = MethodCall(InstanceScope, getterOf(start, startCardinality))
 
         // The remaining path (if any) would be chained method calls.
