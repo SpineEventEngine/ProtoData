@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -31,7 +31,24 @@ import io.spine.tools.code.Java
 
 /**
  * A piece of Java code.
- *
- * Can be an expression, a reference to a variable, an identifier, etc.
  */
-public sealed interface JavaElement: CodeElement<Java>
+public interface JavaElement: CodeElement<Java> {
+
+    /**
+     * Creates a new instance of [JavaElement] from the given Java [code].
+     */
+    public fun of(code: String): JavaElement = ArbitraryElement(code)
+}
+
+/**
+ * An arbitrary piece of Java code.
+ */
+public class ArbitraryElement(private val code: String) : JavaElement {
+
+    override fun toCode(): String = code
+
+    override fun equals(other: Any?): Boolean =
+        other is ArbitraryElement && this.code == other.code
+
+    override fun hashCode(): Int = code.hashCode()
+}

@@ -24,30 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.java.expression
+package io.spine.protodata.java
 
 /**
  * A Java type.
  */
-public interface JavaType {
-
-    /**
-     * Name of this Java type.
-     */
-    public val name: String
-}
+public interface JavaType
 
 /**
- * A singular Java, non-iterable Java type.
+ * A singular, non-iterable Java type.
  */
-public sealed class SingularType : JavaType {
-    override val name: String = this::class.java.simpleName
-}
+public sealed class SingularType : JavaType
 
-public object JavaByte : SingularType()
+public object JavaString : SingularType()
 public object JavaInteger : SingularType()
 public object JavaLong : SingularType()
-public object JavaString : SingularType()
 public object JavaBoolean : SingularType()
+public object JavaByte : SingularType()
+
 public object JavaObject : SingularType()
+
 public object ProtoMessage : SingularType()
+public object ProtoAny : SingularType()
