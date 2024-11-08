@@ -27,13 +27,12 @@
 package io.spine.protodata.java
 
 import com.google.protobuf.Any as ProtoAny
-import com.google.protobuf.Message
 import io.spine.protobuf.TypeConverter
 
 /**
- * Wraps this [Message] expressions into Protobuf `Any` using [TypeConverter.toAny] method.
+ * Wraps this [Any] expression into Protobuf `Any` using [TypeConverter.toAny] method.
  */
-public fun Expression<Message>.packToAny(): Expression<ProtoAny> {
+public fun Expression<*>.packToAny(): Expression<ProtoAny> {
     val type = ClassName(TypeConverter::class)
     return type.call("toAny", arguments = listOf(this))
 }
