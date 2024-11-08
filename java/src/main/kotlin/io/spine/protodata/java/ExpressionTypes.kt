@@ -34,4 +34,4 @@ public object JavaNull
 /**
  * An [Expression] return type stub that denotes a Protobuf message builder.
  */
-public object ProtoBuilder
+public object MessageBuilder

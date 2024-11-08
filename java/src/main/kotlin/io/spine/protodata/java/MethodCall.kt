@@ -101,19 +101,19 @@ public open class MethodCall<T : Any> @JvmOverloads constructor(
     /**
      * Constructs an expression chaining a setter call.
      */
-    public fun chainSet(field: String, value: Expression<*>): MethodCall<ProtoBuilder> =
+    public fun chainSet(field: String, value: Expression<*>): MethodCall<MessageBuilder> =
         fieldAccess(field).setter(value)
 
     /**
      * Constructs an expression chaining a call of an `addField(...)` method.
      */
-    public fun chainAdd(field: String, value: Expression<*>): MethodCall<ProtoBuilder> =
+    public fun chainAdd(field: String, value: Expression<*>): MethodCall<MessageBuilder> =
         fieldAccess(field).add(value)
 
     /**
      * Constructs an expression chaining a call of an `addAllField(...)` method.
      */
-    public fun chainAddAll(field: String, value: Expression<*>): MethodCall<ProtoBuilder> =
+    public fun chainAddAll(field: String, value: Expression<*>): MethodCall<MessageBuilder> =
         fieldAccess(field).addAll(value)
 
     private fun fieldAccess(fieldName: String) = FieldAccess(
