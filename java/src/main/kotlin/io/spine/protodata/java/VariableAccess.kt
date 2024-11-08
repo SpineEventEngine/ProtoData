@@ -26,11 +26,7 @@
 
 package io.spine.protodata.java
 
-/**
- * A string literal.
- *
- * Represented as the same value as the given string, wrapped in quotation marks.
- * No extra character escaping is performed.
- */
-public class StringLiteral(value: String) :
-    ArbitraryExpression<String>("\"$value\"", String::class)
+public class VariableAccess<T>(private val name: String) : Expression<T> {
+
+    override fun toCode(): String = name
+}
