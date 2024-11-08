@@ -119,7 +119,7 @@ public open class MethodCall<T : Any> @JvmOverloads constructor(
     private fun fieldAccess(fieldName: String) = FieldAccess(
         // Would take a lot of time otherwise.
         // There should be `MethodCall` and a separate `BuilderMethodCall`.
-        ArbitraryExpression<Message>(scope.toCode()),
+        ArbitraryExpression<Message>(toCode()),
         fieldName
     )
 }
