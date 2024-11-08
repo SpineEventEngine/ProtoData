@@ -31,19 +31,30 @@ import io.spine.tools.code.Java
 
 /**
  * A piece of Java code.
+ *
+ * An example of creating an arbitrary piece of Java code:
+ *
+ * ```
+ * val printOne = JavaElement("System.out.println(1.0);")
+ * ```
  */
 public interface JavaElement: CodeElement<Java> {
 
-    /**
-     * Creates a new instance of [JavaElement] from the given Java [code].
-     */
-    public fun of(code: String): JavaElement = ArbitraryElement(code)
+    public companion object {
+
+        /**
+         * Creates a new instance of [JavaElement] with the given [code].
+         */
+        public operator fun invoke(code: String): JavaElement = ArbitraryElement(code)
+    }
 }
 
 /**
  * An arbitrary piece of Java code.
+ *
+ * This class is the default implementation of [JavaElement].
  */
-public class ArbitraryElement(private val code: String) : JavaElement {
+public open class ArbitraryElement(private val code: String) : JavaElement {
 
     override fun toCode(): String = code
 
