@@ -44,7 +44,7 @@ public inline fun <reified T : Any> ClassOrEnumName.call(
     name: String,
     arguments: List<Expression<*>> = listOf(),
     generics: List<ClassName> = listOf()
-): MethodCall<T> = MethodCall(this, name, T::class, arguments, generics)
+): MethodCall<T> = MethodCall(this, name, arguments, generics)
 
 /**
  * Constructs an expression which creates a new builder for this class.

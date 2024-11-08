@@ -27,45 +27,32 @@
 package io.spine.protodata.java
 
 import com.google.protobuf.ByteString
-import kotlin.reflect.KClass
 
 /**
  * An arbitrary literal.
  *
- * May denote any number or boolean constants.
+ * This expression should denote any constant value.
+ *
+ * @param [value] A string representation of the literal. It will be used "as is"
+ *  in the resulting Java code.
+ *
+ * @see StringLiteral
  */
-public class Literal<T : Any>(value: T, type: KClass<T>) : ArbitraryExpression<T>("$value", type) {
-
-    public companion object {
-
-        /**
-         * Creates a new instance of [Literal] from the given [value].
-         *
-         * This factory method is an alternative to passing [KClass] to the constructor.
-         * See the class docs for the example usage.
-         *
-         * @param T The type of the returned value.
-         */
-        public inline operator fun <reified T : Any> invoke(value: T): Literal<T> =
-            Literal(value, T::class)
-    }
-}
+public class Literal<T : Any>(value: T) : ArbitraryExpression<T>("$value")
 
 /**
  * A string literal.
  *
- * Represented as the same value as the given string, wrapped in quotation marks.
+ * Represents the same value as the given string, wrapped in quotation marks.
  * No extra character escaping is performed.
  */
-public class StringLiteral(value: String) :
-    ArbitraryExpression<String>("\"$value\"", String::class)
+public class StringLiteral(value: String) : ArbitraryExpression<String>("\"$value\"")
 
 /**
  * An expression which yields the given Protobuf [ByteString].
  */
 public class LiteralBytes(bytes: ByteString) : ArbitraryExpression<ByteString>(
-    code = "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})",
-    type = ByteString::class
+    "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})"
 )
 
 private val ByteStringClass = ByteString::class.qualifiedName!!

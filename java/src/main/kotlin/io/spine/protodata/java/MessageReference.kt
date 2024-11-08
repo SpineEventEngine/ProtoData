@@ -36,7 +36,7 @@ import io.spine.protodata.ast.cardinality
 /**
  * An expression representing a reference to a Protobuf message value.
  */
-public class MessageReference(label: String) : ArbitraryExpression<Message>(label, Message::class) {
+public class MessageReference(label: String) : ArbitraryExpression<Message>(label) {
 
     /**
      * Obtains a [FieldAccess] to the [field] of this message.

@@ -56,7 +56,7 @@ internal constructor(
      * A getter expression for the associated field.
      */
     public inline fun <reified T : Any> getter(): MethodCall<T> =
-        MethodCall(message, getterName, T::class)
+        MethodCall(message, getterName)
 
     /**
      * Constructs a setter expression for the associated field.

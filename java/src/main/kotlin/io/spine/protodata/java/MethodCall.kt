@@ -26,13 +26,10 @@
 
 package io.spine.protodata.java
 
-import com.google.protobuf.Message
-import kotlin.reflect.KClass
-
 /**
  * The assumed reference to `this` when calling a method within an instance.
  */
-public object InstanceScope : ArbitraryExpression<Any>("", Any::class)
+public object InstanceScope : ArbitraryExpression<Any>("")
 
 /**
  * An expression of a Java method call.
@@ -40,63 +37,34 @@ public object InstanceScope : ArbitraryExpression<Any>("", Any::class)
  * Can be a static or an instance method. In the case of the former, the scope is a class name.
  * In the case of the latter — an object reference.
  *
- * @param T The returned type.
+ * @param T The method returned type.
  *
  * @param scope The scope of the method invocation: an instance receiving the method call, or
  *   the name of the class declaring a static method.
  * @param name The name of the method.
- * @param returnedType The returned type.
  * @param arguments The list of the arguments passed to the method.
  * @param generics The list of the type arguments passed to the method.
  */
-public open class MethodCall<T : Any> @JvmOverloads constructor(
+public open class MethodCall<T> @JvmOverloads constructor(
     private val scope: JavaElement,
     name: String,
-    returnedType: KClass<T>,
     arguments: List<Expression<*>> = listOf(),
     generics: List<ClassName> = listOf()
 ) : ArbitraryExpression<T>(
     code = "${scope.toCode()}.${generics.genericTypes()}$name(${arguments.formatParams()})",
-    type = returnedType
 ) {
-
-    public companion object {
-
-        /**
-         * Creates a new instance of [MethodCall] from the given parameters.
-         *
-         * This factory method is an alternative to passing [KClass] to the constructor.
-         * See the class docs for the example usage.
-         *
-         * @param T The type of the returned value.
-         */
-        public inline operator fun <reified T : Any> invoke(
-            scope: JavaElement,
-            name: String,
-            arguments: List<Expression<*>> = listOf(),
-            generics: List<ClassName> = listOf()
-        ): MethodCall<T> = MethodCall(scope, name, T::class, arguments, generics)
-
-        public inline operator fun <reified T : Any> invoke(
-            scope: JavaElement,
-            name: String,
-            argument: Expression<*>
-        ): MethodCall<T> = MethodCall(scope, name, T::class, listOf(argument))
-    }
 
     /**
      * Constructs an expression of calling another method on the result of this method call.
      */
     @JvmOverloads
-    public inline fun <reified R : Any> chain(
-        method: String,
-        arguments: List<Expression<*>> = listOf(),
-    ): MethodCall<R> = MethodCall(this, method, R::class, arguments)
+    public fun <R> chain(method: String, arguments: List<Expression<*>> = listOf()): MethodCall<R> =
+        MethodCall(this, method, arguments)
 
     /**
      * Constructs an expression chaining a call of the `build()` method.
      */
-    public inline fun <reified R : Any> chainBuild(): MethodCall<R> = chain<R>("build")
+    public fun <R> chainBuild(): MethodCall<R> = chain("build")
 
     /**
      * Constructs an expression chaining a setter call.
@@ -116,10 +84,11 @@ public open class MethodCall<T : Any> @JvmOverloads constructor(
     public fun chainAddAll(field: String, value: Expression<*>): MethodCall<MessageBuilder> =
         fieldAccess(field).addAll(value)
 
+    // TODO:2024-11-08:yevhenii.nadtochii: Do we need separation "Java" and "Protobuf : Java"?
+    // There should be a separate `BuilderMethodCall` instead. Also, such a split is needed
+    // in some other places. `MethodCall` is coupled with Protobuf language.
     private fun fieldAccess(fieldName: String) = FieldAccess(
-        // Would take a lot of time otherwise.
-        // There should be `MethodCall` and a separate `BuilderMethodCall`.
-        ArbitraryExpression<Message>(toCode()),
+        ArbitraryExpression(toCode()),
         fieldName
     )
 }

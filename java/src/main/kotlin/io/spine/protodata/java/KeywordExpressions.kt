@@ -28,35 +28,14 @@
 
 package io.spine.protodata.java
 
-import kotlin.reflect.KClass
-
 /**
  * A literal `null` expression.
  */
-public object Null : ArbitraryExpression<JavaNull>("null", JavaNull::class)
+public object Null : ArbitraryExpression<JavaNull>("null")
 
 /**
  * A literal `this` reference.
  *
- * An example usages:
- *
- * ```
- * val this1 = This(JavaObject::class)
- * val this2 = This<JavaObject>()
- * ```
+ * @param T The type of `this` value.
  */
-public class This<T : Any>(type: KClass<T>) : ArbitraryExpression<T>("this", type) {
-
-    public companion object {
-
-        /**
-         * Creates a new instance of [This] expression for the given type [T].
-         *
-         * This factory method is an alternative to passing [KClass] to the constructor.
-         * See the class docs for the example usage.
-         *
-         * @param T The type of the returned value.
-         */
-        public inline operator fun <reified T : Any> invoke(): This<T> = This(T::class)
-    }
-}
+public class This<T> : ArbitraryExpression<T>("this")
