@@ -26,6 +26,10 @@
 
 package io.spine.protodata.java
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiStatement
+import io.spine.tools.psi.java.Environment
+
 /**
  * A Java-executable instruction.
  *
@@ -52,3 +56,9 @@ public interface Statement : JavaElement {
  * This is the basic and default implementation of [Statement].
  */
 public open class ArbitraryStatement(code: String) : ArbitraryElement(code), Statement
+
+/**
+ * Creates a new [PsiStatement] from this Java [Statement].
+ */
+public fun Statement.toPsi(context: PsiElement? = null): PsiStatement =
+    Environment.elementFactory.createStatementFromText(toCode(), context)
