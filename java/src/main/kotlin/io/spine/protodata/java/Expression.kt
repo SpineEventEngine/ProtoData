@@ -47,7 +47,6 @@ public interface Expression<T> : JavaElement {
          * Creates a new instance of [Expression] with the given [code].
          *
          * @param T The type of the returned value.
-         *
          * @param code Java code denoting an expression.
          */
         public operator fun <T> invoke(code: String): Expression<T> = ArbitraryExpression(code)
@@ -76,5 +75,8 @@ public interface Expression<T> : JavaElement {
  *
  * 1. We are quite OK with only compile-time safety.
  * 2. Too much of ceremony with them.
+ *
+ * @param T The type of the returned value.
+ * @param code Java code denoting an expression.
  */
 public open class ArbitraryExpression<T>(code: String): ArbitraryElement(code), Expression<T>

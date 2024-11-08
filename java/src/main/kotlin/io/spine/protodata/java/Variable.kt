@@ -26,7 +26,38 @@
 
 package io.spine.protodata.java
 
-public class VariableAccess<T>(private val name: String) : Expression<T> {
+/**
+ * Declares a local Java variable.
+ *
+ * The variable declaration is performed in Java 11 style, without
+ * an explicit variable type being specified.
+ *
+ * An example of the declared variable:
+ *
+ * ```
+ * val five = Variable<Int>("five", "5 + 5")
+ * println("$five") // Prints `var five = 5 + 5;`
+ * println("${five.read()}") // Prints `five`.
+ * ```
+ *
+ * @param T The type of the variable.
+ * @param name The variable name.
+ * @param init The variable initializer.
+ */
+public class VariableDeclaration<T>(
+    public val name: String,
+    public val init: Expression<T>,
+) : ArbitraryStatement("var $name = $init;") {
 
-    override fun toCode(): String = name
+    public fun read(): VariableAccess<T> = VariableAccess(name)
 }
+
+/**
+ * Provides a read access to the variable with the given name.
+ *
+ * A variable of type [T] is also an [Expression] of the same type.
+ *
+ * @param T The type of the variable.
+ * @param name The name of the variable.
+ */
+public class VariableAccess<T>(name: String) : ArbitraryExpression<T>(name)
