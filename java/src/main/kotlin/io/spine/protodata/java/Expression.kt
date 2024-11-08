@@ -76,4 +76,6 @@ public open class ArbitraryExpression<T : Any>(
         other is ArbitraryExpression<*> && code == other.code && type == other.type
 
     override fun hashCode(): Int = 31 * code.hashCode() + type.hashCode()
+
+    override fun toString(): String = code
 }

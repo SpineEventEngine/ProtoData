@@ -92,6 +92,8 @@ public abstract class JavaTypeName internal constructor(
          */
         public const val PATH_SEPARATOR: String = "/"
     }
+
+    override fun toString(): String = toCode()
 }
 
 /**

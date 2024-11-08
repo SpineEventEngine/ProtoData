@@ -51,4 +51,6 @@ public class ArbitraryElement(private val code: String) : JavaElement {
         other is ArbitraryElement && this.code == other.code
 
     override fun hashCode(): Int = code.hashCode()
+
+    override fun toString(): String = code
 }

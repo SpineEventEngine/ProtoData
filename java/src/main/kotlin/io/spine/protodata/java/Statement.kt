@@ -36,4 +36,6 @@ public open class ArbitraryStatement(private val code: String) : JavaStatement {
         other is ArbitraryStatement && code == other.code
 
     override fun hashCode(): Int = code.hashCode()
+
+    override fun toString(): String = code
 }
