@@ -51,8 +51,29 @@ public open class MethodCall<T> @JvmOverloads constructor(
     arguments: List<Expression<*>> = listOf(),
     generics: List<ClassName> = listOf()
 ) : ArbitraryExpression<T>(
-    code = "${scope.toCode()}.${generics.genericTypes()}$name(${arguments.formatParams()})",
+    "${scope.toCode()}.${generics.genericTypes()}$name(${arguments.formatParams()})"
 ) {
+
+    /**
+     * An expression of a Java method call.
+     *
+     * Can be a static or an instance method. In the case of the former, the scope is a class name.
+     * In the case of the latter — an object reference.
+     *
+     * @param T The method returned type.
+     *
+     * @param scope The scope of the method invocation: an instance receiving the method call, or
+     *   the name of the class declaring a static method.
+     * @param name The name of the method.
+     * @param argument The argument passed to the method.
+     * @param generics The list of the type arguments passed to the method.
+     */
+    public constructor(
+        scope: JavaElement,
+        name: String,
+        argument: Expression<*>,
+        generics: List<ClassName> = listOf()
+    ) : this(scope, name, listOf(argument), generics)
 
     /**
      * Constructs an expression of calling another method on the result of this method call.
