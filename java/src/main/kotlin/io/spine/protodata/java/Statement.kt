@@ -26,16 +26,29 @@
 
 package io.spine.protodata.java
 
-public interface JavaStatement : JavaElement
+/**
+ * A Java-executable instruction.
+ *
+ * An example of creating an arbitrary Java statement:
+ *
+ * ```
+ * val printOne = JavaStatement("System.out.println(1.0);")
+ * ```
+ */
+public interface Statement : JavaElement {
 
-public open class ArbitraryStatement(private val code: String) : JavaStatement {
+    public companion object {
 
-    override fun toCode(): String = code
-
-    override fun equals(other: Any?): Boolean =
-        other is ArbitraryStatement && code == other.code
-
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
+        /**
+         * Creates a new instance of [Statement] with the given [code].
+         */
+        public operator fun invoke(code: String): Statement = ArbitraryStatement(code)
+    }
 }
+
+/**
+ * An arbitrary Java statement.
+ *
+ * This is the basic and default implementation of [Statement].
+ */
+public open class ArbitraryStatement(code: String) : ArbitraryElement(code), Statement

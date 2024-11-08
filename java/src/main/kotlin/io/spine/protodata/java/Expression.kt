@@ -28,54 +28,53 @@
 
 package io.spine.protodata.java
 
-import kotlin.reflect.KClass
-
 /**
  * A piece of Java code that yields a value.
  *
- * @param T The type of the returned value.
- */
-public interface Expression<T> : JavaElement
-
-/**
- * An arbitrary Java expression that yields a value.
- *
- * An example usages:
+ * An example of creating an arbitrary Java expression:
  *
  * ```
- * val four = ArbitraryExpression("2 + 2", JavaInteger::class)
- * val four = ArbitraryExpression<JavaInteger>("2 + 2")
+ * val four = Expression<Int>("4 + 4")
  * ```
  *
  * @param T The type of the returned value.
- * @param code Java code denoting an expression.
- * @param type The class denoting the returned type of the expression.
  */
-public open class ArbitraryExpression<T : Any>(
-    private val code: String,
-    private val type: KClass<T>
-) : Expression<T> {
+public interface Expression<T> : JavaElement {
 
     public companion object {
 
         /**
-         * Creates a new instance of [ArbitraryExpression] from the given [code].
-         *
-         * This factory method is an alternative to passing [KClass] to the constructor.
-         * See the class docs for the example usage.
+         * Creates a new instance of [Expression] with the given [code].
          *
          * @param T The type of the returned value.
+         *
+         * @param code Java code denoting an expression.
          */
-        public inline operator fun <reified T : Any> invoke(code: String): ArbitraryExpression<T> =
-            ArbitraryExpression(code, T::class)
+        public operator fun <T> invoke(code: String): Expression<T> = ArbitraryExpression(code)
     }
-
-    override fun toCode(): String = code
-
-    override fun equals(other: Any?): Boolean =
-        other is ArbitraryExpression<*> && code == other.code && type == other.type
-
-    override fun hashCode(): Int = 31 * code.hashCode() + type.hashCode()
-
-    override fun toString(): String = code
 }
+
+/**
+ * An arbitrary Java expression.
+ *
+ * This is the basic and default implementation of [Expression].
+ *
+ * Please note, the type parameter [T] is not enforced in the runtime.
+ * The methods of [Any] like [equals] and [hashCode] are solely based
+ * on the value of the passed Java [code].
+ *
+ * For example:
+ *
+ * ```
+ * val intFour = Expression<Int>("4 + 4")
+ * val doubleFour = Expression<Double>("4 + 4")
+ * println(intFour.equals(doubleFour)) // Prints `true`.
+ * ```
+ *
+ * We would like to avoid passing around `KClass` instances for
+ * the following reasons:
+ *
+ * 1. We are quite OK with only compile-time safety.
+ * 2. Too much of ceremony with them.
+ */
+public open class ArbitraryExpression<T>(code: String): ArbitraryElement(code), Expression<T>

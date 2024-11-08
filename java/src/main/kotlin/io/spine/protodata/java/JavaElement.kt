@@ -32,10 +32,10 @@ import io.spine.tools.code.Java
 /**
  * A piece of Java code.
  *
- * An example of creating an arbitrary piece of Java code:
+ * An example of creating an arbitrary Java element:
  *
  * ```
- * val printOne = JavaElement("System.out.println(1.0);")
+ * val return = JavaElement("return 0;")
  * ```
  */
 public interface JavaElement: CodeElement<Java> {
@@ -50,9 +50,9 @@ public interface JavaElement: CodeElement<Java> {
 }
 
 /**
- * An arbitrary piece of Java code.
+ * An arbitrary Java element.
  *
- * This class is the default implementation of [JavaElement].
+ * This is the basic and default implementation of [JavaElement].
  */
 public open class ArbitraryElement(private val code: String) : JavaElement {
 
