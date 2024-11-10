@@ -115,7 +115,7 @@ public class JavaValueConverter(
         val start = path.removeFirst()
 
         // Assume we generate the call in a scope of a message method.
-        var call = MethodCall(InstanceScope, getterOf(start, startCardinality))
+        var call = MethodCall(This, getterOf(start, startCardinality))
 
         // The remaining path (if any) would be chained method calls.
         path.forEachIndexed { index, field ->
