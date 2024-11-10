@@ -32,9 +32,9 @@ import io.spine.tools.code.Language
 /**
  * The scheme by which the Protobuf type names are converted into language-specific type names.
  *
- * @param L the type of the target programming language.
- * @param N the type of the Protobuf declaration, such as message, enum, or service.
- * @param T the type of the programming language element in the target language.
+ * @param L The type of the target programming language.
+ * @param N The type of the Protobuf declaration, such as message, enum, or service.
+ * @param T The type of the programming language element in the target language.
  *
  * @property language a programming language for which the convention is defined.
  */
@@ -47,10 +47,9 @@ public interface Convention<L : Language, N: ProtoDeclarationName, T: NameElemen
      * define generated declarations for only a portion of the Protobuf types. For others, this
      * method will return `null`.
      *
-     * @param name
-     *         the name of the type to define the declaration for.
+     * @param name The name of the type to define the declaration for.
      * @return the declaration generated for the given type or `null` if the declaration
-     *         is not defined for the given type.
+     *   is not defined for the given type.
      */
     public fun declarationFor(name: N): Declaration<L, T>?
 
