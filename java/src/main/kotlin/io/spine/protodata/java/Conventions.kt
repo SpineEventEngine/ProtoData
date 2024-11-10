@@ -52,7 +52,7 @@ public abstract class BaseJavaConvention<P: ProtoDeclarationName, J: ClassOrEnum
 }
 
 /**
- * This convention defines a declarations of message or enum types declared in Protobuf.
+ * This convention covers declarations of message or enum types declared in Protobuf.
  *
  * @throws IllegalStateException if the type name is unknown.
  */

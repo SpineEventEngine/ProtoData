@@ -44,6 +44,7 @@ import io.spine.protodata.value.Value.KindCase.MAP_VALUE
 import io.spine.protodata.value.Value.KindCase.MESSAGE_VALUE
 import io.spine.protodata.value.Value.KindCase.NULL_VALUE
 import io.spine.protodata.value.Value.KindCase.STRING_VALUE
+import io.spine.protodata.value.Value.KindCase.REFERENCE
 import io.spine.tools.code.Language
 
 /**
@@ -70,6 +71,7 @@ public abstract class ValueConverter<L: Language, C: CodeElement<L>> {
             ENUM_VALUE -> this.toCode(value.enumValue)
             LIST_VALUE -> toList(value.listValue)
             MAP_VALUE -> this.toCode(value.mapValue)
+            REFERENCE -> this.toCode(value.reference)
             else -> throw IllegalArgumentException("Unsupported value kind: `${value.kindCase}`.")
         }
 

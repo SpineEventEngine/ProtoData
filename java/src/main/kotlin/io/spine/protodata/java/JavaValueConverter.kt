@@ -40,6 +40,7 @@ import io.spine.protodata.value.ListValue
 import io.spine.protodata.value.MapValue
 import io.spine.protodata.value.MessageValue
 import io.spine.protodata.value.Reference
+import io.spine.string.shortly
 import io.spine.tools.code.Java
 
 /**
@@ -117,7 +118,7 @@ public class JavaValueConverter(
         var call = MethodCall(InstanceScope, getterOf(start, startCardinality))
 
         // The remaining path (if any) would be chained method calls.
-        path.forEachIndexed() { index, field ->
+        path.forEachIndexed { index, field ->
             // For all fields but last we can have only message type fields.
             call = if (index == path.size - 1) {
                 call.chain(getterOf(field, CARDINALITY_SINGLE))
@@ -134,6 +135,6 @@ public class JavaValueConverter(
         MESSAGE -> convention.declarationFor(message).name
         ENUMERATION -> convention.declarationFor(enumeration).name
         PRIMITIVE -> primitive.toJavaClass()
-        else -> error("Expected a valid type.")
+        else -> error("Cannot convert the type `${this.shortly()}` to Java class or enum name.")
     }
 }
