@@ -26,12 +26,10 @@
 
 package io.spine.protodata.java
 
-import com.google.protobuf.ByteString
-
 /**
  * An arbitrary literal.
  *
- * This expression should denote any constant value.
+ * Such an expression should denote a constant, compile-time known value.
  *
  * @param [value] A string representation of the literal. It will be used "as is"
  *  in the resulting Java code.
@@ -47,12 +45,3 @@ public class Literal<T : Any>(value: T) : ArbitraryExpression<T>("$value")
  * No extra character escaping is performed.
  */
 public class StringLiteral(value: String) : ArbitraryExpression<String>("\"$value\"")
-
-/**
- * An expression which yields the given Protobuf [ByteString].
- */
-public class LiteralBytes(bytes: ByteString) : ArbitraryExpression<ByteString>(
-    "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})"
-)
-
-private val ByteStringClass = ByteString::class.qualifiedName!!

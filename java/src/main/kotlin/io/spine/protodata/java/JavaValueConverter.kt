@@ -63,7 +63,7 @@ public class JavaValueConverter(
 
     override fun toCode(value: String): StringLiteral = StringLiteral(value)
 
-    override fun toCode(value: ByteString): LiteralBytes = LiteralBytes(value)
+    override fun toCode(value: ByteString): PredefinedByteString = PredefinedByteString(value)
 
     override fun toCode(value: MessageValue): MethodCall<Message> {
         val type = value.type
