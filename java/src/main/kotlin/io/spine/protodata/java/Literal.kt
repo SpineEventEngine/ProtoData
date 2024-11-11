@@ -36,7 +36,7 @@ package io.spine.protodata.java
  *
  * @see StringLiteral
  */
-public class Literal<T : Any>(value: T) : ArbitraryExpression<T>("$value")
+public open class Literal<T>(value: T) : ArbitraryExpression<T>("$value")
 
 /**
  * A string literal.
@@ -44,4 +44,4 @@ public class Literal<T : Any>(value: T) : ArbitraryExpression<T>("$value")
  * Represents the same value as the given string, wrapped in quotation marks.
  * No extra character escaping is performed.
  */
-public class StringLiteral(value: String) : ArbitraryExpression<String>("\"$value\"")
+public class StringLiteral(value: String) : Literal<String>("\"$value\"")
