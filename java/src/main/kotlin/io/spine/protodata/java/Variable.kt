@@ -35,7 +35,7 @@ package io.spine.protodata.java
  * An example of the declared variable:
  *
  * ```
- * val five = Variable<Int>("five", "5 + 5")
+ * val ten = Variable<Int>("five", "5 + 5")
  * println("$five") // Prints `var five = 5 + 5;`
  * println("${five.read()}") // Prints `five`.
  * ```
@@ -49,7 +49,7 @@ public class VariableDeclaration<T>(
     public val init: Expression<T>,
 ) : ArbitraryStatement("var $name = $init;") {
 
-    public fun read(): VariableAccess<T> = VariableAccess(name)
+    public fun read(): ReadVariable<T> = ReadVariable(name)
 }
 
 /**
@@ -60,4 +60,4 @@ public class VariableDeclaration<T>(
  * @param T The type of the variable.
  * @param name The name of the variable.
  */
-public class VariableAccess<T>(name: String) : ArbitraryExpression<T>(name)
+public class ReadVariable<T>(name: String) : ArbitraryExpression<T>(name)
