@@ -27,11 +27,6 @@
 package io.spine.protodata.java
 
 /**
- * The assumed reference to `this` when calling a method within an instance.
- */
-public object InstanceScope : ArbitraryExpression<Any>("")
-
-/**
  * An expression of a Java method call.
  *
  * Can be a static or an instance method. In the case of the former, the scope is a class name.
@@ -113,6 +108,11 @@ public open class MethodCall<T> @JvmOverloads constructor(
         fieldName
     )
 }
+
+/**
+ * The assumed reference to `this` when invoking a [MethodCall] within an instance.
+ */
+public class InstanceScope<T> : ArbitraryExpression<T>("")
 
 /**
  * Formats these class names as type arguments, including the angle brackets.
