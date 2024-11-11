@@ -35,24 +35,27 @@ import io.spine.tools.code.Java
  * An example of creating an arbitrary Java element:
  *
  * ```
- * val return = JavaElement("return 0;")
+ * val switch = JavaElement("switch(value) {")
  * ```
  */
-public interface JavaElement: CodeElement<Java> {
+public interface JavaElement: CodeElement<Java>
 
-    public companion object {
-
-        /**
-         * Creates a new instance of [JavaElement] with the given [code].
-         */
-        public operator fun invoke(code: String): JavaElement = ArbitraryElement(code)
-    }
-}
+/**
+ * Creates a new instance of [JavaElement] with the given [code].
+ *
+ * This function returns the [default][ArbitraryElement] implementation
+ * of [JavaElement].
+ *
+ * @param code The Java code denoting an element.
+ */
+public fun JavaElement(code: String): JavaElement = ArbitraryElement(code)
 
 /**
  * An arbitrary Java element.
  *
  * This is the basic and default implementation of [JavaElement].
+ *
+ * @param code The Java code denoting an element.
  */
 public open class ArbitraryElement(private val code: String) : JavaElement {
 

@@ -47,7 +47,7 @@ public interface Expression<T> : JavaElement
  * This function returns the [default][ArbitraryExpression] implementation of [Expression].
  *
  * @param T The type of the returned value.
- * @param code Java code denoting an expression.
+ * @param code The Java code denoting an expression.
  */
 public fun <T> Expression(code: String): Expression<T> = ArbitraryExpression(code)
 
@@ -73,6 +73,6 @@ public fun <T> Expression(code: String): Expression<T> = ArbitraryExpression(cod
  * ```
  *
  * @param T The type of the returned value.
- * @param code Java code denoting an expression.
+ * @param code The Java code denoting an expression.
  */
 public open class ArbitraryExpression<T>(code: String): ArbitraryElement(code), Expression<T>
