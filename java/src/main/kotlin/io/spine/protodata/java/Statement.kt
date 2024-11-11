@@ -31,29 +31,32 @@ import com.intellij.psi.PsiStatement
 import io.spine.tools.psi.java.Environment
 
 /**
- * A Java-executable instruction.
+ * An executable Java instruction.
  *
  * An example of creating an arbitrary Java statement:
  *
  * ```
- * val printOne = JavaStatement("System.out.println(1.0);")
+ * val printOne = Statement("System.out.println(1.0);")
  * ```
  */
-public interface Statement : JavaElement {
+public interface Statement : JavaElement
 
-    public companion object {
-
-        /**
-         * Creates a new instance of [Statement] with the given [code].
-         */
-        public operator fun invoke(code: String): Statement = ArbitraryStatement(code)
-    }
-}
+/**
+ * Creates a new instance of [Statement] with the given [code].
+ *
+ * This function returns the [default][ArbitraryStatement] implementation
+ * of [Statement].
+ *
+ * @param code The Java code denoting a statement.
+ */
+public fun Statement(code: String): Statement = ArbitraryStatement(code)
 
 /**
  * An arbitrary Java statement.
  *
  * This is the basic and default implementation of [Statement].
+ *
+ * @param code The Java code denoting a statement.
  */
 public open class ArbitraryStatement(code: String) : ArbitraryElement(code), Statement
 
