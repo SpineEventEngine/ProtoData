@@ -34,47 +34,43 @@ package io.spine.protodata.java
  * An example of creating an arbitrary Java expression:
  *
  * ```
- * val four = Expression<Int>("4 + 4")
+ * val eight = Expression<Int>("4 + 4")
  * ```
  *
  * @param T The type of the returned value.
  */
-public interface Expression<T> : JavaElement {
+public interface Expression<T> : JavaElement
 
-    public companion object {
-
-        /**
-         * Creates a new instance of [Expression] with the given [code].
-         *
-         * @param T The type of the returned value.
-         * @param code Java code denoting an expression.
-         */
-        public operator fun <T> invoke(code: String): Expression<T> = ArbitraryExpression(code)
-    }
-}
+/**
+ * Creates a new instance of [Expression] with the given [code].
+ *
+ * This function returns the [default][ArbitraryExpression] implementation of [Expression].
+ *
+ * @param T The type of the returned value.
+ * @param code Java code denoting an expression.
+ */
+public fun <T> Expression(code: String): Expression<T> = ArbitraryExpression(code)
 
 /**
  * An arbitrary Java expression.
  *
  * This is the basic and default implementation of [Expression].
  *
- * Please note, the type parameter [T] is not enforced in the runtime.
- * The methods of [Any] like [equals] and [hashCode] are solely based
- * on the value of the passed Java [code].
- *
  * For example:
  *
  * ```
- * val intFour = Expression<Int>("4 + 4")
- * val doubleFour = Expression<Double>("4 + 4")
- * println(intFour.equals(doubleFour)) // Prints `true`.
+ * val eightInt = ArbitraryExpression<Int>("4 + 4")
+ * val eightDouble = ArbitraryExpression<Double>("4 + 4")
  * ```
  *
- * We would like to avoid passing around `KClass` instances for
- * the following reasons:
+ * Pay attention that the expressions with the same code are not differentiated
+ * at runtime.
  *
- * 1. We are quite OK with only compile-time safety.
- * 2. Too much of ceremony with them.
+ * If we compare the variables declared in the example above, we will get `true`:
+ *
+ * ```
+ * println(eightInt.equals(eightDouble)) // Prints `true`.
+ * ```
  *
  * @param T The type of the returned value.
  * @param code Java code denoting an expression.
