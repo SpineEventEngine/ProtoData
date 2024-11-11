@@ -100,9 +100,6 @@ public open class MethodCall<T> @JvmOverloads constructor(
     public fun chainAddAll(field: String, value: Expression<*>): MethodCall<MessageBuilder> =
         fieldAccess(field).addAll(value)
 
-    // TODO:2024-11-08:yevhenii.nadtochii: Do we need separation "Java" and "Protobuf : Java"?
-    // There should be a separate `BuilderMethodCall` instead. Also, such a split is needed
-    // in some other places. `MethodCall` is coupled with Protobuf language.
     private fun fieldAccess(fieldName: String) = FieldAccess(
         ArbitraryExpression(toCode()),
         fieldName
