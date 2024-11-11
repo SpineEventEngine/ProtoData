@@ -32,19 +32,26 @@ package io.spine.protodata.java
  * The variable declaration is performed in Java 11 style, without
  * an explicit variable type being specified.
  *
- * An example of the declared variable:
+ * An example of a variable declaration:
  *
  * ```
- * val ten = Variable<Int>("five", "5 + 5")
- * println("$five") // Prints `var five = 5 + 5;`
- * println("${five.read()}") // Prints `five`.
+ * val ten = Variable<Int>("ten", "5 + 5")
+ * println("$ten") // Prints `var ten = 5 + 5;`
+ * ```
+ *
+ * The declared variable can be accessed by using [read] method
+ * as following:
+ *
+ * ```
+ * val readTen = ten.read() // Returns `Expression<Int>`.
+ * println("$readTen") // Prints `ten`.
  * ```
  *
  * @param T The type of the variable.
  * @param name The variable name.
  * @param init The variable initializer.
  */
-public class VariableDeclaration<T>(
+public class Variable<T>(
     public val name: String,
     public val init: Expression<T>,
 ) : ArbitraryStatement("var $name = $init;") {
@@ -55,7 +62,8 @@ public class VariableDeclaration<T>(
 /**
  * Provides a read access to the variable with the given name.
  *
- * A variable of type [T] is also an [Expression] of the same type.
+ * When being read, a variable of type [T] is also an [Expression]
+ * of the same type.
  *
  * @param T The type of the variable.
  * @param name The name of the variable.
