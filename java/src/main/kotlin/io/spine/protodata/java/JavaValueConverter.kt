@@ -55,11 +55,11 @@ public class JavaValueConverter(
 
     override fun nullToCode(type: Type): Null = Null
 
-    override fun toCode(value: Boolean): Expression<Boolean> = Literal(value)
+    override fun toCode(value: Boolean): Literal<Boolean> = Literal(value)
 
-    override fun toCode(value: Double): Expression<Double> = Literal(value)
+    override fun toCode(value: Double): Literal<Double> = Literal(value)
 
-    override fun toCode(value: Long): Expression<Long> = Literal(value)
+    override fun toCode(value: Long): Literal<Long> = Literal(value)
 
     override fun toCode(value: String): StringLiteral = StringLiteral(value)
 
