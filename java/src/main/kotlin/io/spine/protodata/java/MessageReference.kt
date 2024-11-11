@@ -45,8 +45,8 @@ public class MessageReference(label: String) : ArbitraryExpression<Message>(labe
         FieldAccess(this, field.name, field.type.cardinality)
 
     /**
-     * Obtains a [FieldAccess] to the field of this message with the given [fieldName].
+     * Obtains a [FieldAccess] to the field of this message with the given [name].
      */
-    public fun field(fieldName: String, cardinality: Cardinality): FieldAccess =
-        FieldAccess(this, fieldName, cardinality)
+    public fun field(name: String, cardinality: Cardinality): FieldAccess =
+        FieldAccess(this, name, cardinality)
 }
