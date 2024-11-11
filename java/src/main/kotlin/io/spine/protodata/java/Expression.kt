@@ -28,8 +28,6 @@
 
 package io.spine.protodata.java
 
-import com.google.protobuf.ByteString
-
 /**
  * A piece of Java code that yields a value.
  *
@@ -78,12 +76,3 @@ public fun <T> Expression(code: String): Expression<T> = ArbitraryExpression(cod
  * @param code The Java code denoting an expression.
  */
 public open class ArbitraryExpression<T>(code: String): ArbitraryElement(code), Expression<T>
-
-/**
- * An expression which yields the given Protobuf [ByteString].
- */
-public class PredefinedByteString(bytes: ByteString) : ArbitraryExpression<ByteString>(
-    "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})"
-)
-
-private val ByteStringClass = ByteString::class.qualifiedName!!

@@ -26,8 +26,18 @@
 
 package io.spine.protodata.java
 
+import com.google.protobuf.ByteString
 import com.google.protobuf.Any as ProtoAny
 import io.spine.protobuf.TypeConverter
+
+/**
+ * An expression which yields the given Protobuf [ByteString].
+ */
+public class PredefinedByteString(bytes: ByteString) : ArbitraryExpression<ByteString>(
+    "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})"
+)
+
+private val ByteStringClass = ByteString::class.qualifiedName!!
 
 /**
  * Wraps this [Any] expression into Protobuf `Any` using [TypeConverter.toAny] method.
