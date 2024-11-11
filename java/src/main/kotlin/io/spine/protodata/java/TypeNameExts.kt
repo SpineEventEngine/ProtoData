@@ -36,7 +36,7 @@ import kotlin.io.path.Path
 /**
  * Obtains the path to the `.java` file, generated for the type with this name.
  *
- * The class which represents this message might not be the top level class of the Java file,
+ * The class which represents this message might not be the top-level class of the Java file,
  * which is determined by the options in the given Protobuf file header.
  */
 public fun TypeName.javaFile(accordingTo: ProtoFileHeader): Path {
@@ -53,6 +53,8 @@ public fun TypeName.javaFile(accordingTo: ProtoFileHeader): Path {
 
 /**
  * Obtains a fully qualified Java class name, generated for the Protobuf type with this name.
+ *
+ * @param accordingTo The header of the proto file in which the type is declared.
  */
 public fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
     composeJavaTypeName(accordingTo, {
