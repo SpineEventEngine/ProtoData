@@ -24,33 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("EnumTypes")
+syntax = "proto3";
 
-package io.spine.protodata.java
+package fields;
 
-import io.spine.protodata.ast.EnumType
-import io.spine.protodata.ast.ProtoFileHeader
-import io.spine.protodata.ast.qualifiedName
-import io.spine.protodata.type.TypeSystem
-import io.spine.string.simply
+import "spine/options.proto";
 
-/**
- * Obtains the full name of the Java enum, generated from this Protobuf enum.
- *
- * @return name of the enum class generated from this enum.
- */
-public fun EnumType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
-    name.javaClassName(accordingTo)
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.test.fields";
+option java_outer_classname = "FieldExtsSpecProto";
+option java_multiple_files = true;
 
-/**
- * Obtains a class name for the Java code generated for this enum type.
- *
- * @param typeSystem The type system to be used for obtaining the header for the proto
- *   file in which this enum type is declared.
- */
-public fun EnumType.javaClassName(typeSystem: TypeSystem): ClassName {
-    val header = typeSystem.findEnum(name)?.second
-        ?: error("Cannot find `${simply<EnumType>()}` for the name `${name.qualifiedName}`.")
-    val className = javaClassName(header)
-    return className
+import "google/protobuf/timestamp.proto";
+
+message FieldExamples {
+    google.protobuf.Timestamp timestamp = 1;
+    Flower flower = 2;
+    repeated string note = 3;
+    map<string, int32> count = 4;
+    int32 total = 5;
+}
+
+enum Flower {
+    F_UNKNOWN = 0;
+    ROSE = 1;
+    TULIP = 2;
+    LILY = 3;
+    CHAMOMILE = 4;
 }

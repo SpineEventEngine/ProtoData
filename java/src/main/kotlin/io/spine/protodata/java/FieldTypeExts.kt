@@ -24,33 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("EnumTypes")
-
 package io.spine.protodata.java
 
-import io.spine.protodata.ast.EnumType
-import io.spine.protodata.ast.ProtoFileHeader
-import io.spine.protodata.ast.qualifiedName
+import io.spine.protodata.ast.FieldType
+import io.spine.protodata.ast.isList
+import io.spine.protodata.ast.isMap
+import io.spine.protodata.ast.toEnumType
+import io.spine.protodata.ast.toMessageType
 import io.spine.protodata.type.TypeSystem
+import io.spine.string.shortly
 import io.spine.string.simply
 
 /**
- * Obtains the full name of the Java enum, generated from this Protobuf enum.
+ * Obtains a Java class name for this field type.
  *
- * @return name of the enum class generated from this enum.
- */
-public fun EnumType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
-    name.javaClassName(accordingTo)
-
-/**
- * Obtains a class name for the Java code generated for this enum type.
+ * If this type is primitive, the result would be [PrimitiveType]
+ * the [class backing] [io.spine.protodata.ast.PrimitiveType.toJavaClass] corresponding
+ * primitive value.
  *
- * @param typeSystem The type system to be used for obtaining the header for the proto
- *   file in which this enum type is declared.
+ * For message or enum types, the name of the corresponding generated class will be returned.
+ *
+ * If this field is `repeated`, the method returns the class name of [java.util.List].
+ * If this field type is a map, the method returns the class name of [java.util.Map].
  */
-public fun EnumType.javaClassName(typeSystem: TypeSystem): ClassName {
-    val header = typeSystem.findEnum(name)?.second
-        ?: error("Cannot find `${simply<EnumType>()}` for the name `${name.qualifiedName}`.")
-    val className = javaClassName(header)
-    return className
+public fun FieldType.javaClassName(typeSystem: TypeSystem): ClassName = when {
+    isMessage -> message.toMessageType(typeSystem).javaClassName(typeSystem)
+    isEnum -> enumeration.toEnumType(typeSystem).javaClassName(typeSystem)
+    isPrimitive -> primitive.toJavaClass()
+    isList -> ClassName(List::class.java)
+    isMap -> ClassName(Map::class.java)
+    else -> error("Cannot determine class for `${simply<FieldType>()}`: `${shortly()}`.")
 }
