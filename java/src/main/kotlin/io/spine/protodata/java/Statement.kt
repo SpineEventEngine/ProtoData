@@ -36,7 +36,7 @@ import io.spine.tools.psi.java.Environment
  * An example of creating an arbitrary Java statement:
  *
  * ```
- * val printOne = Statement("System.out.println(1.0);")
+ * val return = Statement("return;")
  * ```
  */
 public open class Statement(code: String) : AnElement(code)
