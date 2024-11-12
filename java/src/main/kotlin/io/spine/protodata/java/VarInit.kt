@@ -39,8 +39,7 @@ package io.spine.protodata.java
  * println("$ten") // Prints `var ten = 5 + 5;`
  * ```
  *
- * The declared variable can be accessed by using [read] method
- * as following:
+ * The declared variable can be accessed by [read] method as following:
  *
  * ```
  * val readTen = ten.read() // Returns `Expression<Int>`.
@@ -51,21 +50,18 @@ package io.spine.protodata.java
  * @param name The variable name.
  * @param init The variable initializer.
  */
-public class Variable<T>(
+public class VarInit<T>(
     public val name: String,
     public val init: Expression<T>,
 ) : Statement("var $name = $init;") {
 
-    public fun read(): ReadVariable<T> = ReadVariable(name)
+    public fun read(): Var<T> = Var(name)
 }
 
 /**
  * Provides a read access to the variable with the given name.
  *
- * When being read, a variable of type [T] is also an [Expression]
- * of the same type.
- *
  * @param T The type of the variable.
  * @param name The name of the variable.
  */
-public class ReadVariable<T>(name: String) : Expression<T>(name)
+public class Var<T>(name: String) : Expression<T>(name)
