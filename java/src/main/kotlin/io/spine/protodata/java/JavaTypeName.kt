@@ -37,7 +37,7 @@ import kotlin.io.path.Path
 public abstract class JavaTypeName internal constructor(
     public val packageName: String,
     public val simpleNames: List<String>,
-) : JavaElement, NameElement<Java> {
+) : NameElement<Java>, JavaElement {
 
     init {
         require(simpleNames.isNotEmpty()) {
@@ -92,8 +92,6 @@ public abstract class JavaTypeName internal constructor(
          */
         public const val PATH_SEPARATOR: String = "/"
     }
-
-    override fun toString(): String = toCode()
 }
 
 /**
@@ -133,14 +131,23 @@ public abstract class ClassOrEnumName internal constructor(
      */
     public val isNested: Boolean = simpleNames.size > 1
 
+    /**
+     * Obtains the [canonical] name of the type.
+     */
     override fun toCode(): String = canonical
 
-    override fun equals(other: Any?): Boolean =
-        other is ClassOrEnumName && this.canonical == other.canonical
+    /**
+     * Obtains the [canonical] name of the type.
+     */
+    override fun toString(): String = canonical
 
     override fun hashCode(): Int = canonical.hashCode()
 
-    override fun toString(): String = canonical
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ClassOrEnumName) return false
+        return canonical == other.canonical
+    }
 }
 
 /**
