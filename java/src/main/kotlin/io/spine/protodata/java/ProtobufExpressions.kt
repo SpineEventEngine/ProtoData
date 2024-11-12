@@ -24,6 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The fact that `PredefinedByteString` is a single class here is a coincidence.
+@file:Suppress("MatchingDeclarationName")
+
 package io.spine.protodata.java
 
 import com.google.protobuf.ByteString
