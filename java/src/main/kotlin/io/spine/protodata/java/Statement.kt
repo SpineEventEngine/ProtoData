@@ -39,7 +39,7 @@ import io.spine.tools.psi.java.Environment
  * val printOne = Statement("System.out.println(1.0);")
  * ```
  */
-public open class Statement(code: String) : ArbitraryJavaElement(code)
+public open class Statement(code: String) : AnElement(code)
 
 /**
  * Creates a new [PsiStatement] from this Java [Statement].

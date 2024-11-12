@@ -39,12 +39,12 @@ public interface JavaElement : CodeElement<Java>
  *
  * @param code The Java code denoting an element.
  */
-public open class ArbitraryJavaElement(public val code: String) : JavaElement  {
+public open class AnElement(public val code: String) : JavaElement  {
 
     override fun toCode(): String = code
 
     override fun equals(other: Any?): Boolean =
-        other is ArbitraryJavaElement && this.code == other.code
+        other is AnElement && this.code == other.code
 
     override fun hashCode(): Int = code.hashCode()
 
