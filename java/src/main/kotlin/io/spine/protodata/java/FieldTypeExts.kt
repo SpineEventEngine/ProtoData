@@ -38,9 +38,8 @@ import io.spine.string.simply
 /**
  * Obtains a Java class name for this field type.
  *
- * If this type is primitive, the result would be [PrimitiveType]
- * the [class backing] [io.spine.protodata.ast.PrimitiveType.toJavaClass] corresponding
- * primitive value.
+ * If this type is primitive, the result would be the corresponding boxed
+ * [Java type][io.spine.protodata.ast.PrimitiveType.toJavaClass].
  *
  * For message or enum types, the name of the corresponding generated class will be returned.
  *

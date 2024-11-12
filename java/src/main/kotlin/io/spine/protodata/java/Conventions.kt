@@ -74,7 +74,7 @@ public class MessageOrEnumConvention(ts: TypeSystem) :
     }
 
     /**
-     * Open access to the [typeSystem] property for compatibility needs.
+     * Obtains the value of the [typeSystem] property for compatibility needs.
      */
     internal fun typeSystem(): TypeSystem = typeSystem
 }
