@@ -45,7 +45,7 @@ public open class MethodCall<T> @JvmOverloads constructor(
     name: String,
     arguments: List<Expression<*>> = listOf(),
     generics: List<ClassName> = listOf()
-) : ArbitraryExpression<T>(
+) : Expression<T>(
     "${scope.toCode()}.${generics.genericTypes()}$name(${arguments.formatParams()})"
 ) {
 
@@ -100,16 +100,13 @@ public open class MethodCall<T> @JvmOverloads constructor(
     public fun chainAddAll(field: String, value: Expression<*>): MethodCall<MessageBuilder> =
         fieldAccess(field).addAll(value)
 
-    private fun fieldAccess(fieldName: String) = FieldAccess(
-        ArbitraryExpression(toCode()),
-        fieldName
-    )
+    private fun fieldAccess(fieldName: String) = FieldAccess(Expression(toCode()), fieldName)
 }
 
 /**
  * The assumed reference to `this` when invoking a [MethodCall] within an instance.
  */
-public class InstanceScope<T> : ArbitraryExpression<T>("")
+public class InstanceScope<T> : Expression<T>("")
 
 /**
  * Formats these class names as type arguments, including the angle brackets.

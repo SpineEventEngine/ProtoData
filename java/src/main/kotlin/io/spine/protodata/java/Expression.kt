@@ -31,32 +31,7 @@ package io.spine.protodata.java
 /**
  * A piece of Java code that yields a value.
  *
- * An example of creating an arbitrary Java expression:
- *
- * ```
- * val eight = Expression<Int>("4 + 4")
- * ```
- *
- * @param T The type of the returned value.
- */
-public interface Expression<T> : JavaElement
-
-/**
- * Creates a new instance of [Expression] with the given [code].
- *
- * This function returns the [default][ArbitraryExpression] implementation of [Expression].
- *
- * @param T The type of the returned value.
- * @param code The Java code denoting an expression.
- */
-public fun <T> Expression(code: String): Expression<T> = ArbitraryExpression(code)
-
-/**
- * An arbitrary Java expression.
- *
- * This is the basic and default implementation of [Expression].
- *
- * For example:
+ * An example usage:
  *
  * ```
  * val eightInt = ArbitraryExpression<Int>("4 + 4")
@@ -75,4 +50,4 @@ public fun <T> Expression(code: String): Expression<T> = ArbitraryExpression(cod
  * @param T The type of the returned value.
  * @param code The Java code denoting an expression.
  */
-public open class ArbitraryExpression<T>(code: String): ArbitraryElement(code), Expression<T>
+public open class Expression<T>(code: String) : JavaElement(code)

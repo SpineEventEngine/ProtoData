@@ -36,7 +36,7 @@ package io.spine.protodata.java
  *
  * @see StringLiteral
  */
-public open class Literal<T>(value: T) : ArbitraryExpression<T>("$value")
+public open class Literal<T>(value: T) : Expression<T>("$value")
 
 /**
  * A string literal.

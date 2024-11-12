@@ -33,7 +33,7 @@ import io.spine.protobuf.TypeConverter
 /**
  * An expression which yields the given Protobuf [ByteString].
  */
-public class PredefinedByteString(bytes: ByteString) : ArbitraryExpression<ByteString>(
+public class PredefinedByteString(bytes: ByteString) : Expression<ByteString>(
     "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})"
 )
 

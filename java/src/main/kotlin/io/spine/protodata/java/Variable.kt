@@ -54,7 +54,7 @@ package io.spine.protodata.java
 public class Variable<T>(
     public val name: String,
     public val init: Expression<T>,
-) : ArbitraryStatement("var $name = $init;") {
+) : Statement("var $name = $init;") {
 
     public fun read(): ReadVariable<T> = ReadVariable(name)
 }
@@ -68,4 +68,4 @@ public class Variable<T>(
  * @param T The type of the variable.
  * @param name The name of the variable.
  */
-public class ReadVariable<T>(name: String) : ArbitraryExpression<T>(name)
+public class ReadVariable<T>(name: String) : Expression<T>(name)

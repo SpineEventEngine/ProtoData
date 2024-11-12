@@ -31,11 +31,11 @@ package io.spine.protodata.java
 /**
  * A literal `null` expression.
  */
-public object Null : ArbitraryExpression<JavaNull>("null")
+public object Null : Expression<JavaNull>("null")
 
 /**
  * A literal `this` reference.
  *
  * @param T The type of `this` value.
  */
-public class This<T> : ArbitraryExpression<T>("this")
+public class This<T> : Expression<T>("this")

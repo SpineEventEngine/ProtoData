@@ -37,7 +37,7 @@ import kotlin.io.path.Path
 public abstract class JavaTypeName internal constructor(
     public val packageName: String,
     public val simpleNames: List<String>
-) : NameElement<Java>, JavaElement {
+) : JavaElement(""), NameElement<Java> {
 
     init {
         require(simpleNames.isNotEmpty()) {
