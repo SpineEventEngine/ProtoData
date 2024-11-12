@@ -37,8 +37,7 @@ import kotlin.io.path.Path
 public abstract class JavaTypeName internal constructor(
     public val packageName: String,
     public val simpleNames: List<String>,
-    protected open val code: String
-) : JavaElement(code), NameElement<Java> {
+) : JavaElement, NameElement<Java> {
 
     init {
         require(simpleNames.isNotEmpty()) {
@@ -103,7 +102,7 @@ public abstract class JavaTypeName internal constructor(
 public abstract class ClassOrEnumName internal constructor(
     packageName: String,
     simpleNames: List<String>
-) : JavaTypeName(packageName, simpleNames, code = "" /* It is overridden below. */) {
+) : JavaTypeName(packageName, simpleNames) {
 
     /**
      * The canonical name of the type.
@@ -134,9 +133,14 @@ public abstract class ClassOrEnumName internal constructor(
      */
     public val isNested: Boolean = simpleNames.size > 1
 
-    // It is overridden in the class body, so that we can access `canonical` property,
-    // and `super.packagePrefix` property required by `canonical` itself.
-    override val code: String = canonical
+    override fun toCode(): String = canonical
+
+    override fun equals(other: Any?): Boolean =
+        other is ClassOrEnumName && this.canonical == other.canonical
+
+    override fun hashCode(): Int = canonical.hashCode()
+
+    override fun toString(): String = canonical
 }
 
 /**

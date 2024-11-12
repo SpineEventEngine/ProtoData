@@ -31,17 +31,23 @@ import io.spine.tools.code.Java
 
 /**
  * A piece of Java code.
+ */
+public interface JavaElement : CodeElement<Java>
+
+/**
+ * An arbitrary piece of Java code.
  *
  * @param code The Java code denoting an element.
  */
-public open class JavaElement(private val code: String) : CodeElement<Java> {
+public open class ArbitraryJavaElement(public val code: String) : JavaElement  {
 
     override fun toCode(): String = code
 
     override fun equals(other: Any?): Boolean =
-        other is JavaElement && this.code == other.code
+        other is ArbitraryJavaElement && this.code == other.code
 
     override fun hashCode(): Int = code.hashCode()
 
     override fun toString(): String = code
+
 }
