@@ -36,8 +36,9 @@ import kotlin.io.path.Path
  */
 public abstract class JavaTypeName internal constructor(
     public val packageName: String,
-    public val simpleNames: List<String>
-) : JavaElement(""), NameElement<Java> {
+    public val simpleNames: List<String>,
+    protected open val code: String
+) : JavaElement(code), NameElement<Java> {
 
     init {
         require(simpleNames.isNotEmpty()) {
@@ -53,7 +54,7 @@ public abstract class JavaTypeName internal constructor(
     @get:JvmName("simpleName")
     public val simpleName: String
         get() = simpleNames.last()
-    
+
     /**
      * A prefix to be used to refer to this type as a fully qualified name.
      *
@@ -102,7 +103,7 @@ public abstract class JavaTypeName internal constructor(
 public abstract class ClassOrEnumName internal constructor(
     packageName: String,
     simpleNames: List<String>
-) : JavaTypeName(packageName, simpleNames) {
+) : JavaTypeName(packageName, simpleNames, code = "" /* It is overridden below. */) {
 
     /**
      * The canonical name of the type.
@@ -128,28 +129,9 @@ public abstract class ClassOrEnumName internal constructor(
         Path("$dir$PATH_SEPARATOR$topLevelClass.java")
     }
 
-    /**
-     * Tells if this type is nested inside another type.
-     */
-    public val isNested: Boolean = simpleNames.size > 1
-
-    /**
-     * Obtains the [canonical] name of the type.
-     */
-    override fun toCode(): String = canonical
-
-    /**
-     * Obtains the [canonical] name of the type.
-     */
-    override fun toString(): String = canonical
-
-    override fun hashCode(): Int = canonical.hashCode()
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is ClassOrEnumName) return false
-        return canonical == other.canonical
-    }
+    // It is overridden in the class body, so that we can access `canonical` property,
+    // and `super.packagePrefix` property required by `canonical` itself.
+    override val code: String = canonical
 }
 
 /**
