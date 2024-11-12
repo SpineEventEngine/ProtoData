@@ -34,8 +34,8 @@ package io.spine.protodata.java
  * An example usage:
  *
  * ```
- * val eightInt = ArbitraryExpression<Int>("4 + 4")
- * val eightDouble = ArbitraryExpression<Double>("4 + 4")
+ * val eightInt = Expression<Int>("4 + 4")
+ * val eightDouble = Expression<Double>("4 + 4")
  * ```
  *
  * Pay attention that the expressions with the same code are not differentiated

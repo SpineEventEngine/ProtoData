@@ -31,6 +31,14 @@ package io.spine.protodata.java
  *
  * Such an expression should denote a constant, compile time known value.
  *
+ * For example:
+ *
+ * ```
+ * val yes = Literal<Boolean>("true")
+ * val fiveAndHalf = Literal<Double>("5.5")
+ * val ten = Literal<Int>("10")
+ * ```
+ *
  * @param [value] A string representation of the literal. It will be used "as is"
  *  in the resulting Java code.
  *

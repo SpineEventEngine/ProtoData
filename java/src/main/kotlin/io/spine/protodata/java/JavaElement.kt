@@ -37,6 +37,8 @@ public interface JavaElement : CodeElement<Java>
 /**
  * An arbitrary piece of Java code.
  *
+ * This class is the default implementation of [JavaElement].
+ *
  * @param code The Java code denoting an element.
  */
 public open class AnElement(public val code: String) : JavaElement  {
