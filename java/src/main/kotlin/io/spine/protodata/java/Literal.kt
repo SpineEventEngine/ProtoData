@@ -35,7 +35,7 @@ package io.spine.protodata.java
  *
  * ```
  * val yes = Literal<Boolean>("true")
- * val fiveAndHalf = Literal<Double>("5.5")
+ * val half = Literal<Double>("0.5")
  * val ten = Literal<Int>("10")
  * ```
  *
