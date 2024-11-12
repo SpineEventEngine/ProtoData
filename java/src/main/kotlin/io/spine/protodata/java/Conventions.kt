@@ -39,8 +39,8 @@ import io.spine.tools.code.Java
 /**
  * An abstract base for Java [Convention]s.
  *
- * @param P the type of the Protobuf declaration name.
- * @param J the type of the Java declaration name.
+ * @param P The type of the Protobuf declaration name.
+ * @param J The type of the Java declaration name.
  *
  * @property typeSystem the type system which is used to resolve types.
  */
@@ -72,6 +72,11 @@ public class MessageOrEnumConvention(ts: TypeSystem) :
         }
         return Declaration(cls, cls.javaFile)
     }
+
+    /**
+     * Obtains the value of the [typeSystem] property for compatibility needs.
+     */
+    internal fun typeSystem(): TypeSystem = typeSystem
 }
 
 /**

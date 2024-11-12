@@ -24,12 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.dependency.local.Spine].
- */
-val protoDataVersion: String by extra("0.67.0")
+syntax = "proto3";
+
+package fields;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.test.fields";
+option java_outer_classname = "FieldExtsSpecProto";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+
+message FieldExamples {
+    google.protobuf.Timestamp timestamp = 1;
+    Flower flower = 2;
+    repeated string note = 3;
+    map<string, int32> count = 4;
+    int32 total = 5;
+}
+
+enum Flower {
+    F_UNKNOWN = 0;
+    ROSE = 1;
+    TULIP = 2;
+    LILY = 3;
+    CHAMOMILE = 4;
+}

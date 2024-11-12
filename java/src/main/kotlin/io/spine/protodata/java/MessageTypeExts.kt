@@ -30,13 +30,15 @@ package io.spine.protodata.java
 
 import io.spine.protodata.ast.MessageType
 import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.type.TypeSystem
+import io.spine.string.simply
 import java.nio.file.Path
 
 /**
  * Obtains the path to the `.java` file, generated from this message.
  *
- * The class which represents this message might not be the top level class of the Java file,
+ * The class which represents this message might not be the top-level class of the Java file,
  * which is determined by the options in the given Protobuf file header.
  */
 public fun MessageType.javaFile(accordingTo: ProtoFileHeader): Path =
@@ -45,7 +47,7 @@ public fun MessageType.javaFile(accordingTo: ProtoFileHeader): Path =
 /**
  * Obtains the full name of the Java class, generated from this message.
  *
- * @return name of the class generated from this message.
+ * @return the name of the class generated from this message.
  */
 public fun MessageType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
     name.javaClassName(accordingTo)
@@ -53,12 +55,12 @@ public fun MessageType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
 /**
  * Obtains a class name for the Java code generated for this message type.
  *
- * @param typeSystem
- *         the type system to be used for obtaining the header for the proto
- *         file in which this message type is declared.
+ * @param typeSystem The type system to be used for obtaining the header for the proto
+ *   file in which this message type is declared.
  */
 public fun MessageType.javaClassName(typeSystem: TypeSystem): ClassName {
-    val header = typeSystem.findMessage(name)!!.second
+    val header = typeSystem.findMessage(name)?.second
+        ?: error("Cannot find `${simply<MessageType>()}` for the name `${name.qualifiedName}`.")
     val className = javaClassName(header)
     return className
 }
