@@ -26,6 +26,8 @@
 
 package io.spine.protodata.java
 
+import com.google.protobuf.Message
+
 /**
  * An expression of a Java method call.
  *
@@ -85,19 +87,19 @@ public open class MethodCall<T> @JvmOverloads constructor(
     /**
      * Constructs an expression chaining a setter call.
      */
-    public fun chainSet(field: String, value: Expression<*>): MethodCall<MessageBuilder> =
+    public fun chainSet(field: String, value: Expression<*>): MethodCall<Message.Builder> =
         fieldAccess(field).setter(value)
 
     /**
      * Constructs an expression chaining a call of an `addField(...)` method.
      */
-    public fun chainAdd(field: String, value: Expression<*>): MethodCall<MessageBuilder> =
+    public fun chainAdd(field: String, value: Expression<*>): MethodCall<Message.Builder> =
         fieldAccess(field).add(value)
 
     /**
      * Constructs an expression chaining a call of an `addAllField(...)` method.
      */
-    public fun chainAddAll(field: String, value: Expression<*>): MethodCall<MessageBuilder> =
+    public fun chainAddAll(field: String, value: Expression<*>): MethodCall<Message.Builder> =
         fieldAccess(field).addAll(value)
 
     private fun fieldAccess(fieldName: String) = FieldAccess(Expression(toCode()), fieldName)

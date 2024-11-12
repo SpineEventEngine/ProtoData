@@ -61,31 +61,31 @@ internal constructor(
     /**
      * Constructs a setter expression for the associated field.
      */
-    public fun setter(value: Expression<*>): MethodCall<MessageBuilder> =
+    public fun setter(value: Expression<*>): MethodCall<Message.Builder> =
         MethodCall(message, setterName, value)
 
     /**
      * Constructs an `addField(..)` expression for the associated field.
      */
-    public fun add(value: Expression<*>): MethodCall<MessageBuilder> =
+    public fun add(value: Expression<*>): MethodCall<Message.Builder> =
         MethodCall(message, addName, value)
 
     /**
      * Constructs an `addAllField(..)` expression for the associated field.
      */
-    public fun addAll(value: Expression<*>): MethodCall<MessageBuilder> =
+    public fun addAll(value: Expression<*>): MethodCall<Message.Builder> =
         MethodCall(message, addAllName, value)
 
     /**
      * Constructs an `putField(..)` expression for the associated field.
      */
-    public fun put(key: Expression<*>, value: Expression<*>): MethodCall<MessageBuilder> =
+    public fun put(key: Expression<*>, value: Expression<*>): MethodCall<Message.Builder> =
         MethodCall(message, putName, listOf(key, value))
 
     /**
      * Constructs an `putAllField(..)` expression for the associated field.
      */
-    public fun putAll(value: Expression<*>): MethodCall<MessageBuilder> =
+    public fun putAll(value: Expression<*>): MethodCall<Message.Builder> =
         MethodCall(message, putAllName, value)
 
     override fun toString(): String {

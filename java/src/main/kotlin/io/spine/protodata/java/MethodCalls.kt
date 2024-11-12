@@ -52,8 +52,8 @@ public inline fun <reified T : Any> ClassOrEnumName.call(
  * Example: `ClassName("com.acme.Bird").newBuilder()` yields
  * `"com.acme.Bird.newBuilder()"`.
  */
-public fun ClassName.newBuilder(): MethodCall<MessageBuilder> =
-    MethodCall<MessageBuilder>(this, "newBuilder")
+public fun ClassName.newBuilder(): MethodCall<Message.Builder> =
+    MethodCall(this, "newBuilder")
 
 /**
  * Constructs an expression which obtains the default instance for this class.

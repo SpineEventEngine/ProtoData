@@ -29,9 +29,14 @@
 package io.spine.protodata.java
 
 /**
- * A literal `null` expression.
+ * An expression that evaluates to `null`.
  */
-public object Null : Expression<JavaNull>("null")
+public object Null : Expression<Null>("null")
+
+/**
+ * An expression that evaluates to nothing.
+ */
+public object Void : Expression<Void>("void")
 
 /**
  * A literal `this` reference.
