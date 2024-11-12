@@ -129,6 +129,11 @@ public abstract class ClassOrEnumName internal constructor(
         Path("$dir$PATH_SEPARATOR$topLevelClass.java")
     }
 
+    /**
+     * Tells if this type is nested inside another type.
+     */
+    public val isNested: Boolean = simpleNames.size > 1
+
     // It is overridden in the class body, so that we can access `canonical` property,
     // and `super.packagePrefix` property required by `canonical` itself.
     override val code: String = canonical
