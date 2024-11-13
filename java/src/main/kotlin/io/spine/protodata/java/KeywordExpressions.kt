@@ -34,11 +34,6 @@ package io.spine.protodata.java
 public object Null : Expression<Null>("null")
 
 /**
- * An expression that evaluates to nothing.
- */
-public object Void : Expression<Void>("void")
-
-/**
  * A literal `this` reference.
  *
  * @param T The type of `this` value.
