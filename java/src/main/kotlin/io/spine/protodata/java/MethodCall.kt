@@ -80,6 +80,12 @@ public open class MethodCall<T> @JvmOverloads constructor(
         MethodCall(this, method, arguments)
 
     /**
+     * Constructs an expression of calling another method on the result of this method call.
+     */
+    public fun <R> chain(method: String, vararg argument: Expression<*>): MethodCall<R> =
+        MethodCall(this, method, argument.toList())
+
+    /**
      * Constructs an expression chaining a call of the `build()` method.
      */
     public fun <R> chainBuild(): MethodCall<R> = chain("build")
