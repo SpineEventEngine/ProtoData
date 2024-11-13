@@ -35,7 +35,7 @@ package io.spine.protodata.java
  * An example of a variable declaration:
  *
  * ```
- * val ten = Variable<Int>("ten", "5 + 5")
+ * val ten = VarInit<Int>("ten", "5 + 5")
  * println("$ten") // Prints `var ten = 5 + 5;`
  * ```
  *
