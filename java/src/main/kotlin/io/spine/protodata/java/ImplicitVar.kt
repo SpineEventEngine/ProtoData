@@ -40,7 +40,7 @@ public class AbstractVar<T>(private val name: String) : Statement("???") {
  * An example of a variable declaration:
  *
  * ```
- * val ten = VarInit<Int>("ten", "5 + 5")
+ * val ten = ImplicitVar<Int>("ten", "5 + 5")
  * println("$ten") // Prints `var ten = 5 + 5;`
  * ```
  *
