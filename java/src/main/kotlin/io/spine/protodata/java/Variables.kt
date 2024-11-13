@@ -26,21 +26,16 @@
 
 package io.spine.protodata.java
 
-// Should roll back to interfaces to have `AbstractVar`.
-public class AbstractVar<T>(private val name: String) : Statement("???") {
-    public fun read(): Var<T> = Var(name)
-}
-
 /**
- * Declares a local Java variable.
+ * Creates a local Java variable with the given [name] and [value].
  *
- * The variable declaration is performed in Java 11 style, without
- * an explicit variable type being specified.
+ * The variable is created in Java 10 style, without an explicit
+ * variable type being specified.
  *
- * An example of a variable declaration:
+ * An example usage:
  *
  * ```
- * val ten = ImplicitVar<Int>("ten", "5 + 5")
+ * val ten = InitVar<Int>("ten", "5 + 5")
  * println("$ten") // Prints `var ten = 5 + 5;`
  * ```
  *
@@ -55,43 +50,71 @@ public class AbstractVar<T>(private val name: String) : Statement("???") {
  * @param name The variable name.
  * @param value The variable initializer.
  */
-public class ImplicitVar<T>(
+public class InitVar<T>(
     public val name: String,
     public val value: Expression<T>
 ) : Statement("var $name = $value;") {
 
-    public fun read(): Var<T> = Var(name)
+    public fun read(): ReadVar<T> = ReadVar(name)
 }
 
-public class TypedVarDecl<T>(
-    public val name: String,
-    public val type: JavaTypeName
-) : Statement("$type $name;") {
-
-    public fun read(): Var<T> = Var(name)
-}
-
-public class TypedVarInit<T>(
-    public val name: String,
-    public val value: Expression<T>
-) : Statement("$name = $value;")  {
-
-    public fun read(): Var<T> = Var(name)
-}
-
-public class TypedVar<T>(
+/**
+ * Declares a local Java variable with its type being specified explicitly.
+ *
+ * An example of a variable declaration:
+ *
+ * ```
+ * val ten = InitVar<Int>("ten", "5 + 5")
+ * println("$ten") // Prints `var ten = 5 + 5;`
+ * ```
+ *
+ * The declared variable can be accessed by [read] method as following:
+ *
+ * ```
+ * val readTen = ten.read() // Returns `Expression<Int>`.
+ * println("$readTen") // Prints `ten`.
+ * ```
+ *
+ * @param T The type of the variable.
+ * @param name The variable name.
+ * @param value The variable initializer.
+ */
+public class InitTypedVar<T>(
     public val name: String,
     public val type: JavaTypeName,
     public val value: Expression<T>
 ) : Statement("$type $name = $value;") {
 
-    public fun read(): Var<T> = Var(name)
+    public fun read(): ReadVar<T> = ReadVar(name)
+}
+
+public class DeclVar<T>(
+    public val name: String,
+    public val type: JavaTypeName
+) : Statement("$type $name;") {
+
+    public fun read(): ReadVar<T> = ReadVar(name)
+}
+
+public class SetVar<T>(
+    public val name: String,
+    public val value: Expression<T>
+) : Statement("$name = $value;")  {
+
+    public fun read(): ReadVar<T> = ReadVar(name)
 }
 
 /**
  * Provides a read access to the variable with the given name.
  *
+ * An example usage:
+ *
+ * ```
+ * val user = ReadVar<User>("user")
+ * println("user") // Prints `user`.
+ * ```
+ *
  * @param T The type of the variable.
  * @param name The name of the variable.
  */
-public class Var<T>(name: String) : Expression<T>(name)
+public class ReadVar<T>(name: String) : Expression<T>(name)

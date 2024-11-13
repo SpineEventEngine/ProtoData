@@ -35,7 +35,6 @@ import kotlin.io.path.Path
  * A fully qualified name of a Java type.
  */
 public abstract class JavaTypeName internal constructor(
-    public val packageName: String,
     public val simpleNames: List<String>
 ) : NameElement<Java>, JavaElement {
 
@@ -54,26 +53,12 @@ public abstract class JavaTypeName internal constructor(
     public val simpleName: String
         get() = simpleNames.last()
 
-    /**
-     * A prefix to be used to refer to this type as a fully qualified name.
-     *
-     * If [packageName] is empty, the prefix is also empty.
-     * Otherwise, the prefix contains the package name followed by a dot (`.`).
-     */
-    protected val packagePrefix: String
-        get() = if (packageName.isEmpty()) "" else "$packageName."
-
     public companion object {
 
         /**
          * A regular expression for a simple Java type name.
          */
         public val simpleNameRegex: Regex = Regex("^[a-zA-Z_$][a-zA-Z\\d_$]*$")
-
-        /**
-         * The separator in a package name.
-         */
-        public const val PACKAGE_SEPARATOR: String = "."
 
         /**
          * The separator in a binary class name.
@@ -84,13 +69,6 @@ public abstract class JavaTypeName internal constructor(
          * The separator used between nested class names in a canonical name.
          */
         public const val CANONICAL_SEPARATOR: String = "."
-
-        /**
-         * The Unix style separator used to delimit directory names in a Java file name.
-         *
-         * This separator is compatible with IntelliJ PSI.
-         */
-        public const val PATH_SEPARATOR: String = "/"
     }
 }
 
@@ -98,9 +76,18 @@ public abstract class JavaTypeName internal constructor(
  * A fully qualified Java class or enum name.
  */
 public abstract class ClassOrEnumName internal constructor(
-    packageName: String,
+    public val packageName: String,
     simpleNames: List<String>
-) : JavaTypeName(packageName, simpleNames) {
+) : JavaTypeName(simpleNames) {
+
+    /**
+     * A prefix to be used to refer to this type as a fully qualified name.
+     *
+     * If [packageName] is empty, the prefix is also empty.
+     * Otherwise, the prefix contains the package name followed by a dot (`.`).
+     */
+    protected val packagePrefix: String
+        get() = if (packageName.isEmpty()) "" else "$packageName."
 
     /**
      * The canonical name of the type.
@@ -117,7 +104,7 @@ public abstract class ClassOrEnumName internal constructor(
     /**
      * The path to the Java source file of this type.
      *
-     * The returned path uses the Unix path [separator][JavaTypeName.PATH_SEPARATOR] (`/`).
+     * The returned path uses the Unix path [separator][PATH_SEPARATOR] (`/`).
      */
     @get:JvmName("javaFile")
     public val javaFile: Path by lazy {
@@ -147,6 +134,21 @@ public abstract class ClassOrEnumName internal constructor(
         if (this === other) return true
         if (other !is ClassOrEnumName) return false
         return canonical == other.canonical
+    }
+
+    public companion object {
+
+        /**
+         * The separator in a package name.
+         */
+        public const val PACKAGE_SEPARATOR: String = "."
+
+        /**
+         * The Unix style separator used to delimit directory names in a Java file name.
+         *
+         * This separator is compatible with IntelliJ PSI.
+         */
+        public const val PATH_SEPARATOR: String = "/"
     }
 }
 
