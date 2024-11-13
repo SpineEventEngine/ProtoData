@@ -26,6 +26,11 @@
 
 package io.spine.protodata.java
 
+// Should roll back to interfaces to have `AbstractVar`.
+public class AbstractVar<T>(private val name: String) : Statement("???") {
+    public fun read(): Var<T> = Var(name)
+}
+
 /**
  * Declares a local Java variable.
  *
@@ -48,12 +53,37 @@ package io.spine.protodata.java
  *
  * @param T The type of the variable.
  * @param name The variable name.
- * @param init The variable initializer.
+ * @param value The variable initializer.
  */
-public class VarInit<T>(
+public class ImplicitVar<T>(
     public val name: String,
-    public val init: Expression<T>,
-) : Statement("var $name = $init;") {
+    public val value: Expression<T>
+) : Statement("var $name = $value;") {
+
+    public fun read(): Var<T> = Var(name)
+}
+
+public class TypedVarDecl<T>(
+    public val name: String,
+    public val type: JavaTypeName
+) : Statement("$type $name;") {
+
+    public fun read(): Var<T> = Var(name)
+}
+
+public class TypedVarInit<T>(
+    public val name: String,
+    public val value: Expression<T>
+) : Statement("$name = $value;")  {
+
+    public fun read(): Var<T> = Var(name)
+}
+
+public class TypedVar<T>(
+    public val name: String,
+    public val type: JavaTypeName,
+    public val value: Expression<T>
+) : Statement("$type $name = $value;") {
 
     public fun read(): Var<T> = Var(name)
 }
