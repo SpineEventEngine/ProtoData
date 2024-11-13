@@ -39,13 +39,6 @@ package io.spine.protodata.java
  * println("$ten") // Prints `var ten = 5 + 5;`
  * ```
  *
- * The declared variable can be accessed by [read] method as following:
- *
- * ```
- * val readTen = ten.read() // Returns `Expression<Int>`.
- * println("$readTen") // Prints `ten`.
- * ```
- *
  * @param T The type of the variable.
  * @param name The variable name.
  * @param value The variable initializer.
@@ -59,43 +52,65 @@ public class InitVar<T>(
 }
 
 /**
- * Declares a local Java variable with its type being specified explicitly.
+ * Creates a local Java variable with explicitly specified [type].
  *
- * An example of a variable declaration:
- *
- * ```
- * val ten = InitVar<Int>("ten", "5 + 5")
- * println("$ten") // Prints `var ten = 5 + 5;`
- * ```
- *
- * The declared variable can be accessed by [read] method as following:
+ * An example usage:
  *
  * ```
- * val readTen = ten.read() // Returns `Expression<Int>`.
- * println("$readTen") // Prints `ten`.
+ * val ten = InitTypedVar<Int>(PrimitiveName.Int, "ten", "5 + 5")
+ * println("$ten") // Prints `int ten = 5 + 5;`
  * ```
  *
  * @param T The type of the variable.
+ * @param type The variable type name.
  * @param name The variable name.
  * @param value The variable initializer.
  */
 public class InitTypedVar<T>(
-    public val name: String,
     public val type: JavaTypeName,
+    public val name: String,
     public val value: Expression<T>
 ) : Statement("$type $name = $value;") {
 
     public fun read(): ReadVar<T> = ReadVar(name)
 }
 
+/**
+ * Declares a local Java variable with the give [name] and [type].
+ *
+ * An example usage:
+ *
+ * ```
+ * val ten = DeclVar<Int>(PrimitiveName.Int, "ten")
+ * println("$ten") // Prints `int ten;`
+ * ```
+ *
+ * @param T The type of the variable.
+ * @param type The variable type name.
+ * @param name The variable name.
+ */
 public class DeclVar<T>(
-    public val name: String,
-    public val type: JavaTypeName
+    public val type: JavaTypeName,
+    public val name: String
 ) : Statement("$type $name;") {
 
     public fun read(): ReadVar<T> = ReadVar(name)
 }
 
+/**
+ * Assigns a [value] to a variable with the given [name].
+ *
+ * An example usage:
+ *
+ * ```
+ * val setTen = SetVar<Int>("ten", "5")
+ * println("$ten") // Prints `ten = 5;`
+ * ```
+ *
+ * @param T The type of the variable.
+ * @param name The variable name.
+ * @param value The value to assign.
+ */
 public class SetVar<T>(
     public val name: String,
     public val value: Expression<T>
