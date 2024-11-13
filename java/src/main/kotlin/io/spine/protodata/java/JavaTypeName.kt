@@ -34,9 +34,11 @@ import kotlin.io.path.Path
 /**
  * A fully qualified name of a Java type.
  */
-public abstract class JavaTypeName internal constructor(
+public open class JavaTypeName internal constructor(
     public val simpleNames: List<String>
 ) : NameElement<Java>, JavaElement {
+
+    public constructor(vararg simpleName: String) : this(simpleName.toList())
 
     init {
         require(simpleNames.isNotEmpty()) {
@@ -70,6 +72,10 @@ public abstract class JavaTypeName internal constructor(
          */
         public const val CANONICAL_SEPARATOR: String = "."
     }
+
+    override fun toCode(): String = simpleNames.joinToString(CANONICAL_SEPARATOR)
+
+    override fun toString(): String = simpleNames.joinToString(CANONICAL_SEPARATOR)
 }
 
 /**
@@ -117,6 +123,10 @@ public abstract class ClassOrEnumName internal constructor(
      * Tells if this type is nested inside another type.
      */
     public val isNested: Boolean = simpleNames.size > 1
+
+    public val clazz: Expression<Class<*>> by lazy {
+        Expression("$canonical.class")
+    }
 
     /**
      * Obtains the [canonical] name of the type.
