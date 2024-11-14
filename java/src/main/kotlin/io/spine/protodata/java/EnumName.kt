@@ -34,7 +34,7 @@ import kotlin.reflect.KClass
 public class EnumName internal constructor(
     packageName: String,
     simpleNames: List<String>
-) : ClassOrEnumName(packageName, simpleNames) {
+) : ClassName(packageName, simpleNames) {
 
     /**
      * Creates a new enum name from the given package name and a simple name.

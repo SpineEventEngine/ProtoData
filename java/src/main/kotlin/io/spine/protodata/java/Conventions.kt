@@ -44,7 +44,7 @@ import io.spine.tools.code.Java
  *
  * @property typeSystem the type system which is used to resolve types.
  */
-public abstract class BaseJavaConvention<P: ProtoDeclarationName, J: ClassOrEnumName>(
+public abstract class BaseJavaConvention<P: ProtoDeclarationName, J: ClassName>(
     protected val typeSystem: TypeSystem
 ) : Convention<Java, P, J> {
 
@@ -57,9 +57,9 @@ public abstract class BaseJavaConvention<P: ProtoDeclarationName, J: ClassOrEnum
  * @throws IllegalStateException if the type name is unknown.
  */
 public class MessageOrEnumConvention(ts: TypeSystem) :
-    BaseJavaConvention<TypeName, ClassOrEnumName>(ts) {
+    BaseJavaConvention<TypeName, ClassName>(ts) {
 
-    override fun declarationFor(name: TypeName): Declaration<Java, ClassOrEnumName> {
+    override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
         val found = typeSystem.findMessageOrEnum(name)
         val header = found?.second
         check(header != null) {
@@ -86,7 +86,7 @@ public class MessageOrBuilderConvention(ts: TypeSystem) :
 
     override fun declarationFor(name: TypeName): Declaration<Java, ClassName> {
         val decl = MessageOrEnumConvention(typeSystem).declarationFor(name)
-        val messageOrBuilder = (decl.name as ClassName).withSuffix("OrBuilder")
+        val messageOrBuilder = decl.name.withSuffix("OrBuilder")
         return Declaration(messageOrBuilder, messageOrBuilder.javaFile)
     }
 }
@@ -145,5 +145,5 @@ public class GenericServiceConvention(ts: TypeSystem): AbstractServiceConvention
             add(name.simpleName)
         }, { packageName, list ->
             ClassName(packageName, list)
-        }) as ClassName
+        })
 }

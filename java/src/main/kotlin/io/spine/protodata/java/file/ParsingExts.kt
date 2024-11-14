@@ -32,7 +32,7 @@ import com.google.common.cache.LoadingCache
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
-import io.spine.protodata.java.ClassOrEnumName
+import io.spine.protodata.java.ClassName
 import io.spine.protodata.render.SourceFile
 import io.spine.string.Separator
 import io.spine.text.Text
@@ -59,7 +59,7 @@ public fun Text.psiFile(): PsiJavaFile =
  *
  * @return the instance of [PsiClass] if found, `null` otherwise.
  */
-public fun Text.locate(name: ClassOrEnumName): PsiClass? {
+public fun Text.locate(name: ClassName): PsiClass? {
     val psiFile = psiFile()
     val psiClass = psiFile.locate(name.simpleNames)
     return psiClass

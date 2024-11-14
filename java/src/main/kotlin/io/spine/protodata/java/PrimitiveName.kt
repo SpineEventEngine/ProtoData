@@ -29,18 +29,11 @@ package io.spine.protodata.java
 /**
  * A name of Java primitive type.
  */
-public sealed class PrimitiveName(value: String) : JavaTypeName(simpleNames = listOf(value)) {
+public sealed class PrimitiveName(public val value: String) : JavaTypeName() {
 
-    override fun toCode(): String = simpleName
+    override fun toCode(): String = value
 
-    override fun toString(): String = simpleName
-
-    override fun hashCode(): Int = simpleName.hashCode()
-
-    override fun equals(other: Any?): Boolean =
-        other is PrimitiveName && simpleName == other.simpleName
-
-    // Available Java primitives.
+    // Java primitives.
     public object DOUBLE : PrimitiveName("double")
     public object FLOAT : PrimitiveName("float")
     public object INT : PrimitiveName("int")

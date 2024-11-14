@@ -26,18 +26,23 @@
 
 package io.spine.protodata.java
 
+import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.reflect.KClass
 import org.checkerframework.checker.signature.qual.FullyQualifiedName
 
 /**
  * A fully qualified Java class name.
  */
-public class ClassName(
-    packageName: String,
-    simpleNames: List<String>
-) : ClassOrEnumName(packageName, simpleNames) {
+public open class ClassName(
+    public val packageName: String,
+    public val simpleNames: List<String>
+) : JavaTypeName() {
 
     init {
+        require(simpleNames.isNotEmpty()) {
+            "A type name must have a least one simple name."
+        }
         simpleNames.forEach {
             require(!it.contains(PACKAGE_SEPARATOR)) {
                 "A simple name must not contain a package separator" +
@@ -68,6 +73,57 @@ public class ClassName(
      * Obtains the Java class name of the given Kotlin class.
      */
     public constructor(klass: KClass<*>) : this(klass.java)
+
+    /**
+     * Tells if this type is nested inside another type.
+     */
+    public val isNested: Boolean = simpleNames.size > 1
+
+    public val clazz: Expression<Class<*>> by lazy {
+        Expression("$canonical.class")
+    }
+
+    /**
+     * The simple name of this type.
+     *
+     * If the type is nested inside a class, the outer class name is NOT included.
+     */
+    @get:JvmName("simpleName")
+    public val simpleName: String
+        get() = simpleNames.last()
+
+    /**
+     * A prefix to be used to refer to this type as a fully qualified name.
+     *
+     * If [packageName] is empty, the prefix is also empty.
+     * Otherwise, the prefix contains the package name followed by a dot (`.`).
+     */
+    protected val packagePrefix: String
+        get() = if (packageName.isEmpty()) "" else "$packageName."
+
+    /**
+     * The canonical name of the type.
+     *
+     * This is the name by which the class is referred to in Java code.
+     *
+     * For regular Java classes, this is similar to [ClassName.binary],
+     * except that in a binary name nested classes are separated by
+     * the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
+     */
+    @get:JvmName("canonical")
+    public val canonical: String = "$packagePrefix${simpleNames.joinToString(CANONICAL_SEPARATOR)}"
+
+    /**
+     * The path to the Java source file of this type.
+     *
+     * The returned path uses the Unix path [separator][PATH_SEPARATOR] (`/`).
+     */
+    @get:JvmName("javaFile")
+    public val javaFile: Path by lazy {
+        val dir = packageName.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR)
+        val topLevelClass = simpleNames.first()
+        Path("$dir$PATH_SEPARATOR$topLevelClass.java")
+    }
 
     /**
      * The binary name of the class.
@@ -125,6 +181,8 @@ public class ClassName(
 
     override fun hashCode(): Int = binary.hashCode()
 
+    override fun toCode(): String  = canonical
+
     public companion object {
 
         /**
@@ -148,6 +206,33 @@ public class ClassName(
             val simpleNames = items.filter { it[0].isUpperCase() }
             return ClassName(packageName, simpleNames)
         }
+
+        /**
+         * The separator in a binary class name.
+         */
+        public const val BINARY_SEPARATOR: String = "$"
+
+        /**
+         * The separator used between nested class names in a canonical name.
+         */
+        public const val CANONICAL_SEPARATOR: String = "."
+
+        /**
+         * A regular expression for a simple Java type name.
+         */
+        public val simpleNameRegex: Regex = Regex("^[a-zA-Z_$][a-zA-Z\\d_$]*$")
+
+        /**
+         * The separator in a package name.
+         */
+        public const val PACKAGE_SEPARATOR: String = "."
+
+        /**
+         * The Unix style separator used to delimit directory names in a Java file name.
+         *
+         * This separator is compatible with IntelliJ PSI.
+         */
+        public const val PATH_SEPARATOR: String = "/"
     }
 }
 
@@ -163,3 +248,29 @@ public fun ClassName.javaClass(): Class<*>? =
     } catch (ignored: ClassNotFoundException) {
         null
     }
+
+/**
+ * Obtains a name of a class taking into account nesting hierarchy.
+ *
+ * The receiver class may be nested inside another class, which may be
+ * nested inside another class, and so on.
+ *
+ * The returned list contains simple names of the classes, starting
+ * from the outermost to the innermost, which is the receiver of
+ * this extension function.
+ *
+ * If the class is not nested, the returned list contains only
+ * a simple name of the class.
+ */
+internal fun Class<*>.nestedNames(): List<String> {
+    if (declaringClass == null) {
+        return listOf(this.simpleName)
+    }
+    val names = mutableListOf<String>()
+    var cls: Class<*>? = this
+    do {
+        names.add(cls!!.simpleName)
+        cls = cls.declaringClass
+    } while (cls != null)
+    return names.reversed()
+}

@@ -40,7 +40,7 @@ internal const val OF = "of"
  * @param generics The method type parameters.
  */
 @JvmOverloads
-public fun <T> ClassOrEnumName.call(
+public fun <T> ClassName.call(
     name: String,
     arguments: List<Expression<*>> = listOf(),
     generics: List<ClassName> = listOf()

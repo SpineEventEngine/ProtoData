@@ -26,8 +26,9 @@
 
 package io.spine.protodata.java.file
 
-import io.spine.protodata.java.ClassOrEnumName
+import io.spine.protodata.java.ClassName
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
+import io.spine.protodata.render.NonRepeatingInsertionPoint
 import io.spine.string.ti
 import io.spine.text.TextCoordinates
 import io.spine.text.TextFactory.text
@@ -39,8 +40,8 @@ import io.spine.tools.psi.java.lineNumber
  * @see BeforePrimaryDeclaration
  */
 public class BeforeNestedTypeDeclaration(
-    private val name: ClassOrEnumName
-) : io.spine.protodata.render.NonRepeatingInsertionPoint {
+    private val name: ClassName
+) : NonRepeatingInsertionPoint {
 
     init {
         require(name.isNested) {

@@ -68,7 +68,7 @@ public class JavaValueConverter(
 
     override fun toCode(value: MessageValue): MethodCall<Message> {
         val type = value.type
-        val className = convention.declarationFor(type).name as ClassName
+        val className = convention.declarationFor(type).name
         return if (value.fieldsMap.isEmpty()) {
             className.getDefaultInstance()
         } else {
@@ -95,9 +95,9 @@ public class JavaValueConverter(
         val valueList = value.valueList
         val firstEntry = valueList.firstOrNull()
         val firstKey = firstEntry?.key
-        val keyClass = firstKey?.type?.toClass() as ClassName?
+        val keyClass = firstKey?.type?.toClass()
         val firstValue = firstEntry?.value
-        val valueClass = firstValue?.type?.toClass() as ClassName?
+        val valueClass = firstValue?.type?.toClass()
         val valuesMap = valueList.associate {
             valueToCode(it.key) to valueToCode(it.value)
         }
@@ -134,7 +134,7 @@ public class JavaValueConverter(
         return call
     }
 
-    private fun Type.toClass(): ClassOrEnumName = when (kindCase) {
+    private fun Type.toClass(): ClassName = when (kindCase) {
         MESSAGE -> convention.declarationFor(message).name
         ENUMERATION -> convention.declarationFor(enumeration).name
         PRIMITIVE -> primitive.toJavaClass()

@@ -33,7 +33,6 @@ import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.ClassName
-import io.spine.protodata.java.ClassOrEnumName
 import io.spine.protodata.java.EnumName
 import io.spine.protodata.java.annotation.TypeAnnotation
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
@@ -88,7 +87,7 @@ class BeforeNestedTypeDeclarationSpec {
             sourceCode.lines()[location.wholeLine] shouldContain "public enum $NESTED_ENUM"
         }
 
-        private fun locate(type: ClassOrEnumName): TextCoordinates {
+        private fun locate(type: ClassName): TextCoordinates {
             val location = BeforeNestedTypeDeclaration(type).locateOccurrence(sourceCode)
             return location
         }
@@ -207,7 +206,7 @@ private val sourceCode = """
 /**
  * Stub renderer which adds the [SuppressWarnings] annotation to the given type.
  */
-private class SuppressWarningsAnnotation(subject: ClassOrEnumName) :
+private class SuppressWarningsAnnotation(subject: ClassName) :
     TypeAnnotation<SuppressWarnings>(SuppressWarnings::class.java, subject) {
 
     override fun renderAnnotationArguments(file: SourceFile<Java>): String = ""
