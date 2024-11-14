@@ -98,20 +98,20 @@ public open class ClassName(
      * If [packageName] is empty, the prefix is also empty.
      * Otherwise, the prefix contains the package name followed by a dot (`.`).
      */
-    protected val packagePrefix: String
+    private val packagePrefix: String
         get() = if (packageName.isEmpty()) "" else "$packageName."
 
     /**
-     * The canonical name of the type.
-     *
-     * This is the name by which the class is referred to in Java code.
+     * The canonical name of the class.
      *
      * For regular Java classes, this is similar to [ClassName.binary],
      * except that in a binary name nested classes are separated by
      * the dollar (`$`) sign, and in canonical — by the dot (`.`) sign.
+     *
+     * @see Class.getCanonicalName
      */
-    @get:JvmName("canonical")
-    public val canonical: String = "$packagePrefix${simpleNames.joinToString(CANONICAL_SEPARATOR)}"
+    public override val canonical: String =
+        "$packagePrefix${simpleNames.joinToString(CANONICAL_SEPARATOR)}"
 
     /**
      * The path to the Java source file of this type.

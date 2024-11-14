@@ -29,9 +29,9 @@ package io.spine.protodata.java
 /**
  * A name of Java primitive type.
  */
-public sealed class PrimitiveName(public val value: String) : JavaTypeName() {
+public sealed class PrimitiveName(value: String) : JavaTypeName() {
 
-    override fun toCode(): String = value
+    override val canonical: String = value
 
     // Java primitives.
     public object DOUBLE : PrimitiveName("double")

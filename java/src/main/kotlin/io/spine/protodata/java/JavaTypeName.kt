@@ -34,6 +34,18 @@ import io.spine.tools.code.Java
  */
 public abstract class JavaTypeName : NameElement<Java>, JavaElement {
 
+    /**
+     * The fully qualified name of a type that uniquely identifies it
+     * within the Java language.
+     *
+     * For classes and interfaces, this includes the package and any enclosing
+     * class names. For primitives, since they are not part of any package or class,
+     * the canonical name is the same as the simple name.
+     */
+    public abstract val canonical: String
+
+    override fun toCode(): String = canonical
+
     override fun toString(): String = toCode()
 
     override fun equals(other: Any?): Boolean =
@@ -41,3 +53,8 @@ public abstract class JavaTypeName : NameElement<Java>, JavaElement {
 
     override fun hashCode(): Int = toCode().hashCode()
 }
+
+/**
+ * A name of the reference type.
+ */
+public abstract class ObjectName : JavaTypeName()
