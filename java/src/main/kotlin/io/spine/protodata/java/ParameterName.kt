@@ -27,17 +27,18 @@
 package io.spine.protodata.java
 
 /**
- * A name of Java primitive type.
+ * A type parameter name.
+ *
+ * Usually, it is `T` or `E`.
  */
-public sealed class PrimitiveName(value: String) : JavaTypeName() {
+public class ParameterName(value: String) : ObjectName() {
 
-    // Canonical and simple names are the same for primitives.
+    // Indeed, a parameter name has only a local meaning only,
+    // and can't be uniquely identified in Java.
     override val canonical: String = value
 
-    // Java primitives.
-    public object DOUBLE : PrimitiveName("double")
-    public object FLOAT : PrimitiveName("float")
-    public object INT : PrimitiveName("int")
-    public object LONG : PrimitiveName("long")
-    public object BOOLEAN : PrimitiveName("boolean")
+    public companion object {
+        public val T: ParameterName = ParameterName("T")
+        public val E: ParameterName = ParameterName("E")
+    }
 }
