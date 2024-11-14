@@ -41,7 +41,7 @@ public open class ClassName(
 
     init {
         require(simpleNames.isNotEmpty()) {
-            "A type name must have a least one simple name."
+            "A class name must have a least one simple name."
         }
         simpleNames.forEach {
             require(!it.contains(PACKAGE_SEPARATOR)) {
@@ -56,7 +56,7 @@ public open class ClassName(
     }
 
     /**
-     * Creates a new class name from the given package name a class name.
+     * Creates a new class name from the given package name and one or more class names.
      *
      * If a class is nested inside another class, the [simpleName] parameter must
      * contain all the names from the outermost class to the innermost one.
@@ -75,10 +75,13 @@ public open class ClassName(
     public constructor(klass: KClass<*>) : this(klass.java)
 
     /**
-     * Tells if this type is nested inside another type.
+     * Tells if this class is nested inside another class.
      */
     public val isNested: Boolean = simpleNames.size > 1
 
+    /**
+     * Returns an expressions that obtains `Class` instance of this class.
+     */
     public val clazz: Expression<Class<*>> by lazy {
         Expression("$canonical.class")
     }
@@ -98,8 +101,8 @@ public open class ClassName(
      * If [packageName] is empty, the prefix is also empty.
      * Otherwise, the prefix contains the package name followed by a dot (`.`).
      */
-    private val packagePrefix: String
-        get() = if (packageName.isEmpty()) "" else "$packageName."
+    private val packagePrefix: String =
+        if (packageName.isEmpty()) "" else "$packageName."
 
     /**
      * The canonical name of the class.
