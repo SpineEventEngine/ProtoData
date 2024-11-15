@@ -175,13 +175,6 @@ public open class ClassName(
         else null
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is ClassName) return false
-        if (!super.equals(other)) return false
-        return true
-    }
-
     public companion object {
 
         /**

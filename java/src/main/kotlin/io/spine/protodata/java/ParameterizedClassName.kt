@@ -64,7 +64,10 @@ public class ParameterizedClassName(base: ClassName, parameters: List<ObjectName
     }
 
     // Not documented, so not to duplicate docs of the primary constructor.
-    public constructor(base: ClassName, vararg parameter: ObjectName) : this(base, parameter.toList())
+    public constructor(base: ClassName, vararg parameter: ObjectName) : this(
+        base,
+        parameter.toList()
+    )
 
     override val canonical: String = "$base<${parameters.joinToString()}>"
 }
