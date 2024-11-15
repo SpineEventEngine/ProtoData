@@ -28,6 +28,16 @@ package io.spine.protodata.java
 
 /**
  * A fully qualified name of a Java array.
+ *
+ * Example usages:
+ *
+ * ```
+ * val bytes = ArrayName(PrimitiveName.BYTE)
+ * println(bytes) // `byte[]`
+ *
+ * val strings = ArrayName(ClassName(String::class))
+ * println(strings) // `java.lang.String[]`
+ * ```
  */
 public class ArrayName(javaName: JavaTypeName) : ObjectName() {
 

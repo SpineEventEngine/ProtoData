@@ -37,6 +37,7 @@ public sealed class PrimitiveName(value: String) : JavaTypeName() {
     // Java primitives.
     public object DOUBLE : PrimitiveName("double")
     public object FLOAT : PrimitiveName("float")
+    public object BYTE : PrimitiveName("byte")
     public object INT : PrimitiveName("int")
     public object LONG : PrimitiveName("long")
     public object BOOLEAN : PrimitiveName("boolean")
