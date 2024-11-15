@@ -46,7 +46,7 @@ public open class MethodCall<T> @JvmOverloads constructor(
     private val scope: JavaElement,
     name: String,
     arguments: List<Expression<*>> = listOf(),
-    generics: List<ClassName> = listOf()
+    generics: List<ObjectName> = listOf()
 ) : Expression<T>(
     "${scope.toCode()}.${generics.genericTypes()}$name(${arguments.formatParams()})"
 ) {
@@ -69,7 +69,7 @@ public open class MethodCall<T> @JvmOverloads constructor(
         scope: JavaElement,
         name: String,
         argument: Expression<*>,
-        generics: List<ClassName> = listOf()
+        generics: List<ObjectName> = listOf()
     ) : this(scope, name, listOf(argument), generics)
 
     /**
@@ -119,7 +119,7 @@ public class InstanceScope<T> : Expression<T>("")
 /**
  * Formats these class names as type arguments, including the angle brackets.
  */
-private fun List<ClassName>.genericTypes() =
+private fun List<ObjectName>.genericTypes() =
     if (isEmpty()) "" else "<${joinToString()}>"
 
 /**
