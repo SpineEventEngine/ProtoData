@@ -33,8 +33,8 @@ package io.spine.protodata.java
  */
 public class ParameterName(value: String) : ObjectName() {
 
-    // Indeed, a parameter name has only a local meaning only,
-    // and can't be uniquely identified in Java.
+    // Actually, a parameter name has only a local meaning and can't be uniquely
+    // identified in Java. So, it is "canonical" quite formally.
     override val canonical: String = value
 
     public companion object {
