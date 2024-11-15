@@ -55,6 +55,35 @@ public abstract class JavaTypeName : NameElement<Java>, JavaElement {
         other is JavaTypeName && other.toCode() == toCode()
 
     override fun hashCode(): Int = toCode().hashCode()
+
+    // Primitive types.
+    public object VOID : JavaTypeName() {
+        override val canonical: String = "void"
+    }
+    public object BOOLEAN : JavaTypeName() {
+        override val canonical: String = "boolean"
+    }
+    public object BYTE : JavaTypeName() {
+        override val canonical: String = "byte"
+    }
+    public object SHORT : JavaTypeName() {
+        override val canonical: String = "short"
+    }
+    public object INT : JavaTypeName() {
+        override val canonical: String = "int"
+    }
+    public object LONG : JavaTypeName() {
+        override val canonical: String = "long"
+    }
+    public object CHAR : JavaTypeName() {
+        override val canonical: String = "char"
+    }
+    public object FLOAT : JavaTypeName() {
+        override val canonical: String = "float"
+    }
+    public object DOUBLE : JavaTypeName() {
+        override val canonical: String = "double"
+    }
 }
 
 /**
