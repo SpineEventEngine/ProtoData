@@ -39,7 +39,7 @@ package io.spine.protodata.java
  * println(strings) // `java.lang.String[]`
  * ```
  */
-public class ArrayName(javaName: JavaTypeName) : JavaTypeName() {
+public class ArrayTypeName(javaName: JavaTypeName) : JavaTypeName() {
 
     override val canonical: String = "$javaName[]"
 }
