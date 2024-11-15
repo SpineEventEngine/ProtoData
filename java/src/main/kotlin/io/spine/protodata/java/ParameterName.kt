@@ -29,12 +29,21 @@ package io.spine.protodata.java
 /**
  * A type parameter name.
  *
- * Usually, it is `T` or `E`.
+ * Use it to declare a generic field or variable.
+ *
+ * An example usage:
+ *
+ * ```
+ * val list = ClassName(List::class)
+ * val genericList = ParameterizedClassName(list, ParameterName.E)
+ * println(genericList) // `java.util.List<E>`
+ * ```
+ *
+ * @see ParameterName.T
+ * @see ParameterName.E
  */
 public class ParameterName(value: String) : ObjectName() {
 
-    // Actually, a parameter name has only a local meaning and can't be uniquely
-    // identified in Java. So, it is "canonical" quite formally.
     override val canonical: String = value
 
     public companion object {

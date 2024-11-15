@@ -31,10 +31,8 @@ package io.spine.protodata.java
  */
 public sealed class PrimitiveName(value: String) : JavaTypeName() {
 
-    // Canonical and simple names are the same for primitives.
     override val canonical: String = value
 
-    // Java primitives.
     public object DOUBLE : PrimitiveName("double")
     public object FLOAT : PrimitiveName("float")
     public object BYTE : PrimitiveName("byte")

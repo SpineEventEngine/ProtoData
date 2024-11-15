@@ -39,7 +39,7 @@ import io.spine.tools.psi.java.Environment.elementFactory
 public open class FieldDeclaration(code: String) : AnElement(code)
 
 /**
- * Declares and initializes Java field with the given parameters.
+ * Declares and initializes a Java field.
  *
  * An example usage:
  *

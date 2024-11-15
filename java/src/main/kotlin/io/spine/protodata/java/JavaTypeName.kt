@@ -30,17 +30,20 @@ import io.spine.protodata.type.NameElement
 import io.spine.tools.code.Java
 
 /**
- * A fully qualified name of a Java type.
+ * A name of a Java type.
  */
 public abstract class JavaTypeName : NameElement<Java>, JavaElement {
 
     /**
-     * The fully qualified name of a type that uniquely identifies it
-     * within the Java language.
+     * The fully qualified name that uniquely identifies the type within
+     * the Java language.
      *
-     * For classes and interfaces, this includes the package and any enclosing
-     * class names. For primitives, since they are not part of any package or class,
-     * the canonical name is the same as the simple name.
+     * May contain the following:
+     *
+     * 1. For classes and interfaces, this includes the package and any enclosing classes.
+     * 2. For primitives, since they are not part of any package or class, the canonical
+     * name is the same as the simple name.
+     * 3. When canonical name contains generics, the type parameters are printed "as is".
      */
     public abstract val canonical: String
 
@@ -55,6 +58,6 @@ public abstract class JavaTypeName : NameElement<Java>, JavaElement {
 }
 
 /**
- * A fully qualified name of a reference type.
+ * A name of a Java reference type.
  */
 public abstract class ObjectName : JavaTypeName()

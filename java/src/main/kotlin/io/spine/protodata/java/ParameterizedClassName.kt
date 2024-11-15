@@ -29,33 +29,41 @@ package io.spine.protodata.java
 /**
  * A parameterized name of the class.
  *
+ * The class can be parameterized with any [ObjectName]. Typically, it can be
+ * another class or a generic type parameter (like `T` or `E`).
+ *
  * Example usages:
  *
  * ```
- * val listOfStrings = ParameterizedName(ClassName(List::class), ClassName(String::class))
+ * val list = ClassName(List::class)
+ * val string = ClassName(String::class)
+ * val listOfStrings = ParameterizedClassName(list, string)
  * println(listOfStrings) // java.util.List<java.lang.String>
  *
- * val genericMap = ParameterizedName(ClassName(Map::class), ParameterName.T, ParameterName.E)
+ * val map = ClassName(Map::class)
+ * val genericMap = ParameterizedClassName(map, ParameterName.T, ParameterName.E)
  * println(genericMap) // java.util.Map<T, E>
  *
- * val comparatorOfLists = ParameterizedName(ClassName(Comparator::class), listOfStrings)
+ * val comparator = ClassName(Comparator::class)
+ * val comparatorOfLists = ParameterizedClassName(comparator, listOfStrings)
  * println(comparatorOfLists) // java.util.Comparator<java.util.List<java.lang.String>>
  *
- * val comparatorOfMaps = ParameterizedName(ClassName(Comparator::class), genericMap)
- * println(comparatorOfMaps) // java.util.Comparator<java.util.Map<T, E>>
+ * val comparatorOfGenericMaps = ParameterizedClassName(comparator, genericMap)
+ * println(comparatorOfGenericMaps) // java.util.Comparator<java.util.Map<T, E>>
  * ```
  *
  * @param base The parameterized class.
- * @param parameters The type parameters.
+ * @param parameters The type parameters of the class.
  */
 public class ParameterizedClassName(base: ClassName, parameters: List<ObjectName>) : ObjectName() {
 
     init {
         require(parameters.isNotEmpty()) {
-            "`${this::class.simpleName}` requires at least one parameter to be passed."
+            "`${this::class.simpleName}` requires at least one type parameter to be passed."
         }
     }
 
+    // Not documented, so not to duplicate docs of the primary constructor.
     public constructor(base: ClassName, vararg parameter: ObjectName) : this(base, parameter.toList())
 
     override val canonical: String = "$base<${parameters.joinToString()}>"
