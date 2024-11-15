@@ -26,35 +26,10 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.NameElement
-import io.spine.tools.code.Java
-
 /**
- * A fully qualified name of a Java type.
+ * A fully qualified name of a Java array.
  */
-public abstract class JavaTypeName : NameElement<Java>, JavaElement {
+public class ArrayName(javaName: JavaTypeName) : ObjectName() {
 
-    /**
-     * The fully qualified name of a type that uniquely identifies it
-     * within the Java language.
-     *
-     * For classes and interfaces, this includes the package and any enclosing
-     * class names. For primitives, since they are not part of any package or class,
-     * the canonical name is the same as the simple name.
-     */
-    public abstract val canonical: String
-
-    override fun toCode(): String = canonical
-
-    override fun toString(): String = toCode()
-
-    override fun equals(other: Any?): Boolean =
-        other is JavaTypeName && other.toCode() == toCode()
-
-    override fun hashCode(): Int = toCode().hashCode()
+    override val canonical: String = "$javaName[]"
 }
-
-/**
- * A fully qualified name of a reference type.
- */
-public abstract class ObjectName : JavaTypeName()
