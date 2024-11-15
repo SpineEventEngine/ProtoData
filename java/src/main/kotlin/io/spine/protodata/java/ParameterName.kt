@@ -42,7 +42,7 @@ package io.spine.protodata.java
  * @see ParameterName.T
  * @see ParameterName.E
  */
-public class ParameterName(value: String) : ObjectName() {
+public class ParameterName(value: String) : JavaTypeName() {
 
     override val canonical: String = value
 

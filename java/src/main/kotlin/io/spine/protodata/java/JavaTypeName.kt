@@ -85,8 +85,3 @@ public abstract class JavaTypeName : NameElement<Java>, JavaElement {
         override val canonical: String = "double"
     }
 }
-
-/**
- * A name of a Java reference type.
- */
-public abstract class ObjectName : JavaTypeName()

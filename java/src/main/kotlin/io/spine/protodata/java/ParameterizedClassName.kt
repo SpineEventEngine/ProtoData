@@ -29,7 +29,7 @@ package io.spine.protodata.java
 /**
  * A parameterized name of the class.
  *
- * The class can be parameterized with any [ObjectName]. Typically, it can be
+ * The class can be parameterized with any [JavaTypeName]. Typically, it can be
  * another class or a generic type parameter (like `T` or `E`).
  *
  * Example usages:
@@ -55,7 +55,10 @@ package io.spine.protodata.java
  * @param base The parameterized class.
  * @param parameters The type parameters of the class.
  */
-public class ParameterizedClassName(base: ClassName, parameters: List<ObjectName>) : ObjectName() {
+public class ParameterizedClassName(
+    base: ClassName,
+    parameters: List<JavaTypeName>
+) : JavaTypeName() {
 
     init {
         require(parameters.isNotEmpty()) {
@@ -64,7 +67,7 @@ public class ParameterizedClassName(base: ClassName, parameters: List<ObjectName
     }
 
     // Not documented, so not to duplicate docs of the primary constructor.
-    public constructor(base: ClassName, vararg parameter: ObjectName) : this(
+    public constructor(base: ClassName, vararg parameter: JavaTypeName) : this(
         base,
         parameter.toList()
     )

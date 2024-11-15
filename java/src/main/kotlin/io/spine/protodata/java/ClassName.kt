@@ -37,7 +37,7 @@ import org.checkerframework.checker.signature.qual.FullyQualifiedName
 public open class ClassName(
     public val packageName: String,
     public val simpleNames: List<String>
-) : ObjectName() {
+) : JavaTypeName() {
 
     init {
         require(simpleNames.isNotEmpty()) {
