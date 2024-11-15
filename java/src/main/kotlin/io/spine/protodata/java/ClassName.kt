@@ -80,23 +80,23 @@ public open class ClassName(
     public val isNested: Boolean = simpleNames.size > 1
 
     /**
-     * Returns an expressions that obtains `Class` instance of this class.
+     * Returns an expression that obtains `Class` instance of this class.
      */
     public val clazz: Expression<Class<*>> by lazy {
         Expression("$canonical.class")
     }
 
     /**
-     * The simple name of this type.
+     * The simple name of this class.
      *
-     * If the type is nested inside a class, the outer class name is NOT included.
+     * If it is nested inside another class, the outer class name is NOT included.
      */
     @get:JvmName("simpleName")
     public val simpleName: String
         get() = simpleNames.last()
 
     /**
-     * A prefix to be used to refer to this type as a fully qualified name.
+     * A prefix to be used to refer to this class as a fully qualified name.
      *
      * If [packageName] is empty, the prefix is also empty.
      * Otherwise, the prefix contains the package name followed by a dot (`.`).
@@ -117,7 +117,7 @@ public open class ClassName(
         "$packagePrefix${simpleNames.joinToString(CANONICAL_SEPARATOR)}"
 
     /**
-     * The path to the Java source file of this type.
+     * The path to the Java source file of this class.
      *
      * The returned path uses the Unix path [separator][PATH_SEPARATOR] (`/`).
      */
@@ -182,10 +182,6 @@ public open class ClassName(
         return true
     }
 
-    override fun hashCode(): Int = binary.hashCode()
-
-    override fun toCode(): String  = canonical
-
     public companion object {
 
         /**
@@ -221,7 +217,7 @@ public open class ClassName(
         public const val CANONICAL_SEPARATOR: String = "."
 
         /**
-         * A regular expression for a simple Java type name.
+         * A regular expression for a simple Java class name.
          */
         public val simpleNameRegex: Regex = Regex("^[a-zA-Z_$][a-zA-Z\\d_$]*$")
 

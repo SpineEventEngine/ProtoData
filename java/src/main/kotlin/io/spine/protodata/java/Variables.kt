@@ -36,7 +36,7 @@ package io.spine.protodata.java
  *
  * ```
  * val ten = InitVar<Int>("ten", "5 + 5")
- * println("$ten") // Prints `var ten = 5 + 5;`
+ * println(ten) // `var ten = 5 + 5;`
  * ```
  *
  * @param T The type of the variable.
@@ -48,6 +48,9 @@ public class InitVar<T>(
     public val value: Expression<T>
 ) : Statement("var $name = $value;") {
 
+    /**
+     * Returns an expression that reads the variable value.
+     */
     public fun read(): ReadVar<T> = ReadVar(name)
 }
 
@@ -58,7 +61,7 @@ public class InitVar<T>(
  *
  * ```
  * val ten = InitTypedVar<Int>(PrimitiveName.Int, "ten", "5 + 5")
- * println("$ten") // Prints `int ten = 5 + 5;`
+ * println(ten) // `int ten = 5 + 5;`
  * ```
  *
  * @param T The type of the variable.
@@ -72,6 +75,9 @@ public class InitTypedVar<T>(
     public val value: Expression<T>
 ) : Statement("$type $name = $value;") {
 
+    /**
+     * Returns an expression that reads the variable value.
+     */
     public fun read(): ReadVar<T> = ReadVar(name)
 }
 
@@ -82,7 +88,7 @@ public class InitTypedVar<T>(
  *
  * ```
  * val ten = DeclVar<Int>(PrimitiveName.Int, "ten")
- * println("$ten") // Prints `int ten;`
+ * println(ten) // `int ten;`
  * ```
  *
  * @param T The type of the variable.
@@ -94,6 +100,9 @@ public class DeclVar<T>(
     public val name: String
 ) : Statement("$type $name;") {
 
+    /**
+     * Returns an expression that reads the variable value.
+     */
     public fun read(): ReadVar<T> = ReadVar(name)
 }
 
@@ -104,7 +113,7 @@ public class DeclVar<T>(
  *
  * ```
  * val setTen = SetVar<Int>("ten", "5")
- * println("$ten") // Prints `ten = 5;`
+ * println(ten) // `ten = 5;`
  * ```
  *
  * @param T The type of the variable.
@@ -116,6 +125,9 @@ public class SetVar<T>(
     public val value: Expression<T>
 ) : Statement("$name = $value;")  {
 
+    /**
+     * Returns an expression that reads the variable value.
+     */
     public fun read(): ReadVar<T> = ReadVar(name)
 }
 
@@ -126,7 +138,7 @@ public class SetVar<T>(
  *
  * ```
  * val user = ReadVar<User>("user")
- * println("user") // Prints `user`.
+ * println(user) // `user`.
  * ```
  *
  * @param T The type of the variable.
