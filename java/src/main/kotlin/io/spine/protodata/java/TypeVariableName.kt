@@ -35,19 +35,19 @@ package io.spine.protodata.java
  *
  * ```
  * val list = ClassName(List::class)
- * val genericList = ParameterizedClassName(list, ParameterName.E)
+ * val genericList = ParameterizedClassName(list, TypeVariableName.E)
  * println(genericList) // `java.util.List<E>`
  * ```
  *
- * @see ParameterName.T
- * @see ParameterName.E
+ * @see TypeVariableName.T
+ * @see TypeVariableName.E
  */
-public class ParameterName(value: String) : JavaTypeName() {
+public class TypeVariableName(value: String) : JavaTypeName() {
 
     override val canonical: String = value
 
     public companion object {
-        public val T: ParameterName = ParameterName("T")
-        public val E: ParameterName = ParameterName("E")
+        public val T: TypeVariableName = TypeVariableName("T")
+        public val E: TypeVariableName = TypeVariableName("E")
     }
 }
