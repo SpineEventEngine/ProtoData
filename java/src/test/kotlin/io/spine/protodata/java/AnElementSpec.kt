@@ -9,28 +9,27 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("`AnElement` should")
 internal class AnElementSpec {
 
-    private val main = "public static void main(String[] args) { }"
+    private val mainCode = "public static void main(String[] args) { }"
+    private val main = AnElement(mainCode)
 
     @Test
     fun `return the provided code`() {
-        AnElement(main).code shouldBe main
+        main.code shouldBe mainCode
     }
 
     @Test
-    fun `return code as string representation`() {
-        "${AnElement(main)}" shouldBe main
+    fun `return the code as string representation`() {
+        "$main" shouldBe mainCode
     }
 
     @Test
     fun `compare two elements`() {
-        val code = "private static final"
-        val modifiers = AnElement(code)
-        val anotherModifiers = AnElement(code)
-        modifiers shouldBe anotherModifiers
-        modifiers.hashCode() shouldBe anotherModifiers.hashCode()
+        val main2 = AnElement(mainCode)
+        main shouldBe main2
+        main.hashCode() shouldBe main2.hashCode()
 
-        val deskClass = AnElement("final class Desk { }")
-        modifiers shouldNotBe deskClass
-        modifiers.hashCode() shouldNotBe deskClass.hashCode()
+        val anotherFunc = AnElement("public void printSum(int a, int b) { }")
+        main shouldNotBe anotherFunc
+        main.hashCode() shouldNotBe anotherFunc.hashCode()
     }
 }
