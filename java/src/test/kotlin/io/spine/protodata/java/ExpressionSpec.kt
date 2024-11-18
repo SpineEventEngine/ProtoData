@@ -36,28 +36,11 @@
 //@DisplayName("`Expression` should")
 //internal class ExpressionSpec {
 //
-//    @Test
-//    fun `pack value into 'Any'`() {
-//        val expression = Literal("messageVar")
-//        val packed = expression.packToAny()
-//        assertCode(packed, "${TypeConverter::class.qualifiedName}.toAny(messageVar)")
-//    }
-//
 //    @Nested
 //    inner class Print {
 //
 //        @Test
 //        fun `Java string literal`() = assertCode(LiteralString("foo"), "\"foo\"")
-//
-//        @Test
-//        fun `'ByteString' constructor invocation`() {
-//            val bytes = "foobar".toByteArray()
-//            val expression = LiteralBytes(ByteString.copyFrom(bytes))
-//            assertCode(
-//                expression,
-//                "${ByteString::class.qualifiedName}.copyFrom(new byte[]{${bytes.joinToString()}})"
-//            )
-//        }
 //
 //        @Test
 //        fun `literal 'null'`() = assertCode(Null, "null")

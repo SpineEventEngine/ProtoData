@@ -34,9 +34,10 @@ import com.google.protobuf.Any as ProtoAny
 import io.spine.protobuf.TypeConverter
 
 /**
- * An expression which yields the given Protobuf [ByteString].
+ * An expression which yields the given Protobuf [ByteString]
+ * using [ByteString.copyFrom] method.
  */
-public class PredefinedByteString(bytes: ByteString) : Expression<ByteString>(
+public class CopyByteString(bytes: ByteString) : Expression<ByteString>(
     "$ByteStringClass.copyFrom(new byte[]{${bytes.toByteArray().joinToString()}})"
 )
 

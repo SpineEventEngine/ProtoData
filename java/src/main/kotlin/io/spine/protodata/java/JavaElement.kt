@@ -39,7 +39,7 @@ public interface JavaElement : CodeElement<Java>
  *
  * This class is the default implementation of [JavaElement].
  *
- * @param code The Java code denoting an element.
+ * @param code Arbitrary Java code.
  */
 public open class AnElement(public val code: String) : JavaElement  {
 

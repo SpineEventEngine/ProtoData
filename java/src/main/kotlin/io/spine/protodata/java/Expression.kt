@@ -38,16 +38,18 @@ package io.spine.protodata.java
  * val eightDouble = Expression<Double>("4 + 4")
  * ```
  *
- * Pay attention that the expressions with the same code are not differentiated
- * at runtime.
+ * Please, pay attention that the expressions with the same [code]
+ * are not differentiated at runtime. The declared generic parameter
+ * is not preserved, it serves only for compile-time type safety.
  *
- * If we compare the variables declared in the example above, we will get `true`:
+ * If we compare the variables declared in the example above,
+ * we will get `true`:
  *
  * ```
- * println(eightInt.equals(eightDouble)) // Prints `true`.
+ * println(eightInt == eightDouble) // `true`.
  * ```
  *
  * @param T The type of the returned value.
- * @param code The Java code denoting an expression.
+ * @param code The Java code denoting the expression.
  */
 public open class Expression<T>(code: String) : AnElement(code)
