@@ -30,8 +30,12 @@
 package io.spine.protodata.java
 
 import com.google.protobuf.ByteString
+import com.google.protobuf.Message
 import com.google.protobuf.Any as ProtoAny
 import io.spine.protobuf.TypeConverter
+import io.spine.protodata.ast.Cardinality
+import io.spine.protodata.ast.Field
+import io.spine.protodata.ast.cardinality
 
 /**
  * An expression which yields the given Protobuf [ByteString]
@@ -50,3 +54,15 @@ public fun Expression<*>.packToAny(): Expression<ProtoAny> {
     val type = ClassName(TypeConverter::class)
     return type.call("toAny", arguments = listOf(this))
 }
+
+/**
+ * Obtains a [FieldAccess] to the [field] of this message.
+ */
+public fun Expression<Message>.field(field: Field): FieldAccess =
+    FieldAccess(this, field.name, field.type.cardinality)
+
+/**
+ * Obtains a [FieldAccess] to the field of this message with the given [name].
+ */
+public fun Expression<Message>.field(name: String, cardinality: Cardinality): FieldAccess =
+    FieldAccess(this, name, cardinality)

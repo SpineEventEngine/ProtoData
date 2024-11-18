@@ -28,6 +28,7 @@ package io.spine.protodata.java
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
+import com.google.protobuf.Message
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.PrimitiveType
@@ -122,8 +123,7 @@ internal class FieldAccessSpec {
 private val IMMUTABLE_LIST = ImmutableList::class.qualifiedName!!
 private val IMMUTABLE_MAP = ImmutableMap::class.qualifiedName!!
 
-private fun Field.access() =
-    MessageReference("msg").field(this)
+private fun Field.access() = ReadVar<Message>("msg").field(this)
 
 private val stubType: TypeName = typeName {
     simpleName = "StubType"
