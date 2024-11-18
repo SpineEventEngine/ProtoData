@@ -104,6 +104,11 @@ public class DeclVar<T>(
      * Returns an expression that reads the variable value.
      */
     public fun read(): ReadVar<T> = ReadVar(name)
+
+    /**
+     * Returns an expression that sets the value for this variable.
+     */
+    public fun set(value: Expression<T>): SetVar<T> = SetVar(name, value)
 }
 
 /**
