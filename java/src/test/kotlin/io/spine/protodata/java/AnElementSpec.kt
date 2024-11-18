@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.DisplayName
 
+// The class is `open` to allow re-using the base tests by other Java elements.
 @DisplayName("`AnElement` should")
-internal class AnElementSpec {
+internal open class AnElementSpec {
 
     private val main = "public static void main(String[] args) { }"
 

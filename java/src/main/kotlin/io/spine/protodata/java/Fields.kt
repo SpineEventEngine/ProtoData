@@ -29,6 +29,7 @@ package io.spine.protodata.java
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import io.spine.tools.psi.java.Environment.elementFactory
+import org.jaxen.expr.Expr
 
 /**
  * A declaration of a Java field.
@@ -36,7 +37,13 @@ import io.spine.tools.psi.java.Environment.elementFactory
  * The declared field may OR may not be initialized,
  * depending on a specific implementation.
  */
-public open class FieldDeclaration(code: String) : AnElement(code)
+public sealed class FieldDeclaration<T>(public val name: String, code: String) : AnElement(code) {
+
+    /**
+     * Returns an expression that reads the value of this field.
+     */
+    public fun read(useThis: Boolean = false): ReadField<T> = ReadField(name, useThis)
+}
 
 /**
  * Declares and initializes a Java field.
@@ -56,15 +63,9 @@ public open class FieldDeclaration(code: String) : AnElement(code)
 public class InitField<T>(
     public val modifiers: String,
     public val type: JavaTypeName,
-    public val name: String,
+    name: String,
     public val value: Expression<T>
-) : FieldDeclaration("$modifiers $type $name = $value;") {
-
-    /**
-     * Returns an expression that reads the field value.
-     */
-    public fun read(useThis: Boolean = false): ReadField<T> = ReadField(name, useThis)
-}
+) : FieldDeclaration<T>(name, "$modifiers $type $name = $value;")
 
 /**
  * Declares a Java field with the given parameters.
@@ -85,13 +86,14 @@ public class InitField<T>(
 public class DeclField<T>(
     public val modifiers: String,
     public val type: JavaTypeName,
-    public val name: String
-) : FieldDeclaration("$modifiers $type $name;") {
+    name: String
+) : FieldDeclaration<T>(name, "$modifiers $type $name;") {
 
     /**
-     * Returns an expression that reads the field value.
+     * Returns an expression that sets the value for this field.
      */
-    public fun read(useThis: Boolean = false): ReadField<T> = ReadField(name, useThis)
+    public fun set(value: Expression<T>, useThis: Boolean = false): SetField<T> =
+        SetField(name, value, useThis)
 }
 
 /**
@@ -112,7 +114,7 @@ public class SetField<T>(
     public val name: String,
     public val value: Expression<T>,
     public val useThis: Boolean = false
-) : Statement("${readVar(name, useThis)} = $value;") {
+) : Statement("${field(name, useThis)} = $value;") {
 
     /**
      * Returns an expression that reads the field value.
@@ -135,12 +137,12 @@ public class SetField<T>(
  * @param useThis Tells whether to use the explicit `this` keyword.
  */
 public class ReadField<T>(name: String, useThis: Boolean = false) :
-    Expression<T>(readVar(name, useThis))
+    Expression<T>(field(name, useThis))
 
 /**
  * Creates a new [PsiField] from this Java [FieldDeclaration].
  */
-public fun FieldDeclaration.toPsi(context: PsiElement? = null): PsiField =
+public fun FieldDeclaration<*>.toPsi(context: PsiElement? = null): PsiField =
     elementFactory.createFieldFromText(toCode(), context)
 
-private fun readVar(name: String, useThis: Boolean) = if (useThis) "this.$name" else name
+private fun field(name: String, useThis: Boolean) = if (useThis) "this.$name" else name
