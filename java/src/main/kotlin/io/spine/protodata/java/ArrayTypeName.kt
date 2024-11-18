@@ -32,10 +32,11 @@ package io.spine.protodata.java
  * Example usages:
  *
  * ```
- * val bytes = ArrayName(PrimitiveName.BYTE)
+ * val bytes = ArrayTypeName(JavaTypeName.BYTE)
  * println(bytes) // `byte[]`
  *
- * val strings = ArrayName(ClassName(String::class))
+ * val string = ClassName(String::class)
+ * val strings = ArrayTypeName(string)
  * println(strings) // `java.lang.String[]`
  * ```
  */
