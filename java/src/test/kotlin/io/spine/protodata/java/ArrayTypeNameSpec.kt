@@ -1,7 +1,7 @@
 package io.spine.protodata.java
 
+import assertCode
 import com.google.protobuf.Timestamp
-import io.kotest.matchers.shouldBe
 import io.spine.protodata.java.JavaTypeName.BOOLEAN
 import io.spine.protodata.java.JavaTypeName.BYTE
 import io.spine.protodata.java.JavaTypeName.CHAR
@@ -18,26 +18,26 @@ internal class ArrayTypeNameSpec {
 
     @Test
     fun `of primitive types`() {
-        arrayOf(BYTE) shouldBe "byte[]"
-        arrayOf(SHORT) shouldBe "short[]"
-        arrayOf(INT) shouldBe "int[]"
-        arrayOf(LONG) shouldBe "long[]"
-        arrayOf(FLOAT) shouldBe "float[]"
-        arrayOf(DOUBLE) shouldBe "double[]"
-        arrayOf(BOOLEAN) shouldBe "boolean[]"
-        arrayOf(CHAR) shouldBe "char[]"
+        assertArrayName(BYTE, "byte[]")
+        assertArrayName(SHORT, "short[]")
+        assertArrayName(INT, "int[]")
+        assertArrayName(LONG, "long[]")
+        assertArrayName(FLOAT, "float[]")
+        assertArrayName(DOUBLE, "double[]")
+        assertArrayName(BOOLEAN, "boolean[]")
+        assertArrayName(CHAR, "char[]")
     }
 
     @Test
     fun `of classes`() {
         val string = ClassName(String::class)
-        arrayOf(string) shouldBe "java.lang.String[]"
+        assertArrayName(string, "java.lang.String[]")
     }
 
     @Test
     fun `of generic variables`() {
-        arrayOf(TypeVariableName.T) shouldBe "T[]"
-        arrayOf(TypeVariableName.E) shouldBe "E[]"
+        assertArrayName(TypeVariableName.T, "T[]")
+        assertArrayName(TypeVariableName.E, "E[]")
     }
 
     @Test
@@ -45,14 +45,18 @@ internal class ArrayTypeNameSpec {
         val timestamp = ClassName(Timestamp::class)
         val comparator = ClassName(Comparator::class)
         val timestampComparator = ParameterizedClassName(comparator, timestamp)
-        arrayOf(timestampComparator) shouldBe "java.util.Comparator<com.google.protobuf.Timestamp>[]"
+        assertArrayName(
+            timestampComparator,
+            "java.util.Comparator<com.google.protobuf.Timestamp>[]"
+        )
     }
 
     @Test
     fun `of other arrays`() {
         val ints = ArrayTypeName(INT)
-        arrayOf(ints) shouldBe "int[][]"
+        assertArrayName(ints, "int[][]")
     }
 }
 
-private fun arrayOf(type: JavaTypeName) = "${ArrayTypeName(type)}"
+private fun assertArrayName(type: JavaTypeName, expected: String) =
+    assertCode(ArrayTypeName(type), expected)
