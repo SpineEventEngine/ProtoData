@@ -43,12 +43,6 @@
 //        fun `Java string literal`() = assertCode(LiteralString("foo"), "\"foo\"")
 //
 //        @Test
-//        fun `literal 'null'`() = assertCode(Null, "null")
-//
-//        @Test
-//        fun `literal 'this'`() = assertCode(This, "this")
-//
-//        @Test
 //        fun `a number`() = assertCode(Literal(42), "42")
 //
 //        @Test
