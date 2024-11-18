@@ -27,10 +27,10 @@
 package io.spine.protodata.java
 
 /**
- * A parameterized name of the class.
+ * A parameterized class name.
  *
- * The class can be parameterized with any [JavaTypeName]. Typically, it can be
- * another class or a generic type parameter (like `T` or `E`).
+ * The class can be parameterized with any [JavaTypeName]. Usually, it is
+ * another class or a generic type variable (like `T` or `E`).
  *
  * Example usages:
  *
@@ -41,7 +41,7 @@ package io.spine.protodata.java
  * println(listOfStrings) // java.util.List<java.lang.String>
  *
  * val map = ClassName(Map::class)
- * val genericMap = ParameterizedClassName(map, ParameterName.T, ParameterName.E)
+ * val genericMap = ParameterizedClassName(map, TypeVariableName.T, TypeVariableName.E)
  * println(genericMap) // java.util.Map<T, E>
  *
  * val comparator = ClassName(Comparator::class)
@@ -64,9 +64,11 @@ public class ParameterizedClassName(
         require(parameters.isNotEmpty()) {
             "`${this::class.simpleName}` requires at least one type parameter to be passed."
         }
+        require(parameters.all { it !in KnownPrimitives }) {
+            "`${this::class.simpleName}` can't accept a primitive type as a generic parameter."
+        }
     }
 
-    // Not documented, so not to duplicate docs of the primary constructor.
     public constructor(base: ClassName, vararg parameter: JavaTypeName) : this(
         base,
         parameter.toList()

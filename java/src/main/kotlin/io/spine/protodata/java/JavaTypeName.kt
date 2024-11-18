@@ -86,4 +86,14 @@ public abstract class JavaTypeName : NameElement<Java>, JavaElement {
     public object DOUBLE : JavaTypeName() {
         override val canonical: String = "double"
     }
+
+    public companion object {
+
+        /**
+         * The built-in Java primitive types.
+         */
+        public val KnownPrimitives: List<JavaTypeName> = listOf(
+            VOID, BOOLEAN, BYTE, SHORT, INT, LONG, CHAR, FLOAT, DOUBLE
+        )
+    }
 }
