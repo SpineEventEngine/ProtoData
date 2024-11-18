@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @DisplayName("`InitField` should")
-internal class InitFieldSpec : AnElementSpec() {
+internal class InitFieldSpec {
 
     private val surname = InitField(
         modifiers = "private final",

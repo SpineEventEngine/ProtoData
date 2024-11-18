@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @DisplayName("`DeclField` should")
-internal class DeclFieldSpec : AnElementSpec() {
+internal class DeclFieldSpec {
 
     private val surname = DeclField<String>(
         modifiers = "private final",
