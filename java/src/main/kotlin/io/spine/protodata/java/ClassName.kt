@@ -33,6 +33,10 @@ import org.checkerframework.checker.signature.qual.FullyQualifiedName
 
 /**
  * A fully qualified Java class name.
+ *
+ * @property [packageName] The class package. Can be empty.
+ * @property [simpleNames] The class simple names. If the class is nested inside another class,
+ *  this list must contain all the names from the outermost class to the innermost one.
  */
 public open class ClassName(
     public val packageName: String,
@@ -81,6 +85,12 @@ public open class ClassName(
 
     /**
      * Returns an expression that obtains `Class` instance of this class.
+     *
+     * For example:
+     *
+     * ```
+     * val string = ClassName(String::class)
+     * println(string.clazz) // `java.lang.String.class`
      */
     public val clazz: Expression<Class<*>> by lazy {
         Expression("$canonical.class")
