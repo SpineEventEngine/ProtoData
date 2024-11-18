@@ -29,7 +29,7 @@ package io.spine.protodata.java
 /**
  * An arbitrary literal.
  *
- * Such an expression should denote a constant, compile time known value.
+ * Such an expression should denote a constant, compile-time known value.
  *
  * For example:
  *
