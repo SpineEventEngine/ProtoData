@@ -51,7 +51,7 @@ import io.spine.tools.code.Java
  * A [ValueConverter] which converts values into Java expressions.
  */
 @Suppress("TooManyFunctions")
-public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, Expression>() {
+public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, Expression<*>>() {
 
     /**
      * The constructor for backward compatibility.
