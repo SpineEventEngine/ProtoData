@@ -56,7 +56,6 @@ import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
@@ -138,12 +137,6 @@ private fun Project.createConfigurations(protoDataVersion: String) {
     }
 }
 
-private val Project.protoDataRawArtifact: Configuration
-    get() = configurations.getByName(PROTO_DATA_RAW_ARTIFACT)
-
-private val Project.userClasspath: Configuration
-    get() = configurations.getByName(USER_CLASSPATH_CONFIGURATION)
-
 /**
  * Creates [LaunchProtoData] and `clean` task for all source sets of this project
  * available by the time of the call.
@@ -179,28 +172,7 @@ private fun Project.createLaunchTask(
 ): LaunchProtoData {
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
-        settingsDir.set(settingsDirTask.settingsDir.get())
-        plugins = ext.plugins
-        requestFile.set(ext.requestFile(sourceSet))
-        protoDataConfiguration = protoDataRawArtifact
-        userClasspathConfiguration = userClasspath
-        project.afterEvaluate {
-            sources = ext.sourceDirs(sourceSet)
-            targets = ext.targetDirs(sourceSet)
-            compileCommandLine()
-        }
-        setPreLaunchCleanup()
-        onlyIf {
-            hasRequestFile(sourceSet)
-        }
-        dependsOn(
-            settingsDirTask,
-            protoDataRawArtifact.buildDependencies,
-            userClasspath.buildDependencies,
-        )
-        val launchTask = this
-        javaCompileFor(sourceSet)?.dependsOn(launchTask)
-        kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
+        applyDefaults(this@createLaunchTask, ext, sourceSet, settingsDirTask)
     }
     return result
 }
@@ -423,19 +395,19 @@ private fun GenerateProtoTask.generatedDir(language: String = ""): File =
  * In this case the [CleanTask] is also created with appropriate dependencies.
  */
 private fun Project.handleLaunchTaskDependency(
-    task: GenerateProtoTask,
+    generateProto: GenerateProtoTask,
     sourceSet: SourceSet,
     ext: Extension
 ) {
     var launchTask: Task? = LaunchTask.find(project, sourceSet)
     if (launchTask != null) {
-        launchTask.dependsOn(task)
+        launchTask.dependsOn(generateProto)
     } else {
         project.afterEvaluate {
             val settingsTask =
                 project.tasks.withType(CreateSettingsDirectory::class.java).theOnly()
             launchTask = createLaunchTask(settingsTask, sourceSet, ext)
-            launchTask!!.dependsOn(task)
+            launchTask!!.dependsOn(generateProto)
             createCleanTask(sourceSet, ext)
         }
     }

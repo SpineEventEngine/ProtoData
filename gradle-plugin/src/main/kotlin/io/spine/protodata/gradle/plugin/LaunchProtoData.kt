@@ -34,11 +34,14 @@ import io.spine.protodata.cli.SettingsDirParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
+import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
+import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
 import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File.pathSeparator
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
@@ -175,6 +178,36 @@ public abstract class LaunchProtoData : JavaExec() {
     }
 }
 
+internal fun LaunchProtoData.applyDefaults(
+    project: Project,
+    ext: Extension,
+    sourceSet: SourceSet,
+    settingsDirTask: CreateSettingsDirectory
+) {
+    settingsDir.set(settingsDirTask.settingsDir.get())
+    plugins = ext.plugins
+    requestFile.set(ext.requestFile(sourceSet))
+    protoDataConfiguration = project.protoDataRawArtifact
+    userClasspathConfiguration = project.userClasspath
+    project.afterEvaluate {
+        sources = ext.sourceDirs(sourceSet)
+        targets = ext.targetDirs(sourceSet)
+        compileCommandLine()
+    }
+    setPreLaunchCleanup()
+    onlyIf {
+        hasRequestFile(sourceSet)
+    }
+    dependsOn(
+        settingsDirTask,
+        project.protoDataRawArtifact.buildDependencies,
+        project.userClasspath.buildDependencies,
+    )
+    val launchTask = this
+    project.javaCompileFor(sourceSet)?.dependsOn(launchTask)
+    project.kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
+}
+
 private fun Provider<List<Directory>>.absoluteDirs() = takeIf { it.isPresent }
     ?.get()
     ?.map { it.asFile.absoluteFile }
@@ -200,4 +233,10 @@ internal fun LaunchProtoData.hasRequestFile(sourceSet: SourceSet): Boolean {
     }
     return requestFile.exists()
 }
+
+private val Project.protoDataRawArtifact: Configuration
+    get() = configurations.getByName(PROTO_DATA_RAW_ARTIFACT)
+
+private val Project.userClasspath: Configuration
+    get() = configurations.getByName(USER_CLASSPATH_CONFIGURATION)
 
