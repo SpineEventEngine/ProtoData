@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -52,8 +52,8 @@ import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import io.spine.tools.gradle.protobuf.protobufExtension
 import io.spine.util.theOnly
 import java.io.File
-import kotlin.io.path.exists
-import kotlin.io.path.listDirectoryEntries
+import java.nio.file.Path
+import java.nio.file.Paths
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
@@ -354,7 +354,7 @@ private fun GenerateProtoTask.configureSourceSetDirs() {
             .toSet()
 
         // Clear the source directories of the Java source set.
-        // This trick was needed when building `base` module of Spine.
+        // This trick was needed when building the `base` module of Spine.
         // Otherwise, the `java` plugin would complain about duplicate source files.
         lang.setSrcDirs(listOf<String>())
 
@@ -445,35 +445,63 @@ private fun IdeaModule.setupDirectories(project: Project,) {
         sources.filter { !it.residesIn(excludeDir) }.toSet()
 
     val protocOutput = project.file(project.generatedSourceProtoDir)
-    excludeWithNested(protocOutput)
+    val protocTargets = project.protocTargets()
+    excludeWithNested(protocOutput.toPath(), protocTargets)
     sourceDirs = filterSources(sourceDirs, protocOutput)
     testSources.filter { !it.residesIn(protocOutput) }
-    generatedSourceDirs = if (project.generatedDir.exists()) {
-        //TODO:2024-11-19:alexander.yevsyukov: Update with the code from `ProtoTaskExtensions.kt`.
-        project.generatedDir.listDirectoryEntries()
-            .map { it.toFile() }
-            .toSet()
-    } else {
-        emptySet<File>()
-    }
+    generatedSourceDirs = project.generatedDir.resolve(protocTargets)
+        .map { it.toFile() }
+        .toSet()
 }
 
 /**
- * Excludes the given directory and its immediate subdirectories from
+ * Obtains the path of the `generated` directory under the project root directory.
+ */
+private val Project.generatedDir: Path
+    get() = projectDir.resolve(targetBaseDir).toPath()
+
+/**
+ * Lists target directories for Protobuf code generation.
+ *
+ * The directory names are in the following format:
+ *
+ * `<source-set-name>/<builtIn-or-plugin-name>`
+ */
+private fun Project.protocTargets(): List<Path> {
+    val protobufTasks = tasks.withType(GenerateProtoTask::class.java)
+    val codegenTargets = sequence {
+        protobufTasks.forEach { task ->
+            val sourceSet = task.sourceSet.name
+            val builtins = task.builtins.map { builtin -> builtin.name }
+            val plugins = task.plugins.map { plugin -> plugin.name }
+            val combined = builtins + plugins
+            combined.forEach { subdir ->
+                yield(Paths.get(sourceSet, subdir))
+            }
+        }
+    }
+    return codegenTargets.toList()
+}
+
+/**
+ * Excludes the given directory and its subdirectories from
  * being seen as ones with the source code.
  *
  * The primary use of this extension is to exclude `build/generated/source/proto` and its
  * subdirectories to avoid duplication of types in the generated code with those in
  * produced by ProtoData under the `$projectDir/generated/` directory.
  */
-private fun IdeaModule.excludeWithNested(directory: File) {
-    if (directory.exists()) {
-        excludeDirs.add(directory)
-        directory.toPath().listDirectoryEntries().forEach {
-            excludeDirs.add(it.toFile())
-        }
+private fun IdeaModule.excludeWithNested(directory: Path, subdirs: Iterable<Path>) {
+    excludeDirs.add(directory.toFile())
+    directory.resolve(subdirs).forEach {
+        excludeDirs.add(it.toFile())
     }
 }
+
+private fun Path.resolve(subdirs: Iterable<Path>): List<Path> =
+    subdirs.map {
+        resolve(it)
+    }
 
 /**
  * Tells if this file resides in the given [directory].
