@@ -91,36 +91,37 @@ public fun listExpression(vararg expressions: Expression<*>): MethodCall<Immutab
     listExpression(expressions.toList())
 
 /**
- * Constructs an expression of a map of the given [expressions].
+ * Constructs an expression that yields Guava's [ImmutableMap] with the given [entries].
  *
- * The resulting expression always yields an instance of Guava `ImmutableMap`.
- *
- * @param expressions The expressions representing the entries.
- * @param keyType The type of the keys in the map;
- *   must be non-`null` if the map is not empty, may be `null` otherwise.
- * @param valueType The type of the values in the map;
- *   must be non-`null` if the map is not empty, may be `null` otherwise.
+ * @param entries The entries to fill the map with.
+ * @param keyType The type of the keys in the map.
+ * @param valueType The type of the values in the map.
  */
 public fun mapExpression(
-    expressions: Map<Expression<*>, Expression<*>>,
-    keyType: ClassName?,
-    valueType: ClassName?
+    entries: Map<Expression<*>, Expression<*>>,
+    keyType: ClassName,
+    valueType: ClassName
 ): MethodCall<ImmutableMap<*, *>> {
     val immutableMapClass = ClassName(ImmutableMap::class)
-    if (expressions.isEmpty()) {
+    if (entries.isEmpty()) {
         return immutableMapClass.call(OF)
     }
-
-    checkNotNull(keyType) { "Map key type is not set." }
-    checkNotNull(valueType) { "Map value type is not set." }
 
     var call = immutableMapClass.call<ImmutableMap.Builder<*, *>>(
         "builder",
         generics = listOf(keyType, valueType)
     )
-    expressions.forEach { (k, v) ->
+    entries.forEach { (k, v) ->
         call = call.chain("put", listOf(k, v))
     }
 
     return call.chainBuild()
+}
+
+/**
+ * Constructs an expression that yields an empty Guava's [ImmutableMap].
+ */
+public fun mapExpression(): MethodCall<ImmutableMap<*, *>> {
+    val immutableMapClass = ClassName(ImmutableMap::class)
+    return immutableMapClass.call(OF)
 }
