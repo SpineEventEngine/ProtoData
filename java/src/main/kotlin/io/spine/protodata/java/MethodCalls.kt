@@ -93,7 +93,7 @@ public fun listExpression(vararg expressions: Expression<*>): MethodCall<Immutab
 /**
  * Constructs an expression that yields Guava's [ImmutableMap] with the given [entries].
  *
- * @param entries The entries to fill the map with.
+ * @param entries The entries to fill the map with, can't be empty.
  * @param keyType The type of the keys in the map.
  * @param valueType The type of the values in the map.
  */
@@ -102,11 +102,13 @@ public fun mapExpression(
     keyType: ClassName,
     valueType: ClassName
 ): MethodCall<ImmutableMap<*, *>> {
-    val immutableMapClass = ClassName(ImmutableMap::class)
-    if (entries.isEmpty()) {
-        return immutableMapClass.call(OF)
+    require(entries.isNotEmpty()) {
+        "Can't construct an expression to yield Guava's `ImmutableMap` with empty `entries`." +
+                "Use a parameterless overload of this method to create an empty map," +
+                " or pass a non-empty `entries`."
     }
 
+    val immutableMapClass = ClassName(ImmutableMap::class)
     var call = immutableMapClass.call<ImmutableMap.Builder<*, *>>(
         "builder",
         generics = listOf(keyType, valueType)
