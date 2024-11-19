@@ -61,6 +61,7 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.exclude
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.plugins.ide.idea.model.IdeaModule
@@ -92,13 +93,17 @@ import org.gradle.api.Plugin as GradlePlugin
  */
 public class Plugin : GradlePlugin<Project> {
 
-    override fun apply(project: Project): Unit = with(project) {
-        val version = readVersion()
-        val ext = createExtension()
-        createConfigurations(version)
-        createTasks(ext)
-        configureWithProtobufPlugin(version, ext)
-        configureIdea()
+    private val version: String by lazy {
+        readVersion()
+    }
+
+    override fun apply(project: Project) {
+        with(project) {
+            createConfigurations(this@Plugin.version)
+            createTasks()
+            configureWithProtobufPlugin(this@Plugin.version)
+            configureIdea()
+        }
     }
 
     public companion object {
@@ -120,6 +125,15 @@ private fun Project.createExtension(): Extension {
     extensions.add(CodegenSettings::class.java, EXTENSION_NAME, extension)
     return extension
 }
+
+/**
+ * Obtains an instance of the project [Extension] added by ProtoData Gradle Plugin.
+ *
+ * Or, if the extension is not yet added, creates it and returns.
+ */
+internal val Project.extension: Extension
+    get() = extensions.findByType(CodegenSettings::class)?.run { this as Extension }
+        ?: createExtension()
 
 /**
  * Creates configurations for `protoDataRawArtifact` and user-defined classpath,
@@ -148,9 +162,10 @@ private fun Project.createConfigurations(protoDataVersion: String) {
  * @see [Project.handleLaunchTaskDependency]
  * @see [Project.configureProtobufPlugin]
  */
-private fun Project.createTasks(ext: Extension) {
+private fun Project.createTasks() {
     val settingsDirTask = createSettingsDirTask()
     sourceSets.forEach { sourceSet ->
+        val ext = extension
         createLaunchTask(settingsDirTask, sourceSet, ext)
         createCleanTask(sourceSet, ext)
     }
@@ -195,10 +210,10 @@ private fun Project.createCleanTask(sourceSet: SourceSet, ext: Extension) {
     }
 }
 
-private fun Project.configureWithProtobufPlugin(protoDataVersion: String, ext: Extension) {
+private fun Project.configureWithProtobufPlugin(protoDataVersion: String) {
     val protocPlugin = ProtocPluginArtifact(protoDataVersion)
     pluginManager.withPlugin(PROTOBUF_GRADLE_PLUGIN_ID) {
-        configureProtobufPlugin(protocPlugin, ext)
+        configureProtobufPlugin(protocPlugin, extension)
     }
 }
 
@@ -235,7 +250,7 @@ private fun Project.configureProtobufPlugin(
  * Configures the given [task] by enabling Kotlin code generation and adding and
  * configuring ProtoData `protoc` plugin for the task.
  *
- * The method also handles exclusion of duplicated source code and task dependencies.
+ * The method also handles the exclusion of duplicated source code and task dependencies.
  *
  * @see [GenerateProtoTask.configureSourceSetDirs]
  * @see [Project.handleLaunchTaskDependency]
@@ -258,7 +273,7 @@ private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) 
         }
     }
     task.configureSourceSetDirs()
-    handleLaunchTaskDependency(task, sourceSet, ext)
+    handleLaunchTaskDependency(task)
 }
 
 /**
@@ -284,7 +299,7 @@ private fun Project.hasKotlin(): Boolean {
  * Verifies if the project can deal with Java or Kotlin code.
  *
  * The current Protobuf support of Kotlin is based on Java codegen.
- * Therefore, it's likely that Java would be enabled in the project for
+ * Therefore, it is likely that Java would be enabled in the project for
  * Kotlin proto code to be generated.
  * Though, it may change someday, and Kotlin support for Protobuf would be
  * self-sufficient. This method assumes such a case when it checks the presence of
@@ -358,7 +373,7 @@ private fun GenerateProtoTask.configureSourceSetDirs() {
 
         java.srcDir(generatedDir(JAVA))
 
-        // Add `grpc` directory unconditionally.
+        // Add the `grpc` directory unconditionally.
         // We may not have all the `protoc` plugins configured for the task at this time.
         // So, we cannot check if the `grpc` plugin is enabled.
         // It is safe to add the directory anyway, because `srcDir()` does not require
@@ -387,23 +402,21 @@ private fun GenerateProtoTask.generatedDir(language: String = ""): File =
     project.generatedDir(sourceSet, language)
 
 /**
- * Makes a [LaunchProtoData], if it exists for the given [sourceSet], depend on
- * the given [GenerateProtoTask].
+ * Makes a [LaunchProtoData], if it exists for the source set of the given [GenerateProtoTask],
+ * depend on this task.
  *
  * If the [LaunchProtoData] task does not exist (which may be the case for custom source sets
  * created by other plugins), arranges the task creation on [Project.afterEvaluate].
  * In this case the [CleanTask] is also created with appropriate dependencies.
  */
-private fun Project.handleLaunchTaskDependency(
-    generateProto: GenerateProtoTask,
-    sourceSet: SourceSet,
-    ext: Extension
-) {
+private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask) {
+    val sourceSet = generateProto.sourceSet
     var launchTask: Task? = LaunchTask.find(project, sourceSet)
     if (launchTask != null) {
         launchTask.dependsOn(generateProto)
     } else {
         project.afterEvaluate {
+            val ext = it.extension
             val settingsTask =
                 project.tasks.withType(CreateSettingsDirectory::class.java).theOnly()
             launchTask = createLaunchTask(settingsTask, sourceSet, ext)
@@ -429,6 +442,7 @@ private fun Project.configureIdea() {
         pluginManager.withPlugin("idea") {
             val idea = extensions.getByType<IdeaModel>()
             with(idea.module) {
+                //TODO:2024-11-19:alexander.yevsyukov: Refactor.
                 val protocOutput = file(generatedSourceProtoDir)
                 excludeWithNested(protocOutput)
                 sourceDirs = filterSources(sourceDirs, protocOutput)
