@@ -28,6 +28,7 @@ package io.spine.protodata.java
 
 import com.google.protobuf.Message
 import io.spine.protodata.ast.Cardinality
+import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.ast.FieldName
 import io.spine.protodata.ast.fieldName
 
@@ -49,7 +50,7 @@ internal constructor(
     internal constructor(
         message: Expression<Message>,
         name: String,
-        kind: Cardinality = Cardinality.CARDINALITY_SINGLE
+        kind: Cardinality = CARDINALITY_SINGLE
     ) : this(message, fieldName { value = name }, kind)
 
     /**
