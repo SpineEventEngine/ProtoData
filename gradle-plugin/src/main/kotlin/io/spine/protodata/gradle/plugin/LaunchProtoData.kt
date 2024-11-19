@@ -179,12 +179,11 @@ public abstract class LaunchProtoData : JavaExec() {
 }
 
 internal fun LaunchProtoData.applyDefaults(
-    project: Project,
-    ext: Extension,
     sourceSet: SourceSet,
     settingsDirTask: CreateSettingsDirectory
 ) {
     settingsDir.set(settingsDirTask.settingsDir.get())
+    val ext = project.extension
     plugins = ext.plugins
     requestFile.set(ext.requestFile(sourceSet))
     protoDataConfiguration = project.protoDataRawArtifact

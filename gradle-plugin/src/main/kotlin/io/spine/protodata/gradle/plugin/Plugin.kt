@@ -165,9 +165,8 @@ private fun Project.createConfigurations(protoDataVersion: String) {
 private fun Project.createTasks() {
     val settingsDirTask = createSettingsDirTask()
     sourceSets.forEach { sourceSet ->
-        val ext = extension
-        createLaunchTask(settingsDirTask, sourceSet, ext)
-        createCleanTask(sourceSet, ext)
+        createLaunchTask(settingsDirTask, sourceSet)
+        createCleanTask(sourceSet)
     }
 }
 
@@ -182,12 +181,11 @@ private fun Project.createSettingsDirTask(): CreateSettingsDirectory {
 @CanIgnoreReturnValue
 private fun Project.createLaunchTask(
     settingsDirTask: CreateSettingsDirectory,
-    sourceSet: SourceSet,
-    ext: Extension
+    sourceSet: SourceSet
 ): LaunchProtoData {
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
-        applyDefaults(this@createLaunchTask, ext, sourceSet, settingsDirTask)
+        applyDefaults(sourceSet, settingsDirTask)
     }
     return result
 }
@@ -198,11 +196,11 @@ private fun Project.createLaunchTask(
  * Makes a `clean` task depend on the created task.
  * Also, makes the task which launches ProtoData CLI depend on the created task.
  */
-private fun Project.createCleanTask(sourceSet: SourceSet, ext: Extension) {
+private fun Project.createCleanTask(sourceSet: SourceSet) {
     val project = this
     val cleanSourceSet = CleanTask.nameFor(sourceSet)
     tasks.create<Delete>(cleanSourceSet) {
-        delete(ext.targetDirs(sourceSet))
+        delete(extension.targetDirs(sourceSet))
 
         tasks.getByName("clean").dependsOn(this)
         val launchTask = LaunchTask.get(project, sourceSet)
@@ -213,7 +211,7 @@ private fun Project.createCleanTask(sourceSet: SourceSet, ext: Extension) {
 private fun Project.configureWithProtobufPlugin(protoDataVersion: String) {
     val protocPlugin = ProtocPluginArtifact(protoDataVersion)
     pluginManager.withPlugin(PROTOBUF_GRADLE_PLUGIN_ID) {
-        configureProtobufPlugin(protocPlugin, extension)
+        configureProtobufPlugin(protocPlugin)
     }
 }
 
@@ -223,10 +221,7 @@ private fun Project.configureWithProtobufPlugin(protoDataVersion: String) {
  * Also configures the `GenerateProtoTaskCollection` by adding a configuration action for each
  * of the tasks.
  */
-private fun Project.configureProtobufPlugin(
-    protocPlugin: ProtocPluginArtifact,
-    ext: Extension
-) {
+private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact) {
     protobufExtension?.apply {
         plugins {
             it.create(PROTODATA_PROTOC_PLUGIN) { locator ->
@@ -240,7 +235,7 @@ private fun Project.configureProtobufPlugin(
            This, in turn, leads to missing generated sources in the `compileJava` task. */
         generateProtoTasks {
             it.all().forEach { task ->
-                configureProtoTask(task, ext)
+                configureProtoTask(task)
             }
         }
     }
@@ -255,14 +250,14 @@ private fun Project.configureProtobufPlugin(
  * @see [GenerateProtoTask.configureSourceSetDirs]
  * @see [Project.handleLaunchTaskDependency]
  */
-private fun Project.configureProtoTask(task: GenerateProtoTask, ext: Extension) {
+private fun Project.configureProtoTask(task: GenerateProtoTask) {
     if (hasJavaOrKotlin()) {
         task.builtins.maybeCreate("kotlin")
     }
     val sourceSet = task.sourceSet
     task.plugins.apply {
         create(PROTODATA_PROTOC_PLUGIN) {
-            val requestFile = ext.requestFile(sourceSet)
+            val requestFile = extension.requestFile(sourceSet)
             val path = requestFile.get().asFile.absolutePath
             val nameEncoded = path.base64Encoded()
             it.option(nameEncoded)
@@ -416,12 +411,11 @@ private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask)
         launchTask.dependsOn(generateProto)
     } else {
         project.afterEvaluate {
-            val ext = it.extension
             val settingsTask =
                 project.tasks.withType(CreateSettingsDirectory::class.java).theOnly()
-            launchTask = createLaunchTask(settingsTask, sourceSet, ext)
+            launchTask = createLaunchTask(settingsTask, sourceSet)
             launchTask!!.dependsOn(generateProto)
-            createCleanTask(sourceSet, ext)
+            createCleanTask(sourceSet)
         }
     }
 }
@@ -434,28 +428,33 @@ private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask)
  * we define in [GenerateProtoTask.configureSourceSetDirs].
  */
 private fun Project.configureIdea() {
+    val thisProject = this
+    gradle.afterProject {
+        if (it == thisProject) {
+            pluginManager.withPlugin("idea") {
+                val idea = extensions.getByType<IdeaModel>()
+                idea.module.setupDirectories(thisProject)
+            }
+        }
+    }
+}
+
+private fun IdeaModule.setupDirectories(project: Project,) {
 
     fun filterSources(sources: Set<File>, excludeDir: File): Set<File> =
         sources.filter { !it.residesIn(excludeDir) }.toSet()
 
-    gradle.afterProject {
-        pluginManager.withPlugin("idea") {
-            val idea = extensions.getByType<IdeaModel>()
-            with(idea.module) {
-                //TODO:2024-11-19:alexander.yevsyukov: Refactor.
-                val protocOutput = file(generatedSourceProtoDir)
-                excludeWithNested(protocOutput)
-                sourceDirs = filterSources(sourceDirs, protocOutput)
-                testSources.filter { !it.residesIn(protocOutput) }
-                generatedSourceDirs = if (generatedDir.exists()) {
-                    generatedDir.listDirectoryEntries()
-                        .map { it.toFile() }
-                        .toSet()
-                } else {
-                    emptySet<File>()
-                }
-            }
-        }
+    val protocOutput = project.file(project.generatedSourceProtoDir)
+    excludeWithNested(protocOutput)
+    sourceDirs = filterSources(sourceDirs, protocOutput)
+    testSources.filter { !it.residesIn(protocOutput) }
+    generatedSourceDirs = if (project.generatedDir.exists()) {
+        //TODO:2024-11-19:alexander.yevsyukov: Update with the code from `ProtoTaskExtensions.kt`.
+        project.generatedDir.listDirectoryEntries()
+            .map { it.toFile() }
+            .toSet()
+    } else {
+        emptySet<File>()
     }
 }
 
