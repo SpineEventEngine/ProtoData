@@ -32,7 +32,8 @@ import com.google.protobuf.Message
 import io.spine.protobuf.defaultInstance
 import io.spine.protodata.protobuf.toMessageType
 import io.spine.protodata.type.TypeSystem
-import io.spine.type.shortDebugString
+import io.spine.string.shortly
+import io.spine.string.simply
 
 /**
  * Tells if this type is `google.protobuf.Any`.
@@ -68,8 +69,22 @@ public inline fun <reified T: Message> messageTypeOf(): MessageType {
  */
 public fun TypeName.toMessageType(typeSystem: TypeSystem): MessageType {
     val found = typeSystem.findMessage(this)?.first
-    check(found != null) {
-        "Unable to find `${MessageType::class.simpleName}` for the type `${shortDebugString()}`."
-    }
-    return found
+    checkFound<MessageType>(found)
+    return found!!
 }
+
+/**
+ * Converts this type name to an instance of [EnumType] finding it using the given [typeSystem].
+ *
+ * @throws IllegalStateException If the type system does not have a corresponding `EnumType`.
+ */
+public fun TypeName.toEnumType(typeSystem: TypeSystem): EnumType {
+    val found = typeSystem.findEnum(this)?.first
+    checkFound<EnumType>(found)
+    return found!!
+}
+
+private inline fun <reified T: Message> TypeName.checkFound(found: Message?) =
+    check(found != null) {
+        "Unable to find `${simply<T>()}` for the type name `${shortly()}`."
+    }

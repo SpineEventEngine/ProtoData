@@ -37,6 +37,7 @@ import io.spine.protodata.ast.Type.KindCase.MESSAGE
 import io.spine.protodata.ast.Type.KindCase.PRIMITIVE
 import io.spine.protodata.ast.cardinality
 import io.spine.protodata.java.FieldMethods.Companion.getterOf
+import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.type.ValueConverter
 import io.spine.protodata.value.EnumValue
 import io.spine.protodata.value.ListValue
@@ -50,9 +51,15 @@ import io.spine.tools.code.Java
  * A [ValueConverter] which converts values into Java expressions.
  */
 @Suppress("TooManyFunctions")
-public class JavaValueConverter(
-    private val convention: MessageOrEnumConvention
-) : ValueConverter<Java, Expression<*>>() {
+public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, Expression>() {
+
+    /**
+     * The constructor for backward compatibility.
+     */
+    @Deprecated("Please use constructor accepting `TypeSystem` instead.")
+    public constructor(convention: MessageOrEnumConvention) : this(convention.typeSystem())
+
+    private val convention = MessageOrEnumConvention(typeSystem)
 
     override fun nullToCode(type: Type): Null = Null
 

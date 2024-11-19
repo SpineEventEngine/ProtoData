@@ -30,6 +30,9 @@ package io.spine.protodata.java
 
 import io.spine.protodata.ast.EnumType
 import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.qualifiedName
+import io.spine.protodata.type.TypeSystem
+import io.spine.string.simply
 
 /**
  * Obtains the full name of the Java enum, generated from this Protobuf enum.
@@ -38,3 +41,16 @@ import io.spine.protodata.ast.ProtoFileHeader
  */
 public fun EnumType.javaClassName(accordingTo: ProtoFileHeader): ClassName =
     name.javaClassName(accordingTo)
+
+/**
+ * Obtains a class name for the Java code generated for this enum type.
+ *
+ * @param typeSystem The type system to be used for obtaining the header for the proto
+ *   file in which this enum type is declared.
+ */
+public fun EnumType.javaClassName(typeSystem: TypeSystem): ClassName {
+    val header = typeSystem.findEnum(name)?.second
+        ?: error("Cannot find `${simply<EnumType>()}` for the name `${name.qualifiedName}`.")
+    val className = javaClassName(header)
+    return className
+}
