@@ -108,7 +108,11 @@ public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, E
         val valuesMap = valueList.associate {
             valueToCode(it.key) to valueToCode(it.value)
         }
-        return mapExpression(valuesMap, keyClass, valueClass)
+        return if (valuesMap.isEmpty()) {
+            mapExpression()
+        } else {
+            mapExpression(valuesMap, keyClass!!, valueClass!!)
+        }
     }
 
     override fun toCode(reference: Reference): MethodCall<Any> {
@@ -125,7 +129,7 @@ public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, E
         val start = path.removeFirst()
 
         // Assume we generate the call in the scope of a message method.
-        var call = MethodCall<Any>(InstanceScope<Any>(), getterOf(start, startCardinality))
+        var call = MethodCall<Any>(This<Message>(), getterOf(start, startCardinality))
 
         // The remaining path (if any) would be chained method calls.
         path.forEachIndexed { index, field ->
