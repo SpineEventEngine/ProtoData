@@ -112,11 +112,6 @@ public open class MethodCall<T> @JvmOverloads constructor(
 }
 
 /**
- * The assumed reference to `this` when invoking a [MethodCall] within an instance.
- */
-public class InstanceScope<T> : Expression<T>("")
-
-/**
  * Formats these class names as type arguments, including the angle brackets.
  */
 private fun List<JavaTypeName>.genericTypes() =
