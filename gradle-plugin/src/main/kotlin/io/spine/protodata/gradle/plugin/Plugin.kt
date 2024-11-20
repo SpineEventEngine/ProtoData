@@ -34,9 +34,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.gradle.GenerateProtoTask
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.CleanTask
-import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.gradle.LaunchTask
-import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTOBUF_GRADLE_PLUGIN_ID
 import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
@@ -48,6 +46,7 @@ import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.protobufExtension
+import io.spine.tools.gradle.task.descriptorSetFile
 import io.spine.util.theOnly
 import java.io.File
 import org.gradle.api.Project
@@ -56,7 +55,6 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.exclude
-import org.gradle.kotlin.dsl.findByType
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -113,27 +111,6 @@ public class Plugin : GradlePlugin<Project> {
 }
 
 /**
- * Obtains an instance of the project [Extension] added by ProtoData Gradle Plugin.
- *
- * Or, if the extension is not yet added, creates it and returns.
- */
-internal val Project.extension: Extension
-    get() = extensions.findByType(CodegenSettings::class)?.run { this as Extension }
-        ?: createExtension()
-
-private fun Project.createExtension(): Extension {
-    val extension = Extension(this)
-    extensions.add(CodegenSettings::class.java, EXTENSION_NAME, extension)
-    return extension
-}
-
-/**
- * Obtains the name of the directory where ProtoData places generated files.
- */
-internal val Project.targetBaseDir: String
-    get() = extension.targetBaseDir.toString()
-
-/**
  * Creates configurations for `protoDataRawArtifact` and user-defined classpath,
  * and adds dependency on [Artifacts.fatCli].
  */
@@ -155,10 +132,10 @@ private fun Project.createConfigurations(protoDataVersion: String) {
  *
  * There may be cases of source sets added by other plugins after this method is invoked.
  * Such situations are handled by [Project.handleLaunchTaskDependency] invoked by
- * [Project.configureProtobufPlugin].
+ * [Project.setProtocPluginArtifact].
  *
  * @see [Project.handleLaunchTaskDependency]
- * @see [Project.configureProtobufPlugin]
+ * @see [Project.setProtocPluginArtifact]
  */
 private fun Project.createTasks() {
     val settingsDirTask = createSettingsDirTask()
@@ -209,24 +186,30 @@ private fun Project.createCleanTask(sourceSet: SourceSet) {
 private fun Project.configureWithProtobufPlugin(protoDataVersion: String) {
     val protocPlugin = ProtocPluginArtifact(protoDataVersion)
     pluginManager.withPlugin(PROTOBUF_GRADLE_PLUGIN_ID) {
-        configureProtobufPlugin(protocPlugin)
+        setProtocPluginArtifact(protocPlugin)
+        configureGenerateProtoTasks()
     }
 }
 
 /**
  * Configures the Protobuf Gradle Plugin by adding ProtoData plugin to the list of `protoc` plugins.
- *
- * Also configures the `GenerateProtoTaskCollection` by adding a configuration action for each
- * of the tasks.
  */
-private fun Project.configureProtobufPlugin(protocPlugin: ProtocPluginArtifact) {
+private fun Project.setProtocPluginArtifact(protocPlugin: ProtocPluginArtifact) {
     protobufExtension?.apply {
         plugins {
             it.create(PROTODATA_PROTOC_PLUGIN) { locator ->
                 locator.artifact = protocPlugin.coordinates
             }
         }
+    }
+}
 
+/**
+ * Configures the `GenerateProtoTaskCollection` by adding a configuration action for
+ * each of the tasks.
+ */
+private fun Project.configureGenerateProtoTasks() {
+    protobufExtension?.apply {
         /* The below block adds a configuration action for the `GenerateProtoTaskCollection`.
            We cannot do it like `generateProtoTasks.all().forEach { ... }` because it
            breaks the configuration order of the `GenerateProtoTaskCollection`.
@@ -266,56 +249,8 @@ private fun Project.configureProtoTask(task: GenerateProtoTask) {
         }
     }
     task.configureSourceSetDirs()
+    task.enableDescriptorSetFile()
     handleLaunchTaskDependency(task)
-}
-
-/**
- * Tells if this project can deal with Java code.
- *
- * @return `true` if `java` plugin is installed, `false` otherwise.
- */
-private fun Project.hasJava(): Boolean =
-    pluginManager.hasPlugin("java")
-
-/**
- * Tells if this project can deal with Kotlin code.
- *
- * @return `true` if `compileKotlin` or `compileTestKotlin` tasks are present, `false` otherwise.
- */
-private fun Project.hasKotlin(): Boolean {
-    val compileKotlin = tasks.findByName("compileKotlin")
-    val compileTestKotlin = tasks.findByName("compileTestKotlin")
-    return compileKotlin != null || compileTestKotlin != null
-}
-
-/**
- * Verifies if the project can deal with Java or Kotlin code.
- *
- * The current Protobuf support of Kotlin is based on Java codegen.
- * Therefore, it is likely that Java would be enabled in the project for
- * Kotlin proto code to be generated.
- * Though, it may change someday, and Kotlin support for Protobuf would be
- * self-sufficient. This method assumes such a case when it checks the presence of
- * Kotlin compilation tasks.
- *
- * @see [hasJava]
- * @see [hasKotlin]
- */
-private fun Project.hasJavaOrKotlin(): Boolean {
-    if (hasJava()) {
-        return true
-    }
-    return hasKotlin()
-}
-
-/**
- * Obtains the `generated` directory for the given [sourceSet] and a language.
- *
- * If the language is not given, the returned directory is the root directory for the source set.
- */
-private fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): File {
-    val path = "$targetBaseDir/${sourceSet.name}/$language"
-    return File(path)
 }
 
 /**
@@ -374,9 +309,6 @@ private fun GenerateProtoTask.configureSourceSetDirs() {
     }
 }
 
-private fun SourceSet.kotlinDirectorySet(): SourceDirectorySet? =
-    extensions.findByName("kotlin") as SourceDirectorySet?
-
 /**
  * Obtains the `generated` directory for the source set of the task.
  *
@@ -384,6 +316,18 @@ private fun SourceSet.kotlinDirectorySet(): SourceDirectorySet? =
  */
 private fun GenerateProtoTask.generatedDir(language: String = ""): File =
     project.generatedDir(sourceSet, language)
+
+/**
+ * Enables generation of descriptor set files and sets the [path][descriptorSetFile] to the file.
+ */
+private fun GenerateProtoTask.enableDescriptorSetFile() {
+    isGenerateDescriptorSet = true
+    with(descriptorSetOptions) {
+        path = descriptorSetFile.path
+        isIncludeImports = true
+        isIncludeSourceInfo = true
+    }
+}
 
 /**
  * Makes a [LaunchProtoData], if it exists for the source set of the given [GenerateProtoTask],

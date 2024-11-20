@@ -26,10 +26,84 @@
 
 package io.spine.protodata.gradle.plugin
 
+import io.spine.protodata.gradle.CodegenSettings
+import io.spine.protodata.gradle.Names.EXTENSION_NAME
+import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+
+/**
+ * Obtains an instance of the project [Extension] added by ProtoData Gradle Plugin.
+ *
+ * Or, if the extension is not yet added, creates it and returns.
+ */
+internal val Project.extension: Extension
+    get() = extensions.findByType(CodegenSettings::class)?.run { this as Extension }
+        ?: createExtension()
+
+private fun Project.createExtension(): Extension {
+    val extension = Extension(this)
+    extensions.add(CodegenSettings::class.java, EXTENSION_NAME, extension)
+    return extension
+}
+
+/**
+ * Obtains the name of the directory where ProtoData places generated files.
+ */
+internal val Project.targetBaseDir: String
+    get() = extension.targetBaseDir.toString()
+
+/**
+ * Obtains the `generated` directory for the given [sourceSet] and a language.
+ *
+ * If the language is not given, the returned directory is the root directory for the source set.
+ */
+internal fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): File {
+    val path = "$targetBaseDir/${sourceSet.name}/$language"
+    return File(path)
+}
+
+/**
+ * Tells if this project can deal with Java code.
+ *
+ * @return `true` if `java` plugin is installed, `false` otherwise.
+ */
+internal fun Project.hasJava(): Boolean =
+    pluginManager.hasPlugin("java")
+
+/**
+ * Tells if this project can deal with Kotlin code.
+ *
+ * @return `true` if `compileKotlin` or `compileTestKotlin` tasks are present, `false` otherwise.
+ */
+internal fun Project.hasKotlin(): Boolean {
+    val compileKotlin = tasks.findByName("compileKotlin")
+    val compileTestKotlin = tasks.findByName("compileTestKotlin")
+    return compileKotlin != null || compileTestKotlin != null
+}
+
+/**
+ * Verifies if the project can deal with Java or Kotlin code.
+ *
+ * The current Protobuf support of Kotlin is based on Java codegen.
+ * Therefore, it is likely that Java would be enabled in the project for
+ * Kotlin proto code to be generated.
+ * Though, it may change someday, and Kotlin support for Protobuf would be
+ * self-sufficient. This method assumes such a case when it checks the presence of
+ * Kotlin compilation tasks.
+ *
+ * @see [hasJava]
+ * @see [hasKotlin]
+ */
+internal  fun Project.hasJavaOrKotlin(): Boolean {
+    if (hasJava()) {
+        return true
+    }
+    return hasKotlin()
+}
 
 /**
  * Attempts to obtain the Java compilation Gradle task for the given source set.
