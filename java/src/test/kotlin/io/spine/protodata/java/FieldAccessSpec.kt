@@ -28,6 +28,7 @@ package io.spine.protodata.java
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
+import com.google.protobuf.Message
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.PrimitiveType
@@ -49,20 +50,20 @@ internal class FieldAccessSpec {
     @Test
     fun `provide a getter for a single field`() {
         val access = singleField().access()
-        assertAccessor(access.getter, "getIncarnation()")
+        assertAccessor(access.getter<Any>(), "getIncarnation()")
     }
 
     @Test
     fun `provide a getter for a oneof field`() {
         val access = oneofField().access()
-        assertAccessor(access.getter, "getSidekick()")
+        assertAccessor(access.getter<Any>(), "getSidekick()")
     }
 
     @Test
     fun `provide a getter for a list field`() {
         val access = listField().access()
         assertAccessor(
-            access.getter,
+            access.getter<Any>(),
             accessor = "getRouteList()",
         )
     }
@@ -71,7 +72,7 @@ internal class FieldAccessSpec {
     fun `provide a getter for a map field`() {
         val access = mapField().access()
         assertAccessor(
-            access.getter,
+            access.getter<Any>(),
             accessor = "getAttributesMap()",
         )
     }
@@ -98,7 +99,7 @@ internal class FieldAccessSpec {
     @Test
     fun `provide put() method`() {
         val access = mapField().access()
-        val expression = access.put(LiteralString("foo"), LiteralString("bar"))
+        val expression = access.put(StringLiteral("foo"), StringLiteral("bar"))
         assertAccessor(expression, "putAttributes(\"foo\", \"bar\")")
     }
 
@@ -106,7 +107,7 @@ internal class FieldAccessSpec {
     fun `provide putAll() method`() {
         val access = mapField().access()
         val mapValue = mapExpression(
-            mapOf(LiteralString("foo") to LiteralString("bar")),
+            mapOf(StringLiteral("foo") to StringLiteral("bar")),
             keyType = ClassName(String::class),
             valueType = ClassName(String::class)
         )
@@ -122,8 +123,7 @@ internal class FieldAccessSpec {
 private val IMMUTABLE_LIST = ImmutableList::class.qualifiedName!!
 private val IMMUTABLE_MAP = ImmutableMap::class.qualifiedName!!
 
-private fun Field.access() =
-    MessageReference("msg").field(this)
+private fun Field.access() = ReadVar<Message>("msg").field(this)
 
 private val stubType: TypeName = typeName {
     simpleName = "StubType"
@@ -163,7 +163,7 @@ private fun oneofField() = field {
 }
 
 private fun assertAccessor(
-    expression: Expression,
+    expression: Expression<*>,
     accessor: String
 ) {
     expression.toCode() shouldBe "msg.${accessor}"

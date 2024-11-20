@@ -25,7 +25,7 @@
  */
 package io.spine.protodata.java.annotation
 
-import io.spine.protodata.java.ClassOrEnumName
+import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.render.JavaRenderer
 import io.spine.protodata.java.file.BeforeNestedTypeDeclaration
 import io.spine.protodata.java.file.BeforePrimaryDeclaration
@@ -63,7 +63,7 @@ public abstract class TypeAnnotation<T : Annotation>(
      *
      * If not `null`, the annotation is applied only to the types specified by this field.
      */
-    protected val subject: ClassOrEnumName? = null,
+    protected val subject: ClassName? = null,
 
     /**
      * The source file top class of which should be annotated.

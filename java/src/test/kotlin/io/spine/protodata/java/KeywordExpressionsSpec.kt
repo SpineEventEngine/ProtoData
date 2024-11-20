@@ -26,30 +26,17 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
+import assertCode
+import com.google.protobuf.Message
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A piece of Java code.
- */
-public interface JavaElement : CodeElement<Java>
+@DisplayName("`KeywordExpressions` should provide an expression")
+internal class KeywordExpressionsSpec {
 
-/**
- * An arbitrary piece of Java code.
- *
- * This class is the default implementation of [JavaElement].
- *
- * @param code Arbitrary Java code.
- */
-public open class AnElement(public val code: String) : JavaElement  {
+    @Test
+    fun `for 'null' keyword`() = assertCode(Null, "null")
 
-    override fun toCode(): String = code
-
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
-
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
-
+    @Test
+    fun `for 'this' keyword`() = assertCode(This<Message>(), "this")
 }

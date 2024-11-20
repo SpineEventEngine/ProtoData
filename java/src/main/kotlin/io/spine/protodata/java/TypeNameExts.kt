@@ -62,7 +62,7 @@ public fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
         add(simpleName)
     }, { packageName, list ->
         ClassName(packageName, list)
-    }) as ClassName
+    })
 
 /**
  * Obtains a fully qualified Java enum type name, generated for the Protobuf enum with this name.
@@ -93,8 +93,8 @@ public fun TypeName.javaEnumName(accordingTo: ProtoFileHeader): EnumName =
 internal fun composeJavaTypeName(
     accordingTo: ProtoFileHeader,
     setup: MutableList<String>.() -> Unit,
-    create: (String, List<String>) -> ClassOrEnumName
-): ClassOrEnumName {
+    create: (String, List<String>) -> ClassName
+): ClassName {
     val packageName = accordingTo.javaPackage()
     val javaMultipleFiles = accordingTo.javaMultipleFiles()
     val nameElements = mutableListOf<String>()

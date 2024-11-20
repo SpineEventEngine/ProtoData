@@ -26,7 +26,7 @@
 
 import io.kotest.matchers.shouldBe
 import io.spine.io.Resource
-import io.spine.protodata.java.Expression
+import io.spine.protodata.java.JavaElement
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.div
@@ -37,8 +37,8 @@ import kotlin.io.path.writeText
  */
 internal fun String.toSourcePath(): Path = Path(replace(".", "//") + ".java")
 
-internal fun assertCode(expression: Expression, code: String) {
-    expression.toCode() shouldBe code
+internal fun assertCode(element: JavaElement, code: String) {
+    "$element" shouldBe code
 }
 
 /**

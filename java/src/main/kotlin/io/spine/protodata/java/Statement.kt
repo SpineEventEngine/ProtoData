@@ -26,30 +26,23 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiStatement
+import io.spine.tools.psi.java.Environment
 
 /**
- * A piece of Java code.
+ * An executable Java instruction.
+ *
+ * An example of creating an arbitrary Java statement:
+ *
+ * ```
+ * val return = Statement("return;")
+ * ```
  */
-public interface JavaElement : CodeElement<Java>
+public open class Statement(code: String) : AnElement(code)
 
 /**
- * An arbitrary piece of Java code.
- *
- * This class is the default implementation of [JavaElement].
- *
- * @param code Arbitrary Java code.
+ * Creates a new [PsiStatement] from this Java [Statement].
  */
-public open class AnElement(public val code: String) : JavaElement  {
-
-    override fun toCode(): String = code
-
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
-
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
-
-}
+public fun Statement.toPsi(context: PsiElement? = null): PsiStatement =
+    Environment.elementFactory.createStatementFromText(toCode(), context)

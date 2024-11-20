@@ -26,7 +26,10 @@
 
 package io.spine.protodata.java
 
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableMap
 import com.google.protobuf.ByteString
+import com.google.protobuf.Message
 import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.Type.KindCase.ENUMERATION
@@ -48,7 +51,7 @@ import io.spine.tools.code.Java
  * A [ValueConverter] which converts values into Java expressions.
  */
 @Suppress("TooManyFunctions")
-public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, Expression>() {
+public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, Expression<*>>() {
 
     /**
      * The constructor for backward compatibility.
@@ -60,19 +63,19 @@ public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, E
 
     override fun nullToCode(type: Type): Null = Null
 
-    override fun toCode(value: Boolean): Literal = Literal(value)
+    override fun toCode(value: Boolean): Literal<Boolean> = Literal(value)
 
-    override fun toCode(value: Double): Literal = Literal(value)
+    override fun toCode(value: Double): Literal<Double> = Literal(value)
 
-    override fun toCode(value: Long): Literal = Literal(value)
+    override fun toCode(value: Long): Literal<Long> = Literal(value)
 
-    override fun toCode(value: String): LiteralString = LiteralString(value)
+    override fun toCode(value: String): StringLiteral = StringLiteral(value)
 
-    override fun toCode(value: ByteString): LiteralBytes = LiteralBytes(value)
+    override fun toCode(value: ByteString): CopyByteString = CopyByteString(value)
 
-    override fun toCode(value: MessageValue): MethodCall {
+    override fun toCode(value: MessageValue): MethodCall<Message> {
         val type = value.type
-        val className = convention.declarationFor(type).name as ClassName
+        val className = convention.declarationFor(type).name
         return if (value.fieldsMap.isEmpty()) {
             className.getDefaultInstance()
         } else {
@@ -84,31 +87,35 @@ public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, E
         }
     }
 
-    override fun toCode(value: EnumValue): MethodCall {
+    override fun toCode(value: EnumValue): MethodCall<Message> {
         val type = value.type
         val enumClassName = convention.declarationFor(type).name as EnumName
         return enumClassName.enumValue(value.constNumber)
     }
 
-    override fun toList(value: ListValue): MethodCall {
+    override fun toList(value: ListValue): MethodCall<ImmutableList<*>> {
         val expressions = value.valuesList.map(this::valueToCode)
         return listExpression(expressions)
     }
 
-    override fun toCode(value: MapValue): MethodCall {
+    override fun toCode(value: MapValue): MethodCall<ImmutableMap<*, *>> {
         val valueList = value.valueList
         val firstEntry = valueList.firstOrNull()
         val firstKey = firstEntry?.key
-        val keyClass = firstKey?.type?.toClass() as ClassName?
+        val keyClass = firstKey?.type?.toClass()
         val firstValue = firstEntry?.value
-        val valueClass = firstValue?.type?.toClass() as ClassName?
+        val valueClass = firstValue?.type?.toClass()
         val valuesMap = valueList.associate {
             valueToCode(it.key) to valueToCode(it.value)
         }
-        return mapExpression(valuesMap, keyClass, valueClass)
+        return if (valuesMap.isEmpty()) {
+            mapExpression()
+        } else {
+            mapExpression(valuesMap, keyClass!!, valueClass!!)
+        }
     }
 
-    override fun toCode(reference: Reference): MethodCall {
+    override fun toCode(reference: Reference): MethodCall<Any> {
         val path = reference.target.fieldNameList.toMutableList()
 
         // If the field reference contains only one element, take the cardinality of the field type.
@@ -121,8 +128,8 @@ public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, E
         }
         val start = path.removeFirst()
 
-        // Assume we generate the call in a scope of a message method.
-        var call = MethodCall(This, getterOf(start, startCardinality))
+        // Assume we generate the call in the scope of a message method.
+        var call = MethodCall<Any>(This<Message>(), getterOf(start, startCardinality))
 
         // The remaining path (if any) would be chained method calls.
         path.forEachIndexed { index, field ->
@@ -138,7 +145,7 @@ public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, E
         return call
     }
 
-    private fun Type.toClass(): ClassOrEnumName = when (kindCase) {
+    private fun Type.toClass(): ClassName = when (kindCase) {
         MESSAGE -> convention.declarationFor(message).name
         ENUMERATION -> convention.declarationFor(enumeration).name
         PRIMITIVE -> primitive.toJavaClass()

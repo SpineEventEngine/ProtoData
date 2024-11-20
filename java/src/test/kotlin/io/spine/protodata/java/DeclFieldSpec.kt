@@ -26,30 +26,35 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
+import assertCode
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A piece of Java code.
- */
-public interface JavaElement : CodeElement<Java>
+@DisplayName("`DeclField` should")
+internal class DeclFieldSpec {
 
-/**
- * An arbitrary piece of Java code.
- *
- * This class is the default implementation of [JavaElement].
- *
- * @param code Arbitrary Java code.
- */
-public open class AnElement(public val code: String) : JavaElement  {
+    private val surname = DeclField<String>(
+        modifiers = "private final",
+        type = ClassName(String::class),
+        name = "surname"
+    )
 
-    override fun toCode(): String = code
+    @Test
+    fun `declare a Java field`() {
+        assertCode(surname, "private final java.lang.String surname;")
+    }
 
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
+    @Test
+    fun `set a value to the declared field`() {
+        val anderson = "Anderson"
+        val expression = StringLiteral(anderson)
+        assertCode(surname.set(expression), "surname = \"$anderson\";")
+        assertCode(surname.set(expression, useThis = true), "this.surname = \"$anderson\";")
+    }
 
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
-
+    @Test
+    fun `provide a read access to the declared field`() {
+        assertCode(surname.read(), "surname")
+        assertCode(surname.read(useThis = true), "this.surname")
+    }
 }
