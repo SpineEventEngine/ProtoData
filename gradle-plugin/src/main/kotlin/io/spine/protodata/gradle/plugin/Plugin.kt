@@ -32,9 +32,12 @@ package io.spine.protodata.gradle.plugin
 import com.google.common.annotations.VisibleForTesting
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.gradle.GenerateProtoTask
+import io.spine.code.proto.DescriptorReference
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.CleanTask
+import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.gradle.LaunchTask
+import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTOBUF_GRADLE_PLUGIN_ID
 import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
@@ -49,12 +52,15 @@ import io.spine.tools.gradle.protobuf.protobufExtension
 import io.spine.tools.gradle.task.descriptorSetFile
 import io.spine.util.theOnly
 import java.io.File
+import java.io.IOException
+import java.nio.file.Path
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.exclude
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -108,6 +114,27 @@ public class Plugin : GradlePlugin<Project> {
             return version
         }
     }
+}
+
+/**
+ * Obtains an instance of the project [Extension] added by ProtoData Gradle Plugin.
+ *
+ * Or, if the extension is not yet added, creates it and returns.
+ */
+internal val Project.extension: Extension
+    get() = extensions.findByType(CodegenSettings::class)?.run { this as Extension }
+        ?: createExtension()
+
+/**
+ * Creates [Extension] associated with [Plugin] in this project.
+ *
+ * The extension is exposed by the type of [CodegenSettings] it implements to hide
+ * the implementation details from the end-user projects.
+ */
+private fun Project.createExtension(): Extension {
+    val extension = Extension(this)
+    extensions.add(CodegenSettings::class.java, EXTENSION_NAME, extension)
+    return extension
 }
 
 /**
@@ -249,7 +276,7 @@ private fun Project.configureProtoTask(task: GenerateProtoTask) {
         }
     }
     task.configureSourceSetDirs()
-    task.enableDescriptorSetFile()
+    task.setupDescriptorSetFileCreation()
     handleLaunchTaskDependency(task)
 }
 
@@ -318,14 +345,50 @@ private fun GenerateProtoTask.generatedDir(language: String = ""): File =
     project.generatedDir(sourceSet, language)
 
 /**
- * Enables generation of descriptor set files and sets the [path][descriptorSetFile] to the file.
+ * Tell `protoc` to generate descriptor set files under the project build dir.
+ *
+ * The name of the descriptor set file to be generated
+ * is made to be unique via the project's [Maven coordinates][descriptorSetFile].
+ * A unique name is needed for subsequent merging of these files.
+ *
+ * As the last step of this task, writes a [reference file][DescriptorReference],
+ * pointing to the generated descriptor set file.
+ * The reference file is used by the Spine Base library and Spine SDK tools
+ * when loading the generated descriptor set files.
  */
-private fun GenerateProtoTask.enableDescriptorSetFile() {
+private fun GenerateProtoTask.setupDescriptorSetFileCreation() {
     isGenerateDescriptorSet = true
     with(descriptorSetOptions) {
         path = descriptorSetFile.path
         isIncludeImports = true
         isIncludeSourceInfo = true
+    }
+
+    val descriptorsDir = descriptorSetFile.parentFile
+
+    // Add the `descriptorsDir` directory to the resources.
+    project.sourceSets.named(sourceSet.name) {
+        it.resources.srcDirs(descriptorsDir)
+    }
+
+    this.doLast {
+        // Create a `desc.ref` in the same resource directory which will be put into resources.
+        createDescriptorReferenceFile(descriptorsDir.toPath())
+    }
+}
+
+/**
+ * Creates a [descriptor reference][DescriptorReference] file in the given directory.
+ *
+ * Overwrites the file if it already exists.
+ */
+private fun GenerateProtoTask.createDescriptorReferenceFile(dir: Path) {
+    val descRefFile = DescriptorReference.fileAt(dir)
+    try {
+        descRefFile.writeText(descriptorSetFile.name)
+    } catch (e: IOException) {
+        project.logger.error("Error writing `${descRefFile.absolutePath}`.", e)
+        throw e
     }
 }
 

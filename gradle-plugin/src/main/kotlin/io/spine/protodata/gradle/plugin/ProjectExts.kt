@@ -26,29 +26,11 @@
 
 package io.spine.protodata.gradle.plugin
 
-import io.spine.protodata.gradle.CodegenSettings
-import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-
-/**
- * Obtains an instance of the project [Extension] added by ProtoData Gradle Plugin.
- *
- * Or, if the extension is not yet added, creates it and returns.
- */
-internal val Project.extension: Extension
-    get() = extensions.findByType(CodegenSettings::class)?.run { this as Extension }
-        ?: createExtension()
-
-private fun Project.createExtension(): Extension {
-    val extension = Extension(this)
-    extensions.add(CodegenSettings::class.java, EXTENSION_NAME, extension)
-    return extension
-}
 
 /**
  * Obtains the name of the directory where ProtoData places generated files.
