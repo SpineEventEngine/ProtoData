@@ -67,9 +67,12 @@ subprojects {
         from("$rootDir/../version.gradle.kts")
     }
 
+    val protoDataVersion: String by extra
+    group = "io.spine.protodata.tests"
+    version = protoDataVersion
+
     repositories.standardToSpineSdk()
 
-    val protoDataVersion: String by extra
     configurations {
         forceVersions()
         all {
