@@ -47,6 +47,20 @@ public fun <T> ClassName.call(
 ): MethodCall<T> = MethodCall(this, name, arguments, generics)
 
 /**
+ * Constructs a call to a static method of this class.
+ *
+ * @param name The name of the method.
+ * @param argument The method argument.
+ * @param generics The method type parameters.
+ */
+@JvmOverloads
+public fun <T> ClassName.call(
+    name: String,
+    argument: Expression<*>,
+    generics: List<ClassName> = listOf()
+): MethodCall<T> = MethodCall(this, name, argument, generics)
+
+/**
  * Constructs an expression which creates a new builder for this class.
  *
  * Example: `ClassName("com.acme.Bird").newBuilder()` yields

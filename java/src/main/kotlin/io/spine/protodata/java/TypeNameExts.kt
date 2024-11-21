@@ -30,6 +30,9 @@ package io.spine.protodata.java
 
 import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.qualifiedName
+import io.spine.protodata.type.TypeSystem
+import io.spine.string.simply
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -63,6 +66,19 @@ public fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
     }, { packageName, list ->
         ClassName(packageName, list)
     })
+
+/**
+ * Obtains a fully qualified Java class name, generated for the Protobuf type with this name.
+ *
+ * @param typeSystem The type system to be used for obtaining the header for the proto
+ *   file in which this message type is declared.
+ */
+public fun TypeName.javaClassName(typeSystem: TypeSystem): ClassName {
+    val header = typeSystem.findMessage(this)?.second
+        ?: error("Cannot find Java `${simply<ClassName>()}` for the Protobuf `${qualifiedName}`.")
+    val className = javaClassName(header)
+    return className
+}
 
 /**
  * Obtains a fully qualified Java enum type name, generated for the Protobuf enum with this name.
