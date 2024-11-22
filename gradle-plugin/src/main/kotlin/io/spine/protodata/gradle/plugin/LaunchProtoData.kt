@@ -178,10 +178,17 @@ public abstract class LaunchProtoData : JavaExec() {
     }
 }
 
+/**
+ * Applies default settings to the receiver task.
+ *
+ * @param sourceSet The source set for which the task is created.
+ * @param settingsDirTask The task for creating the settings directory from which this task depends.
+ */
 internal fun LaunchProtoData.applyDefaults(
     sourceSet: SourceSet,
     settingsDirTask: CreateSettingsDirectory
 ) {
+    val project = project
     settingsDir.set(settingsDirTask.settingsDir.get())
     val ext = project.extension
     plugins = ext.plugins
