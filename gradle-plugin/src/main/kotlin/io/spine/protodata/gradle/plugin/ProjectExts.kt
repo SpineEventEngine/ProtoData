@@ -26,6 +26,10 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.google.common.collect.ImmutableList
+import io.spine.tools.code.Java
+import io.spine.tools.code.Kotlin
+import io.spine.tools.code.Language
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
@@ -53,18 +57,24 @@ internal fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): 
  *
  * @return `true` if `java` plugin is installed, `false` otherwise.
  */
-internal fun Project.hasJava(): Boolean =
-    pluginManager.hasPlugin("java")
+internal fun Project.hasJava(): Boolean = hasCompileTask(Java)
 
 /**
  * Tells if this project can deal with Kotlin code.
  *
- * @return `true` if `compileKotlin` or `compileTestKotlin` tasks are present, `false` otherwise.
+ * @return `true` if any of the tasks starts with `"compile"` and ends with `"Kotlin"`.
  */
-internal fun Project.hasKotlin(): Boolean {
-    val compileKotlin = tasks.findByName("compileKotlin")
-    val compileTestKotlin = tasks.findByName("compileTestKotlin")
-    return compileKotlin != null || compileTestKotlin != null
+internal fun Project.hasKotlin(): Boolean = hasCompileTask(Kotlin)
+
+/**
+ * Tells if this project has a compile task for the given language.
+ */
+private fun Project.hasCompileTask(language: Language): Boolean {
+    val currentTasks = ImmutableList.copyOf(tasks)
+    val compileTask = currentTasks.find {
+        it.name.startsWith("compile") && it.name.endsWith(language.name)
+    }
+    return compileTask != null
 }
 
 /**
