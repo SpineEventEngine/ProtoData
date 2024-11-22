@@ -90,7 +90,7 @@ private fun Project.hasCompileTask(language: Language): Boolean {
  * @see [hasJava]
  * @see [hasKotlin]
  */
-internal  fun Project.hasJavaOrKotlin(): Boolean {
+internal fun Project.hasJavaOrKotlin(): Boolean {
     if (hasJava()) {
         return true
     }
