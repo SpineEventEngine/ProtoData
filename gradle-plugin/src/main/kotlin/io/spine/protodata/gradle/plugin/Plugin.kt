@@ -46,9 +46,11 @@ import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
+import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.protobufExtension
+import io.spine.tools.gradle.task.JavaTaskName
 import io.spine.tools.gradle.task.descriptorSetFile
 import io.spine.util.theOnly
 import java.io.File
@@ -371,9 +373,22 @@ private fun GenerateProtoTask.setupDescriptorSetFileCreation() {
         it.resources.srcDirs(descriptorsDir)
     }
 
-    this.doLast {
+    setProcessResourceDependency()
+
+    doLast {
         // Create a `desc.ref` in the same resource directory which will be put into resources.
         createDescriptorReferenceFile(descriptorsDir.toPath())
+    }
+}
+
+/**
+ * Makes the `ProcessResources` task of the same source set depend on this task to
+ * ensure that descriptor set files and the reference file are picked up as resources.
+ */
+private fun GenerateProtoTask.setProcessResourceDependency() {
+    val taskName = JavaTaskName.processResources(SourceSetName(sourceSet.name))
+    project.tasks.named(taskName.value()) {
+        it.dependsOn(this)
     }
 }
 
