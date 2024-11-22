@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,34 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:Suppress("RemoveRedundantQualifierName")
+package io.spine.protodata.test
 
-import io.spine.dependency.lib.JavaX
-import io.spine.dependency.local.Spine
-import io.spine.protodata.gradle.CodegenSettings
+import io.kotest.matchers.shouldBe
+import io.spine.protobuf.pack
+import io.spine.protobuf.unpackGuessingType
+import java.util.UUID
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-buildscript {
-    standardSpineSdkRepositories()
-    apply(from = "$rootDir/../version.gradle.kts")
-    val protoDataVersion: String by extra
-    dependencies {
-        classpath("io.spine.protodata:gradle-plugin:$protoDataVersion")
+@DisplayName("ProtoData Gradle Plugin should")
+internal class DescriptorSetFileITest {
+
+    /**
+     * This test verifies that it is possible to unpack an instance of [com.google.protobuf.Any]
+     * using the extension function [unpackGuessingType].
+     *
+     * The extension indirectly calls [io.spine.type.KnownTypes] created using descriptor set files loaded
+     * from the classpath. If the unpacking works, it means we have descriptor set files produced for in this module.
+     */
+    @Test
+    fun `enable creation of descriptor set files`() {
+        val taskId = taskId { uuid = UUID.randomUUID().toString() }
+        val packed = taskId.pack()
+        val unpacked = packed.unpackGuessingType()
+        unpacked shouldBe taskId
     }
-}
-
-apply(plugin = "io.spine.protodata")
-
-dependencies {
-    val extensionSubproject = project(":protodata-extension")
-    "protoData"(extensionSubproject)
-    implementation(extensionSubproject)
-    implementation(JavaX.annotations)
-    testImplementation(Spine.base)?.because("tests use packing and unpacking extension functions.")
-}
-
-extensions.getByType<CodegenSettings>().apply {
-    plugins(
-        "io.spine.protodata.test.uuid.UuidPlugin",
-        "io.spine.protodata.test.annotation.AnnotationPlugin"
-    )
 }
