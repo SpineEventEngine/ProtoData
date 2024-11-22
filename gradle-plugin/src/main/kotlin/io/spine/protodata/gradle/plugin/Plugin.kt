@@ -30,6 +30,7 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.annotations.VisibleForTesting
+import com.google.common.collect.ImmutableList
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.gradle.GenerateProtoTask
 import io.spine.code.proto.DescriptorReference
@@ -244,7 +245,8 @@ private fun Project.configureGenerateProtoTasks() {
            breaks the configuration order of the `GenerateProtoTaskCollection`.
            This, in turn, leads to missing generated sources in the `compileJava` task. */
         generateProtoTasks {
-            it.all().forEach { task ->
+            val all = ImmutableList.copyOf(it.all())
+            all.forEach { task ->
                 configureProtoTask(task)
             }
         }
