@@ -30,13 +30,17 @@ import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import com.google.protobuf.Duration
 import com.google.protobuf.FieldMask
+import com.google.protobuf.Message
+import com.google.protobuf.Parser
 import com.google.protobuf.Timestamp
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.test.Sidekick
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-internal class `'MethodCall' should` {
+@DisplayName("`MethodCall` should")
+internal class MethodCallSpec {
 
     @Test
     fun `print method invocation`() {
@@ -46,21 +50,22 @@ internal class `'MethodCall' should` {
 
     @Test
     fun `print arguments`() {
-        val call = MethodCall(
-            MessageReference("msg"),
+        val call = MethodCall<Message.Builder>(
+            Expression<Message>("msg"),
             name = "putHeader",
-            arguments = listOf(LiteralString("cookez?"), LiteralString("heck_yeah"))
+            arguments = listOf(StringLiteral("cookez?"), StringLiteral("heck_yeah"))
         )
         call.toCode() shouldBe "msg.putHeader(\"cookez?\", \"heck_yeah\")"
     }
 
     @Test
     fun `print type arguments`() {
-        val call = ClassName(ImmutableMap::class).call(
-            "builder",
-            arguments = listOf(),
-            generics = listOf(ClassName(Sidekick::class), ClassName(Duration::class))
-        )
+        val call = ClassName(ImmutableMap::class)
+            .call<ImmutableMap.Builder<Sidekick, Duration>>(
+                "builder",
+                arguments = listOf(),
+                generics = listOf(ClassName(Sidekick::class), ClassName(Duration::class))
+            )
         val immutableMap = ImmutableMap::class.qualifiedName
         val sidekick = Sidekick::class.qualifiedName
         val duration = Duration::class.qualifiedName
@@ -73,7 +78,7 @@ internal class `'MethodCall' should` {
         @Test
         fun `another method`() {
             val defaultInstance = ClassName(Timestamp::class).getDefaultInstance()
-            val getParser = defaultInstance.chain("getParserForType")
+            val getParser = defaultInstance.chain<Parser<Timestamp>>("getParserForType")
             getParser.toCode() shouldBe
                     "${Timestamp::class.qualifiedName}.getDefaultInstance().getParserForType()"
         }
@@ -117,8 +122,8 @@ internal class `'MethodCall' should` {
         @Test
         fun `build() method`() {
             val defaultInstance = ClassName(FieldMask::class).newBuilder()
-            val setter = defaultInstance.chainBuild()
-            setter.toCode() shouldBe
+            val build = defaultInstance.chainBuild<FieldMask>()
+            build.toCode() shouldBe
                     "${FieldMask::class.qualifiedName}.newBuilder().build()"
         }
     }

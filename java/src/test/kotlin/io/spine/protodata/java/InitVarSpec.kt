@@ -26,30 +26,25 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
+import assertCode
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A piece of Java code.
- */
-public interface JavaElement : CodeElement<Java>
+@DisplayName("`InitVar` should")
+internal class InitVarSpec {
 
-/**
- * An arbitrary piece of Java code.
- *
- * This class is the default implementation of [JavaElement].
- *
- * @param code Arbitrary Java code.
- */
-public open class AnElement(public val code: String) : JavaElement  {
+    private val surname = InitVar(
+        name = "surname",
+        value = StringLiteral("Anderson")
+    )
 
-    override fun toCode(): String = code
+    @Test
+    fun `create an initialized Java variable`() {
+        assertCode(surname, "var surname = \"Anderson\";")
+    }
 
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
-
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
-
+    @Test
+    fun `provide a read access to the created variable`() {
+        assertCode(surname.read(), "surname")
+    }
 }

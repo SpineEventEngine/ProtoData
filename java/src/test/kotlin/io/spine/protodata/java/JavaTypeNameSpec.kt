@@ -26,30 +26,39 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A piece of Java code.
- */
-public interface JavaElement : CodeElement<Java>
+@DisplayName("`JavaTypeName` should")
+internal class JavaTypeNameSpec {
 
-/**
- * An arbitrary piece of Java code.
- *
- * This class is the default implementation of [JavaElement].
- *
- * @param code Arbitrary Java code.
- */
-public open class AnElement(public val code: String) : JavaElement  {
+    private val myCanonical = "my-canonical-name"
+    private val myType = typeName(myCanonical)
 
-    override fun toCode(): String = code
+    @Test
+    fun `return the provided canonical name`() {
+        myType.canonical shouldBe myCanonical
+    }
 
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
+    @Test
+    fun `return the canonical name as string representation`() {
+        "$myType" shouldBe myCanonical
+    }
 
-    override fun hashCode(): Int = code.hashCode()
+    @Test
+    fun `compare two elements`() {
+        val myType2 = typeName(myCanonical)
+        myType shouldBe myType2
+        myType.hashCode() shouldBe myType2.hashCode()
 
-    override fun toString(): String = code
+        val anotherType = typeName("another-canonical-name")
+        myType shouldNotBe anotherType
+        myType.hashCode() shouldNotBe anotherType.hashCode()
+    }
+}
 
+private fun typeName(canonical: String) = object : JavaTypeName() {
+    override val canonical: String = canonical
 }

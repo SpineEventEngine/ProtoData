@@ -26,30 +26,21 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
-
 /**
- * A piece of Java code.
- */
-public interface JavaElement : CodeElement<Java>
-
-/**
- * An arbitrary piece of Java code.
+ * A fully qualified name of a Java array.
  *
- * This class is the default implementation of [JavaElement].
+ * Example usages:
  *
- * @param code Arbitrary Java code.
+ * ```
+ * val bytes = ArrayTypeName(JavaTypeName.BYTE)
+ * println(bytes) // `byte[]`
+ *
+ * val string = ClassName(String::class)
+ * val strings = ArrayTypeName(string)
+ * println(strings) // `java.lang.String[]`
+ * ```
  */
-public open class AnElement(public val code: String) : JavaElement  {
+public class ArrayTypeName(javaName: JavaTypeName) : JavaTypeName() {
 
-    override fun toCode(): String = code
-
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
-
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
-
+    override val canonical: String = "$javaName[]"
 }

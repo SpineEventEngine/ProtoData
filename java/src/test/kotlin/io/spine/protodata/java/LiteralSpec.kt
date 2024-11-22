@@ -26,30 +26,26 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
+import assertCode
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * A piece of Java code.
- */
-public interface JavaElement : CodeElement<Java>
+@DisplayName("`Literal` expression should print")
+internal class LiteralSpec {
 
-/**
- * An arbitrary piece of Java code.
- *
- * This class is the default implementation of [JavaElement].
- *
- * @param code Arbitrary Java code.
- */
-public open class AnElement(public val code: String) : JavaElement  {
+    @Test
+    fun `a number`() = assertCode(Literal(42), "42")
 
-    override fun toCode(): String = code
+    @Test
+    fun `a boolean`() = assertCode(Literal(false), "false")
 
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
+    @Test
+    fun `a string`() = assertCode(StringLiteral("foo"), "\"foo\"")
 
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
-
+    @Test
+    fun `an arbitrary value`() {
+        val anything = "Frankie says relax"
+        val expression = Literal(anything)
+        assertCode(expression, anything)
+    }
 }

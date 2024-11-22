@@ -30,6 +30,9 @@ package io.spine.protodata.java
 
 import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.qualifiedName
+import io.spine.protodata.type.TypeSystem
+import io.spine.string.simply
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -62,7 +65,20 @@ public fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
         add(simpleName)
     }, { packageName, list ->
         ClassName(packageName, list)
-    }) as ClassName
+    })
+
+/**
+ * Obtains a fully qualified Java class name, generated for the Protobuf type with this name.
+ *
+ * @param typeSystem The type system to be used for obtaining the header for the proto
+ *   file in which this message type is declared.
+ */
+public fun TypeName.javaClassName(typeSystem: TypeSystem): ClassName {
+    val header = typeSystem.findMessage(this)?.second
+        ?: error("Cannot find Java `${simply<ClassName>()}` for the Protobuf `${qualifiedName}`.")
+    val className = javaClassName(header)
+    return className
+}
 
 /**
  * Obtains a fully qualified Java enum type name, generated for the Protobuf enum with this name.
@@ -93,8 +109,8 @@ public fun TypeName.javaEnumName(accordingTo: ProtoFileHeader): EnumName =
 internal fun composeJavaTypeName(
     accordingTo: ProtoFileHeader,
     setup: MutableList<String>.() -> Unit,
-    create: (String, List<String>) -> ClassOrEnumName
-): ClassOrEnumName {
+    create: (String, List<String>) -> ClassName
+): ClassName {
     val packageName = accordingTo.javaPackage()
     val javaMultipleFiles = accordingTo.javaMultipleFiles()
     val nameElements = mutableListOf<String>()

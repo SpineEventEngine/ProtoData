@@ -24,32 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:JvmName("Expressions")
+
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
+/**
+ * An expression that evaluates to `null`.
+ */
+public object Null : Expression<Null>("null")
 
 /**
- * A piece of Java code.
- */
-public interface JavaElement : CodeElement<Java>
-
-/**
- * An arbitrary piece of Java code.
+ * A literal `this` reference.
  *
- * This class is the default implementation of [JavaElement].
- *
- * @param code Arbitrary Java code.
+ * @param T The type of `this` value.
  */
-public open class AnElement(public val code: String) : JavaElement  {
-
-    override fun toCode(): String = code
-
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
-
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
-
-}
+public class This<T> : Expression<T>("this")

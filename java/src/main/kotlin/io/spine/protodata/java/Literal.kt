@@ -26,30 +26,30 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
+/**
+ * An arbitrary literal.
+ *
+ * Such an expression should denote a constant, compile-time known value.
+ *
+ * For example:
+ *
+ * ```
+ * val yes = Literal<Boolean>("true")
+ * val half = Literal<Double>("0.5")
+ * val ten = Literal<Int>("10")
+ * ```
+ *
+ * @param [value] A string representation of the literal. It will be used "as is"
+ *  in the resulting Java code.
+ *
+ * @see StringLiteral
+ */
+public open class Literal<T>(value: T) : Expression<T>("$value")
 
 /**
- * A piece of Java code.
- */
-public interface JavaElement : CodeElement<Java>
-
-/**
- * An arbitrary piece of Java code.
+ * A string literal.
  *
- * This class is the default implementation of [JavaElement].
- *
- * @param code Arbitrary Java code.
+ * Represents the same value as the given string, wrapped in quotation marks.
+ * No extra character escaping is performed.
  */
-public open class AnElement(public val code: String) : JavaElement  {
-
-    override fun toCode(): String = code
-
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
-
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
-
-}
+public class StringLiteral(value: String) : Literal<String>("\"$value\"")

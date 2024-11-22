@@ -45,7 +45,7 @@ internal class MessageOrEnumConventionSpec {
         declaration shouldNotBe null
         val (cls, path) = declaration
         val expectedClassName = "dev.acme.example.Foo"
-        (cls as ClassName).binary shouldBe expectedClassName
+        cls.binary shouldBe expectedClassName
         path shouldBe expectedClassName.toSourcePath()
     }
 

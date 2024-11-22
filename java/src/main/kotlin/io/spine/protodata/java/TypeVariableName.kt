@@ -26,30 +26,28 @@
 
 package io.spine.protodata.java
 
-import io.spine.protodata.type.CodeElement
-import io.spine.tools.code.Java
-
 /**
- * A piece of Java code.
- */
-public interface JavaElement : CodeElement<Java>
-
-/**
- * An arbitrary piece of Java code.
+ * A type parameter name.
  *
- * This class is the default implementation of [JavaElement].
+ * Use it to declare a generic field or variable.
  *
- * @param code Arbitrary Java code.
+ * An example usage:
+ *
+ * ```
+ * val list = ClassName(List::class)
+ * val genericList = ParameterizedClassName(list, TypeVariableName.E)
+ * println(genericList) // `java.util.List<E>`
+ * ```
+ *
+ * @see TypeVariableName.T
+ * @see TypeVariableName.E
  */
-public open class AnElement(public val code: String) : JavaElement  {
+public class TypeVariableName(value: String) : JavaTypeName() {
 
-    override fun toCode(): String = code
+    override val canonical: String = value
 
-    override fun equals(other: Any?): Boolean =
-        other is AnElement && this.code == other.code
-
-    override fun hashCode(): Int = code.hashCode()
-
-    override fun toString(): String = code
-
+    public companion object {
+        public val T: TypeVariableName = TypeVariableName("T")
+        public val E: TypeVariableName = TypeVariableName("E")
+    }
 }

@@ -31,7 +31,6 @@ import given.annotation.NoTypeTargetAnnotation
 import given.annotation.Schedule
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.java.ClassName
-import io.spine.protodata.java.ClassOrEnumName
 import io.spine.protodata.render.SourceFile
 import io.spine.tools.code.Java
 import io.spine.tools.java.reference
@@ -130,7 +129,7 @@ internal class TypeAnnotationSpec {
 
 private class StubAnnotation<T : Annotation>(
     annotationClass: Class<T>,
-    subject: ClassOrEnumName? = null,
+    subject: ClassName? = null,
     file: SourceFile<Java>? = null
 ) :
     TypeAnnotation<T>(annotationClass, subject, file) {
