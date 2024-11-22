@@ -62,7 +62,7 @@ class ExtensionSpec {
             apply<ProtobufPlugin>()
             apply<Plugin>()
 
-            extension = extensions.getByType<CodegenSettings>() as Extension
+            this@ExtensionSpec.extension = extensions.getByType<CodegenSettings>() as Extension
         }
     }
 

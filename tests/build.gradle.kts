@@ -24,7 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.protobuf
 import io.spine.dependency.lib.Caffeine
 import io.spine.dependency.lib.Grpc
 import io.spine.dependency.test.JUnit
@@ -38,6 +37,7 @@ import io.spine.dependency.local.ProtoData
 import io.spine.dependency.local.Spine
 import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
+import io.spine.dependency.test.Kotest
 import io.spine.gradle.kotlin.setFreeCompilerArgs
 import io.spine.gradle.standardToSpineSdk
 import io.spine.gradle.testing.configureLogging
@@ -67,9 +67,12 @@ subprojects {
         from("$rootDir/../version.gradle.kts")
     }
 
+    val protoDataVersion: String by extra
+    group = "io.spine.protodata.tests"
+    version = protoDataVersion
+
     repositories.standardToSpineSdk()
 
-    val protoDataVersion: String by extra
     configurations {
         forceVersions()
         all {
@@ -80,6 +83,8 @@ subprojects {
                 @Suppress("DEPRECATION") // To force `Kotlin.stdLibJdk7`.
                 force(
                     Kotlin.stdLibJdk7,
+                    KotlinX.Coroutines.core,
+                    KotlinX.Coroutines.test,
                     KotlinX.Coroutines.jdk8,
                     Caffeine.lib,
                     Grpc.api,
@@ -120,6 +125,7 @@ subprojects {
 
         JUnit.api.forEach { testImplementation(it) }
         Truth.libs.forEach { testImplementation(it) }
+        testImplementation(Kotest.assertions)
         testRuntimeOnly(JUnit.runner)
     }
 

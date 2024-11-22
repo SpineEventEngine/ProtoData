@@ -26,10 +26,76 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.google.common.collect.ImmutableList
+import io.spine.tools.code.Java
+import io.spine.tools.code.Kotlin
+import io.spine.tools.code.Language
+import java.io.File
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+
+/**
+ * Obtains the name of the directory where ProtoData places generated files.
+ */
+internal val Project.targetBaseDir: String
+    get() = extension.targetBaseDir.toString()
+
+/**
+ * Obtains the `generated` directory for the given [sourceSet] and a language.
+ *
+ * If the language is not given, the returned directory is the root directory for the source set.
+ */
+internal fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): File {
+    val path = "$targetBaseDir/${sourceSet.name}/$language"
+    return File(path)
+}
+
+/**
+ * Tells if this project can deal with Java code.
+ *
+ * @return `true` if `java` plugin is installed, `false` otherwise.
+ */
+internal fun Project.hasJava(): Boolean = hasCompileTask(Java)
+
+/**
+ * Tells if this project can deal with Kotlin code.
+ *
+ * @return `true` if any of the tasks starts with `"compile"` and ends with `"Kotlin"`.
+ */
+internal fun Project.hasKotlin(): Boolean = hasCompileTask(Kotlin)
+
+/**
+ * Tells if this project has a compile task for the given language.
+ */
+private fun Project.hasCompileTask(language: Language): Boolean {
+    val currentTasks = ImmutableList.copyOf(tasks)
+    val compileTask = currentTasks.find {
+        it.name.startsWith("compile") && it.name.endsWith(language.name)
+    }
+    return compileTask != null
+}
+
+/**
+ * Verifies if the project can deal with Java or Kotlin code.
+ *
+ * The current Protobuf support of Kotlin is based on Java codegen.
+ * Therefore, it is likely that Java would be enabled in the project for
+ * Kotlin proto code to be generated.
+ * Though, it may change someday, and Kotlin support for Protobuf would be
+ * self-sufficient. This method assumes such a case when it checks the presence of
+ * Kotlin compilation tasks.
+ *
+ * @see [hasJava]
+ * @see [hasKotlin]
+ */
+internal fun Project.hasJavaOrKotlin(): Boolean {
+    if (hasJava()) {
+        return true
+    }
+    return hasKotlin()
+}
 
 /**
  * Attempts to obtain the Java compilation Gradle task for the given source set.

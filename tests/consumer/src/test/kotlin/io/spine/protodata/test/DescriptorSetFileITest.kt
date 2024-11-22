@@ -24,37 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:Suppress("unused")
+package io.spine.protodata.test
 
-package io.spine.dependency.test
+import io.kotest.matchers.shouldBe
+import io.spine.protobuf.pack
+import io.spine.protobuf.unpackGuessingType
+import java.util.UUID
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-/**
- * Testing framework for Kotlin.
- *
- * @see <a href="https://kotest.io/">Kotest site</a>
- */
-@Suppress("unused", "ConstPropertyName")
-object Kotest {
-    const val version = "5.9.1"
-    const val group = "io.kotest"
-    const val assertions = "$group:kotest-assertions-core:$version"
-    const val runnerJUnit5 = "$group:kotest-runner-junit5:$version"
-    const val runnerJUnit5Jvm = "$group:kotest-runner-junit5-jvm:$version"
-    const val frameworkApi = "$group:kotest-framework-api:$version"
-    const val datatest = "$group:kotest-framework-datatest:$version"
-    const val frameworkEngine = "$group:kotest-framework-engine:$version"
+@DisplayName("ProtoData Gradle Plugin should")
+internal class DescriptorSetFileITest {
 
-    // https://plugins.gradle.org/plugin/io.kotest.multiplatform
-    object MultiplatformGradlePlugin {
-        const val version = Kotest.version
-        const val id = "io.kotest.multiplatform"
-        const val classpath = "$group:kotest-framework-multiplatform-plugin-gradle:$version"
-    }
-
-    // https://github.com/kotest/kotest-gradle-plugin
-    object JvmGradlePlugin {
-        const val version = "0.4.10"
-        const val id = "io.kotest"
-        const val classpath = "$group:kotest-gradle-plugin:$version"
+    /**
+     * This test verifies that it is possible to unpack an instance of [com.google.protobuf.Any]
+     * using the extension function [unpackGuessingType].
+     *
+     * The extension indirectly calls [io.spine.type.KnownTypes] created using descriptor set files loaded
+     * from the classpath. If the unpacking works, it means we have descriptor set files produced for in this module.
+     */
+    @Test
+    fun `enable creation of descriptor set files`() {
+        val taskId = taskId { uuid = UUID.randomUUID().toString() }
+        val packed = taskId.pack()
+        val unpacked = packed.unpackGuessingType()
+        unpacked shouldBe taskId
     }
 }

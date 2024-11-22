@@ -24,37 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:Suppress("unused")
+package io.spine.protodata.gradle.plugin
 
-package io.spine.dependency.test
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.tasks.SourceSet
 
 /**
- * Testing framework for Kotlin.
- *
- * @see <a href="https://kotest.io/">Kotest site</a>
+ * Obtains a source directory set with the Kotlin source code, if it exists in this source set.
  */
-@Suppress("unused", "ConstPropertyName")
-object Kotest {
-    const val version = "5.9.1"
-    const val group = "io.kotest"
-    const val assertions = "$group:kotest-assertions-core:$version"
-    const val runnerJUnit5 = "$group:kotest-runner-junit5:$version"
-    const val runnerJUnit5Jvm = "$group:kotest-runner-junit5-jvm:$version"
-    const val frameworkApi = "$group:kotest-framework-api:$version"
-    const val datatest = "$group:kotest-framework-datatest:$version"
-    const val frameworkEngine = "$group:kotest-framework-engine:$version"
-
-    // https://plugins.gradle.org/plugin/io.kotest.multiplatform
-    object MultiplatformGradlePlugin {
-        const val version = Kotest.version
-        const val id = "io.kotest.multiplatform"
-        const val classpath = "$group:kotest-framework-multiplatform-plugin-gradle:$version"
-    }
-
-    // https://github.com/kotest/kotest-gradle-plugin
-    object JvmGradlePlugin {
-        const val version = "0.4.10"
-        const val id = "io.kotest"
-        const val classpath = "$group:kotest-gradle-plugin:$version"
-    }
-}
+internal fun SourceSet.kotlinDirectorySet(): SourceDirectorySet? =
+    extensions.findByName("kotlin") as SourceDirectorySet?
