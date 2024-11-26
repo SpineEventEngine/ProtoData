@@ -27,7 +27,6 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.protobuf.gradle.GenerateProtoTask
-import io.spine.tools.gradle.protobuf.generatedDir
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import java.io.File
 import java.nio.file.Path
@@ -70,12 +69,6 @@ private fun IdeaModule.setupDirectories(project: Project,) {
         .map { it.toFile() }
         .toSet()
 }
-
-/**
- * Obtains the path of the `generated` directory under the project root directory.
- */
-private val Project.generatedDir: Path
-    get() = projectDir.resolve(targetBaseDir).toPath()
 
 /**
  * Lists target directories for Protobuf code generation.

@@ -31,6 +31,7 @@ import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
 import java.io.File
+import java.nio.file.Path
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
@@ -43,13 +44,20 @@ internal val Project.targetBaseDir: String
     get() = extension.targetBaseDir.toString()
 
 /**
+ * Obtains the path of the directory with the generated code as configured by
+ * the [Extension.targetBaseDir] property of the ProtoData extension of this Gradle project.
+ */
+internal val Project.generatedDir: Path
+    get() = projectDir.resolve(targetBaseDir).toPath()
+
+/**
  * Obtains the `generated` directory for the given [sourceSet] and a language.
  *
  * If the language is not given, the returned directory is the root directory for the source set.
  */
 internal fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): File {
-    val path = "$targetBaseDir/${sourceSet.name}/$language"
-    return File(path)
+    val path = generatedDir.resolve("${sourceSet.name}/$language")
+    return path.toFile()
 }
 
 /**
