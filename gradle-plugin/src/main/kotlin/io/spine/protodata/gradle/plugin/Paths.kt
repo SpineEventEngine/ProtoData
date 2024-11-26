@@ -24,31 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+package io.spine.protodata.gradle.plugin
+
+import java.io.File
+import java.nio.file.Path
 
 /**
- * Dependencies on Spine Validation SDK.
- *
- * See [`SpineEventEngine/validation`](https://github.com/SpineEventEngine/validation/).
+ * Obtains a list of directories resolved as nested into this one.
  */
-@Suppress("unused", "ConstPropertyName")
-object Validation {
-    /**
-     * The version of the Validation library artifacts.
-     */
-    const val version = "2.0.0-SNAPSHOT.173"
+internal fun Path.resolve(subdirs: Iterable<Path>): List<Path> =
+    subdirs.map {
+        resolve(it)
+    }
 
-    const val group = "io.spine.validation"
-    private const val prefix = "spine-validation"
+/**
+ * Obtains a set of files or directories that are not nested under [excludeDir].
+ */
+internal fun Set<File>.excluding(excludeDir: File): Set<File> =
+    filter { !it.residesIn(excludeDir) }.toSet()
 
-    const val runtime = "$group:$prefix-java-runtime:$version"
-    const val java = "$group:$prefix-java:$version"
-
-    /** Obtains the artifact for the `java-bundle` artifact of the given version. */
-    fun javaBundle(version: String) = "$group:$prefix-java-bundle:$version"
-
-    val javaBundle = javaBundle(version)
-
-    const val model = "$group:$prefix-model:$version"
-    const val config = "$group:$prefix-configuration:$version"
-}
+/**
+ * Tells if this file resides in the given [directory].
+ */
+internal fun File.residesIn(directory: File): Boolean =
+    canonicalFile.startsWith(directory.absolutePath)

@@ -27,12 +27,12 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.protobuf.gradle.GenerateProtoTask
-import io.spine.tools.gradle.protobuf.generatedDir
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
-import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.Path
 import java.nio.file.Paths
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskCollection
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.plugins.ide.idea.model.IdeaModule
@@ -56,26 +56,49 @@ internal fun Project.configureIdea() {
     }
 }
 
-private fun IdeaModule.setupDirectories(project: Project,) {
-
-    fun filterSources(sources: Set<File>, excludeDir: File): Set<File> =
-        sources.filter { !it.residesIn(excludeDir) }.toSet()
-
+/**
+ * Configures directory settings in this [IdeaModule] in the following way:
+ *
+ * 1. Marks directories under `build/generated/source/proto` as excluded.
+ * 2. Filters these directories from being viewed as [sourceDirs][IdeaModule.sourceDirs].
+ * 3. Marks directories under [Project.generatedDir] as those with generated sources.
+ * 4. Marks `extracted-include-protos`, `extracted-protos`, and their children as excluded.
+ */
+private fun IdeaModule.setupDirectories(project: Project) {
     val protocOutput = project.file(project.generatedSourceProtoDir)
     val protocTargets = project.protocTargets()
     excludeWithNested(protocOutput.toPath(), protocTargets)
-    sourceDirs = filterSources(sourceDirs, protocOutput)
+    sourceDirs = sourceDirs.excluding(protocOutput)
     testSources.filter { !it.residesIn(protocOutput) }
     generatedSourceDirs = project.generatedDir.resolve(protocTargets)
         .map { it.toFile() }
         .toSet()
+    excludeExtractedDirs(project)
 }
 
 /**
- * Obtains the path of the `generated` directory under the project root directory.
+ * Marks the directories `extracted-include-protos` and `extracted-protos` and their
+ * subdirectories as excluded in this [IdeaModule].
  */
-private val Project.generatedDir: Path
-    get() = projectDir.resolve(targetBaseDir).toPath()
+private fun IdeaModule.excludeExtractedDirs(project: Project) {
+    val sourceSetDirs = project.generateProtoTasks().map { Path(it.sourceSet.name) }
+    val extractedIncludeProtos = project.buildDir.resolve("extracted-include-protos").toPath()
+    val extractedProtos = project.buildDir.resolve("extracted-protos").toPath()
+
+    excludeWithNested(extractedIncludeProtos, sourceSetDirs)
+    excludeWithNested(extractedProtos, sourceSetDirs)
+}
+
+/**
+ * Excludes the given directory and its subdirectories from
+ * being seen as ones with the source code.
+ */
+private fun IdeaModule.excludeWithNested(directory: Path, subdirs: Iterable<Path>) {
+    excludeDirs.add(directory.toFile())
+    directory.resolve(subdirs).forEach {
+        excludeDirs.add(it.toFile())
+    }
+}
 
 /**
  * Lists target directories for Protobuf code generation.
@@ -84,8 +107,8 @@ private val Project.generatedDir: Path
  *
  * `<source-set-name>/<builtIn-or-plugin-name>`
  */
-private fun Project.protocTargets(): List<Path> {
-    val protobufTasks = tasks.withType(GenerateProtoTask::class.java)
+internal fun Project.protocTargets(): List<Path> {
+    val protobufTasks = generateProtoTasks()
     val codegenTargets = sequence {
         protobufTasks.forEach { task ->
             val sourceSet = task.sourceSet.name
@@ -100,28 +123,5 @@ private fun Project.protocTargets(): List<Path> {
     return codegenTargets.toList()
 }
 
-/**
- * Excludes the given directory and its subdirectories from
- * being seen as ones with the source code.
- *
- * The primary use of this extension is to exclude `build/generated/source/proto` and its
- * subdirectories to avoid duplication of types in the generated code with those in
- * produced by ProtoData under the `$projectDir/generated/` directory.
- */
-private fun IdeaModule.excludeWithNested(directory: Path, subdirs: Iterable<Path>) {
-    excludeDirs.add(directory.toFile())
-    directory.resolve(subdirs).forEach {
-        excludeDirs.add(it.toFile())
-    }
-}
-
-private fun Path.resolve(subdirs: Iterable<Path>): List<Path> =
-    subdirs.map {
-        resolve(it)
-    }
-
-/**
- * Tells if this file resides in the given [directory].
- */
-internal fun File.residesIn(directory: File): Boolean =
-    canonicalFile.startsWith(directory.absolutePath)
+private fun Project.generateProtoTasks(): TaskCollection<GenerateProtoTask> =
+    tasks.withType(GenerateProtoTask::class.java)

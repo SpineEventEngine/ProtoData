@@ -241,8 +241,9 @@ internal class Run(version: String) : CliktCommand(
         }
         if (sourceRoots != null && targetRoots != null) {
             checkUsage(sourceRoots!!.size == targetRoots!!.size) {
-                "Mismatched amount of directories. Given ${sourceRoots!!.size} sources " +
-                        "and ${targetRoots!!.size} targets."
+                "Mismatched number of directories." +
+                        " Given ${sourceRoots!!.size} source directories and" +
+                        " ${targetRoots!!.size} target directories."
             }
         }
     }
