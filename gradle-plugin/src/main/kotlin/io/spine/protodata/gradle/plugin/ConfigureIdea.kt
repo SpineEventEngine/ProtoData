@@ -28,7 +28,6 @@ package io.spine.protodata.gradle.plugin
 
 import com.google.protobuf.gradle.GenerateProtoTask
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
-import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import org.gradle.api.Project
@@ -55,19 +54,26 @@ internal fun Project.configureIdea() {
     }
 }
 
-private fun IdeaModule.setupDirectories(project: Project,) {
-
-    fun filterSources(sources: Set<File>, excludeDir: File): Set<File> =
-        sources.filter { !it.residesIn(excludeDir) }.toSet()
-
+private fun IdeaModule.setupDirectories(project: Project) {
     val protocOutput = project.file(project.generatedSourceProtoDir)
     val protocTargets = project.protocTargets()
     excludeWithNested(protocOutput.toPath(), protocTargets)
-    sourceDirs = filterSources(sourceDirs, protocOutput)
+    sourceDirs = sourceDirs.excluding(protocOutput)
     testSources.filter { !it.residesIn(protocOutput) }
     generatedSourceDirs = project.generatedDir.resolve(protocTargets)
         .map { it.toFile() }
         .toSet()
+}
+
+/**
+ * Excludes the given directory and its subdirectories from
+ * being seen as ones with the source code.
+ */
+private fun IdeaModule.excludeWithNested(directory: Path, subdirs: Iterable<Path>) {
+    excludeDirs.add(directory.toFile())
+    directory.resolve(subdirs).forEach {
+        excludeDirs.add(it.toFile())
+    }
 }
 
 /**
@@ -77,7 +83,7 @@ private fun IdeaModule.setupDirectories(project: Project,) {
  *
  * `<source-set-name>/<builtIn-or-plugin-name>`
  */
-private fun Project.protocTargets(): List<Path> {
+internal fun Project.protocTargets(): List<Path> {
     val protobufTasks = tasks.withType(GenerateProtoTask::class.java)
     val codegenTargets = sequence {
         protobufTasks.forEach { task ->
@@ -92,29 +98,3 @@ private fun Project.protocTargets(): List<Path> {
     }
     return codegenTargets.toList()
 }
-
-/**
- * Excludes the given directory and its subdirectories from
- * being seen as ones with the source code.
- *
- * The primary use of this extension is to exclude `build/generated/source/proto` and its
- * subdirectories to avoid duplication of types in the generated code with those in
- * produced by ProtoData under the `$projectDir/generated/` directory.
- */
-private fun IdeaModule.excludeWithNested(directory: Path, subdirs: Iterable<Path>) {
-    excludeDirs.add(directory.toFile())
-    directory.resolve(subdirs).forEach {
-        excludeDirs.add(it.toFile())
-    }
-}
-
-private fun Path.resolve(subdirs: Iterable<Path>): List<Path> =
-    subdirs.map {
-        resolve(it)
-    }
-
-/**
- * Tells if this file resides in the given [directory].
- */
-internal fun File.residesIn(directory: File): Boolean =
-    canonicalFile.startsWith(directory.absolutePath)
