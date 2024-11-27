@@ -28,6 +28,7 @@ package io.spine.protodata.gradle.plugin
 
 import com.google.protobuf.gradle.GenerateProtoTask
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
 import java.nio.file.Paths
@@ -68,7 +69,7 @@ private fun IdeaModule.setupDirectories(project: Project) {
     val protocOutput = project.file(project.generatedSourceProtoDir)
     val protocTargets = project.protocTargets()
     excludeWithNested(protocOutput.toPath(), protocTargets)
-    sourceDirs = sourceDirs.excluding(protocOutput)
+    sourceDirs = FilteringFileSet(sourceDirs, protocOutput)
     testSources.filter { !it.residesIn(protocOutput) }
     generatedSourceDirs = project.generatedDir.resolve(protocTargets)
         .map { it.toFile() }
@@ -125,3 +126,31 @@ internal fun Project.protocTargets(): List<Path> {
 
 private fun Project.generateProtoTasks(): TaskCollection<GenerateProtoTask> =
     tasks.withType(GenerateProtoTask::class.java)
+
+/**
+ * A file set which filters out files or directories belonging to [excludedDir].
+ *
+ * The set filters out incoming [delegate] set on initialization.
+ * It also overrides [add] and [addAll] preventing subsequent adding of unwanted elements.
+ */
+private class FilteringFileSet(
+    private val delegate: MutableSet<File>,
+    private val excludedDir: File
+): MutableSet<File> by delegate {
+
+    init {
+        delegate.removeIf { it.residesIn(excludedDir) }
+    }
+
+    override fun add(element: File): Boolean {
+        if (!element.residesIn(excludedDir)) {
+            return delegate.add(element)
+        }
+        return false
+    }
+
+    override fun addAll(elements: Collection<File>): Boolean {
+        val filtered = elements.excluding(excludedDir)
+        return delegate.addAll(filtered)
+    }
+}
