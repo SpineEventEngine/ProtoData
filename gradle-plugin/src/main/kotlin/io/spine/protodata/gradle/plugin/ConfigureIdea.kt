@@ -149,7 +149,15 @@ private class FilteringFileSet(
 ): MutableSet<File> by delegate {
 
     init {
-        delegate.removeIf { it.residesIn(excludedDir) }
+        delegate.removeIf {
+            val excluded = it.residesIn(excludedDir)
+            if (excluded) {
+                logger.debug {
+                    "Excluding `$it` from IDEA module source directories."
+                }
+            }
+            excluded
+        }
     }
 
     override fun add(element: File): Boolean {
