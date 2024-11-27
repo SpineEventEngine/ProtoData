@@ -74,7 +74,7 @@ public fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
  *   file in which this message type is declared.
  */
 public fun TypeName.javaClassName(typeSystem: TypeSystem): ClassName {
-    val header = typeSystem.findMessage(this)?.second
+    val header = typeSystem.findMessageOrEnum(this)?.second
         ?: error("Cannot find Java `${simply<ClassName>()}` for the Protobuf `${qualifiedName}`.")
     val className = javaClassName(header)
     return className
