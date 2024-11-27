@@ -34,7 +34,7 @@ package io.spine.dependency.local
 @Suppress("ConstPropertyName", "unused")
 object CoreJava {
     const val group = Spine.group
-    const val version = "2.0.0-SNAPSHOT.182"
+    const val version = "2.0.0-SNAPSHOT.183"
     const val core = "$group:spine-core:$version"
     const val client = "$group:spine-client:$version"
     const val server = "$group:spine-server:$version"
