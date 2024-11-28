@@ -39,10 +39,10 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 /**
- * Obtains the directory
+ * Obtains the root directory into which Protobuf Gradle Plugin assigns the `protoc` output.
  */
 internal val Project.protocOutputDir: File
-    get() = file(generatedSourceProtoDir)
+    get() = generatedSourceProtoDir.toFile()
 
 /**
  * Obtains the name of the directory where ProtoData places generated files.
