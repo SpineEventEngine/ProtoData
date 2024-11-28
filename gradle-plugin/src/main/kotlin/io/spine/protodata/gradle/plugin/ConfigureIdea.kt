@@ -27,10 +27,10 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.protobuf.gradle.GenerateProtoTask
-import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
+import io.spine.protodata.gradle.debug
 import java.nio.file.Path
-import kotlin.io.path.Path
 import java.nio.file.Paths
+import kotlin.io.path.Path
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.kotlin.dsl.getByType
@@ -45,13 +45,10 @@ import org.gradle.plugins.ide.idea.model.IdeaModule
  * we define in [GenerateProtoTask.configureSourceSetDirs].
  */
 internal fun Project.configureIdea() {
-    val thisProject = this
-    gradle.afterProject {
-        if (it == thisProject) {
-            pluginManager.withPlugin("idea") {
-                val idea = extensions.getByType<IdeaModel>()
-                idea.module.setupDirectories(thisProject)
-            }
+    afterEvaluate {
+        pluginManager.withPlugin("idea") {
+            val idea = extensions.getByType<IdeaModel>()
+            idea.module.setupDirectories(this)
         }
     }
 }
@@ -65,15 +62,43 @@ internal fun Project.configureIdea() {
  * 4. Marks `extracted-include-protos`, `extracted-protos`, and their children as excluded.
  */
 private fun IdeaModule.setupDirectories(project: Project) {
-    val protocOutput = project.file(project.generatedSourceProtoDir)
+    val protocOutputDir = project.protocOutputDir
     val protocTargets = project.protocTargets()
-    excludeWithNested(protocOutput.toPath(), protocTargets)
-    sourceDirs = sourceDirs.excluding(protocOutput)
-    testSources.filter { !it.residesIn(protocOutput) }
-    generatedSourceDirs = project.generatedDir.resolve(protocTargets)
-        .map { it.toFile() }
-        .toSet()
+    excludeWithNested(protocOutputDir.toPath(), protocTargets)
+    excludeFromGeneratedSourceDirs()
+    sourceDirs = sourceDirs.excluding(protocOutputDir)
+    testSources.filter { !it.residesIn(protocOutputDir) }
+    setGeneratedSourceDirs(protocTargets)
     excludeExtractedDirs(project)
+}
+
+/**
+ * Traverses [generatedSourceDirs][IdeaModule.generatedSourceDirs] excluding those
+ * belonging to `protoc` output directory.
+ */
+private fun IdeaModule.excludeFromGeneratedSourceDirs() {
+    val protocOutputDir = project.protocOutputDir
+    generatedSourceDirs.forEach {
+        if (it.residesIn(protocOutputDir)) {
+            excludeDirs.add(it)
+            project.logger.debug {
+                "Added `$it` to excluded directories in the IDEA module `$name`."
+            }
+        }
+    }
+}
+
+/**
+ * Configures [generatedSourceDirs][IdeaModule.generatedSourceDirs] not to have
+ * the directories under `protoc` output root, and to have ProtoData target directories.
+ */
+private fun IdeaModule.setGeneratedSourceDirs(protocTargets: List<Path>) {
+    val project = project
+    val protocOutputDir = project.protocOutputDir
+    val protoDataTargets = project.generatedDir.resolve(protocTargets)
+        .map { it.toFile() }.toSet()
+    generatedSourceDirs =
+        generatedSourceDirs.filter { !it.residesIn(protocOutputDir) }.toSet() + protoDataTargets
 }
 
 /**
@@ -108,19 +133,18 @@ private fun IdeaModule.excludeWithNested(directory: Path, subdirs: Iterable<Path
  * `<source-set-name>/<builtIn-or-plugin-name>`
  */
 internal fun Project.protocTargets(): List<Path> {
+    val codegenTargets = mutableListOf<Path>()
     val protobufTasks = generateProtoTasks()
-    val codegenTargets = sequence {
-        protobufTasks.forEach { task ->
-            val sourceSet = task.sourceSet.name
-            val builtins = task.builtins.map { builtin -> builtin.name }
-            val plugins = task.plugins.map { plugin -> plugin.name }
-            val combined = builtins + plugins
-            combined.forEach { subdir ->
-                yield(Paths.get(sourceSet, subdir))
-            }
+    protobufTasks.forEach { task ->
+        val sourceSet = task.sourceSet.name
+        val builtins = task.builtins()
+        val plugins = task.plugins()
+        val combined = builtins + plugins
+        combined.forEach { subdir ->
+            codegenTargets.add(Paths.get(sourceSet, subdir))
         }
     }
-    return codegenTargets.toList()
+    return codegenTargets
 }
 
 private fun Project.generateProtoTasks(): TaskCollection<GenerateProtoTask> =

@@ -30,12 +30,19 @@ import com.google.common.collect.ImmutableList
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
+import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import java.io.File
 import java.nio.file.Path
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+
+/**
+ * Obtains the directory
+ */
+internal val Project.protocOutputDir: File
+    get() = file(generatedSourceProtoDir)
 
 /**
  * Obtains the name of the directory where ProtoData places generated files.
