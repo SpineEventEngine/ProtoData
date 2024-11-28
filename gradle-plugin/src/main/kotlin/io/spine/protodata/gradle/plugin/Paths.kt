@@ -40,7 +40,7 @@ internal fun Path.resolve(subdirs: Iterable<Path>): List<Path> =
 /**
  * Obtains a set of files or directories that are not nested under [excludeDir].
  */
-internal fun Set<File>.excluding(excludeDir: File): Set<File> =
+internal fun Iterable<File>.excluding(excludeDir: File): Set<File> =
     filter { !it.residesIn(excludeDir) }.toSet()
 
 /**

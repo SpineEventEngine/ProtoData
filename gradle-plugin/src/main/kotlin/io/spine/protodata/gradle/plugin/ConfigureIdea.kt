@@ -27,11 +27,15 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.protobuf.gradle.GenerateProtoTask
+import io.spine.protodata.gradle.debug
+import io.spine.string.Separator
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
 import java.nio.file.Paths
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.ide.idea.model.IdeaModel
@@ -68,7 +72,7 @@ private fun IdeaModule.setupDirectories(project: Project) {
     val protocOutput = project.file(project.generatedSourceProtoDir)
     val protocTargets = project.protocTargets()
     excludeWithNested(protocOutput.toPath(), protocTargets)
-    sourceDirs = sourceDirs.excluding(protocOutput)
+    sourceDirs = FilteringFileSet(sourceDirs, protocOutput, project.logger)
     testSources.filter { !it.residesIn(protocOutput) }
     generatedSourceDirs = project.generatedDir.resolve(protocTargets)
         .map { it.toFile() }
@@ -125,3 +129,62 @@ internal fun Project.protocTargets(): List<Path> {
 
 private fun Project.generateProtoTasks(): TaskCollection<GenerateProtoTask> =
     tasks.withType(GenerateProtoTask::class.java)
+
+/**
+ * A file set which filters out files or directories belonging to [excludedDir].
+ *
+ * The set filters out incoming [delegate] set on initialization.
+ * It also overrides [add] and [addAll] preventing subsequent adding of unwanted elements.
+ *
+ * We set such "forceful" implementation of filtering when configuring source directories of
+ * an `IdeaModule`. This is to make sure that the filtering works disregarding the order of
+ * invocation of [Project.afterEvaluate] or [org.gradle.api.invocation.Gradle.afterProject] blocks.
+ *
+ * @see IdeaModule.setupDirectories
+ */
+private class FilteringFileSet(
+    private val delegate: MutableSet<File>,
+    private val excludedDir: File,
+    private val logger: Logger
+): MutableSet<File> by delegate {
+
+    init {
+        delegate.removeIf {
+            val excluded = it.residesIn(excludedDir)
+            if (excluded) {
+                logger.debug {
+                    "Excluding `$it` from IDEA module source directories."
+                }
+            }
+            excluded
+        }
+    }
+
+    override fun add(element: File): Boolean {
+        if (!element.residesIn(excludedDir)) {
+            logger.debug { "Adding `$element` as IDEA module source directory." }
+            return delegate.add(element)
+        }
+        logger.debug { "`$element` NOT added as IDEA module source directory." }
+        return false
+    }
+
+    override fun addAll(elements: Collection<File>): Boolean {
+        val filtered = elements.excluding(excludedDir)
+        val nl = Separator.nl()
+        if (filtered.isNotEmpty()) {
+            logger.debug {
+                "Adding IDEA module source directories:$nl" +
+                        filtered.joinToString(nl) { "  ${it.name}" }
+            }
+        }
+        if (filtered.size != elements.size) {
+            val excluded = elements.toSet() - filtered
+            logger.debug {
+                "Excluded directories:$nl" +
+                        excluded.joinToString(nl) { "  ${it.name}" }
+            }
+        }
+        return delegate.addAll(filtered)
+    }
+}
