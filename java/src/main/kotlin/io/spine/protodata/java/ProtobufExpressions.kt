@@ -48,7 +48,7 @@ public class CopyByteString(bytes: ByteString) : Expression<ByteString>(
 private val ByteStringClass = ByteString::class.qualifiedName!!
 
 /**
- * Wraps this [Any] expression into Protobuf `Any` using [TypeConverter.toAny] method.
+ * Wraps this [Expression] into Protobuf `Any` using [TypeConverter.toAny] method.
  */
 public fun Expression<*>.packToAny(): Expression<ProtoAny> {
     val type = ClassName(TypeConverter::class)
