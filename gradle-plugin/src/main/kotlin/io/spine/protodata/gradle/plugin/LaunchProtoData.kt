@@ -148,13 +148,13 @@ public abstract class LaunchProtoData : JavaExec() {
     }
 
     internal fun setPreLaunchCleanup() {
-        doFirst(CleanAction())
+        doFirst(CleanTargetDirs())
     }
 
     /**
      * Cleans the target directory to prepare it for ProtoData.
      */
-    private inner class CleanAction : Action<Task> {
+    private inner class CleanTargetDirs : Action<Task> {
 
         override fun execute(t: Task) {
             val sourceDirs = sources.absoluteDirs()
@@ -166,10 +166,13 @@ public abstract class LaunchProtoData : JavaExec() {
             sourceDirs.asSequence()
                 .zip(targetDirs.asSequence())
                 .filter { (s, t) ->
+                    // Do not clean directories if we are overwriting files in
+                    // the directories created by `protoc`.
+                    // Such a mode is deprecated currently, but we may revisit this later.
                     !FileUtil.filesEqual(s, t) /* Honor case-sensitivity under macOS. */
                 }
                 .map { it.second }
-                .filter { it.exists() && it.list()!!.isNotEmpty() }
+                .filter { it.exists() && it.list()?.isNotEmpty() ?: false }
                 .forEach {
                     logger.info { "Cleaning target directory `$it`." }
                     project.delete(it)
@@ -204,6 +207,14 @@ internal fun LaunchProtoData.applyDefaults(
     onlyIf {
         hasRequestFile(sourceSet)
     }
+    setDependencies(sourceSet, settingsDirTask)
+}
+
+private fun LaunchProtoData.setDependencies(
+    sourceSet: SourceSet,
+    settingsDirTask: CreateSettingsDirectory
+) {
+    val project = project
     dependsOn(
         settingsDirTask,
         project.protoDataRawArtifact.buildDependencies,
@@ -213,14 +224,6 @@ internal fun LaunchProtoData.applyDefaults(
     project.javaCompileFor(sourceSet)?.dependsOn(launchTask)
     project.kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
 }
-
-private fun Provider<List<Directory>>.absoluteDirs() = takeIf { it.isPresent }
-    ?.get()
-    ?.map { it.asFile.absoluteFile }
-    ?: listOf()
-
-private fun Provider<List<Directory>>.absolutePaths(): String =
-    absoluteDirs().joinToString(pathSeparator)
 
 /**
  * Tells if the request file for this task exists.
@@ -246,3 +249,10 @@ private val Project.protoDataRawArtifact: Configuration
 private val Project.userClasspath: Configuration
     get() = configurations.getByName(USER_CLASSPATH_CONFIGURATION)
 
+private fun Provider<List<Directory>>.absoluteDirs() = takeIf { it.isPresent }
+    ?.get()
+    ?.map { it.asFile.absoluteFile }
+    ?: listOf()
+
+private fun Provider<List<Directory>>.absolutePaths(): String =
+    absoluteDirs().joinToString(pathSeparator)

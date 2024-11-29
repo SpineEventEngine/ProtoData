@@ -30,12 +30,19 @@ import com.google.common.collect.ImmutableList
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
+import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import java.io.File
 import java.nio.file.Path
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+
+/**
+ * Obtains the root directory into which Protobuf Gradle Plugin assigns the `protoc` output.
+ */
+internal val Project.protocOutputDir: File
+    get() = generatedSourceProtoDir.toFile()
 
 /**
  * Obtains the name of the directory where ProtoData places generated files.
