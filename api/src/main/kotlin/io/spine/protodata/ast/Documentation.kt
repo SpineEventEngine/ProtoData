@@ -26,25 +26,17 @@
 
 package io.spine.protodata.ast
 
-import com.google.protobuf.DescriptorProtos.DescriptorProto
-import com.google.protobuf.DescriptorProtos.DescriptorProto.FIELD_FIELD_NUMBER
-import com.google.protobuf.DescriptorProtos.DescriptorProto.NESTED_TYPE_FIELD_NUMBER
-import com.google.protobuf.DescriptorProtos.DescriptorProto.ONEOF_DECL_FIELD_NUMBER
-import com.google.protobuf.DescriptorProtos.EnumDescriptorProto.VALUE_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
-import com.google.protobuf.DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER
-import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
-import com.google.protobuf.Descriptors
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.string.trimWhitespace
-import io.spine.util.interlaced
 
 /**
  * Documentation contained in a Protobuf file.
@@ -63,7 +55,7 @@ public class Documentation private constructor(locations: List<Location>) {
     /**
      * Creates an instance of `Documentation` with all the docs from the given file.
      */
-    public constructor(file: Descriptors.FileDescriptor) : this(file.toProto())
+    public constructor(file: FileDescriptor) : this(file.toProto())
 
     /**
      * Obtains documentation for the given message.
@@ -133,124 +125,3 @@ public class Documentation private constructor(locations: List<Location>) {
 
 private fun Iterable<String>.trimWhitespace(): List<String> =
     map { it.trimWhitespace() }
-
-private val Descriptor.isTopLevel: Boolean
-    get() = containingType == null
-
-private val EnumDescriptor.isTopLevel: Boolean
-    get() = containingType == null
-
-/**
- * A numerical path to a location is source code.
- *
- * Used by the Protobuf compiler as a coordinate system for arbitrary Protobuf declarations.
- *
- * See `google.protobuf.SourceCodeInfo.Location.path` for the explanation of the protocol.
- */
-@JvmInline
-private value class LocationPath
-private constructor(private val value: List<Int>) {
-
-    companion object {
-
-        /**
-         * Obtains the `LocationPath` from the Protobuf's `Location`.
-         */
-        fun from(location: Location): LocationPath {
-            return LocationPath(location.pathList)
-        }
-
-        /**
-         * Obtains the `LocationPath` from the given message.
-         */
-        fun fromMessage(descriptor: Descriptor): LocationPath {
-            val numbers = mutableListOf<Int>()
-            numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
-            if (!descriptor.isTopLevel) {
-                numbers.addAll(upToTop(descriptor.containingType))
-                numbers.add(NESTED_TYPE_FIELD_NUMBER)
-            }
-            numbers.add(descriptor.index)
-            return LocationPath(numbers)
-        }
-
-        /**
-         * Obtains the `LocationPath` from the given enum.
-         */
-        fun fromEnum(descriptor: EnumDescriptor): LocationPath {
-            val numbers = mutableListOf<Int>()
-            if (descriptor.isTopLevel) {
-                numbers.add(FileDescriptorProto.ENUM_TYPE_FIELD_NUMBER)
-            } else {
-                numbers.add(MESSAGE_TYPE_FIELD_NUMBER)
-                numbers.addAll(upToTop(descriptor.containingType))
-                numbers.add(DescriptorProto.ENUM_TYPE_FIELD_NUMBER)
-            }
-            numbers.add(descriptor.index)
-            return LocationPath(numbers)
-        }
-
-        /**
-         * Obtains the `LocationPath` from the given service.
-         */
-        fun fromService(descriptor: ServiceDescriptor): LocationPath {
-            return LocationPath(
-                listOf(
-                    FileDescriptorProto.SERVICE_FIELD_NUMBER,
-                    descriptor.index
-                )
-            )
-        }
-
-        private fun upToTop(parent: Descriptor): List<Int> {
-            val rootPath = mutableListOf<Int>()
-            var containingType: Descriptor? = parent
-            while (containingType != null) {
-                rootPath.add(containingType.index)
-                containingType = containingType.containingType
-            }
-            return rootPath.interlaced(NESTED_TYPE_FIELD_NUMBER)
-                .toList()
-                .reversed()
-        }
-    }
-
-    /**
-     * Obtains the `LocationPath` to the given field.
-     *
-     * It's expected that the field belongs to the message located at this location path.
-     */
-    fun field(field: FieldDescriptor): LocationPath =
-        subDeclaration(FIELD_FIELD_NUMBER, field.index)
-
-    /**
-     * Obtains the `LocationPath` to the given `oneof` group.
-     *
-     * It's expected that the group is declared in the message located at this location path.
-     */
-    fun oneof(group: OneofDescriptor): LocationPath =
-        subDeclaration(ONEOF_DECL_FIELD_NUMBER, group.index)
-
-    /**
-     * Obtains the `LocationPath` to the given enum constant.
-     *
-     * It's expected that the constant belongs to the enum located at this location path.
-     */
-    fun constant(constant: EnumValueDescriptor): LocationPath =
-        subDeclaration(VALUE_FIELD_NUMBER, constant.index)
-
-    /**
-     * Obtains the `LocationPath` to the given RPC.
-     *
-     * It's expected that the RPC belongs to the service located at this location path.
-     */
-    fun rpc(rpc: MethodDescriptor): LocationPath =
-        subDeclaration(METHOD_FIELD_NUMBER, rpc.index)
-
-    override fun toString(): String {
-        return "LocationPath(${value.joinToString()})"
-    }
-
-    private fun subDeclaration(descriptorFieldNumber: Int, index: Int): LocationPath =
-        LocationPath(value + arrayOf(descriptorFieldNumber, index))
-}
