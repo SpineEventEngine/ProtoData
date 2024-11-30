@@ -47,7 +47,6 @@ dependencies {
 
 configurations.all {
     if(name.endsWith("ProtoPath")) {
-        System.err.println(" --- Configuring `$name` with `${Spine.baseForBuildScript}`. ---")
         resolutionStrategy.force(
             Spine.baseForBuildScript
         )
