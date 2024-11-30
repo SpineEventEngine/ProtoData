@@ -24,29 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.protobuf
+package io.spine.protodata.ast
 
-import com.google.protobuf.Descriptors.OneofDescriptor
-import io.spine.protodata.ast.OneofGroup
-import io.spine.protodata.ast.OneofName
-import io.spine.protodata.ast.documentation
-import io.spine.protodata.ast.oneofGroup
-import io.spine.protodata.ast.oneofName
-import io.spine.protodata.ast.toList
+import com.google.protobuf.DescriptorProtos.FileDescriptorProto
+import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
 
 /**
- * Obtains the name of this `oneof` as a [OneofName].
+ * Provides locations in a Protobuf file.
  */
-public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
+public abstract class Locations protected constructor(locations: List<Location>)  {
 
-/**
- * Converts this `oneof` descriptor to [OneofGroup].
- */
-public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
-    oneofGroup {
-        val groupName = name()
-        name = groupName
-        field.addAll(fields.mapped())
-        option.addAll(options.toList())
-        doc = documentation().forOneof(this@toOneOfGroup)
-    }
+    private val map: Map<LocationPath, Location> = locations.associateBy(
+        LocationPath.Companion::from
+    )
+
+    /**
+     * Creates an instance with locations from the given file.
+     */
+    protected constructor(file: FileDescriptorProto) : this(file.sourceCodeInfo.locationList)
+
+    /**
+     * Obtains a location for the given path.
+     *
+     * @return The location or [Location.getDefaultInstance] if there is no location with
+     *   the given path.
+     */
+    internal fun locationAt(path: LocationPath): Location =
+        map[path] ?: Location.getDefaultInstance()
+}

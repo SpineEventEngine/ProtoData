@@ -29,21 +29,15 @@ package io.spine.protodata.protobuf
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FileDescriptor
-import com.google.protobuf.Descriptors.GenericDescriptor
-import io.spine.protodata.ast.Documentation
 import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.MessageType
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.documentation
+import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.messageType
 import io.spine.protodata.ast.toList
 import io.spine.protodata.ast.type
-
-/**
- * Obtains documentation of this [GenericDescriptor].
- */
-internal val GenericDescriptor.fileDoc: Documentation
-    get() = Documentation(file)
 
 /**
  * Obtains the name of this message type as a [TypeName].
@@ -57,7 +51,9 @@ public fun Descriptor.toMessageType(): MessageType =
     messageType {
         name = name()
         file = getFile().file()
-        doc = fileDoc.forMessage(this@toMessageType)
+        val self = this@toMessageType
+        doc = documentation().forMessage(self)
+        span = coordinates().forMessage(self)
         option.addAll(options.toList())
         if (containingType != null) {
             declaredIn = containingType.name()

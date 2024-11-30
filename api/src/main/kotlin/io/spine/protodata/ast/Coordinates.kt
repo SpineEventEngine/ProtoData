@@ -27,6 +27,7 @@
 package io.spine.protodata.ast
 
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
+import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
@@ -36,90 +37,106 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
-import io.spine.string.trimWhitespace
 
 /**
- * Documentation contained in a Protobuf file.
+ * Provides line and column numbers for declarations in a Protobuf file.
  */
-public class Documentation(file: FileDescriptorProto) : Locations(file) {
+public class Coordinates(file: FileDescriptorProto) : Locations(file) {
 
     /**
-     * Creates an instance of `Documentation` with all the docs from the given file.
+     * Creates an instance with coordinates of declarations in the given file.
      */
     public constructor(file: FileDescriptor) : this(file.toProto())
 
     /**
-     * Obtains documentation for the given message.
+     * Obtains declaration coordinates the given message.
      */
-    public fun forMessage(d: Descriptor): Doc {
+    public fun forMessage(d: Descriptor): Span {
         val path = LocationPath.fromMessage(d)
-        return commentsAt(path)
+        return spanAt(path)
     }
 
     /**
-     * Obtains documentation for the given message field.
+     * Obtains declaration coordinates the given message.
      */
-    public fun forField(d: FieldDescriptor): Doc {
+    public fun forField(d: FieldDescriptor): Span {
         val path = LocationPath.fromMessage(d.containingType).field(d)
-        return commentsAt(path)
+        return spanAt(path)
     }
 
     /**
-     * Obtains documentation for the given `oneof` group.
+     * Obtains declaration coordinates for the given `oneof` group.
      */
-    public fun forOneof(d: OneofDescriptor): Doc {
+    public fun forOneof(d: OneofDescriptor): Span {
         val path = LocationPath.fromMessage(d.containingType).oneof(d)
-        return commentsAt(path)
+        return spanAt(path)
     }
 
     /**
-     * Obtains documentation for the given enum type.
+     * Obtains declaration coordinates for the given enum type.
      */
-    public fun forEnum(d: EnumDescriptor): Doc {
+    public fun forEnum(d: EnumDescriptor): Span {
         val path = LocationPath.fromEnum(d)
-        return commentsAt(path)
+        return spanAt(path)
     }
 
     /**
-     * Obtains documentation for the given enum constant.
+     * Obtains declaration coordinates for the given enum constant.
      */
-    public fun forEnumConstant(d: EnumValueDescriptor): Doc {
+    public fun forEnumConstant(d: EnumValueDescriptor): Span {
         val path = LocationPath.fromEnum(d.type).constant(d)
-        return commentsAt(path)
+        return spanAt(path)
     }
 
     /**
-     * Obtains documentation for the given service.
+     * Obtains declaration coordinates for the given service.
      */
-    public fun forService(d: ServiceDescriptor): Doc {
+    public fun forService(d: ServiceDescriptor): Span {
         val path = LocationPath.fromService(d)
-        return commentsAt(path)
+        return spanAt(path)
     }
 
     /**
-     * Obtains documentation for the given RPC method.
+     * Obtains declaration coordinates for the given RPC method.
      */
-    public fun forRpc(d: MethodDescriptor): Doc {
+    public fun forRpc(d: MethodDescriptor): Span {
         val path = LocationPath.fromService(d.service).rpc(d)
-        return commentsAt(path)
+        return spanAt(path)
     }
 
-    private fun commentsAt(path: LocationPath): Doc {
+    private fun spanAt(path: LocationPath): Span {
         val location = locationAt(path)
-        return doc {
-            leadingComment = location.leadingComments.trimWhitespace()
-            trailingComment = location.trailingComments.trimWhitespace()
-            detachedComment.addAll(location.leadingDetachedCommentsList.trimWhitespace())
-        }
+        return location.toSpan()
     }
 }
 
-private fun Iterable<String>.trimWhitespace(): List<String> =
-    map { it.trimWhitespace() }
+/**
+ * Converts the [Location.span][Location.getSpanList] field into [Span].
+ *
+ * See the documentation of the `Location.span` field for details.
+ */
+private fun Location.toSpan(): Span {
+    if (this == Location.getDefaultInstance()) {
+        return Span.getDefaultInstance()
+    }
+    // Convert the value of the `span` field into four-elements array.
+    val slots =
+        if (spanCount == 3)
+            arrayOf(getSpan(0), getSpan(1), getSpan(0), getSpan(2))
+        else
+            arrayOf(getSpan(0), getSpan(1), getSpan(2), getSpan(3))
+    // Add 1 to make the coordinates 1-based.
+    return span {
+        startLine = slots[0] + 1
+        startColumn = slots[1] + 1
+        endLine = slots[2] + 1
+        endColumn = slots[3] + 1
+    }
+}
 
 /**
- * Obtains documentation for the file of this [GenericDescriptor].
+ * Obtains coordinates for the file this [GenericDescriptor].
  */
-internal fun GenericDescriptor.documentation(): Documentation = Documentation(file)
+internal fun GenericDescriptor.coordinates(): Coordinates = Coordinates(file)
 
-//TODO:2024-11-30:alexander.yevsyukov: Cache the above construction.
+//TODO:2024-11-30:alexander.yevsyukov: Cache this.

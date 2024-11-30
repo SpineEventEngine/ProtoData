@@ -125,6 +125,9 @@ message MessageType {
 
     // Documentation of this type.
     Doc doc = 9;
+
+    // Coordinates of the declaration.
+    Span span = 10;
 }
 
 // A Protobuf enum type.
@@ -154,6 +157,9 @@ message EnumType {
 
     // Documentation of this type.
     Doc doc = 6;
+
+    // Coordinates of the declaration.
+    Span span = 7;
 }
 
 // A name of an enum constant.
@@ -189,6 +195,9 @@ message EnumConstant {
 
     // Documentation of this constant.
     Doc doc = 7;
+
+    // Coordinates of the declaration.
+    Span span = 8;
 }
 
 // A primitive Protobuf type.
@@ -336,6 +345,9 @@ message Field {
 
     // Documentation of this field.
     Doc doc = 8;
+
+    // Coordinates of the declaration.
+    Span span = 9;
 }
 
 // Name of a group of fields.
@@ -503,7 +515,7 @@ message Doc {
     //
     string leading_comment = 1;
 
-    // The comment placed beneath above the declaration without any empty lines.
+    // The comment placed beneath the declaration without any empty lines.
     string trailing_comment = 2;
 
     // Comments placed above the declaration separated by at least
@@ -513,4 +525,27 @@ message Doc {
     // but rather to its context.
     //
     repeated string detached_comment = 3;
+}
+
+// The location span of a Protobuf declaration.
+//
+// Values of the fields are 1-based.
+// Zero values mean that the location is unknown.
+//
+message Span {
+
+    // The line where the declaration is started.
+    int32 start_line = 1;
+
+    // The column where the declaration is started.
+    int32 start_column = 2;
+
+    // The line where the declaration ends.
+    //
+    // Contains the same value as `start_line` for one line declarations.
+    //
+    int32 end_line = 3;
+
+    // The column where the declaration ends.
+    int32 end_column = 4;
 }

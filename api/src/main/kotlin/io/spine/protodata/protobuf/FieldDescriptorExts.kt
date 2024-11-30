@@ -68,6 +68,7 @@ import io.spine.protodata.ast.PrimitiveType.TYPE_UINT64
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.copy
+import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
 import io.spine.protodata.ast.fieldType
@@ -110,7 +111,7 @@ public fun buildField(desc: FieldDescriptor): Field =
         val declaredIn = desc.containingType.name()
         name = desc.name()
         orderOfDeclaration = desc.index
-        doc = desc.fileDoc.forField(desc)
+        doc = desc.documentation().forField(desc)
         number = desc.number
         declaringType = declaredIn
 

@@ -29,6 +29,7 @@ package io.spine.protodata.protobuf
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.protodata.ast.Service
 import io.spine.protodata.ast.ServiceName
+import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.service
 import io.spine.protodata.ast.serviceName
 import io.spine.protodata.ast.toList
@@ -47,11 +48,10 @@ public fun ServiceDescriptor.name(): ServiceName = serviceName {
  */
 public fun ServiceDescriptor.toService(): Service =
     service {
-        val docs = fileDoc
         val serviceName = name()
         name = serviceName
         file = getFile().file()
         rpc.addAll(methods.map { it.toRpc(serviceName) })
         option.addAll(options.toList())
-        doc = docs.forService(this@toService)
+        doc = documentation().forService(this@toService)
     }

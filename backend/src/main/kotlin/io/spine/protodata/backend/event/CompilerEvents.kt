@@ -103,10 +103,12 @@ private class ProtoFileEvents(
         fileDescriptor.messageTypes.forEach {
             messageEvents.apply { produceMessageEvents(it) }
         }
+        //TODO:2024-11-30:alexander.yevsyukov: Where's documentation?
         val enumEvents = EnumCompilerEvents(header)
         fileDescriptor.enumTypes.forEach {
             enumEvents.apply { produceEnumEvents(it) }
         }
+        //TODO:2024-11-30:alexander.yevsyukov: Where's documentation?
         val serviceEvents = ServiceCompilerEvents(header)
         fileDescriptor.services.forEach {
             serviceEvents.apply { produceServiceEvents(it) }
