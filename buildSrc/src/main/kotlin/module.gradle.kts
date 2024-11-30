@@ -55,7 +55,6 @@ plugins {
 
 apply {
     plugin(Dokka.GradlePlugin.id)
-    plugin(Protobuf.GradlePlugin.id)
 }
 
 apply<IncrementGuard>()
