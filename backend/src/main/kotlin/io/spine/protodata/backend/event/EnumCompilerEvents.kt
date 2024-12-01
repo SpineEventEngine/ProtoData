@@ -31,10 +31,6 @@ import com.google.protobuf.Descriptors.EnumValueDescriptor
 import io.spine.base.EventMessage
 import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.ast.constantName
-import io.spine.protodata.ast.event.EnumConstantEntered
-import io.spine.protodata.ast.event.EnumConstantExited
-import io.spine.protodata.ast.event.EnumEntered
-import io.spine.protodata.ast.event.EnumExited
 import io.spine.protodata.ast.event.enumConstantEntered
 import io.spine.protodata.ast.event.enumConstantExited
 import io.spine.protodata.ast.event.enumConstantOptionDiscovered
@@ -57,12 +53,12 @@ internal class EnumCompilerEvents(
     /**
      * Yields compiler events for the given enum type.
      *
-     * Opens with an [EnumEntered] event.
+     * Opens with an [EnumEntered][io.spine.protodata.ast.event.EnumEntered] event.
      * Then the events regarding the type metadata go.
      * Then go the events regarding the enum constants.
-     * At last, closes with an [EnumExited] event.
+     * At last, closes with an [EnumExited][io.spine.protodata.ast.event.EnumExited] event.
      */
-    internal suspend fun SequenceScope<EventMessage>.produceEnumEvents(
+    internal suspend fun SequenceScope<EventMessage>.produceEvents(
         desc: EnumDescriptor
     ) {
         val enumType = desc.toEnumType()
@@ -101,9 +97,10 @@ internal class EnumCompilerEvents(
     /**
      * Yields compiler events for the given enum constant.
      *
-     * Opens with an [EnumConstantEntered] event.
+     * Opens with an [EnumConstantEntered][io.spine.protodata.ast.event.EnumConstantEntered] event.
      * Then go the events regarding the constant options.
-     * At last, closes with an [EnumConstantExited] event.
+     * At last, closes with an
+     * [EnumConstantExited][io.spine.protodata.ast.event.EnumConstantExited] event.
      */
     private suspend fun SequenceScope<EventMessage>.produceConstantEvents(
         desc: EnumValueDescriptor

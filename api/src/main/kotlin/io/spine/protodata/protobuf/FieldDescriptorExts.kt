@@ -67,6 +67,7 @@ import io.spine.protodata.ast.PrimitiveType.TYPE_UINT32
 import io.spine.protodata.ast.PrimitiveType.TYPE_UINT64
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
+import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.field
@@ -110,16 +111,16 @@ public fun buildField(desc: FieldDescriptor): Field =
     field {
         val declaredIn = desc.containingType.name()
         name = desc.name()
-        orderOfDeclaration = desc.index
-        doc = desc.documentation().forField(desc)
-        number = desc.number
-        declaringType = declaredIn
-
         // New `FieldType` and `group_name` API.
         type = desc.toFieldType()
+        declaringType = declaredIn
+        number = desc.number
+        orderOfDeclaration = desc.index
         desc.realContainingOneof?.let {
             enclosingOneof = it.name()
         }
+        doc = desc.documentation().forField(desc)
+        span = desc.coordinates().forField(desc)
     }
 
 /**

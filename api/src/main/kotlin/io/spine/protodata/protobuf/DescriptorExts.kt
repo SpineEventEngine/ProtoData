@@ -52,8 +52,6 @@ public fun Descriptor.toMessageType(): MessageType =
         name = name()
         file = getFile().file()
         val self = this@toMessageType
-        doc = documentation().forMessage(self)
-        span = coordinates().forMessage(self)
         option.addAll(options.toList())
         if (containingType != null) {
             declaredIn = containingType.name()
@@ -62,6 +60,8 @@ public fun Descriptor.toMessageType(): MessageType =
         field.addAll(fields.mapped())
         nestedMessages.addAll(nestedTypes.map { it.name() })
         nestedEnums.addAll(enumTypes.map { it.name() })
+        doc = documentation().forMessage(self)
+        span = coordinates().forMessage(self)
     }
 
 /**

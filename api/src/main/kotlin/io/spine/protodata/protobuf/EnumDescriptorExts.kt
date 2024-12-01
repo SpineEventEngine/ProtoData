@@ -34,6 +34,7 @@ import io.spine.protodata.ast.EnumType
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.constantName
+import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.enumType
@@ -62,6 +63,7 @@ public fun EnumDescriptor.toEnumType(): EnumType =
             declaredIn = containingType.name()
         }
         doc = documentation().forEnum(this@toEnumType)
+        span = coordinates().forEnum(this@toEnumType)
     }
 
 /**
@@ -99,4 +101,5 @@ public fun buildConstant(desc: EnumValueDescriptor, declaringType: TypeName): En
         number = desc.number
         orderOfDeclaration = desc.index
         doc = desc.documentation().forEnumConstant(desc)
+        span = desc.coordinates().forEnumConstant(desc)
     }

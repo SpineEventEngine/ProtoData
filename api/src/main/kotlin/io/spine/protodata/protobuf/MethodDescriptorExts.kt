@@ -35,6 +35,7 @@ import io.spine.protodata.ast.CallCardinality.UNARY
 import io.spine.protodata.ast.Rpc
 import io.spine.protodata.ast.RpcName
 import io.spine.protodata.ast.ServiceName
+import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.rpc
@@ -87,6 +88,7 @@ public fun buildRpc(
     cardinality = desc.cardinality
     requestType = desc.inputType.name()
     responseType = desc.outputType.name()
-    doc = desc.documentation().forRpc(desc)
     service = declaringService
+    doc = desc.documentation().forRpc(desc)
+    span = desc.coordinates().forRpc(desc)
 }

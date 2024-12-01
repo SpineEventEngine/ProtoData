@@ -29,6 +29,7 @@ package io.spine.protodata.protobuf
 import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.protodata.ast.OneofGroup
 import io.spine.protodata.ast.OneofName
+import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.oneofGroup
 import io.spine.protodata.ast.oneofName
@@ -49,4 +50,5 @@ public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
         field.addAll(fields.mapped())
         option.addAll(options.toList())
         doc = documentation().forOneof(this@toOneOfGroup)
+        span = coordinates().forOneof(this@toOneOfGroup)
     }

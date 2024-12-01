@@ -29,6 +29,7 @@ package io.spine.protodata.protobuf
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.protodata.ast.Service
 import io.spine.protodata.ast.ServiceName
+import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.service
 import io.spine.protodata.ast.serviceName
@@ -54,4 +55,5 @@ public fun ServiceDescriptor.toService(): Service =
         rpc.addAll(methods.map { it.toRpc(serviceName) })
         option.addAll(options.toList())
         doc = documentation().forService(this@toService)
+        span = coordinates().forService(this@toService)
     }
