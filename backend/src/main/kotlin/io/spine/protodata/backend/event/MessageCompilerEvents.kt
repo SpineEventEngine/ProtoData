@@ -30,7 +30,6 @@ import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.ast.Coordinates
 import io.spine.protodata.ast.Documentation
 import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.ast.event.FieldEntered

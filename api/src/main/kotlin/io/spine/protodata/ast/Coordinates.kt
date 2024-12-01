@@ -37,16 +37,12 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
+import io.spine.protodata.util.Cache
 
 /**
  * Provides line and column numbers for declarations in a Protobuf file.
  */
-public class Coordinates(file: FileDescriptorProto) : Locations(file) {
-
-    /**
-     * Creates an instance with coordinates of declarations in the given file.
-     */
-    public constructor(file: FileDescriptor) : this(file.toProto())
+public class Coordinates private constructor(file: FileDescriptorProto) : Locations(file) {
 
     /**
      * Obtains declaration coordinates the given message.
@@ -108,6 +104,23 @@ public class Coordinates(file: FileDescriptorProto) : Locations(file) {
         val location = locationAt(path)
         return location.toSpan()
     }
+
+    public companion object : Cache<FileDescriptorProto, Coordinates>() {
+
+        override fun create(key: FileDescriptorProto, param: Any?): Coordinates = Coordinates(key)
+
+        /**
+         * Obtains coordinates for the given file.
+         */
+        @JvmStatic
+        public fun of(file: FileDescriptor): Coordinates = get(file.toProto(), null)
+
+        /**
+         * Obtains coordinates for the given file.
+         */
+        @JvmStatic
+        public fun of(file: FileDescriptorProto): Coordinates = get(file, null)
+    }
 }
 
 /**
@@ -137,6 +150,4 @@ private fun Location.toSpan(): Span {
 /**
  * Obtains coordinates for the file this [GenericDescriptor].
  */
-internal fun GenericDescriptor.coordinates(): Coordinates = Coordinates(file)
-
-//TODO:2024-11-30:alexander.yevsyukov: Cache this.
+internal fun GenericDescriptor.coordinates(): Coordinates = Coordinates.of(file)

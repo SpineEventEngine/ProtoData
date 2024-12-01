@@ -36,17 +36,13 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
+import io.spine.protodata.util.Cache
 import io.spine.string.trimWhitespace
 
 /**
  * Documentation contained in a Protobuf file.
  */
-public class Documentation(file: FileDescriptorProto) : Locations(file) {
-
-    /**
-     * Creates an instance of `Documentation` with all the docs from the given file.
-     */
-    public constructor(file: FileDescriptor) : this(file.toProto())
+public class Documentation private constructor(file: FileDescriptorProto) : Locations(file) {
 
     /**
      * Obtains documentation for the given message.
@@ -112,6 +108,24 @@ public class Documentation(file: FileDescriptorProto) : Locations(file) {
             detachedComment.addAll(location.leadingDetachedCommentsList.trimWhitespace())
         }
     }
+
+    public companion object : Cache<FileDescriptorProto, Documentation>() {
+
+        override fun create(key: FileDescriptorProto, param: Any?): Documentation =
+            Documentation(key)
+
+        /**
+         * Obtains documentation for the given file.
+         */
+        @JvmStatic
+        public fun of(file: FileDescriptor): Documentation = get(file.toProto())
+
+        /**
+         * Obtains documentation for the given file.
+         */
+        @JvmStatic
+        public fun of(file: FileDescriptorProto): Documentation = get(file)
+    }
 }
 
 private fun Iterable<String>.trimWhitespace(): List<String> =
@@ -120,6 +134,4 @@ private fun Iterable<String>.trimWhitespace(): List<String> =
 /**
  * Obtains documentation for the file of this [GenericDescriptor].
  */
-internal fun GenericDescriptor.documentation(): Documentation = Documentation(file)
-
-//TODO:2024-11-30:alexander.yevsyukov: Cache the above construction.
+internal fun GenericDescriptor.documentation(): Documentation = Documentation.of(file)

@@ -31,6 +31,8 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.code.proto.FileSet
 import io.spine.environment.DefaultMode
+import io.spine.protodata.ast.Coordinates
+import io.spine.protodata.ast.Documentation
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.plugin.Plugin
@@ -129,10 +131,21 @@ public class Pipeline(
      * should be single-threaded.
      */
     public operator fun invoke() {
-        // Clear the cache of previously parsed files to avoid repeated code generation
-        // when running from tests.
-        SourceFile.clearCache()
+        clearCaches()
         emitEventsAndRenderSources()
+    }
+
+    /**
+     * Clears the static caches that could have been created by previous runs, e.g., when
+     * running from tests.
+     *
+     * Clears the caches of previously parsed files to avoid repeated code generation.
+     * Also, clears the caches of [Documentation] and [Coordinates] classes.
+     */
+    private fun clearCaches() {
+        SourceFile.clearCache()
+        Documentation.clearCache()
+        Coordinates.clearCache()
     }
 
     private fun emitEventsAndRenderSources() {

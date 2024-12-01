@@ -76,13 +76,15 @@ private class ProtoFileEvents(
     private val fileDescriptor: FileDescriptor
 ) {
     private val header = fileDescriptor.toHeader()
-    private val documentation = Documentation(fileDescriptor)
+    private val documentation = Documentation.of(fileDescriptor)
 
     /**
      * Yields compiler events for the given file.
      *
-     * Opens with an [FileEntered] event. Then go the events regarding the file metadata. Then go
-     * the events regarding the file contents. At last, closes with an [FileExited] event.
+     * Opens with an [FileEntered] event.
+     * Then go the events regarding the file metadata.
+     * Then go the events regarding the file contents.
+     * At last, closes with an [FileExited] event.
      */
     suspend fun SequenceScope<EventMessage>.produceFileEvents() {
         yield(
