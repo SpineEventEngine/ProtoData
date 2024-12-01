@@ -27,7 +27,14 @@
 package io.spine.protodata.ast
 
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
+import io.spine.protodata.ast.given.Driver
+import io.spine.protodata.ast.given.Tractor
+import io.spine.protodata.protobuf.toMessageType
+import io.spine.type.KnownTypes
+import io.spine.type.TypeUrl
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -74,6 +81,33 @@ internal class FieldExtsSpec {
                 .buildPartial()
 
             field.isRepeated shouldBe false
+        }
+    }
+
+    @Test
+    fun `add field documentation`() {
+        val typeUrl = TypeUrl.of(Tractor::class.java)
+        val mt = typeUrl.toTypeName().messageDescriptor()
+        val field = mt.toMessageType().field("driver")
+        val doc = field.doc
+        doc.run {
+            leadingComment shouldContain "This is the leading comment"
+            trailingComment shouldContain "This is the trailing comment"
+            detachedCommentList.find { it.contains("detached comment") } shouldNotBe null
+        }
+    }
+
+    @Test
+    fun `add field coordinates`() {
+        val typeUrl = TypeUrl.of(Driver::class.java)
+        val mt = typeUrl.toTypeName().messageDescriptor()
+        val field = mt.toMessageType().field("license_number")
+        val span = field.span
+        span.run {
+            startLine shouldBe 69
+            startColumn shouldBe 5
+            endLine shouldBe 69
+            endColumn shouldBe 51
         }
     }
 }

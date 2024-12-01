@@ -45,6 +45,8 @@ message Tractor {
         visibility: FULL
     };
 
+    // A detached comment above the `driver` field.
+
     // The driver of the tractor. This is the leading comment.
     Driver driver = 1 [
         // A tractor may not have a driver, but if it has, it must be valid.
@@ -53,7 +55,6 @@ message Tractor {
     ];
     // This is the trailing comment for the `driver` field.
 
-    // A detached comment above the `plow` field.
 
     // This is the leading comment for the field.
     Plow plow = 2 [ /* A one-line option comment. */ (validate) = true];
