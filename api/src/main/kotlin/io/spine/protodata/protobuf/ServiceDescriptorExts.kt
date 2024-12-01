@@ -52,8 +52,8 @@ public fun ServiceDescriptor.toService(): Service =
         val serviceName = name()
         name = serviceName
         file = getFile().file()
-        rpc.addAll(methods.map { it.toRpc(serviceName) })
         option.addAll(options.toList())
+        rpc.addAll(methods.map { it.toRpc(serviceName) })
         doc = documentation().forService(this@toService)
         span = coordinates().forService(this@toService)
     }

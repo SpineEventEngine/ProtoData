@@ -84,13 +84,13 @@ message MessageType {
     TypeName name = 1 [(required) = true];
 
     // Path to the file which declares this type.
-    File file = 5 [(required) = true];
+    File file = 2 [(required) = true];
 
     // Name of the message type which hosts the declaration of this type.
     //
     // This field is empty for the top level message type.
     //
-    TypeName declared_in = 6;
+    TypeName declared_in = 3;
 
     // Message-level options.
     repeated Option option = 4 [(distinct) = true];
@@ -101,13 +101,13 @@ message MessageType {
     //
     // The fields are ordered by their order of declaration in the message.
     //
-    repeated Field field = 2;
+    repeated Field field = 5;
 
     // The field groups defined in this type.
     //
     // The `oneof`s are ordered by their order of declaration in the message.
     //
-    repeated OneofGroup oneof_group = 3 [(distinct) = true];
+    repeated OneofGroup oneof_group = 6 [(distinct) = true];
 
     // Message type declarations nested inside this type.
     //
@@ -407,14 +407,14 @@ message Service {
     // Path to the file which declares this service.
     File file = 2;
 
+    // Service-level options.
+    repeated Option option = 3 [(distinct) = true];
+
     // The remote procedure call methods exposed by this service.
     //
     // The methods are ordered by their order of declaration in the service.
     //
-    repeated Rpc rpc = 3 [(distinct) = true];
-
-    // Service-level options.
-    repeated Option option = 4 [(distinct) = true];
+    repeated Rpc rpc = 4 [(distinct) = true];
 
     // Documentation of this service.
     Doc doc = 5;
