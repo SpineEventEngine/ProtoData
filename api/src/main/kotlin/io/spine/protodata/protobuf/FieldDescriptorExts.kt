@@ -109,7 +109,8 @@ public fun FieldDescriptor.toField(): Field {
  */
 public fun buildField(desc: FieldDescriptor): Field =
     field {
-        val declaredIn = desc.containingType.name()
+        val messageType = desc.containingType
+        val declaredIn = messageType.name()
         name = desc.name()
         // New `FieldType` and `group_name` API.
         type = desc.toFieldType()
@@ -119,8 +120,8 @@ public fun buildField(desc: FieldDescriptor): Field =
         desc.realContainingOneof?.let {
             enclosingOneof = it.name()
         }
-        doc = desc.documentation().forField(desc)
-        span = desc.coordinates().forField(desc)
+        doc = messageType.documentation().forField(desc)
+        span = messageType.coordinates().forField(desc)
     }
 
 /**

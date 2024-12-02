@@ -37,6 +37,7 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
+import io.spine.protodata.protobuf.fromResources
 import io.spine.protodata.util.Cache
 
 /**
@@ -150,4 +151,7 @@ private fun Location.toSpan(): Span {
 /**
  * Obtains coordinates for the file this [GenericDescriptor].
  */
-internal fun GenericDescriptor.coordinates(): Coordinates = Coordinates.of(file)
+internal fun GenericDescriptor.coordinates(): Coordinates {
+    val fromResources = fromResources()
+    return Coordinates.of(fromResources.file)
+}

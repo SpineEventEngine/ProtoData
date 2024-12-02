@@ -65,7 +65,7 @@ public fun Descriptor.toMessageType(): MessageType =
     }
 
 /**
- * Converts the `Descriptor` into [Type] instance with the [message][Type.getMessage]
+ * Converts the `Descriptor` into [Type] instance with the [message][Type.message]
  * property initialized.
  */
 public fun Descriptor.toType(): Type = type {

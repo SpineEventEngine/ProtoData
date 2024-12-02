@@ -33,8 +33,6 @@ import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
 import io.spine.protodata.ast.given.Driver
 import io.spine.protodata.ast.given.Tractor
 import io.spine.protodata.protobuf.toMessageType
-import io.spine.type.KnownTypes
-import io.spine.type.TypeUrl
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -86,9 +84,7 @@ internal class FieldExtsSpec {
 
     @Test
     fun `add field documentation`() {
-        val typeUrl = TypeUrl.of(Tractor::class.java)
-        val mt = typeUrl.toTypeName().messageDescriptor()
-        val field = mt.toMessageType().field("driver")
+        val field = Tractor.getDescriptor().toMessageType().field("driver")
         val doc = field.doc
         doc.run {
             leadingComment shouldContain "This is the leading comment"
@@ -99,9 +95,7 @@ internal class FieldExtsSpec {
 
     @Test
     fun `add field coordinates`() {
-        val typeUrl = TypeUrl.of(Driver::class.java)
-        val mt = typeUrl.toTypeName().messageDescriptor()
-        val field = mt.toMessageType().field("license_number")
+        val field = Driver.getDescriptor().toMessageType().field("license_number")
         val span = field.span
         span.run {
             startLine shouldBe 69
