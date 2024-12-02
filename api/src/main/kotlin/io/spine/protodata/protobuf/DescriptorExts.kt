@@ -52,14 +52,14 @@ public fun Descriptor.name(): TypeName = buildTypeName(name, file, containingTyp
  * The method filters synthetic descriptors created for map fields.
  * A descriptor of a map field entry is named after the name of the field
  * with the `"Entry"` suffix.
- * We use this convention for filtering [nestedTypes] returned by Protobuf API.
+ * We use this convention for filtering [Descriptor.nestedTypes] returned by Protobuf API.
  *
  * @see <a href="https://protobuf.dev/programming-guides/proto3/#maps-features">
  *     Protobuf documentation</a>
  */
-public fun Descriptor.nestedTypes(): List<Descriptor> {
-    val mapEntryTypes =
-        fields.filter { it.isMapField }.map { it.name.camelCase() + "Entry" }.toList()
+public fun Descriptor.realNestedTypes(): List<Descriptor> {
+    val mapEntryTypes = fields.filter { it.isMapField }
+        .map { it.name.camelCase() + "Entry" }.toList()
     return nestedTypes.filter { !mapEntryTypes.contains(it.name) }
 }
 
@@ -77,7 +77,7 @@ public fun Descriptor.toMessageType(): MessageType =
         }
         oneofGroup.addAll(realOneofs.map { it.toOneOfGroup() })
         field.addAll(fields.mapped())
-        nestedMessages.addAll(nestedTypes().map { it.name() })
+        nestedMessages.addAll(realNestedTypes().map { it.name() })
         nestedEnums.addAll(enumTypes.map { it.name() })
         doc = documentation().forMessage(self)
         span = coordinates().forMessage(self)
@@ -153,7 +153,7 @@ internal fun <T> walkMessage(
         while (queue.isNotEmpty()) {
             val msg = queue.removeFirst()
             yieldAll(extractorFun(msg))
-            queue.addAll(msg.nestedTypes())
+            queue.addAll(msg.realNestedTypes())
         }
     }
 }

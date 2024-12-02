@@ -50,7 +50,7 @@ import io.spine.protodata.ast.oneofGroup
 import io.spine.protodata.ast.produceOptionEvents
 import io.spine.protodata.protobuf.buildField
 import io.spine.protodata.protobuf.name
-import io.spine.protodata.protobuf.nestedTypes
+import io.spine.protodata.protobuf.realNestedTypes
 import io.spine.protodata.protobuf.toMessageType
 
 /**
@@ -104,7 +104,7 @@ internal class MessageCompilerEvents(
             .filter { it.realContainingOneof == null }
             .forEach { produceFieldEvents(it) }
 
-        desc.nestedTypes().forEach {
+        desc.realNestedTypes().forEach {
             produceEvents(desc = it)
         }
 
