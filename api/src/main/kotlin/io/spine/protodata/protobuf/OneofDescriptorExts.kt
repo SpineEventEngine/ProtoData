@@ -49,6 +49,7 @@ public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
         name = groupName
         field.addAll(fields.mapped())
         option.addAll(options.toList())
-        doc = documentation().forOneof(this@toOneOfGroup)
-        span = coordinates().forOneof(this@toOneOfGroup)
+        val messageType = containingType
+        doc = messageType.documentation().forOneof(this@toOneOfGroup)
+        span = messageType.coordinates().forOneof(this@toOneOfGroup)
     }

@@ -27,16 +27,23 @@
 package io.spine.protodata.protobuf
 
 import com.google.protobuf.Descriptors.GenericDescriptor
+import io.spine.type.KnownTypes
 import io.spine.type.TypeUrl
 
 /**
  * Obtains the version of this descriptor with source line information loaded from
  * the descriptor set files stored in resources.
  *
+ * If resources do not have the version of this descriptor, returns [this].
+ *
  * @see io.spine.type.KnownTypes
  */
-internal fun GenericDescriptor.fromResources(): GenericDescriptor {
+internal fun GenericDescriptor.withSourceLines(): GenericDescriptor {
     val typeUrl = TypeUrl.of(this)
-    val typeName = typeUrl.toTypeName()
-    return typeName.genericDescriptor()
+    return if (KnownTypes.instance().contains(typeUrl)) {
+        val typeName = typeUrl.toTypeName()
+        typeName.genericDescriptor()
+    } else {
+        this
+    }
 }

@@ -146,7 +146,7 @@ private class DefinitionFactory(private val file: FileDescriptor) {
     fun messageTypes(): Sequence<MessageType> {
         var messages = file.messageTypes.asSequence()
         for (msg in file.messageTypes) {
-            messages += walkMessage(msg) { it.nestedTypes }
+            messages += walkMessage(msg) { it.nestedTypes() }
         }
         return messages.map { it.toMessageType() }
     }

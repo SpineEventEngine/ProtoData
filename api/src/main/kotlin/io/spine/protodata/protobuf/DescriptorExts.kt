@@ -33,16 +33,35 @@ import io.spine.protodata.ast.Field
 import io.spine.protodata.ast.MessageType
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
-import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.coordinates
+import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.messageType
 import io.spine.protodata.ast.toList
 import io.spine.protodata.ast.type
+import io.spine.string.camelCase
 
 /**
  * Obtains the name of this message type as a [TypeName].
  */
 public fun Descriptor.name(): TypeName = buildTypeName(name, file, containingType)
+
+/**
+ * Obtains only descriptors of message types declared under the message represented
+ * by this descriptor.
+ *
+ * The method filters synthetic descriptors created for map fields.
+ * A descriptor of a map field entry is named after the name of the field
+ * with the `"Entry"` suffix.
+ * We use this convention for filtering [nestedTypes] returned by Protobuf API.
+ *
+ * @see <a href="https://protobuf.dev/programming-guides/proto3/#maps-features">
+ *     Protobuf documentation</a>
+ */
+public fun Descriptor.nestedTypes(): List<Descriptor> {
+    val mapEntryTypes =
+        fields.filter { it.isMapField }.map { it.name.camelCase() + "Entry" }.toList()
+    return nestedTypes.filter { !mapEntryTypes.contains(it.name) }
+}
 
 /**
  * Converts the receiver `Descriptor` into a [MessageType].
@@ -58,7 +77,7 @@ public fun Descriptor.toMessageType(): MessageType =
         }
         oneofGroup.addAll(realOneofs.map { it.toOneOfGroup() })
         field.addAll(fields.mapped())
-        nestedMessages.addAll(nestedTypes.map { it.name() })
+        nestedMessages.addAll(nestedTypes().map { it.name() })
         nestedEnums.addAll(enumTypes.map { it.name() })
         doc = documentation().forMessage(self)
         span = coordinates().forMessage(self)
@@ -134,7 +153,7 @@ internal fun <T> walkMessage(
         while (queue.isNotEmpty()) {
             val msg = queue.removeFirst()
             yieldAll(extractorFun(msg))
-            queue.addAll(msg.nestedTypes)
+            queue.addAll(msg.nestedTypes())
         }
     }
 }

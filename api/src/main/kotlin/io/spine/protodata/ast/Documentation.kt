@@ -36,7 +36,7 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
-import io.spine.protodata.protobuf.fromResources
+import io.spine.protodata.protobuf.withSourceLines
 import io.spine.protodata.util.Cache
 import io.spine.string.trimWhitespace
 
@@ -136,6 +136,6 @@ private fun Iterable<String>.trimWhitespace(): List<String> =
  * Obtains documentation for the file of this [GenericDescriptor].
  */
 internal fun GenericDescriptor.documentation(): Documentation {
-    val fromResources = fromResources()
+    val fromResources = withSourceLines()
     return Documentation.of(fromResources.file)
 }

@@ -100,6 +100,7 @@ public fun buildConstant(desc: EnumValueDescriptor, declaringType: TypeName): En
         declaredIn = declaringType
         number = desc.number
         orderOfDeclaration = desc.index
-        doc = desc.documentation().forEnumConstant(desc)
-        span = desc.coordinates().forEnumConstant(desc)
+        val enumType = desc.type
+        doc = enumType.documentation().forEnumConstant(desc)
+        span = enumType.coordinates().forEnumConstant(desc)
     }
