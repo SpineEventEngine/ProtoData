@@ -26,7 +26,10 @@
 
 package io.spine.protodata.protobuf
 
+import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.GenericDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.spine.type.KnownTypes
 import io.spine.type.TypeUrl
 
@@ -39,6 +42,9 @@ import io.spine.type.TypeUrl
  * @see io.spine.type.KnownTypes
  */
 internal fun GenericDescriptor.withSourceLines(): GenericDescriptor {
+    require(this is Descriptor || this is EnumDescriptor || this is ServiceDescriptor) {
+        "Expecting message, enum, or service descriptor. Got: `$this`."
+    }
     val typeUrl = TypeUrl.ofTypeOrService(this)
     return if (KnownTypes.instance().contains(typeUrl)) {
         val typeName = typeUrl.typeName()

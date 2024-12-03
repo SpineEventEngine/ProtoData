@@ -89,6 +89,7 @@ public fun buildRpc(
     requestType = desc.inputType.name()
     responseType = desc.outputType.name()
     service = declaringService
-    doc = desc.documentation().forRpc(desc)
-    span = desc.coordinates().forRpc(desc)
+    val serviceDescr = desc.service
+    doc = serviceDescr.documentation().forRpc(desc)
+    span = serviceDescr.coordinates().forRpc(desc)
 }
