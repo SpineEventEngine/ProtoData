@@ -39,9 +39,9 @@ import io.spine.type.TypeUrl
  * @see io.spine.type.KnownTypes
  */
 internal fun GenericDescriptor.withSourceLines(): GenericDescriptor {
-    val typeUrl = TypeUrl.of(this)
+    val typeUrl = TypeUrl.ofTypeOrService(this)
     return if (KnownTypes.instance().contains(typeUrl)) {
-        val typeName = typeUrl.toTypeName()
+        val typeName = typeUrl.typeName()
         typeName.genericDescriptor()
     } else {
         this
