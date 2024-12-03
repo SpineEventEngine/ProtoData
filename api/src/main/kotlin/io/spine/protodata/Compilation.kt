@@ -59,7 +59,7 @@ public object Compilation {
      * The method returns the string printed to the console so that it could be also
      * put into logging output.
      *
-     * @param file The file in which causes the warning.
+     * @param file The file which causes the warning.
      * @param line The one-based number of the line with the questionable code.
      * @param column The one-based number of the column with the questionable code.
      * @param message The description of the warning.
