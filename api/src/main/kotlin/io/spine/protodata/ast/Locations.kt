@@ -24,31 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+package io.spine.protodata.ast
+
+import com.google.protobuf.DescriptorProtos.FileDescriptorProto
+import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
 
 /**
- * Dependencies on Spine Validation SDK.
- *
- * See [`SpineEventEngine/validation`](https://github.com/SpineEventEngine/validation/).
+ * Provides locations in a Protobuf file.
  */
-@Suppress("unused", "ConstPropertyName")
-object Validation {
+public abstract class Locations protected constructor(locations: List<Location>)  {
+
+    private val map: Map<LocationPath, Location> = locations.associateBy(
+        LocationPath.Companion::from
+    )
+
     /**
-     * The version of the Validation library artifacts.
+     * Creates an instance with locations from the given file.
      */
-    const val version = "2.0.0-SNAPSHOT.177"
+    protected constructor(file: FileDescriptorProto) : this(file.sourceCodeInfo.locationList)
 
-    const val group = "io.spine.validation"
-    private const val prefix = "spine-validation"
-
-    const val runtime = "$group:$prefix-java-runtime:$version"
-    const val java = "$group:$prefix-java:$version"
-
-    /** Obtains the artifact for the `java-bundle` artifact of the given version. */
-    fun javaBundle(version: String) = "$group:$prefix-java-bundle:$version"
-
-    val javaBundle = javaBundle(version)
-
-    const val model = "$group:$prefix-model:$version"
-    const val config = "$group:$prefix-configuration:$version"
+    /**
+     * Obtains a location for the given path.
+     *
+     * @return The location or [Location.getDefaultInstance] if there is no location with
+     *   the given path.
+     */
+    internal fun locationAt(path: LocationPath): Location =
+        map[path] ?: Location.getDefaultInstance()
 }

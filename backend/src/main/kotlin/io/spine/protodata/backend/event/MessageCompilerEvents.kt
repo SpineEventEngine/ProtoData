@@ -36,8 +36,6 @@ import io.spine.protodata.ast.event.FieldEntered
 import io.spine.protodata.ast.event.FieldExited
 import io.spine.protodata.ast.event.OneofGroupEntered
 import io.spine.protodata.ast.event.OneofGroupExited
-import io.spine.protodata.ast.event.TypeEntered
-import io.spine.protodata.ast.event.TypeExited
 import io.spine.protodata.ast.event.fieldEntered
 import io.spine.protodata.ast.event.fieldExited
 import io.spine.protodata.ast.event.fieldOptionDiscovered
@@ -52,27 +50,27 @@ import io.spine.protodata.ast.oneofGroup
 import io.spine.protodata.ast.produceOptionEvents
 import io.spine.protodata.protobuf.buildField
 import io.spine.protodata.protobuf.name
+import io.spine.protodata.protobuf.realNestedTypes
 import io.spine.protodata.protobuf.toMessageType
 
 /**
  * Produces events for a message.
  */
 internal class MessageCompilerEvents(
-    private val header: ProtoFileHeader,
-    private val documentation: Documentation
+    private val header: ProtoFileHeader
 ) {
     /**
      * Yields compiler events for the given message type.
      *
-     * Starts with an [TypeEntered] event.
+     * Starts with [TypeDiscovered][io.spine.protodata.ast.event.TypeDiscovered] and
+     * [io.spine.protodata.ast.event.TypeEntered] events.
      * Then the events regarding the type metadata come.
      * Then go the events regarding the fields.
-     * At last, closes with an [TypeExited] event.
+     * At last, closes with an [TypeExited][io.spine.protodata.ast.event.TypeExited] event.
      *
-     * @param desc
-     *         the descriptor of a Protobuf [Message] type.
+     * @param desc The descriptor of the message type.
      */
-    internal suspend fun SequenceScope<EventMessage>.produceMessageEvents(
+    internal suspend fun SequenceScope<EventMessage>.produceEvents(
         desc: Descriptor
     ) {
         val typeName = desc.name()
@@ -106,14 +104,14 @@ internal class MessageCompilerEvents(
             .filter { it.realContainingOneof == null }
             .forEach { produceFieldEvents(it) }
 
-        desc.nestedTypes.forEach {
-            produceMessageEvents(desc = it)
+        desc.realNestedTypes().forEach {
+            produceEvents(desc = it)
         }
 
         val enums = EnumCompilerEvents(header)
         desc.enumTypes.forEach {
             enums.apply {
-                produceEnumEvents(desc = it)
+                produceEvents(desc = it)
             }
         }
 
@@ -137,6 +135,7 @@ internal class MessageCompilerEvents(
         desc: OneofDescriptor
     ) {
         val typeName = desc.containingType.name()
+        val documentation = Documentation.of(desc.containingType.file)
         val oneofName = desc.name()
         val oneofGroup = oneofGroup {
             name = oneofName

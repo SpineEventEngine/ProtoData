@@ -54,10 +54,12 @@ internal class ServiceCompilerEvents(
     /**
      * Yields compiler events for the given service.
      *
-     * Opens with an [ServiceEntered] event. Then go the events regarding the service metadata.
-     * Then go the events regarding the RPC methods. At last, closes with an [ServiceExited] event.
+     * Opens with an [ServiceEntered] event.
+     * Then go the events regarding the service metadata.
+     * Then go the events regarding the RPC methods.
+     * At last, closes with an [ServiceExited] event.
      */
-    internal suspend fun SequenceScope<EventMessage>.produceServiceEvents(
+    internal suspend fun SequenceScope<EventMessage>.produceEvents(
         desc: ServiceDescriptor
     ) {
         val path = header.file

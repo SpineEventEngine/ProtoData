@@ -29,6 +29,8 @@ package io.spine.protodata.protobuf
 import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.protodata.ast.OneofGroup
 import io.spine.protodata.ast.OneofName
+import io.spine.protodata.ast.coordinates
+import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.oneofGroup
 import io.spine.protodata.ast.oneofName
 import io.spine.protodata.ast.toList
@@ -43,10 +45,11 @@ public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
  */
 public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
     oneofGroup {
-        val docs = fileDoc
         val groupName = name()
         name = groupName
         field.addAll(fields.mapped())
         option.addAll(options.toList())
-        doc = docs.forOneof(this@toOneOfGroup)
+        val messageType = containingType
+        doc = messageType.documentation().forOneof(this@toOneOfGroup)
+        span = messageType.coordinates().forOneof(this@toOneOfGroup)
     }

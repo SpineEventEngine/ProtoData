@@ -83,31 +83,31 @@ message MessageType {
 
     TypeName name = 1 [(required) = true];
 
+    // Path to the file which declares this type.
+    File file = 2 [(required) = true];
+
+    // Name of the message type which hosts the declaration of this type.
+    //
+    // This field is empty for the top level message type.
+    //
+    TypeName declared_in = 3;
+
+    // Message-level options.
+    repeated Option option = 4 [(distinct) = true];
+
     // The fields of this type.
     //
     // Does not include the fields belonging to a field group.
     //
     // The fields are ordered by their order of declaration in the message.
     //
-    repeated Field field = 2;
+    repeated Field field = 5;
 
     // The field groups defined in this type.
     //
     // The `oneof`s are ordered by their order of declaration in the message.
     //
-    repeated OneofGroup oneof_group = 3 [(distinct) = true];
-
-    // Message-level options.
-    repeated Option option = 4 [(distinct) = true];
-
-    // Path to the file which declares this type.
-    File file = 5 [(required) = true];
-
-    // Name of the message type which hosts the declaration of this type.
-    //
-    // This field is empty for the top level message type.
-    //
-    TypeName declared_in = 6;
+    repeated OneofGroup oneof_group = 6 [(distinct) = true];
 
     // Message type declarations nested inside this type.
     //
@@ -125,6 +125,9 @@ message MessageType {
 
     // Documentation of this type.
     Doc doc = 9;
+
+    // Coordinates of the declaration.
+    Span span = 10;
 }
 
 // A Protobuf enum type.
@@ -154,6 +157,9 @@ message EnumType {
 
     // Documentation of this type.
     Doc doc = 6;
+
+    // Coordinates of the declaration.
+    Span span = 7;
 }
 
 // A name of an enum constant.
@@ -189,6 +195,9 @@ message EnumConstant {
 
     // Documentation of this constant.
     Doc doc = 7;
+
+    // Coordinates of the declaration.
+    Span span = 8;
 }
 
 // A primitive Protobuf type.
@@ -336,6 +345,9 @@ message Field {
 
     // Documentation of this field.
     Doc doc = 8;
+
+    // Coordinates of the declaration.
+    Span span = 9;
 }
 
 // Name of a group of fields.
@@ -361,6 +373,9 @@ message OneofGroup {
 
     // Documentation of this group.
     Doc doc = 4;
+
+    // Coordinates of the declaration.
+    Span span = 5;
 }
 
 // A name of a Protobuf service type.
@@ -389,20 +404,23 @@ message Service {
 
     ServiceName name = 1 [(required) = true];
 
-    // The remote procedure call methods exposed by this service.
-    //
-    // The methods are ordered by their order of declaration in the service.
-    //
-    repeated Rpc rpc = 2 [(distinct) = true];
+    // Path to the file which declares this service.
+    File file = 2;
 
     // Service-level options.
     repeated Option option = 3 [(distinct) = true];
 
-    // Documentation of this service.
-    Doc doc = 4;
+    // The remote procedure call methods exposed by this service.
+    //
+    // The methods are ordered by their order of declaration in the service.
+    //
+    repeated Rpc rpc = 4 [(distinct) = true];
 
-    // Path to the file which declares this service.
-    File file = 5;
+    // Documentation of this service.
+    Doc doc = 5;
+
+    // Coordinates of the declaration.
+    Span span = 6;
 }
 
 // A name of an RPC method.
@@ -416,27 +434,30 @@ message Rpc {
 
     RpcName name = 1 [(required) = true];
 
+    // The service declaring this remote procedure.
+    ServiceName service = 2 [(required) = true];
+
     // The kind of call.
     //
     // A call may accept one request or a stream of requests and produce
     // one response or a stream of responses.
     //
-    CallCardinality cardinality = 2 [(required) = true];
+    CallCardinality cardinality = 3 [(required) = true];
 
     // The type of the request messages.
-    TypeName request_type = 3 [(required) = true];
+    TypeName request_type = 4 [(required) = true];
 
     // The type of the response messages.
-    TypeName response_type = 4 [(required) = true];
+    TypeName response_type = 5 [(required) = true];
 
     // `rpc`-level options.
-    repeated Option option = 5 [(distinct) = true];
+    repeated Option option = 6 [(distinct) = true];
 
     // Documentation of this `rpc`.
-    Doc doc = 6;
+    Doc doc = 7;
 
-    // The service declaring this method.
-    ServiceName service = 7 [(required) = true];
+    // The coordinates of the declaration.
+    Span span = 8;
 }
 
 // The kind of exchange between a client and a server in a single `rpc` call.
@@ -503,7 +524,7 @@ message Doc {
     //
     string leading_comment = 1;
 
-    // The comment placed beneath above the declaration without any empty lines.
+    // The comment placed beneath the declaration without any empty lines.
     string trailing_comment = 2;
 
     // Comments placed above the declaration separated by at least
@@ -513,4 +534,27 @@ message Doc {
     // but rather to its context.
     //
     repeated string detached_comment = 3;
+}
+
+// The location span of a Protobuf declaration.
+//
+// Values of the fields are 1-based.
+// Zero values mean that the location is unknown.
+//
+message Span {
+
+    // The line where the declaration is started.
+    int32 start_line = 1;
+
+    // The column where the declaration is started.
+    int32 start_column = 2;
+
+    // The line where the declaration ends.
+    //
+    // Contains the same value as `start_line` for one line declarations.
+    //
+    int32 end_line = 3;
+
+    // The column where the declaration ends.
+    int32 end_column = 4;
 }

@@ -24,31 +24,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+syntax = "proto3";
 
-/**
- * Dependencies on Spine Validation SDK.
- *
- * See [`SpineEventEngine/validation`](https://github.com/SpineEventEngine/validation/).
- */
-@Suppress("unused", "ConstPropertyName")
-object Validation {
-    /**
-     * The version of the Validation library artifacts.
-     */
-    const val version = "2.0.0-SNAPSHOT.177"
+package spine.protodata.ast;
 
-    const val group = "io.spine.validation"
-    private const val prefix = "spine-validation"
+import "spine/options.proto";
 
-    const val runtime = "$group:$prefix-java-runtime:$version"
-    const val java = "$group:$prefix-java:$version"
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.ast.given";
+option java_outer_classname = "FieldExtsSpecProto";
+option java_multiple_files = true;
 
-    /** Obtains the artifact for the `java-bundle` artifact of the given version. */
-    fun javaBundle(version: String) = "$group:$prefix-java-bundle:$version"
+// A simple message with a message-level option and fields with options.
+message Tractor {
 
-    val javaBundle = javaBundle(version)
+    // An example of docs for a message level option.
+    // The option is multi-line.
+    option (entity) = {
+        kind: ENTITY
+        visibility: FULL
+    };
 
-    const val model = "$group:$prefix-model:$version"
-    const val config = "$group:$prefix-configuration:$version"
+    // A detached comment above the `driver` field.
+
+    // The driver of the tractor. This is the leading comment.
+    Driver driver = 1 [
+        // A tractor may not have a driver, but if it has, it must be valid.
+        // This is an example of an option comment.
+        (validate) = true
+    ];
+    // This is the trailing comment for the `driver` field.
+
+
+    // This is the leading comment for the field.
+    Plow plow = 2 [ /* A one-line option comment. */ (validate) = true];
+}
+
+message Plow {
+    string description = 1 [(required) = true];
+}
+
+message Driver {
+    string name = 1 [(required) = true];
+    string license_number = 2 [(required) = true];
 }

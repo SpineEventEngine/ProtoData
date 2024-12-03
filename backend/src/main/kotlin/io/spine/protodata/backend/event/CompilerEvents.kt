@@ -30,9 +30,6 @@ import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
-import io.spine.protodata.ast.Documentation
-import io.spine.protodata.ast.event.FileEntered
-import io.spine.protodata.ast.event.FileExited
 import io.spine.protodata.ast.event.dependencyDiscovered
 import io.spine.protodata.ast.event.fileEntered
 import io.spine.protodata.ast.event.fileExited
@@ -64,7 +61,7 @@ public object CompilerEvents {
             yieldAll(dependencies.map { it.toDependencyEvent() })
             ownFiles
                 .map(::ProtoFileEvents)
-                .forEach { it.apply { produceFileEvents() } }
+                .forEach { it.apply { produceEvents() } }
         }
     }
 }
@@ -73,18 +70,19 @@ public object CompilerEvents {
  * Produces events from the associated file.
  */
 private class ProtoFileEvents(
-    private val fileDescriptor: FileDescriptor
+    private val file: FileDescriptor
 ) {
-    private val header = fileDescriptor.toHeader()
-    private val documentation = Documentation(fileDescriptor)
+    private val header = file.toHeader()
 
     /**
      * Yields compiler events for the given file.
      *
-     * Opens with an [FileEntered] event. Then go the events regarding the file metadata. Then go
-     * the events regarding the file contents. At last, closes with an [FileExited] event.
+     * Opens with an [FileEntered][io.spine.protodata.ast.event.FileEntered] event.
+     * Then go the events regarding the file metadata.
+     * Then go the events regarding the file contents.
+     * At last, closes with an [FileExited][io.spine.protodata.ast.event.FileExited] event.
      */
-    suspend fun SequenceScope<EventMessage>.produceFileEvents() {
+    suspend fun SequenceScope<EventMessage>.produceEvents() {
         yield(
             fileEntered {
                 // Avoid the name clash with the class property.
@@ -93,23 +91,23 @@ private class ProtoFileEvents(
                 header = hdr
             }
         )
-        produceOptionEvents(fileDescriptor.options) {
+        produceOptionEvents(file.options) {
             fileOptionDiscovered {
                 file = header.file
                 option = it
             }
         }
-        val messageEvents = MessageCompilerEvents(header, documentation)
-        fileDescriptor.messageTypes.forEach {
-            messageEvents.apply { produceMessageEvents(it) }
+        val messageEvents = MessageCompilerEvents(header)
+        file.messageTypes.forEach {
+            messageEvents.apply { produceEvents(it) }
         }
         val enumEvents = EnumCompilerEvents(header)
-        fileDescriptor.enumTypes.forEach {
-            enumEvents.apply { produceEnumEvents(it) }
+        file.enumTypes.forEach {
+            enumEvents.apply { produceEvents(it) }
         }
         val serviceEvents = ServiceCompilerEvents(header)
-        fileDescriptor.services.forEach {
-            serviceEvents.apply { produceServiceEvents(it) }
+        file.services.forEach {
+            serviceEvents.apply { produceEvents(it) }
         }
         yield(
             fileExited {

@@ -31,8 +31,8 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.sksamuel.aedile.core.cacheBuilder
 import io.spine.protodata.ast.file
+import io.spine.protodata.util.Cache
 import io.spine.server.query.select
 import io.spine.text.Text
 import io.spine.text.TextFactory.text
@@ -49,7 +49,6 @@ import java.time.Instant
 import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-import kotlinx.coroutines.runBlocking
 
 /**
  * A file with the source code.
@@ -152,28 +151,22 @@ private constructor(
         }
     }
 
-    public companion object {
+    public companion object : Cache<Path, SourceFile<*>>() {
 
         /**
-         * The cache of created [SourceFile] instances by their full paths.
-         *
-         * The cache is necessary to make sure that two or more [SourceFileSet]s hold
-         * the same instance of [SourceFile] for the same file on the file system.
+         * Creates an instance of `SourceFile` for the given absolute path and a pair
+         * of the relative path and [Charset] of the file passed in [param].
          */
-        private val cache = cacheBuilder<Path, SourceFile<*>> {
-            initialCapacity = 100
-        }.build()
+        override fun create(key: Path, param: Any?): SourceFile<*> {
+            val absolutePath = key
+            @Suppress("UNCHECKED_CAST")
+            val pair = param as Pair<Path, Charset>
+            val relativePath = pair.first
+            val charset = pair.second
 
-        /**
-         * Clears the internal cache which maps full file paths to [SourceFile] instances.
-         *
-         * Clearing the cache may be useful in between tests to avoid stale instances obtained
-         * in cases of using the same full paths.
-         */
-        public fun clearCache() {
-            synchronized(this) {
-                cache.invalidateAll()
-            }
+            val lang = Language.of(absolutePath)
+            val code = absolutePath.readText(charset)
+            return create(lang, relativePath, code)
         }
 
         /**
@@ -185,15 +178,7 @@ private constructor(
             charset: Charset = Charsets.UTF_8
         ): SourceFile<*> {
             val absolute = sourceRoot / relativePath
-            return synchronized(this) {
-                runBlocking {
-                    cache.get(absolute) {
-                        val lang = Language.of(absolute)
-                        val code = absolute.readText(charset)
-                        create(lang, relativePath, code)
-                    }
-                }
-            }
+            return get(absolute, relativePath to charset)
         }
 
         /**

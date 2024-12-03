@@ -34,9 +34,11 @@ import io.spine.protodata.ast.EnumType
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.constantName
+import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.enumType
+import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.toList
 import io.spine.protodata.ast.type
 
@@ -52,7 +54,6 @@ public fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containin
  */
 public fun EnumDescriptor.toEnumType(): EnumType =
     enumType {
-        val docs = fileDoc
         val typeName = name()
         name = typeName
         option.addAll(options.toList())
@@ -61,7 +62,8 @@ public fun EnumDescriptor.toEnumType(): EnumType =
         if (containingType != null) {
             declaredIn = containingType.name()
         }
-        doc = docs.forEnum(this@toEnumType)
+        doc = documentation().forEnum(this@toEnumType)
+        span = coordinates().forEnum(this@toEnumType)
     }
 
 /**
@@ -98,5 +100,7 @@ public fun buildConstant(desc: EnumValueDescriptor, declaringType: TypeName): En
         declaredIn = declaringType
         number = desc.number
         orderOfDeclaration = desc.index
-        doc = desc.fileDoc.forEnumConstant(desc)
+        val enumType = desc.type
+        doc = enumType.documentation().forEnumConstant(desc)
+        span = enumType.coordinates().forEnumConstant(desc)
     }

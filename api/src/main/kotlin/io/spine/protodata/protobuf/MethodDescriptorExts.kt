@@ -35,7 +35,9 @@ import io.spine.protodata.ast.CallCardinality.UNARY
 import io.spine.protodata.ast.Rpc
 import io.spine.protodata.ast.RpcName
 import io.spine.protodata.ast.ServiceName
+import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.copy
+import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.rpc
 import io.spine.protodata.ast.rpcName
 import io.spine.protodata.ast.toList
@@ -86,6 +88,8 @@ public fun buildRpc(
     cardinality = desc.cardinality
     requestType = desc.inputType.name()
     responseType = desc.outputType.name()
-    doc = desc.fileDoc.forRpc(desc)
     service = declaringService
+    val serviceDescr = desc.service
+    doc = serviceDescr.documentation().forRpc(desc)
+    span = serviceDescr.coordinates().forRpc(desc)
 }

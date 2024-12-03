@@ -24,31 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+package io.spine.protodata.protobuf
+
+import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Descriptors.EnumDescriptor
+import com.google.protobuf.Descriptors.GenericDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
+import io.spine.type.KnownTypes
+import io.spine.type.TypeUrl
 
 /**
- * Dependencies on Spine Validation SDK.
+ * Obtains the version of this descriptor with source line information loaded from
+ * the descriptor set files stored in resources.
  *
- * See [`SpineEventEngine/validation`](https://github.com/SpineEventEngine/validation/).
+ * If resources do not have the version of this descriptor, returns [this].
+ *
+ * @see io.spine.type.KnownTypes
  */
-@Suppress("unused", "ConstPropertyName")
-object Validation {
-    /**
-     * The version of the Validation library artifacts.
-     */
-    const val version = "2.0.0-SNAPSHOT.177"
-
-    const val group = "io.spine.validation"
-    private const val prefix = "spine-validation"
-
-    const val runtime = "$group:$prefix-java-runtime:$version"
-    const val java = "$group:$prefix-java:$version"
-
-    /** Obtains the artifact for the `java-bundle` artifact of the given version. */
-    fun javaBundle(version: String) = "$group:$prefix-java-bundle:$version"
-
-    val javaBundle = javaBundle(version)
-
-    const val model = "$group:$prefix-model:$version"
-    const val config = "$group:$prefix-configuration:$version"
+internal fun GenericDescriptor.withSourceLines(): GenericDescriptor {
+    require(this is Descriptor || this is EnumDescriptor || this is ServiceDescriptor) {
+        "Expecting message, enum, or service descriptor. Got: `$this`."
+    }
+    val typeUrl = TypeUrl.ofTypeOrService(this)
+    return if (KnownTypes.instance().contains(typeUrl)) {
+        val typeName = typeUrl.typeName()
+        typeName.genericDescriptor()
+    } else {
+        this
+    }
 }
