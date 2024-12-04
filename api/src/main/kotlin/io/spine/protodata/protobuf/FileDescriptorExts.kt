@@ -133,8 +133,7 @@ private fun <T : ProtoDeclaration> Sequence<T>.associateByUrl() =
 /**
  * A factory of Protobuf definitions of a single `.proto` file.
  *
- * @property file
- *            the descriptor of the Protobuf file.
+ * @property file The descriptor of the Protobuf file.
  */
 private class DefinitionFactory(private val file: FileDescriptor) {
 
