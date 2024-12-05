@@ -102,7 +102,7 @@ public class Coordinates private constructor(file: FileDescriptorProto) : Locati
     }
 
     public fun forOption(option: FieldDescriptor, context: GenericDescriptor): Span {
-        val path = LocationPath.option(option, context)
+        val path = LocationPath.of(option, context)
         return spanAt(path)
     }
 

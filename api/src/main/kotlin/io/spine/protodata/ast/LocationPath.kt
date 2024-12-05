@@ -128,53 +128,30 @@ private constructor(private val value: List<Int>) {
                 .reversed()
         }
 
-        fun option(option: FieldDescriptor, context: GenericDescriptor): LocationPath {
+        fun of(option: FieldDescriptor, context: GenericDescriptor): LocationPath {
             val path = when (context) {
-                is FileDescriptor -> ofFileOption(option)
-                is Descriptor -> ofMessageOption(option)
-                is EnumDescriptor -> ofEnumOption(option)
-                is ServiceDescriptor -> ofServiceOption(option)
-                is FieldDescriptor -> ofFieldOption(option)
-                is OneofDescriptor -> ofOneofOption(option)
-                is EnumValueDescriptor -> ofEnumValueOption(option)
-                is MethodDescriptor -> ofMethodOption(option)
+                is FileDescriptor -> optionAt(FileDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+                is Descriptor -> optionAt(DescriptorProto.OPTIONS_FIELD_NUMBER, option)
+                is EnumDescriptor -> optionAt(EnumDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+                is ServiceDescriptor -> optionAt(
+                    ServiceDescriptorProto.OPTIONS_FIELD_NUMBER,
+                    option
+                )
+                is FieldDescriptor -> optionAt(FieldDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+                is OneofDescriptor -> optionAt(OneofDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+                is EnumValueDescriptor -> optionAt(
+                    EnumValueDescriptorProto.OPTIONS_FIELD_NUMBER,
+                    option
+                )
+                is MethodDescriptor -> optionAt(MethodDescriptorProto.OPTIONS_FIELD_NUMBER, option)
                 // Return the non-existing path so that the default `Location` is returned.
                 else -> LocationPath(listOf(-1, -1))
             }
             return path
         }
 
-        private fun ofFileOption(option: FieldDescriptor): LocationPath {
-            return LocationPath(listOf(FileDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
-        }
-
-        private fun ofMessageOption(option: FieldDescriptor): LocationPath {
-            return LocationPath(listOf(DescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
-        }
-
-        private fun ofEnumOption(option: FieldDescriptor): LocationPath {
-            return LocationPath(listOf(EnumDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
-        }
-
-        private fun ofServiceOption(option: FieldDescriptor): LocationPath {
-            return LocationPath(listOf(ServiceDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
-        }
-
-        private fun ofFieldOption(option: FieldDescriptor): LocationPath {
-            return LocationPath(listOf(FieldDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
-        }
-
-        private fun ofOneofOption(option: FieldDescriptor): LocationPath {
-            return LocationPath(listOf(OneofDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
-        }
-
-        private fun ofEnumValueOption(option: FieldDescriptor): LocationPath {
-            return LocationPath(listOf(EnumValueDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
-        }
-
-        private fun ofMethodOption(option: FieldDescriptor): LocationPath {
-            return LocationPath(listOf(MethodDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
-        }
+        private fun optionAt(optionsFieldNumber: Int, option: FieldDescriptor): LocationPath =
+            LocationPath(listOf(optionsFieldNumber, option.toProto().number))
     }
 
     /**
@@ -222,4 +199,3 @@ private val Descriptor.isTopLevel: Boolean
 
 private val EnumDescriptor.isTopLevel: Boolean
     get() = containingType == null
-
