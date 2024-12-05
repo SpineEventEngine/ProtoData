@@ -41,6 +41,7 @@ import io.spine.protobuf.pack
 import io.spine.protobuf.unpack
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.type
+import com.google.protobuf.Any as ProtoAny
 
 /**
  * Unpacks the value of this option using the specified generic type.
@@ -107,22 +108,20 @@ private fun parseOptions(options: ExtendableMessage<*>): Sequence<Option> =
     sequence {
         options.allFields.forEach { (optionDescriptor, value) ->
             if (value is Collection<*>) {
-                value.forEach {
-                    val option = toOption(optionDescriptor, it!!)
+                value.forEach { item ->
+                    val option = optionDescriptor.toOption(item!!)
                     yield(option)
                 }
             } else {
-                val option = toOption(optionDescriptor, value)
+                val option = optionDescriptor.toOption(value)
                 yield(option)
             }
         }
     }
 
-private fun toOption(
-    optionDescriptor: FieldDescriptor,
-    value: Any
-): Option {
-    val optionValue = fieldToAny(optionDescriptor, value)
+private fun FieldDescriptor.toOption(value: Any): Option {
+    val optionDescriptor = this
+    val optionValue = optionDescriptor.packOptionValue(value)
     val option = option {
         name = optionDescriptor.name
         number = optionDescriptor.number
@@ -132,8 +131,8 @@ private fun toOption(
     return option
 }
 
-private fun fieldToAny(field: FieldDescriptor, value: Any): com.google.protobuf.Any =
-    if (field.type == ENUM) {
+private fun FieldDescriptor.packOptionValue(value: Any): ProtoAny =
+    if (type == ENUM) {
         val descr = value as EnumValueDescriptor
         val enumValue = com.google.protobuf.enumValue {
             name = descr.name
