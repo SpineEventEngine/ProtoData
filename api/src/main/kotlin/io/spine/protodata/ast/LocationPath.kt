@@ -30,16 +30,24 @@ import com.google.protobuf.DescriptorProtos.DescriptorProto
 import com.google.protobuf.DescriptorProtos.DescriptorProto.FIELD_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.DescriptorProto.NESTED_TYPE_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.DescriptorProto.ONEOF_DECL_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.EnumDescriptorProto
 import com.google.protobuf.DescriptorProtos.EnumDescriptorProto.VALUE_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.EnumValueDescriptorProto
+import com.google.protobuf.DescriptorProtos.FieldDescriptorProto
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto.MESSAGE_TYPE_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto.SERVICE_FIELD_NUMBER
+import com.google.protobuf.DescriptorProtos.MethodDescriptorProto
+import com.google.protobuf.DescriptorProtos.OneofDescriptorProto
+import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto.METHOD_FIELD_NUMBER
 import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
+import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
@@ -52,6 +60,7 @@ import io.spine.util.interlaced
  *
  * See `google.protobuf.SourceCodeInfo.Location.path` for the explanation of the protocol.
  */
+@Suppress("TooManyFunctions")
 @JvmInline
 internal value class LocationPath
 private constructor(private val value: List<Int>) {
@@ -117,6 +126,54 @@ private constructor(private val value: List<Int>) {
             return rootPath.interlaced(NESTED_TYPE_FIELD_NUMBER)
                 .toList()
                 .reversed()
+        }
+
+        fun option(option: FieldDescriptor, context: GenericDescriptor): LocationPath {
+            val path = when (context) {
+                is FileDescriptor -> ofFileOption(option)
+                is Descriptor -> ofMessageOption(option)
+                is EnumDescriptor -> ofEnumOption(option)
+                is ServiceDescriptor -> ofServiceOption(option)
+                is FieldDescriptor -> ofFieldOption(option)
+                is OneofDescriptor -> ofOneofOption(option)
+                is EnumValueDescriptor -> ofEnumValueOption(option)
+                is MethodDescriptor -> ofMethodOption(option)
+                // Return the non-existing path so that the default `Location` is returned.
+                else -> LocationPath(listOf(-1, -1))
+            }
+            return path
+        }
+
+        private fun ofFileOption(option: FieldDescriptor): LocationPath {
+            return LocationPath(listOf(FileDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
+        }
+
+        private fun ofMessageOption(option: FieldDescriptor): LocationPath {
+            return LocationPath(listOf(DescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
+        }
+
+        private fun ofEnumOption(option: FieldDescriptor): LocationPath {
+            return LocationPath(listOf(EnumDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
+        }
+
+        private fun ofServiceOption(option: FieldDescriptor): LocationPath {
+            return LocationPath(listOf(ServiceDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
+        }
+
+        private fun ofFieldOption(option: FieldDescriptor): LocationPath {
+            return LocationPath(listOf(FieldDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
+        }
+
+        private fun ofOneofOption(option: FieldDescriptor): LocationPath {
+            return LocationPath(listOf(OneofDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
+        }
+
+        private fun ofEnumValueOption(option: FieldDescriptor): LocationPath {
+            return LocationPath(listOf(EnumValueDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
+        }
+
+        private fun ofMethodOption(option: FieldDescriptor): LocationPath {
+            return LocationPath(listOf(MethodDescriptorProto.OPTIONS_FIELD_NUMBER, option.index))
         }
     }
 

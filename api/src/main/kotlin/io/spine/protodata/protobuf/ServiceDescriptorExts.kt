@@ -49,11 +49,12 @@ public fun ServiceDescriptor.name(): ServiceName = serviceName {
  */
 public fun ServiceDescriptor.toService(): Service =
     service {
+        val self = this@toService
         val serviceName = name()
         name = serviceName
         file = getFile().file()
-        option.addAll(options.toList())
+        option.addAll(options.toList(self))
         rpc.addAll(methods.map { it.toRpc(serviceName) })
-        doc = documentation().forService(this@toService)
-        span = coordinates().forService(this@toService)
+        doc = documentation().forService(self)
+        span = coordinates().forService(self)
     }

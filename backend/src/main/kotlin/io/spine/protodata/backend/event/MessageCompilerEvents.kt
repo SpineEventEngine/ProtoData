@@ -88,7 +88,7 @@ internal class MessageCompilerEvents(
                 type = messageType.name
             }
         )
-        produceOptionEvents(desc.options) {
+        produceOptionEvents(desc.options, desc) {
             typeOptionDiscovered {
                 file = path
                 type = typeName
@@ -149,7 +149,7 @@ internal class MessageCompilerEvents(
                 group = oneofGroup
             }
         )
-        produceOptionEvents(desc.options) {
+        produceOptionEvents(desc.options, desc) {
             oneofOptionDiscovered {
                 file = path
                 type = typeName
@@ -192,7 +192,7 @@ internal class MessageCompilerEvents(
                 field = theField
             }
         )
-        produceOptionEvents(desc.options) {
+        produceOptionEvents(desc.options, desc) {
             fieldOptionDiscovered {
                 file = path
                 type = typeName

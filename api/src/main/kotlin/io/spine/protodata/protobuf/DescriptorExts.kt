@@ -71,7 +71,7 @@ public fun Descriptor.toMessageType(): MessageType =
         name = name()
         file = getFile().file()
         val self = this@toMessageType
-        option.addAll(options.toList())
+        option.addAll(options.toList(self))
         if (containingType != null) {
             declaredIn = containingType.name()
         }

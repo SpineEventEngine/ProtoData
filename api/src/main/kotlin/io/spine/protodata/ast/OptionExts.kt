@@ -31,6 +31,7 @@ package io.spine.protodata.ast
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
+import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import com.google.protobuf.Message
 import io.spine.base.EventMessage
@@ -84,16 +85,15 @@ public inline fun <reified T : Message> Iterable<Option>.find(): T? {
 /**
  * Yields events regarding a set of options.
  *
- * @param options
- *         the set of options, such as `FileOptions`, `FieldOptions`, etc.
- * @param factory
- *         a function which given an option, constructs a fitting event.
+ * @param options The set of options, such as `FileOptions`, `FieldOptions`, etc.
+ * @param factory A function which given an option, constructs a fitting event.
  */
 public suspend fun SequenceScope<EventMessage>.produceOptionEvents(
     options: ExtendableMessage<*>,
+    context: GenericDescriptor,
     factory: (Option) -> EventMessage
 ) {
-    parseOptions(options).forEach {
+    options.parseOptions(context).forEach {
         yield(factory(it))
     }
 }
@@ -101,25 +101,25 @@ public suspend fun SequenceScope<EventMessage>.produceOptionEvents(
 /**
  * Parses this `options` message into a list of [Option]s.
  */
-public fun ExtendableMessage<*>.toList(): List<Option> =
-    parseOptions(this).toList()
+public fun ExtendableMessage<*>.toList(context: GenericDescriptor): List<Option> =
+    parseOptions(context).toList()
 
-private fun parseOptions(options: ExtendableMessage<*>): Sequence<Option> =
+private fun ExtendableMessage<*>.parseOptions(context: GenericDescriptor): Sequence<Option> =
     sequence {
-        options.allFields.forEach { (optionDescriptor, value) ->
+        allFields.forEach { (optionDescriptor, value) ->
             if (value is Collection<*>) {
                 value.forEach { item ->
-                    val option = optionDescriptor.toOption(item!!)
+                    val option = optionDescriptor.toOption(item!!, context)
                     yield(option)
                 }
             } else {
-                val option = optionDescriptor.toOption(value)
+                val option = optionDescriptor.toOption(value, context)
                 yield(option)
             }
         }
     }
 
-private fun FieldDescriptor.toOption(value: Any): Option {
+private fun FieldDescriptor.toOption(value: Any, context: GenericDescriptor): Option {
     val optionDescriptor = this
     val optionValue = optionDescriptor.packOptionValue(value)
     val option = option {
@@ -127,6 +127,9 @@ private fun FieldDescriptor.toOption(value: Any): Option {
         number = optionDescriptor.number
         type = optionDescriptor.type()
         this.value = optionValue
+
+        doc = context.file.documentation().forOption(optionDescriptor, context)
+        span = context.file.coordinates().forOption(optionDescriptor, context)
     }
     return option
 }

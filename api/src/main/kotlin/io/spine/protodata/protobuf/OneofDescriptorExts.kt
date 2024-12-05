@@ -45,11 +45,12 @@ public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
  */
 public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
     oneofGroup {
+        val self = this@toOneOfGroup
         val groupName = name()
         name = groupName
         field.addAll(fields.mapped())
-        option.addAll(options.toList())
+        option.addAll(options.toList(self))
         val messageType = containingType
-        doc = messageType.documentation().forOneof(this@toOneOfGroup)
-        span = messageType.coordinates().forOneof(this@toOneOfGroup)
+        doc = messageType.documentation().forOneof(self)
+        span = messageType.coordinates().forOneof(self)
     }

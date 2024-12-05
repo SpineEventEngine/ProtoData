@@ -93,7 +93,7 @@ private class ProtoFileEvents(
                 header = hdr
             }
         )
-        produceOptionEvents(file.options) {
+        produceOptionEvents(file.options, file) {
             fileOptionDiscovered {
                 file = header.file
                 option = it

@@ -48,7 +48,9 @@ import io.spine.protobuf.AnyPacker
 import io.spine.protodata.ast.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ast.ProtobufDependency
 import io.spine.protodata.ast.ProtobufSourceFile
+import io.spine.protodata.ast.doc
 import io.spine.protodata.ast.option
+import io.spine.protodata.ast.span
 import io.spine.protodata.ast.toType
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
@@ -178,6 +180,9 @@ class CodeGenerationContextSpec {
                 number = BETA_TYPE_FIELD_NUMBER
                 type = TYPE_BOOL.toType()
                 value = AnyPacker.pack(BoolValue.of(true))
+                //TODO:2024-12-05:alexander.yevsyukov: Populate with data.
+                doc = doc { }
+                span = span { }
             })
             // 4 regular fields and 2 fields under `oneof`.
             journeyType.fieldList shouldHaveSize 6

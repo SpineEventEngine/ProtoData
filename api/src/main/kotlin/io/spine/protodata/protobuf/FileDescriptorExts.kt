@@ -100,7 +100,7 @@ public fun FileDescriptor.toHeader(): ProtoFileHeader = protoFileHeader {
     file = file()
     packageName = `package`
     syntax = syntaxVersion()
-    option.addAll(options.toList())
+    option.addAll(options.toList(this@toHeader))
 }
 
 /**

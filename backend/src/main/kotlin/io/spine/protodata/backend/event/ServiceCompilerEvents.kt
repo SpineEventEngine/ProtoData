@@ -77,7 +77,7 @@ internal class ServiceCompilerEvents(
                 service = serviceName
             }
         )
-        produceOptionEvents(desc.options) {
+        produceOptionEvents(desc.options, desc) {
             serviceOptionDiscovered {
                 file = path
                 service = serviceName
@@ -108,7 +108,7 @@ internal class ServiceCompilerEvents(
                 rpc = theRpc
             }
         )
-        produceOptionEvents(desc.options) {
+        produceOptionEvents(desc.options, desc) {
             rpcOptionDiscovered {
                 file = path
                 service = serviceName

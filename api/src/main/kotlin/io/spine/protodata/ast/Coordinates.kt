@@ -101,6 +101,11 @@ public class Coordinates private constructor(file: FileDescriptorProto) : Locati
         return spanAt(path)
     }
 
+    public fun forOption(option: FieldDescriptor, context: GenericDescriptor): Span {
+        val path = LocationPath.option(option, context)
+        return spanAt(path)
+    }
+
     private fun spanAt(path: LocationPath): Span {
         val location = locationAt(path)
         return location.toSpan()

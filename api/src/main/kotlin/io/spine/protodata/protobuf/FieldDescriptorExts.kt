@@ -90,13 +90,14 @@ public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
  * @see buildField
  */
 public fun FieldDescriptor.toField(): Field {
-    val field = buildField(this)
+    val self = this
+    val field = buildField(self)
     return field.copy {
         // There are several similar expressions in this file, like
         // the `option.addAll()` call below. Sadly, these duplicates
         // could not be refactored into a common function because
         // they have no common compile-time type.
-        option.addAll(options.toList())
+        option.addAll(options.toList(self))
     }
 }
 

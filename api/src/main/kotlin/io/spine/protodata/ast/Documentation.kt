@@ -101,6 +101,11 @@ public class Documentation private constructor(file: FileDescriptorProto) : Loca
         return commentsAt(path)
     }
 
+    public fun forOption(option: FieldDescriptor, context: GenericDescriptor): Doc {
+        val path = LocationPath.option(option, context)
+        return commentsAt(path)
+    }
+
     private fun commentsAt(path: LocationPath): Doc {
         val location = locationAt(path)
         return doc {

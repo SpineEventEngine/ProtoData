@@ -55,7 +55,7 @@ public fun MethodDescriptor.name(): RpcName = rpcName { value = name }
 public fun MethodDescriptor.toRpc(declaringService: ServiceName): Rpc {
     val rpc = buildRpc(this, declaringService)
     return rpc.copy {
-        option.addAll(options.toList())
+        option.addAll(options.toList(this@toRpc))
     }
 }
 

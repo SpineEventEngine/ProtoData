@@ -76,7 +76,7 @@ internal class EnumCompilerEvents(
                 type = typeName
             }
         )
-        produceOptionEvents(desc.options) {
+        produceOptionEvents(desc.options, desc) {
             enumOptionDiscovered {
                 file = path
                 this.type = typeName
@@ -118,7 +118,7 @@ internal class EnumCompilerEvents(
                 constant = theConstant
             }
         )
-        produceOptionEvents(desc.options) {
+        produceOptionEvents(desc.options, desc) {
             enumConstantOptionDiscovered {
                 file = path
                 type = typeName
