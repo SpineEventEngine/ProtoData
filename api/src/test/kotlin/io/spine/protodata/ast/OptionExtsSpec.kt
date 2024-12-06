@@ -29,6 +29,7 @@ package io.spine.protodata.ast
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ast.given.OptionExtsSpecProto
+import io.spine.protodata.ast.given.Selector
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -57,6 +58,36 @@ internal class OptionExtsSpec {
                 startColumn shouldBe 1
                 endLine shouldBe 37
                 endColumn shouldBe 54
+            }
+        }
+    }
+
+    @Test
+    fun `obtain options for a message`() {
+        val msg = Selector.getDescriptor()
+        val options = msg.options.toList(msg)
+
+        options.named("deprecated").run {
+            doc.leadingComment shouldContain "This is a standard message option."
+            doc.trailingComment shouldContain "A trailing comment for the option."
+
+            span.run {
+                startLine shouldBe 51
+                startColumn shouldBe 5
+                endLine shouldBe 51
+                endColumn shouldBe 31
+            }
+        }
+
+        options.named("entity").run {
+            doc.leadingComment shouldContain "This is a custom Spine option."
+            doc.trailingComment shouldContain "Another trailing comment."
+
+            span.run {
+                startLine shouldBe 55
+                startColumn shouldBe 5
+                endLine shouldBe 58
+                endColumn shouldBe 7
             }
         }
     }

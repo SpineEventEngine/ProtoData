@@ -51,6 +51,10 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
+import io.spine.protodata.ast.LocationPath.Companion.fromEnum
+import io.spine.protodata.ast.LocationPath.Companion.fromMessage
+import io.spine.protodata.ast.LocationPath.Companion.fromService
+import io.spine.protodata.ast.LocationPath.Companion.plus
 import io.spine.util.interlaced
 
 /**
@@ -63,7 +67,7 @@ import io.spine.util.interlaced
 @Suppress("TooManyFunctions")
 @JvmInline
 internal value class LocationPath
-private constructor(private val value: List<Int>) {
+internal constructor(private val value: List<Int>) {
 
     companion object {
 
@@ -128,30 +132,24 @@ private constructor(private val value: List<Int>) {
                 .reversed()
         }
 
+        internal operator fun LocationPath.plus(another: LocationPath): LocationPath =
+            LocationPath(value + another.value)
+
         fun of(option: FieldDescriptor, context: GenericDescriptor): LocationPath {
             val path = when (context) {
                 is FileDescriptor -> optionAt(FileDescriptorProto.OPTIONS_FIELD_NUMBER, option)
-                is Descriptor -> optionAt(DescriptorProto.OPTIONS_FIELD_NUMBER, option)
-                is EnumDescriptor -> optionAt(EnumDescriptorProto.OPTIONS_FIELD_NUMBER, option)
-                is ServiceDescriptor -> optionAt(
-                    ServiceDescriptorProto.OPTIONS_FIELD_NUMBER,
-                    option
-                )
-                is FieldDescriptor -> optionAt(FieldDescriptorProto.OPTIONS_FIELD_NUMBER, option)
-                is OneofDescriptor -> optionAt(OneofDescriptorProto.OPTIONS_FIELD_NUMBER, option)
-                is EnumValueDescriptor -> optionAt(
-                    EnumValueDescriptorProto.OPTIONS_FIELD_NUMBER,
-                    option
-                )
-                is MethodDescriptor -> optionAt(MethodDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+                is Descriptor -> context.pathOf(option)
+                is EnumDescriptor -> context.pathOf(option)
+                is ServiceDescriptor -> context.pathOf(option)
+                is FieldDescriptor -> context.pathOf(option)
+                is OneofDescriptor -> context.pathOf(option)
+                is EnumValueDescriptor -> context.pathOf(option)
+                is MethodDescriptor -> context.pathOf(option)
                 // Return the non-existing path so that the default `Location` is returned.
                 else -> LocationPath(listOf(-1, -1))
             }
             return path
         }
-
-        private fun optionAt(optionsFieldNumber: Int, option: FieldDescriptor): LocationPath =
-            LocationPath(listOf(optionsFieldNumber, option.toProto().number))
     }
 
     /**
@@ -199,3 +197,31 @@ private val Descriptor.isTopLevel: Boolean
 
 private val EnumDescriptor.isTopLevel: Boolean
     get() = containingType == null
+
+private fun optionAt(optionsFieldNumber: Int, option: FieldDescriptor): LocationPath =
+    LocationPath(listOf(optionsFieldNumber, option.toProto().number))
+
+private fun Descriptor.pathOf(option: FieldDescriptor): LocationPath =
+    fromMessage(this) + optionAt(DescriptorProto.OPTIONS_FIELD_NUMBER, option)
+
+private fun EnumDescriptor.pathOf(option: FieldDescriptor): LocationPath =
+    fromEnum(this) + optionAt(EnumDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+
+private fun ServiceDescriptor.pathOf(option: FieldDescriptor): LocationPath =
+    fromService(this) + optionAt(ServiceDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+
+private fun FieldDescriptor.pathOf(option: FieldDescriptor): LocationPath =
+    fromMessage(containingType).field(this) +
+            optionAt(FieldDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+
+private fun OneofDescriptor.pathOf(option: FieldDescriptor): LocationPath =
+    fromMessage(containingType).oneof(this) +
+            optionAt(OneofDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+
+private fun EnumValueDescriptor.pathOf(option: FieldDescriptor): LocationPath =
+    fromEnum(type).constant(this) +
+            optionAt(EnumValueDescriptorProto.OPTIONS_FIELD_NUMBER, option)
+
+private fun MethodDescriptor.pathOf(option: FieldDescriptor): LocationPath =
+    fromService(service).rpc(this) +
+            optionAt(MethodDescriptorProto.OPTIONS_FIELD_NUMBER, option)

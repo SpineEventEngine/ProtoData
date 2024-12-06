@@ -47,6 +47,16 @@ import "google/protobuf/timestamp.proto";
 // This is a stub message with documentation.
 message Selector {
 
+    // This is a standard message option.
+    option deprecated = false;
+    // A trailing comment for the option.
+
+    // This is a custom Spine option.
+    option (entity) = {
+        kind: ENTITY,
+        visibility: FULL
+    }; // Another trailing comment.
+
     // The current position of the selector.
     Position position = 1 [
         // A selector cannot be in an undefined position.
