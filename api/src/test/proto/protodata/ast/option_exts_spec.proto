@@ -59,7 +59,7 @@ message Selector {
 
     // The current position of the selector.
     Position position = 1 [
-        // A selector cannot be in an undefined position.
+        // This comment is not included into the location info.
         (required) = true
     ];
 

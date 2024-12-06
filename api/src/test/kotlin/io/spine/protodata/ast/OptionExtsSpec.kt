@@ -29,6 +29,7 @@ package io.spine.protodata.ast
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldContain
+import io.spine.protobuf.field
 import io.spine.protodata.ast.given.OptionExtsSpecProto
 import io.spine.protodata.ast.given.Selector
 import org.junit.jupiter.api.DisplayName
@@ -89,6 +90,22 @@ internal class OptionExtsSpec {
                 startColumn shouldBe 5
                 endLine shouldBe 58
                 endColumn shouldBe 7
+            }
+        }
+    }
+
+    @Test
+    fun `obtain options for a field`() {
+        val field = Selector.getDescriptor().field("position")!!
+        val options = field.options()
+
+        options.named("required").run {
+            doc.leadingComment.shouldBeEmpty()
+            span .run {
+                startLine shouldBe 63
+                startColumn shouldBe 9
+                endLine shouldBe 63
+                endColumn shouldBe 26
             }
         }
     }
