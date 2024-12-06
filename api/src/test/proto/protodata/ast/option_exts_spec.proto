@@ -65,10 +65,17 @@ message Selector {
 
     // Enumerates the positions of the selector.
     enum Position {
+
+        // A standard enum option.
+        option deprecated = false;
+
         POSITION_UNDEFINED = 0;
 
         // Left.
-        POSITION_LEFT = 1;
+        POSITION_LEFT = 1 [
+            // A standard enum value option.
+            deprecated = false
+        ];
 
         // Right.
         POSITION_RIGHT = 2;
@@ -82,3 +89,8 @@ message Selector {
 
     google.protobuf.Timestamp when_changed = 2;
 }
+
+
+
+// Turn generic services on so that the code and descriptors are generated.
+option java_generic_services = true;

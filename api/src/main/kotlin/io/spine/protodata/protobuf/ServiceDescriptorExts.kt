@@ -33,7 +33,7 @@ import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.service
 import io.spine.protodata.ast.serviceName
-import io.spine.protodata.ast.toList
+import io.spine.protodata.ast.options
 
 /**
  * Obtains the name of this service as a [ServiceName].
@@ -53,7 +53,7 @@ public fun ServiceDescriptor.toService(): Service =
         val serviceName = name()
         name = serviceName
         file = getFile().file()
-        option.addAll(options.toList(self))
+        option.addAll(options())
         rpc.addAll(methods.map { it.toRpc(serviceName) })
         doc = documentation().forService(self)
         span = coordinates().forService(self)

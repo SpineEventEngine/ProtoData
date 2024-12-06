@@ -40,9 +40,9 @@ import io.spine.protodata.ast.ProtoFileHeader.SyntaxVersion.PROTO3
 import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.Service
 import io.spine.protodata.ast.file
+import io.spine.protodata.ast.options
 import io.spine.protodata.ast.protoFileHeader
 import io.spine.protodata.ast.protobufSourceFile
-import io.spine.protodata.ast.toList
 
 /**
  * Obtains the syntax version of the given [FileDescriptor].
@@ -100,7 +100,7 @@ public fun FileDescriptor.toHeader(): ProtoFileHeader = protoFileHeader {
     file = file()
     packageName = `package`
     syntax = syntaxVersion()
-    option.addAll(options.toList(this@toHeader))
+    option.addAll(options())
 }
 
 /**

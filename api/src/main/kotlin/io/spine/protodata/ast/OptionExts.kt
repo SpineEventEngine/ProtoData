@@ -28,10 +28,16 @@
 
 package io.spine.protodata.ast
 
+import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
+import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.Descriptors.GenericDescriptor
+import com.google.protobuf.Descriptors.MethodDescriptor
+import com.google.protobuf.Descriptors.OneofDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
 import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import com.google.protobuf.Message
 import io.spine.base.EventMessage
@@ -99,9 +105,49 @@ public suspend fun SequenceScope<EventMessage>.produceOptionEvents(
 }
 
 /**
+ * Obtains options declared in this file.
+ */
+public fun FileDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this message.
+ */
+public fun Descriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this enumeration.
+ */
+public fun EnumDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this service.
+ */
+public fun ServiceDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this field.
+ */
+public fun FieldDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this oneof.
+ */
+public fun OneofDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this enum item.
+ */
+public fun EnumValueDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this `rpc` method.
+ */
+public fun MethodDescriptor.options(): List<Option> = options.toList(this)
+
+/**
  * Parses this `options` message into a list of [Option]s.
  */
-public fun ExtendableMessage<*>.toList(context: GenericDescriptor): List<Option> =
+private fun ExtendableMessage<*>.toList(context: GenericDescriptor): List<Option> =
     parseOptions(context).toList()
 
 private fun ExtendableMessage<*>.parseOptions(context: GenericDescriptor): Sequence<Option> =

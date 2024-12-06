@@ -36,10 +36,10 @@ import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.constantName
 import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.copy
+import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.enumType
-import io.spine.protodata.ast.documentation
-import io.spine.protodata.ast.toList
+import io.spine.protodata.ast.options
 import io.spine.protodata.ast.type
 
 /**
@@ -57,7 +57,7 @@ public fun EnumDescriptor.toEnumType(): EnumType =
         val self = this@toEnumType
         val typeName = name()
         name = typeName
-        option.addAll(options.toList(self))
+        option.addAll(options())
         file = getFile().file()
         constant.addAll(values.map { it.toEnumConstant(typeName) })
         if (containingType != null) {
@@ -85,7 +85,7 @@ public fun EnumValueDescriptor.toEnumConstant(declaringType: TypeName): EnumCons
     val self = this
     val constant = buildConstant(self, declaringType)
     return constant.copy {
-        option.addAll(options.toList(self))
+        option.addAll(options())
     }
 }
 

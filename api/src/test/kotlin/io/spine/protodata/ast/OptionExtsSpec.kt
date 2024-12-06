@@ -39,7 +39,7 @@ internal class OptionExtsSpec {
     @Test
     fun  `obtain options for a file`() {
         val file = OptionExtsSpecProto.getDescriptor()
-        val options = file.options.toList(file)
+        val options = file.options()
 
         options.named("type_url_prefix").run {
             doc.leadingComment shouldContain "We use type URL prefix"
@@ -65,7 +65,7 @@ internal class OptionExtsSpec {
     @Test
     fun `obtain options for a message`() {
         val msg = Selector.getDescriptor()
-        val options = msg.options.toList(msg)
+        val options = msg.options()
 
         options.named("deprecated").run {
             doc.leadingComment shouldContain "This is a standard message option."
@@ -88,6 +88,22 @@ internal class OptionExtsSpec {
                 startColumn shouldBe 5
                 endLine shouldBe 58
                 endColumn shouldBe 7
+            }
+        }
+    }
+
+    @Test
+    fun `obtain options for an enum`() {
+        val enum = Selector.Position.getDescriptor()
+        val options = enum.options()
+
+        options.named("deprecated").run {
+            doc.leadingComment shouldContain "A standard enum option."
+            span.run {
+                startLine shouldBe 70
+                endLine shouldBe 70
+                startColumn shouldBe 9
+                endColumn shouldBe 35
             }
         }
     }
