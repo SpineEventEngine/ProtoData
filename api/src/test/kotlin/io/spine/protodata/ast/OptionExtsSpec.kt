@@ -27,6 +27,7 @@
 package io.spine.protodata.ast
 
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ast.given.OptionExtsSpecProto
 import io.spine.protodata.ast.given.Selector
@@ -104,6 +105,23 @@ internal class OptionExtsSpec {
                 endLine shouldBe 70
                 startColumn shouldBe 9
                 endColumn shouldBe 35
+            }
+        }
+    }
+
+    @Test
+    fun `obtain options for an enum item`() {
+        val item = Selector.Position.POSITION_LEFT.valueDescriptor
+        val options = item.options()
+
+        options.named("deprecated").run {
+            // Enum item docs are not available from descriptors.
+            doc.leadingComment.shouldBeEmpty()
+            span.run {
+                startLine shouldBe 77
+                endLine shouldBe 77
+                startColumn shouldBe 13
+                endColumn shouldBe 31
             }
         }
     }

@@ -101,6 +101,12 @@ public class Documentation private constructor(file: FileDescriptorProto) : Loca
         return commentsAt(path)
     }
 
+    /**
+     * Obtains documentation for the given option method.
+     *
+     * @param option The descriptor of the option.
+     * @param context The scope in which the option is declared.
+     */
     public fun forOption(option: FieldDescriptor, context: GenericDescriptor): Doc {
         val path = LocationPath.of(option, context)
         return commentsAt(path)

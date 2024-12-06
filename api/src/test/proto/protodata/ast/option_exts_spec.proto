@@ -73,7 +73,7 @@ message Selector {
 
         // Left.
         POSITION_LEFT = 1 [
-            // A standard enum value option.
+            // Comments of enum item options are not included into descriptors.
             deprecated = false
         ];
 
