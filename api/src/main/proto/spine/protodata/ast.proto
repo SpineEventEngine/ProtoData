@@ -518,7 +518,7 @@ message Option {
     Doc doc = 5;
 
     // The coordinates of the declaration.
-    Span span = 8;
+    Span span = 6;
 }
 
 // Documentation associated with a certain Protobuf declaration.
