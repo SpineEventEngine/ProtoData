@@ -101,6 +101,13 @@ public class Coordinates private constructor(file: FileDescriptorProto) : Locati
         return spanAt(path)
     }
 
+    /**
+     * Obtains the span of the option declared in the given context.
+     *
+     * @param option The descriptor of the option.
+     * @param context The descriptor of the scope in which the option is declared, such as
+     *   a message type, an enumeration, a service, etc.
+     */
     public fun forOption(option: FieldDescriptor, context: GenericDescriptor): Span {
         val path = LocationPath.of(option, context)
         return spanAt(path)

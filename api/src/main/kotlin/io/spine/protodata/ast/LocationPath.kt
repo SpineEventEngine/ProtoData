@@ -135,6 +135,13 @@ internal constructor(private val value: List<Int>) {
         internal operator fun LocationPath.plus(another: LocationPath): LocationPath =
             LocationPath(value + another.value)
 
+        /**
+         * Obtains a location path of the option declaration.
+         *
+         * @param option The descriptor of the option.
+         * @param context The descriptor of the scope in which the option is declared, such as
+         *   a message type, an enumeration, a service, etc.
+         */
         fun of(option: FieldDescriptor, context: GenericDescriptor): LocationPath {
             val path = when (context) {
                 is FileDescriptor -> optionAt(FileDescriptorProto.OPTIONS_FIELD_NUMBER, option)
@@ -145,7 +152,8 @@ internal constructor(private val value: List<Int>) {
                 is OneofDescriptor -> context.pathOf(option)
                 is EnumValueDescriptor -> context.pathOf(option)
                 is MethodDescriptor -> context.pathOf(option)
-                // Return the non-existing path so that the default `Location` is returned.
+                // Return the non-existing path.
+                // This would make the `Locations` class return the default `Location` instance.
                 else -> LocationPath(listOf(-1, -1))
             }
             return path
