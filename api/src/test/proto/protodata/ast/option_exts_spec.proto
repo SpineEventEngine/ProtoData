@@ -94,3 +94,62 @@ message Selector {
     google.protobuf.Timestamp when_changed = 2;
 }
 
+// Message for sending a notification
+message NotificationRequest {
+    string user_id = 1 [(required) = true];
+
+    // A method of notification.
+    oneof channel {
+        // A channel must be selected.
+        option (is_required) = true;
+        // The trailing comment for the `oneof` option.
+
+        EmailNotification email = 2;
+        SmsNotification sms = 3;
+        PushNotification push = 4;
+    }
+}
+
+// Response message
+message NotificationResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// The service to send notifications.
+service NotificationService {
+    // A standard service option.
+    option deprecated = false;
+    // Trailing comment for the standard option.
+
+    // A custom service option.
+    option (SPI_service) = true;
+    // Trailing comment for the custom option.
+
+    // The method for sending notifications.
+    rpc SendNotification (NotificationRequest) returns (NotificationResponse) {
+        // Ensure retry-safe behavior.
+        option idempotency_level = IDEMPOTENT;
+        // Trailing comment for the standard method option.
+    }
+}
+
+// Email notification type
+message EmailNotification {
+    string email_address = 1;
+    string subject = 2;
+    string body = 3;
+}
+
+// SMS notification type
+message SmsNotification {
+    string phone_number = 1;
+    string body = 2;
+}
+
+// Push notification type
+message PushNotification {
+    string device_token = 1;
+    string title = 2;
+    string body = 3;
+}

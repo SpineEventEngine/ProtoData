@@ -30,6 +30,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldContain
 import io.spine.protobuf.field
+import io.spine.protodata.ast.given.NotificationRequest
+import io.spine.protodata.ast.given.NotificationService
 import io.spine.protodata.ast.given.OptionExtsSpecProto
 import io.spine.protodata.ast.given.Selector
 import org.junit.jupiter.api.DisplayName
@@ -115,6 +117,24 @@ internal class OptionExtsSpec {
         }
 
         @Test
+        fun `a field group under oneof`() {
+            val oneof = NotificationRequest.getDescriptor().oneofs.find { it.name == "channel" }!!
+            val options = oneof.options()
+
+            options.named("is_required").run {
+                doc.leadingComment shouldContain "A channel must be selected."
+                doc.trailingComment shouldContain "The trailing comment for the `oneof` option."
+
+                span.run {
+                    startLine shouldBe 104
+                    startColumn shouldBe 9
+                    endLine shouldBe 104
+                    endColumn shouldBe 37
+                }
+            }
+        }
+
+        @Test
         fun `an enum`() {
             val enum = Selector.Position.getDescriptor()
             val options = enum.options()
@@ -143,6 +163,44 @@ internal class OptionExtsSpec {
                     endLine shouldBe 81
                     startColumn shouldBe 13
                     endColumn shouldBe 31
+                }
+            }
+        }
+
+        @Test
+        fun `a service`() {
+            val service = NotificationService.getDescriptor()
+            val options = service.options()
+
+            options.named("deprecated").run {
+                doc.leadingComment shouldContain "A standard service option."
+                doc.trailingComment shouldContain "Trailing comment for the standard option."
+
+                span.run {
+                    startLine shouldBe 122
+                    startColumn shouldBe 5
+                    endLine shouldBe 122
+                    endColumn shouldBe 31
+                }
+            }
+        }
+
+        @Test
+        fun `a service method`() {
+            val method = NotificationService.getDescriptor().methods.find {
+                it.name == "SendNotification"
+            }!!
+            val options = method.options()
+
+            options.named("idempotency_level").run {
+                doc.leadingComment shouldContain "Ensure retry-safe behavior."
+                doc.trailingComment shouldContain "Trailing comment for the standard method option."
+
+                span.run {
+                    startLine shouldBe 132
+                    startColumn shouldBe 9
+                    endLine shouldBe 132
+                    endColumn shouldBe 47
                 }
             }
         }
