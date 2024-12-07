@@ -42,6 +42,10 @@ option java_outer_classname = "OptionExtsSpecProto";
 // Use multiple files so that each declaration is a top-level Java class.
 option java_multiple_files = true;
 
+// Turn generic services on so that the code and descriptors are generated.
+option java_generic_services = true;
+
+import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 // This is a stub message with documentation.
@@ -90,7 +94,3 @@ message Selector {
     google.protobuf.Timestamp when_changed = 2;
 }
 
-
-
-// Turn generic services on so that the code and descriptors are generated.
-option java_generic_services = true;

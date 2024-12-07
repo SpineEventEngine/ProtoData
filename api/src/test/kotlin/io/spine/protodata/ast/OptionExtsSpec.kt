@@ -33,112 +33,117 @@ import io.spine.protobuf.field
 import io.spine.protodata.ast.given.OptionExtsSpecProto
 import io.spine.protodata.ast.given.Selector
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("Extensions for `Option` should")
 internal class OptionExtsSpec {
 
-    @Test
-    fun  `obtain options for a file`() {
-        val file = OptionExtsSpecProto.getDescriptor()
-        val options = file.options()
+    @Nested inner class
+    `obtain options for`{
 
-        options.named("type_url_prefix").run {
-            doc.leadingComment shouldContain "We use type URL prefix"
-            span.run {
-                startLine shouldBe 34
-                startColumn shouldBe 1
-                endLine shouldBe 34
-                endColumn shouldBe 44
+        @Test
+        fun  `a file`() {
+            val file = OptionExtsSpecProto.getDescriptor()
+            val options = file.options()
+
+            options.named("type_url_prefix").run {
+                doc.leadingComment shouldContain "We use type URL prefix"
+                span.run {
+                    startLine shouldBe 34
+                    startColumn shouldBe 1
+                    endLine shouldBe 34
+                    endColumn shouldBe 44
+                }
+            }
+
+            options.named("java_package").run {
+                doc.leadingComment shouldContain "The preferred package"
+                span.run {
+                    startLine shouldBe 37
+                    startColumn shouldBe 1
+                    endLine shouldBe 37
+                    endColumn shouldBe 54
+                }
             }
         }
 
-        options.named("java_package").run {
-            doc.leadingComment shouldContain "The preferred package"
-            span.run {
-                startLine shouldBe 37
-                startColumn shouldBe 1
-                endLine shouldBe 37
-                endColumn shouldBe 54
+        @Test
+        fun `a message`() {
+            val msg = Selector.getDescriptor()
+            val options = msg.options()
+
+            options.named("deprecated").run {
+                doc.leadingComment shouldContain "This is a standard message option."
+                doc.trailingComment shouldContain "A trailing comment for the option."
+
+                span.run {
+                    startLine shouldBe 55
+                    startColumn shouldBe 5
+                    endLine shouldBe 55
+                    endColumn shouldBe 31
+                }
+            }
+
+            options.named("entity").run {
+                doc.leadingComment shouldContain "This is a custom Spine option."
+                doc.trailingComment shouldContain "Another trailing comment."
+
+                span.run {
+                    startLine shouldBe 59
+                    startColumn shouldBe 5
+                    endLine shouldBe 62
+                    endColumn shouldBe 7
+                }
             }
         }
-    }
 
-    @Test
-    fun `obtain options for a message`() {
-        val msg = Selector.getDescriptor()
-        val options = msg.options()
+        @Test
+        fun `a field`() {
+            val field = Selector.getDescriptor().field("position")!!
+            val options = field.options()
 
-        options.named("deprecated").run {
-            doc.leadingComment shouldContain "This is a standard message option."
-            doc.trailingComment shouldContain "A trailing comment for the option."
-
-            span.run {
-                startLine shouldBe 51
-                startColumn shouldBe 5
-                endLine shouldBe 51
-                endColumn shouldBe 31
+            options.named("required").run {
+                doc.leadingComment.shouldBeEmpty()
+                span .run {
+                    startLine shouldBe 67
+                    startColumn shouldBe 9
+                    endLine shouldBe 67
+                    endColumn shouldBe 26
+                }
             }
         }
 
-        options.named("entity").run {
-            doc.leadingComment shouldContain "This is a custom Spine option."
-            doc.trailingComment shouldContain "Another trailing comment."
+        @Test
+        fun `an enum`() {
+            val enum = Selector.Position.getDescriptor()
+            val options = enum.options()
 
-            span.run {
-                startLine shouldBe 55
-                startColumn shouldBe 5
-                endLine shouldBe 58
-                endColumn shouldBe 7
+            options.named("deprecated").run {
+                doc.leadingComment shouldContain "A standard enum option."
+                span.run {
+                    startLine shouldBe 74
+                    endLine shouldBe 74
+                    startColumn shouldBe 9
+                    endColumn shouldBe 35
+                }
             }
         }
-    }
 
-    @Test
-    fun `obtain options for a field`() {
-        val field = Selector.getDescriptor().field("position")!!
-        val options = field.options()
+        @Test
+        fun `an enum item`() {
+            val item = Selector.Position.POSITION_LEFT.valueDescriptor
+            val options = item.options()
 
-        options.named("required").run {
-            doc.leadingComment.shouldBeEmpty()
-            span .run {
-                startLine shouldBe 63
-                startColumn shouldBe 9
-                endLine shouldBe 63
-                endColumn shouldBe 26
-            }
-        }
-    }
-
-    @Test
-    fun `obtain options for an enum`() {
-        val enum = Selector.Position.getDescriptor()
-        val options = enum.options()
-
-        options.named("deprecated").run {
-            doc.leadingComment shouldContain "A standard enum option."
-            span.run {
-                startLine shouldBe 70
-                endLine shouldBe 70
-                startColumn shouldBe 9
-                endColumn shouldBe 35
-            }
-        }
-    }
-
-    @Test
-    fun `obtain options for an enum item`() {
-        val item = Selector.Position.POSITION_LEFT.valueDescriptor
-        val options = item.options()
-
-        options.named("deprecated").run {
-            // Enum item docs are not available from descriptors.
-            doc.leadingComment.shouldBeEmpty()
-            span.run {
-                startLine shouldBe 77
-                endLine shouldBe 77
-                startColumn shouldBe 13
-                endColumn shouldBe 31
+            options.named("deprecated").run {
+                // Enum item docs are not available from descriptors.
+                doc.leadingComment.shouldBeEmpty()
+                span.run {
+                    startLine shouldBe 81
+                    endLine shouldBe 81
+                    startColumn shouldBe 13
+                    endColumn shouldBe 31
+                }
             }
         }
     }
