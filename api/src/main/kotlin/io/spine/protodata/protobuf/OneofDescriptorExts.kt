@@ -33,7 +33,7 @@ import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.oneofGroup
 import io.spine.protodata.ast.oneofName
-import io.spine.protodata.ast.toList
+import io.spine.protodata.ast.options
 
 /**
  * Obtains the name of this `oneof` as a [OneofName].
@@ -45,11 +45,12 @@ public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
  */
 public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
     oneofGroup {
+        val self = this@toOneOfGroup
         val groupName = name()
         name = groupName
         field.addAll(fields.mapped())
-        option.addAll(options.toList())
+        option.addAll(options())
         val messageType = containingType
-        doc = messageType.documentation().forOneof(this@toOneOfGroup)
-        span = messageType.coordinates().forOneof(this@toOneOfGroup)
+        doc = messageType.documentation().forOneof(self)
+        span = messageType.coordinates().forOneof(self)
     }

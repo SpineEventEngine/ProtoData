@@ -36,7 +36,7 @@ import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.messageType
-import io.spine.protodata.ast.toList
+import io.spine.protodata.ast.options
 import io.spine.protodata.ast.type
 import io.spine.string.camelCase
 
@@ -71,7 +71,7 @@ public fun Descriptor.toMessageType(): MessageType =
         name = name()
         file = getFile().file()
         val self = this@toMessageType
-        option.addAll(options.toList())
+        option.addAll(options())
         if (containingType != null) {
             declaredIn = containingType.name()
         }

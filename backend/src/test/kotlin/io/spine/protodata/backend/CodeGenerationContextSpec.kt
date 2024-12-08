@@ -48,7 +48,9 @@ import io.spine.protobuf.AnyPacker
 import io.spine.protodata.ast.PrimitiveType.TYPE_BOOL
 import io.spine.protodata.ast.ProtobufDependency
 import io.spine.protodata.ast.ProtobufSourceFile
+import io.spine.protodata.ast.doc
 import io.spine.protodata.ast.option
+import io.spine.protodata.ast.span
 import io.spine.protodata.ast.toType
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
@@ -178,6 +180,16 @@ class CodeGenerationContextSpec {
                 number = BETA_TYPE_FIELD_NUMBER
                 type = TYPE_BOOL.toType()
                 value = AnyPacker.pack(BoolValue.of(true))
+                doc = doc {
+                    // The option is not documented.
+                    // It's OK because we test docs of options in the tests of the `api` module.
+                }
+                span = span {
+                    startLine = 34
+                    startColumn = 5
+                    endLine = 34
+                    endColumn = 31
+                }
             })
             // 4 regular fields and 2 fields under `oneof`.
             journeyType.fieldList shouldHaveSize 6

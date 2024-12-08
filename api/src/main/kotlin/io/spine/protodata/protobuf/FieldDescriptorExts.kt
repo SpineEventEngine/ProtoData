@@ -74,7 +74,7 @@ import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
 import io.spine.protodata.ast.fieldType
 import io.spine.protodata.ast.mapEntryType
-import io.spine.protodata.ast.toList
+import io.spine.protodata.ast.options
 import io.spine.protodata.ast.toType
 import io.spine.protodata.ast.type
 import kotlin.reflect.KClass
@@ -90,13 +90,14 @@ public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
  * @see buildField
  */
 public fun FieldDescriptor.toField(): Field {
-    val field = buildField(this)
+    val self = this
+    val field = buildField(self)
     return field.copy {
         // There are several similar expressions in this file, like
         // the `option.addAll()` call below. Sadly, these duplicates
         // could not be refactored into a common function because
         // they have no common compile-time type.
-        option.addAll(options.toList())
+        option.addAll(options())
     }
 }
 

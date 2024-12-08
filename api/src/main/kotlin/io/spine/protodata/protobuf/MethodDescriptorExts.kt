@@ -38,9 +38,9 @@ import io.spine.protodata.ast.ServiceName
 import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.documentation
+import io.spine.protodata.ast.options
 import io.spine.protodata.ast.rpc
 import io.spine.protodata.ast.rpcName
-import io.spine.protodata.ast.toList
 
 /**
  * Obtains the name of this RPC method as an [RpcName].
@@ -55,7 +55,7 @@ public fun MethodDescriptor.name(): RpcName = rpcName { value = name }
 public fun MethodDescriptor.toRpc(declaringService: ServiceName): Rpc {
     val rpc = buildRpc(this, declaringService)
     return rpc.copy {
-        option.addAll(options.toList())
+        option.addAll(options())
     }
 }
 

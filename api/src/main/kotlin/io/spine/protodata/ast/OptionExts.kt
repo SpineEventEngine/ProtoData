@@ -28,9 +28,16 @@
 
 package io.spine.protodata.ast
 
+import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor.Type.ENUM
+import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.GenericDescriptor
+import com.google.protobuf.Descriptors.MethodDescriptor
+import com.google.protobuf.Descriptors.OneofDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
 import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import com.google.protobuf.Message
 import io.spine.base.EventMessage
@@ -41,6 +48,7 @@ import io.spine.protobuf.pack
 import io.spine.protobuf.unpack
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.type
+import com.google.protobuf.Any as ProtoAny
 
 /**
  * Unpacks the value of this option using the specified generic type.
@@ -83,57 +91,97 @@ public inline fun <reified T : Message> Iterable<Option>.find(): T? {
 /**
  * Yields events regarding a set of options.
  *
- * @param options
- *         the set of options, such as `FileOptions`, `FieldOptions`, etc.
- * @param factory
- *         a function which given an option, constructs a fitting event.
+ * @param options The set of options, such as `FileOptions`, `FieldOptions`, etc.
+ * @param factory A function which given an option, constructs a fitting event.
  */
 public suspend fun SequenceScope<EventMessage>.produceOptionEvents(
     options: ExtendableMessage<*>,
+    context: GenericDescriptor,
     factory: (Option) -> EventMessage
 ) {
-    parseOptions(options).forEach {
+    options.parseOptions(context).forEach {
         yield(factory(it))
     }
 }
 
 /**
+ * Obtains options declared in this file.
+ */
+public fun FileDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this message.
+ */
+public fun Descriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this enumeration.
+ */
+public fun EnumDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this service.
+ */
+public fun ServiceDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this field.
+ */
+public fun FieldDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this oneof.
+ */
+public fun OneofDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this enum item.
+ */
+public fun EnumValueDescriptor.options(): List<Option> = options.toList(this)
+
+/**
+ * Obtains options declared in this `rpc` method.
+ */
+public fun MethodDescriptor.options(): List<Option> = options.toList(this)
+
+/**
  * Parses this `options` message into a list of [Option]s.
  */
-public fun ExtendableMessage<*>.toList(): List<Option> =
-    parseOptions(this).toList()
+private fun ExtendableMessage<*>.toList(context: GenericDescriptor): List<Option> =
+    parseOptions(context).toList()
 
-private fun parseOptions(options: ExtendableMessage<*>): Sequence<Option> =
+private fun ExtendableMessage<*>.parseOptions(context: GenericDescriptor): Sequence<Option> =
     sequence {
-        options.allFields.forEach { (optionDescriptor, value) ->
+        allFields.forEach { (optionDescriptor, value) ->
             if (value is Collection<*>) {
-                value.forEach {
-                    val option = toOption(optionDescriptor, it!!)
+                value.forEach { item ->
+                    val option = optionDescriptor.toOption(item!!, context)
                     yield(option)
                 }
             } else {
-                val option = toOption(optionDescriptor, value)
+                val option = optionDescriptor.toOption(value, context)
                 yield(option)
             }
         }
     }
 
-private fun toOption(
-    optionDescriptor: FieldDescriptor,
-    value: Any
-): Option {
-    val optionValue = fieldToAny(optionDescriptor, value)
+private fun FieldDescriptor.toOption(value: Any, context: GenericDescriptor): Option {
+    val optionDescriptor = this
+    val optionValue = optionDescriptor.packOptionValue(value)
     val option = option {
         name = optionDescriptor.name
         number = optionDescriptor.number
         type = optionDescriptor.type()
         this.value = optionValue
+
+        doc = context.file.documentation().forOption(optionDescriptor, context)
+        span = context.file.coordinates().forOption(optionDescriptor, context)
     }
     return option
 }
 
-private fun fieldToAny(field: FieldDescriptor, value: Any): com.google.protobuf.Any =
-    if (field.type == ENUM) {
+private fun FieldDescriptor.packOptionValue(value: Any): ProtoAny =
+    if (type == ENUM) {
         val descr = value as EnumValueDescriptor
         val enumValue = com.google.protobuf.enumValue {
             name = descr.name

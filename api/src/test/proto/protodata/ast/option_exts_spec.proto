@@ -1,0 +1,155 @@
+/*
+ * Copyright 2024, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+syntax = "proto3";
+
+package spine.protodata.ast;
+
+import "spine/options.proto";
+
+// We use type URL prefix for stub types too.
+option (type_url_prefix) = "type.spine.io";
+
+// The preferred package name is "given" to separate stub types from production or test code.
+option java_package = "io.spine.protodata.ast.given";
+
+// Explicitly set the outer class name.
+option java_outer_classname = "OptionExtsSpecProto";
+
+// Use multiple files so that each declaration is a top-level Java class.
+option java_multiple_files = true;
+
+// Turn generic services on so that the code and descriptors are generated.
+option java_generic_services = true;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// This is a stub message with documentation.
+message Selector {
+
+    // This is a standard message option.
+    option deprecated = false;
+    // A trailing comment for the option.
+
+    // This is a custom Spine option.
+    option (entity) = {
+        kind: ENTITY,
+        visibility: FULL
+    }; // Another trailing comment.
+
+    // The current position of the selector.
+    Position position = 1 [
+        // This comment is not included into the location info.
+        (required) = true
+    ];
+
+    // Enumerates the positions of the selector.
+    enum Position {
+
+        // A standard enum option.
+        option deprecated = false;
+
+        POSITION_UNDEFINED = 0;
+
+        // Left.
+        POSITION_LEFT = 1 [
+            // Comments of enum item options are not included into descriptors.
+            deprecated = false
+        ];
+
+        // Right.
+        POSITION_RIGHT = 2;
+
+        // Top.
+        POSITION_TOP = 3;
+
+        // Bottom.
+        POSITION_BOTTOM = 4;
+    }
+
+    google.protobuf.Timestamp when_changed = 2;
+}
+
+// Message for sending a notification
+message NotificationRequest {
+    string user_id = 1 [(required) = true];
+
+    // A method of notification.
+    oneof channel {
+        // A channel must be selected.
+        option (is_required) = true;
+        // The trailing comment for the `oneof` option.
+
+        EmailNotification email = 2;
+        SmsNotification sms = 3;
+        PushNotification push = 4;
+    }
+}
+
+// Response message
+message NotificationResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// The service to send notifications.
+service NotificationService {
+    // A standard service option.
+    option deprecated = false;
+    // Trailing comment for the standard option.
+
+    // A custom service option.
+    option (SPI_service) = true;
+    // Trailing comment for the custom option.
+
+    // The method for sending notifications.
+    rpc SendNotification (NotificationRequest) returns (NotificationResponse) {
+        // Ensure retry-safe behavior.
+        option idempotency_level = IDEMPOTENT;
+        // Trailing comment for the standard method option.
+    }
+}
+
+// Email notification type
+message EmailNotification {
+    string email_address = 1;
+    string subject = 2;
+    string body = 3;
+}
+
+// SMS notification type
+message SmsNotification {
+    string phone_number = 1;
+    string body = 2;
+}
+
+// Push notification type
+message PushNotification {
+    string device_token = 1;
+    string title = 2;
+    string body = 3;
+}

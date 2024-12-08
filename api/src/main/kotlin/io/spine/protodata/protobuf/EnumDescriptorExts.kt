@@ -36,10 +36,10 @@ import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.constantName
 import io.spine.protodata.ast.coordinates
 import io.spine.protodata.ast.copy
+import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.enumConstant
 import io.spine.protodata.ast.enumType
-import io.spine.protodata.ast.documentation
-import io.spine.protodata.ast.toList
+import io.spine.protodata.ast.options
 import io.spine.protodata.ast.type
 
 /**
@@ -54,16 +54,17 @@ public fun EnumDescriptor.name(): TypeName = buildTypeName(name, file, containin
  */
 public fun EnumDescriptor.toEnumType(): EnumType =
     enumType {
+        val self = this@toEnumType
         val typeName = name()
         name = typeName
-        option.addAll(options.toList())
+        option.addAll(options())
         file = getFile().file()
         constant.addAll(values.map { it.toEnumConstant(typeName) })
         if (containingType != null) {
             declaredIn = containingType.name()
         }
-        doc = documentation().forEnum(this@toEnumType)
-        span = coordinates().forEnum(this@toEnumType)
+        doc = documentation().forEnum(self)
+        span = coordinates().forEnum(self)
     }
 
 /**
@@ -81,9 +82,10 @@ public fun EnumDescriptor.toType(): Type = type {
  * @see buildConstant
  */
 public fun EnumValueDescriptor.toEnumConstant(declaringType: TypeName): EnumConstant {
-    val constant = buildConstant(this, declaringType)
+    val self = this
+    val constant = buildConstant(self, declaringType)
     return constant.copy {
-        option.addAll(options.toList())
+        option.addAll(options())
     }
 }
 

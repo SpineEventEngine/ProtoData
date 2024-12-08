@@ -24,37 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.protobuf
-
-import com.google.protobuf.Descriptors.ServiceDescriptor
-import io.spine.protodata.ast.Service
-import io.spine.protodata.ast.ServiceName
-import io.spine.protodata.ast.coordinates
-import io.spine.protodata.ast.documentation
-import io.spine.protodata.ast.service
-import io.spine.protodata.ast.serviceName
-import io.spine.protodata.ast.options
+package io.spine.dependency.local
 
 /**
- * Obtains the name of this service as a [ServiceName].
+ * Spine TestLib library.
+ *
+ * @see <a href="https://github.com/SpineEventEngine/testlib">spine-testlib</a>
  */
-public fun ServiceDescriptor.name(): ServiceName = serviceName {
-    typeUrlPrefix = file.typeUrlPrefix
-    packageName = file.`package`
-    simpleName = name
+@Suppress("ConstPropertyName")
+object TestLib {
+    const val version = "2.0.0-SNAPSHOT.184"
+    const val group = Spine.toolsGroup
+    const val artifact = "spine-testlib"
+    const val lib = "$group:$artifact:$version"
 }
-
-/**
- * Converts this service descriptor into [Service] instance.
- */
-public fun ServiceDescriptor.toService(): Service =
-    service {
-        val self = this@toService
-        val serviceName = name()
-        name = serviceName
-        file = getFile().file()
-        option.addAll(options())
-        rpc.addAll(methods.map { it.toRpc(serviceName) })
-        doc = documentation().forService(self)
-        span = coordinates().forService(self)
-    }

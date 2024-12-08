@@ -26,12 +26,12 @@
 
 import io.spine.dependency.build.Dokka
 import io.spine.dependency.build.ErrorProne
-import io.spine.dependency.test.JUnit
 import io.spine.dependency.lib.Protobuf
-import io.spine.dependency.test.Truth
+import io.spine.dependency.local.Base
 import io.spine.dependency.local.CoreJava
-import io.spine.dependency.local.Spine
 import io.spine.dependency.local.ToolBase
+import io.spine.dependency.test.JUnit
+import io.spine.dependency.test.Truth
 import io.spine.gradle.javac.configureErrorProne
 import io.spine.gradle.javac.configureJavac
 import io.spine.gradle.kotlin.applyJvmToolchain
@@ -102,7 +102,7 @@ fun Module.forceConfigurations() {
         resolutionStrategy {
             force(
                 Protobuf.compiler,
-                Spine.base,
+                Base.lib,
                 ToolBase.lib,
             )
         }

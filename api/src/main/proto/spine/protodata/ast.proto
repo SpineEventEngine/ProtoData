@@ -123,7 +123,7 @@ message MessageType {
     //
     repeated TypeName nested_enums = 8 [(distinct) = true];
 
-    // Documentation of this type.
+    // The documentation of this type.
     Doc doc = 9;
 
     // Coordinates of the declaration.
@@ -155,7 +155,7 @@ message EnumType {
     //
     TypeName declared_in = 5;
 
-    // Documentation of this type.
+    // The documentation of this type.
     Doc doc = 6;
 
     // Coordinates of the declaration.
@@ -193,7 +193,7 @@ message EnumConstant {
     // Options associated with this constant.
     repeated Option option = 6;
 
-    // Documentation of this constant.
+    // The documentation of this constant.
     Doc doc = 7;
 
     // Coordinates of the declaration.
@@ -343,7 +343,7 @@ message Field {
     // Field-level options.
     repeated Option option = 7 [(distinct) = true];
 
-    // Documentation of this field.
+    // The documentation of this field.
     Doc doc = 8;
 
     // Coordinates of the declaration.
@@ -371,7 +371,7 @@ message OneofGroup {
     // Oneof-level options.
     repeated Option option = 3 [(distinct) = true];
 
-    // Documentation of this group.
+    // The documentation of this group.
     Doc doc = 4;
 
     // Coordinates of the declaration.
@@ -416,7 +416,7 @@ message Service {
     //
     repeated Rpc rpc = 4 [(distinct) = true];
 
-    // Documentation of this service.
+    // The documentation of this service.
     Doc doc = 5;
 
     // Coordinates of the declaration.
@@ -453,7 +453,7 @@ message Rpc {
     // `rpc`-level options.
     repeated Option option = 6 [(distinct) = true];
 
-    // Documentation of this `rpc`.
+    // The documentation of this `rpc`.
     Doc doc = 7;
 
     // The coordinates of the declaration.
@@ -513,6 +513,12 @@ message Option {
 
     // The packed value of the option.
     google.protobuf.Any value = 4 [(required) = true];
+
+    // The documentation of the option.
+    Doc doc = 5;
+
+    // The coordinates of the declaration.
+    Span span = 6;
 }
 
 // Documentation associated with a certain Protobuf declaration.

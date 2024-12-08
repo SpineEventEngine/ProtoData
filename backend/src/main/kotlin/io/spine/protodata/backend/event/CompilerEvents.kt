@@ -26,6 +26,8 @@
 
 package io.spine.protodata.backend.event
 
+import com.google.common.collect.ImmutableSet
+import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
@@ -52,10 +54,10 @@ public object CompilerEvents {
      * The resulting sequence is always finite, it's limited by the type set.
      */
     public fun parse(request: CodeGeneratorRequest): Sequence<EventMessage> {
+        val allFiles = request.protoFileList.toDescriptors()
         val filesToGenerate = request.fileToGenerateList.toSet()
-        val files = FileSet.of(request.protoFileList)
         return sequence {
-            val (ownFiles, dependencies) = files.files().partition {
+            val (ownFiles, dependencies) = allFiles.partition {
                 it.name in filesToGenerate
             }
             yieldAll(dependencies.map { it.toDependencyEvent() })
@@ -91,7 +93,7 @@ private class ProtoFileEvents(
                 header = hdr
             }
         )
-        produceOptionEvents(file.options) {
+        produceOptionEvents(file.options, file) {
             fileOptionDiscovered {
                 file = header.file
                 option = it
@@ -115,6 +117,16 @@ private class ProtoFileEvents(
             }
         )
     }
+}
+
+/**
+ * Convert this collection of [FileDescriptorProto] to a set of corresponding
+ * instances of [FileDescriptor].
+ */
+private fun Collection<FileDescriptorProto>.toDescriptors(): ImmutableSet<FileDescriptor> {
+    val files = FileSet.of(this)
+    val fileDescriptors = files.files()
+    return fileDescriptors
 }
 
 /**
