@@ -70,6 +70,7 @@ public object Compilation {
      * @param message The description of what went wrong.
      * @throws Compilation.Error exception when called under tests.
      */
+    @Suppress("TooGenericExceptionThrown") // False positive from detekt.
     public fun error(file: File, line: Int, column: Int, message: String) {
         val output = errorMessage(file, line, column, message)
         if (underTests) {
