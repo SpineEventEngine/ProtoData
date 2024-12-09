@@ -24,12 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.dependency.local.Spine].
- */
-val protoDataVersion: String by extra("0.70.1")
+package io.spine.protodata
+
+import io.kotest.matchers.string.shouldContain
+import java.io.File
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+
+@DisplayName("`Compilation` object should")
+internal class CompilationSpec {
+
+    @Test
+    fun `throw the 'Error' exception under tests`() {
+        val file = File("some.proto")
+        val lineNumber = 100
+        val columnNumber = 500
+        val errorMessage = "Some error."
+        val exception = assertThrows<Compilation.Error> {
+            Compilation.error(file, lineNumber, columnNumber, errorMessage)
+        }
+        exception.message.let {
+            it shouldContain file.path
+            it shouldContain "$lineNumber:$columnNumber"
+            it shouldContain errorMessage
+        }
+    }
+}
