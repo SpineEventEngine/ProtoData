@@ -26,7 +26,6 @@
 
 package io.spine.protodata
 
-import io.spine.environment.Environment
 import io.spine.environment.Tests
 import java.io.File
 import kotlin.system.exitProcess
@@ -41,9 +40,8 @@ import kotlin.system.exitProcess
  * In the testing mode, the [error] method throws [Compilation.Error] exception with
  * the same error message as printed to the console in the production mode.
  *
- * The execution mode is [detected][Environment.is] via the [Environment] class.
+ * The execution mode is [detected][Tests.enabled] via the [Tests] environment type.
  *
- * @see Environment
  * @see Tests
  */
 public object Compilation {
@@ -52,7 +50,7 @@ public object Compilation {
      * Tells if the code generation is performed under tests.
      */
     private val underTests: Boolean
-        get() = Environment.instance().`is`(Tests::class.java)
+        get() = Tests.type().enabled()
 
     /**
      * The exit code for a compilation error.
