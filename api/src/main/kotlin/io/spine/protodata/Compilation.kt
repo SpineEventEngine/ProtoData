@@ -26,13 +26,35 @@
 
 package io.spine.protodata
 
+import io.spine.environment.Environment
+import io.spine.environment.Tests
 import java.io.File
 import kotlin.system.exitProcess
 
 /**
  * Provides functions to report compilation errors and warnings.
+ *
+ * The object has two modes of handling the compilation [error].
+ * In the production mode, the [error] method prints an error message to [System.err] and
+ * exits the process with [ERROR_EXIT_CODE].
+ *
+ * In the testing mode, the [error] method throws [Compilation.Error] exception with
+ * the same error message as printed to the console in the production mode.
+ *
+ * The execution mode is [detected][Environment.is] via the [Environment] class.
+ *
+ * @see Environment
+ * @see Tests
  */
 public object Compilation {
+
+    /**
+     * Tells if the code generation is performed under tests.
+     */
+    private val underTests: Boolean
+        get() {
+            return Environment.instance().`is`(Tests::class.java)
+        }
 
     /**
      * The exit code for a compilation error.
@@ -46,12 +68,24 @@ public object Compilation {
      * @param line The one-based number of the line with the error.
      * @param column The one-based number of the column with the error.
      * @param message The description of what went wrong.
+     * @throws Compilation.Error exception when called under tests.
      */
     public fun error(file: File, line: Int, column: Int, message: String) {
-        val output = "e: $file:$line:$column: $message"
-        System.err.println(output)
-        exitProcess(ERROR_EXIT_CODE)
+        val output = errorMessage(file, line, column, message)
+        if (underTests) {
+            throw Error(output)
+        } else {
+            System.err.println(output)
+            exitProcess(ERROR_EXIT_CODE)
+        }
     }
+
+    private fun errorMessage(
+        file: File,
+        line: Int,
+        column: Int,
+        message: String
+    ) = "e: $file:$line:$column: $message"
 
     /**
      * Prints the warning diagnostics to [System.out].
@@ -69,5 +103,14 @@ public object Compilation {
         val output = "w: $file:$line:$column: $message"
         println(output)
         return output
+    }
+
+    /**
+     * The exception thrown by [Compilation.error] when the testing mode is on.
+     */
+    public class Error(message: String) : kotlin.Exception(message) {
+        public companion object {
+            private const val serialVersionUID: Long = 0L
+        }
     }
 }
