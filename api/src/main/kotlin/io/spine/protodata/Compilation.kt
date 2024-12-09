@@ -52,9 +52,7 @@ public object Compilation {
      * Tells if the code generation is performed under tests.
      */
     private val underTests: Boolean
-        get() {
-            return Environment.instance().`is`(Tests::class.java)
-        }
+        get() = Environment.instance().`is`(Tests::class.java)
 
     /**
      * The exit code for a compilation error.
