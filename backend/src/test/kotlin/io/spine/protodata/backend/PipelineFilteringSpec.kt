@@ -27,6 +27,7 @@
 package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors.Descriptor
+import io.kotest.matchers.shouldNotBe
 import io.spine.protodata.backend.recorder.RecordingPlugin
 import io.spine.protodata.testing.PipelineSetup
 import java.nio.file.Path
@@ -47,9 +48,11 @@ internal class PipelineFilteringSpec {
 
     @Test
     fun `filter message types`(@TempDir output: Path, @TempDir settings: Path) {
+        val acceptedTypeName = "MessageTypes"
+
         val filter: DescriptorFilter = {
             if (it is Descriptor) {
-                it.name.contains("View")
+                it.name == acceptedTypeName
             } else {
                 true
             }
@@ -59,7 +62,6 @@ internal class PipelineFilteringSpec {
         val pipeline = setup.createPipeline()
         pipeline()
 
-        //TODO:2024-12-11:alexander.yevsyukov: Add querying ability for `RecordingPlugin` and
-        // check the views.
+        recorder.query().messageTypeNames().find { it.contains(acceptedTypeName) } shouldNotBe null
     }
 }

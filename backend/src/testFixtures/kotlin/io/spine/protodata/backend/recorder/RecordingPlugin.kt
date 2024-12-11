@@ -34,7 +34,10 @@ import io.spine.protodata.ast.event.TypeEntered
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.View
+import io.spine.protodata.render.Renderer
+import io.spine.protodata.render.SourceFileSet
 import io.spine.server.entity.alter
+import io.spine.tools.code.Java
 import io.spine.validate.ValidatingBuilder
 
 /**
@@ -42,16 +45,47 @@ import io.spine.validate.ValidatingBuilder
  * processed by a pipeline.
  */
 class RecordingPlugin : Plugin(
-    views = setOf(MessageView::class.java, EnumView::class.java, ServicesView::class.java)
-)
+    views = setOf(MessageView::class.java, EnumView::class.java, ServicesView::class.java),
+    renderers = listOf(Query())) {
+
+    fun query() = renderers.first() as Query
+}
 
 private abstract class RecordingView<S : DeclarationViewState, B: ValidatingBuilder<S>> :
     View<String, S, B>() {
 
-    val singletonId: String = this::class.qualifiedName!!
+    companion object {
+        @Suppress("ConstPropertyName") // for readability.
+        const val singletonId: String = "SINGLETON"
+    }
+}
+
+/**
+ * A no-action renderer which serves the querying capabilities.
+ */
+class Query: Renderer<Java>(Java) {
+
+    fun messageTypeNames(): List<String> = findNames<MessageTypes>()
+
+    fun enumTypeNames(): List<String> = findNames<EnumTypes>()
+
+    fun serviceNames(): List<String> = findNames<Services>()
+
+    private inline fun <reified S : DeclarationViewState> findNames(): List<String> {
+        val v = select<S>().findById(RecordingView.singletonId)
+        return v?.getNameList() ?: emptyList()
+    }
+
+    override fun render(sources: SourceFileSet) {
+        // Do nothing
+    }
 }
 
 private class MessageView : RecordingView<MessageTypes, MessageTypes.Builder>() {
+
+    init {
+        println("`MessageView` class created.`")
+    }
 
     @Subscribe
     fun on(@External e: TypeEntered) = alter {
