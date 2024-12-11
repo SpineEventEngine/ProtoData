@@ -288,8 +288,8 @@ public class PipelineSetup(
         public fun byResources(
             plugins: List<Plugin>,
             outputRoot: Path,
-            descriptorFilter: DescriptorFilter = { true },
             settingsDir: Path,
+            descriptorFilter: DescriptorFilter = { true },
             writeSettings: (SettingsDirectory) -> Unit
         ): PipelineSetup =
             byResources(Java, plugins, outputRoot, settingsDir, descriptorFilter, writeSettings)
