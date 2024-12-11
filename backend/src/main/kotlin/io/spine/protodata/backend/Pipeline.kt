@@ -71,6 +71,10 @@ import io.spine.server.under
  * @property sources The source sets to be processed by the pipeline.
  * @property request The Protobuf compiler request.
  * @property settings The directory to which setting files for the [plugins] should be stored.
+ * @property descriptorFilter The predicate to accept descriptors during parsing of the [request].
+ *  The default value accepts all the descriptors.
+ *  The primary usage scenario for this parameter is accepting only
+ *  descriptors of interest when running tests.
  */
 @Internal
 public class Pipeline(
@@ -78,6 +82,7 @@ public class Pipeline(
     public val plugins: List<Plugin>,
     public val sources: List<SourceFileSet>,
     public val request: CodeGeneratorRequest,
+    private val descriptorFilter: DescriptorFilter = { true },
     public val settings: SettingsDirectory
 ) {
 
@@ -107,11 +112,11 @@ public class Pipeline(
         settings: SettingsDirectory,
         id: String = generateId()
     ) : this(
-        id,
-        listOf(plugin),
-        listOf(sources),
-        request,
-        settings
+        id = id,
+        plugins = listOf(plugin),
+        sources = listOf(sources),
+        request = request,
+        settings = settings
     )
 
     init {
@@ -176,7 +181,7 @@ public class Pipeline(
         settings.emitEvents().forEach {
             configuration.emitted(it)
         }
-        val events = CompilerEvents.parse(request)
+        val events = CompilerEvents.parse(request, descriptorFilter)
         compiler.emitted(events)
     }
 

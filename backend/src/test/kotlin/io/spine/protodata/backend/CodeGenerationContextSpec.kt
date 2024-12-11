@@ -132,7 +132,7 @@ class CodeGenerationContextSpec {
         }
 
         fun emitCompilerEvents(pipelineId: String) {
-            val events = CompilerEvents.parse(codeGeneratorRequest)
+            val events = CompilerEvents.parse(codeGeneratorRequest, { true })
             ProtobufCompilerContext(pipelineId).use {
                 it.emitted(events)
             }
@@ -272,7 +272,7 @@ class CodeGenerationContextSpec {
                 protoFile.addAll(dependencies)
                 fileToGenerate.addAll(dependencies.map { it.name })
             }
-            val events = CompilerEvents.parse(set)
+            val events = CompilerEvents.parse(set, { true })
 
             val eventList = events.toList()
             eventList.distinct() shouldContainExactly eventList

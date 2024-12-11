@@ -62,10 +62,10 @@ internal class MemberSpec {
         @JvmStatic
         fun setup(@TempDir outputDir: Path, @TempDir settingsDir: Path) {
             val setup = PipelineSetup.byResources(
-                Java,
-                listOf(RenderingTestbed(probe)),
-                outputDir,
-                settingsDir
+                language = Java,
+                plugins = listOf(RenderingTestbed(probe)),
+                outputRoot = outputDir,
+                settingsDir = settingsDir
             ) {}
 
             val pipeline = setup.createPipeline()

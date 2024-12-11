@@ -170,9 +170,9 @@ private fun setup(
     listOf(StubPlugin()),
     input,
     output,
-    CodeGeneratorRequest.getDefaultInstance(),
     settings,
-    writeSettings
+    CodeGeneratorRequest.getDefaultInstance(),
+    writeSettings = writeSettings
 )
 
 private fun setupByResources(

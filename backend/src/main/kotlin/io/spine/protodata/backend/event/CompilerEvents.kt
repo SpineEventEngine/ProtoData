@@ -29,6 +29,7 @@ package io.spine.protodata.backend.event
 import com.google.common.collect.ImmutableSet
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.Descriptors.FileDescriptor
+import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
@@ -37,6 +38,7 @@ import io.spine.protodata.ast.event.fileEntered
 import io.spine.protodata.ast.event.fileExited
 import io.spine.protodata.ast.event.fileOptionDiscovered
 import io.spine.protodata.ast.produceOptionEvents
+import io.spine.protodata.backend.DescriptorFilter
 import io.spine.protodata.protobuf.file
 import io.spine.protodata.protobuf.toHeader
 import io.spine.protodata.protobuf.toPbSourceFile
@@ -44,7 +46,7 @@ import io.spine.protodata.protobuf.toPbSourceFile
 /**
  * A factory for Protobuf compiler events.
  */
-public object CompilerEvents {
+internal object CompilerEvents {
 
     /**
      * Produces a sequence of events based on the given descriptor set.
@@ -53,7 +55,10 @@ public object CompilerEvents {
      *
      * The resulting sequence is always finite, it's limited by the type set.
      */
-    public fun parse(request: CodeGeneratorRequest): Sequence<EventMessage> {
+    fun parse(
+        request: CodeGeneratorRequest,
+        descriptorFilter: DescriptorFilter
+    ): Sequence<EventMessage> {
         val allFiles = request.protoFileList.toDescriptors()
         val filesToGenerate = request.fileToGenerateList.toSet()
         return sequence {
@@ -62,8 +67,10 @@ public object CompilerEvents {
             }
             yieldAll(dependencies.map { it.toDependencyEvent() })
             ownFiles
-                .map(::ProtoFileEvents)
-                .forEach { it.apply { produceEvents() } }
+                .map { ProtoFileEvents(it, descriptorFilter) }
+                .forEach {
+                    it.apply { produceEvents() }
+                }
         }
     }
 }
@@ -72,7 +79,8 @@ public object CompilerEvents {
  * Produces events from the associated file.
  */
 private class ProtoFileEvents(
-    private val file: FileDescriptor
+    private val file: FileDescriptor,
+    private val descriptorFilter: DescriptorFilter
 ) {
     private val header = file.toHeader()
 
@@ -99,16 +107,16 @@ private class ProtoFileEvents(
                 option = it
             }
         }
-        val messageEvents = MessageCompilerEvents(header)
-        file.messageTypes.forEach {
+        val messageEvents = MessageEvents(header)
+        file.messageTypes.forEachFiltered {
             messageEvents.apply { produceEvents(it) }
         }
-        val enumEvents = EnumCompilerEvents(header)
-        file.enumTypes.forEach {
+        val enumEvents = EnumEvents(header)
+        file.enumTypes.forEachFiltered {
             enumEvents.apply { produceEvents(it) }
         }
-        val serviceEvents = ServiceCompilerEvents(header)
-        file.services.forEach {
+        val serviceEvents = ServiceEvents(header)
+        file.services.forEachFiltered {
             serviceEvents.apply { produceEvents(it) }
         }
         yield(
@@ -117,6 +125,9 @@ private class ProtoFileEvents(
             }
         )
     }
+
+    private inline fun <T : GenericDescriptor> List<T>.forEachFiltered(
+        action: (T) -> Unit) = filter(descriptorFilter).forEach(action)
 }
 
 /**
