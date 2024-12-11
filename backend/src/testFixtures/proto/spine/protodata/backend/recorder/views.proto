@@ -39,18 +39,21 @@ option (every_is).java_type = "DeclarationViewState";
 
 // Collects message types processed by a pipeline.
 message MessageTypes {
+    option (entity).kind = VIEW;
     string id = 1;
     repeated string name = 2;
 }
 
 // Collects message types processed by a pipeline.
 message EnumTypes {
+    option (entity).kind = VIEW;
     string id = 1;
     repeated string name = 2;
 }
 
 // Collects message types processed by a pipeline.
 message Services {
+    option (entity).kind = VIEW;
     string id = 1;
     repeated string name = 2;
 }

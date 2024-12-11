@@ -26,12 +26,12 @@
 
 package io.spine.protodata.backend.recorder
 
-import com.google.protobuf.Message
+import io.spine.base.EntityState
 
 /**
  * The interface common to view states collecting names of Protobuf declarations.
  */
-internal interface DeclarationViewState : Message {
+internal interface DeclarationViewState : EntityState<String> {
 
     fun getNameList(): List<String>
 }
