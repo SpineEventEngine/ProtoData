@@ -45,7 +45,7 @@ import com.google.protobuf.Descriptors.GenericDescriptor
  *  * [EnumDescriptor][com.google.protobuf.Descriptors.EnumDescriptor]
  *  * [ServiceDescriptor][com.google.protobuf.Descriptors.ServiceDescriptor]
  *
- * Since it is not possible to group the above classes in a type safe manner, we have to
+ * Since it is not possible to group the above classes in a type-safe manner, we have to
  * use the common supertype.
  */
 public typealias DescriptorFilter = (GenericDescriptor) -> Boolean
