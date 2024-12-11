@@ -175,8 +175,8 @@ public fun MutableSet<Class<out View<*,  *, *>>>.add(view: KClass<out View<*, *,
  * This instance will be added to the repository registration list for
  * the bounded context being built.
  *
- * @param I the type of entity identifiers.
- * @param E the type of entities.
+ * @param I The type of entity identifiers.
+ * @param E The type of entities.
  */
 public inline fun <reified I, reified E : Entity<I, *>>
         BoundedContextBuilder.add(entity: KClass<out E>) {
