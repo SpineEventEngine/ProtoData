@@ -26,7 +26,8 @@
 
 import io.spine.dependency.local.CoreJava
 import io.spine.dependency.local.ProtoTap
-import io.spine.dependency.local.Spine
+import io.spine.dependency.local.Reflect
+import io.spine.dependency.local.TestLib
 
 plugins {
     protobuf
@@ -42,11 +43,11 @@ protobuf {
 
 dependencies {
     api(gradleTestKit())
-    api(Spine.testlib)
+    api(TestLib.lib)
     api(CoreJava.testUtilServer)
     api(ProtoTap.api)
     api(project(":api"))
     api(project(":backend"))
 
-    implementation(Spine.reflect)
+    implementation(Reflect.lib)
 }
