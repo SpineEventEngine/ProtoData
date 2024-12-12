@@ -30,6 +30,8 @@ import io.spine.protodata.cli.test.DefaultOptionsCounter
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.StubSoloRenderer
+import io.spine.server.query.Querying
+import io.spine.server.query.select
 import kotlin.io.path.Path
 
 class DefaultOptionsCounterRenderer : StubSoloRenderer() {
@@ -39,7 +41,7 @@ class DefaultOptionsCounterRenderer : StubSoloRenderer() {
     }
 
     override fun render(sources: SourceFileSet) {
-        val counters = select<DefaultOptionsCounter>().all()
+        val counters = (this as Querying).select<DefaultOptionsCounter>().all()
         sources.createFile(
             Path(FILE_NAME),
             counters.joinToString(separator = ",") {

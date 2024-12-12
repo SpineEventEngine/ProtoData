@@ -34,6 +34,8 @@ import io.spine.gradle.publish.PublishingRepos
 
 plugins {
     `build-proto-model`
+    `java-test-fixtures`
+    prototap
 }
 
 dependencies {

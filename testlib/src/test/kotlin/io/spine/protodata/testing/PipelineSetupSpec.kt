@@ -147,7 +147,7 @@ internal class PipelineSetupSpec {
         val setup = setupByResources(Java, output, settings)
         val (pipeline, blackbox) = setup.createPipelineWithBlackBox()
 
-        // We do not expose the type behind `codegenContext` property for additional
+        // We do not expose the type behind the `codegenContext` property for additional
         // safety of the usage. We still assume and test it here because it's essential for
         // the testing utilities we provide.
         (pipeline.codegenContext is CodeGenerationContext) shouldBe true
@@ -170,9 +170,9 @@ private fun setup(
     listOf(StubPlugin()),
     input,
     output,
-    CodeGeneratorRequest.getDefaultInstance(),
     settings,
-    writeSettings
+    CodeGeneratorRequest.getDefaultInstance(),
+    writeSettings = writeSettings
 )
 
 private fun setupByResources(

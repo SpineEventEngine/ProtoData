@@ -29,6 +29,8 @@ package io.spine.protodata.test
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
+import io.spine.server.query.Querying
+import io.spine.server.query.select
 import io.spine.tools.code.Java
 
 /**
@@ -37,7 +39,7 @@ import io.spine.tools.code.Java
 public class UnderscorePrefixRenderer : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
-        val internalTypes = select<InternalType>().all()
+        val internalTypes = (this as Querying).select<InternalType>().all()
         internalTypes.forEach { internalType ->
             val oldName = internalType.name.simpleName
             val newName = "_$oldName"

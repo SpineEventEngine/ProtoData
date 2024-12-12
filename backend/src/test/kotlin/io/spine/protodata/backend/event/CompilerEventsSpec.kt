@@ -97,7 +97,7 @@ class CompilerEventsSpec {
             fileToGenerate += DoctorProto.getDescriptor().fullName
             protoFile.addAll(allDependencyFiles)
         }
-        events = CompilerEvents.parse(request).toList()
+        events = CompilerEvents.parse(request, { true }).toList()
     }
 
     @Test

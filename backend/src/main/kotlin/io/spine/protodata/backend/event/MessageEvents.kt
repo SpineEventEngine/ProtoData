@@ -56,11 +56,10 @@ import io.spine.protodata.protobuf.toMessageType
 /**
  * Produces events for a message.
  */
-internal class MessageCompilerEvents(
-    private val header: ProtoFileHeader
-) {
+internal class MessageEvents(header: ProtoFileHeader) : DeclarationEvents<Descriptor>(header) {
+
     /**
-     * Yields compiler events for the given message type.
+     * Yields events for the given message type.
      *
      * Starts with [TypeDiscovered][io.spine.protodata.ast.event.TypeDiscovered] and
      * [io.spine.protodata.ast.event.TypeEntered] events.
@@ -70,7 +69,7 @@ internal class MessageCompilerEvents(
      *
      * @param desc The descriptor of the message type.
      */
-    internal suspend fun SequenceScope<EventMessage>.produceEvents(
+    override suspend fun SequenceScope<EventMessage>.produceEvents(
         desc: Descriptor
     ) {
         val typeName = desc.name()
@@ -108,7 +107,8 @@ internal class MessageCompilerEvents(
             produceEvents(desc = it)
         }
 
-        val enums = EnumCompilerEvents(header)
+        // Do not filter out nested enum types either.
+        val enums = EnumEvents(header)
         desc.enumTypes.forEach {
             enums.apply {
                 produceEvents(desc = it)

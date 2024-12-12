@@ -24,25 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.dependency.local.CoreJava
-import io.spine.dependency.local.ProtoTap
-import io.spine.dependency.local.Reflect
-import io.spine.dependency.local.TestLib
+package io.spine.protodata.backend
 
-plugins {
-    protobuf
-    id("io.spine.mc-java")
-    `java-test-fixtures`
-    prototap
-}
+import com.google.protobuf.Descriptors.GenericDescriptor
 
-dependencies {
-    api(gradleTestKit())
-    api(TestLib.lib)
-    api(CoreJava.testUtilServer)
-    api(ProtoTap.api)
-    api(project(":api"))
-    api(project(":backend"))
-
-    implementation(Reflect.lib)
-}
+/**
+ * The predicate to accept the descriptors of interest.
+ *
+ * Filtering descriptors is a test feature which allows accepting only a portion of
+ * stub types when running code generation tests.
+ *
+ * The filtering is applied only to top-level declarations.
+ * The filtering is not applied to nested message or enum types to preserve the integrity.
+ *
+ * ## API note
+ *
+ * Even though the input type of the predicate is [GenericDescriptor], which is a supertype of
+ * all the descriptor classes in Protobuf, filtering is supported only for the following types:
+ *  * [Descriptor][com.google.protobuf.Descriptors.Descriptor]
+ *  * [EnumDescriptor][com.google.protobuf.Descriptors.EnumDescriptor]
+ *  * [ServiceDescriptor][com.google.protobuf.Descriptors.ServiceDescriptor]
+ *
+ * Since it is not possible to group the above classes in a type-safe manner, we have to
+ * use the common supertype.
+ */
+public typealias DescriptorFilter = (GenericDescriptor) -> Boolean

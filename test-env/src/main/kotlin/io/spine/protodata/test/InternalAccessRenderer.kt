@@ -29,6 +29,8 @@ package io.spine.protodata.test
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
+import io.spine.server.query.Querying
+import io.spine.server.query.select
 import io.spine.tools.code.Java
 import java.io.File
 import java.nio.file.Path
@@ -40,7 +42,7 @@ import kotlin.io.path.Path
 public class InternalAccessRenderer : Renderer<Java>(Java) {
 
     override fun render(sources: SourceFileSet) {
-        val internalTypes = select<InternalType>().all()
+        val internalTypes = (this as Querying).select<InternalType>().all()
         internalTypes.forEach { internalType ->
             val path = internalType.toPath()
             sources.createFile(

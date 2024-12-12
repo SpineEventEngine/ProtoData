@@ -46,21 +46,17 @@ import io.spine.protodata.protobuf.toEnumType
 /**
  * Produces events for an enum.
  */
-internal class EnumCompilerEvents(
-    private val header: ProtoFileHeader
-) {
+internal class EnumEvents(header: ProtoFileHeader) : DeclarationEvents<EnumDescriptor>(header) {
 
     /**
-     * Yields compiler events for the given enum type.
+     * Yields events for the given enum type.
      *
      * Opens with an [EnumEntered][io.spine.protodata.ast.event.EnumEntered] event.
      * Then the events regarding the type metadata go.
      * Then go the events regarding the enum constants.
      * At last, closes with an [EnumExited][io.spine.protodata.ast.event.EnumExited] event.
      */
-    internal suspend fun SequenceScope<EventMessage>.produceEvents(
-        desc: EnumDescriptor
-    ) {
+    override suspend fun SequenceScope<EventMessage>.produceEvents(desc: EnumDescriptor) {
         val enumType = desc.toEnumType()
         val typeName = desc.name()
         val path = header.file

@@ -71,6 +71,10 @@ import io.spine.server.under
  * @property sources The source sets to be processed by the pipeline.
  * @property request The Protobuf compiler request.
  * @property settings The directory to which setting files for the [plugins] should be stored.
+ * @property descriptorFilter The predicate to accept descriptors during parsing of the [request].
+ *  The default value accepts all the descriptors.
+ *  The primary usage scenario for this parameter is accepting only
+ *  descriptors of interest when running tests.
  */
 @Internal
 public class Pipeline(
@@ -78,6 +82,7 @@ public class Pipeline(
     public val plugins: List<Plugin>,
     public val sources: List<SourceFileSet>,
     public val request: CodeGeneratorRequest,
+    private val descriptorFilter: DescriptorFilter = { true },
     public val settings: SettingsDirectory
 ) {
 
@@ -106,13 +111,7 @@ public class Pipeline(
         request: CodeGeneratorRequest,
         settings: SettingsDirectory,
         id: String = generateId()
-    ) : this(
-        id,
-        listOf(plugin),
-        listOf(sources),
-        request,
-        settings
-    )
+    ) : this(id, listOf(plugin), listOf(sources), request, settings = settings)
 
     init {
         under<DefaultMode> {
@@ -130,9 +129,9 @@ public class Pipeline(
      * Therefore, the execution of the code related to the signal processing
      * should be single-threaded.
      */
-    public operator fun invoke() {
+    public operator fun invoke(afterCompile: (CodegenContext) -> Unit = {}) {
         clearCaches()
-        emitEventsAndRenderSources()
+        emitEventsAndRenderSources(afterCompile)
     }
 
     /**
@@ -148,12 +147,13 @@ public class Pipeline(
         Coordinates.clearCache()
     }
 
-    private fun emitEventsAndRenderSources() {
+    private fun emitEventsAndRenderSources(afterCompile: (CodegenContext) -> Unit) {
         codegenContext.use {
             ConfigurationContext(id).use { configuration ->
                 ProtobufCompilerContext(id).use { compiler ->
                     emitEvents(configuration, compiler)
                     renderSources()
+                    afterCompile(codegenContext)
                 }
             }
         }
@@ -176,7 +176,7 @@ public class Pipeline(
         settings.emitEvents().forEach {
             configuration.emitted(it)
         }
-        val events = CompilerEvents.parse(request)
+        val events = CompilerEvents.parse(request, descriptorFilter)
         compiler.emitted(events)
     }
 

@@ -24,25 +24,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.dependency.local.CoreJava
-import io.spine.dependency.local.ProtoTap
-import io.spine.dependency.local.Reflect
-import io.spine.dependency.local.TestLib
+syntax = "proto3";
 
-plugins {
-    protobuf
-    id("io.spine.mc-java")
-    `java-test-fixtures`
-    prototap
+package spine.protodata.backend.given;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.backend.given";
+option java_outer_classname = "PipelineFilteringSpecProto";
+option java_multiple_files = true;
+
+import "google/protobuf/empty.proto";
+
+// This file defines several message types, enum types, and services
+// to be filtered by a pipelines executed by `PipelineFilteringSpec` test suite.
+
+message Message1 {
 }
 
-dependencies {
-    api(gradleTestKit())
-    api(TestLib.lib)
-    api(CoreJava.testUtilServer)
-    api(ProtoTap.api)
-    api(project(":api"))
-    api(project(":backend"))
+message Message2 {
+}
 
-    implementation(Reflect.lib)
+message Message3 {
+}
+
+enum EnumType1 {
+    ET1_UNDEFINED = 0;
+    ET1_1 = 1;
+}
+
+enum EnumType2 {
+    ET2_UNDEFINED = 0;
+    ET2_1 = 1;
+}
+
+enum EnumType3 {
+    ET3_UNDEFINED = 0;
+    ET3_1 = 1;
+}
+
+service Service1 {
+    rpc Do(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+service Service2 {
+    rpc Do(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+service Service3 {
+    rpc Do(google.protobuf.Empty) returns (google.protobuf.Empty);
 }

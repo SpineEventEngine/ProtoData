@@ -24,25 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.dependency.local.CoreJava
-import io.spine.dependency.local.ProtoTap
-import io.spine.dependency.local.Reflect
-import io.spine.dependency.local.TestLib
+package io.spine.protodata.testing.recorder
 
-plugins {
-    protobuf
-    id("io.spine.mc-java")
-    `java-test-fixtures`
-    prototap
-}
+import io.spine.base.EntityState
 
-dependencies {
-    api(gradleTestKit())
-    api(TestLib.lib)
-    api(CoreJava.testUtilServer)
-    api(ProtoTap.api)
-    api(project(":api"))
-    api(project(":backend"))
+/**
+ * The interface common to view states collecting names of Protobuf declarations.
+ */
+public interface DeclarationViewState : EntityState<String> {
 
-    implementation(Reflect.lib)
+    public fun getNameList(): List<String>
 }

@@ -24,25 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.dependency.local.CoreJava
-import io.spine.dependency.local.ProtoTap
-import io.spine.dependency.local.Reflect
-import io.spine.dependency.local.TestLib
+@file:JvmName("ServiceNames")
 
-plugins {
-    protobuf
-    id("io.spine.mc-java")
-    `java-test-fixtures`
-    prototap
-}
+package io.spine.protodata.ast
 
-dependencies {
-    api(gradleTestKit())
-    api(TestLib.lib)
-    api(CoreJava.testUtilServer)
-    api(ProtoTap.api)
-    api(project(":api"))
-    api(project(":backend"))
-
-    implementation(Reflect.lib)
-}
+/**
+ * Obtains a fully qualified name of a `ServiceName` or its builder.
+ */
+public val ServiceNameOrBuilder.qualifiedName: String
+    get() {
+        val names = buildList<String> {
+            add(packageName)
+            add(simpleName)
+        }
+        return names.filter { it.isNotEmpty() }.joinToString(separator = ".")
+    }

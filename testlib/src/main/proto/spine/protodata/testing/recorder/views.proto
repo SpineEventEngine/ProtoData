@@ -24,25 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.dependency.local.CoreJava
-import io.spine.dependency.local.ProtoTap
-import io.spine.dependency.local.Reflect
-import io.spine.dependency.local.TestLib
+syntax = "proto3";
 
-plugins {
-    protobuf
-    id("io.spine.mc-java")
-    `java-test-fixtures`
-    prototap
+package spine.protodata.testing.recorder;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.testing.recorder";
+option java_outer_classname = "ViewsProto";
+option java_multiple_files = true;
+
+option (every_is).java_type = "DeclarationViewState";
+
+// Collects message types processed by a pipeline.
+message MessageTypes {
+    option (entity).kind = VIEW;
+    string id = 1;
+    repeated string name = 2;
 }
 
-dependencies {
-    api(gradleTestKit())
-    api(TestLib.lib)
-    api(CoreJava.testUtilServer)
-    api(ProtoTap.api)
-    api(project(":api"))
-    api(project(":backend"))
+// Collects message types processed by a pipeline.
+message EnumTypes {
+    option (entity).kind = VIEW;
+    string id = 1;
+    repeated string name = 2;
+}
 
-    implementation(Reflect.lib)
+// Collects message types processed by a pipeline.
+message Services {
+    option (entity).kind = VIEW;
+    string id = 1;
+    repeated string name = 2;
 }

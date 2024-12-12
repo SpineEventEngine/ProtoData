@@ -39,7 +39,9 @@ import io.spine.protodata.ast.messages
 import io.spine.protodata.ast.services
 import io.spine.protodata.settings.LoadsSettings
 import io.spine.protodata.type.TypeSystem
+import io.spine.server.query.Querying
 import io.spine.server.query.QueryingClient
+import io.spine.server.query.select
 import io.spine.tools.code.Language
 
 /**
@@ -95,14 +97,18 @@ protected constructor(
      *
      * @param S the type of the entity state.
      */
+    @Deprecated(
+        "Please use `Querying.select()` extension instead.",
+        ReplaceWith("select<S>()", imports = ["io.spine.server.query.select"])
+    )
     public inline fun <reified S : EntityState<*>> select(): QueryingClient<S> =
         select(S::class.java)
 
     /**
      * Creates a [QueryingClient] for obtaining entity states of the given type.
      *
-     * @param S the type of the entity state.
-     * @param type the class of the entity state.
+     * @param S The type of the entity state.
+     * @param type The class of the entity state.
      */
     public final override fun <S : EntityState<*>> select(type: Class<S>): QueryingClient<S> =
         _context.select(type)
@@ -153,13 +159,13 @@ protected constructor(
  * Obtains the header of the proto file with the given [path].
  */
 public fun Member<*>.findHeader(path: File): ProtoFileHeader? =
-    select<ProtobufSourceFile>().findById(path)?.header
+    (this as Querying).select<ProtobufSourceFile>().findById(path)?.header
 
 /**
  * Obtains all Protobuf source code files passed to the current compilation process.
  */
 public fun Member<*>.findAllFiles(): Collection<ProtobufSourceFile> =
-    select<ProtobufSourceFile>().all()
+    (this as Querying).select<ProtobufSourceFile>().all()
 
 /**
  * Obtains all the message types that are parsed by the current compilation process
