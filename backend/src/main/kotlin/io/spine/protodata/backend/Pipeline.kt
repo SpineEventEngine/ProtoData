@@ -111,13 +111,7 @@ public class Pipeline(
         request: CodeGeneratorRequest,
         settings: SettingsDirectory,
         id: String = generateId()
-    ) : this(
-        id = id,
-        plugins = listOf(plugin),
-        sources = listOf(sources),
-        request = request,
-        settings = settings
-    )
+    ) : this(id, listOf(plugin), listOf(sources), request, settings = settings)
 
     init {
         under<DefaultMode> {
