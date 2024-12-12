@@ -34,9 +34,13 @@ import io.spine.protodata.ast.event.TypeEntered
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.View
+import io.spine.protodata.plugin.ViewRepository
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.server.entity.alter
+import io.spine.server.query.Querying
+import io.spine.server.query.select
+import io.spine.server.route.EventRouting
 import io.spine.tools.code.Java
 import io.spine.validate.ValidatingBuilder
 
@@ -45,7 +49,7 @@ import io.spine.validate.ValidatingBuilder
  * processed by a pipeline.
  */
 class RecordingPlugin : Plugin(
-    views = setOf(MessageView::class.java, EnumView::class.java, ServicesView::class.java),
+    viewRepositories = setOf(MessageView.Repo(), EnumView.Repo(), ServicesView.Repo()),
     renderers = listOf(Query())) {
 
     fun query() = renderers.first() as Query
@@ -57,6 +61,15 @@ private abstract class RecordingView<S : DeclarationViewState, B: ValidatingBuil
     companion object {
         @Suppress("ConstPropertyName") // for readability.
         const val singletonId: String = "SINGLETON"
+    }
+}
+
+private abstract class RecordingViewRepo<S : DeclarationViewState, V : RecordingView<S, *>> :
+    ViewRepository<String, V, S>() {
+
+    override fun setupEventRouting(routing: EventRouting<String>) {
+        super.setupEventRouting(routing)
+        routing.unicast<TypeEntered> { e, _ -> RecordingView.singletonId }
     }
 }
 
@@ -72,7 +85,7 @@ class Query: Renderer<Java>(Java) {
     fun serviceNames(): List<String> = findNames<Services>()
 
     private inline fun <reified S : DeclarationViewState> findNames(): List<String> {
-        val v = select<S>().findById(RecordingView.singletonId)
+        val v = (this as Querying).select<S>().findById(RecordingView.singletonId)
         return v?.getNameList() ?: emptyList()
     }
 
@@ -92,6 +105,8 @@ private class MessageView : RecordingView<MessageTypes, MessageTypes.Builder>() 
         id = singletonId
         addName(e.type.qualifiedName)
     }
+
+    class Repo : RecordingViewRepo<MessageTypes, MessageView>()
 }
 
 private class EnumView : RecordingView<EnumTypes, EnumTypes.Builder>() {
@@ -101,6 +116,8 @@ private class EnumView : RecordingView<EnumTypes, EnumTypes.Builder>() {
         id = singletonId
         addName(e.type.qualifiedName)
     }
+
+    class Repo : RecordingViewRepo<EnumTypes, EnumView>()
 }
 
 private class ServicesView : RecordingView<Services, Services.Builder>() {
@@ -110,4 +127,6 @@ private class ServicesView : RecordingView<Services, Services.Builder>() {
         id = singletonId
         addName(e.service.qualifiedName)
     }
+
+    class Repo : RecordingViewRepo<Services, ServicesView>()
 }

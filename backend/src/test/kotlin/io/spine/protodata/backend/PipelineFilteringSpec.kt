@@ -60,8 +60,9 @@ internal class PipelineFilteringSpec {
 
         val setup = PipelineSetup.byResources(listOf(recorder), output, settings, filter) { _ -> }
         val pipeline = setup.createPipeline()
-        pipeline()
-
-        recorder.query().messageTypeNames().find { it.contains(acceptedTypeName) } shouldNotBe null
+        pipeline {
+            recorder.query().messageTypeNames()
+                .find { it.contains(acceptedTypeName) } shouldNotBe null
+        }
     }
 }

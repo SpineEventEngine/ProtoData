@@ -24,33 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.cli.given
+package io.spine.protodata.context
 
-import io.spine.protodata.cli.test.DefaultOptionsCounter
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.test.StubSoloRenderer
+import io.spine.base.EntityState
 import io.spine.server.query.Querying
-import io.spine.server.query.select
-import kotlin.io.path.Path
+import io.spine.server.query.QueryingClient
 
-class DefaultOptionsCounterRenderer : StubSoloRenderer() {
+public class CompilerQuery(private val context: CodegenContext) : Querying {
 
-    companion object {
-        const val FILE_NAME = "default_opts_counted.txt"
-    }
-
-    override fun render(sources: SourceFileSet) {
-        val counters = (this as Querying).select<DefaultOptionsCounter>().all()
-        sources.createFile(
-            Path(FILE_NAME),
-            counters.joinToString(separator = ",") {
-                it.timestampInFutureEncountered.toString() + ", " +
-                        it.requiredFieldForTestEncountered.toString()
-            }
-        )
-    }
+    /**
+     * Creates a [QueryingClient] for obtaining entity states of the given type.
+     *
+     * @param S The type of the entity state.
+     * @param type The class of the entity state.
+     */
+    override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> =
+        context.select(type)
 }
-class DefaultOptionsCounterRendererPlugin : Plugin(
-    renderers = listOf(DefaultOptionsCounterRenderer())
-)
