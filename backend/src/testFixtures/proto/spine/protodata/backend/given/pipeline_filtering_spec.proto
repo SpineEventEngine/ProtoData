@@ -24,20 +24,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.context
+syntax = "proto3";
 
-import io.spine.base.EntityState
-import io.spine.server.query.Querying
-import io.spine.server.query.QueryingClient
+package spine.protodata.backend.given;
 
-public class CompilerQuery(private val context: CodegenContext) : Querying {
+import "spine/options.proto";
 
-    /**
-     * Creates a [QueryingClient] for obtaining entity states of the given type.
-     *
-     * @param S The type of the entity state.
-     * @param type The class of the entity state.
-     */
-    override fun <P : EntityState<*>> select(type: Class<P>): QueryingClient<P> =
-        context.select(type)
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.backend.given";
+option java_outer_classname = "PipelineFilteringSpecProto";
+option java_multiple_files = true;
+
+import "google/protobuf/empty.proto";
+
+// This file defines several message types, enum types, and services
+// to be filtered by a pipelines executed by `PipelineFilteringSpec` test suite.
+
+message Message1 {
+}
+
+message Message2 {
+}
+
+message Message3 {
+}
+
+enum EnumType1 {
+    ET1_UNDEFINED = 0;
+    ET1_1 = 1;
+}
+
+enum EnumType2 {
+    ET2_UNDEFINED = 0;
+    ET2_1 = 1;
+}
+
+enum EnumType3 {
+    ET3_UNDEFINED = 0;
+    ET3_1 = 1;
+}
+
+service Service1 {
+    rpc Do(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+service Service2 {
+    rpc Do(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+service Service3 {
+    rpc Do(google.protobuf.Empty) returns (google.protobuf.Empty);
 }

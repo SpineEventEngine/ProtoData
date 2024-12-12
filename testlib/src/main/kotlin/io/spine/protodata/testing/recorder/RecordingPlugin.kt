@@ -24,14 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend.recorder
+package io.spine.protodata.testing.recorder
 
+import io.spine.base.EventMessage
 import io.spine.core.External
 import io.spine.core.Subscribe
 import io.spine.protodata.ast.event.EnumEntered
 import io.spine.protodata.ast.event.ServiceEntered
 import io.spine.protodata.ast.event.TypeEntered
 import io.spine.protodata.ast.qualifiedName
+import io.spine.protodata.context.CodegenContext
+import io.spine.protodata.testing.recorder.RecordingPlugin.Companion.singletonId
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
@@ -48,57 +51,66 @@ import io.spine.validate.ValidatingBuilder
  * The diagnostics plugin that gathers names of message types, enum types, or services
  * processed by a pipeline.
  */
-class RecordingPlugin : Plugin(
-    viewRepositories = setOf(MessageView.Repo(), EnumView.Repo(), ServicesView.Repo()),
-    renderers = listOf(Query())) {
+public class RecordingPlugin : Plugin(
+    viewRepositories = setOf(
+        MessageView.Repo(),
+        EnumView.Repo(),
+        ServicesView.Repo()
+    ),
+    renderers = listOf(ContextAccess())
+) {
 
-    fun query() = renderers.first() as Query
-}
+    /**
+     * Obtains [CodegenContext] in which this plugin acts.
+     */
+    public val context: CodegenContext
+        get() = (renderers.first() as ContextAccess).context()
 
-private abstract class RecordingView<S : DeclarationViewState, B: ValidatingBuilder<S>> :
-    View<String, S, B>() {
+    public companion object {
 
-    companion object {
+        /**
+         * The ID used by the views of this plugin.
+         */
         @Suppress("ConstPropertyName") // for readability.
-        const val singletonId: String = "SINGLETON"
+        public const val singletonId: String = "SINGLETON"
     }
 }
 
+/**
+ * A no-op renderer which serves purely for accessing [CodegenContext] in
+ * which [RecordingPlugin] acts.
+ */
+private class ContextAccess: Renderer<Java>(Java) {
+
+    fun context(): CodegenContext = context!!
+
+    override fun render(sources: SourceFileSet) {
+        // Do nothing.
+    }
+}
+
+/**
+ * Abstract base for recording views.
+ */
+private abstract class RecordingView<S : DeclarationViewState, B: ValidatingBuilder<S>> :
+    View<String, S, B>()
+
+/**
+ * Abstract base for view repositories which routs all events to the singleton instance.
+ */
 private abstract class RecordingViewRepo<S : DeclarationViewState, V : RecordingView<S, *>> :
     ViewRepository<String, V, S>() {
 
     override fun setupEventRouting(routing: EventRouting<String>) {
         super.setupEventRouting(routing)
-        routing.unicast<TypeEntered> { e, _ -> RecordingView.singletonId }
+        routing.unicast<EventMessage> { _, _ -> singletonId }
     }
 }
 
 /**
- * A no-action renderer which serves the querying capabilities.
+ * The view which records message type names.
  */
-class Query: Renderer<Java>(Java) {
-
-    fun messageTypeNames(): List<String> = findNames<MessageTypes>()
-
-    fun enumTypeNames(): List<String> = findNames<EnumTypes>()
-
-    fun serviceNames(): List<String> = findNames<Services>()
-
-    private inline fun <reified S : DeclarationViewState> findNames(): List<String> {
-        val v = (this as Querying).select<S>().findById(RecordingView.singletonId)
-        return v?.getNameList() ?: emptyList()
-    }
-
-    override fun render(sources: SourceFileSet) {
-        // Do nothing
-    }
-}
-
 private class MessageView : RecordingView<MessageTypes, MessageTypes.Builder>() {
-
-    init {
-        println("`MessageView` class created.`")
-    }
 
     @Subscribe
     fun on(@External e: TypeEntered) = alter {
@@ -109,6 +121,9 @@ private class MessageView : RecordingView<MessageTypes, MessageTypes.Builder>() 
     class Repo : RecordingViewRepo<MessageTypes, MessageView>()
 }
 
+/**
+ * The view which records enum type names.
+ */
 private class EnumView : RecordingView<EnumTypes, EnumTypes.Builder>() {
 
     @Subscribe
@@ -120,6 +135,9 @@ private class EnumView : RecordingView<EnumTypes, EnumTypes.Builder>() {
     class Repo : RecordingViewRepo<EnumTypes, EnumView>()
 }
 
+/**
+ * The view which records service names.
+ */
 private class ServicesView : RecordingView<Services, Services.Builder>() {
 
     @Subscribe
@@ -129,4 +147,24 @@ private class ServicesView : RecordingView<Services, Services.Builder>() {
     }
 
     class Repo : RecordingViewRepo<Services, ServicesView>()
+}
+
+/**
+ * Obtains the names of message types processed in this [CodegenContext].
+ */
+public fun CodegenContext.messageTypeNames(): List<String> = findNames<MessageTypes>()
+
+/**
+ * Obtains the names of enum types processed in this [CodegenContext].
+ */
+public fun CodegenContext.enumTypeNames(): List<String> = findNames<EnumTypes>()
+
+/**
+ * Obtains the names of services processed in this [CodegenContext].
+ */
+public fun CodegenContext.serviceNames(): List<String> = findNames<Services>()
+
+private inline fun <reified S : DeclarationViewState> CodegenContext.findNames(): List<String> {
+    val v = (this as Querying).select<S>().findById(singletonId)
+    return v?.getNameList() ?: emptyList()
 }

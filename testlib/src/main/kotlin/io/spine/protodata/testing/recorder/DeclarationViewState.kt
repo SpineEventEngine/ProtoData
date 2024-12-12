@@ -24,14 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.backend.recorder
+package io.spine.protodata.testing.recorder
 
 import io.spine.base.EntityState
 
 /**
  * The interface common to view states collecting names of Protobuf declarations.
  */
-internal interface DeclarationViewState : EntityState<String> {
+public interface DeclarationViewState : EntityState<String> {
 
-    fun getNameList(): List<String>
+    public fun getNameList(): List<String>
 }

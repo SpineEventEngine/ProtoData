@@ -31,14 +31,9 @@ import io.spine.dependency.local.TestLib
 
 plugins {
     protobuf
+    id("io.spine.mc-java")
     `java-test-fixtures`
     prototap
-}
-
-protobuf {
-    protoc {
-        artifact = io.spine.dependency.lib.Protobuf.compiler
-    }
 }
 
 dependencies {

@@ -35,7 +35,6 @@ import io.spine.protodata.ast.Coordinates
 import io.spine.protodata.ast.Documentation
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
-import io.spine.protodata.context.CompilerQuery
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
@@ -130,7 +129,7 @@ public class Pipeline(
      * Therefore, the execution of the code related to the signal processing
      * should be single-threaded.
      */
-    public operator fun invoke(afterCompile: (CompilerQuery) -> Unit = {}) {
+    public operator fun invoke(afterCompile: (CodegenContext) -> Unit = {}) {
         clearCaches()
         emitEventsAndRenderSources(afterCompile)
     }
@@ -148,14 +147,13 @@ public class Pipeline(
         Coordinates.clearCache()
     }
 
-    private fun emitEventsAndRenderSources(afterCompile: (CompilerQuery) -> Unit) {
+    private fun emitEventsAndRenderSources(afterCompile: (CodegenContext) -> Unit) {
         codegenContext.use {
             ConfigurationContext(id).use { configuration ->
                 ProtobufCompilerContext(id).use { compiler ->
                     emitEvents(configuration, compiler)
                     renderSources()
-                    val query = CompilerQuery(codegenContext)
-                    afterCompile(query)
+                    afterCompile(codegenContext)
                 }
             }
         }

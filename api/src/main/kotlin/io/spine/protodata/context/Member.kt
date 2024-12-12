@@ -82,10 +82,6 @@ protected constructor(
             null
         }
 
-    private val query: Querying by lazy {
-        CompilerQuery(context!!)
-    }
-
     /**
      * A type system with the Protobuf types defined in the current code generation pipeline.
      *
@@ -115,7 +111,7 @@ protected constructor(
      * @param type The class of the entity state.
      */
     public final override fun <S : EntityState<*>> select(type: Class<S>): QueryingClient<S> =
-        query.select(type)
+        _context.select(type)
 
     final override fun <T : Any> loadSettings(cls: Class<T>): T = super.loadSettings(cls)
 

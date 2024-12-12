@@ -27,16 +27,22 @@
 package io.spine.protodata.backend
 
 import com.google.protobuf.Descriptors.Descriptor
-import io.kotest.matchers.shouldNotBe
-import io.spine.protodata.backend.recorder.RecordingPlugin
+import com.google.protobuf.Descriptors.EnumDescriptor
+import com.google.protobuf.Descriptors.ServiceDescriptor
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldNotContain
 import io.spine.protodata.testing.PipelineSetup
+import io.spine.protodata.testing.recorder.RecordingPlugin
+import io.spine.protodata.testing.recorder.enumTypeNames
+import io.spine.protodata.testing.recorder.messageTypeNames
+import io.spine.protodata.testing.recorder.serviceNames
 import java.nio.file.Path
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-@DisplayName("Filtering of a `Pipeline` should")
+@DisplayName("Filtering of a `Pipeline` should filter")
 internal class PipelineFilteringSpec {
 
     private lateinit var recorder: RecordingPlugin
@@ -46,9 +52,28 @@ internal class PipelineFilteringSpec {
         recorder = RecordingPlugin()
     }
 
+    /**
+     * Creates a pipeline with the [recorder] plugin and the given [filter].
+     */
+    private fun createPipeline(
+        output: Path,
+        settings: Path,
+        filter: DescriptorFilter
+    ): Pipeline {
+        val setup = PipelineSetup.byResources(listOf(recorder), output, settings, filter) { _ -> }
+        val pipeline = setup.createPipeline()
+        return pipeline
+    }
+
+    /**
+     * Obtains a fully qualified name of a Protobuf declaration in `pipeline_filtering_spec.proto`.
+     */
+    private fun qualifiedNameOf(simpleName: String): String =
+        "spine.protodata.backend.given.$simpleName"
+
     @Test
-    fun `filter message types`(@TempDir output: Path, @TempDir settings: Path) {
-        val acceptedTypeName = "MessageTypes"
+    fun `message types`(@TempDir output: Path, @TempDir settings: Path) {
+        val acceptedTypeName = "Message2"
 
         val filter: DescriptorFilter = {
             if (it is Descriptor) {
@@ -58,11 +83,57 @@ internal class PipelineFilteringSpec {
             }
         }
 
-        val setup = PipelineSetup.byResources(listOf(recorder), output, settings, filter) { _ -> }
-        val pipeline = setup.createPipeline()
+        val pipeline = createPipeline(output, settings, filter)
         pipeline {
-            recorder.query().messageTypeNames()
-                .find { it.contains(acceptedTypeName) } shouldNotBe null
+            it.messageTypeNames().let { list ->
+                list shouldContain qualifiedNameOf(acceptedTypeName)
+                list shouldNotContain qualifiedNameOf("Message1")
+                list shouldNotContain qualifiedNameOf("Message3")
+            }
+        }
+    }
+
+    @Test
+    fun `enum types`(@TempDir output: Path, @TempDir settings: Path) {
+        val acceptedTypeName = "EnumType2"
+
+        val filter: DescriptorFilter = {
+            if (it is EnumDescriptor) {
+                it.name == acceptedTypeName
+            } else {
+                true
+            }
+        }
+
+        val pipeline = createPipeline(output, settings, filter)
+        pipeline {
+            it.enumTypeNames().let { list ->
+                list shouldContain qualifiedNameOf(acceptedTypeName)
+                list shouldNotContain qualifiedNameOf("EnumType1")
+                list shouldNotContain qualifiedNameOf("EnumType3")
+            }
+        }
+    }
+
+    @Test
+    fun services(@TempDir output: Path, @TempDir settings: Path) {
+        val acceptedServiceName = "Service2"
+
+        val filter: DescriptorFilter = {
+            if (it is ServiceDescriptor) {
+                it.name == acceptedServiceName
+            } else {
+                true
+            }
+        }
+
+        val pipeline = createPipeline(output, settings, filter)
+        pipeline {
+            it.serviceNames().let { list ->
+                list shouldContain qualifiedNameOf(acceptedServiceName)
+                list shouldNotContain qualifiedNameOf("Service1")
+                list shouldNotContain qualifiedNameOf("Service3")
+            }
         }
     }
 }
