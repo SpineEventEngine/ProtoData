@@ -115,7 +115,7 @@ import org.gradle.testfixtures.ProjectBuilder
  * ### 5. Create `PipelineSetup` instance using [byResources] factory method
  *
  * ```kotlin
- * val setup = PipelineSetup.byResources(plugins, outputDir, settingsDir) {
+ * val setup = PipelineSetup.byResources(plugins, outputDir, settingsDir, descriptorFilter) {
  *     // Write settings here.
  * }
  * ```
@@ -152,6 +152,7 @@ import org.gradle.testfixtures.ProjectBuilder
  * @see [byResources]
  * @see [SettingsDirectory]
  * @see [io.spine.protodata.settings.LoadsSettings.consumerId]
+ * @see DescriptorFilter
  */
 @Suppress("LongParameterList") // OK, assuming the default value.
 public class PipelineSetup(
