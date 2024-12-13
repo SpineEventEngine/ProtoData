@@ -26,9 +26,11 @@
 
 import io.spine.dependency.lib.Aedile
 import io.spine.dependency.lib.Jackson
+import io.spine.dependency.local.Base
 import io.spine.dependency.local.CoreJava
 import io.spine.dependency.local.Logging
-import io.spine.dependency.local.Spine
+import io.spine.dependency.local.Reflect
+import io.spine.dependency.local.Text
 import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
 
@@ -39,8 +41,8 @@ plugins {
 
 dependencies {
     listOf(
-        Spine.base,
-        Spine.text,
+        Base.lib,
+        Text.lib,
         CoreJava.server,
         ToolBase.lib,
         ToolBase.psiJava
@@ -50,7 +52,7 @@ dependencies {
 
     api(Logging.lib)
 
-    implementation(Spine.reflect)
+    implementation(Reflect.lib)
     implementation(Aedile.lib)
 
     with(Jackson) {
@@ -59,7 +61,7 @@ dependencies {
         runtimeOnly(moduleKotlin)
     }
 
-    arrayOf(Spine.base, Validation.runtime)
+    arrayOf(Base.lib, Validation.runtime)
         .forEach {
             testFixturesImplementation(it)
         }
