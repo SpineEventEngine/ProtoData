@@ -105,7 +105,7 @@ public object Compilation {
     /**
      * The exception thrown by [Compilation.error] when the testing mode is on.
      */
-    public class Error(message: String) : kotlin.Exception(message) {
+    public class Error(message: String) : kotlin.Error(message) {
         public companion object {
             private const val serialVersionUID: Long = 0L
         }
