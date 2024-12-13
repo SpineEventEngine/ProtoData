@@ -119,10 +119,10 @@ enum NullValue {
 // `MessageValue` represents a message for the `Value` type union.
 message MessageValue {
 
-    // Unordered map of dynamically typed values.
+    // Unordered map of field names to their values.
     map<string, Value> fields = 1;
 
-    // Type of the message.
+    // The type of the message.
     //
     // Same as the `Value.type.message`.
     //

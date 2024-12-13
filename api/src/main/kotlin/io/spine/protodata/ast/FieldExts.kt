@@ -28,7 +28,9 @@
 
 package io.spine.protodata.ast
 
+import io.spine.protodata.type.TypeSystem
 import io.spine.string.camelCase
+import java.io.File
 
 /**
  * Obtains the type of this field as [Type] instance.
@@ -96,3 +98,13 @@ public val Field.qualifiedName: String
  */
 public val FieldName.camelCase: String
     get() = value.camelCase()
+
+/**
+ * Obtains the path to a Protobuf source file which declares
+ * the message type to which this field belongs.
+ */
+public fun Field.declaringFile(typeSystem: TypeSystem): File {
+    val messageType = declaringType.toMessageType(typeSystem)
+    val file = messageType.file.toPath().toFile()
+    return file
+}
