@@ -128,6 +128,12 @@ public class Pipeline(
      * that no concurrent modification of entity states is allowed.
      * Therefore, the execution of the code related to the signal processing
      * should be single-threaded.
+     *
+     * @param afterCompile The callback invoked after the compilation process and before
+     *  closing [CodegenContext] and other contexts.
+     *  The primary purpose of the callback is to allow tests to verify the state
+     *  of [CodegenContext], e.g., by [querying][io.spine.server.query.Querying.select]
+     *  entity states of interest.
      */
     public operator fun invoke(afterCompile: (CodegenContext) -> Unit = {}) {
         clearCaches()
