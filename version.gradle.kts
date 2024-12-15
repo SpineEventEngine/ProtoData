@@ -32,4 +32,4 @@
  *
  * For dependencies on Spine SDK module please see [io.spine.dependency.local.Spine].
  */
-val protoDataVersion: String by extra("0.80.1")
+val protoDataVersion: String by extra("0.80.2")
