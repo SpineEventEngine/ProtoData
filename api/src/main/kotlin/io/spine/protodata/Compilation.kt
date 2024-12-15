@@ -26,6 +26,7 @@
 
 package io.spine.protodata
 
+import io.spine.base.Mistake
 import io.spine.environment.Tests
 import java.io.File
 import kotlin.system.exitProcess
@@ -110,7 +111,7 @@ public object Compilation {
     /**
      * The exception thrown by [Compilation.error] when the testing mode is on.
      */
-    public class Error(message: String) : kotlin.Error(message) {
+    public class Error(message: String) : Mistake(message) {
         public companion object {
             private const val serialVersionUID: Long = 0L
         }
