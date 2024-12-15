@@ -187,6 +187,12 @@ all modules and does not describe the project structure per-subproject.
   </dependency>
   <dependency>
     <groupId>io.spine.tools</groupId>
+    <artifactId>spine-logging-testlib</artifactId>
+    <version>2.0.0-SNAPSHOT.242</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.spine.tools</groupId>
     <artifactId>spine-plugin-testlib</artifactId>
     <version>2.0.0-SNAPSHOT.240</version>
     <scope>test</scope>
