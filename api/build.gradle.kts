@@ -66,6 +66,7 @@ dependencies {
             testFixturesImplementation(it)
         }
 
+    testImplementation(Logging.testLib)
     testImplementation(project(":test-env"))
 
     // For using `CodeGenerationContext` in stubs.

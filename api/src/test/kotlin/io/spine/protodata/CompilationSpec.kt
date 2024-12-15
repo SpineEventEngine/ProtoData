@@ -27,7 +27,9 @@
 package io.spine.protodata
 
 import io.kotest.matchers.string.shouldContain
+import io.spine.logging.testing.tapConsole
 import java.io.File
+import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -45,6 +47,24 @@ internal class CompilationSpec {
             Compilation.error(file, lineNumber, columnNumber, errorMessage)
         }
         exception.message.let {
+            it shouldContain file.path
+            it shouldContain "$lineNumber:$columnNumber"
+            it shouldContain errorMessage
+        }
+    }
+
+    @Test
+    fun `print the error message to the system error stream`() {
+        val file = Paths.get("nested/dir/file.proto").toFile()
+        val lineNumber = 10
+        val columnNumber = 5
+        val errorMessage = "Testing console output."
+        val consoleOutput = tapConsole {
+            assertThrows<Compilation.Error> {
+                Compilation.error(file, lineNumber, columnNumber, errorMessage)
+            }
+        }
+        consoleOutput.let {
             it shouldContain file.path
             it shouldContain "$lineNumber:$columnNumber"
             it shouldContain errorMessage
