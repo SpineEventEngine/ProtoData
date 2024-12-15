@@ -58,7 +58,12 @@ public object Compilation {
     public const val ERROR_EXIT_CODE: Int = -1
 
     /**
-     * Prints the error diagnostics to [System.err] and exits the process with [ERROR_EXIT_CODE].
+     * Prints the error diagnostics to [System.err] and terminates the compilation.
+     *
+     * The termination of the compilation in the production mode is done by
+     * exiting the process with [ERROR_EXIT_CODE].
+     *
+     * If the code is run [under tests][Tests] the method throws [Compilation.Error].
      *
      * @param file The file in which the error occurred.
      * @param line The one-based number of the line with the error.
@@ -69,10 +74,10 @@ public object Compilation {
     @Suppress("TooGenericExceptionThrown") // False positive from detekt.
     public fun error(file: File, line: Int, column: Int, message: String): Nothing {
         val output = errorMessage(file, line, column, message)
+        System.err.println(output)
         if (underTests) {
             throw Error(output)
         } else {
-            System.err.println(output)
             exitProcess(ERROR_EXIT_CODE)
         }
     }
@@ -88,7 +93,7 @@ public object Compilation {
      * Prints the warning diagnostics to [System.out].
      *
      * The method returns the string printed to the console so that it could be also
-     * put into logging output.
+     * put into logging output by the calling code.
      *
      * @param file The file which causes the warning.
      * @param line The one-based number of the line with the questionable code.
