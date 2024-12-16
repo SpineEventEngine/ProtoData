@@ -49,7 +49,7 @@ public fun PrimitiveType.asType(): Type = toType()
 public val PrimitiveType.protoName: String
     get() {
         if (this == TYPE_BOOL) {
-            return "boolean"
+            return "bool"
         }
         val knownPrefix = "TYPE_"
         return if (name.startsWith(knownPrefix)) {

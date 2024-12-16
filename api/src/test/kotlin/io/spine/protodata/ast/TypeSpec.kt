@@ -96,7 +96,7 @@ internal class TypeSpec {
 
         @Test
         fun primitive() {
-            TYPE_BOOL.toType().name shouldBe "boolean"
+            TYPE_BOOL.toType().name shouldBe "bool"
             TYPE_DOUBLE.toType().name shouldBe "double"
             TYPE_SFIXED64.toType().name shouldBe "sfixed64"
         }
