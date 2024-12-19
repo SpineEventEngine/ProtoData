@@ -197,7 +197,7 @@ private fun Project.createLaunchTask(
 }
 
 /**
- * Creates a task which deletes the generated code for the given [sourceSet].
+ * Creates a task which deletes the files generated for the given [sourceSet].
  *
  * Makes a `clean` task depend on the created task.
  * Also, makes the task which launches ProtoData CLI depend on the created task.
@@ -207,6 +207,7 @@ private fun Project.createCleanTask(sourceSet: SourceSet) {
     val cleanSourceSet = CleanTask.nameFor(sourceSet)
     tasks.create<Delete>(cleanSourceSet) {
         delete(extension.targetDirs(sourceSet))
+        delete(protoFileList(sourceSet.name))
 
         tasks.getByName("clean").dependsOn(this)
         val launchTask = LaunchTask.get(project, sourceSet)

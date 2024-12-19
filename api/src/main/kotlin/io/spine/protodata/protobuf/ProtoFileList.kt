@@ -60,7 +60,7 @@ public class ProtoFileList(public val files: List<File>) {
         public fun create(dir: Path, sourceSetName: String, files: List<File>) {
             val targetFile = dir.resolve(fileFor(sourceSetName).toPath()).toFile()
             // Use the `LF` separator for compatibility with the Kotlin runtime for reading.
-            targetFile.writeText(files.joinToString(Separator.LF.toString()))
+            targetFile.writeText(files.joinToString(Separator.LF.value))
         }
 
         /**
