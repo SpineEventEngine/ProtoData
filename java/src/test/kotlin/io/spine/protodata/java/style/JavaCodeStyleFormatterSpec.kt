@@ -33,6 +33,7 @@ import copyResource
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.Format
 import io.spine.protodata.settings.SettingsDirectory
@@ -83,6 +84,7 @@ internal class JavaCodeStyleFormatterSpec {
             copyResource(fileName, inputDir)
 
             Pipeline(
+                protoFileList = ProtoFileList(listOf()),
                 plugin = RenderingTestbed(
                     JavaCodeStyleFormatter()
                 ),

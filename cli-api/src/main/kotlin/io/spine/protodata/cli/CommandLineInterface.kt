@@ -36,6 +36,18 @@ import io.spine.protodata.settings.Format.PROTO_JSON
 import io.spine.protodata.settings.Format.YAML
 
 /**
+ * The command-line parameter for specifying the name of the file which stores
+ * the list of Protobuf files compiled by `protoc`.
+ */
+public object ProtoFilesParam : Parameter(
+    name = "--proto-files",
+    shortName = "-l",
+    help = """
+        The name of the file which stores the list of files compiled by `protoc`.
+    """.trimIndent()
+)
+
+/**
  * The part of the console output used for showing how to use the dollar sign for
  * a nested binary class name.
  *

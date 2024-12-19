@@ -31,6 +31,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.annotation.GeneratedTypeAnnotation
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.string.ti
@@ -102,6 +103,7 @@ class BeforePrimaryDeclarationSpec {
             }
 
             Pipeline(
+                protoFileList = ProtoFileList(listOf()),
                 plugin = GeneratedTypeAnnotation().toPlugin(),
                 sources = SourceFileSet.create(input, output),
                 request = CodeGeneratorRequest.getDefaultInstance(),

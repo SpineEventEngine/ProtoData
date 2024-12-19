@@ -35,6 +35,7 @@ import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.EnumName
 import io.spine.protodata.java.annotation.TypeAnnotation
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.render.SourceFileSet
@@ -111,6 +112,7 @@ class BeforeNestedTypeDeclarationSpec {
             }
 
             Pipeline(
+                protoFileList = ProtoFileList(listOf()),
                 plugin = RenderingTestbed(
                     SuppressWarningsAnnotation(deeplyNestedClassName),
                     SuppressWarningsAnnotation(nestedEnum),

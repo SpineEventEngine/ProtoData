@@ -31,6 +31,7 @@ import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.JAVA_FILE
 import io.spine.protodata.java.WithSourceFileSet
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.settings.Format.PROTO_JSON
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.settings.defaultConsumerId
@@ -59,6 +60,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
         @Test
         fun `if no settings are passed`(@TempDir dir: Path) {
             Pipeline(
+                protoFileList = ProtoFileList(listOf()),
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
@@ -77,6 +79,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                 """.ti()
             )
             Pipeline(
+                protoFileList = ProtoFileList(listOf()),
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
@@ -102,6 +105,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
             """.ti()
         )
         Pipeline(
+            protoFileList = ProtoFileList(listOf()),
             plugins = listOf(SuppressWarningsAnnotation.Plugin()),
             sources = sources,
             request = emptyRequest,

@@ -26,18 +26,36 @@
 
 package io.spine.protodata.gradle
 
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.SourceSet
 
 /**
- * Performs cleaning of generated files.
+ * Abstract base for utilities finding tasks of a certain type by
+ * the [provided name pattern][nameFor].
  */
-public object CleanTask : TaskLocator() {
-
-    @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
-    private const val prefix = "cleanProtoData"
+public abstract class TaskLocator {
 
     /**
-     * Obtains a name of the task for the given source set.
+     * Obtains a name for the task for the given source set.
      */
-    override fun nameFor(sourceSet: SourceSet): String = "$prefix${sourceSet.capitalizedName}"
+    public abstract fun nameFor(sourceSet: SourceSet): String
+
+    /**
+     * Obtains an instance of the task in the given project for the specified source set.
+     */
+    public fun get(project: Project, sourceSet: SourceSet): Task {
+        val name = LaunchTask.nameFor(sourceSet)
+        return project.tasks.getByName(name)
+    }
+
+    /**
+     * Obtains an instance of the task in the given project for the specified source set.
+     *
+     * @return the task or `null` if there is no task created for this source set
+     */
+    public fun find(project: Project, sourceSet: SourceSet): Task? {
+        val name = LaunchTask.nameFor(sourceSet)
+        return project.tasks.findByName(name)
+    }
 }

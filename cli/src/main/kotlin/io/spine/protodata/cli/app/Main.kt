@@ -48,12 +48,14 @@ import io.spine.protodata.cli.DebugLoggingParam
 import io.spine.protodata.cli.InfoLoggingParam
 import io.spine.protodata.cli.Parameter
 import io.spine.protodata.cli.PluginParam
+import io.spine.protodata.cli.ProtoFilesParam
 import io.spine.protodata.cli.RequestParam
 import io.spine.protodata.cli.SettingsDirParam
 import io.spine.protodata.cli.SourceRootParam
 import io.spine.protodata.cli.TargetRootParam
 import io.spine.protodata.cli.UserClasspathParam
 import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.string.Separator
@@ -127,6 +129,14 @@ internal class Run(version: String) : CliktCommand(
     )
 
     private fun NullableOption<Path, Path>.splitPaths() = split(pathSeparator)
+
+    private val protoFileList: File
+        by ProtoFilesParam.toOption().file(
+            mustExist = true,
+            canBeDir = false,
+            canBeSymlink = false,
+            mustBeReadable = true
+        ).required()
 
     private val plugins: List<String>
             by PluginParam.toOption().multiple()
@@ -207,7 +217,9 @@ internal class Run(version: String) : CliktCommand(
               - settings dir: ${settingsDir}.
             """.ti()
         }
+        val list = ProtoFileList.load(protoFileList)
         val pipeline = Pipeline(
+            protoFileList = list,
             plugins = plugins,
             sources = sources,
             request = request,

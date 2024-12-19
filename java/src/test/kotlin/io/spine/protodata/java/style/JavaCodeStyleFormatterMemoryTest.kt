@@ -30,6 +30,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import copyResource
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.Format
 import io.spine.protodata.settings.SettingsDirectory
@@ -85,6 +86,7 @@ internal class JavaCodeStyleFormatterMemoryTest {
             copyResource(fileName, inputDir)
 
             Pipeline(
+                protoFileList = ProtoFileList(listOf()),
                 plugin =  JavaCodeStyleFormatterPlugin(),
                 sources = SourceFileSet.create(inputDir, outputDir),
                 request = CodeGeneratorRequest.getDefaultInstance(),

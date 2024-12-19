@@ -38,7 +38,7 @@ import org.gradle.api.tasks.TaskAction
 /**
  * Creates a directory for storing settings files passed to ProtoData.
  */
-public abstract class CreateSettingsDirectory: DefaultTask() {
+public abstract class CreateSettingsDirectory : DefaultTask() {
 
     /**
      * The directory to store ProtoData settings files.

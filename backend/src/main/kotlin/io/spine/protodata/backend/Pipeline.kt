@@ -38,6 +38,7 @@ import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFile
@@ -67,6 +68,7 @@ import io.spine.server.under
  *
  * @property id The ID of the pipeline to be used for distinguishing contexts when
  *   two or more pipelines are executed in the same JVM. If not specified, the ID will be generated.
+ * @property protoFileList The list of Protobuf files compiled by `protoc`.
  * @property plugins The code generation plugins to be applied to the pipeline.
  * @property sources The source sets to be processed by the pipeline.
  * @property request The Protobuf compiler request.
@@ -77,8 +79,10 @@ import io.spine.server.under
  *  descriptors of interest when running tests.
  */
 @Internal
+@Suppress("LongParameterList")
 public class Pipeline(
     public val id: String = generateId(),
+    public val protoFileList: ProtoFileList,
     public val plugins: List<Plugin>,
     public val sources: List<SourceFileSet>,
     public val request: CodeGeneratorRequest,
@@ -106,12 +110,13 @@ public class Pipeline(
      */
     @VisibleForTesting
     public constructor(
+        protoFileList: ProtoFileList,
         plugin: Plugin,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
         settings: SettingsDirectory,
         id: String = generateId()
-    ) : this(id, listOf(plugin), listOf(sources), request, settings = settings)
+    ) : this(id, protoFileList, listOf(plugin), listOf(sources), request, settings = settings)
 
     init {
         under<DefaultMode> {
