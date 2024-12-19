@@ -39,6 +39,7 @@ import io.spine.protodata.given.value.KelvinTemperature
 import io.spine.protodata.given.value.Misreferences
 import io.spine.protodata.given.value.NumberGenerated
 import io.spine.protodata.given.value.Range
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.protobuf.toField
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.type.TypeSystem
@@ -51,10 +52,10 @@ import org.junit.jupiter.api.assertThrows
 internal class OptionsSpec {
 
     private val typeSystem: TypeSystem by lazy {
-        val protoSources = setOf(
-            FieldOptionsProto.getDescriptor()
-        ).map { it.toPbSourceFile() }.toSet()
-        TypeSystem(protoSources)
+        val descriptors = setOf(FieldOptionsProto.getDescriptor())
+        val protoFiles = descriptors.map { java.io.File(it.file.name) }
+        val protoSources = descriptors.map { it.toPbSourceFile() }.toSet()
+        TypeSystem(ProtoFileList(protoFiles), protoSources)
     }
 
     @Test

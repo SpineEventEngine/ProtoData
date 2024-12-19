@@ -55,7 +55,9 @@ import io.spine.protodata.ast.protoFileHeader
 import io.spine.protodata.ast.protobufSourceFile
 import io.spine.protodata.ast.service
 import io.spine.protodata.ast.serviceName
+import io.spine.protodata.ast.toPath
 import io.spine.protodata.ast.typeName
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.value.pack
 import io.spine.protodata.ast.enumType as newEnumType
@@ -193,10 +195,16 @@ public object TypesTestEnv {
             header = rejectionsProtoHeader
             type.put(rejectionTypeName.typeUrl, rejectionType)
         }
-        TypeSystem(setOf(
-            multipleFilesProto,
-            singleFileProto,
-            rejections
+        TypeSystem(
+            ProtoFileList(listOf(
+                protoSourceMultiple.toPath().toFile(),
+                protoSourceSingle.toPath().toFile(),
+                rejectionsFile.toPath().toFile()
+            )),
+            setOf(
+                multipleFilesProto,
+                singleFileProto,
+                rejections
         ))
     }
 }

@@ -60,12 +60,15 @@ import io.spine.net.EmailAddressProto
 import io.spine.net.InternetDomain
 import io.spine.net.InternetDomainProto
 import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
+import io.spine.protodata.protobuf.ProtoFileList
+import io.spine.protodata.protobuf.file
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.type.TypeSystem
 import io.spine.time.TimeProto
 import io.spine.time.ZoneId
 import io.spine.time.ZoneOffset
 import io.spine.ui.LanguageProto
+import java.io.File
 import org.junit.jupiter.api.Test
 import com.google.protobuf.Any as ProtoAny
 
@@ -75,7 +78,7 @@ import com.google.protobuf.Any as ProtoAny
 internal class EventContextDependenciesTest {
 
     private val typeSystem: TypeSystem by lazy {
-        val protoSources = setOf(
+        val descriptors = setOf(
             ActorContextProto.getDescriptor(),
             AnyProto.getDescriptor(),
             CommandProto.getDescriptor(),
@@ -91,8 +94,10 @@ internal class EventContextDependenciesTest {
             TimestampProto.getDescriptor(),
             UserIdProto.getDescriptor(),
             VersionProto.getDescriptor(),
-        ).map { it.toPbSourceFile() }.toSet()
-        TypeSystem(protoSources)
+        )
+        val protoSources = descriptors.map { it.toPbSourceFile() }.toSet()
+        val protoFiles = descriptors.map { File(it.file.name) }
+        TypeSystem(ProtoFileList(protoFiles), protoSources)
     }
 
     @Test

@@ -34,6 +34,7 @@ import io.spine.protodata.ast.event.FieldEntered
 import io.spine.protodata.ast.event.FieldExited
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.type.TypeSystem
@@ -65,7 +66,7 @@ internal class PluginSpec {
     @Test
     fun `propagate 'TypeSystem' into its policies`() {
         val ctx = BoundedContext.singleTenant("Stubs")
-        val typeSystem = TypeSystem(emptySet())
+        val typeSystem = TypeSystem(ProtoFileList(emptyList()), emptySet())
         plugin.applyTo(ctx, typeSystem)
         policy1.typeSystem() shouldBe typeSystem
         policy2.typeSystem() shouldBe typeSystem
@@ -97,6 +98,7 @@ internal class PluginSpec {
     private fun runPipeline(src: Path, target: Path, settingsDir: Path) {
         val fileSet = SourceFileSet.create(src, target)
         val pipeline = Pipeline(
+            ProtoFileList(listOf()),
             plugin,
             fileSet,
             CodeGeneratorRequest.getDefaultInstance(),

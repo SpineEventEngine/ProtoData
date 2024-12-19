@@ -41,6 +41,7 @@ import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
 import io.spine.protodata.cli.given.DefaultOptionsCounterRendererPlugin
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.settings.Format
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.ECHO_FILE
@@ -62,6 +63,7 @@ import io.spine.time.Month.SEPTEMBER
 import io.spine.time.toInstant
 import io.spine.type.toCompactJson
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.pathString
 import kotlin.io.path.readText
@@ -78,6 +80,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("ProtoData command-line application should")
 class MainSpec {
 
+    private lateinit var protoListFile: Path
     private lateinit var srcRoot : Path
     private lateinit var targetRoot : Path
     private lateinit var codegenRequestFile: Path
@@ -88,6 +91,10 @@ class MainSpec {
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
+        protoListFile = sandbox.resolve(ProtoFileList.fileFor("main").toPath())
+        protoListFile.writeText(
+            "/given/proto/file/path.proto"
+        )
         targetRoot = sandbox.resolve("target")
         targetRoot.toFile().mkdirs()
         srcRoot = sandbox.resolve("src")
@@ -120,6 +127,7 @@ class MainSpec {
     @Test
     fun `render enhanced code`(@TempDir dir: Path) {
         launchApp(
+            "-l", protoListFile.absolutePathString(),
             "-p", TestPlugin::class.jvmName,
             "-p", UnderscorePrefixRendererPlugin::class.jvmName,
             "--src", srcRoot.toString(),
@@ -133,6 +141,7 @@ class MainSpec {
     @Test
     fun `provide Spine options by default`(@TempDir dir: Path) {
         launchApp(
+            "-l", protoListFile.absolutePathString(),
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
             "-p", DefaultOptionsCounterRendererPlugin::class.jvmName,
             "--src", srcRoot.toString(),
@@ -157,6 +166,7 @@ class MainSpec {
             )
 
             launchApp(
+                "-l", protoListFile.absolutePathString(),
                 "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
@@ -175,6 +185,7 @@ class MainSpec {
                 """.ti()
             )
             launchApp(
+                "-l", protoListFile.absolutePathString(),
                 "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
@@ -197,6 +208,7 @@ class MainSpec {
                 """.ti()
             )
             launchApp(
+                "-l", protoListFile.absolutePathString(),
                 "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
@@ -219,6 +231,7 @@ class MainSpec {
             settings.writeFor<ProtoEchoRenderer>(Format.PROTO_JSON, json)
 
             launchApp(
+                "-l", protoListFile.absolutePathString(),
                 "-p", ProtoEchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
@@ -245,6 +258,7 @@ class MainSpec {
             settings.writeFor<ProtoEchoRenderer>(Format.PROTO_BINARY, bytes)
 
             launchApp(
+                "-l", protoListFile.absolutePathString(),
                 "-p", ProtoEchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
@@ -269,6 +283,7 @@ class MainSpec {
             )
 
             launchApp(
+                "-l", protoListFile.absolutePathString(),
                 "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
@@ -284,6 +299,7 @@ class MainSpec {
             SettingsDirectory(configDir).writeFor<PlainStringRenderer>(Format.PLAIN, plainString)
 
             launchApp(
+                "-l", protoListFile.absolutePathString(),
                 "-p", PlainStringRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
@@ -301,6 +317,7 @@ class MainSpec {
         fun `target dir is missing`(@TempDir dir: Path) {
             assertThrows<UsageError> {
                 launchApp(
+                    "-l", protoListFile.absolutePathString(),
                     "-p", TestPlugin::class.jvmName,
                     "-p", UnderscorePrefixRenderer::class.jvmName,
                     "-t", codegenRequestFile.toString(),
@@ -314,6 +331,7 @@ class MainSpec {
         fun `code generator request file is missing`(@TempDir dir: Path) {
             assertMissingOption {
                 launchApp(
+                    "-l", protoListFile.absolutePathString(),
                     "-p", TestPlugin::class.jvmName,
                     "-p", UnderscorePrefixRenderer::class.jvmName,
                     "--src", srcRoot.toString(),

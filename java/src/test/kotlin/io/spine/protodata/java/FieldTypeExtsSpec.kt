@@ -32,12 +32,14 @@ import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.FieldType
 import io.spine.protodata.ast.MessageType
 import io.spine.protodata.ast.field
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.protobuf.toMessageType
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.type.TypeSystem
 import io.spine.test.fields.FieldExamples
 import io.spine.test.fields.FieldExtsSpecProto
 import io.spine.test.fields.Flower
+import java.io.File
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -80,10 +82,13 @@ abstract class FieldTypeTest(
     private val messageType: MessageType = FieldExamples.getDescriptor().toMessageType()
 ) {
     protected val typeSystem: TypeSystem by lazy {
-        TypeSystem(setOf(
-            FieldExtsSpecProto.getDescriptor().toPbSourceFile(),
-            TimestampProto.getDescriptor().toPbSourceFile()
-        ))
+        val descriptors = setOf(
+            FieldExtsSpecProto.getDescriptor(),
+            TimestampProto.getDescriptor()
+        )
+        val protoSources = descriptors.map { File(it.file.name) }
+        val protoFiles = descriptors.map { it.toPbSourceFile() }.toSet()
+        TypeSystem(ProtoFileList(protoSources), protoFiles)
     }
     protected fun typeOf(fieldName: String): FieldType = messageType.field(fieldName).type
 }

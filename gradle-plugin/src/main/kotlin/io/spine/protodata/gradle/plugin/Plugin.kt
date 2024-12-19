@@ -47,6 +47,7 @@ import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
@@ -157,20 +158,20 @@ private fun Project.createConfigurations(protoDataVersion: String) {
 }
 
 /**
- * Creates [LaunchProtoData] and `clean` task for all source sets of this project
- * available by the time of the call.
+ * Creates auxiliary tasks.
+ *
+ * Creates [CreateSettingsDirectory] task and [`clean`][Delete] tasks for
+ * all source sets of this project available by the time of the call.
  *
  * There may be cases of source sets added by other plugins after this method is invoked.
- * Such situations are handled by [Project.handleLaunchTaskDependency] invoked by
- * [Project.setProtocPluginArtifact].
+ * Such situations are handled by [Project.handleLaunchTaskDependency].
  *
  * @see [Project.handleLaunchTaskDependency]
- * @see [Project.setProtocPluginArtifact]
  */
 private fun Project.createTasks() {
     val settingsDirTask = createSettingsDirTask()
     sourceSets.forEach { sourceSet ->
-        createLaunchTask(settingsDirTask, sourceSet)
+        createLaunchTask(sourceSet, settingsDirTask)
         createCleanTask(sourceSet)
     }
 }
@@ -185,8 +186,8 @@ private fun Project.createSettingsDirTask(): CreateSettingsDirectory {
  */
 @CanIgnoreReturnValue
 private fun Project.createLaunchTask(
-    settingsDirTask: CreateSettingsDirectory,
-    sourceSet: SourceSet
+    sourceSet: SourceSet,
+    settingsDirTask: CreateSettingsDirectory
 ): LaunchProtoData {
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
@@ -196,7 +197,7 @@ private fun Project.createLaunchTask(
 }
 
 /**
- * Creates a task which deletes the generated code for the given [sourceSet].
+ * Creates a task which deletes the files generated for the given [sourceSet].
  *
  * Makes a `clean` task depend on the created task.
  * Also, makes the task which launches ProtoData CLI depend on the created task.
@@ -206,6 +207,7 @@ private fun Project.createCleanTask(sourceSet: SourceSet) {
     val cleanSourceSet = CleanTask.nameFor(sourceSet)
     tasks.create<Delete>(cleanSourceSet) {
         delete(extension.targetDirs(sourceSet))
+        delete(protoFileList(sourceSet.name))
 
         tasks.getByName("clean").dependsOn(this)
         val launchTask = LaunchTask.get(project, sourceSet)
@@ -266,22 +268,35 @@ private fun Project.configureProtoTask(task: GenerateProtoTask) {
     if (hasJavaOrKotlin()) {
         task.builtins.maybeCreate("kotlin")
     }
-    val sourceSet = task.sourceSet
-    task.plugins.apply {
+    task.addProtoDataProtocPlugin()
+    task.configureSourceSetDirs()
+    task.setupDescriptorSetFileCreation()
+    task.requestCreatingProtoFileList()
+    handleLaunchTaskDependency(task)
+}
+
+private fun GenerateProtoTask.addProtoDataProtocPlugin() {
+    plugins.apply {
         create(PROTODATA_PROTOC_PLUGIN) {
-            val requestFile = extension.requestFile(sourceSet)
+            val requestFile = project.extension.requestFile(sourceSet)
             val path = requestFile.get().asFile.absolutePath
             val nameEncoded = path.base64Encoded()
             it.option(nameEncoded)
             if (logger.isDebugEnabled) {
-                logger.debug("The task `${task.name}` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
-                        " with the option `$nameEncoded`.")
+                logger.debug(
+                    "The task `$name` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
+                            " with the option `$nameEncoded`."
+                )
             }
         }
     }
-    task.configureSourceSetDirs()
-    task.setupDescriptorSetFileCreation()
-    handleLaunchTaskDependency(task)
+}
+
+private fun GenerateProtoTask.requestCreatingProtoFileList() {
+    doLast {
+        val protoFiles = sourceDirs.asFileTree.files.toList().sorted()
+        ProtoFileList.create(project.protoFileListDir, sourceSet.name, protoFiles)
+    }
 }
 
 /**
@@ -423,7 +438,7 @@ private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask)
         ?.dependsOn(generateProto)
         ?: afterEvaluate {
             val settingsTask = tasks.withType(CreateSettingsDirectory::class.java).theOnly()
-            val launchTask = createLaunchTask(settingsTask, sourceSet)
+            val launchTask = createLaunchTask(sourceSet, settingsTask)
             launchTask.dependsOn(generateProto)
             createCleanTask(sourceSet)
         }

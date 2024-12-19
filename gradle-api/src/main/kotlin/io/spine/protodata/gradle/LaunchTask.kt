@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -34,31 +34,13 @@ import org.gradle.api.tasks.SourceSet
 /**
  * Utilities for working with `launchProtoData` tasks in a Gradle project.
  */
-public object LaunchTask {
+public object LaunchTask : TaskLocator() {
 
     /**
      * Obtains a name of the task for the given source set.
      */
-    public fun nameFor(sourceSet: SourceSet): String {
+    override fun nameFor(sourceSet: SourceSet): String {
         val sourceSetName = SourceSetName(sourceSet.name)
         return "launch${sourceSetName.toInfix()}ProtoData"
-    }
-
-    /**
-     * Obtains an instance of the task in the given project for the specified source set.
-     */
-    public fun get(project: Project, sourceSet: SourceSet): Task {
-        val name = nameFor(sourceSet)
-        return project.tasks.getByName(name)
-    }
-
-    /**
-     * Obtains an instance of the task in the given project for the specified source set.
-     *
-     * @return the task or `null` if there is no task created for this source set
-     */
-    public fun find(project: Project, sourceSet: SourceSet): Task? {
-        val name = nameFor(sourceSet)
-        return project.tasks.findByName(name)
     }
 }

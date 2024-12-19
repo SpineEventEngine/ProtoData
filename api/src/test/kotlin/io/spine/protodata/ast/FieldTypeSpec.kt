@@ -35,6 +35,7 @@ import io.spine.protodata.ast.PrimitiveType.TYPE_INT32
 import io.spine.protodata.ast.PrimitiveType.TYPE_SINT64
 import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
 import io.spine.protodata.ast.PrimitiveType.TYPE_UINT64
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.toMessageType
 import io.spine.protodata.protobuf.toPbSourceFile
@@ -185,9 +186,10 @@ internal class FieldTypeSpec {
     @Nested inner class
     `extract 'MessageType'` : TypeTest() {
 
-        private val typeSystem = TypeSystem(setOf(
-            FieldTypeSpecProto.getDescriptor().toPbSourceFile()
-        ))
+        private val typeSystem = TypeSystem(
+            ProtoFileList(emptyList()),
+            setOf(FieldTypeSpecProto.getDescriptor().toPbSourceFile())
+        )
 
         private fun messageTypeFrom(fieldName: String): MessageType? =
             typeOf(fieldName).extractMessageType(typeSystem)

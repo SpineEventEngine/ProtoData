@@ -29,6 +29,7 @@ package io.spine.protodata.gradle.plugin
 import com.intellij.openapi.util.io.FileUtil
 import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.cli.PluginParam
+import io.spine.protodata.cli.ProtoFilesParam
 import io.spine.protodata.cli.RequestParam
 import io.spine.protodata.cli.SettingsDirParam
 import io.spine.protodata.cli.SourceRootParam
@@ -47,6 +48,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
@@ -68,6 +70,9 @@ import org.gradle.api.tasks.SourceSet
  * Please refer to the `protoData { }` extension configuring ProtoData.
  */
 public abstract class LaunchProtoData : JavaExec() {
+
+    @get:Input
+    internal abstract val sourceSetName: Property<String>
 
     /**
      * The file containing the binary form of `CodeGeneratorRequest` passed to this task.
@@ -116,6 +121,10 @@ public abstract class LaunchProtoData : JavaExec() {
      */
     internal fun compileCommandLine() {
         val command = sequence {
+            val protoFileList = project.protoFileList(sourceSetName.get())
+            yield(ProtoFilesParam.name)
+            yield(protoFileList.canonicalPath)
+
             plugins.get().forEach {
                 yield(PluginParam.name)
                 yield(it)
@@ -191,6 +200,7 @@ internal fun LaunchProtoData.applyDefaults(
     sourceSet: SourceSet,
     settingsDirTask: CreateSettingsDirectory
 ) {
+    sourceSetName.set(sourceSet.name)
     val project = project
     settingsDir.set(settingsDirTask.settingsDir.get())
     val ext = project.extension

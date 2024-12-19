@@ -36,11 +36,13 @@ import io.spine.option.OptionsProto
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.plugin.Plugin
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.StubSoloRenderer
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
@@ -54,6 +56,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("`ProtoData` CLI logging levels should")
 class LoggingLevelSpec {
 
+    private lateinit var protoListFile: Path
     private lateinit var codegenRequestFile: Path
     private lateinit var settingsDirectory: Path
     private lateinit var srcRoot : Path
@@ -62,6 +65,10 @@ class LoggingLevelSpec {
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
+        protoListFile = sandbox.resolve(ProtoFileList.fileFor("main").toPath())
+        protoListFile.writeText(
+            "/given/proto/file/path.proto"
+        )
         settingsDirectory = sandbox.resolve("settings")
         settingsDirectory.toFile().mkdirs()
         srcRoot = sandbox.resolve("src")
@@ -122,6 +129,7 @@ class LoggingLevelSpec {
 
     private fun launchWithLoggingParams(vararg argv: String) {
         val params = mutableListOf(
+            "--proto-files", protoListFile.absolutePathString(),
             "-p", LoggingLevelAsserterPlugin::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
