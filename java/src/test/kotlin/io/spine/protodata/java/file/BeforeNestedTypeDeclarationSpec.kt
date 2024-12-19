@@ -112,7 +112,7 @@ class BeforeNestedTypeDeclarationSpec {
             }
 
             Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugin = RenderingTestbed(
                     SuppressWarningsAnnotation(deeplyNestedClassName),
                     SuppressWarningsAnnotation(nestedEnum),

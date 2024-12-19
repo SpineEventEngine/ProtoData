@@ -68,7 +68,7 @@ import io.spine.server.under
  *
  * @property id The ID of the pipeline to be used for distinguishing contexts when
  *   two or more pipelines are executed in the same JVM. If not specified, the ID will be generated.
- * @property protoFileList The list of Protobuf files compiled by `protoc`.
+ * @property compiledProtoFiles The list of Protobuf files compiled by `protoc`.
  * @property plugins The code generation plugins to be applied to the pipeline.
  * @property sources The source sets to be processed by the pipeline.
  * @property request The Protobuf compiler request.
@@ -82,7 +82,7 @@ import io.spine.server.under
 @Suppress("LongParameterList")
 public class Pipeline(
     public val id: String = generateId(),
-    public val protoFileList: ProtoFileList,
+    public val compiledProtoFiles: ProtoFileList,
     public val plugins: List<Plugin>,
     public val sources: List<SourceFileSet>,
     public val request: CodeGeneratorRequest,
@@ -94,7 +94,7 @@ public class Pipeline(
      * The type system passed to the plugins at the start of the pipeline.
      */
     private val typeSystem: TypeSystem by lazy {
-        request.toTypeSystem()
+        request.toTypeSystem(compiledProtoFiles)
     }
 
     /**
@@ -110,13 +110,13 @@ public class Pipeline(
      */
     @VisibleForTesting
     public constructor(
-        protoFileList: ProtoFileList,
+        compiledProtoFiles: ProtoFileList,
         plugin: Plugin,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
         settings: SettingsDirectory,
         id: String = generateId()
-    ) : this(id, protoFileList, listOf(plugin), listOf(sources), request, settings = settings)
+    ) : this(id, compiledProtoFiles, listOf(plugin), listOf(sources), request, settings = settings)
 
     init {
         under<DefaultMode> {
@@ -211,8 +211,8 @@ public class Pipeline(
 /**
  * Converts this code generation request into [TypeSystem] taking all the proto files.
  */
-private fun CodeGeneratorRequest.toTypeSystem(): TypeSystem {
+private fun CodeGeneratorRequest.toTypeSystem(compiledProtoFiles: ProtoFileList): TypeSystem {
     val fileDescriptors = FileSet.of(protoFileList).files()
     val protoFiles = fileDescriptors.map { it.toPbSourceFile() }
-    return TypeSystem(protoFiles.toSet())
+    return TypeSystem(compiledProtoFiles, protoFiles.toSet())
 }

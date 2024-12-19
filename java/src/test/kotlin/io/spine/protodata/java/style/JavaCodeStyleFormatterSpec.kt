@@ -84,7 +84,7 @@ internal class JavaCodeStyleFormatterSpec {
             copyResource(fileName, inputDir)
 
             Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugin = RenderingTestbed(
                     JavaCodeStyleFormatter()
                 ),

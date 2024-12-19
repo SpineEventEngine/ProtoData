@@ -66,7 +66,7 @@ internal class PluginSpec {
     @Test
     fun `propagate 'TypeSystem' into its policies`() {
         val ctx = BoundedContext.singleTenant("Stubs")
-        val typeSystem = TypeSystem(emptySet())
+        val typeSystem = TypeSystem(ProtoFileList(emptyList()), emptySet())
         plugin.applyTo(ctx, typeSystem)
         policy1.typeSystem() shouldBe typeSystem
         policy2.typeSystem() shouldBe typeSystem

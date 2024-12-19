@@ -86,7 +86,7 @@ internal class JavaCodeStyleFormatterMemoryTest {
             copyResource(fileName, inputDir)
 
             Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugin =  JavaCodeStyleFormatterPlugin(),
                 sources = SourceFileSet.create(inputDir, outputDir),
                 request = CodeGeneratorRequest.getDefaultInstance(),

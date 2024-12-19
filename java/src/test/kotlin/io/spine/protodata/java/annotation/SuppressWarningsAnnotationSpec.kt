@@ -60,7 +60,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
         @Test
         fun `if no settings are passed`(@TempDir dir: Path) {
             Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
@@ -79,7 +79,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                 """.ti()
             )
             Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
@@ -105,7 +105,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
             """.ti()
         )
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugins = listOf(SuppressWarningsAnnotation.Plugin()),
             sources = sources,
             request = emptyRequest,

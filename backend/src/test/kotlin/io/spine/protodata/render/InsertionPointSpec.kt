@@ -106,7 +106,7 @@ class InsertionPointsSpec {
             """.trimIndent()
         )
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugins = listOf(RenderingTestbed(
                 renderers = listOf(
                     VariousKtInsertionPointsPrinter(),

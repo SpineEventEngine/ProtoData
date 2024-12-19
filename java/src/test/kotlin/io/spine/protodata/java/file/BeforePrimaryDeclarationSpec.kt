@@ -103,7 +103,7 @@ class BeforePrimaryDeclarationSpec {
             }
 
             Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugin = GeneratedTypeAnnotation().toPlugin(),
                 sources = SourceFileSet.create(input, output),
                 request = CodeGeneratorRequest.getDefaultInstance(),

@@ -31,6 +31,7 @@ import io.kotest.matchers.shouldNotBe
 import io.spine.core.External
 import io.spine.protodata.ast.event.TypeDiscovered
 import io.spine.protodata.ast.event.TypeEntered
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.event.Just
 import io.spine.server.event.NoReaction
@@ -48,7 +49,10 @@ internal class PolicySpec {
 
         policy.typeSystem() shouldBe null
 
-        val typeSystem = TypeSystem(emptySet())
+        val typeSystem = TypeSystem(
+            ProtoFileList(emptyList()),
+            emptySet()
+        )
         policy.use(typeSystem)
 
         policy.typeSystem() shouldBe typeSystem

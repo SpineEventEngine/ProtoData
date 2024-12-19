@@ -128,7 +128,7 @@ internal class PipelineSpec {
     @Test
     fun `render enhanced code`(@TempDir settingsDir: Path) {
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugins = listOf(TestPlugin(), RenderingTestbed(renderer)),
             sources = listOf(overwritingSourceSet),
             request = request,
@@ -140,7 +140,7 @@ internal class PipelineSpec {
     @Test
     fun `generate new files`(@TempDir settingsDir: Path) {
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugins = listOf(TestPlugin(), RenderingTestbed(InternalAccessRenderer())),
             sources = listOf(overwritingSourceSet),
             request = request,
@@ -156,7 +156,7 @@ internal class PipelineSpec {
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, "foo bar")
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugins = listOf(TestPlugin(), RenderingTestbed(DeletingRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = request,
@@ -172,7 +172,7 @@ internal class PipelineSpec {
         write(path, initialContent)
         val renderer = PrependingRenderer()
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugin = TestPlugin(
                 JavaGenericInsertionPointPrinter(),
                 renderer
@@ -198,7 +198,7 @@ internal class PipelineSpec {
         write(path, initialContent)
         val renderer = PrependingRenderer(NonExistingPoint)
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugin = TestPlugin(renderer),
             sources = SourceFileSet.create(srcRoot, targetRoot),
             request,
@@ -218,7 +218,7 @@ internal class PipelineSpec {
             }
         """.trimIndent())
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugins = listOf(RenderingTestbed(
                 renderers = listOf(
                     AnnotationInsertionPointPrinter(),
@@ -240,7 +240,7 @@ internal class PipelineSpec {
         write(path, initialContent)
         val renderer = PrependingRenderer(NonExistingPoint, inline = true)
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugin = TestPlugin(renderer),
             sources = SourceFileSet.create(srcRoot, targetRoot),
             request,
@@ -256,7 +256,7 @@ internal class PipelineSpec {
         write(jsPath, "alert('Hello')")
         write(ktPath, "println(\"Hello\")")
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugin = TestPlugin(
                 JsRenderer(),
                 KtRenderer()
@@ -272,7 +272,7 @@ internal class PipelineSpec {
     @Test
     fun `add insertion points`(@TempDir settingsDir: Path) {
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugin = TestPlugin(
                 JavaGenericInsertionPointPrinter(),
                 CatOutOfTheBoxEmancipator()
@@ -291,7 +291,7 @@ internal class PipelineSpec {
     @Test
     fun `not add insertion points if nobody touches the file contents`(@TempDir settingsDir: Path) {
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugin = TestPlugin(
                 JavaGenericInsertionPointPrinter(),
                 JsRenderer()
@@ -312,7 +312,7 @@ internal class PipelineSpec {
         @TempDir settingsDir: Path,
         @TempDir destination: Path) {
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugins = listOf(TestPlugin(), RenderingTestbed(InternalAccessRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, destination)),
             request = request,
@@ -332,7 +332,7 @@ internal class PipelineSpec {
     @Test
     fun `copy all sources into the new destination`(@TempDir settingsDir: Path) {
         Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugins = listOf(TestPlugin(), RenderingTestbed(NoOpRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = request,
@@ -357,7 +357,7 @@ internal class PipelineSpec {
             secondSourceFile.createFile().writeText("foo bar")
 
             Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugins = listOf(
                     TestPlugin(),
                     RenderingTestbed(NoOpRenderer())
@@ -395,7 +395,7 @@ internal class PipelineSpec {
                 expectedContent
             )
             Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugins = listOf(
                     TestPlugin(),
                     RenderingTestbed(PlainStringRenderer())
@@ -429,7 +429,7 @@ internal class PipelineSpec {
             write(existingFilePath, expectedContent)
 
             Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugins = listOf(
                     TestPlugin(),
                     RenderingTestbed(listOf(
@@ -460,7 +460,7 @@ internal class PipelineSpec {
         fun `view is already registered`(@TempDir settingsDir: Path) {
             val viewClass = DeletedTypeView::class.java
             val pipeline = Pipeline(
-                protoFileList = ProtoFileList(listOf()),
+                compiledProtoFiles = ProtoFileList(listOf()),
                 plugins = listOf(
                     DocilePlugin(
                         views = setOf(viewClass),
@@ -480,7 +480,7 @@ internal class PipelineSpec {
     @Test
     fun `expose 'codegenContext' property for testing purposes`(@TempDir settingsDir: Path) {
         val pipeline = Pipeline(
-            protoFileList = ProtoFileList(listOf()),
+            compiledProtoFiles = ProtoFileList(listOf()),
             plugins = listOf(TestPlugin(), RenderingTestbed(renderer)),
             sources = listOf(overwritingSourceSet),
             request = request,

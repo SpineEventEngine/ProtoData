@@ -44,13 +44,18 @@ import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.ast.typeName
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.type.shortDebugString
 
 /**
  * A collection of known Protobuf types.
+ *
+ * @property compiledProtoFiles The list of Protobuf files compiled by `protoc`.
+ * @property definitions The result of parsing of files compiled by `protoc` and files they import.
  */
 public class TypeSystem(
-    private val files: Set<ProtobufSourceFile>
+    public val compiledProtoFiles: ProtoFileList,
+    private val definitions: Set<ProtobufSourceFile>
 ) {
     /**
      * Looks up a message type by its name.
@@ -81,7 +86,7 @@ public class TypeSystem(
         mapSelector: (ProtobufSourceFile) -> Map<String, T>
     ): Pair<T, ProtoFileHeader>? {
         val typeUrl = name.typeUrl
-        val file = files.find {
+        val file = definitions.find {
             mapSelector(it).containsKey(typeUrl)
         }
         val types = file?.let(mapSelector)

@@ -219,7 +219,7 @@ internal class Run(version: String) : CliktCommand(
         }
         val list = ProtoFileList.load(protoFileList)
         val pipeline = Pipeline(
-            protoFileList = list,
+            compiledProtoFiles = list,
             plugins = plugins,
             sources = sources,
             request = request,
