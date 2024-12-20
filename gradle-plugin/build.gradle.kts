@@ -69,8 +69,6 @@ testing {
     }
 }
 
-//val toolBaseVersion: String by extra
-
 dependencies {
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
