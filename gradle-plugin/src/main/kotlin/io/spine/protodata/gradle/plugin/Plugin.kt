@@ -295,7 +295,7 @@ private fun GenerateProtoTask.addProtoDataProtocPlugin() {
 private fun GenerateProtoTask.requestCreatingProtoFileList() {
     doLast {
         val protoFiles = sourceDirs.asFileTree.files.toList().sorted()
-        ProtoFileList.create(project.protoFileListDir, sourceSet.name, protoFiles)
+        ProtoFileList.create(project.pipelineParametersDir, sourceSet.name, protoFiles)
     }
 }
 

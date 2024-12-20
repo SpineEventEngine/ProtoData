@@ -58,6 +58,7 @@ public class ProtoFileList(public val files: List<File>) {
          * @param files The list of files names of which are to be stored in the created file.
          */
         public fun create(dir: Path, sourceSetName: String, files: List<File>) {
+            dir.toFile().mkdirs()
             val targetFile = dir.resolve(fileFor(sourceSetName).toPath()).toFile()
             // Use the `LF` separator for compatibility with the Kotlin runtime for reading.
             targetFile.writeText(files.joinToString(Separator.LF.value))

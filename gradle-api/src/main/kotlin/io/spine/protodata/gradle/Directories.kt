@@ -38,6 +38,12 @@ public object Directories {
     public const val PROTODATA_WORKING_DIR: String = "protodata"
 
     /**
+     * The name of the subdirectory under [PROTODATA_WORKING_DIR] for storing
+     * files passed as parameters to pipelines.
+     */
+    public const val PARAMETERS_SUBDIR: String = "parameters"
+
+    /**
      * The name of the subdirectory under [PROTODATA_WORKING_DIR] where
      * the ProtoData settings files are stored.
      */

@@ -27,6 +27,7 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.collect.ImmutableList
+import io.spine.protodata.gradle.Directories.PARAMETERS_SUBDIR
 import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
 import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.tools.code.Java
@@ -48,17 +49,16 @@ internal val Project.protoDataWorkingDir: Directory
     get() = layout.buildDirectory.dir(PROTODATA_WORKING_DIR).get()
 
 /**
- * Obtains the directory for storing
- * the [list of Protobuf files][io.spine.protodata.protobuf.ProtoFileList] compiled by `protoc`.
+ * Obtains the directory for storing files passed as parameters to pipelines.
  */
-internal val Project.protoFileListDir: Path
-    get() = protoDataWorkingDir.asFile.toPath()
+internal val Project.pipelineParametersDir: Path
+    get() = protoDataWorkingDir.dir(PARAMETERS_SUBDIR).asFile.toPath()
 
 /**
  * Obtains the name of the file containing names of Protobuf files compiled by `protoc`.
  */
 internal fun Project.protoFileList(sourceSetName: String): File =
-    protoFileListDir.resolve(ProtoFileList.fileFor(sourceSetName).toPath()).toFile()
+    pipelineParametersDir.resolve(ProtoFileList.fileFor(sourceSetName).toPath()).toFile()
 
 /**
  * Obtains the root directory into which Protobuf Gradle Plugin assigns the `protoc` output.
