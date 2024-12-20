@@ -24,11 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.dependency.test.JUnit
 import io.spine.dependency.lib.Kotlin
 import io.spine.dependency.lib.Protobuf
-import io.spine.dependency.local.Spine
+import io.spine.dependency.local.TestLib
 import io.spine.dependency.local.ToolBase
+import io.spine.dependency.test.JUnit
 import io.spine.gradle.isSnapshot
 
 plugins {
@@ -61,7 +61,7 @@ testing {
                 implementation(Kotlin.gradlePluginLib)
                 implementation(Kotlin.testJUnit5)
                 implementation(ToolBase.pluginBase)
-                implementation(Spine.testlib)
+                implementation(TestLib.lib)
                 implementation(ToolBase.pluginTestlib)
                 implementation(project(":gradle-plugin"))
             }
@@ -69,7 +69,7 @@ testing {
     }
 }
 
-val toolBaseVersion: String by extra
+//val toolBaseVersion: String by extra
 
 dependencies {
     compileOnly(gradleApi())
