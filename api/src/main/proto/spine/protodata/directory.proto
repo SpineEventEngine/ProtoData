@@ -32,19 +32,12 @@ import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
 option java_package = "io.spine.protodata.ast";
-option java_outer_classname = "FileProto";
+option java_outer_classname = "DirectoryProto";
 option java_multiple_files = true;
 
-// A path to a file in an arbitrary OS.
-//
-// In most cases it is going to be a relative path.
-// In some cases it may be an absolute path.
-//
-// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
-// the current operating system. This value holds this exact format of the path.
-//
-message File {
+// A path to a directory in an arbitrary OS.
+message Directory {
 
-    // The path to the file, separating directories with slash (`/`) symbol.
+    // The path to the directory, could be relative or absolute.
     string path = 1 [(required) = true];
 }
