@@ -30,10 +30,6 @@ package io.spine.protodata.cli
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.settings.Format.JSON
-import io.spine.protodata.settings.Format.PLAIN
-import io.spine.protodata.settings.Format.PROTO_JSON
-import io.spine.protodata.settings.Format.YAML
 
 /**
  * The command-line parameter for specifying the name of the file which stores
@@ -141,26 +137,6 @@ public object UserClasspathParam : Parameter(
 )
 
 /**
- * The command-line parameter for specifying the path to the file with custom
- * configuration for ProtoData.
- */
-@Deprecated(message = "Use `SettingsDirParam` instead.")
-public object ConfigFileParam : Parameter(
-    name = "--configuration-file",
-    shortName = "-c",
-    help = """
-        File which contains the custom configuration for ProtoData.
-
-        May be a JSON, a YAML, or a binary Protobuf file.
-        JSON files must have `.json` extension.
-        JSON files with Protobuf JSON format must have `.pb.json` extension.
-        YAML files must have `.yml` or `.yaml` extension.
-        Protobuf binary files must have `.pb` or `.bin` extension.
-        Messages must not be delimited.
-        """
-)
-
-/**
  * The command-line parameter for specifying the path to the directory with
  * setting files for ProtoData plugins.
  */
@@ -180,37 +156,6 @@ public object SettingsDirParam : Parameter (
         Messages must not be delimited.
         """
 )
-
-/**
- * The command-line parameter for specifying custom configuration values.
- */
-@Deprecated(message = "Use `SettingsDirParam` instead.")
-public object ConfigValueParam : Parameter(
-    name = "--configuration-value",
-    shortName = "--cv",
-    help = """
-        Custom configuration for ProtoData.
-        May be a JSON or a YAML.
-        Must be used alongside with `${ddash.confFmt}`.
-        """
-)
-
-/**
- * The command-line parameter for specifying the format of a custom configuration.
- */
-@Deprecated(message = "Use `SettingsDirParam` instead.")
-public object ConfigFormatParam : Parameter(
-    name = "--configuration-format",
-    shortName = "--cf",
-    help = """
-        The format of the custom configuration.
-        Must be one of: `yaml`, `json`, `proto_json`, `plain`.
-        Must be used alongside with `${ddash.confVal}`.
-        """
-) {
-    public fun options(): List<String> =
-        setOf(YAML, JSON, PROTO_JSON, PLAIN).map { it.name.lowercase() }
-}
 
 /**
  * The command-line parameter which turns the `INFO` logging level on.
@@ -249,9 +194,5 @@ private object dash {
 @Suppress("ClassName", "SpellCheckingInspection") // for better readability in `help` texts.
 private object ddash {
     val tr = lazy { TargetRootParam.name }
-    @Suppress("DEPRECATION")
-    val confVal = lazy { ConfigValueParam.name }
-    @Suppress("DEPRECATION")
-    val confFmt = lazy { ConfigFormatParam.name }
     val plugin = lazy { PluginParam.name }
 }
