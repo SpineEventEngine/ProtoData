@@ -1,0 +1,89 @@
+/*
+ * Copyright 2024, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+syntax = "proto3";
+
+package spine.protodata;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.ast";
+option java_outer_classname = "PipelineParametersProto";
+option java_multiple_files = true;
+
+import "spine/protodata/file.proto";
+import "spine/protodata/directory.proto";
+
+// The parameter object passed to the `Pipeline` constructor.
+message PipelineParameters {
+
+    // Proto files compiled by `protoc`.
+    repeated File compiled_proto = 1 [(required) = true];
+
+    // The path to the directory with setting files passed to the ProtoData plugins.
+    //
+    // Setting files may be a JSON, a YAML, or a binary Protobuf file.
+    // A name of the file must match the name of the plugin class, with the extension
+    // corresponding to the format of the file:
+    //  * JSON files must have `.json` extension.
+    //  * JSON files with Protobuf JSON format must have `.pb.json` extension.
+    //  * YAML files must have `.yml` or `.yaml` extension.
+    //  * Protobuf binary files must have `.pb` or `.bin` extension.
+    // Messages must not be delimited.
+    //
+    Directory settings = 2 [(required) = true];
+
+    // Binary names of Java or Kotlin classes derived from `io.spine.protodata.plugin.Plugin`.
+    repeated string plugin_class_name = 3;
+
+    // The path to the binary file containing a serialized instance of
+    // `com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest` received by
+    // ProtoData `protoc` plugin.
+    //
+    File request_file = 4 [(required) = true];
+
+    // Paths to directories with the source files to be processed.
+    repeated Directory source_root = 5 [(required) = true];
+
+    // Paths to the directories where the processed source files should be placed.
+    //
+    // The number target directories must match the number of entries in `source_root`.
+    //
+    repeated Directory target_root = 6 [(required) = true];
+
+    // The logging level to be used by ProtoData.
+    LoggingLevel logging_level = 7;
+}
+
+// The level of logging to be used by ProtoData.
+enum LoggingLevel {
+
+    // The default value of logging.
+    WARN = 0;
+    INFO = 1;
+    DEBUG = 2;
+}
