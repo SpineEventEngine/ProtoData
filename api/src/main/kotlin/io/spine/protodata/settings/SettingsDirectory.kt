@@ -41,7 +41,7 @@ import kotlin.io.path.listDirectoryEntries
  * Only the files belonging to the directory directly are considered,
  * no subdirectories are traversed.
  *
- * @param path the existing path to the settings directory.
+ * @param path The existing path to the settings directory.
  */
 public class SettingsDirectory(
     public val path: Path
@@ -56,11 +56,11 @@ public class SettingsDirectory(
     }
 
     /**
-     * Writes settings file for the given consumer.
+     * Writes a settings file for the given consumer.
      *
-     * @param consumerId the ID of the consumer to write settings for.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param consumerId The ID of the consumer to write settings for.
+     * @param format The format of the settings file.
+     * @param content The content of the settings file.
      */
     public fun write(consumerId: String, format: Format, content: String) {
         val file = file(consumerId, format)
@@ -68,22 +68,22 @@ public class SettingsDirectory(
     }
 
     /**
-     * Writes settings file for the consumer specified by the generic parameter.
+     * Writes a settings file for the consumer specified by the generic parameter.
      *
-     * @param T the type of the settings consumer.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param T The type of the settings consumer.
+     * @param format The format of the settings file.
+     * @param content The content of the settings file.
      */
     public inline fun <reified T: LoadsSettings> writeFor(format: Format, content: String) {
         write(T::class.java.defaultConsumerId, format, content)
     }
 
     /**
-     * Writes settings file for the given consumer.
+     * Writes a settings file for the given consumer.
      *
-     * @param consumerId the ID of the consumer to write settings for.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param consumerId The ID of the consumer to write settings for.
+     * @param format The format of the settings file.
+     * @param content The content of the settings file.
      */
     public fun write(consumerId: String, format: Format, content: ByteArray) {
         val file = file(consumerId, format)
@@ -91,11 +91,11 @@ public class SettingsDirectory(
     }
 
     /**
-     * Writes settings file for the consumer specified by the generic parameter.
+     * Writes a settings file for the consumer specified by the generic parameter.
      *
-     * @param T the type of the settings consumer.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param T The type of the settings consumer.
+     * @param format The format of the settings file.
+     * @param content The content of the settings file.
      */
     public inline fun <reified T: LoadsSettings> writeFor(format: Format, content: ByteArray) {
         write(T::class.java.defaultConsumerId, format, content)
