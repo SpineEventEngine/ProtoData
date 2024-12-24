@@ -53,3 +53,11 @@ public open class Literal<T>(value: T) : Expression<T>("$value")
  * No extra character escaping is performed.
  */
 public class StringLiteral(value: String) : Literal<String>("\"$value\"")
+
+/**
+ * A `long` literal.
+ *
+ * Represents the same value as the given long, followed by `L` symbol.
+ * For example, for "12" it will produce the following code: "12L".
+ */
+public class LongLiteral(value: Long) : Literal<String>("${value}L")
