@@ -26,6 +26,9 @@
 
 package io.spine.protodata.params
 
+import io.spine.protodata.params.Directories.PARAMETERS_SUBDIR
+import io.spine.protodata.params.Directories.SETTINGS_SUBDIR
+import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.util.requireExistingDirectory
 import java.nio.file.Path
 
@@ -39,5 +42,23 @@ public class WorkingDirectory(
 ) {
     init {
         requireExistingDirectory(path)
+    }
+
+    /**
+     * The directory managing files with [PipelineParameters].
+     */
+    public val pipelineParametersDirectory: PipelineParametersDirectory by lazy {
+        val dir = path.resolve(PARAMETERS_SUBDIR)
+        dir.toFile().mkdirs()
+        PipelineParametersDirectory(dir)
+    }
+
+    /**
+     * The directory managing files with plugin settings.
+     */
+    public val settingsDirectory: SettingsDirectory by lazy {
+        val dir = path.resolve(SETTINGS_SUBDIR)
+        dir.toFile().mkdirs()
+        SettingsDirectory(dir)
     }
 }
