@@ -31,36 +31,49 @@ package spine.protodata;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.settings";
-option java_outer_classname = "SettingsProto";
+option java_package = "io.spine.protodata.util";
+option java_outer_classname = "FormatProto";
 option java_multiple_files = true;
 
-import "google/protobuf/empty.proto";
-import "spine/protodata/file.proto";
+import "google/protobuf/descriptor.proto";
 
-// A view on the ProtoData user configuration.
+extend google.protobuf.EnumValueOptions {
+
+    // Possible file extensions associated with a file format.
+    //
+    // Only applicable to the `Format` enum.
+    //
+    repeated string extension = 73980 [(internal) = true];
+}
+
+// The format of a Protobuf message stored in a file.
 //
-// Describes parameters passed to a component of the code generation process.
-// The user may then obtain those parameters by finding the instance of this view.
+// Files with settings for ProtoData and its plugins should be stored in one of these formats.
 //
-// @see io.spine.protodata.settings.LoadsSettings
-//
-message Settings {
-    option (entity).kind = VIEW;
+enum Format {
 
-    // A name of a ProtoData component which is going to consume the settings.
-    string consumer = 1;
+    RCF_UNKNOWN = 0;
 
-    oneof kind {
-        option (is_required) = true;
+    // A Protobuf message encoded in binary.
+    //
+    // See: https://protobuf.dev/programming-guides/techniques/#suffixes
+    // See: https://buf.build/docs/reference/inputs#binpb
+    //
+    PROTO_BINARY = 1 [(extension) = "binpb", (extension) = "pb", (extension) = "bin"];
 
-        // No settings are supplied.
-        google.protobuf.Empty empty = 2;
+    // A Protobuf message encoded in Protobuf JSON.
+    //
+    // Use this item instead of [JSON] for Protobuf messages stored in
+    // JSON format so that the correct parser is selected for the file.
+    //
+    PROTO_JSON = 2 [(extension) = "pb.json"];
 
-        // A file which contains the configuration.
-        //
-        // The format of the configuration is inferred from the file extension.
-        //
-        File file = 3;
-    }
+    // A plain JSON value.
+    JSON = 3 [(extension) = "json"];
+
+    // A plain YAML value.
+    YAML = 4 [(extension) = "yml", (extension) = "yaml"];
+
+    // A plain string value.
+    PLAIN = 5 [(extension) = "txt"];
 }

@@ -26,8 +26,8 @@
 
 package io.spine.protodata.ast
 
-import io.spine.protodata.settings.Format
-import io.spine.protodata.settings.extensions
+import io.spine.protodata.util.Format
+import io.spine.protodata.util.extensions
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString

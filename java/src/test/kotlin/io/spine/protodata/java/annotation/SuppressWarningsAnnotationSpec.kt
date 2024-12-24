@@ -32,7 +32,7 @@ import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.JAVA_FILE
 import io.spine.protodata.java.WithSourceFileSet
 import io.spine.protodata.protobuf.ProtoFileList
-import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.util.Format.PROTO_JSON
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.settings.defaultConsumerId
 import io.spine.string.ti

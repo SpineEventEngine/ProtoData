@@ -26,11 +26,16 @@
 
 package io.spine.protodata.settings
 
+import io.spine.protodata.ast.File
+import io.spine.protodata.ast.toPath
+import io.spine.protodata.settings.Settings.KindCase.EMPTY
+import io.spine.protodata.settings.Settings.KindCase.FILE
+import io.spine.protodata.settings.Settings.KindCase.KIND_NOT_SET
 import io.spine.server.query.Querying
 import io.spine.server.query.select
 
 /**
- * A ProtoData component which accesses its settings via the [Settings] view.
+ * A ProtoData plugin component which accesses its settings via the [Settings] view.
  */
 public interface LoadsSettings : Querying, WithSettings {
 
@@ -78,3 +83,19 @@ public inline fun <reified T: Any> LoadsSettings.loadSettings(): T =
  */
 public val Class<*>.defaultConsumerId: String
     get() = canonicalName
+
+/**
+ * Parses this instance of [Settings] into the given class.
+ */
+private fun <T : Any> Settings.parse(cls: Class<T>): T =
+    when (kindCase!!) {
+        FILE -> parseFile(file, cls)
+        EMPTY, KIND_NOT_SET -> unknownCase(cls)
+    }
+
+private fun <T : Any> parseFile(file: File, cls: Class<T>): T =
+    io.spine.protodata.util.parseFile(file.toPath().toFile(), cls)
+
+private fun Settings.unknownCase(cls: Class<*>): Nothing {
+    error("Unable to parse settings as `${cls.canonicalName}`. `kindCase` is `$kindCase`.")
+}

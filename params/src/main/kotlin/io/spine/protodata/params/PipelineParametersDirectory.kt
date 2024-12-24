@@ -26,7 +26,13 @@
 
 package io.spine.protodata.params
 
+import io.spine.protodata.util.Format
+import io.spine.protodata.util.extensions
+import io.spine.protodata.util.parseFile
 import io.spine.protodata.util.requireExistingDirectory
+import io.spine.tools.code.SourceSetName
+import io.spine.type.toJson
+import java.io.File
 import java.nio.file.Path
 
 /**
@@ -35,7 +41,35 @@ import java.nio.file.Path
 public class PipelineParametersDirectory(
     public val path: Path
 ) {
+
     init {
         requireExistingDirectory(path)
+    }
+
+    /**
+     * Reads the parameters for the pipeline for the given source set.
+     */
+    public fun read(sourceSet: SourceSetName): PipelineParameters {
+        val file = file(sourceSet)
+        val result = parseFile(file, PipelineParameters::class.java)
+        return result
+    }
+
+    /**
+     * Creates the file storing the parameters for the pipeline for the given source set.
+     */
+    public fun write(sourceSet: SourceSetName, parameters: PipelineParameters) {
+        val content = parameters.toJson()
+        val file = file(sourceSet)
+        file.writeText(content)
+    }
+
+    private fun file(sourceSet: SourceSetName): File {
+        val fileName = "${sourceSet.value}.${DEFAULT_FORMAT.extensions.first()}"
+        return path.resolve(fileName).toFile()
+    }
+
+    private companion object {
+        val DEFAULT_FORMAT = Format.PROTO_JSON
     }
 }

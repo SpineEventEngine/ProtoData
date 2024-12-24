@@ -30,6 +30,10 @@ import io.spine.protodata.util.requireExistingDirectory
 import io.spine.protodata.ast.toProto
 import io.spine.protodata.settings.event.SettingsFileDiscovered
 import io.spine.protodata.settings.event.settingsFileDiscovered
+import io.spine.protodata.util.Format
+import io.spine.protodata.util.extensions
+import io.spine.protodata.util.hasSupportedFormat
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.listDirectoryEntries
 
@@ -70,7 +74,7 @@ public class SettingsDirectory(
      */
     public fun write(consumerId: String, format: Format, content: String) {
         val file = file(consumerId, format)
-        file.toFile().writeText(content)
+        file.writeText(content)
     }
 
     /**
@@ -93,7 +97,7 @@ public class SettingsDirectory(
      */
     public fun write(consumerId: String, format: Format, content: ByteArray) {
         val file = file(consumerId, format)
-        file.toFile().writeBytes(content)
+        file.writeBytes(content)
     }
 
     /**
@@ -107,9 +111,9 @@ public class SettingsDirectory(
         write(T::class.java.defaultConsumerId, format, content)
     }
 
-    private fun file(consumerId: String, format: Format): Path {
+    private fun file(consumerId: String, format: Format): File {
         val fileName = "${consumerId}.${format.extensions.first()}"
-        return path.resolve(fileName)
+        return path.resolve(fileName).toFile()
     }
 
     /**
@@ -125,5 +129,5 @@ public class SettingsDirectory(
 
     private fun files() =
         path.listDirectoryEntries()
-            .filter { it.isSettings() }
+            .filter { it.hasSupportedFormat() }
 }

@@ -34,7 +34,7 @@ import io.spine.io.ResourceDirectory
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.protobuf.ProtoFileList
-import io.spine.protodata.settings.Format.PROTO_JSON
+import io.spine.protodata.util.Format.PROTO_JSON
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.PipelineSetup.Companion.byResources
 import io.spine.protodata.testing.PipelineSetup.Companion.detectCallingClass

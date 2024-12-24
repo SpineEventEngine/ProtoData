@@ -24,10 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.settings
+package io.spine.protodata.util
 
 import io.spine.io.Glob
-import io.spine.protodata.settings.Format.UNRECOGNIZED
+import io.spine.protodata.util.Format.UNRECOGNIZED
 import java.nio.file.Path
 import kotlin.io.path.name
 
@@ -46,7 +46,7 @@ public val Format.extensions: List<String>
     get() = if (this == UNRECOGNIZED) {
         emptyList()
     } else {
-        valueDescriptor.options.getExtension(SettingsProto.extension).toList()
+        valueDescriptor.options.getExtension(FormatProto.extension).toList()
     }
 
 /**
@@ -59,7 +59,7 @@ public fun formatOf(file: Path): Format =
         ?: error("Unrecognized settings format: `${file.name}`.")
 
 /**
- * Tells if this file is a settings file.
+ * Tells if this file is of one of the supported [formats][Format].
  */
-public fun Path.isSettings(): Boolean =
+public fun Path.hasSupportedFormat(): Boolean =
     Format.values().any { it.matches(this) }

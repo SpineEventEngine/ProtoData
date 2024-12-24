@@ -28,12 +28,13 @@ package io.spine.protodata.settings
 
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.settings.Format.JSON
-import io.spine.protodata.settings.Format.PLAIN
-import io.spine.protodata.settings.Format.PROTO_BINARY
-import io.spine.protodata.settings.Format.PROTO_JSON
-import io.spine.protodata.settings.Format.RCF_UNKNOWN
-import io.spine.protodata.settings.Format.YAML
+import io.spine.protodata.util.Format.JSON
+import io.spine.protodata.util.Format.PLAIN
+import io.spine.protodata.util.Format.PROTO_BINARY
+import io.spine.protodata.util.Format.PROTO_JSON
+import io.spine.protodata.util.Format.RCF_UNKNOWN
+import io.spine.protodata.util.Format.YAML
+import io.spine.protodata.util.extensions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
