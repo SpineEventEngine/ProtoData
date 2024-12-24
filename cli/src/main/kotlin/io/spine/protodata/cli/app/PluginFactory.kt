@@ -39,12 +39,9 @@ import kotlin.system.exitProcess
  * If a class could not be found, the factory reports the error using the [callback][printError]
  * passed to the constructor, and then terminates the process with exit code [1][EXIT_CODE].
  *
- * @param classLoader
- *         the loader for the classes of the plugins.
- * @param classpath
- *         the user classpath used for finding plugin classes.
- * @param printError
- *         the function given to the factory for reporting errors.
+ * @param classLoader The loader for the classes of the plugins.
+ * @param classpath The user classpath used for finding plugin classes.
+ * @param printError The function given to the factory for reporting errors.
  */
 internal class PluginFactory(
     classLoader: ClassLoader,

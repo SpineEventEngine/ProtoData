@@ -28,13 +28,13 @@ package io.spine.protodata.gradle.plugin
 
 import com.intellij.openapi.util.io.FileUtil
 import io.spine.protodata.Constants.CLI_APP_CLASS
-import io.spine.protodata.cli.PluginParam
-import io.spine.protodata.cli.ProtoFilesParam
-import io.spine.protodata.cli.RequestParam
-import io.spine.protodata.cli.SettingsDirParam
-import io.spine.protodata.cli.SourceRootParam
-import io.spine.protodata.cli.TargetRootParam
-import io.spine.protodata.cli.UserClasspathParam
+import io.spine.protodata.params.PluginParam
+import io.spine.protodata.params.ProtoFilesParam
+import io.spine.protodata.params.RequestParam
+import io.spine.protodata.params.SettingsDirParam
+import io.spine.protodata.params.SourceRootParam
+import io.spine.protodata.params.TargetRootParam
+import io.spine.protodata.params.UserClasspathParam
 import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.error

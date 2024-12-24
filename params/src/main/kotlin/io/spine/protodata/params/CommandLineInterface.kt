@@ -26,7 +26,7 @@
 
 @file:Suppress("MaxLineLength")
 
-package io.spine.protodata.cli
+package io.spine.protodata.params
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.plugin.Plugin
