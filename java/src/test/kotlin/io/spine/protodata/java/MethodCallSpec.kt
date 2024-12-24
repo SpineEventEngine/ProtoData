@@ -26,6 +26,7 @@
 
 package io.spine.protodata.java
 
+import com.google.api.QuotaLimit
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import com.google.protobuf.Duration
@@ -117,6 +118,41 @@ internal class MethodCallSpec {
             setter.toCode() shouldBe
                     "${FieldMask::class.qualifiedName}.newBuilder()" +
                     ".addAllPaths(${ImmutableList::class.qualifiedName}.of(1, 2))"
+        }
+
+        @Test
+        fun `put() method`() {
+            val builder = ClassName(QuotaLimit::class).newBuilder()
+                .chainPut(
+                    "values",
+                    StringLiteral("Standard"),
+                    LongLiteral(160)
+                )
+            builder.toCode() shouldBe
+                    "${QuotaLimit::class.qualifiedName}.newBuilder().putValues(\"Standard\", 160L)"
+        }
+
+        @Test
+        @Suppress("MaxLineLength") // To keep the readability of code literals.
+        fun `putAll() method`() {
+            val values = mapExpression(
+                keyType = ClassName(String::class),
+                valueType = ClassName(Long::class.javaObjectType),
+                entries = mapOf(
+                    StringLiteral("Short") to LongLiteral(80),
+                    StringLiteral("Standard") to LongLiteral(160),
+                    StringLiteral("Extended") to LongLiteral(560)
+                )
+            )
+            val builder = ClassName(QuotaLimit::class).newBuilder()
+                .chainPutAll("values", values)
+            builder.toCode() shouldBe
+                    "${QuotaLimit::class.qualifiedName}.newBuilder()" +
+                    ".putAllValues(" +
+                    "com.google.common.collect.ImmutableMap.<java.lang.String, java.lang.Long>builder()" +
+                    ".put(\"Short\", 80L).put(\"Standard\", 160L).put(\"Extended\", 560L)" +
+                    ".build()" +
+                    ")"
         }
 
         @Test

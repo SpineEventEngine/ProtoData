@@ -104,9 +104,29 @@ public open class MethodCall<T> @JvmOverloads constructor(
 
     /**
      * Constructs an expression chaining a call of an `addAllField(...)` method.
+     *
+     * @see listExpression
      */
     public fun chainAddAll(field: String, value: Expression<*>): MethodCall<Message.Builder> =
         fieldAccess(field).addAll(value)
+
+    /**
+     * Constructs an expression chaining a call of an `putField(...)` method.
+     */
+    public fun chainPut(
+        field: String,
+        key: Expression<*>,
+        value: Expression<*>
+    ): MethodCall<Message.Builder> =
+        fieldAccess(field).put(key, value)
+
+    /**
+     * Constructs an expression chaining a call of an `putAllField(...)` method.
+     *
+     * @see mapExpression
+     */
+    public fun chainPutAll(field: String, value: Expression<*>): MethodCall<Message.Builder> =
+        fieldAccess(field).putAll(value)
 
     private fun fieldAccess(fieldName: String) = FieldAccess(Expression(toCode()), fieldName)
 }
