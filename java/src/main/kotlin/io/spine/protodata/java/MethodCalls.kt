@@ -107,9 +107,9 @@ public fun listExpression(vararg expressions: Expression<*>): MethodCall<Immutab
 /**
  * Constructs an expression that yields Guava's [ImmutableMap] with the given [entries].
  *
- * @param entries The entries to fill the map with, can't be empty.
  * @param keyType The type of the keys in the map.
  * @param valueType The type of the values in the map.
+ * @param entries The entries to fill the map with, can't be empty.
  */
 public fun mapExpression(
     keyType: ClassName,
