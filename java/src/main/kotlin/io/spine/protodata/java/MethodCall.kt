@@ -111,7 +111,7 @@ public open class MethodCall<T> @JvmOverloads constructor(
         fieldAccess(field).addAll(value)
 
     /**
-     * Constructs an expression chaining a call of an `putField(...)` method.
+     * Constructs an expression chaining a call of a `putField(...)` method.
      */
     public fun chainPut(
         field: String,
@@ -121,7 +121,7 @@ public open class MethodCall<T> @JvmOverloads constructor(
         fieldAccess(field).put(key, value)
 
     /**
-     * Constructs an expression chaining a call of an `putAllField(...)` method.
+     * Constructs an expression chaining a call of a `putAllField(...)` method.
      *
      * @see mapExpression
      */
