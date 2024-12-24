@@ -112,9 +112,9 @@ public fun listExpression(vararg expressions: Expression<*>): MethodCall<Immutab
  * @param valueType The type of the values in the map.
  */
 public fun mapExpression(
-    entries: Map<Expression<*>, Expression<*>>,
     keyType: ClassName,
-    valueType: ClassName
+    valueType: ClassName,
+    entries: Map<Expression<*>, Expression<*>>
 ): MethodCall<ImmutableMap<*, *>> {
     require(entries.isNotEmpty()) {
         "Can't construct an expression to yield Guava's `ImmutableMap` with empty `entries`." +

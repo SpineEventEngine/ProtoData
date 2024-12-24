@@ -107,9 +107,9 @@ internal class FieldAccessSpec {
     fun `provide putAll() method`() {
         val access = mapField().access()
         val mapValue = mapExpression(
-            mapOf(StringLiteral("foo") to StringLiteral("bar")),
             keyType = ClassName(String::class),
-            valueType = ClassName(String::class)
+            valueType = ClassName(String::class),
+            mapOf(StringLiteral("foo") to StringLiteral("bar"))
         )
         val expression = access.putAll(mapValue)
         val type = String::class.java.canonicalName
