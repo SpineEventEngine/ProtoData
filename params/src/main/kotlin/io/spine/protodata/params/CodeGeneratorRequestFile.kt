@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,34 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
+package io.spine.protodata.params
+
+import io.spine.protodata.params.Directories.PROTODATA_WORKING_DIR
+import io.spine.protodata.params.Directories.REQUESTS_SUBDIR
+import io.spine.tools.code.SourceSetName
 
 /**
- * Constants for directory names used by ProtoData.
+ * Utilities for working with `CodeGeneratorRequest` files.
  */
-public object Directories {
+public object CodeGeneratorRequestFile {
 
     /**
-     * The name of the ProtoData working directory which is conventionally
-     * placed under the `build` directory.
+     * The default name of the subdirectory of the `build` directory where code generation
+     * request files are placed.
      */
-    public const val PROTODATA_WORKING_DIR: String = "protodata"
+    @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
+    public const val defaultDirectory: String = "$PROTODATA_WORKING_DIR/$REQUESTS_SUBDIR"
 
     /**
-     * The name of the subdirectory under [PROTODATA_WORKING_DIR] for storing
-     * files passed as parameters to pipelines.
+     * Obtains the name of the file with the code generation request for the given source set.
      */
-    public const val PARAMETERS_SUBDIR: String = "parameters"
-
-    /**
-     * The name of the subdirectory under [PROTODATA_WORKING_DIR] where
-     * the ProtoData settings files are stored.
-     */
-    public const val SETTINGS_SUBDIR: String = "settings"
-
-    /**
-     * The name of the subdirectory under [PROTODATA_WORKING_DIR] where
-     * [code generation requests files][CodeGeneratorRequestFile] are stored.
-     */
-    public const val REQUESTS_SUBDIR: String = "requests"
+    public fun name(sourceSet: SourceSetName): String = "${sourceSet.value}.bin"
 }

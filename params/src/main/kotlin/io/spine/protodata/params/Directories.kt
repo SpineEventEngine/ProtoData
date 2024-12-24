@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,26 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
-
-import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
-import io.spine.protodata.gradle.Directories.REQUESTS_SUBDIR
-import org.gradle.api.tasks.SourceSet
+package io.spine.protodata.params
 
 /**
- * Utilities for working with `CodeGeneratorRequest` files.
+ * Constants for directory names used by ProtoData.
  */
-public object CodeGeneratorRequestFile {
+public object Directories {
 
     /**
-     * The default name of the subdirectory of the `build` directory where code generation
-     * request files are placed.
+     * The name of the ProtoData working directory which is conventionally
+     * placed under the `build` directory.
      */
-    @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
-    public const val defaultDirectory: String = "$PROTODATA_WORKING_DIR/$REQUESTS_SUBDIR"
+    public const val PROTODATA_WORKING_DIR: String = "protodata"
 
     /**
-     * Obtains the name of the file with the code generation request for the given source set.
+     * The name of the subdirectory under [PROTODATA_WORKING_DIR] for storing
+     * files passed as parameters to pipelines.
      */
-    public fun name(sourceSet: SourceSet): String = "${sourceSet.name}.bin"
+    public const val PARAMETERS_SUBDIR: String = "parameters"
+
+    /**
+     * The name of the subdirectory under [PROTODATA_WORKING_DIR] where
+     * the ProtoData settings files are stored.
+     */
+    public const val SETTINGS_SUBDIR: String = "settings"
+
+    /**
+     * The name of the subdirectory under [PROTODATA_WORKING_DIR] where
+     * [code generation requests files][CodeGeneratorRequestFile] are stored.
+     */
+    public const val REQUESTS_SUBDIR: String = "requests"
 }

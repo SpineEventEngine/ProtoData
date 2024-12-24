@@ -27,8 +27,9 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.gradle.CodeGeneratorRequestFile
+import io.spine.protodata.params.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodegenSettings
+import io.spine.tools.code.SourceSetName
 import io.spine.tools.fs.DirectoryName.generated
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import org.gradle.api.Project
@@ -71,8 +72,10 @@ public class Extension(private val project: Project): CodegenSettings {
         )
     }
 
-    internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
-        requestFilesDirProperty.file(CodeGeneratorRequestFile.name(forSourceSet))
+    internal fun requestFile(sourceSet: SourceSet): Provider<RegularFile> {
+        val file = CodeGeneratorRequestFile.name(SourceSetName(sourceSet.name))
+        return requestFilesDirProperty.file(file)
+    }
 
     /**
      * Synthetic property for providing the source directories for the given

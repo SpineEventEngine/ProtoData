@@ -27,8 +27,8 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.collect.ImmutableList
-import io.spine.protodata.gradle.Directories.PARAMETERS_SUBDIR
-import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
+import io.spine.protodata.params.Directories.PARAMETERS_SUBDIR
+import io.spine.protodata.params.Directories.PROTODATA_WORKING_DIR
 import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
