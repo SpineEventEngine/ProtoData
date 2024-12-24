@@ -26,6 +26,7 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.intellij.openapi.util.io.FileUtil
 import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.cli.PluginParam
 import io.spine.protodata.cli.ProtoFilesParam
@@ -40,7 +41,9 @@ import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
 import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File.pathSeparator
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -152,6 +155,40 @@ public abstract class LaunchProtoData : JavaExec() {
         mainClass.set(CLI_APP_CLASS)
         args(command)
     }
+
+
+    internal fun setPreLaunchCleanup() {
+        doFirst(CleanTargetDirs())
+    }
+
+    /**
+     * Cleans the target directory to prepare it for ProtoData.
+     */
+    private inner class CleanTargetDirs : Action<Task> {
+
+        override fun execute(t: Task) {
+            val sourceDirs = sources.absoluteDirs()
+            val targetDirs = targets.absoluteDirs()
+
+            if (sourceDirs.isEmpty()) {
+                return
+            }
+            sourceDirs.asSequence()
+                .zip(targetDirs.asSequence())
+                .filter { (s, t) ->
+                    // Do not clean directories if we are overwriting files in
+                    // the directories created by `protoc`.
+                    // Such a mode is deprecated currently, but we may revisit this later.
+                    !FileUtil.filesEqual(s, t) /* Honor case-sensitivity under macOS. */
+                }
+                .map { it.second }
+                .filter { it.exists() && it.list()?.isNotEmpty() ?: false }
+                .forEach {
+                    logger.info { "Cleaning target directory `$it`." }
+                    project.delete(it)
+                }
+        }
+    }
 }
 
 /**
@@ -177,6 +214,7 @@ internal fun LaunchProtoData.applyDefaults(
         targets = ext.targetDirs(sourceSet)
         compileCommandLine()
     }
+    setPreLaunchCleanup()
     onlyIf {
         hasRequestFile(sourceSet)
     }

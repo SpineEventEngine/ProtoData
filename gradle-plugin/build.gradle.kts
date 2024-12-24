@@ -76,7 +76,7 @@ dependencies {
     api(project(":gradle-api"))
 
     implementation(project(":api"))
-    implementation(project(":cli-api"))
+    implementation(project(":params"))
     implementation(ToolBase.lib)
     implementation(ToolBase.pluginBase)
     implementation(Kotlin.gradlePluginApi)

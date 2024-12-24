@@ -209,7 +209,8 @@ private fun Project.createCleanTask(sourceSet: SourceSet) {
         delete(extension.targetDirs(sourceSet))
         delete(protoFileList(sourceSet.name))
 
-        tasks.getByName("clean").dependsOn(this)
+        val cleanProtoDataTask = this
+        tasks.getByName("clean").dependsOn(cleanProtoDataTask)
         val launchTask = LaunchTask.get(project, sourceSet)
         launchTask.mustRunAfter(this)
     }

@@ -47,7 +47,7 @@ dependencies {
 
     listOf(
         ":api",
-        ":cli-api",
+        ":params",
         ":backend",
         ":java"
     ).forEach { implementation(project(it)) }
