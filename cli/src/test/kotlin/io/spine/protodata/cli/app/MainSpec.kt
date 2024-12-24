@@ -42,7 +42,7 @@ import io.spine.protodata.cli.given.DefaultOptionsCounterRendererPlugin
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.protobuf.ProtoFileList
-import io.spine.protodata.settings.Format
+import io.spine.protodata.util.Format
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.EchoRenderer

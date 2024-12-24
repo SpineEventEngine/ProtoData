@@ -35,7 +35,7 @@ import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.settings.Format
+import io.spine.protodata.util.Format
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.style.indentOptions
 import io.spine.type.toJson

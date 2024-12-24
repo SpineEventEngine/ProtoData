@@ -38,7 +38,7 @@ import io.spine.protodata.plugin.ConfigurationError
 import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.render.codeLine
-import io.spine.protodata.settings.Format
+import io.spine.protodata.util.Format
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.settings.defaultConsumerId
 import io.spine.protodata.test.AnnotationInsertionPointPrinter
