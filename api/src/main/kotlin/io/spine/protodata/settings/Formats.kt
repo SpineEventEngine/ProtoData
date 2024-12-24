@@ -39,7 +39,6 @@ public fun Format.matches(file: Path): Boolean =
             .map { Glob.extension(it) }
             .any { it.matches(file) }
 
-
 /**
  * Obtains file extensions associated with this format.
  */
