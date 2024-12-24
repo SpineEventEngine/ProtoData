@@ -27,31 +27,31 @@
 package io.spine.protodata.settings
 
 /**
- * A ProtoData component which obtains settings provided by the user.
+ * A ProtoData plugin component which can [load][loadSettings] its settings.
+ *
+ * It is the API user's responsibility to know the format of the settings and provide
+ * an appropriate class given s the parameter to the [loadSettings] method.
+ *
+ * For Protobuf messages, encoded either in binary or in the Protobuf JSON format, the class
+ * passed as the parameter to the [loadSettings] method must be a subtype of
+ * [com.google.protobuf.Message] and must be able to deserialize from the given binary/JSON.
+ *
+ * For JSON/YAML configuration, we use [Jackson](https://github.com/FasterXML/jackson) to
+ * deserialize values. Users may use Jackson's API, such as annotations and modules,
+ * to define classes to represent the configuration. Modules will be included automatically via
+ * classpath scanning.
+ *
+ * In Kotlin, the simplest way to define a type compatible with a configuration is a data class.
+ * Jackson is capable of working with Kotlin `val`-s, so the data class can be immutable.
+ * In Java, Jackson is capable of working with immutable types as well. However, it may require
+ * some annotations to be added to the class. See the Jackson doc for more info.
  */
 public interface WithSettings {
 
     /**
-     * Obtains the settings provided by the user as an instance of the given class.
+     * Obtains the settings as an instance of the given class.
      *
-     * It is the API user's responsibility to know the format of the settings and provide
-     * an appropriate class.
-     *
-     * For Protobuf messages, encoded either in binary or in the Protobuf JSON format, the [cls]
-     * must be a subtype of [com.google.protobuf.Message] and must be able to deserialize from
-     * the given binary/JSON.
-     *
-     * For JSON/YAML configuration, we use [Jackson](https://github.com/FasterXML/jackson) to
-     * deserialize values. Users may use Jackson's API, such as annotations and modules,
-     * to define classes to represent the configuration. Modules will be included automatically via
-     * classpath scanning.
-     *
-     * In Kotlin, the simplest way to define a type compatible with a configuration is a data class.
-     * Jackson is capable of working with Kotlin `val`-s, so the data class can be immutable.
-     * In Java, Jackson is capable of working with immutable types as well. However, it may require
-     * some annotations to be added to the class. See the Jackson doc for more info.
-     *
-     * @throws io.spine.protodata.ConfigurationError if no configuration is provided to ProtoData.
+     * @throws IllegalStateException if no settings are available.
      */
     public fun <T: Any> loadSettings(cls: Class<T>): T
 
