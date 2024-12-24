@@ -26,11 +26,11 @@
 
 package io.spine.protodata.settings
 
+import io.spine.protodata.util.requireExistingDirectory
 import io.spine.protodata.ast.toProto
 import io.spine.protodata.settings.event.SettingsFileDiscovered
 import io.spine.protodata.settings.event.settingsFileDiscovered
 import java.nio.file.Path
-import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 
 /**
@@ -47,12 +47,7 @@ public class SettingsDirectory(
     public val path: Path
 ) {
     init {
-        require(path.toFile().isDirectory) {
-            "The path `$path` is not a directory."
-        }
-        require(path.exists()) {
-            "The directory `$path` does not exist."
-        }
+        requireExistingDirectory(path)
     }
 
     /**
