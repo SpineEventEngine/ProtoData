@@ -32,6 +32,18 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.plugin.Plugin
 
 /**
+ * The command-line parameter for specifying the name of the file which stores an instance of
+ * `[PipelineParameters] in [PROTO_JSON][io.spine.protodata.util.Format.PROTO_JSON] format.
+ */
+public object ParametersFileParam : Parameter(
+    name = "--params",
+    shortName = "-P",
+    help = """
+        The path to the file with the serialized instance of `PipelineParameters` to 
+        be passed to the pipeline. The file must be in `pb.json` format.
+    """.trimIndent()
+)
+/**
  * The command-line parameter for specifying the name of the file which stores
  * the list of Protobuf files compiled by `protoc`.
  */

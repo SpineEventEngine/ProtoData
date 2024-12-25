@@ -38,7 +38,7 @@ import java.nio.file.Path
 /**
  * A directory under [WorkingDirectory] which manages files of [PipelineParameters].
  */
-public class PipelineParametersDirectory(
+public class ParametersDirectory(
     public val path: Path
 ) {
 
@@ -58,13 +58,17 @@ public class PipelineParametersDirectory(
     /**
      * Creates the file storing the parameters for the pipeline for the given source set.
      */
-    public fun write(sourceSet: SourceSetName, parameters: PipelineParameters) {
+    public fun write(sourceSet: SourceSetName, parameters: PipelineParameters): File {
         val content = parameters.toJson()
         val file = file(sourceSet)
         file.writeText(content)
+        return file
     }
 
-    private fun file(sourceSet: SourceSetName): File {
+    /**
+     * Obtains the file for passing parameters for compilation of the specified source set.
+     */
+    public fun file(sourceSet: SourceSetName): File {
         val fileName = "${sourceSet.value}.${DEFAULT_FORMAT.extensions.first()}"
         return path.resolve(fileName).toFile()
     }

@@ -51,14 +51,14 @@ internal val Project.protoDataWorkingDir: Directory
 /**
  * Obtains the directory for storing files passed as parameters to pipelines.
  */
-internal val Project.pipelineParametersDir: Path
+internal val Project.parametersDir: Path
     get() = protoDataWorkingDir.dir(PARAMETERS_SUBDIR).asFile.toPath()
 
 /**
  * Obtains the name of the file containing names of Protobuf files compiled by `protoc`.
  */
 internal fun Project.protoFileList(sourceSetName: String): File =
-    pipelineParametersDir.resolve(ProtoFileList.fileFor(sourceSetName).toPath()).toFile()
+    parametersDir.resolve(ProtoFileList.fileFor(sourceSetName).toPath()).toFile()
 
 /**
  * Obtains the root directory into which Protobuf Gradle Plugin assigns the `protoc` output.

@@ -35,16 +35,27 @@ import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
 
 /**
- * Converts the given path to a [File] message.
+ * Converts the given path to a [File] message containing an absolute version of this path.
  */
 public fun Path.toProto(): File = file {
     path = absolutePathString()
 }
 
 /**
- * Converts the given [java.io.File] to a [File] message.
+ * Converts this path to a [Directory] message.
+ */
+public fun Path.toDirectory(): Directory = toFile().toDirectory()
+
+/**
+ * Converts this instance of [java.io.File] to a [File] message with an absolute path.
  */
 public fun java.io.File.toProto(): File = toPath().toProto()
+
+/**
+ * Converts this instance of [java.io.File] to a [Directory] message.
+ */
+public fun java.io.File.toDirectory(): Directory =
+    directory { this@directory.path = this@toDirectory.path }
 
 /**
  * Converts the given [File] message to a [Path].

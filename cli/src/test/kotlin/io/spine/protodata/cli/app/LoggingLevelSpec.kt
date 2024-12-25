@@ -33,14 +33,20 @@ import io.kotest.matchers.string.shouldContain
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.option.OptionsProto
+import io.spine.protodata.ast.directory
+import io.spine.protodata.ast.file
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
+import io.spine.protodata.params.WorkingDirectory
+import io.spine.protodata.params.pipelineParameters
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.StubSoloRenderer
+import io.spine.tools.code.SourceSetName
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
@@ -56,7 +62,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("`ProtoData` CLI logging levels should")
 class LoggingLevelSpec {
 
-    private lateinit var protoListFile: Path
+    private lateinit var parametersFile: File
     private lateinit var codegenRequestFile: Path
     private lateinit var settingsDirectory: Path
     private lateinit var srcRoot : Path
@@ -65,17 +71,25 @@ class LoggingLevelSpec {
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
-        protoListFile = sandbox.resolve(ProtoFileList.fileFor("main").toPath())
-        protoListFile.writeText(
-            "/given/proto/file/path.proto"
-        )
+        val workingDir = WorkingDirectory(sandbox)
+
+        codegenRequestFile = sandbox.resolve("code-gen-request.bin")
+
+        val params = pipelineParameters {
+            compiledProto.add(file { path = "/given/proto/file/path.proto"})
+            settings = directory { path = workingDir.settingsDirectory.path.absolutePathString() }
+            sourceRoot.add(directory { path = sandbox.resolve("src").absolutePathString() })
+            targetRoot.add(directory { path = sandbox.resolve("generated").absolutePathString() })
+            requestFile = codegenRequestFile.toFile().toProto()
+        }
+        parametersFile = workingDir.parametersDirectory.write(SourceSetName.main, params)
+
         settingsDirectory = sandbox.resolve("settings")
         settingsDirectory.toFile().mkdirs()
         srcRoot = sandbox.resolve("src")
         srcRoot.toFile().mkdirs()
         targetRoot = sandbox.resolve("target")
         targetRoot.toFile().mkdirs()
-        codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
         sourceFile = srcRoot.resolve("SourceCode.java")
         sourceFile.writeText("""
@@ -129,7 +143,7 @@ class LoggingLevelSpec {
 
     private fun launchWithLoggingParams(vararg argv: String) {
         val params = mutableListOf(
-            "--proto-files", protoListFile.absolutePathString(),
+            "--params", parametersFile.toPath().absolutePathString(),
             "-p", LoggingLevelAsserterPlugin::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),

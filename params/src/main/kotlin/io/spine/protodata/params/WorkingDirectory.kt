@@ -47,10 +47,10 @@ public class WorkingDirectory(
     /**
      * The directory managing files with [PipelineParameters].
      */
-    public val pipelineParametersDirectory: PipelineParametersDirectory by lazy {
+    public val parametersDirectory: ParametersDirectory by lazy {
         val dir = path.resolve(PARAMETERS_SUBDIR)
         dir.toFile().mkdirs()
-        PipelineParametersDirectory(dir)
+        ParametersDirectory(dir)
     }
 
     /**

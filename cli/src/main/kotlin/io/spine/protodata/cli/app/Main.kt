@@ -43,12 +43,14 @@ import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
+import io.spine.protodata.ast.toPath
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.params.DebugLoggingParam
 import io.spine.protodata.params.InfoLoggingParam
 import io.spine.protodata.params.Parameter
+import io.spine.protodata.params.ParametersFileParam
+import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.PluginParam
-import io.spine.protodata.params.ProtoFilesParam
 import io.spine.protodata.params.RequestParam
 import io.spine.protodata.params.SettingsDirParam
 import io.spine.protodata.params.SourceRootParam
@@ -58,6 +60,7 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.util.parseFile
 import io.spine.string.Separator
 import io.spine.string.ti
 import io.spine.tools.code.manifest.Version
@@ -130,13 +133,12 @@ internal class Run(version: String) : CliktCommand(
 
     private fun NullableOption<Path, Path>.splitPaths() = split(pathSeparator)
 
-    private val protoFileList: File
-        by ProtoFilesParam.toOption().file(
-            mustExist = true,
-            canBeDir = false,
-            canBeSymlink = false,
-            mustBeReadable = true
-        ).required()
+    private val paramsFile: File by ParametersFileParam.toOption().file(
+        mustExist = true,
+        canBeDir = false,
+        canBeSymlink = false,
+        mustBeReadable = true
+    ).required()
 
     private val plugins: List<String>
             by PluginParam.toOption().multiple()
@@ -217,7 +219,12 @@ internal class Run(version: String) : CliktCommand(
               - settings dir: ${settingsDir}.
             """.ti()
         }
-        val list = ProtoFileList.load(protoFileList)
+
+        val params = parseFile(paramsFile, PipelineParameters::class.java)
+
+        val compiledProtos = params.compiledProtoList.map { it.toPath().toFile() }
+        
+        val list = ProtoFileList(compiledProtos)
         val pipeline = Pipeline(
             compiledProtoFiles = list,
             plugins = plugins,
