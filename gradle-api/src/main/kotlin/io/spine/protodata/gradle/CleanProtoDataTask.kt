@@ -31,7 +31,7 @@ import org.gradle.api.tasks.SourceSet
 /**
  * Performs cleaning of generated files.
  */
-public object CleanTask : TaskLocator() {
+public object CleanProtoDataTask : TaskLocator() {
 
     @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
     private const val prefix = "cleanProtoData"

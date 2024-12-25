@@ -35,7 +35,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.gradle.GenerateProtoTask
 import io.spine.code.proto.DescriptorReference
 import io.spine.protodata.gradle.Artifacts
-import io.spine.protodata.gradle.CleanTask
+import io.spine.protodata.gradle.CleanProtoDataTask
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
@@ -204,7 +204,7 @@ private fun Project.createLaunchTask(
  */
 private fun Project.createCleanTask(sourceSet: SourceSet) {
     val project = this
-    val cleanSourceSet = CleanTask.nameFor(sourceSet)
+    val cleanSourceSet = CleanProtoDataTask.nameFor(sourceSet)
     tasks.create<Delete>(cleanSourceSet) {
         delete(extension.targetDirs(sourceSet))
         delete(protoFileList(sourceSet.name))
@@ -431,7 +431,7 @@ private fun GenerateProtoTask.createDescriptorReferenceFile(dir: Path) {
  *
  * If the [LaunchProtoData] task does not exist (which may be the case for custom source sets
  * created by other plugins), arranges the task creation on [Project.afterEvaluate].
- * In this case the [CleanTask] is also created with appropriate dependencies.
+ * In this case the [CleanProtoDataTask] is also created with appropriate dependencies.
  */
 private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask) {
     val sourceSet = generateProto.sourceSet
