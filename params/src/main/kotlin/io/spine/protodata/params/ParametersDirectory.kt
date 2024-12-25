@@ -28,8 +28,7 @@ package io.spine.protodata.params
 
 import io.spine.protodata.util.Format
 import io.spine.protodata.util.extensions
-import io.spine.protodata.util.parseFile
-import io.spine.protodata.util.requireExistingDirectory
+import io.spine.protodata.util.ensureExistingDirectory
 import io.spine.tools.code.SourceSetName
 import io.spine.type.toJson
 import java.io.File
@@ -43,16 +42,7 @@ public class ParametersDirectory(
 ) {
 
     init {
-        requireExistingDirectory(path)
-    }
-
-    /**
-     * Reads the parameters for the pipeline for the given source set.
-     */
-    public fun read(sourceSet: SourceSetName): PipelineParameters {
-        val file = file(sourceSet)
-        val result = parseFile(file, PipelineParameters::class.java)
-        return result
+        ensureExistingDirectory(path)
     }
 
     /**

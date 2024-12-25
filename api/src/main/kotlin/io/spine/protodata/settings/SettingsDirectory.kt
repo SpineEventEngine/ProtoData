@@ -26,7 +26,7 @@
 
 package io.spine.protodata.settings
 
-import io.spine.protodata.util.requireExistingDirectory
+import io.spine.protodata.util.ensureExistingDirectory
 import io.spine.protodata.ast.toProto
 import io.spine.protodata.settings.event.SettingsFileDiscovered
 import io.spine.protodata.settings.event.settingsFileDiscovered
@@ -62,7 +62,7 @@ public class SettingsDirectory(
     public val path: Path
 ) {
     init {
-        requireExistingDirectory(path)
+        ensureExistingDirectory(path)
     }
 
     /**

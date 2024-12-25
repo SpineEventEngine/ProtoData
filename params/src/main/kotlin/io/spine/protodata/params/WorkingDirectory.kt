@@ -29,7 +29,7 @@ package io.spine.protodata.params
 import io.spine.protodata.params.Directories.PARAMETERS_SUBDIR
 import io.spine.protodata.params.Directories.SETTINGS_SUBDIR
 import io.spine.protodata.settings.SettingsDirectory
-import io.spine.protodata.util.requireExistingDirectory
+import io.spine.protodata.util.ensureExistingDirectory
 import java.nio.file.Path
 
 /**
@@ -41,7 +41,7 @@ public class WorkingDirectory(
     public val path: Path
 ) {
     init {
-        requireExistingDirectory(path)
+        ensureExistingDirectory(path)
     }
 
     /**

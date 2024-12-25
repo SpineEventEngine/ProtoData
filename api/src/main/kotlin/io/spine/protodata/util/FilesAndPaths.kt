@@ -27,19 +27,15 @@
 package io.spine.protodata.util
 
 import java.nio.file.Path
-import kotlin.io.path.exists
 
 /**
- * Verifies that the given path is a directory that exists.
+ * Verifies that the given path is a directory and creates it if it does not exist.
  *
- * @throws IllegalArgumentException if the path is not a directory, or
- *   if the directory does not exist.
+ * @throws IllegalArgumentException if the path is not a directory.
  */
-public fun requireExistingDirectory(path: Path) {
+public fun ensureExistingDirectory(path: Path) {
     require(path.toFile().isDirectory) {
         "The path `$path` is not a directory."
     }
-    require(path.exists()) {
-        "The directory `$path` does not exist."
-    }
+    path.toFile().mkdirs()
 }

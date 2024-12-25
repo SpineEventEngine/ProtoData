@@ -47,7 +47,6 @@ import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
-import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
@@ -207,7 +206,6 @@ private fun Project.createCleanTask(sourceSet: SourceSet) {
     val cleanSourceSet = CleanProtoDataTask.nameFor(sourceSet)
     tasks.create<Delete>(cleanSourceSet) {
         delete(extension.targetDirs(sourceSet))
-        delete(protoFileList(sourceSet.name))
 
         val cleanProtoDataTask = this
         tasks.getByName("clean").dependsOn(cleanProtoDataTask)
@@ -272,7 +270,6 @@ private fun Project.configureProtoTask(task: GenerateProtoTask) {
     task.addProtoDataProtocPlugin()
     task.configureSourceSetDirs()
     task.setupDescriptorSetFileCreation()
-    task.requestCreatingProtoFileList()
     handleLaunchTaskDependency(task)
 }
 
@@ -290,13 +287,6 @@ private fun GenerateProtoTask.addProtoDataProtocPlugin() {
                 )
             }
         }
-    }
-}
-
-private fun GenerateProtoTask.requestCreatingProtoFileList() {
-    doLast {
-        val protoFiles = sourceDirs.asFileTree.files.toList().sorted()
-        ProtoFileList.create(project.parametersDir, sourceSet.name, protoFiles)
     }
 }
 
