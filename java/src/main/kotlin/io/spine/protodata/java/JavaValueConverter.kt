@@ -111,7 +111,7 @@ public class JavaValueConverter(typeSystem: TypeSystem) : ValueConverter<Java, E
         return if (valuesMap.isEmpty()) {
             mapExpression()
         } else {
-            mapExpression(valuesMap, keyClass!!, valueClass!!)
+            mapExpression(keyClass!!, valueClass!!, valuesMap)
         }
     }
 
