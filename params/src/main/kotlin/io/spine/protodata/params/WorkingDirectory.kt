@@ -49,7 +49,6 @@ public class WorkingDirectory(
      */
     public val parametersDirectory: ParametersDirectory by lazy {
         val dir = path.resolve(PARAMETERS_SUBDIR)
-        dir.toFile().mkdirs()
         ParametersDirectory(dir)
     }
 
@@ -58,7 +57,6 @@ public class WorkingDirectory(
      */
     public val settingsDirectory: SettingsDirectory by lazy {
         val dir = path.resolve(SETTINGS_SUBDIR)
-        dir.toFile().mkdirs()
         SettingsDirectory(dir)
     }
 }

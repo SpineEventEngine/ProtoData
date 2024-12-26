@@ -31,11 +31,11 @@ import io.kotest.matchers.string.shouldEndWith
 import io.spine.protodata.ast.EnumInFile
 import io.spine.protodata.ast.MessageInFile
 import io.spine.protodata.ast.ServiceInFile
-import io.spine.protodata.protobuf.ProtoFileList
-import io.spine.protodata.testing.RenderingTestbed
+import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.testing.PipelineSetup
+import io.spine.protodata.testing.RenderingTestbed
 import io.spine.tools.code.Java
 import java.nio.file.Path
 import org.junit.jupiter.api.BeforeAll
@@ -64,7 +64,7 @@ internal class MemberSpec {
         fun setup(@TempDir outputDir: Path, @TempDir settingsDir: Path) {
             val setup = PipelineSetup.byResources(
                 language = Java,
-                protoFileList = ProtoFileList(listOf()),
+                params = PipelineParameters.getDefaultInstance(),
                 plugins = listOf(RenderingTestbed(probe)),
                 outputRoot = outputDir,
                 settingsDir = settingsDir

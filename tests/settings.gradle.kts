@@ -30,15 +30,16 @@ include(":protodata-extension")
 
 includeBuild("..")
 
-//TODO:2024-12-25:alexander.yevsyukov: remove after the debug session is over.
-plugins {
-    id("com.gradle.develocity") version("3.19")
-}
-
-//TODO:2024-12-25:alexander.yevsyukov: remove after the debug session is over.
-develocity {
-    buildScan {
-        termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
-        termsOfUseAgree.set("yes")
-    }
-}
+////TODO:2024-12-25:alexander.yevsyukov: remove after the debug session is over.
+//plugins {
+//    id("com.gradle.develocity") version("3.19")
+//}
+//
+////TODO:2024-12-25:alexander.yevsyukov: remove after the debug session is over.
+//develocity {
+//    buildScan {
+//
+//        termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
+//        termsOfUseAgree.set("yes")
+//    }
+//}

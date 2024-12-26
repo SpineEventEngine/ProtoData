@@ -35,7 +35,6 @@ import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.JAVA_FILE
 import io.spine.protodata.java.WithSourceFileSet
 import io.spine.protodata.java.annotation.GeneratedTypeAnnotation.Companion.currentDateTime
-import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.time.testing.FrozenMadHatterParty
@@ -154,7 +153,7 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
     private fun createPipelineWith(generatedTypeAnnotation: GeneratedTypeAnnotation) {
         Pipeline(
-            compiledProtoFiles = ProtoFileList(listOf()),
+            params = io.spine.protodata.params.PipelineParameters.getDefaultInstance(),
             plugins = listOf(generatedTypeAnnotation.toPlugin()),
             sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance(),

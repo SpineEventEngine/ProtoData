@@ -33,8 +33,10 @@ import io.spine.code.proto.FileSet
 import io.spine.environment.DefaultMode
 import io.spine.protodata.ast.Coordinates
 import io.spine.protodata.ast.Documentation
+import io.spine.protodata.ast.toPath
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
+import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
@@ -68,7 +70,7 @@ import io.spine.server.under
  *
  * @property id The ID of the pipeline to be used for distinguishing contexts when
  *   two or more pipelines are executed in the same JVM. If not specified, the ID will be generated.
- * @property compiledProtoFiles The list of Protobuf files compiled by `protoc`.
+ * @property params The pipeline parameters object.
  * @property plugins The code generation plugins to be applied to the pipeline.
  * @property sources The source sets to be processed by the pipeline.
  * @property request The Protobuf compiler request.
@@ -82,13 +84,21 @@ import io.spine.server.under
 @Suppress("LongParameterList")
 public class Pipeline(
     public val id: String = generateId(),
-    public val compiledProtoFiles: ProtoFileList,
+    public val params: PipelineParameters,
     public val plugins: List<Plugin>,
     public val sources: List<SourceFileSet>,
     public val request: CodeGeneratorRequest,
     private val descriptorFilter: DescriptorFilter = { true },
     public val settings: SettingsDirectory
 ) {
+
+    /**
+     * Files compiled by `protoc`.
+     */
+    private val compiledProtoFiles: ProtoFileList by lazy {
+        val compiledProtos = params.compiledProtoList.map { it.toPath().toFile() }
+        ProtoFileList(compiledProtos)
+    }
 
     /**
      * The type system passed to the plugins at the start of the pipeline.
@@ -110,13 +120,20 @@ public class Pipeline(
      */
     @VisibleForTesting
     public constructor(
-        compiledProtoFiles: ProtoFileList,
+        params: PipelineParameters,
         plugin: Plugin,
         sources: SourceFileSet,
         request: CodeGeneratorRequest,
         settings: SettingsDirectory,
         id: String = generateId()
-    ) : this(id, compiledProtoFiles, listOf(plugin), listOf(sources), request, settings = settings)
+    ) : this(
+        id,
+        params,
+        listOf(plugin),
+        listOf(sources),
+        request,
+        settings = settings
+    )
 
     init {
         under<DefaultMode> {

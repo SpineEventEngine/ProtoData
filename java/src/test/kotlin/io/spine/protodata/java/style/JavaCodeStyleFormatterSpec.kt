@@ -31,13 +31,13 @@ package io.spine.protodata.java.style
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import copyResource
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.protobuf.ProtoFileList
+import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.util.Format
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.style.indentOptions
+import io.spine.protodata.testing.RenderingTestbed
+import io.spine.protodata.util.Format
 import io.spine.type.toJson
 import java.nio.file.Files.readString
 import java.nio.file.Path
@@ -84,7 +84,7 @@ internal class JavaCodeStyleFormatterSpec {
             copyResource(fileName, inputDir)
 
             Pipeline(
-                compiledProtoFiles = ProtoFileList(listOf()),
+                params = PipelineParameters.getDefaultInstance(),
                 plugin = RenderingTestbed(
                     JavaCodeStyleFormatter()
                 ),

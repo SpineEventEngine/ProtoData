@@ -34,6 +34,7 @@ import io.spine.protodata.ast.event.FieldEntered
 import io.spine.protodata.ast.event.FieldExited
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.Pipeline
+import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
@@ -98,7 +99,7 @@ internal class PluginSpec {
     private fun runPipeline(src: Path, target: Path, settingsDir: Path) {
         val fileSet = SourceFileSet.create(src, target)
         val pipeline = Pipeline(
-            ProtoFileList(listOf()),
+            PipelineParameters.getDefaultInstance(),
             plugin,
             fileSet,
             CodeGeneratorRequest.getDefaultInstance(),

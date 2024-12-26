@@ -29,13 +29,12 @@ package io.spine.protodata.util
 import java.nio.file.Path
 
 /**
- * Verifies that the given path is a directory and creates it if it does not exist.
- *
- * @throws IllegalArgumentException if the path is not a directory.
+ * Makes sure that the given directory exists.
  */
 public fun ensureExistingDirectory(path: Path) {
-    require(path.toFile().isDirectory) {
-        "The path `$path` is not a directory."
+    val dir = path.toFile()
+    dir.mkdirs()
+    require(dir.isDirectory) {
+        "The directory `$path` does not exist and could not be created."
     }
-    path.toFile().mkdirs()
 }

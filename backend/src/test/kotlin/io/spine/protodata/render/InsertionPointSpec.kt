@@ -35,7 +35,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.protobuf.ProtoFileList
+import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.CompanionFramer
@@ -106,7 +106,7 @@ class InsertionPointsSpec {
             """.trimIndent()
         )
         Pipeline(
-            compiledProtoFiles = ProtoFileList(listOf()),
+            params = PipelineParameters.getDefaultInstance(),
             plugins = listOf(RenderingTestbed(
                 renderers = listOf(
                     VariousKtInsertionPointsPrinter(),

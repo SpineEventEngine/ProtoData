@@ -31,7 +31,6 @@ import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
-import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.testing.PipelineSetup
 import io.spine.protodata.testing.recorder.RecordingPlugin
 import io.spine.protodata.testing.recorder.enumTypeNames
@@ -62,11 +61,10 @@ internal class PipelineFilteringSpec {
         filter: DescriptorFilter
     ): Pipeline {
         val setup = PipelineSetup.byResources(
-            ProtoFileList(listOf()),
-            listOf(recorder),
-            output,
-            settings,
-            filter
+            plugins = listOf(recorder),
+            outputRoot = output,
+            settingsDir = settings,
+            descriptorFilter = filter
         ) { _ -> }
         val pipeline = setup.createPipeline()
         return pipeline

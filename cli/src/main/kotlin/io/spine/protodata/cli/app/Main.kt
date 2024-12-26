@@ -43,7 +43,6 @@ import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
-import io.spine.protodata.ast.toPath
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.params.DebugLoggingParam
 import io.spine.protodata.params.InfoLoggingParam
@@ -57,7 +56,6 @@ import io.spine.protodata.params.SourceRootParam
 import io.spine.protodata.params.TargetRootParam
 import io.spine.protodata.params.UserClasspathParam
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.util.parseFile
@@ -222,11 +220,8 @@ internal class Run(version: String) : CliktCommand(
 
         val params = parseFile(paramsFile, PipelineParameters::class.java)
 
-        val compiledProtos = params.compiledProtoList.map { it.toPath().toFile() }
-        
-        val list = ProtoFileList(compiledProtos)
         val pipeline = Pipeline(
-            compiledProtoFiles = list,
+            params = params,
             plugins = plugins,
             sources = sources,
             request = request,
