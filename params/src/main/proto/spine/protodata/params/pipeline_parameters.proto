@@ -74,16 +74,4 @@ message PipelineParameters {
     // The number target directories must match the number of entries in `source_root`.
     //
     repeated Directory target_root = 6 [(required) = true];
-
-    // The logging level to be used by ProtoData.
-    LoggingLevel logging_level = 7;
-}
-
-// The level of logging to be used by ProtoData.
-enum LoggingLevel {
-
-    // The default value of logging.
-    WARN = 0;
-    INFO = 1;
-    DEBUG = 2;
 }
