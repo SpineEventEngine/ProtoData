@@ -1,11 +1,11 @@
 /*
- * Copyright 2023, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,12 +28,14 @@ package io.spine.protodata.java.annotation
 
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.string.shouldContain
+import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.JAVA_FILE
 import io.spine.protodata.java.WithSourceFileSet
-import io.spine.protodata.util.Format.PROTO_JSON
-import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.params.PipelineParameters
+import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.settings.defaultConsumerId
+import io.spine.protodata.util.Format.PROTO_JSON
 import io.spine.string.ti
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -57,13 +59,12 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
     inner class `suppress ALL warnings ` {
 
         @Test
-        fun `if no settings are passed`(@TempDir dir: Path) {
+        fun `if no settings are passed`() {
             Pipeline(
-                params = io.spine.protodata.params.PipelineParameters.getDefaultInstance(),
+                params = PipelineParameters.getDefaultInstance(),
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
-                settings = SettingsDirectory(dir)
             )()
             val code = loadCode()
             assertContainsSuppressionAll(code)
@@ -71,18 +72,21 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
         @Test
         fun `if settings contain an empty list of suppressions`(@TempDir dir: Path) {
-            val settings = SettingsDirectory(dir)
+            val settings = WorkingDirectory(dir).settingsDirectory
             settings.write(SuppressWarningsAnnotation::class.java.defaultConsumerId,
                 PROTO_JSON, """
                     {"warnings": {"value": []}} 
                 """.ti()
             )
+            val params = PipelineParameters.newBuilder()
+                .setSettings(settings.path.toDirectory())
+                .buildPartial()
+
             Pipeline(
-                params = io.spine.protodata.params.PipelineParameters.getDefaultInstance(),
+                params = params,
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
                 request = emptyRequest,
-                settings = settings
             )()
             val code = loadCode()
             assertContainsSuppressionAll(code)
@@ -95,7 +99,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
     @Test
     fun `suppress only selected warnings`(@TempDir dir: Path) {
-        val settings = SettingsDirectory(dir)
+        val settings = WorkingDirectory(dir).settingsDirectory
         val deprecation = "deprecation"
         val stringEqualsEmptyString = "StringEqualsEmptyString"
         settings.write(SuppressWarningsAnnotation::class.java.defaultConsumerId,
@@ -103,12 +107,15 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                 {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
             """.ti()
         )
+        val params = PipelineParameters.newBuilder()
+            .setSettings(settings.path.toDirectory())
+            .buildPartial()
+
         Pipeline(
-            params = io.spine.protodata.params.PipelineParameters.getDefaultInstance(),
+            params = params,
             plugins = listOf(SuppressWarningsAnnotation.Plugin()),
             sources = sources,
             request = emptyRequest,
-            settings = settings
         )()
         val code = loadCode()
 

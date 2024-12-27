@@ -46,7 +46,6 @@ import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.params.pipelineParameters
-import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.EchoRenderer
 import io.spine.protodata.test.EchoRendererPlugin
@@ -71,7 +70,6 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
-import kotlin.io.path.pathString
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
@@ -86,6 +84,7 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("ProtoData command-line application should")
 class MainSpec {
 
+    private lateinit var workingDir: WorkingDirectory
     private lateinit var parametersFile: File
     private lateinit var srcRoot : Path
     private lateinit var targetRoot : Path
@@ -97,7 +96,7 @@ class MainSpec {
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
-        val workingDir = WorkingDirectory(sandbox)
+        workingDir = WorkingDirectory(sandbox)
 
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
@@ -140,7 +139,7 @@ class MainSpec {
     }
 
     @Test
-    fun `render enhanced code`(@TempDir dir: Path) {
+    fun `render enhanced code`() {
         launchApp(
             "--params", parametersFile.absolutePath,
             "-p", TestPlugin::class.jvmName,
@@ -148,13 +147,12 @@ class MainSpec {
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
-            "-d", dir.pathString
         )
         targetFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
     }
 
     @Test
-    fun `provide Spine options by default`(@TempDir dir: Path) {
+    fun `provide Spine options by default`() {
         launchApp(
             "--params", parametersFile.absolutePath,
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
@@ -162,7 +160,6 @@ class MainSpec {
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
-            "-d", dir.pathString
         )
         val generatedFile = targetRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
         generatedFile.readText() shouldBe "true, true"
@@ -172,10 +169,9 @@ class MainSpec {
     inner class `Receive custom configuration through` {
 
         @Test
-        fun `configuration file`(@TempDir dir: Path) {
-            val settings = SettingsDirectory(dir)
+        fun `configuration file`() {
             val name = "Internet"
-            settings.writeFor<EchoRenderer>(Format.JSON, """
+            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.JSON, """
                     { "value": "$name" }
                 """.ti()
             )
@@ -186,16 +182,14 @@ class MainSpec {
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-d", dir.pathString
             )
             outputEchoFile.readText() shouldBe name
         }
 
         @Test
-        fun `configuration value`(@TempDir dir: Path) {
-            val settings = SettingsDirectory(dir)
+        fun `configuration value`() {
             val name = "Mr. World"
-            settings.writeFor<EchoRenderer>(Format.JSON, """
+            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.JSON, """
                     { "value": "$name" }
                 """.ti()
             )
@@ -205,7 +199,6 @@ class MainSpec {
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-d", dir.pathString,
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -215,10 +208,9 @@ class MainSpec {
     inner class `Receive custom configuration as` {
 
         @Test
-        fun `plain JSON`(@TempDir dir: Path) {
-            val settings = SettingsDirectory(dir)
+        fun `plain JSON`() {
             val name = "Internet"
-            settings.writeFor<EchoRenderer>(Format.JSON, """
+            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.JSON, """
                     { "value": "$name" }
                 """.ti()
             )
@@ -228,13 +220,12 @@ class MainSpec {
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-d", dir.pathString
             )
             outputEchoFile.readText() shouldBe name
         }
 
         @Test
-        fun `Protobuf JSON`(@TempDir dir: Path) {
+        fun `Protobuf JSON`() {
             val time = Time.currentTime()
             val json = echo {
                 message = "English, %s!"
@@ -242,8 +233,7 @@ class MainSpec {
                 arg = stringValue { value = "Adam Falkner" }.pack()
                 when_ = time
             }.toCompactJson()
-            val settings = SettingsDirectory(dir)
-            settings.writeFor<ProtoEchoRenderer>(Format.PROTO_JSON, json)
+            workingDir.settingsDirectory.writeFor<ProtoEchoRenderer>(Format.PROTO_JSON, json)
 
             launchApp(
                 "--params", parametersFile.absolutePath,
@@ -251,7 +241,6 @@ class MainSpec {
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-d", dir.pathString
             )
             val text = outputEchoFile.readText()
 
@@ -260,7 +249,7 @@ class MainSpec {
         }
 
         @Test
-        fun `binary Protobuf`(@TempDir dir: Path) {
+        fun `binary Protobuf`() {
             val time = LocalDates.of(1962, SEPTEMBER, 12)
             val bytes = echo {
                 message = "We choose to go to the %s."
@@ -269,8 +258,7 @@ class MainSpec {
                 when_ = time.toTimestamp()
             }.toByteArray()
 
-            val settings = SettingsDirectory(dir)
-            settings.writeFor<ProtoEchoRenderer>(Format.PROTO_BINARY, bytes)
+            workingDir.settingsDirectory.writeFor<ProtoEchoRenderer>(Format.PROTO_BINARY, bytes)
 
             launchApp(
                 "--params", parametersFile.absolutePath,
@@ -278,7 +266,6 @@ class MainSpec {
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-d", dir.pathString
             )
 
             val text = outputEchoFile.readText()
@@ -289,10 +276,9 @@ class MainSpec {
 
         @Suppress("TestFunctionName")
         @Test
-        fun YAML(@TempDir dir: Path) {
+        fun YAML() {
             val name = "Mr. Anderson"
-            val settings = SettingsDirectory(dir)
-            settings.writeFor<EchoRenderer>(Format.YAML, """
+            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.YAML, """
                     value: $name
                 """.trimIndent()
             )
@@ -303,15 +289,14 @@ class MainSpec {
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-d", dir.pathString
             )
             outputEchoFile.readText() shouldBe name
         }
 
         @Test
-        fun `plain string`(@TempDir configDir: Path) {
+        fun `plain string`() {
             val plainString = "dont.mail.me:42@example.org"
-            SettingsDirectory(configDir).writeFor<PlainStringRenderer>(Format.PLAIN, plainString)
+            workingDir.settingsDirectory.writeFor<PlainStringRenderer>(Format.PLAIN, plainString)
 
             launchApp(
                 "--params", parametersFile.absolutePath,
@@ -319,7 +304,6 @@ class MainSpec {
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
                 "-t", codegenRequestFile.toString(),
-                "-d", configDir.pathString
             )
             outputEchoFile.readText() shouldBe plainString
         }
@@ -329,7 +313,7 @@ class MainSpec {
     inner class `Fail if` {
 
         @Test
-        fun `target dir is missing`(@TempDir dir: Path) {
+        fun `target dir is missing`() {
             assertThrows<UsageError> {
                 launchApp(
                     "--params", parametersFile.absolutePath,
@@ -337,20 +321,18 @@ class MainSpec {
                     "-p", UnderscorePrefixRenderer::class.jvmName,
                     "-t", codegenRequestFile.toString(),
                     "--src", srcRoot.toString(),
-                    "-d", dir.pathString
                 )
             }
         }
 
         @Test
-        fun `code generator request file is missing`(@TempDir dir: Path) {
+        fun `code generator request file is missing`() {
             assertMissingOption {
                 launchApp(
                     "--params", parametersFile.absolutePath,
                     "-p", TestPlugin::class.jvmName,
                     "-p", UnderscorePrefixRenderer::class.jvmName,
                     "--src", srcRoot.toString(),
-                    "-d", dir.pathString
                 )
             }
         }

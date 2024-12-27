@@ -33,7 +33,7 @@ import io.spine.protodata.plugin.Plugin
 
 /**
  * The command-line parameter for specifying the name of the file which stores an instance of
- * `[PipelineParameters] in [PROTO_JSON][io.spine.protodata.util.Format.PROTO_JSON] format.
+ * [PipelineParameters] in [PROTO_JSON][io.spine.protodata.util.Format.PROTO_JSON] format.
  */
 public object ParametersFileParam : Parameter(
     name = "--params",

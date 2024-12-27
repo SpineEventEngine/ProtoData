@@ -33,6 +33,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.plugin.ConfigurationError
@@ -126,25 +127,23 @@ internal class PipelineSpec {
     }
 
     @Test
-    fun `render enhanced code`(@TempDir settingsDir: Path) {
+    fun `render enhanced code`() {
         Pipeline(
             params = PipelineParameters.getDefaultInstance(),
             plugins = listOf(TestPlugin(), RenderingTestbed(renderer)),
             sources = listOf(overwritingSourceSet),
             request = request,
-            settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetFile).isEqualTo("_Journey worth taking")
     }
 
     @Test
-    fun `generate new files`(@TempDir settingsDir: Path) {
+    fun `generate new files`() {
         Pipeline(
             params = PipelineParameters.getDefaultInstance(),
             plugins = listOf(TestPlugin(), RenderingTestbed(InternalAccessRenderer())),
             sources = listOf(overwritingSourceSet),
             request = request,
-            settings = SettingsDirectory(settingsDir)
         )()
         val newClass = targetRoot.resolve("spine/protodata/test/JourneyInternal.java")
         assertExists(newClass)
@@ -152,7 +151,7 @@ internal class PipelineSpec {
     }
 
     @Test
-    fun `delete files`(@TempDir settingsDir: Path) {
+    fun `delete files`() {
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, "foo bar")
         Pipeline(
@@ -160,13 +159,12 @@ internal class PipelineSpec {
             plugins = listOf(TestPlugin(), RenderingTestbed(DeletingRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = request,
-            settings = SettingsDirectory(settingsDir)
         )()
         assertDoesNotExist(targetRoot / path)
     }
 
     @Test
-    fun `write into insertion points`(@TempDir settingsDir: Path) {
+    fun `write into insertion points`() {
         val initialContent = "foo bar"
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, initialContent)
@@ -178,8 +176,7 @@ internal class PipelineSpec {
                 renderer
             ),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request,
-            settings = SettingsDirectory(settingsDir)
+            request
         )()
 
         assertTextIn(targetRoot / path).run {
@@ -192,7 +189,7 @@ internal class PipelineSpec {
     }
 
     @Test
-    fun `not write into non-existing insertion points`(@TempDir settingsDir: Path) {
+    fun `not write into non-existing insertion points`() {
         val initialContent = "foo bar"
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, initialContent)
@@ -201,14 +198,13 @@ internal class PipelineSpec {
             params = PipelineParameters.getDefaultInstance(),
             plugin = TestPlugin(renderer),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request,
-            settings = SettingsDirectory(settingsDir)
+            request
         )()
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
 
     @Test
-    fun `write into inline insertion points`(@TempDir settingsDir: Path) {
+    fun `write into inline insertion points`() {
         val path = "ClassWithMethod.java"
         write(path, """
             class ClassWithMethod {
@@ -227,14 +223,13 @@ internal class PipelineSpec {
             )),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = CodeGeneratorRequest.getDefaultInstance(),
-            settings = SettingsDirectory(settingsDir)
         )()
         assertTextIn(targetRoot / path)
             .contains("@Nullable String")
     }
 
     @Test
-    fun `not write into non-existing inline insertion points`(@TempDir settingsDir: Path) {
+    fun `not write into non-existing inline insertion points`() {
         val initialContent = "foo bar"
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, initialContent)
@@ -243,14 +238,13 @@ internal class PipelineSpec {
             params = PipelineParameters.getDefaultInstance(),
             plugin = TestPlugin(renderer),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request,
-            settings = SettingsDirectory(settingsDir)
+            request
         )()
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
 
     @Test
-    fun `use different renderers for different files`(@TempDir settingsDir: Path) {
+    fun `use different renderers for different files`() {
         val jsPath = "test/source.js"
         val ktPath = "corp/acme/test/Source.kt"
         write(jsPath, "alert('Hello')")
@@ -262,15 +256,14 @@ internal class PipelineSpec {
                 KtRenderer()
             ),
             sources = SourceFileSet.create(srcRoot, targetRoot),
-            request,
-            settings = SettingsDirectory(settingsDir)
+            request
         )()
         assertTextIn(targetRoot / jsPath).contains("Hello JavaScript")
         assertTextIn(targetRoot / ktPath).contains("Hello Kotlin")
     }
 
     @Test
-    fun `add insertion points`(@TempDir settingsDir: Path) {
+    fun `add insertion points`() {
         Pipeline(
             params = PipelineParameters.getDefaultInstance(),
             plugin = TestPlugin(
@@ -278,8 +271,7 @@ internal class PipelineSpec {
                 CatOutOfTheBoxEmancipator()
             ),
             sources = overwritingSourceSet,
-            request,
-            settings = SettingsDirectory(settingsDir)
+            request
         )()
         assertTextIn(targetFile).run {
             startsWith("/* ${GenericInsertionPoint.FILE_START.codeLine} */")
@@ -289,7 +281,7 @@ internal class PipelineSpec {
     }
 
     @Test
-    fun `not add insertion points if nobody touches the file contents`(@TempDir settingsDir: Path) {
+    fun `not add insertion points if nobody touches the file contents`() {
         Pipeline(
             params = PipelineParameters.getDefaultInstance(),
             plugin = TestPlugin(
@@ -297,8 +289,7 @@ internal class PipelineSpec {
                 JsRenderer()
             ),
             sources = overwritingSourceSet,
-            request,
-            settings = SettingsDirectory(settingsDir)
+            request
         )()
         assertTextIn(targetFile).run {
             doesNotContain(GenericInsertionPoint.FILE_START.codeLine)
@@ -309,14 +300,12 @@ internal class PipelineSpec {
 
     @Test
     fun `write code into different destination`(
-        @TempDir settingsDir: Path,
         @TempDir destination: Path) {
         Pipeline(
             params = PipelineParameters.getDefaultInstance(),
             plugins = listOf(TestPlugin(), RenderingTestbed(InternalAccessRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, destination)),
             request = request,
-            settings = SettingsDirectory(settingsDir)
         )()
 
         val path = "spine/protodata/test/JourneyInternal.java"
@@ -330,13 +319,12 @@ internal class PipelineSpec {
     }
 
     @Test
-    fun `copy all sources into the new destination`(@TempDir settingsDir: Path) {
+    fun `copy all sources into the new destination`() {
         Pipeline(
             params = PipelineParameters.getDefaultInstance(),
             plugins = listOf(TestPlugin(), RenderingTestbed(NoOpRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
             request = request,
-            settings = SettingsDirectory(settingsDir)
         )()
         assertExists(targetFile)
     }
@@ -346,7 +334,6 @@ internal class PipelineSpec {
 
         @Test
         fun `preserve source set when copying files`(
-            @TempDir settingsDir: Path,
             @TempDir source2: Path,
             @TempDir destination1: Path,
             @TempDir destination2: Path
@@ -367,7 +354,6 @@ internal class PipelineSpec {
                     SourceFileSet.create(source2, destination2)
                 ),
                 request = request,
-                settings = SettingsDirectory(settingsDir)
             )()
 
             assertExists(destination1.resolve(targetFile.name))
@@ -394,8 +380,11 @@ internal class PipelineSpec {
                 Format.PLAIN,
                 expectedContent
             )
+            val params = PipelineParameters.newBuilder()
+                .setSettings(settingsDir.toDirectory())
+                .buildPartial()
             Pipeline(
-                params = PipelineParameters.getDefaultInstance(),
+                params = params,
                 plugins = listOf(
                     TestPlugin(),
                     RenderingTestbed(PlainStringRenderer())
@@ -405,7 +394,6 @@ internal class PipelineSpec {
                     SourceFileSet.create(source2, destination2)
                 ),
                 request = request,
-                settings = settings
             )()
 
             val firstFile = destination1.resolve(ECHO_FILE)
@@ -419,7 +407,6 @@ internal class PipelineSpec {
 
         @Test
         fun `change files using insertion points`(
-            @TempDir settingsDir: Path,
             @TempDir source2: Path,
             @TempDir destination1: Path,
             @TempDir destination2: Path
@@ -442,7 +429,6 @@ internal class PipelineSpec {
                     SourceFileSet.create(source2, destination2)
                 ),
                 request = request,
-                settings = SettingsDirectory(settingsDir)
             )()
 
             assertDoesNotExist(destination2.resolve(existingFilePath))
@@ -457,7 +443,7 @@ internal class PipelineSpec {
     inner class `Fail to construct if` {
 
         @Test
-        fun `view is already registered`(@TempDir settingsDir: Path) {
+        fun `view is already registered`() {
             val viewClass = DeletedTypeView::class.java
             val pipeline = Pipeline(
                 params = PipelineParameters.getDefaultInstance(),
@@ -470,7 +456,6 @@ internal class PipelineSpec {
                 ),
                 sources = listOf(overwritingSourceSet),
                 request = request,
-                settings = SettingsDirectory(settingsDir)
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
             error.message shouldContain(viewClass.name)
@@ -478,13 +463,12 @@ internal class PipelineSpec {
     }
 
     @Test
-    fun `expose 'codegenContext' property for testing purposes`(@TempDir settingsDir: Path) {
+    fun `expose 'codegenContext' property for testing purposes`() {
         val pipeline = Pipeline(
             params = PipelineParameters.getDefaultInstance(),
             plugins = listOf(TestPlugin(), RenderingTestbed(renderer)),
             sources = listOf(overwritingSourceSet),
             request = request,
-            settings = SettingsDirectory(settingsDir)
         )
         var codegenContext: CodegenContext? = null
         try {

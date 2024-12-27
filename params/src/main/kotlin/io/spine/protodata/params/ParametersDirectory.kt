@@ -40,11 +40,6 @@ import java.nio.file.Path
 public class ParametersDirectory(
     public val path: Path
 ) {
-
-    init {
-        ensureExistingDirectory(path)
-    }
-
     /**
      * Creates the file storing the parameters for the pipeline for the given source set.
      *
@@ -53,11 +48,7 @@ public class ParametersDirectory(
     public fun write(sourceSet: SourceSetName, parameters: PipelineParameters): File {
         val content = parameters.toJson()
         val file = file(sourceSet)
-        // Ensure the directory exists because it is sometimes deleted
-        // by the Gradle `clean` task, although we ensure the existence of
-        // the directory in the constructor. Somehow the directory disappears after the constructor.
-        // This is a workaround until we find out the root cause of the accidental deletion.
-        path.toFile().mkdirs()
+        ensureExistingDirectory(path)
         file.writeText(content)
         return file
     }

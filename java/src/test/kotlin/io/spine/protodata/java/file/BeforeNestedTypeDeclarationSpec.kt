@@ -38,7 +38,6 @@ import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.RenderingTestbed
 import io.spine.string.ti
 import io.spine.text.TextCoordinates
@@ -104,7 +103,7 @@ class BeforeNestedTypeDeclarationSpec {
 
         @JvmStatic
         @BeforeAll
-        fun runPipeline(@TempDir settingsDir: Path, @TempDir input: Path, @TempDir output: Path) {
+        fun runPipeline(@TempDir input: Path, @TempDir output: Path) {
             val inputClassSrc = input / "$TOP_CLASS.java"
             inputClassSrc.run {
                 createFile()
@@ -119,8 +118,7 @@ class BeforeNestedTypeDeclarationSpec {
                     SuppressWarningsAnnotation(nestedInterface),
                 ),
                 sources = SourceFileSet.create(input, output),
-                request = CodeGeneratorRequest.getDefaultInstance(),
-                settings = SettingsDirectory(settingsDir)
+                request = CodeGeneratorRequest.getDefaultInstance()
             )()
 
             javaFile = output / inputClassSrc.name

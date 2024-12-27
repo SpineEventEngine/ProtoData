@@ -58,9 +58,14 @@ public fun java.io.File.toDirectory(): Directory =
     directory { this@directory.path = this@toDirectory.path }
 
 /**
- * Converts the given [File] message to a [Path].
+ * Converts this [File] message to a [Path].
  */
 public fun File.toPath(): Path = Path(path)
+
+/**
+ * Converts this [Directory] message to a [Path].
+ */
+public fun Directory.toPath(): Path = Path(path)
 
 /**
  * The suffix of `pb.json` files including the leading dot.

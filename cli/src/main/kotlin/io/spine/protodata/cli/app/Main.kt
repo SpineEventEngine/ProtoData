@@ -51,13 +51,11 @@ import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.PluginParam
 import io.spine.protodata.params.RequestParam
-import io.spine.protodata.params.SettingsDirParam
 import io.spine.protodata.params.SourceRootParam
 import io.spine.protodata.params.TargetRootParam
 import io.spine.protodata.params.UserClasspathParam
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.util.parseFile
 import io.spine.string.Separator
 import io.spine.string.ti
@@ -167,15 +165,6 @@ internal class Run(version: String) : CliktCommand(
                 mustBeReadable = true
             ).splitPaths()
 
-    @Suppress("unused")
-    private val settingsDir: Path
-            by SettingsDirParam.toOption().path(
-                mustExist = true,
-                mustBeReadable = true,
-                canBeDir = true,
-                canBeSymlink = false
-            ).required()
-
     private val debug: Boolean by DebugLoggingParam.toOption().flag(default = false)
 
     private val info: Boolean by InfoLoggingParam.toOption().flag(default = false)
@@ -207,14 +196,12 @@ internal class Run(version: String) : CliktCommand(
         val sources = createSourceFileSets()
         val plugins = loadPlugins()
         val request = loadRequest()
-        val dir = SettingsDirectory(settingsDir)
         logger.atDebug().log { """
             Starting code generation with the following arguments:
               - plugins: ${plugins.joinToString()}
               - request
                   - files to generate: ${request.fileToGenerateList.joinToString()}
-                  - parameter: ${request.parameter}
-              - settings dir: ${settingsDir}.
+                  - parameter: ${request.parameter}.
             """.ti()
         }
 
@@ -225,7 +212,6 @@ internal class Run(version: String) : CliktCommand(
             plugins = plugins,
             sources = sources,
             request = request,
-            settings = dir
         )
         pipeline()
     }

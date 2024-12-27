@@ -33,10 +33,8 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.params.PipelineParameters
-import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.CompanionFramer
 import io.spine.protodata.test.CompanionLalalaRenderer
@@ -48,6 +46,7 @@ import io.spine.protodata.test.KotlinInsertionPoint.FILE_START
 import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
 import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
+import io.spine.protodata.testing.RenderingTestbed
 import io.spine.text.TextCoordinates
 import java.lang.System.lineSeparator
 import java.nio.file.Path
@@ -118,7 +117,6 @@ class InsertionPointsSpec {
             )),
             sources = listOf(SourceFileSet.create(input, output)),
             request = CodeGeneratorRequest.getDefaultInstance(),
-            settings = SettingsDirectory(input)
         )()
         kotlinFile = output / inputKtFile.name
         javaFile = output / inputJavaFile.name

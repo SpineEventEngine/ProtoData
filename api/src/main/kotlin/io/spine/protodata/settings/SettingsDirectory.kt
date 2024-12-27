@@ -35,6 +35,7 @@ import io.spine.protodata.util.extensions
 import io.spine.protodata.util.hasSupportedFormat
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 
 /**
@@ -61,10 +62,6 @@ import kotlin.io.path.listDirectoryEntries
 public class SettingsDirectory(
     public val path: Path
 ) {
-    init {
-        ensureExistingDirectory(path)
-    }
-
     /**
      * Writes a settings file for the given consumer.
      *
@@ -74,6 +71,7 @@ public class SettingsDirectory(
      */
     public fun write(consumerId: String, format: Format, content: String) {
         val file = file(consumerId, format)
+        ensureExistingDirectory(path)
         file.writeText(content)
     }
 
@@ -97,6 +95,7 @@ public class SettingsDirectory(
      */
     public fun write(consumerId: String, format: Format, content: ByteArray) {
         val file = file(consumerId, format)
+        ensureExistingDirectory(path)
         file.writeBytes(content)
     }
 
@@ -127,7 +126,11 @@ public class SettingsDirectory(
             }
         }
 
-    private fun files() =
-        path.listDirectoryEntries()
-            .filter { it.hasSupportedFormat() }
+    private fun files(): List<Path> =
+        if (path.exists()) {
+            path.listDirectoryEntries()
+                .filter { it.hasSupportedFormat() }
+        } else {
+            emptyList()
+        }
 }

@@ -200,7 +200,6 @@ public class PipelineSetup(
             listOf(sourceFileSet),
             request,
             descriptorFilter,
-            settings
         )
         return p
     }

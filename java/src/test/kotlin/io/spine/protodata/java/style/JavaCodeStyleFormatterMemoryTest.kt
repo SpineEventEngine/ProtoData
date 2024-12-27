@@ -29,8 +29,10 @@ package io.spine.protodata.java.style
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import copyResource
 import io.kotest.matchers.string.shouldContain
+import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.params.PipelineParameters
+import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.style.indentOptions
@@ -77,26 +79,29 @@ internal class JavaCodeStyleFormatterMemoryTest {
         @BeforeAll
         @JvmStatic
         fun runPipeline(
-            @TempDir settingDir: Path,
+            @TempDir sandbox: Path,
             @TempDir inputDir: Path,
             @TempDir outputDir: Path
         ) {
             this.outputDir = outputDir
-            val settings = writeSettings(settingDir)
+            val settingsDir = WorkingDirectory(sandbox).settingsDirectory
+            writeSettings(settingsDir)
+            val params = PipelineParameters.newBuilder()
+                .setSettings(settingsDir.path.toDirectory())
+                .buildPartial()
             copyResource(fileName, inputDir)
 
             Pipeline(
-                params = PipelineParameters.getDefaultInstance(),
+                params = params,
                 plugin =  JavaCodeStyleFormatterPlugin(),
                 sources = SourceFileSet.create(inputDir, outputDir),
-                request = CodeGeneratorRequest.getDefaultInstance(),
-                settings
+                request = CodeGeneratorRequest.getDefaultInstance()
             )()
 
             formattedCode = readString(outputDir.resolve(fileName))
         }
 
-        private fun writeSettings(settingDir: Path): SettingsDirectory {
+        private fun writeSettings(settings: SettingsDirectory) {
             val javaStyle = javaCodeStyleDefaults().toBuilder().apply {
                 indentOptions = indentOptions {
                     indentSize = INDENT_SIZE
@@ -104,13 +109,11 @@ internal class JavaCodeStyleFormatterMemoryTest {
                 }
             }
 
-            val settings = SettingsDirectory(settingDir)
             settings.write(
                 JavaCodeStyleFormatter.settingsId,
                 Format.PROTO_JSON,
                 javaStyle.toJson()
             )
-            return settings
         }
     }
 }

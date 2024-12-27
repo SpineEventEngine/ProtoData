@@ -37,7 +37,6 @@ import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
@@ -76,10 +75,9 @@ internal class PluginSpec {
     @Test
     fun `register policies with a 'CodegenContext'`(
         @TempDir src: Path,
-        @TempDir target: Path,
-        @TempDir settingsDir: Path
+        @TempDir target: Path
     ) {
-        runPipeline(src, target, settingsDir)
+        runPipeline(src, target)
 
         policy1.context() shouldNotBe null
         policy1.context().name().value shouldStartWith CodeGenerationContext.NAME_PREFIX
@@ -89,21 +87,19 @@ internal class PluginSpec {
     @Test
     fun `extend a given context via its builder`(
         @TempDir src: Path,
-        @TempDir target: Path,
-        @TempDir settingsDir: Path
+        @TempDir target: Path
     ) {
-        runPipeline(src, target, settingsDir)
+        runPipeline(src, target)
         (plugin as StubPlugin).contextBuilder shouldNotBe null
     }
 
-    private fun runPipeline(src: Path, target: Path, settingsDir: Path) {
+    private fun runPipeline(src: Path, target: Path) {
         val fileSet = SourceFileSet.create(src, target)
         val pipeline = Pipeline(
             PipelineParameters.getDefaultInstance(),
             plugin,
             fileSet,
-            CodeGeneratorRequest.getDefaultInstance(),
-            SettingsDirectory(settingsDir)
+            CodeGeneratorRequest.getDefaultInstance()
         )
         pipeline()
     }

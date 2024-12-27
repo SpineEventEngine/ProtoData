@@ -49,7 +49,6 @@ import io.spine.tools.code.SourceSetName
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
@@ -148,7 +147,6 @@ class LoggingLevelSpec {
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
             "-t", codegenRequestFile.toString(),
-            "-d", settingsDirectory.pathString
         )
         params.addAll(argv)
         Run("1961.04.12").parse(params)

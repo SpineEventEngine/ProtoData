@@ -157,7 +157,6 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
             plugins = listOf(generatedTypeAnnotation.toPlugin()),
             sources = this.sources,
             request = CodeGeneratorRequest.getDefaultInstance(),
-            settings = settings
         )()
     }
 }

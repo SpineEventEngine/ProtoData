@@ -38,7 +38,6 @@ import io.spine.protodata.gradle.info
 import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.PluginParam
 import io.spine.protodata.params.RequestParam
-import io.spine.protodata.params.SettingsDirParam
 import io.spine.protodata.params.SourceRootParam
 import io.spine.protodata.params.TargetRootParam
 import io.spine.protodata.params.UserClasspathParam
@@ -53,12 +52,10 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
@@ -87,12 +84,6 @@ public abstract class LaunchProtoData : JavaExec() {
      */
     @get:InputFile
     internal abstract val requestFile: RegularFileProperty
-
-    /**
-     * The directory which stores ProtoData settings files.
-     */
-    @get:InputDirectory
-    internal abstract val settingsDir: DirectoryProperty
 
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
@@ -161,9 +152,6 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield(UserClasspathParam.name)
                 yield(userCp)
             }
-
-            yield(SettingsDirParam.name)
-            yield(project.file(settingsDir).absolutePath)
         }.asIterable()
         logger.info { "ProtoData command for `${path}`: ${command.joinToString(separator = " ")}" }
         classpath(protoDataConfiguration)
@@ -218,7 +206,6 @@ internal fun LaunchProtoData.applyDefaults(
 ) {
     sourceSetName.set(sourceSet.name)
     val project = project
-    settingsDir.set(settingsDirTask.settingsDir.get())
     val ext = project.extension
     plugins = ext.plugins
     requestFile.set(ext.requestFile(sourceSet))
@@ -254,8 +241,15 @@ private fun LaunchProtoData.setDependencies(
     project.kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
 }
 
+/**
+ * Writes the file with parameters for a pipeline.
+ *
+ * The function obtains the list of compiled proto files by querying an instance
+ * of [GenerateProtoTask] on which the receiver task depends on (as set by
+ * [Plugin.handleLaunchTaskDependency][io.spine.protodata.gradle.plugin.handleLaunchTaskDependency]
+ * function).
+ */
 private fun LaunchProtoData.createParametersFile() {
-    // This task depends on a `GenerateProtoTask` as set in `Plugin.handleLaunchTaskDependency().
     val generateProtoTask = dependsOn.first { it is GenerateProtoTask } as GenerateProtoTask
     val params = pipelineParameters {
         val protoFiles = generateProtoTask.sourceDirs.asFileTree.files.toList().sorted()
