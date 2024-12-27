@@ -79,7 +79,7 @@ class LoggingLevelSpec {
             settings = directory { path = workingDir.settingsDirectory.path.absolutePathString() }
             sourceRoot.add(directory { path = sandbox.resolve("src").absolutePathString() })
             targetRoot.add(directory { path = sandbox.resolve("generated").absolutePathString() })
-            requestFile = codegenRequestFile.toFile().toProto()
+            request = codegenRequestFile.toFile().toProto()
         }
         parametersFile = workingDir.parametersDirectory.write(SourceSetName.main, params)
 

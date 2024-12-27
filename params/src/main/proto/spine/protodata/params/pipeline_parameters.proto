@@ -64,7 +64,7 @@ message PipelineParameters {
     // `com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest` received by
     // ProtoData `protoc` plugin.
     //
-    File request_file = 4 [(required) = true];
+    File request = 4 [(required) = true];
 
     // Paths to directories with the source files to be processed.
     repeated Directory source_root = 5 [(required) = true];

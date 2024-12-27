@@ -245,7 +245,7 @@ private fun LaunchProtoData.setDependencies(
  * Writes the file with parameters for a pipeline.
  *
  * The function obtains the list of compiled proto files by querying an instance
- * of [GenerateProtoTask] on which the receiver task depends on (as set by
+ * of [GenerateProtoTask] on which the receiver task depends on (as set by the
  * [Plugin.handleLaunchTaskDependency][io.spine.protodata.gradle.plugin.handleLaunchTaskDependency]
  * function).
  */
@@ -264,7 +264,7 @@ private fun LaunchProtoData.createParametersFile() {
         targetRoot.addAll(
             targets.absoluteDirs().map { it.toDirectory() }
         )
-        requestFile = project.file(this@createParametersFile.requestFile).absoluteFile.toProto()
+        request = project.file(this@createParametersFile.requestFile).absoluteFile.toProto()
     }
 
     val sourceSet = SourceSetName(sourceSetName.get())
