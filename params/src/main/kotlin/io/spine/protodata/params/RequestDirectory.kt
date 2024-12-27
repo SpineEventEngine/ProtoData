@@ -26,46 +26,21 @@
 
 package io.spine.protodata.params
 
-import io.spine.protodata.params.Directories.PARAMETERS_SUBDIR
-import io.spine.protodata.params.Directories.REQUESTS_SUBDIR
-import io.spine.protodata.params.Directories.SETTINGS_SUBDIR
-import io.spine.protodata.settings.SettingsDirectory
-import io.spine.protodata.util.ensureExistingDirectory
+import io.spine.tools.code.SourceSetName
+import java.io.File
 import java.nio.file.Path
 
 /**
- * A directory which stores files passed to ProtoData command-line application.
- *
- * @param path The path to the existing directory.
+ * The directory for `CodeGeneratorRequest` files.
  */
-public class WorkingDirectory(
+public class RequestDirectory(
     public val path: Path
 ) {
-    init {
-        ensureExistingDirectory(path)
-    }
 
     /**
-     * The directory managing files with [PipelineParameters].
+     * Obtains a simple file reference to the file with code generation request for
+     * the given source set.
      */
-    public val parametersDirectory: ParametersDirectory by lazy {
-        val dir = path.resolve(PARAMETERS_SUBDIR)
-        ParametersDirectory(dir)
-    }
-
-    /**
-     * The directory managing files with plugin settings.
-     */
-    public val settingsDirectory: SettingsDirectory by lazy {
-        val dir = path.resolve(SETTINGS_SUBDIR)
-        SettingsDirectory(dir)
-    }
-
-    /**
-     * The directory managing `CodeGeneratorRequest` files.
-     */
-    public val requestDirectory: RequestDirectory by lazy {
-        val dir = path.resolve(REQUESTS_SUBDIR)
-        RequestDirectory(dir)
-    }
+    public fun file(sourceSet: SourceSetName): File =
+        File(CodeGeneratorRequestFile.name(sourceSet))
 }
