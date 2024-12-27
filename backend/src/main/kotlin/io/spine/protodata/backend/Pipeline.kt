@@ -31,8 +31,10 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.code.proto.FileSet
 import io.spine.environment.DefaultMode
+import io.spine.logging.WithLogging
 import io.spine.protodata.ast.Coordinates
 import io.spine.protodata.ast.Documentation
+import io.spine.protodata.ast.File
 import io.spine.protodata.ast.toPath
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
@@ -51,6 +53,8 @@ import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
+import io.spine.string.ti
+import kotlin.io.path.inputStream
 
 /**
  * A pipeline which processes the Protobuf files.
@@ -73,7 +77,6 @@ import io.spine.server.under
  * @property params The pipeline parameters object.
  * @property plugins The code generation plugins to be applied to the pipeline.
  * @property sources The source sets to be processed by the pipeline.
- * @property request The Protobuf compiler request.
  * @property descriptorFilter The predicate to accept descriptors during parsing of the [request].
  *  The default value accepts all the descriptors.
  *  The primary usage scenario for this parameter is accepting only
@@ -86,9 +89,8 @@ public class Pipeline(
     public val params: PipelineParameters,
     public val plugins: List<Plugin>,
     public val sources: List<SourceFileSet>,
-    public val request: CodeGeneratorRequest,
     private val descriptorFilter: DescriptorFilter = { true },
-) {
+) : WithLogging {
 
     /**
      * Files compiled by `protoc`.
@@ -96,6 +98,21 @@ public class Pipeline(
     private val compiledProtoFiles: ProtoFileList by lazy {
         val compiledProtos = params.compiledProtoList.map { it.toPath().toFile() }
         ProtoFileList(compiledProtos)
+    }
+
+    /**
+     * The Protobuf compiler request.
+     */
+    public val request: CodeGeneratorRequest by lazy {
+        params.request.run {
+            if (equals(File.getDefaultInstance())) {
+                // This is a case of passing partial parameters to a pipeline in tests.
+                CodeGeneratorRequest.getDefaultInstance()
+            } else {
+                // This is a normal production scenario.
+                toPath().inputStream().use(CodeGeneratorRequest::parseFrom)
+            }
+        }
     }
 
     /**
@@ -129,14 +146,12 @@ public class Pipeline(
         params: PipelineParameters,
         plugin: Plugin,
         sources: SourceFileSet,
-        request: CodeGeneratorRequest,
         id: String = generateId()
     ) : this(
         id,
         params,
         listOf(plugin),
         listOf(sources),
-        request,
     )
 
     init {
@@ -163,6 +178,16 @@ public class Pipeline(
      */
     public operator fun invoke(afterCompile: (CodegenContext) -> Unit = {}) {
         clearCaches()
+
+        logger.atDebug().log { """
+            Starting code generation with the following arguments:
+              - plugins: ${plugins.joinToString()}
+              - request
+                  - files to generate: ${request.fileToGenerateList.joinToString()}
+                  - parameter: ${request.parameter}.
+            """.ti()
+        }
+
         emitEventsAndRenderSources(afterCompile)
     }
 

@@ -26,7 +26,6 @@
 
 package io.spine.protodata.java.file
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
 import io.spine.protodata.backend.Pipeline
@@ -104,8 +103,7 @@ class BeforePrimaryDeclarationSpec {
             Pipeline(
                 params = PipelineParameters.getDefaultInstance(),
                 plugin = GeneratedTypeAnnotation().toPlugin(),
-                sources = SourceFileSet.create(input, output),
-                request = CodeGeneratorRequest.getDefaultInstance()
+                sources = SourceFileSet.create(input, output)
             )()
 
             classSrc = output / inputClassSrc.name

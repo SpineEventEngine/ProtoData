@@ -38,9 +38,8 @@ public class RequestDirectory(
 ) {
 
     /**
-     * Obtains a simple file reference to the file with code generation request for
-     * the given source set.
+     * Obtains the file with code generation request for the given source set.
      */
     public fun file(sourceSet: SourceSetName): File =
-        File(CodeGeneratorRequestFile.name(sourceSet))
+        path.resolve(CodeGeneratorRequestFile.name(sourceSet)).toFile()
 }

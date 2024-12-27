@@ -26,7 +26,6 @@
 
 package io.spine.protodata.java.style
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import copyResource
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ast.toDirectory
@@ -94,8 +93,7 @@ internal class JavaCodeStyleFormatterMemoryTest {
             Pipeline(
                 params = params,
                 plugin =  JavaCodeStyleFormatterPlugin(),
-                sources = SourceFileSet.create(inputDir, outputDir),
-                request = CodeGeneratorRequest.getDefaultInstance()
+                sources = SourceFileSet.create(inputDir, outputDir)
             )()
 
             formattedCode = readString(outputDir.resolve(fileName))

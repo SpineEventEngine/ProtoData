@@ -34,6 +34,7 @@ import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ast.toDirectory
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.plugin.ConfigurationError
@@ -89,6 +90,7 @@ internal class PipelineSpec {
     private lateinit var targetRoot : Path
     private lateinit var codegenRequestFile: Path
     private lateinit var targetFile: Path
+    private lateinit var params: PipelineParameters
     private lateinit var request: CodeGeneratorRequest
     private lateinit var renderer: UnderscorePrefixRenderer
     private lateinit var overwritingSourceSet: SourceFileSet
@@ -113,6 +115,11 @@ internal class PipelineSpec {
             fileToGenerate += descriptor.name
         }
         codegenRequestFile.writeBytes(request.toByteArray())
+
+        params = PipelineParameters.newBuilder()
+            .setRequest(codegenRequestFile.toProto())
+            .buildPartial()
+
         renderer = UnderscorePrefixRenderer()
 
         overwritingSourceSet = SourceFileSet.create(srcRoot, targetRoot)
@@ -129,10 +136,9 @@ internal class PipelineSpec {
     @Test
     fun `render enhanced code`() {
         Pipeline(
-            params = PipelineParameters.getDefaultInstance(),
+            params = params,
             plugins = listOf(TestPlugin(), RenderingTestbed(renderer)),
             sources = listOf(overwritingSourceSet),
-            request = request,
         )()
         assertTextIn(targetFile).isEqualTo("_Journey worth taking")
     }
@@ -140,10 +146,9 @@ internal class PipelineSpec {
     @Test
     fun `generate new files`() {
         Pipeline(
-            params = PipelineParameters.getDefaultInstance(),
+            params = params,
             plugins = listOf(TestPlugin(), RenderingTestbed(InternalAccessRenderer())),
             sources = listOf(overwritingSourceSet),
-            request = request,
         )()
         val newClass = targetRoot.resolve("spine/protodata/test/JourneyInternal.java")
         assertExists(newClass)
@@ -155,10 +160,9 @@ internal class PipelineSpec {
         val path = "io/spine/protodata/test/DeleteMe_.java"
         write(path, "foo bar")
         Pipeline(
-            params = PipelineParameters.getDefaultInstance(),
+            params = params,
             plugins = listOf(TestPlugin(), RenderingTestbed(DeletingRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request = request,
         )()
         assertDoesNotExist(targetRoot / path)
     }
@@ -170,13 +174,12 @@ internal class PipelineSpec {
         write(path, initialContent)
         val renderer = PrependingRenderer()
         Pipeline(
-            params = PipelineParameters.getDefaultInstance(),
+            params = params,
             plugin = TestPlugin(
                 JavaGenericInsertionPointPrinter(),
                 renderer
             ),
-            sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            sources = SourceFileSet.create(srcRoot, targetRoot)
         )()
 
         assertTextIn(targetRoot / path).run {
@@ -195,10 +198,9 @@ internal class PipelineSpec {
         write(path, initialContent)
         val renderer = PrependingRenderer(NonExistingPoint)
         Pipeline(
-            params = PipelineParameters.getDefaultInstance(),
+            params = params,
             plugin = TestPlugin(renderer),
-            sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            sources = SourceFileSet.create(srcRoot, targetRoot)
         )()
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
@@ -214,7 +216,7 @@ internal class PipelineSpec {
             }
         """.trimIndent())
         Pipeline(
-            params = PipelineParameters.getDefaultInstance(),
+            params = params,
             plugins = listOf(RenderingTestbed(
                 renderers = listOf(
                     AnnotationInsertionPointPrinter(),
@@ -222,7 +224,6 @@ internal class PipelineSpec {
                 )
             )),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request = CodeGeneratorRequest.getDefaultInstance(),
         )()
         assertTextIn(targetRoot / path)
             .contains("@Nullable String")
@@ -237,8 +238,7 @@ internal class PipelineSpec {
         Pipeline(
             params = PipelineParameters.getDefaultInstance(),
             plugin = TestPlugin(renderer),
-            sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            sources = SourceFileSet.create(srcRoot, targetRoot)
         )()
         textIn(targetRoot / path) shouldBe textIn(srcRoot / path)
     }
@@ -255,8 +255,7 @@ internal class PipelineSpec {
                 JsRenderer(),
                 KtRenderer()
             ),
-            sources = SourceFileSet.create(srcRoot, targetRoot),
-            request
+            sources = SourceFileSet.create(srcRoot, targetRoot)
         )()
         assertTextIn(targetRoot / jsPath).contains("Hello JavaScript")
         assertTextIn(targetRoot / ktPath).contains("Hello Kotlin")
@@ -270,8 +269,7 @@ internal class PipelineSpec {
                 JavaGenericInsertionPointPrinter(),
                 CatOutOfTheBoxEmancipator()
             ),
-            sources = overwritingSourceSet,
-            request
+            sources = overwritingSourceSet
         )()
         assertTextIn(targetFile).run {
             startsWith("/* ${GenericInsertionPoint.FILE_START.codeLine} */")
@@ -288,8 +286,7 @@ internal class PipelineSpec {
                 JavaGenericInsertionPointPrinter(),
                 JsRenderer()
             ),
-            sources = overwritingSourceSet,
-            request
+            sources = overwritingSourceSet
         )()
         assertTextIn(targetFile).run {
             doesNotContain(GenericInsertionPoint.FILE_START.codeLine)
@@ -302,10 +299,9 @@ internal class PipelineSpec {
     fun `write code into different destination`(
         @TempDir destination: Path) {
         Pipeline(
-            params = PipelineParameters.getDefaultInstance(),
+            params = params,
             plugins = listOf(TestPlugin(), RenderingTestbed(InternalAccessRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, destination)),
-            request = request,
         )()
 
         val path = "spine/protodata/test/JourneyInternal.java"
@@ -321,10 +317,9 @@ internal class PipelineSpec {
     @Test
     fun `copy all sources into the new destination`() {
         Pipeline(
-            params = PipelineParameters.getDefaultInstance(),
+            params = params,
             plugins = listOf(TestPlugin(), RenderingTestbed(NoOpRenderer())),
             sources = listOf(SourceFileSet.create(srcRoot, targetRoot)),
-            request = request,
         )()
         assertExists(targetFile)
     }
@@ -344,7 +339,7 @@ internal class PipelineSpec {
             secondSourceFile.createFile().writeText("foo bar")
 
             Pipeline(
-                params = PipelineParameters.getDefaultInstance(),
+                params = params,
                 plugins = listOf(
                     TestPlugin(),
                     RenderingTestbed(NoOpRenderer())
@@ -353,7 +348,6 @@ internal class PipelineSpec {
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request = request,
             )()
 
             assertExists(destination1.resolve(targetFile.name))
@@ -392,8 +386,7 @@ internal class PipelineSpec {
                 sources = listOf(
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
-                ),
-                request = request,
+                )
             )()
 
             val firstFile = destination1.resolve(ECHO_FILE)
@@ -416,7 +409,7 @@ internal class PipelineSpec {
             write(existingFilePath, expectedContent)
 
             Pipeline(
-                params = PipelineParameters.getDefaultInstance(),
+                params = params,
                 plugins = listOf(
                     TestPlugin(),
                     RenderingTestbed(listOf(
@@ -428,7 +421,6 @@ internal class PipelineSpec {
                     SourceFileSet.create(srcRoot, destination1),
                     SourceFileSet.create(source2, destination2)
                 ),
-                request = request,
             )()
 
             assertDoesNotExist(destination2.resolve(existingFilePath))
@@ -446,7 +438,7 @@ internal class PipelineSpec {
         fun `view is already registered`() {
             val viewClass = DeletedTypeView::class.java
             val pipeline = Pipeline(
-                params = PipelineParameters.getDefaultInstance(),
+                params = params,
                 plugins = listOf(
                     DocilePlugin(
                         views = setOf(viewClass),
@@ -455,7 +447,6 @@ internal class PipelineSpec {
                     RenderingTestbed(renderer)
                 ),
                 sources = listOf(overwritingSourceSet),
-                request = request,
             )
             val error = assertThrows<ConfigurationError> { pipeline() }
             error.message shouldContain(viewClass.name)
@@ -465,10 +456,9 @@ internal class PipelineSpec {
     @Test
     fun `expose 'codegenContext' property for testing purposes`() {
         val pipeline = Pipeline(
-            params = PipelineParameters.getDefaultInstance(),
+            params = params,
             plugins = listOf(TestPlugin(), RenderingTestbed(renderer)),
             sources = listOf(overwritingSourceSet),
-            request = request,
         )
         var codegenContext: CodegenContext? = null
         try {

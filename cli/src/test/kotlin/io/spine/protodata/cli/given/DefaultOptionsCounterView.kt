@@ -32,7 +32,6 @@ import io.spine.core.Where
 import io.spine.protobuf.AnyPacker
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.event.FieldOptionDiscovered
-import io.spine.protodata.ast.typeName
 import io.spine.protodata.cli.test.DefaultOptionsCounter
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository

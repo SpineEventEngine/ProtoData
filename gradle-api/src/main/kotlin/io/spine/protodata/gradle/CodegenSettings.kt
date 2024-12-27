@@ -44,14 +44,6 @@ public interface CodegenSettings {
     public fun optionProviders(vararg classNames: String)
 
     /**
-     * A directory where the serialized `CodeGeneratorRequest`s are stored.
-     *
-     * For each source set, we generate a separate request file. Files are named after
-     * the associated source set with the `.bin` extension.
-     */
-    public var requestFilesDir: Any
-
-    /**
      * The subdirectories to which the files generated from Protobuf are placed.
      *
      * If the code files that need processing are placed in a few subdirectories within

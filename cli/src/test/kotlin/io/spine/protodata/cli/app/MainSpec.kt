@@ -36,8 +36,8 @@ import io.kotest.matchers.string.shouldStartWith
 import io.spine.base.Time
 import io.spine.option.OptionsProto
 import io.spine.protobuf.pack
-import io.spine.protodata.ast.directory
 import io.spine.protodata.ast.file
+import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.ast.toProto
 import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
 import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
@@ -68,13 +68,15 @@ import io.spine.tools.code.SourceSetName
 import io.spine.type.toCompactJson
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
+import java.nio.file.StandardOpenOption.CREATE
+import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -102,18 +104,17 @@ class MainSpec {
 
         val params = pipelineParameters {
             compiledProto.add(file { path = "/given/proto/file/path.proto"})
-            settings = directory { path = workingDir.settingsDirectory.path.absolutePathString() }
-            sourceRoot.add(directory { path = sandbox.resolve("src").absolutePathString() })
-            targetRoot.add(directory { path = sandbox.resolve("generated").absolutePathString() })
+            settings = workingDir.settingsDirectory.path.toDirectory()
+            sourceRoot.add(sandbox.resolve("src").toDirectory())
+            targetRoot.add(sandbox.resolve("generated").toDirectory())
             request = codegenRequestFile.toFile().toProto()
         }
-        parametersFile = workingDir.parametersDirectory.write(SourceSetName.main, params)
+        parametersFile = workingDir.parametersDirectory.write(SourceSetName.test, params)
 
         targetRoot = sandbox.resolve("target")
         targetRoot.toFile().mkdirs()
         srcRoot = sandbox.resolve("src")
         srcRoot.toFile().mkdirs()
-        codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
         val sourceFile = srcRoot.resolve("SourceCode.java")
         sourceFile.writeText("""
@@ -128,14 +129,15 @@ class MainSpec {
                 project.toProto(),
                 testProto.toProto(),
                 TestOptionsProto.getDescriptor().toProto(),
-                OptionsProto.getDescriptor().toProto()
+                OptionsProto.getDescriptor().toProto(),
+                //DescriptorProtos.getDescriptor().toProto(),
             ))
             fileToGenerate.addAll(listOf(
                 project.name,
                 testProto.name
             ))
         }
-        codegenRequestFile.writeBytes(request.toByteArray())
+        codegenRequestFile.writeBytes(request.toByteArray(), CREATE, TRUNCATE_EXISTING)
     }
 
     @Test
@@ -146,7 +148,6 @@ class MainSpec {
             "-p", UnderscorePrefixRendererPlugin::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
-            "-t", codegenRequestFile.toString(),
         )
         targetFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
     }
@@ -159,7 +160,6 @@ class MainSpec {
             "-p", DefaultOptionsCounterRendererPlugin::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
-            "-t", codegenRequestFile.toString(),
         )
         val generatedFile = targetRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
         generatedFile.readText() shouldBe "true, true"
@@ -181,7 +181,6 @@ class MainSpec {
                 "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
-                "-t", codegenRequestFile.toString(),
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -198,7 +197,6 @@ class MainSpec {
                 "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
-                "-t", codegenRequestFile.toString(),
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -219,7 +217,6 @@ class MainSpec {
                 "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
-                "-t", codegenRequestFile.toString(),
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -240,7 +237,6 @@ class MainSpec {
                 "-p", ProtoEchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
-                "-t", codegenRequestFile.toString(),
             )
             val text = outputEchoFile.readText()
 
@@ -265,7 +261,6 @@ class MainSpec {
                 "-p", ProtoEchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
-                "-t", codegenRequestFile.toString(),
             )
 
             val text = outputEchoFile.readText()
@@ -288,7 +283,6 @@ class MainSpec {
                 "-p", EchoRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
-                "-t", codegenRequestFile.toString(),
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -303,7 +297,6 @@ class MainSpec {
                 "-p", PlainStringRendererPlugin::class.jvmName,
                 "--src", srcRoot.toString(),
                 "--target", targetRoot.toString(),
-                "-t", codegenRequestFile.toString(),
             )
             outputEchoFile.readText() shouldBe plainString
         }
@@ -319,7 +312,6 @@ class MainSpec {
                     "--params", parametersFile.absolutePath,
                     "-p", TestPlugin::class.jvmName,
                     "-p", UnderscorePrefixRenderer::class.jvmName,
-                    "-t", codegenRequestFile.toString(),
                     "--src", srcRoot.toString(),
                 )
             }

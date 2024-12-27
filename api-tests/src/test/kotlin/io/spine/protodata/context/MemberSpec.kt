@@ -31,12 +31,15 @@ import io.kotest.matchers.string.shouldEndWith
 import io.spine.protodata.ast.EnumInFile
 import io.spine.protodata.ast.MessageInFile
 import io.spine.protodata.ast.ServiceInFile
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.params.PipelineParameters
+import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.testing.PipelineSetup
 import io.spine.protodata.testing.RenderingTestbed
 import io.spine.tools.code.Java
+import io.spine.tools.code.SourceSetName
 import java.nio.file.Path
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
@@ -61,13 +64,17 @@ internal class MemberSpec {
          */
         @BeforeAll
         @JvmStatic
-        fun setup(@TempDir outputDir: Path, @TempDir settingsDir: Path) {
+        fun setup(@TempDir workingDir: Path, @TempDir outputDir: Path) {
+            val requestFile = WorkingDirectory(workingDir).parametersDirectory
+                .file(SourceSetName("testFixtures"))
+            val params = PipelineParameters.newBuilder()
+                .setRequest(requestFile.toProto())
+                .buildPartial()
             val setup = PipelineSetup.byResources(
                 language = Java,
-                params = PipelineParameters.getDefaultInstance(),
+                params = params,
                 plugins = listOf(RenderingTestbed(probe)),
-                outputRoot = outputDir,
-                settingsDir = settingsDir
+                outputRoot = outputDir
             ) {}
 
             val pipeline = setup.createPipeline()

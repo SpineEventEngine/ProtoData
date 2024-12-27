@@ -26,7 +26,6 @@
 
 package io.spine.protodata.java.file
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
@@ -117,8 +116,7 @@ class BeforeNestedTypeDeclarationSpec {
                     SuppressWarningsAnnotation(nestedEnum),
                     SuppressWarningsAnnotation(nestedInterface),
                 ),
-                sources = SourceFileSet.create(input, output),
-                request = CodeGeneratorRequest.getDefaultInstance()
+                sources = SourceFileSet.create(input, output)
             )()
 
             javaFile = output / inputClassSrc.name

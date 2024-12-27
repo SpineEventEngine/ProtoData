@@ -28,7 +28,6 @@ package io.spine.protodata.java.annotation
 
 import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.Time
 import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.backend.Pipeline
@@ -156,7 +155,6 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
             params = io.spine.protodata.params.PipelineParameters.getDefaultInstance(),
             plugins = listOf(generatedTypeAnnotation.toPlugin()),
             sources = this.sources,
-            request = CodeGeneratorRequest.getDefaultInstance(),
         )()
     }
 }

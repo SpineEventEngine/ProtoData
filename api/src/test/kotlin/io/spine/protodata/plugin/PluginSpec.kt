@@ -26,7 +26,6 @@
 
 package io.spine.protodata.plugin
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldStartWith
@@ -98,8 +97,7 @@ internal class PluginSpec {
         val pipeline = Pipeline(
             PipelineParameters.getDefaultInstance(),
             plugin,
-            fileSet,
-            CodeGeneratorRequest.getDefaultInstance()
+            fileSet
         )
         pipeline()
     }

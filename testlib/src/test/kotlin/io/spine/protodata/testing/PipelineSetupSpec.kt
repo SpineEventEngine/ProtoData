@@ -31,8 +31,11 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.io.ResourceDirectory
+import io.spine.protodata.ast.toDirectory
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.params.PipelineParameters
+import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.PipelineSetup.Companion.byResources
@@ -40,8 +43,10 @@ import io.spine.protodata.testing.PipelineSetup.Companion.detectCallingClass
 import io.spine.protodata.util.Format.PROTO_JSON
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
+import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.TypeScript
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
+import io.spine.validate.NonValidated
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.exists
@@ -54,17 +59,15 @@ internal class PipelineSetupSpec {
 
     @Test
     fun `ensure output and settings directories are created`(
+        @TempDir workingDir: Path,
         @TempDir input: Path,
         @TempDir output: Path,
-        @TempDir settings: Path,
     ) {
         // Since JUnit creates `output` and `settings` directories automatically,
         // have nested ones to check the creation.
         val outputPrim = output.resolve("primo")
-        val settingsPrim = settings.resolve("primus")
-        val setup = setup(input, outputPrim, settingsPrim) { _ -> }
+        val setup = setup(workingDir, input, outputPrim) { _ -> }
         setup.run {
-            this.settings.path.exists() shouldBe true
             sourceFileSet.run {
                 inputRoot shouldBe input
                 outputRoot.run {
@@ -77,16 +80,17 @@ internal class PipelineSetupSpec {
 
     @Test
     fun `invoke settings callback before creating a pipeline`(
+        @TempDir workingDir: Path,
         @TempDir input: Path,
         @TempDir output: Path,
-        @TempDir settings: Path,
     ) {
-        val setup = setup(input, output, settings) {
+        val setup = setup(workingDir, input, output) {
             it.write("foo_bar", PROTO_JSON, Empty.getDefaultInstance().toByteArray())
         }
-        settings.fileCount() shouldBe 0
+        val settingsDir = setup.settings.path
+        settingsDir.fileCount() shouldBe 0
         setup.createPipeline()
-        settings.fileCount() shouldBe 1
+        settingsDir.fileCount() shouldBe 1
     }
 
     @Test
@@ -97,20 +101,21 @@ internal class PipelineSetupSpec {
 
     @Test
     fun `use 'CodeGeneratorRequest' captured by ProtoTap`(
-        @TempDir output: Path,
-        @TempDir settings: Path,
+        @TempDir workingDir: Path,
+        @TempDir output: Path
     ) {
-        val setup = setupByResources(Java, output, settings)
-        setup.request shouldNotBe CodeGeneratorRequest.getDefaultInstance()
+        val setup = setupByResources(Java, workingDir, output)
+        val pipeline = setup.createPipeline()
+        pipeline.request shouldNotBe CodeGeneratorRequest.getDefaultInstance()
     }
 
     @Test
     fun `use sources captured by ProtoTap`(
-        @TempDir output: Path,
-        @TempDir settings: Path,
+        @TempDir workingDir: Path,
+        @TempDir output: Path
     ) {
         val language = Java
-        val setup = setupByResources(language, output, settings)
+        val setup = setupByResources(language, workingDir, output)
         setup.run {
             val langDir = language.protocOutputDir()
             val resourceDir = ResourceDirectory.get(
@@ -142,10 +147,10 @@ internal class PipelineSetupSpec {
 
     @Test
     fun `create a pipeline with 'BlackBox' instance over 'CodeGeneratorContext'`(
+        @TempDir workingDir: Path,
         @TempDir output: Path,
-        @TempDir settings: Path,
     ) {
-        val setup = setupByResources(Java, output, settings)
+        val setup = setupByResources(Java, workingDir, output)
         val (pipeline, blackbox) = setup.createPipelineWithBlackBox()
 
         // We do not expose the type behind the `codegenContext` property for additional
@@ -163,32 +168,41 @@ internal class PipelineSetupSpec {
 }
 
 private fun setup(
+    workingDir: Path,
     input: Path,
     output: Path,
-    settings: Path,
     writeSettings: (SettingsDirectory) -> Unit
 ): PipelineSetup = PipelineSetup(
-    PipelineParameters.getDefaultInstance(),
+    createParams(workingDir),
     listOf(StubPlugin()),
     input,
     output,
-    settings,
-    CodeGeneratorRequest.getDefaultInstance(),
     writeSettings = writeSettings
 )
 
 private fun setupByResources(
     language: Java,
-    outputRoot: Path,
-    settingsDir: Path
-): PipelineSetup = byResources(
-    language,
-    PipelineParameters.getDefaultInstance(),
-    listOf(StubPlugin()),
-    outputRoot,
-    settingsDir,
-) { _ -> }
+    workingDir: Path,
+    outputRoot: Path
+): PipelineSetup {
+    return byResources(
+        language,
+        createParams(workingDir),
+        listOf(StubPlugin()),
+        outputRoot,
+    ) { _ -> }
+}
+
+private fun createParams(workingDir: Path): @NonValidated PipelineParameters {
+    val wd = WorkingDirectory(workingDir)
+    val requestFile = wd.requestDirectory.file(SourceSetName("testFixtures"))
+    val params = PipelineParameters.newBuilder()
+        .setSettings(wd.settingsDirectory.path.toDirectory())
+        .setRequest(requestFile.toProto())
+        .buildPartial()
+    return params
+}
 
 internal class StubPlugin: Plugin()
 
-private fun Path.fileCount() = toFile().list()!!.size
+private fun Path.fileCount() = toFile().list()?.size ?: 0

@@ -146,7 +146,6 @@ class LoggingLevelSpec {
             "-p", LoggingLevelAsserterPlugin::class.jvmName,
             "--src", srcRoot.toString(),
             "--target", targetRoot.toString(),
-            "-t", codegenRequestFile.toString(),
         )
         params.addAll(argv)
         Run("1961.04.12").parse(params)

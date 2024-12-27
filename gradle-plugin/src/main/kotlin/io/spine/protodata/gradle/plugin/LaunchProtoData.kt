@@ -37,7 +37,6 @@ import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
 import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.PluginParam
-import io.spine.protodata.params.RequestParam
 import io.spine.protodata.params.SourceRootParam
 import io.spine.protodata.params.TargetRootParam
 import io.spine.protodata.params.UserClasspathParam
@@ -52,11 +51,9 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
@@ -78,12 +75,6 @@ public abstract class LaunchProtoData : JavaExec() {
 
     @get:Input
     internal abstract val sourceSetName: Property<String>
-
-    /**
-     * The file containing the binary form of `CodeGeneratorRequest` passed to this task.
-     */
-    @get:InputFile
-    internal abstract val requestFile: RegularFileProperty
 
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
@@ -136,8 +127,6 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield(PluginParam.name)
                 yield(it)
             }
-            yield(RequestParam.name)
-            yield(project.file(requestFile).absolutePath)
 
             if (sources.isPresent) {
                 yield(SourceRootParam.name)
@@ -208,7 +197,6 @@ internal fun LaunchProtoData.applyDefaults(
     val project = project
     val ext = project.extension
     plugins = ext.plugins
-    requestFile.set(ext.requestFile(sourceSet))
     protoDataConfiguration = project.protoDataRawArtifact
     userClasspathConfiguration = project.userClasspath
     project.afterEvaluate {
@@ -264,7 +252,7 @@ private fun LaunchProtoData.createParametersFile() {
         targetRoot.addAll(
             targets.absoluteDirs().map { it.toDirectory() }
         )
-        request = project.file(this@createParametersFile.requestFile).absoluteFile.toProto()
+        request = workingDir.requestDirectory.file(SourceSetName(sourceSetName.get())).toProto()
     }
 
     val sourceSet = SourceSetName(sourceSetName.get())
@@ -281,7 +269,7 @@ private fun LaunchProtoData.createParametersFile() {
  * which assumes that the request file should have been created.
  */
 internal fun LaunchProtoData.hasRequestFile(sourceSet: SourceSet): Boolean {
-    val requestFile = requestFile.get().asFile
+    val requestFile = workingDir.requestDirectory.file(SourceSetName(sourceSet.name))
     if (!requestFile.exists() && sourceSet.containsProtoFiles()) {
         logger.error {
             "Unable to locate the request file `$requestFile` which should have been created" +

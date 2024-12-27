@@ -26,7 +26,6 @@
 
 package io.spine.protodata.java.annotation
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.backend.Pipeline
@@ -47,10 +46,6 @@ import org.junit.jupiter.api.io.TempDir
 @DisplayName("`SuppressRenderer` should")
 internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
-    companion object {
-        val emptyRequest: CodeGeneratorRequest = CodeGeneratorRequest.getDefaultInstance()
-    }
-
     private fun loadCode() = sources.first()
         .file(Path(JAVA_FILE))
         .code()
@@ -64,7 +59,6 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                 params = PipelineParameters.getDefaultInstance(),
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
-                request = emptyRequest,
             )()
             val code = loadCode()
             assertContainsSuppressionAll(code)
@@ -86,7 +80,6 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                 params = params,
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
                 sources = this@SuppressWarningsAnnotationSpec.sources,
-                request = emptyRequest,
             )()
             val code = loadCode()
             assertContainsSuppressionAll(code)
@@ -115,7 +108,6 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
             params = params,
             plugins = listOf(SuppressWarningsAnnotation.Plugin()),
             sources = sources,
-            request = emptyRequest,
         )()
         val code = loadCode()
 

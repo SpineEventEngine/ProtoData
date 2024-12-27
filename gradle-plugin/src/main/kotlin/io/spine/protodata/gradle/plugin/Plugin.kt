@@ -47,6 +47,7 @@ import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
+import io.spine.protodata.params.WorkingDirectory
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
@@ -276,8 +277,10 @@ private fun Project.configureProtoTask(task: GenerateProtoTask) {
 private fun GenerateProtoTask.addProtoDataProtocPlugin() {
     plugins.apply {
         create(PROTODATA_PROTOC_PLUGIN) {
-            val requestFile = project.extension.requestFile(sourceSet)
-            val path = requestFile.get().asFile.absolutePath
+            val requestFile = WorkingDirectory(project.protoDataWorkingDir.asFile.toPath())
+                .requestDirectory
+                .file(SourceSetName(sourceSet.name))
+            val path = requestFile.absolutePath
             val nameEncoded = path.base64Encoded()
             it.option(nameEncoded)
             if (logger.isDebugEnabled) {

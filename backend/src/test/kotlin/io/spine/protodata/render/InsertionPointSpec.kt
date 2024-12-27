@@ -26,7 +26,6 @@
 
 package io.spine.protodata.render
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldHaveAtLeastSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
@@ -116,7 +115,6 @@ class InsertionPointsSpec {
                     CompanionLalalaRenderer())
             )),
             sources = listOf(SourceFileSet.create(input, output)),
-            request = CodeGeneratorRequest.getDefaultInstance(),
         )()
         kotlinFile = output / inputKtFile.name
         javaFile = output / inputJavaFile.name

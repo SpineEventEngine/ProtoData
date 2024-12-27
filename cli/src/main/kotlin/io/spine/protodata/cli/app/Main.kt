@@ -37,8 +37,6 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.code.proto.parse
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
@@ -50,7 +48,6 @@ import io.spine.protodata.params.Parameter
 import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.PluginParam
-import io.spine.protodata.params.RequestParam
 import io.spine.protodata.params.SourceRootParam
 import io.spine.protodata.params.TargetRootParam
 import io.spine.protodata.params.UserClasspathParam
@@ -58,7 +55,6 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.util.parseFile
 import io.spine.string.Separator
-import io.spine.string.ti
 import io.spine.tools.code.manifest.Version
 import java.io.File
 import java.io.File.pathSeparator
@@ -139,14 +135,6 @@ internal class Run(version: String) : CliktCommand(
     private val plugins: List<String>
             by PluginParam.toOption().multiple()
 
-    private val codegenRequestFile: File
-            by RequestParam.toOption().file(
-                mustExist = true,
-                canBeDir = false,
-                canBeSymlink = false,
-                mustBeReadable = true
-            ).required()
-
     private val sourceRoots: List<Path>?
             by SourceRootParam.toOption().path(
                 canBeFile = false,
@@ -195,15 +183,6 @@ internal class Run(version: String) : CliktCommand(
     private fun doRun() {
         val sources = createSourceFileSets()
         val plugins = loadPlugins()
-        val request = loadRequest()
-        logger.atDebug().log { """
-            Starting code generation with the following arguments:
-              - plugins: ${plugins.joinToString()}
-              - request
-                  - files to generate: ${request.fileToGenerateList.joinToString()}
-                  - parameter: ${request.parameter}.
-            """.ti()
-        }
 
         val params = parseFile(paramsFile, PipelineParameters::class.java)
 
@@ -211,15 +190,8 @@ internal class Run(version: String) : CliktCommand(
             params = params,
             plugins = plugins,
             sources = sources,
-            request = request,
         )
         pipeline()
-    }
-
-    private fun loadRequest(): CodeGeneratorRequest {
-        return codegenRequestFile.inputStream().use {
-            CodeGeneratorRequest::class.parse(it)
-        }
     }
 
     private fun createSourceFileSets(): List<SourceFileSet> {
