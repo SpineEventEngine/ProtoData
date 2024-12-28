@@ -30,6 +30,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.code.proto.FileSet
+import io.spine.code.proto.parse
 import io.spine.environment.DefaultMode
 import io.spine.logging.WithLogging
 import io.spine.protodata.ast.Coordinates
@@ -104,15 +105,17 @@ public class Pipeline(
      * The Protobuf compiler request.
      */
     public val request: CodeGeneratorRequest by lazy {
-        params.request.run {
-            if (equals(File.getDefaultInstance())) {
-                // This is a case of passing partial parameters to a pipeline in tests.
-                CodeGeneratorRequest.getDefaultInstance()
-            } else {
-                // This is a normal production scenario.
-                toPath().inputStream().use(CodeGeneratorRequest::parseFrom)
+        val requestFile = params.request
+        val loadedRequest = if (requestFile == File.getDefaultInstance()) {
+            // This is a case of passing partial parameters to a pipeline in tests.
+            CodeGeneratorRequest.getDefaultInstance()
+        } else {
+            // This is a normal production scenario.
+            requestFile.toPath().inputStream().use {
+                CodeGeneratorRequest::class.parse(it)
             }
         }
+        loadedRequest
     }
 
     /**

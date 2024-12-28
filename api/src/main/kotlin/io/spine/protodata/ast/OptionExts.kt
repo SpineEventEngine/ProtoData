@@ -99,7 +99,8 @@ public suspend fun SequenceScope<EventMessage>.produceOptionEvents(
     context: GenericDescriptor,
     factory: (Option) -> EventMessage
 ) {
-    options.parseOptions(context).forEach {
+    val parsed = options.parseOptions(context)
+    parsed.forEach {
         yield(factory(it))
     }
 }

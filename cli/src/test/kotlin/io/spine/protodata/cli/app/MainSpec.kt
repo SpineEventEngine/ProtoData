@@ -28,6 +28,7 @@ package io.spine.protodata.cli.app
 
 import com.github.ajalt.clikt.core.MissingOption
 import com.github.ajalt.clikt.core.UsageError
+import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.codeGeneratorRequest
 import com.google.protobuf.stringValue
 import io.kotest.matchers.shouldBe
@@ -68,15 +69,12 @@ import io.spine.tools.code.SourceSetName
 import io.spine.type.toCompactJson
 import java.io.File
 import java.nio.file.Path
-import java.nio.file.StandardOpenOption.CREATE
-import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -137,7 +135,7 @@ class MainSpec {
                 testProto.name
             ))
         }
-        codegenRequestFile.writeBytes(request.toByteArray(), CREATE, TRUNCATE_EXISTING)
+        codegenRequestFile.writeBytes(request.toByteArray())
     }
 
     @Test
