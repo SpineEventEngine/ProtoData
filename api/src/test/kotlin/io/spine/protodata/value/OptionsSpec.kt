@@ -34,7 +34,7 @@ import io.spine.option.MaxOption
 import io.spine.option.MinOption
 import io.spine.protodata.ast.find
 import io.spine.protodata.given.value.DiceRoll
-import io.spine.protodata.given.value.FieldOptionsProto
+import io.spine.protodata.given.value.FieldOptionSamplesProto
 import io.spine.protodata.given.value.KelvinTemperature
 import io.spine.protodata.given.value.Misreferences
 import io.spine.protodata.given.value.NumberGenerated
@@ -52,7 +52,7 @@ import org.junit.jupiter.api.assertThrows
 internal class OptionsSpec {
 
     private val typeSystem: TypeSystem by lazy {
-        val descriptors = setOf(FieldOptionsProto.getDescriptor())
+        val descriptors = setOf(FieldOptionSamplesProto.getDescriptor())
         val protoFiles = descriptors.map { java.io.File(it.file.name) }
         val protoSources = descriptors.map { it.toPbSourceFile() }.toSet()
         TypeSystem(ProtoFileList(protoFiles), protoSources)

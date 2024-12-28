@@ -17,5 +17,5 @@ extend google.protobuf.FieldOptions {
     //
     // The field's getter method will be annotated.
     //
-    string java_annotation = 73890;
+    string java_annotation = 74000;
 }
