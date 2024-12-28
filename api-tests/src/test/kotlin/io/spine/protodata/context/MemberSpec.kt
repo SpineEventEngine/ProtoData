@@ -31,13 +31,12 @@ import io.kotest.matchers.string.shouldEndWith
 import io.spine.protodata.ast.EnumInFile
 import io.spine.protodata.ast.MessageInFile
 import io.spine.protodata.ast.ServiceInFile
-import io.spine.protodata.ast.toProto
-import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.testing.PipelineSetup
 import io.spine.protodata.testing.RenderingTestbed
+import io.spine.protodata.testing.parametersWithRequestFile
 import io.spine.tools.code.Java
 import io.spine.tools.code.SourceSetName
 import java.nio.file.Path
@@ -67,9 +66,7 @@ internal class MemberSpec {
         fun setup(@TempDir workingDir: Path, @TempDir outputDir: Path) {
             val requestFile = WorkingDirectory(workingDir).parametersDirectory
                 .file(SourceSetName("testFixtures"))
-            val params = PipelineParameters.newBuilder()
-                .setRequest(requestFile.toProto())
-                .buildPartial()
+            val params = parametersWithRequestFile(requestFile)
             val setup = PipelineSetup.byResources(
                 language = Java,
                 params = params,

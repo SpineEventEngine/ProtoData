@@ -38,6 +38,7 @@ import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.style.indentOptions
 import io.spine.protodata.testing.RenderingTestbed
+import io.spine.protodata.testing.parametersWithSettingsDir
 import io.spine.protodata.util.Format
 import io.spine.type.toJson
 import java.nio.file.Files.readString
@@ -83,9 +84,7 @@ internal class JavaCodeStyleFormatterSpec {
             this.outputDir = outputDir
             val settingsDir = WorkingDirectory(sandbox).settingsDirectory
             writeSettings(settingsDir)
-            val params = PipelineParameters.newBuilder()
-                .setSettings(settingsDir.path.toDirectory())
-                .buildPartial()
+            val params = parametersWithSettingsDir(settingsDir.path)
             copyResource(fileName, inputDir)
 
             Pipeline(

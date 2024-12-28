@@ -31,10 +31,9 @@ import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
-import io.spine.protodata.ast.toProto
-import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.RequestDirectory
 import io.spine.protodata.testing.PipelineSetup
+import io.spine.protodata.testing.parametersWithRequestFile
 import io.spine.protodata.testing.recorder.RecordingPlugin
 import io.spine.protodata.testing.recorder.enumTypeNames
 import io.spine.protodata.testing.recorder.messageTypeNames
@@ -65,9 +64,7 @@ internal class PipelineFilteringSpec {
         filter: DescriptorFilter
     ): Pipeline {
         val requestFile = RequestDirectory(requestsDir).file(SourceSetName("testFixtures"))
-        val params = PipelineParameters.newBuilder()
-            .setRequest(requestFile.toProto())
-            .buildPartial()
+        val params = parametersWithRequestFile(requestFile)
         val setup = PipelineSetup.byResources(
             params = params,
             plugins = listOf(recorder),

@@ -34,6 +34,7 @@ import io.spine.protodata.java.WithSourceFileSet
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.settings.defaultConsumerId
+import io.spine.protodata.testing.parametersWithSettingsDir
 import io.spine.protodata.util.Format.PROTO_JSON
 import io.spine.string.ti
 import java.nio.file.Path
@@ -72,9 +73,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                     {"warnings": {"value": []}} 
                 """.ti()
             )
-            val params = PipelineParameters.newBuilder()
-                .setSettings(settings.path.toDirectory())
-                .buildPartial()
+            val params = parametersWithSettingsDir(settings.path)
 
             Pipeline(
                 params = params,
@@ -100,9 +99,7 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                 {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
             """.ti()
         )
-        val params = PipelineParameters.newBuilder()
-            .setSettings(settings.path.toDirectory())
-            .buildPartial()
+        val params = parametersWithSettingsDir(settings.path)
 
         Pipeline(
             params = params,

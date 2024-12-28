@@ -34,7 +34,6 @@ import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.protodata.ast.toDirectory
-import io.spine.protodata.ast.toProto
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.plugin.ConfigurationError
@@ -64,6 +63,8 @@ import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.protodata.testing.RenderingTestbed
+import io.spine.protodata.testing.parametersWithRequestFile
+import io.spine.protodata.testing.parametersWithSettingsDir
 import io.spine.protodata.util.Format
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
@@ -116,9 +117,7 @@ internal class PipelineSpec {
         }
         codegenRequestFile.writeBytes(request.toByteArray())
 
-        params = PipelineParameters.newBuilder()
-            .setRequest(codegenRequestFile.toProto())
-            .buildPartial()
+        params = parametersWithRequestFile(codegenRequestFile)
 
         renderer = UnderscorePrefixRenderer()
 
@@ -374,9 +373,7 @@ internal class PipelineSpec {
                 Format.PLAIN,
                 expectedContent
             )
-            val params = PipelineParameters.newBuilder()
-                .setSettings(settingsDir.toDirectory())
-                .buildPartial()
+            val params = parametersWithSettingsDir(settingsDir)
             Pipeline(
                 params = params,
                 plugins = listOf(

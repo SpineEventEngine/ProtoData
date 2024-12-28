@@ -193,15 +193,8 @@ private fun setupByResources(
     ) { _ -> }
 }
 
-private fun createParams(workingDir: Path): @NonValidated PipelineParameters {
-    val wd = WorkingDirectory(workingDir)
-    val requestFile = wd.requestDirectory.file(SourceSetName("testFixtures"))
-    val params = PipelineParameters.newBuilder()
-        .setSettings(wd.settingsDirectory.path.toDirectory())
-        .setRequest(requestFile.toProto())
-        .buildPartial()
-    return params
-}
+private fun createParams(workingDir: Path): @NonValidated PipelineParameters =
+    parametersForWorkingDir(workingDir)
 
 internal class StubPlugin: Plugin()
 
