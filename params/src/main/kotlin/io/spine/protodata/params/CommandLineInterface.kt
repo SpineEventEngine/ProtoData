@@ -28,7 +28,6 @@
 
 package io.spine.protodata.params
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.protodata.plugin.Plugin
 
 /**
@@ -41,17 +40,6 @@ public object ParametersFileParam : Parameter(
     help = """
         The path to the file with the serialized instance of `PipelineParameters` to 
         be passed to the pipeline. The file must be in `pb.json` format.
-    """.trimIndent()
-)
-/**
- * The command-line parameter for specifying the name of the file which stores
- * the list of Protobuf files compiled by `protoc`.
- */
-public object ProtoFilesParam : Parameter(
-    name = "--proto-files",
-    shortName = "-l",
-    help = """
-        The name of the file which stores the list of files compiled by `protoc`.
     """.trimIndent()
 )
 
@@ -79,17 +67,6 @@ public object PluginParam : Parameter(
         To pass more than one plugin class, type:
            `<...> ${dash.p} com.foo.FirstPlugin ${dash.p} com.foo.Second${escDollar}NestedPlugin`.
         """
-)
-
-/**
- * The command-line parameter for specifying the path to the file with
- * serialized [CodeGeneratorRequest].
- */
-public object RequestParam : Parameter(
-    name = "--request",
-    shortName = "-t", // "-r" was already taken, now it's available. Shall we rename?
-    help = "The path to the binary file containing a serialized instance of " +
-            "`${CodeGeneratorRequest.getDescriptor().name}`."
 )
 
 /**
@@ -145,27 +122,6 @@ public object UserClasspathParam : Parameter(
         This option may be omitted if the classes are already present in the ProtoData classpath. 
         May be one path to a JAR, a ZIP, or a directory. 
         Or, may be many paths separated by the system-dependent path separator (`$ps`).
-        """
-)
-
-/**
- * The command-line parameter for specifying the path to the directory with
- * setting files for ProtoData plugins.
- */
-public object SettingsDirParam : Parameter (
-    name = "--settings-dir",
-    shortName = "-d",
-    help = """
-        A directory which contains setting files for ProtoData plugins.
-        
-        Setting files may be a JSON, a YAML, or a binary Protobuf file.
-        A name of the file must match the name of the plugin class, with the extension
-        corresponding to the format of the file:
-         * JSON files must have `.json` extension.
-         * JSON files with Protobuf JSON format must have `.pb.json` extension.
-         * YAML files must have `.yml` or `.yaml` extension.
-         * Protobuf binary files must have `.pb` or `.bin` extension.
-        Messages must not be delimited.
         """
 )
 
