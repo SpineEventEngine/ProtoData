@@ -176,4 +176,15 @@ internal class OptionsSpec {
             it shouldContain "int32"
         }
     }
+
+    @Test
+    fun `pack options using correct type URL`() {
+        val field = DiceRoll.getDescriptor().fields[0].toField()
+
+        val min = field.optionList.find("min")!!
+        min.value.typeUrl shouldBe "type.spine.io/MinOption"
+
+        val max = field.optionList.find("max")!!
+        max.value.typeUrl shouldBe "type.spine.io/MaxOption"
+    }
 }
