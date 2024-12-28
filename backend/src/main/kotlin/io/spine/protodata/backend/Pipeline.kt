@@ -90,7 +90,7 @@ public class Pipeline(
     public val params: PipelineParameters,
     public val plugins: List<Plugin>,
     public val sources: List<SourceFileSet>,
-    private val descriptorFilter: DescriptorFilter = { true },
+    private val descriptorFilter: DescriptorFilter = { true }
 ) : WithLogging {
 
     /**
@@ -150,12 +150,7 @@ public class Pipeline(
         plugin: Plugin,
         sources: SourceFileSet,
         id: String = generateId()
-    ) : this(
-        id,
-        params,
-        listOf(plugin),
-        listOf(sources),
-    )
+    ) : this(id, params, listOf(plugin), listOf(sources))
 
     init {
         under<DefaultMode> {
