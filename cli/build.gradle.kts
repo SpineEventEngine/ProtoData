@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.dependency.lib.AutoService
+import io.spine.dependency.lib.AutoServiceKsp
 import io.spine.dependency.lib.Clikt
 import io.spine.dependency.local.Logging
 import io.spine.gradle.publish.SpinePublishing
@@ -34,6 +36,7 @@ plugins {
     `write-manifest`
     `build-proto-model`
     `maven-publish`
+    ksp
     id("com.github.johnrengelman.shadow")
 }
 
@@ -53,6 +56,10 @@ dependencies {
     ).forEach { implementation(project(it)) }
 
     testImplementation(project(":test-env"))
+    testAnnotationProcessor(AutoService.processor)?.because(
+        "We need `@AutoService` for registering custom options provider.")
+    ksp(AutoServiceKsp.processor)
+    testCompileOnly(AutoService.annotations)
 }
 
 /** The publishing settings from the root project. */

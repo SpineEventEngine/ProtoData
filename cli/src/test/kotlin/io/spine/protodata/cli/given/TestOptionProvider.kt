@@ -26,12 +26,14 @@
 
 package io.spine.protodata.cli.given
 
+import com.google.auto.service.AutoService
 import com.google.protobuf.ExtensionRegistry
 import io.spine.option.OptionsProto
 import io.spine.option.OptionsProvider
 import io.spine.protodata.cli.test.TestOptionsProto
 
-class TestOptionProvider : OptionsProvider {
+@AutoService(OptionsProvider::class)
+public class TestOptionProvider : OptionsProvider {
 
     override fun registerIn(registry: ExtensionRegistry) {
         OptionsProto.registerAllExtensions(registry)
