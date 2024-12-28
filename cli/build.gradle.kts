@@ -55,11 +55,12 @@ dependencies {
         ":java"
     ).forEach { implementation(project(it)) }
 
-    testImplementation(project(":test-env"))
     testAnnotationProcessor(AutoService.processor)?.because(
         "We need `@AutoService` for registering custom options provider.")
     ksp(AutoServiceKsp.processor)
     testCompileOnly(AutoService.annotations)
+    testImplementation(project(":testlib"))
+    testImplementation(project(":test-env"))
 }
 
 /** The publishing settings from the root project. */

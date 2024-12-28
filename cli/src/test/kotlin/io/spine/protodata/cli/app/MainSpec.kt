@@ -28,17 +28,12 @@ package io.spine.protodata.cli.app
 
 import com.github.ajalt.clikt.core.MissingOption
 import com.github.ajalt.clikt.core.UsageError
-import com.google.protobuf.AnyProto
-import com.google.protobuf.DescriptorProtos
-import com.google.protobuf.EmptyProto
-import com.google.protobuf.TimestampProto
 import com.google.protobuf.compiler.codeGeneratorRequest
 import com.google.protobuf.stringValue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldStartWith
 import io.spine.base.Time
-import io.spine.option.OptionsProto
 import io.spine.protobuf.pack
 import io.spine.protodata.ast.AstProto
 import io.spine.protodata.ast.FileProto
@@ -65,12 +60,13 @@ import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.protodata.test.UnderscorePrefixRendererPlugin
 import io.spine.protodata.test.echo
+import io.spine.protodata.testing.googleProtobufProtos
+import io.spine.protodata.testing.spineOptionProtos
 import io.spine.protodata.util.Format
 import io.spine.string.ti
 import io.spine.time.LocalDates
 import io.spine.time.Month.SEPTEMBER
 import io.spine.time.toInstant
-import io.spine.time.validation.TimeOptionsProto
 import io.spine.tools.code.SourceSetName
 import io.spine.type.toCompactJson
 import java.io.File
@@ -129,19 +125,17 @@ class MainSpec {
         val project = ProjectProto.getDescriptor()
         val testProto = TestProto.getDescriptor()
         val request = codeGeneratorRequest {
-            protoFile.addAll(listOf(
-                project.toProto(),
-                testProto.toProto(),
-                TestOptionsProto.getDescriptor().toProto(),
-                OptionsProto.getDescriptor().toProto(),
-                DescriptorProtos.getDescriptor().toProto(),
-                TimeOptionsProto.getDescriptor().toProto(),
-                AstProto.getDescriptor().toProto(),
-                AnyProto.getDescriptor().toProto(),
-                EmptyProto.getDescriptor().toProto(),
-                FileProto.getDescriptor().toProto(),
-                TimestampProto.getDescriptor().toProto()
-            ))
+            protoFile.addAll(
+                googleProtobufProtos() +
+                spineOptionProtos() +
+                listOf(
+                    project.toProto(),
+                    testProto.toProto(),
+                    TestOptionsProto.getDescriptor().toProto(),
+                    AstProto.getDescriptor().toProto(),
+                    FileProto.getDescriptor().toProto(),
+                )
+            )
             fileToGenerate.addAll(listOf(
                 project.name,
                 testProto.name
