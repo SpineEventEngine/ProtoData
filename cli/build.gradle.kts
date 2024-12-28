@@ -218,3 +218,11 @@ tasks.shadowJar {
 // See https://github.com/johnrengelman/shadow/issues/153.
 tasks.shadowDistTar.get().enabled = false
 tasks.shadowDistZip.get().enabled = false
+
+// Set explicit dependency for the `kspTestKotlin` task to avoid the Gradle warning
+// on missing explicit dependency.
+project.afterEvaluate {
+    val kspTestKotlin by tasks.getting
+    val launchTestProtoData by tasks.getting
+    kspTestKotlin.dependsOn(launchTestProtoData)
+}
