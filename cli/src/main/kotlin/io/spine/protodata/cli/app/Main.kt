@@ -93,19 +93,6 @@ private fun readVersion(): String = Version.fromManifestOf(Run::class.java).valu
 
 /**
  * The main CLI command which performs the ProtoData code generation tasks.
- *
- * The command accepts class names for the service provider interface implementations via the CLI
- * parameters, such as `--plugin`, `--renderer`, and `--option-provider`, all of which
- * can be repeated parameters, if required.
- *
- * Then, using the classpath of the app and the user classpath supplied via the `--user-classpath`
- * parameter, loads those classes.
- *
- * `Code Generation` context accept Protobuf compiler events, regarding the Protobuf types, listed
- * in the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter.
- *
- * Finally, the renderers apply required changes to the source set with the root path, supplied in
- * the `--source-root` parameter.
  */
 @Suppress("TooManyFunctions") // It is OK for the `main` entry point.
 internal class Run(version: String) : CliktCommand(
