@@ -30,8 +30,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.annotation.GeneratedTypeAnnotation
-import io.spine.protodata.params.PipelineParameters
-import io.spine.protodata.render.SourceFileSet
+import io.spine.protodata.testing.pipelineParams
+import io.spine.protodata.testing.withRoots
 import io.spine.string.ti
 import java.nio.file.Path
 import javax.annotation.processing.Generated
@@ -101,9 +101,8 @@ class BeforePrimaryDeclarationSpec {
             }
 
             Pipeline(
-                params = PipelineParameters.getDefaultInstance(),
+                params = pipelineParams { withRoots(input, output) },
                 plugin = GeneratedTypeAnnotation().toPlugin(),
-                sources = SourceFileSet.create(input, output)
             )()
 
             classSrc = output / inputClassSrc.name

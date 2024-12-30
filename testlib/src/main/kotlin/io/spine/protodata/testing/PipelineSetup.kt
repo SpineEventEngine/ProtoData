@@ -161,13 +161,19 @@ import org.gradle.testfixtures.ProjectBuilder
  */
 @Suppress("LongParameterList") // OK, assuming the default value.
 public class PipelineSetup(
-    public val params: PipelineParameters,
+    params: PipelineParameters,
     public val plugins: List<Plugin>,
     inputDir: Path,
     outputDir: Path,
     private val descriptorFilter: DescriptorFilter = { true },
     private val writeSettings: (SettingsDirectory) -> Unit
 ) {
+    /**
+     * Parameters with populated source and target rood directories passed as `inputDir` and
+     * `outputDir` constructor parameters.
+     */
+    public val params: PipelineParameters
+
     /**
      * The directory to store settings for the [plugins].
      */
@@ -179,6 +185,10 @@ public class PipelineSetup(
     public val sourceFileSet: SourceFileSet
 
     init {
+        this.params = params.toBuilder()
+            .withRoots(inputDir, outputDir)
+            .buildPartial()
+
         require(plugins.isNotEmpty()) {
             "The list of plugins cannot be empty."
         }
@@ -197,7 +207,6 @@ public class PipelineSetup(
             id,
             params,
             plugins,
-            listOf(sourceFileSet),
             descriptorFilter,
         )
         return p

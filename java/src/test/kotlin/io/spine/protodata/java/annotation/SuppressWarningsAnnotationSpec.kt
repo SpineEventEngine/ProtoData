@@ -27,18 +27,19 @@
 package io.spine.protodata.java.annotation
 
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.JAVA_FILE
 import io.spine.protodata.java.WithSourceFileSet
-import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.settings.defaultConsumerId
-import io.spine.protodata.testing.parametersWithSettingsDir
+import io.spine.protodata.testing.pipelineParams
+import io.spine.protodata.testing.withRoots
+import io.spine.protodata.testing.withSettingsDir
 import io.spine.protodata.util.Format.PROTO_JSON
 import io.spine.string.ti
 import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.io.path.readText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -49,17 +50,20 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
 
     private fun loadCode() = sources.first()
         .file(Path(JAVA_FILE))
-        .code()
+        .outputPath.readText()     
 
     @Nested
     inner class `suppress ALL warnings ` {
 
         @Test
         fun `if no settings are passed`() {
+            val sourceSet = sources.first()
+            val params = pipelineParams {
+                withRoots(sourceSet.inputRoot, sourceSet.outputRoot)
+            }
             Pipeline(
-                params = PipelineParameters.getDefaultInstance(),
+                params = params,
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
-                sources = this@SuppressWarningsAnnotationSpec.sources,
             )()
             val code = loadCode()
             assertContainsSuppressionAll(code)
@@ -73,12 +77,15 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                     {"warnings": {"value": []}} 
                 """.ti()
             )
-            val params = parametersWithSettingsDir(settings.path)
+            val sourceSet = sources.first()
+            val params = pipelineParams {
+                withRoots(sourceSet.inputRoot, sourceSet.outputRoot)
+                withSettingsDir(settings.path)
+            }
 
             Pipeline(
                 params = params,
                 plugins = listOf(SuppressWarningsAnnotation.Plugin()),
-                sources = this@SuppressWarningsAnnotationSpec.sources,
             )()
             val code = loadCode()
             assertContainsSuppressionAll(code)
@@ -99,12 +106,15 @@ internal class SuppressWarningsAnnotationSpec : WithSourceFileSet() {
                 {"warnings": {"value": ["$deprecation", "$stringEqualsEmptyString"]}} 
             """.ti()
         )
-        val params = parametersWithSettingsDir(settings.path)
+        val sourceSet = sources.first()
+        val params = pipelineParams {
+            withRoots(sourceSet.inputRoot, sourceSet.outputRoot)
+            withSettingsDir(settings.path)
+        }
 
         Pipeline(
             params = params,
             plugins = listOf(SuppressWarningsAnnotation.Plugin()),
-            sources = sources,
         )()
         val code = loadCode()
 

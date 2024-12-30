@@ -36,7 +36,8 @@ import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.testing.PipelineSetup
 import io.spine.protodata.testing.RenderingTestbed
-import io.spine.protodata.testing.parametersWithRequestFile
+import io.spine.protodata.testing.pipelineParams
+import io.spine.protodata.testing.withRequestFile
 import io.spine.tools.code.Java
 import io.spine.tools.code.SourceSetName
 import java.nio.file.Path
@@ -66,7 +67,7 @@ internal class MemberSpec {
         fun setup(@TempDir workingDir: Path, @TempDir outputDir: Path) {
             val requestFile = WorkingDirectory(workingDir).parametersDirectory
                 .file(SourceSetName("testFixtures"))
-            val params = parametersWithRequestFile(requestFile)
+            val params = pipelineParams { withRequestFile(requestFile) }
             val setup = PipelineSetup.byResources(
                 language = Java,
                 params = params,

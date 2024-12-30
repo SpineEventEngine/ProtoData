@@ -33,11 +33,12 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.spine.protodata.params.RequestDirectory
 import io.spine.protodata.testing.PipelineSetup
-import io.spine.protodata.testing.parametersWithRequestFile
+import io.spine.protodata.testing.pipelineParams
 import io.spine.protodata.testing.recorder.RecordingPlugin
 import io.spine.protodata.testing.recorder.enumTypeNames
 import io.spine.protodata.testing.recorder.messageTypeNames
 import io.spine.protodata.testing.recorder.serviceNames
+import io.spine.protodata.testing.withRequestFile
 import io.spine.tools.code.SourceSetName
 import java.nio.file.Path
 import org.junit.jupiter.api.BeforeEach
@@ -64,7 +65,7 @@ internal class PipelineFilteringSpec {
         filter: DescriptorFilter
     ): Pipeline {
         val requestFile = RequestDirectory(requestsDir).file(SourceSetName("testFixtures"))
-        val params = parametersWithRequestFile(requestFile)
+        val params = pipelineParams { withRequestFile(requestFile) }
         val setup = PipelineSetup.byResources(
             params = params,
             plugins = listOf(recorder),

@@ -37,15 +37,12 @@ import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
 import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.PluginParam
-import io.spine.protodata.params.SourceRootParam
-import io.spine.protodata.params.TargetRootParam
 import io.spine.protodata.params.UserClasspathParam
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.params.pipelineParameters
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File
-import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -127,14 +124,6 @@ public abstract class LaunchProtoData : JavaExec() {
                 yield(PluginParam.name)
                 yield(it)
             }
-
-            if (sources.isPresent) {
-                yield(SourceRootParam.name)
-                yield(sources.absolutePaths())
-            }
-
-            yield(TargetRootParam.name)
-            yield(targets.absolutePaths())
 
             val userCp = userClasspathConfiguration.asPath
             if (userCp.isNotEmpty()) {
@@ -290,6 +279,3 @@ private fun Provider<List<Directory>>.absoluteDirs(): List<File> = takeIf { it.i
     ?.get()
     ?.map { it.asFile.absoluteFile }
     ?: listOf()
-
-private fun Provider<List<Directory>>.absolutePaths(): String =
-    absoluteDirs().joinToString(pathSeparator)

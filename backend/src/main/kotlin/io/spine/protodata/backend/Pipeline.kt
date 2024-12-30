@@ -34,6 +34,7 @@ import io.spine.code.proto.parse
 import io.spine.environment.DefaultMode
 import io.spine.logging.WithLogging
 import io.spine.protodata.ast.Coordinates
+import io.spine.protodata.ast.Directory
 import io.spine.protodata.ast.Documentation
 import io.spine.protodata.ast.File
 import io.spine.protodata.ast.toPath
@@ -55,6 +56,7 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
 import io.spine.string.ti
+import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 
 /**
@@ -77,7 +79,6 @@ import kotlin.io.path.inputStream
  *   two or more pipelines are executed in the same JVM. If not specified, the ID will be generated.
  * @property params The pipeline parameters object.
  * @property plugins The code generation plugins to be applied to the pipeline.
- * @property sources The source sets to be processed by the pipeline.
  * @property descriptorFilter The predicate to accept descriptors during parsing of the [request].
  *  The default value accepts all the descriptors.
  *  The primary usage scenario for this parameter is accepting only
@@ -89,7 +90,6 @@ public class Pipeline(
     public val id: String = generateId(),
     public val params: PipelineParameters,
     public val plugins: List<Plugin>,
-    public val sources: List<SourceFileSet>,
     private val descriptorFilter: DescriptorFilter = { true }
 ) : WithLogging {
 
@@ -102,7 +102,8 @@ public class Pipeline(
     }
 
     /**
-     * The Protobuf compiler request.
+     * The Protobuf compiler request loaded from the file specified by
+     * the [request property] [PipelineParameters.getRequest] of the [pipeline parameters][params].
      */
     public val request: CodeGeneratorRequest by lazy {
         val requestFile = params.request
@@ -142,21 +143,56 @@ public class Pipeline(
     }
 
     /**
+     * The source sets to be processed by the pipeline.
+     */
+    public val sources: List<SourceFileSet> by lazy {
+        createSourceFileSets()
+    }
+
+    /**
      * Creates a new `Pipeline` with only one plugin and one source set.
      */
     @VisibleForTesting
     public constructor(
         params: PipelineParameters,
         plugin: Plugin,
-        sources: SourceFileSet,
         id: String = generateId()
-    ) : this(id, params, listOf(plugin), listOf(sources))
+    ) : this(id, params, listOf(plugin))
 
     init {
         under<DefaultMode> {
             use(InMemoryStorageFactory.newInstance())
             use(InMemoryTransportFactory.newInstance())
             use(Delivery.direct())
+        }
+    }
+
+    private fun createSourceFileSets(): List<SourceFileSet> {
+        checkPaths()
+        val sources = params.sourceRootList
+        val targets = (params.targetRootList ?: sources)!!
+        return sources
+            ?.zip(targets)
+            ?.map { (s, t) -> s.toPath() to t.toPath() }
+            ?.filter { (s, _) -> s.exists() }
+            ?.map { (s, t) -> SourceFileSet.create(s, t) }
+            ?: targets.oneSetWithNoFiles()
+    }
+
+    private fun checkPaths() {
+        val sourceRoots = params.sourceRootList
+        val targetRoots = params.targetRootList
+        if (sourceRoots.isEmpty()) {
+            require(targetRoots.size == 1) {
+                "When not providing a source directory, only one target directory must be present."
+            }
+        }
+        if (sourceRoots.isNotEmpty()  && targetRoots.isNotEmpty()) {
+            require(sourceRoots!!.size == targetRoots!!.size) {
+                "Mismatched number of directories." +
+                        " Given ${sourceRoots.size} source directories and" +
+                        " ${targetRoots.size} target directories."
+            }
         }
     }
 
@@ -260,3 +296,9 @@ private fun CodeGeneratorRequest.toTypeSystem(compiledProtoFiles: ProtoFileList)
     val protoFiles = fileDescriptors.map { it.toPbSourceFile() }
     return TypeSystem(compiledProtoFiles, protoFiles.toSet())
 }
+
+/**
+ * Creates a list that contains a single, empty source set.
+ */
+private fun List<Directory>.oneSetWithNoFiles(): List<SourceFileSet> =
+    listOf(SourceFileSet.empty(first().toPath()))

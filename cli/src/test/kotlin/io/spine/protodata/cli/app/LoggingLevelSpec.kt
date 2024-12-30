@@ -32,7 +32,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
-import io.spine.option.OptionsProto
 import io.spine.protodata.ast.directory
 import io.spine.protodata.ast.file
 import io.spine.protodata.ast.toProto
@@ -45,6 +44,8 @@ import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.StubSoloRenderer
+import io.spine.protodata.testing.googleProtobufProtos
+import io.spine.protodata.testing.spineOptionProtos
 import io.spine.tools.code.SourceSetName
 import java.io.File
 import java.nio.file.Path
@@ -98,12 +99,14 @@ class LoggingLevelSpec {
         val project = ProjectProto.getDescriptor()
         val testProto = TestProto.getDescriptor()
         val request = codeGeneratorRequest {
-            protoFile.addAll(listOf(
-                project.toProto(),
-                testProto.toProto(),
-                TestOptionsProto.getDescriptor().toProto(),
-                OptionsProto.getDescriptor().toProto()
-            ))
+            protoFile.addAll(
+                listOf(
+                    project.toProto(),
+                    testProto.toProto(),
+                    TestOptionsProto.getDescriptor().toProto(),
+                ) + spineOptionProtos()
+                        + googleProtobufProtos()
+            )
             fileToGenerate.addAll(listOf(
                 project.name,
                 testProto.name
@@ -144,8 +147,6 @@ class LoggingLevelSpec {
         val params = mutableListOf(
             "--params", parametersFile.toPath().absolutePathString(),
             "-p", LoggingLevelAsserterPlugin::class.jvmName,
-            "--src", srcRoot.toString(),
-            "--target", targetRoot.toString(),
         )
         params.addAll(argv)
         Run("1961.04.12").parse(params)

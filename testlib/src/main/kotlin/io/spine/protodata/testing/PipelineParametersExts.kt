@@ -36,18 +36,52 @@ import java.io.File
 import java.nio.file.Path
 
 /**
- * Creates a partial instance of [PipelineParameters] that refer to the given request file.
+ * Creates a partial instance of [PipelineParameters] by applying the [block] to the builder.
  */
-public fun parametersWithRequestFile(file: File): @NonValidated PipelineParameters =
-    PipelineParameters.newBuilder()
-        .setRequest(file.toProto())
-        .buildPartial()
+public fun pipelineParams(
+    block: (PipelineParameters.Builder.() -> Unit)
+): @NonValidated PipelineParameters {
+    val builder = PipelineParameters.newBuilder()
+    block(builder)
+    return builder.buildPartial()
+}
 
 /**
- * Creates a partial instance of [PipelineParameters] that refer to the given request file.
+ * Assigns the given [file] as the reference to the request parameters file.
  */
-public fun parametersWithRequestFile(file: Path): @NonValidated PipelineParameters =
-        parametersWithRequestFile(file.toFile())
+public fun PipelineParameters.Builder.withRequestFile(file: File): PipelineParameters.Builder  {
+    request = file.toProto()
+    return this
+}
+
+/**
+ * Assigns the given [file] as the reference to the request parameters file.
+ */
+public fun PipelineParameters.Builder.withRequestFile(file: Path): PipelineParameters.Builder {
+    withRequestFile(file.toFile())
+    return this
+}
+
+/**
+ * Assigns the given [dir] as the reference to the settings directory.
+ */
+public fun PipelineParameters.Builder.withSettingsDir(dir: Path): PipelineParameters.Builder {
+    settings = dir.toDirectory()
+    return this
+}
+
+/**
+ * Adds [sourceRoot] and [targetRoot] directories to this builder of parameters.
+ */
+public fun PipelineParameters.Builder.withRoots(
+    sourceRoot: Path,
+    targetRoot: Path
+): PipelineParameters.Builder {
+    val builder = this@withRoots
+    builder.addSourceRoot(sourceRoot.toDirectory())
+    builder.addTargetRoot(targetRoot.toDirectory())
+    return this
+}
 
 /**
  * Creates a partial instance of [PipelineParameters] that refer to the given settings directory.
@@ -67,8 +101,10 @@ public fun parametersWithSettingsDir(dir: Path): @NonValidated PipelineParameter
  *  * The [settings directory][PipelineParameters.getSettings] is named
  *  after the [convention][WorkingDirectory.settingsDirectory].
  */
-public fun parametersForWorkingDir(dir: Path): @NonValidated PipelineParameters {
-    val wd = WorkingDirectory(dir)
+public fun parametersForWorkingDir(
+    workingDir: Path
+): @NonValidated PipelineParameters {
+    val wd = WorkingDirectory(workingDir)
     val requestFile = wd.requestDirectory.file(SourceSetName("testFixtures"))
     val params = PipelineParameters.newBuilder()
         .setSettings(wd.settingsDirectory.path.toDirectory())

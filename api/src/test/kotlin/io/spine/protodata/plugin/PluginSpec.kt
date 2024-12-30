@@ -33,9 +33,9 @@ import io.spine.protodata.ast.event.FieldEntered
 import io.spine.protodata.ast.event.FieldExited
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.protobuf.ProtoFileList
-import io.spine.protodata.render.SourceFileSet
+import io.spine.protodata.testing.pipelineParams
+import io.spine.protodata.testing.withRoots
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
@@ -93,11 +93,12 @@ internal class PluginSpec {
     }
 
     private fun runPipeline(src: Path, target: Path) {
-        val fileSet = SourceFileSet.create(src, target)
+        val params = pipelineParams {
+            withRoots(src, target)
+        }
         val pipeline = Pipeline(
-            PipelineParameters.getDefaultInstance(),
+            params,
             plugin,
-            fileSet
         )
         pipeline()
     }

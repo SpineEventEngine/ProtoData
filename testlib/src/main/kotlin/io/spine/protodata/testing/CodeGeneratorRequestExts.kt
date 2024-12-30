@@ -50,9 +50,9 @@ import io.spine.time.validation.TimeOptionsProto
  * ```kotlin
  * val request = codeGeneratorRequest {
  *   protoFile.addAll(
- *      googleProtobufProtos() +
- *      spineOptionProtos() +
  *      myCustomProtos
+ *      spineOptionProtos() +
+ *      googleProtobufProtos() +
  *   )
  * }
  * ```
@@ -82,9 +82,9 @@ public fun googleProtobufProtos(): List<FileDescriptorProto> = listOf(
  * ```kotlin
  * val request = codeGeneratorRequest {
  *   protoFile.addAll(
- *      googleProtobufProtos() +
+ *      myCustomProtos +
  *      spineOptionProtos() +
- *      myCustomProtos
+ *      googleProtobufProtos()
  *   )
  * }
  * ```

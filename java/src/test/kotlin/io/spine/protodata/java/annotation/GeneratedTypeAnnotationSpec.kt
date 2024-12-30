@@ -35,38 +35,26 @@ import io.spine.protodata.java.JAVA_FILE
 import io.spine.protodata.java.WithSourceFileSet
 import io.spine.protodata.java.annotation.GeneratedTypeAnnotation.Companion.currentDateTime
 import io.spine.protodata.render.SourceFile
-import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.testing.pipelineParams
+import io.spine.protodata.testing.withRoots
 import io.spine.time.testing.FrozenMadHatterParty
 import io.spine.time.toTimestamp
-import java.nio.file.Path
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.io.path.Path
+import kotlin.io.path.readText
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("`GeneratedTypeAnnotation` renderer should")
 internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
-    companion object {
-
-        lateinit var settings: SettingsDirectory
-
-        @BeforeAll
-        @JvmStatic
-        fun createSettings(@TempDir dir: Path) {
-            settings = SettingsDirectory(dir)
-        }
-    }
-
     @Test
     fun `add the annotation, assuming 'PROTODATA_CLI' as the default generator`() {
-        createPipelineWith(GeneratedTypeAnnotation())
+        runPipelineWith(GeneratedTypeAnnotation())
         assertGenerated(
             "@javax.annotation.processing.Generated(\"$CLI_APP_CLASS\")"
         )
@@ -74,7 +62,7 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
     @Test
     fun `use given generator value`() {
-        createPipelineWith(GeneratedTypeAnnotation(javaClass.name))
+        runPipelineWith(GeneratedTypeAnnotation(javaClass.name))
         assertGenerated(
             "@javax.annotation.processing.Generated(\"${javaClass.name}\")"
         )
@@ -101,7 +89,7 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
         @Test
         fun `produce timestamp of code generation`() {
-            createPipelineWith(GeneratedTypeAnnotation(
+            runPipelineWith(GeneratedTypeAnnotation(
                 generator = javaClass.name,
                 addTimestamp = true
             ))
@@ -126,7 +114,7 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
         val addFileName : (SourceFile<*>) -> String = {
             "file://${it.relativePath}"
         }
-        createPipelineWith(GeneratedTypeAnnotation(
+        runPipelineWith(GeneratedTypeAnnotation(
             generator = javaClass.name,
             commenter = addFileName
         ))
@@ -148,13 +136,15 @@ internal class GeneratedTypeAnnotationSpec : WithSourceFileSet() {
 
     private fun generatedCode() = sources.first()
         .file(Path(JAVA_FILE))
-        .code()
+        .outputPath.readText()
 
-    private fun createPipelineWith(generatedTypeAnnotation: GeneratedTypeAnnotation) {
+    private fun runPipelineWith(generatedTypeAnnotation: GeneratedTypeAnnotation) {
+        val params = pipelineParams {
+            withRoots(sources.first().inputRoot, sources.first().outputRoot)
+        }
         Pipeline(
-            params = io.spine.protodata.params.PipelineParameters.getDefaultInstance(),
+            params = params,
             plugins = listOf(generatedTypeAnnotation.toPlugin()),
-            sources = this.sources,
         )()
     }
 }

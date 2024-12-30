@@ -31,11 +31,8 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.spine.io.ResourceDirectory
-import io.spine.protodata.ast.toDirectory
-import io.spine.protodata.ast.toProto
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.params.PipelineParameters
-import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.PipelineSetup.Companion.byResources
@@ -43,7 +40,6 @@ import io.spine.protodata.testing.PipelineSetup.Companion.detectCallingClass
 import io.spine.protodata.util.Format.PROTO_JSON
 import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
-import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.TypeScript
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
 import io.spine.validate.NonValidated

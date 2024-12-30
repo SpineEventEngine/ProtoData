@@ -48,18 +48,14 @@ import io.spine.protodata.params.Parameter
 import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.PluginParam
-import io.spine.protodata.params.SourceRootParam
-import io.spine.protodata.params.TargetRootParam
 import io.spine.protodata.params.UserClasspathParam
 import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.util.parseFile
 import io.spine.string.Separator
 import io.spine.tools.code.manifest.Version
 import java.io.File
 import java.io.File.pathSeparator
 import java.nio.file.Path
-import kotlin.io.path.exists
 import kotlin.system.exitProcess
 
 /**
@@ -122,18 +118,6 @@ internal class Run(version: String) : CliktCommand(
     private val plugins: List<String>
             by PluginParam.toOption().multiple()
 
-    private val sourceRoots: List<Path>?
-            by SourceRootParam.toOption().path(
-                canBeFile = false,
-                canBeSymlink = false
-            ).splitPaths()
-
-    private val targetRoots: List<Path>?
-            by TargetRootParam.toOption().path(
-                canBeFile = false,
-                canBeSymlink = false
-            ).splitPaths().required()
-
     private val classpath: List<Path>?
             by UserClasspathParam.toOption().path(
                 mustExist = true,
@@ -168,7 +152,6 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun doRun() {
-        val sources = createSourceFileSets()
         val plugins = loadPlugins()
 
         val params = parseFile(paramsFile, PipelineParameters::class.java)
@@ -176,36 +159,10 @@ internal class Run(version: String) : CliktCommand(
         val pipeline = Pipeline(
             params = params,
             plugins = plugins,
-            sources = sources,
         )
         pipeline()
     }
 
-    private fun createSourceFileSets(): List<SourceFileSet> {
-        checkPaths()
-        val sources = sourceRoots
-        val targets = (targetRoots ?: sources)!!
-        return sources
-            ?.zip(targets)
-            ?.filter { (s, _) -> s.exists() }
-            ?.map { (s, t) -> SourceFileSet.create(s, t) }
-            ?: targets.oneSetWithNoFiles()
-    }
-
-    private fun checkPaths() {
-        if (sourceRoots == null) {
-            checkUsage(targetRoots!!.size == 1) {
-                "When not providing a source directory, only one target directory must be present."
-            }
-        }
-        if (sourceRoots != null && targetRoots != null) {
-            checkUsage(sourceRoots!!.size == targetRoots!!.size) {
-                "Mismatched number of directories." +
-                        " Given ${sourceRoots!!.size} source directories and" +
-                        " ${targetRoots!!.size} target directories."
-            }
-        }
-    }
 
     private fun loadPlugins(): List<Plugin> {
         val factory = PluginFactory(
@@ -221,12 +178,6 @@ internal class Run(version: String) : CliktCommand(
      */
     private fun printError(message: String?) = echo(message, trailingNewline = true, err = true)
 }
-
-/**
- * Creates a list that contains a single, empty source set.
- */
-private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet> =
-    listOf(SourceFileSet.empty(first()))
 
 /**
  * Throws an [UsageError] with the result of calling [lazyMessage] if the [condition] isn't met.

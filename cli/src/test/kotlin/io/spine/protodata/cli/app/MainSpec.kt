@@ -26,8 +26,6 @@
 
 package io.spine.protodata.cli.app
 
-import com.github.ajalt.clikt.core.MissingOption
-import com.github.ajalt.clikt.core.UsageError
 import com.google.protobuf.compiler.codeGeneratorRequest
 import com.google.protobuf.stringValue
 import io.kotest.matchers.shouldBe
@@ -57,7 +55,6 @@ import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.ProtoEchoRenderer
 import io.spine.protodata.test.ProtoEchoRendererPlugin
 import io.spine.protodata.test.TestPlugin
-import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.protodata.test.UnderscorePrefixRendererPlugin
 import io.spine.protodata.test.echo
 import io.spine.protodata.testing.googleProtobufProtos
@@ -80,7 +77,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("ProtoData command-line application should")
@@ -102,19 +98,20 @@ class MainSpec {
 
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
+        srcRoot = sandbox.resolve("src")
+        srcRoot.toFile().mkdirs()
+        targetRoot = sandbox.resolve("target")
+        targetRoot.toFile().mkdirs()
+
         val params = pipelineParameters {
             compiledProto.add(file { path = "/given/proto/file/path.proto"})
             settings = workingDir.settingsDirectory.path.toDirectory()
-            sourceRoot.add(sandbox.resolve("src").toDirectory())
-            targetRoot.add(sandbox.resolve("generated").toDirectory())
+            sourceRoot.add(srcRoot.toDirectory())
+            targetRoot.add(this@MainSpec.targetRoot.toDirectory())
             request = codegenRequestFile.toFile().toProto()
         }
         parametersFile = workingDir.parametersDirectory.write(SourceSetName.test, params)
 
-        targetRoot = sandbox.resolve("target")
-        targetRoot.toFile().mkdirs()
-        srcRoot = sandbox.resolve("src")
-        srcRoot.toFile().mkdirs()
 
         val sourceFile = srcRoot.resolve("SourceCode.java")
         sourceFile.writeText("""
@@ -126,15 +123,15 @@ class MainSpec {
         val testProto = TestProto.getDescriptor()
         val request = codeGeneratorRequest {
             protoFile.addAll(
-                googleProtobufProtos() +
-                spineOptionProtos() +
                 listOf(
                     project.toProto(),
                     testProto.toProto(),
                     TestOptionsProto.getDescriptor().toProto(),
                     AstProto.getDescriptor().toProto(),
                     FileProto.getDescriptor().toProto(),
-                )
+                ) +
+                spineOptionProtos() +
+                googleProtobufProtos()
             )
             fileToGenerate.addAll(listOf(
                 project.name,
@@ -150,8 +147,6 @@ class MainSpec {
             "--params", parametersFile.absolutePath,
             "-p", TestPlugin::class.jvmName,
             "-p", UnderscorePrefixRendererPlugin::class.jvmName,
-            "--src", srcRoot.toString(),
-            "--target", targetRoot.toString(),
         )
         targetFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
     }
@@ -162,8 +157,6 @@ class MainSpec {
             "--params", parametersFile.absolutePath,
             "-p", DefaultOptionsCounterPlugin::class.jvmName,
             "-p", DefaultOptionsCounterRendererPlugin::class.jvmName,
-            "--src", srcRoot.toString(),
-            "--target", targetRoot.toString(),
         )
         val generatedFile = targetRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
         generatedFile.readText() shouldBe "true, true"
@@ -183,8 +176,6 @@ class MainSpec {
             launchApp(
                 "--params", parametersFile.absolutePath,
                 "-p", EchoRendererPlugin::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -199,8 +190,6 @@ class MainSpec {
             launchApp(
                 "--params", parametersFile.absolutePath,
                 "-p", EchoRendererPlugin::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -219,8 +208,6 @@ class MainSpec {
             launchApp(
                 "--params", parametersFile.absolutePath,
                 "-p", EchoRendererPlugin::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -239,8 +226,6 @@ class MainSpec {
             launchApp(
                 "--params", parametersFile.absolutePath,
                 "-p", ProtoEchoRendererPlugin::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
             )
             val text = outputEchoFile.readText()
 
@@ -263,8 +248,6 @@ class MainSpec {
             launchApp(
                 "--params", parametersFile.absolutePath,
                 "-p", ProtoEchoRendererPlugin::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
             )
 
             val text = outputEchoFile.readText()
@@ -285,8 +268,6 @@ class MainSpec {
             launchApp(
                 "--params", parametersFile.absolutePath,
                 "-p", EchoRendererPlugin::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
             )
             outputEchoFile.readText() shouldBe name
         }
@@ -299,44 +280,10 @@ class MainSpec {
             launchApp(
                 "--params", parametersFile.absolutePath,
                 "-p", PlainStringRendererPlugin::class.jvmName,
-                "--src", srcRoot.toString(),
-                "--target", targetRoot.toString(),
             )
             outputEchoFile.readText() shouldBe plainString
         }
     }
-
-    @Nested
-    inner class `Fail if` {
-
-        @Test
-        fun `target dir is missing`() {
-            assertThrows<UsageError> {
-                launchApp(
-                    "--params", parametersFile.absolutePath,
-                    "-p", TestPlugin::class.jvmName,
-                    "-p", UnderscorePrefixRenderer::class.jvmName,
-                    "--src", srcRoot.toString(),
-                )
-            }
-        }
-
-        @Test
-        fun `code generator request file is missing`() {
-            assertMissingOption {
-                launchApp(
-                    "--params", parametersFile.absolutePath,
-                    "-p", TestPlugin::class.jvmName,
-                    "-p", UnderscorePrefixRenderer::class.jvmName,
-                    "--src", srcRoot.toString(),
-                )
-            }
-        }
-
-        private fun assertMissingOption(block: () -> Unit) {
-            assertThrows<MissingOption>(block)
-        }
-    }
-
+    
     private fun launchApp(vararg argv: String) = Run("42.0.0").parse(argv.toList())
 }

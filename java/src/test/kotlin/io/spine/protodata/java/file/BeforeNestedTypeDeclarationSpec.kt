@@ -33,11 +33,11 @@ import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.EnumName
 import io.spine.protodata.java.annotation.TypeAnnotation
-import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.render.SourceFile
-import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.testing.RenderingTestbed
+import io.spine.protodata.testing.pipelineParams
+import io.spine.protodata.testing.withRoots
 import io.spine.string.ti
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
@@ -110,13 +110,12 @@ class BeforeNestedTypeDeclarationSpec {
             }
 
             Pipeline(
-                params = PipelineParameters.getDefaultInstance(),
+                params = pipelineParams { withRoots(input, output) },
                 plugin = RenderingTestbed(
                     SuppressWarningsAnnotation(deeplyNestedClassName),
                     SuppressWarningsAnnotation(nestedEnum),
                     SuppressWarningsAnnotation(nestedInterface),
                 ),
-                sources = SourceFileSet.create(input, output)
             )()
 
             javaFile = output / inputClassSrc.name
