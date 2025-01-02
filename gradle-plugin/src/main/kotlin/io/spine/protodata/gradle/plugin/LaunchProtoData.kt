@@ -163,12 +163,8 @@ public abstract class LaunchProtoData : JavaExec() {
  * Applies default settings to the receiver task.
  *
  * @param sourceSet The source set for which the task is created.
- * @param settingsDirTask The task for creating the settings directory from which this task depends.
  */
-internal fun LaunchProtoData.applyDefaults(
-    sourceSet: SourceSet,
-    settingsDirTask: CreateSettingsDirectory
-) {
+internal fun LaunchProtoData.applyDefaults(sourceSet: SourceSet) {
     sourceSetName.set(sourceSet.name)
     val project = project
     val ext = project.extension
@@ -187,16 +183,12 @@ internal fun LaunchProtoData.applyDefaults(
     onlyIf {
         hasRequestFile(sourceSet)
     }
-    setDependencies(sourceSet, settingsDirTask)
+    setDependencies(sourceSet)
 }
 
-private fun LaunchProtoData.setDependencies(
-    sourceSet: SourceSet,
-    settingsDirTask: CreateSettingsDirectory
-) {
+private fun LaunchProtoData.setDependencies(sourceSet: SourceSet) {
     val project = project
     dependsOn(
-        settingsDirTask,
         project.protoDataRawArtifact.buildDependencies,
         project.userClasspath.buildDependencies,
     )

@@ -54,7 +54,6 @@ import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.protobufExtension
 import io.spine.tools.gradle.task.JavaTaskName
 import io.spine.tools.gradle.task.descriptorSetFile
-import io.spine.util.theOnly
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
@@ -158,27 +157,19 @@ private fun Project.createConfigurations(protoDataVersion: String) {
 }
 
 /**
- * Creates auxiliary tasks.
- *
- * Creates [CreateSettingsDirectory] task and [`clean`][Delete] tasks for
- * all source sets of this project available by the time of the call.
+ * Creates the [CleanProtoDataTask] and [LaunchProtoData] tasks for all source sets
+ * in this project available by the time of the call.
  *
  * There may be cases of source sets added by other plugins after this method is invoked.
- * Such situations are handled by [Project.handleLaunchTaskDependency].
+ * Such cases are handled by the [handleLaunchTaskDependency] function.
  *
  * @see [Project.handleLaunchTaskDependency]
  */
 private fun Project.createTasks() {
-    val settingsDirTask = createSettingsDirTask()
     sourceSets.forEach { sourceSet ->
-        createLaunchTask(sourceSet, settingsDirTask)
+        createLaunchTask(sourceSet)
         createCleanTask(sourceSet)
     }
-}
-
-private fun Project.createSettingsDirTask(): CreateSettingsDirectory {
-    val result = tasks.create<CreateSettingsDirectory>("createSettingsDirectory")
-    return result
 }
 
 /**
@@ -187,11 +178,10 @@ private fun Project.createSettingsDirTask(): CreateSettingsDirectory {
 @CanIgnoreReturnValue
 private fun Project.createLaunchTask(
     sourceSet: SourceSet,
-    settingsDirTask: CreateSettingsDirectory
 ): LaunchProtoData {
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
-        applyDefaults(sourceSet, settingsDirTask)
+        applyDefaults(sourceSet)
     }
     return result
 }
@@ -431,8 +421,7 @@ private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask)
     LaunchTask.find(this, sourceSet)
         ?.dependsOn(generateProto)
         ?: afterEvaluate {
-            val settingsTask = tasks.withType(CreateSettingsDirectory::class.java).theOnly()
-            val launchTask = createLaunchTask(sourceSet, settingsTask)
+            val launchTask = createLaunchTask(sourceSet)
             launchTask.dependsOn(generateProto)
             createCleanTask(sourceSet)
         }
