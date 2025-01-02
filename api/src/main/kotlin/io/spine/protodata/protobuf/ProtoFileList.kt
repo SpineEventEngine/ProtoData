@@ -26,51 +26,17 @@
 
 package io.spine.protodata.protobuf
 
-import io.spine.string.Separator
 import java.io.File
-import java.nio.file.Path
 
 /**
- * A list of Protobuf files compiled by `protoc`.
- *
- * The list is stored in a file passed to the constructor.
- * Each line of the file is a full name of the Protobuf file.
+ * The list of absolute names of Protobuf files compiled by `protoc`.
  *
  * @property files The references to Protobuf files compiled by `protoc`.
  */
 public class ProtoFileList(public val files: List<File>) {
 
-    public companion object {
-
-        /**
-         * Obtains a name for the file listing Protobuf files in the source set
-         * with the given name.
-         */
-        public fun fileFor(sourceSetName: String): File =
-            File("${sourceSetName}-proto-files.txt")
-
-        /**
-         * Creates the file in the given directory which lists the specified files.
-         *
-         * @param dir The directory to place the file. The name of the file [depends][fileFor]
-         *  upon the name of the source set.
-         * @param sourceSetName The name of the source set which contains the files.
-         * @param files The list of files names of which are to be stored in the created file.
-         */
-        public fun create(dir: Path, sourceSetName: String, files: List<File>) {
-            dir.toFile().mkdirs()
-            val targetFile = dir.resolve(fileFor(sourceSetName).toPath()).toFile()
-            // Use the `LF` separator for compatibility with the Kotlin runtime for reading.
-            targetFile.writeText(files.joinToString(Separator.LF.value))
-        }
-
-        /**
-         * Loads the list from the file with the given name.
-         */
-        public fun load(file: File): ProtoFileList {
-            val content = file.readText()
-            val files = content.lines().map { line -> File(line) }
-            return ProtoFileList(files)
-        }
-    }
+    /**
+     * Finds the full pathname for the given file.
+     */
+    public fun find(file: File): File? = files.find { it.path.endsWith(file.path) }
 }
