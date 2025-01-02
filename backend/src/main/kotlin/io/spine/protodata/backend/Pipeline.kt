@@ -56,17 +56,18 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
 import io.spine.string.ti
+import io.spine.validate.NonValidated
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 
 /**
  * A pipeline which processes the Protobuf files.
  *
- * A pipeline consists of the `Code Generation` context, which receives Protobuf compiler events,
- * and one or more [Renderer]s.
+ * A pipeline consists of the [`Code Generation` context][codegenContext],
+ * which receives Protobuf compiler events, and one or more [Plugin]s.
+ * The pipeline starts by building [codegenContext] with the supplied [Plugin]s.
  *
- * The pipeline starts by building the `Code Generation` bounded context with the supplied
- * [Plugin]s. Then, the Protobuf compiler events are emitted and the subscribers in
+ * Then, the Protobuf compiler events are emitted and the subscribers in
  * the context receive them.
  *
  * Then, the [Renderer]s, which are able to query the states of entities
@@ -77,19 +78,23 @@ import kotlin.io.path.inputStream
  *
  * @property id The ID of the pipeline to be used for distinguishing contexts when
  *   two or more pipelines are executed in the same JVM. If not specified, the ID will be generated.
- * @property params The pipeline parameters object.
- * @property plugins The code generation plugins to be applied to the pipeline.
+ * @property params The parameters passed to the pipeline. As the `@NonValidated` annotation
+ *   suggests, the given instance may not satisfy all the validation constraints defined in
+ *   the `PipelineParameters` message type. This is to allow tests to pass only some of
+ *   the parameters if plugins under the test do not need them all.
+ *   The production mode of the execution requires a `@Validated` instance of `PipelineParameters`.
+ * @property plugins The code generation plugins to be applied to the pipeline in addition to
+ *  those specified via [params][PipelineParameters.getPluginClassNameList].
  * @property descriptorFilter The predicate to accept descriptors during parsing of the [request].
  *  The default value accepts all the descriptors.
- *  The primary usage scenario for this parameter is accepting only
- *  descriptors of interest when running tests.
+ *  The primary usage scenario for this parameter is accepting only the descriptors of interest
+ *  when running tests.
  */
 @Internal
-@Suppress("LongParameterList")
 public class Pipeline(
     public val id: String = generateId(),
-    public val params: PipelineParameters,
-    public val plugins: List<Plugin>,
+    public val params: @NonValidated PipelineParameters,
+    @VisibleForTesting public val plugins: List<Plugin>,
     private val descriptorFilter: DescriptorFilter = { true }
 ) : WithLogging {
 
