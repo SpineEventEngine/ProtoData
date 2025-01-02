@@ -67,11 +67,28 @@ message PipelineParameters {
     File request = 4 [(required) = true];
 
     // Paths to directories with the source files to be processed.
+    //
+    // Skip this parameter if there is no initial source to modify.
+    //
+    // If multiple directories are listed, their number must match the number of
+    // `target_root` directories.
+    //
+    // Source and target directories are paired up according to the order they
+    // are provided, e.g., the files from first source root are written to the first
+    // target root and so on.
+    //
+    // When specifying multiple directories, some of them are allowed to be non-existent.
+    // They will just be ignored along with their paired targets. But at least one directory
+    // must exist. Otherwise, the process will end up with an error.
+    //
     repeated Directory source_root = 5 [(required) = true];
 
     // Paths to the directories where the processed source files should be placed.
     //
     // The number target directories must match the number of entries in `source_root`.
+    //
+    // Please see the documentation of the `source_root` parameter for the rules of matching
+    // source and target root directories.
     //
     repeated Directory target_root = 6 [(required) = true];
 }

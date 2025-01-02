@@ -70,47 +70,6 @@ public object PluginParam : Parameter(
 )
 
 /**
- * The command-line parameter for specifying the path to the directory with
- * source files to be processed.
- */
-public object SourceRootParam : Parameter(
-    name = "--source-root",
-    shortName = "--src",
-    help = """
-        The path to a directory which contains the source files to be processed.
-        Skip this argument if there is no initial source to modify.
-        
-        Multiple directories can be listed separated by the system-dependent path separator (`$ps`). 
-        In such a case, the number of directories must match the number of ${ddash.tr}
-        directories; source and target directories are paired up according to the order
-        they are provided in, so that the files from first source are written to
-        the first target and so on.
-        
-        When specifying multiple directories, some of them are allowed to be non-existent.
-        They will just be ignored along with their paired targets. But at least one directory
-        must exist. Otherwise, the process will end up with an error.
-        """
-)
-
-/**
- * The command-line parameter for specifying the path to the directory where
- * to put the processed files.
- */
-public object TargetRootParam : Parameter(
-    name = "--target-root",
-    shortName = "--target",
-    help = """
-        The path where the processed files should be placed.
-        May be the same as `${SourceRootParam.name}`. For editing files in-place, skip this option.
-        
-        Multiple directories can be listed separated by the system-dependent path separator (`$ps`). 
-        In such a case, the number of directories must match the number of `${dash.src}` directories.
-        Source and target directories are paired up according to the order they are provided in,
-        so that the files from first source are written to the first target and so on.
-        """
-)
-
-/**
  * The command-line parameter for composing the user-defined classpath.
  */
 public object UserClasspathParam : Parameter(
@@ -153,7 +112,6 @@ public object DebugLoggingParam : Parameter(
 @Suppress("ClassName") // for better readability
 private object dash {
     val p = lazy { PluginParam.shortName }
-    val src = lazy { SourceRootParam.shortName }
 }
 
 /**
@@ -161,6 +119,5 @@ private object dash {
  */
 @Suppress("ClassName", "SpellCheckingInspection") // for better readability in `help` texts.
 private object ddash {
-    val tr = lazy { TargetRootParam.name }
     val plugin = lazy { PluginParam.name }
 }
