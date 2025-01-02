@@ -59,7 +59,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
-@DisplayName("`ProtoData` CLI logging levels should")
+@DisplayName("ProtoData CLI logging levels should")
 class LoggingLevelSpec {
 
     private lateinit var parametersFile: File
@@ -81,6 +81,7 @@ class LoggingLevelSpec {
             sourceRoot.add(directory { path = sandbox.resolve("src").absolutePathString() })
             targetRoot.add(directory { path = sandbox.resolve("generated").absolutePathString() })
             request = codegenRequestFile.toFile().toProto()
+            pluginClassName.add(LoggingLevelAsserterPlugin::class.jvmName)
         }
         parametersFile = workingDir.parametersDirectory.write(SourceSetName.main, params)
 
@@ -146,7 +147,6 @@ class LoggingLevelSpec {
     private fun launchWithLoggingParams(vararg argv: String) {
         val params = mutableListOf(
             "--params", parametersFile.toPath().absolutePathString(),
-            "-p", LoggingLevelAsserterPlugin::class.jvmName,
         )
         params.addAll(argv)
         Run("1961.04.12").parse(params)

@@ -36,13 +36,12 @@ import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
 import io.spine.protodata.params.ParametersFileParam
-import io.spine.protodata.params.PluginParam
-import io.spine.protodata.params.UserClasspathParam
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.params.pipelineParameters
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File
+import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -116,20 +115,8 @@ public abstract class LaunchProtoData : JavaExec() {
     internal fun compileCommandLine() {
         val command = sequence {
             val sourceSet = SourceSetName(sourceSetName.get())
-
             yield(ParametersFileParam.name)
             yield(workingDir.parametersDirectory.file(sourceSet))
-
-            plugins.get().forEach {
-                yield(PluginParam.name)
-                yield(it)
-            }
-
-            val userCp = userClasspathConfiguration.asPath
-            if (userCp.isNotEmpty()) {
-                yield(UserClasspathParam.name)
-                yield(userCp)
-            }
         }.asIterable()
         logger.info { "ProtoData command for `${path}`: ${command.joinToString(separator = " ")}" }
         classpath(protoDataConfiguration)
@@ -242,6 +229,11 @@ private fun LaunchProtoData.createParametersFile() {
             targets.absoluteDirs().map { it.toDirectory() }
         )
         request = workingDir.requestDirectory.file(SourceSetName(sourceSetName.get())).toProto()
+
+        pluginClassName.addAll(plugins.get())
+
+        val ucp = userClasspathConfiguration.asPath.split(pathSeparator)
+        userClasspath.addAll(ucp)
     }
 
     val sourceSet = SourceSetName(sourceSetName.get())

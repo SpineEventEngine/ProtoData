@@ -57,6 +57,7 @@ import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
 import io.spine.string.ti
 import io.spine.validate.NonValidated
+import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 
@@ -83,7 +84,7 @@ import kotlin.io.path.inputStream
  *   the `PipelineParameters` message type. This is to allow tests to pass only some of
  *   the parameters if plugins under the test do not need them all.
  *   The production mode of the execution requires a `@Validated` instance of `PipelineParameters`.
- * @property plugins The code generation plugins to be applied to the pipeline in addition to
+ * @param plugins The code generation plugins to be applied to the pipeline in addition to
  *  those specified via [params][PipelineParameters.getPluginClassNameList].
  * @property descriptorFilter The predicate to accept descriptors during parsing of the [request].
  *  The default value accepts all the descriptors.
@@ -94,7 +95,7 @@ import kotlin.io.path.inputStream
 public class Pipeline(
     public val id: String = generateId(),
     public val params: @NonValidated PipelineParameters,
-    @VisibleForTesting public val plugins: List<Plugin>,
+    @VisibleForTesting plugins: List<Plugin> = emptyList(),
     private val descriptorFilter: DescriptorFilter = { true }
 ) : WithLogging {
 
@@ -130,6 +131,18 @@ public class Pipeline(
     public val settings: SettingsDirectory by lazy {
         val dir = params.settings.toPath()
         SettingsDirectory(dir)
+    }
+
+    /**
+     * The combined list of plugins processed by the pipeline.
+     *
+     * Contains the plugins loaded by the names of the classes passed via
+     * [params][PipelineParameters.getPluginClassNameList] and plugins passed via
+     * the constructor parameter.
+     */
+    public val plugins: List<Plugin> by lazy {
+        val combined = loadPlugins(params.pluginClassNameList) + plugins
+        combined
     }
 
     /**
@@ -170,6 +183,16 @@ public class Pipeline(
             use(InMemoryTransportFactory.newInstance())
             use(Delivery.direct())
         }
+    }
+
+    private fun loadPlugins(plugins: List<String>): List<Plugin> {
+        val classpath = params.userClasspathList.map { Path(it) }
+        val factory = PluginFactory(
+            Thread.currentThread().contextClassLoader,
+            classpath,
+            ::printError
+        )
+        return factory.load(plugins)
     }
 
     private fun createSourceFileSets(): List<SourceFileSet> {
@@ -290,6 +313,13 @@ public class Pipeline(
          */
         @JvmStatic
         public fun generateId(): String = SecureRandomString.generate()
+    }
+
+    /**
+     * Prints the given error [message] to the screen.
+     */
+    private fun printError(message: String?) {
+        System.err.println(message)
     }
 }
 

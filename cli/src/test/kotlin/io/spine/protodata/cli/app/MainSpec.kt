@@ -43,8 +43,10 @@ import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
 import io.spine.protodata.cli.given.DefaultOptionsCounterRendererPlugin
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
+import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.params.pipelineParameters
+import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.EchoRenderer
 import io.spine.protodata.test.EchoRendererPlugin
@@ -60,18 +62,21 @@ import io.spine.protodata.test.echo
 import io.spine.protodata.testing.googleProtobufProtos
 import io.spine.protodata.testing.spineOptionProtos
 import io.spine.protodata.util.Format
+import io.spine.protodata.util.parseFile
 import io.spine.string.ti
 import io.spine.time.LocalDates
 import io.spine.time.Month.SEPTEMBER
 import io.spine.time.toInstant
 import io.spine.tools.code.SourceSetName
 import io.spine.type.toCompactJson
+import io.spine.type.toJson
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -112,7 +117,6 @@ class MainSpec {
         }
         parametersFile = workingDir.parametersDirectory.write(SourceSetName.test, params)
 
-
         val sourceFile = srcRoot.resolve("SourceCode.java")
         sourceFile.writeText("""
             ${Project::class.simpleName}.getUuid() 
@@ -144,9 +148,8 @@ class MainSpec {
     @Test
     fun `render enhanced code`() {
         launchApp(
-            "--params", parametersFile.absolutePath,
-            "-p", TestPlugin::class.jvmName,
-            "-p", UnderscorePrefixRendererPlugin::class.jvmName,
+            TestPlugin::class,
+            UnderscorePrefixRendererPlugin::class
         )
         targetFile.readText() shouldBe "_${Project::class.simpleName}.getUuid() "
     }
@@ -154,45 +157,22 @@ class MainSpec {
     @Test
     fun `provide Spine options by default`() {
         launchApp(
-            "--params", parametersFile.absolutePath,
-            "-p", DefaultOptionsCounterPlugin::class.jvmName,
-            "-p", DefaultOptionsCounterRendererPlugin::class.jvmName,
+            DefaultOptionsCounterPlugin::class,
+            DefaultOptionsCounterRendererPlugin::class
         )
         val generatedFile = targetRoot.resolve(DefaultOptionsCounterRenderer.FILE_NAME)
         generatedFile.readText() shouldBe "true, true"
     }
 
-    @Nested
-    inner class `Receive custom configuration through` {
-
-        @Test
-        fun `configuration file`() {
-            val name = "Internet"
-            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.JSON, """
-                    { "value": "$name" }
-                """.ti()
-            )
-
-            launchApp(
-                "--params", parametersFile.absolutePath,
-                "-p", EchoRendererPlugin::class.jvmName,
-            )
-            outputEchoFile.readText() shouldBe name
-        }
-
-        @Test
-        fun `configuration value`() {
-            val name = "Mr. World"
-            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.JSON, """
-                    { "value": "$name" }
-                """.ti()
-            )
-            launchApp(
-                "--params", parametersFile.absolutePath,
-                "-p", EchoRendererPlugin::class.jvmName,
-            )
-            outputEchoFile.readText() shouldBe name
-        }
+    @Test
+    fun `load settings via a file`() {
+        val name = "Internet"
+        workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.JSON, """
+                { "value": "$name" }
+            """.ti()
+        )
+        launchApp(EchoRendererPlugin::class)
+        outputEchoFile.readText() shouldBe name
     }
 
     @Nested
@@ -205,10 +185,7 @@ class MainSpec {
                     { "value": "$name" }
                 """.ti()
             )
-            launchApp(
-                "--params", parametersFile.absolutePath,
-                "-p", EchoRendererPlugin::class.jvmName,
-            )
+            launchApp(EchoRendererPlugin::class)
             outputEchoFile.readText() shouldBe name
         }
 
@@ -223,10 +200,7 @@ class MainSpec {
             }.toCompactJson()
             workingDir.settingsDirectory.writeFor<ProtoEchoRenderer>(Format.PROTO_JSON, json)
 
-            launchApp(
-                "--params", parametersFile.absolutePath,
-                "-p", ProtoEchoRendererPlugin::class.jvmName,
-            )
+            launchApp(ProtoEchoRendererPlugin::class)
             val text = outputEchoFile.readText()
 
             text shouldStartWith time.toInstant().toString()
@@ -245,10 +219,7 @@ class MainSpec {
 
             workingDir.settingsDirectory.writeFor<ProtoEchoRenderer>(Format.PROTO_BINARY, bytes)
 
-            launchApp(
-                "--params", parametersFile.absolutePath,
-                "-p", ProtoEchoRendererPlugin::class.jvmName,
-            )
+            launchApp(ProtoEchoRendererPlugin::class)
 
             val text = outputEchoFile.readText()
 
@@ -265,10 +236,7 @@ class MainSpec {
                 """.trimIndent()
             )
 
-            launchApp(
-                "--params", parametersFile.absolutePath,
-                "-p", EchoRendererPlugin::class.jvmName,
-            )
+            launchApp(EchoRendererPlugin::class)
             outputEchoFile.readText() shouldBe name
         }
 
@@ -277,13 +245,24 @@ class MainSpec {
             val plainString = "dont.mail.me:42@example.org"
             workingDir.settingsDirectory.writeFor<PlainStringRenderer>(Format.PLAIN, plainString)
 
-            launchApp(
-                "--params", parametersFile.absolutePath,
-                "-p", PlainStringRendererPlugin::class.jvmName,
-            )
+            launchApp(PlainStringRendererPlugin::class)
             outputEchoFile.readText() shouldBe plainString
         }
     }
     
-    private fun launchApp(vararg argv: String) = Run("42.0.0").parse(argv.toList())
+    private fun launchApp(vararg plugins: KClass<out Plugin>) {
+        addPluginClassNames(plugins)
+        Run("42.0.0").parse(listOf(
+            "--params", parametersFile.absolutePath
+        ))
+    }
+
+    private fun addPluginClassNames(plugins: Array<out KClass<out Plugin>>) {
+        val draftParams = parseFile(parametersFile, PipelineParameters::class.java)
+        val classNames = plugins.map { it.jvmName }
+        val withPlugins = draftParams.toBuilder()
+            .addAllPluginClassName(classNames)
+            .build()
+        parametersFile.writeText(withPlugins.toJson())
+    }
 }

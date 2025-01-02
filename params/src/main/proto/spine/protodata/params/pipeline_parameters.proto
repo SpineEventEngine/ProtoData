@@ -91,4 +91,14 @@ message PipelineParameters {
     // source and target root directories.
     //
     repeated Directory target_root = 6 [(required) = true];
+
+    // The user classpath which contains all plugin classes specified in the `user_class_name`
+    // property, as well as their dependencies, which are not included as a part of
+    // the ProtoData library.
+    //
+    // May be one path to a JAR, a ZIP, or a directory, or several entries of these kinds.
+    //
+    // This parameter may be omitted if the classes are already present in the ProtoData classpath.
+    //
+    repeated string user_classpath = 7;
 }

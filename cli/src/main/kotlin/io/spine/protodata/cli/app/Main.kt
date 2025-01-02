@@ -29,14 +29,10 @@ package io.spine.protodata.cli.app
 import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.UsageError
-import com.github.ajalt.clikt.parameters.options.NullableOption
 import com.github.ajalt.clikt.parameters.options.flag
-import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
-import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
-import com.github.ajalt.clikt.parameters.types.path
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
@@ -47,15 +43,10 @@ import io.spine.protodata.params.InfoLoggingParam
 import io.spine.protodata.params.Parameter
 import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.PipelineParameters
-import io.spine.protodata.params.PluginParam
-import io.spine.protodata.params.UserClasspathParam
-import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.util.parseFile
 import io.spine.string.Separator
 import io.spine.tools.code.manifest.Version
 import java.io.File
-import java.io.File.pathSeparator
-import java.nio.file.Path
 import kotlin.system.exitProcess
 
 /**
@@ -106,23 +97,12 @@ internal class Run(version: String) : CliktCommand(
         completionCandidates = cc
     )
 
-    private fun NullableOption<Path, Path>.splitPaths() = split(pathSeparator)
-
     private val paramsFile: File by ParametersFileParam.toOption().file(
         mustExist = true,
         canBeDir = false,
         canBeSymlink = false,
         mustBeReadable = true
     ).required()
-
-    private val plugins: List<String>
-            by PluginParam.toOption().multiple()
-
-    private val classpath: List<Path>?
-            by UserClasspathParam.toOption().path(
-                mustExist = true,
-                mustBeReadable = true
-            ).splitPaths()
 
     private val debug: Boolean by DebugLoggingParam.toOption().flag(default = false)
 
@@ -152,31 +132,10 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun doRun() {
-        val plugins = loadPlugins()
-
         val params = parseFile(paramsFile, PipelineParameters::class.java)
-
-        val pipeline = Pipeline(
-            params = params,
-            plugins = plugins,
-        )
+        val pipeline = Pipeline(params = params)
         pipeline()
     }
-
-
-    private fun loadPlugins(): List<Plugin> {
-        val factory = PluginFactory(
-            Thread.currentThread().contextClassLoader,
-            classpath,
-            ::printError
-        )
-        return factory.load(plugins)
-    }
-
-    /**
-     * Prints the given error [message] to the screen.
-     */
-    private fun printError(message: String?) = echo(message, trailingNewline = true, err = true)
 }
 
 /**
