@@ -314,13 +314,13 @@ public class Pipeline(
         @JvmStatic
         public fun generateId(): String = SecureRandomString.generate()
     }
+}
 
-    /**
-     * Prints the given error [message] to the screen.
-     */
-    private fun printError(message: String?) {
-        System.err.println(message)
-    }
+/**
+ * Prints the given error [message] to [System.err].
+ */
+private fun printError(message: String?) {
+    System.err.println(message)
 }
 
 /**
