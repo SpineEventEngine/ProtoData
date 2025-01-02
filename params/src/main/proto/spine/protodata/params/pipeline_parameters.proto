@@ -57,7 +57,10 @@ message PipelineParameters {
     //
     Directory settings = 2 [(required) = true];
 
-    // Binary names of Java or Kotlin classes derived from `io.spine.protodata.plugin.Plugin`.
+    // Names of Java or Kotlin classes derived from `io.spine.protodata.plugin.Plugin`.
+    //
+    // For nested classes please use binary names, with the `$` delimiter before a nested class.
+    //
     repeated string plugin_class_name = 3;
 
     // The path to the binary file containing a serialized instance of
