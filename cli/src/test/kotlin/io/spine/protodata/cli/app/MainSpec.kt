@@ -133,9 +133,8 @@ class MainSpec {
                     TestOptionsProto.getDescriptor().toProto(),
                     AstProto.getDescriptor().toProto(),
                     FileProto.getDescriptor().toProto(),
-                ) +
-                spineOptionProtos() +
-                googleProtobufProtos()
+                ) + spineOptionProtos()
+                        + googleProtobufProtos()
             )
             fileToGenerate.addAll(listOf(
                 project.name,
