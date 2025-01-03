@@ -27,14 +27,12 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.common.annotations.VisibleForTesting
-import io.spine.protodata.gradle.CodeGeneratorRequestFile
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.tools.fs.DirectoryName.generated
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
@@ -53,10 +51,6 @@ public class Extension(private val project: Project): CodegenSettings {
     public override fun optionProviders(vararg classNames: String): Unit =
         optionProviders.addAll(classNames.toList())
 
-    public override var requestFilesDir: Any
-        get() = requestFilesDirProperty.get()
-        set(value) = requestFilesDirProperty.set(project.file(value))
-
     @VisibleForTesting
     public val plugins: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
@@ -64,15 +58,6 @@ public class Extension(private val project: Project): CodegenSettings {
     @VisibleForTesting
     public val optionProviders: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
-
-    internal val requestFilesDirProperty: DirectoryProperty = with(project) {
-        objects.directoryProperty().convention(
-            layout.buildDirectory.dir(CodeGeneratorRequestFile.defaultDirectory)
-        )
-    }
-
-    internal fun requestFile(forSourceSet: SourceSet): Provider<RegularFile> =
-        requestFilesDirProperty.file(CodeGeneratorRequestFile.name(forSourceSet))
 
     /**
      * Synthetic property for providing the source directories for the given

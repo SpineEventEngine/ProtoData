@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,20 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
+package io.spine.protodata.util
 
-import org.gradle.api.tasks.SourceSet
+import java.nio.file.Path
 
 /**
- * Performs cleaning of generated files.
+ * Makes sure that the given directory exists.
  */
-public object CleanTask {
-
-    @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
-    private const val prefix = "cleanProtoData"
-
-    /**
-     * Obtains a name of the task for the given source set.
-     */
-    public fun nameFor(sourceSet: SourceSet): String = "$prefix${sourceSet.capitalizedName}"
+public fun ensureExistingDirectory(path: Path) {
+    val dir = path.toFile()
+    dir.mkdirs()
+    require(dir.isDirectory) {
+        "The directory `$path` does not exist and could not be created."
+    }
 }

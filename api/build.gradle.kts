@@ -68,9 +68,7 @@ dependencies {
 
     testImplementation(Logging.testLib)
     testImplementation(project(":test-env"))
-
-    // For using `CodeGenerationContext` in stubs.
-    testImplementation(project(":backend"))
+    testImplementation(project(":testlib"))
 }
 
 forceSpineBase()

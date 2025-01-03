@@ -37,6 +37,7 @@ import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.Cardinality.CARDINALITY_LIST
 import io.spine.protodata.ast.Cardinality.CARDINALITY_MAP
 import io.spine.protodata.ast.Cardinality.CARDINALITY_SINGLE
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.type.TypeSystem
 import io.spine.test.type.Article
@@ -67,13 +68,15 @@ import org.junit.jupiter.api.Test
 internal class MessageTypeDependenciesSpec {
 
     private val typeSystem: TypeSystem by lazy {
-        val protoSources = setOf(
-            MessageTypeDependenciesSpecProto.getDescriptor().toPbSourceFile(),
-            ProjectProto.getDescriptor().toPbSourceFile(),
-            EmptyProto.getDescriptor().toPbSourceFile(),
-            TimestampProto.getDescriptor().toPbSourceFile(),
+        val descriptors = setOf(
+            MessageTypeDependenciesSpecProto.getDescriptor(),
+            ProjectProto.getDescriptor(),
+            EmptyProto.getDescriptor(),
+            TimestampProto.getDescriptor()
         )
-        TypeSystem(protoSources)
+        val protoFiles = descriptors.map { java.io.File(it.file.name) }
+        val protoSources = descriptors.map { it.toPbSourceFile() }.toSet()
+        TypeSystem(ProtoFileList(protoFiles), protoSources)
     }
 
     private fun allDependenciesOf(type: MessageType): Set<MessageType> =

@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,6 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    implementation(project(":api"))
-}
+@file:Suppress("MaxLineLength")
+
+package io.spine.protodata.params
+
+/**
+ * The command-line parameter for specifying the name of the file which stores an instance of
+ * [PipelineParameters] in [PROTO_JSON][io.spine.protodata.util.Format.PROTO_JSON] format.
+ */
+public object ParametersFileParam : Parameter(
+    name = "--params",
+    shortName = "-P",
+    help = """
+        The path to the file with the serialized instance of `PipelineParameters` to 
+        be passed to the pipeline. The file must be in `pb.json` format.
+    """.trimIndent()
+)
+
+/**
+ * The command-line parameter which turns the `INFO` logging level on.
+ */
+public object InfoLoggingParam : Parameter(
+    name = "--info",
+    shortName = "-I",
+    help = """
+        Set log level to `INFO`.        
+    """
+)
+
+/**
+ * The command-line parameter which turns the `DEBUG` logging level on.
+ */
+public object DebugLoggingParam : Parameter(
+    name = "--debug",
+    shortName = "-D",
+    help = """
+        Set log level to `DEBUG`.        
+    """
+)

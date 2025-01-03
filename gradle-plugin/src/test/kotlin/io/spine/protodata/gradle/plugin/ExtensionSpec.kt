@@ -83,13 +83,6 @@ class ExtensionSpec {
     }
 
     @Test
-    fun `specify request file location`() {
-        val path = "my/path/to/main.bin"
-        extension.requestFilesDir = path
-        extension.requestFilesDirProperty.get().asFile shouldBe project.projectDir.resolve(path)
-    }
-
-    @Test
     fun `produce target directory`() {
         val basePath = "my/path"
         val expected = listOf("foo", "bar")

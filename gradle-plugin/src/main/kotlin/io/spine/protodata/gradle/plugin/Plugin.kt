@@ -35,7 +35,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue
 import com.google.protobuf.gradle.GenerateProtoTask
 import io.spine.code.proto.DescriptorReference
 import io.spine.protodata.gradle.Artifacts
-import io.spine.protodata.gradle.CleanTask
+import io.spine.protodata.gradle.CleanProtoDataTask
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
@@ -47,13 +47,13 @@ import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
+import io.spine.protodata.params.WorkingDirectory
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.protobufExtension
 import io.spine.tools.gradle.task.JavaTaskName
 import io.spine.tools.gradle.task.descriptorSetFile
-import io.spine.util.theOnly
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
@@ -157,27 +157,19 @@ private fun Project.createConfigurations(protoDataVersion: String) {
 }
 
 /**
- * Creates [LaunchProtoData] and `clean` task for all source sets of this project
- * available by the time of the call.
+ * Creates the [CleanProtoDataTask] and [LaunchProtoData] tasks for all source sets
+ * in this project available by the time of the call.
  *
  * There may be cases of source sets added by other plugins after this method is invoked.
- * Such situations are handled by [Project.handleLaunchTaskDependency] invoked by
- * [Project.setProtocPluginArtifact].
+ * Such cases are handled by the [handleLaunchTaskDependency] function.
  *
  * @see [Project.handleLaunchTaskDependency]
- * @see [Project.setProtocPluginArtifact]
  */
 private fun Project.createTasks() {
-    val settingsDirTask = createSettingsDirTask()
     sourceSets.forEach { sourceSet ->
-        createLaunchTask(settingsDirTask, sourceSet)
+        createLaunchTask(sourceSet)
         createCleanTask(sourceSet)
     }
-}
-
-private fun Project.createSettingsDirTask(): CreateSettingsDirectory {
-    val result = tasks.create<CreateSettingsDirectory>("createSettingsDirectory")
-    return result
 }
 
 /**
@@ -185,29 +177,29 @@ private fun Project.createSettingsDirTask(): CreateSettingsDirectory {
  */
 @CanIgnoreReturnValue
 private fun Project.createLaunchTask(
-    settingsDirTask: CreateSettingsDirectory,
-    sourceSet: SourceSet
+    sourceSet: SourceSet,
 ): LaunchProtoData {
     val taskName = LaunchTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
-        applyDefaults(sourceSet, settingsDirTask)
+        applyDefaults(sourceSet)
     }
     return result
 }
 
 /**
- * Creates a task which deletes the generated code for the given [sourceSet].
+ * Creates a task which deletes the files generated for the given [sourceSet].
  *
  * Makes a `clean` task depend on the created task.
  * Also, makes the task which launches ProtoData CLI depend on the created task.
  */
 private fun Project.createCleanTask(sourceSet: SourceSet) {
     val project = this
-    val cleanSourceSet = CleanTask.nameFor(sourceSet)
+    val cleanSourceSet = CleanProtoDataTask.nameFor(sourceSet)
     tasks.create<Delete>(cleanSourceSet) {
         delete(extension.targetDirs(sourceSet))
 
-        tasks.getByName("clean").dependsOn(this)
+        val cleanProtoDataTask = this
+        tasks.getByName("clean").dependsOn(cleanProtoDataTask)
         val launchTask = LaunchTask.get(project, sourceSet)
         launchTask.mustRunAfter(this)
     }
@@ -266,22 +258,29 @@ private fun Project.configureProtoTask(task: GenerateProtoTask) {
     if (hasJavaOrKotlin()) {
         task.builtins.maybeCreate("kotlin")
     }
-    val sourceSet = task.sourceSet
-    task.plugins.apply {
-        create(PROTODATA_PROTOC_PLUGIN) {
-            val requestFile = extension.requestFile(sourceSet)
-            val path = requestFile.get().asFile.absolutePath
-            val nameEncoded = path.base64Encoded()
-            it.option(nameEncoded)
-            if (logger.isDebugEnabled) {
-                logger.debug("The task `${task.name}` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
-                        " with the option `$nameEncoded`.")
-            }
-        }
-    }
+    task.addProtoDataProtocPlugin()
     task.configureSourceSetDirs()
     task.setupDescriptorSetFileCreation()
     handleLaunchTaskDependency(task)
+}
+
+private fun GenerateProtoTask.addProtoDataProtocPlugin() {
+    plugins.apply {
+        create(PROTODATA_PROTOC_PLUGIN) {
+            val requestFile = WorkingDirectory(project.protoDataWorkingDir.asFile.toPath())
+                .requestDirectory
+                .file(SourceSetName(sourceSet.name))
+            val path = requestFile.absolutePath
+            val nameEncoded = path.base64Encoded()
+            it.option(nameEncoded)
+            if (logger.isDebugEnabled) {
+                logger.debug(
+                    "The task `$name` got plugin `$PROTODATA_PROTOC_PLUGIN`" +
+                            " with the option `$nameEncoded`."
+                )
+            }
+        }
+    }
 }
 
 /**
@@ -415,15 +414,14 @@ private fun GenerateProtoTask.createDescriptorReferenceFile(dir: Path) {
  *
  * If the [LaunchProtoData] task does not exist (which may be the case for custom source sets
  * created by other plugins), arranges the task creation on [Project.afterEvaluate].
- * In this case the [CleanTask] is also created with appropriate dependencies.
+ * In this case the [CleanProtoDataTask] is also created with appropriate dependencies.
  */
 private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask) {
     val sourceSet = generateProto.sourceSet
     LaunchTask.find(this, sourceSet)
         ?.dependsOn(generateProto)
         ?: afterEvaluate {
-            val settingsTask = tasks.withType(CreateSettingsDirectory::class.java).theOnly()
-            val launchTask = createLaunchTask(settingsTask, sourceSet)
+            val launchTask = createLaunchTask(sourceSet)
             launchTask.dependsOn(generateProto)
             createCleanTask(sourceSet)
         }

@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.settings
+package io.spine.protodata.util
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -33,23 +33,30 @@ import com.google.common.io.ByteSource
 import com.google.common.io.Files
 import com.google.protobuf.Message
 import io.spine.protobuf.defaultInstance
-import io.spine.protodata.ast.File
-import io.spine.protodata.ast.toPath
-import io.spine.protodata.settings.Format.JSON
-import io.spine.protodata.settings.Format.PLAIN
-import io.spine.protodata.settings.Format.PROTO_BINARY
-import io.spine.protodata.settings.Format.PROTO_JSON
-import io.spine.protodata.settings.Format.RCF_UNKNOWN
-import io.spine.protodata.settings.Format.UNRECOGNIZED
-import io.spine.protodata.settings.Format.YAML
-import io.spine.protodata.settings.Settings.KindCase.EMPTY
-import io.spine.protodata.settings.Settings.KindCase.FILE
-import io.spine.protodata.settings.Settings.KindCase.KIND_NOT_SET
+import io.spine.protodata.util.Format.JSON
+import io.spine.protodata.util.Format.PLAIN
+import io.spine.protodata.util.Format.PROTO_BINARY
+import io.spine.protodata.util.Format.PROTO_JSON
+import io.spine.protodata.util.Format.RCF_UNKNOWN
+import io.spine.protodata.util.Format.UNRECOGNIZED
+import io.spine.protodata.util.Format.YAML
 import io.spine.type.fromJson
 import java.nio.charset.Charset.defaultCharset
 
 /**
- * A parser for user-defined settings.
+ * Parses the given file loading the instance of the given class.
+ *
+ * The format of the file is determined by the extension of the file.
+ */
+public fun <T : Any> parseFile(file: java.io.File, cls: Class<T>): T {
+    val path = file.toPath()
+    val format = formatOf(path)
+    val bytes = Files.asByteSource(path.toFile())
+    return format.parser.parse(bytes, cls)
+}
+
+/**
+ * A parser for files in one of the supported [formats][Format].
  */
 internal sealed interface Parser {
 
@@ -60,20 +67,11 @@ internal sealed interface Parser {
 }
 
 /**
- * Parses this instance of [Settings] into the given class.
- */
-internal fun <T : Any> Settings.parse(cls: Class<T>): T =
-    when (kindCase!!) {
-        FILE -> parseFile(file, cls)
-        EMPTY, KIND_NOT_SET -> unknownCase(cls)
-    }
-
-/**
  * Obtains a [Parser] for this format.
  *
  * @throws IllegalStateException If the format is a non-value.
  */
-internal val Format.parser: Parser
+private val Format.parser: Parser
     get() = when(this) {
         PROTO_BINARY -> ProtoBinaryParser
         PROTO_JSON -> ProtoJsonParser
@@ -147,7 +145,6 @@ private sealed class JacksonParser : Parser {
  * Settings parser for JSON.
  */
 private object JsonParser : JacksonParser() {
-
     private val commonJsonFactory = JsonFactory()
     override val factory: JsonFactory by this::commonJsonFactory
 }
@@ -156,7 +153,6 @@ private object JsonParser : JacksonParser() {
  * Settings parser for YAML.
  */
 private object YamlParser : JacksonParser() {
-
     private val commonYamlFactory = YAMLFactory()
     override val factory: JsonFactory by this::commonYamlFactory
 }
@@ -169,7 +165,6 @@ private object YamlParser : JacksonParser() {
  * If the type is wrong, throws a [IllegalStateException].
  */
 private object PlainParser : Parser {
-
     override fun <T> parse(source: ByteSource, cls: Class<T>): T {
         if (cls != String::class.java) {
             error("Expected settings of type `${cls.canonicalName}` but got a plain string.")
@@ -178,15 +173,4 @@ private object PlainParser : Parser {
         @Suppress("UNCHECKED_CAST")
         return value as T
     }
-}
-
-private fun <T> parseFile(file: File, cls: Class<T>): T {
-    val path = file.toPath()
-    val format = formatOf(path)
-    val bytes = Files.asByteSource(path.toFile())
-    return format.parser.parse(bytes, cls)
-}
-
-private fun Settings.unknownCase(cls: Class<*>): Nothing {
-    error("Unable to parse settings as `${cls.canonicalName}`. `kindCase` is `$kindCase`.")
 }

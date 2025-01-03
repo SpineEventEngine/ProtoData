@@ -30,7 +30,7 @@ include(
     "api",
     "api-tests",
     "backend",
-    "cli-api",
+    "params",
     "cli",
     "protoc",
     "test-env",

@@ -42,6 +42,8 @@ dependencies {
     api(CoreJava.server)
     api(ToolBase.lib)
     api(project(":api"))
+    implementation(project(":params"))?.because("We need the `PipelineParameters` type.")
+
     with(Jackson) {
         api(databind)
         implementation(dataformatYaml)

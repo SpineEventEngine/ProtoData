@@ -38,5 +38,6 @@ public class TestEnvOptionsProvider : OptionsProvider {
 
     override fun registerIn(registry: ExtensionRegistry) {
         XtraOptsProto.registerAllExtensions(registry)
+        DoctorProto.registerAllExtensions(registry)
     }
 }

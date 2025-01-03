@@ -30,14 +30,21 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.code.proto.FileSet
+import io.spine.code.proto.parse
 import io.spine.environment.DefaultMode
+import io.spine.logging.WithLogging
 import io.spine.protodata.ast.Coordinates
+import io.spine.protodata.ast.Directory
 import io.spine.protodata.ast.Documentation
+import io.spine.protodata.ast.File
+import io.spine.protodata.ast.toPath
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
+import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.applyTo
 import io.spine.protodata.plugin.render
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.protobuf.toPbSourceFile
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFile
@@ -48,15 +55,20 @@ import io.spine.server.delivery.Delivery
 import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
+import io.spine.string.ti
+import io.spine.validate.NonValidated
+import kotlin.io.path.Path
+import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 
 /**
  * A pipeline which processes the Protobuf files.
  *
- * A pipeline consists of the `Code Generation` context, which receives Protobuf compiler events,
- * and one or more [Renderer]s.
+ * A pipeline consists of the [`Code Generation` context][codegenContext],
+ * which receives Protobuf compiler events, and one or more [Plugin]s.
+ * The pipeline starts by building [codegenContext] with the supplied [Plugin]s.
  *
- * The pipeline starts by building the `Code Generation` bounded context with the supplied
- * [Plugin]s. Then, the Protobuf compiler events are emitted and the subscribers in
+ * Then, the Protobuf compiler events are emitted and the subscribers in
  * the context receive them.
  *
  * Then, the [Renderer]s, which are able to query the states of entities
@@ -67,30 +79,77 @@ import io.spine.server.under
  *
  * @property id The ID of the pipeline to be used for distinguishing contexts when
  *   two or more pipelines are executed in the same JVM. If not specified, the ID will be generated.
- * @property plugins The code generation plugins to be applied to the pipeline.
- * @property sources The source sets to be processed by the pipeline.
- * @property request The Protobuf compiler request.
- * @property settings The directory to which setting files for the [plugins] should be stored.
+ * @property params The parameters passed to the pipeline. As the `@NonValidated` annotation
+ *   suggests, the given instance may not satisfy all the validation constraints defined in
+ *   the `PipelineParameters` message type. This is to allow tests to pass only some of
+ *   the parameters if plugins under the test do not need them all.
+ *   The production mode of the execution requires a `@Validated` instance of `PipelineParameters`.
+ * @param plugins The code generation plugins to be applied to the pipeline in addition to
+ *  those specified via [params][PipelineParameters.getPluginClassNameList].
  * @property descriptorFilter The predicate to accept descriptors during parsing of the [request].
  *  The default value accepts all the descriptors.
- *  The primary usage scenario for this parameter is accepting only
- *  descriptors of interest when running tests.
+ *  The primary usage scenario for this parameter is accepting only the descriptors of interest
+ *  when running tests.
  */
 @Internal
 public class Pipeline(
     public val id: String = generateId(),
-    public val plugins: List<Plugin>,
-    public val sources: List<SourceFileSet>,
-    public val request: CodeGeneratorRequest,
-    private val descriptorFilter: DescriptorFilter = { true },
-    public val settings: SettingsDirectory
-) {
+    public val params: @NonValidated PipelineParameters,
+    @VisibleForTesting plugins: List<Plugin> = emptyList(),
+    private val descriptorFilter: DescriptorFilter = { true }
+) : WithLogging {
+
+    /**
+     * Files compiled by `protoc`.
+     */
+    private val compiledProtoFiles: ProtoFileList by lazy {
+        val compiledProtos = params.compiledProtoList.map { it.toPath().toFile() }
+        ProtoFileList(compiledProtos)
+    }
+
+    /**
+     * The Protobuf compiler request loaded from the file specified by
+     * the [request property] [PipelineParameters.getRequest] of the [pipeline parameters][params].
+     */
+    public val request: CodeGeneratorRequest by lazy {
+        val requestFile = params.request
+        val loadedRequest = if (requestFile == File.getDefaultInstance()) {
+            // This is a case of passing partial parameters to a pipeline in tests.
+            CodeGeneratorRequest.getDefaultInstance()
+        } else {
+            // This is a normal production scenario.
+            requestFile.toPath().inputStream().use {
+                CodeGeneratorRequest::class.parse(it)
+            }
+        }
+        loadedRequest
+    }
+
+    /**
+     * The directory to which setting files for the [plugins] should be stored.
+     */
+    public val settings: SettingsDirectory by lazy {
+        val dir = params.settings.toPath()
+        SettingsDirectory(dir)
+    }
+
+    /**
+     * The combined list of plugins processed by the pipeline.
+     *
+     * Contains the plugins loaded by the names of the classes passed via
+     * [params][PipelineParameters.getPluginClassNameList] and plugins passed via
+     * the constructor parameter.
+     */
+    public val plugins: List<Plugin> by lazy {
+        val combined = loadPlugins(params.pluginClassNameList) + plugins
+        combined
+    }
 
     /**
      * The type system passed to the plugins at the start of the pipeline.
      */
     private val typeSystem: TypeSystem by lazy {
-        request.toTypeSystem()
+        request.toTypeSystem(compiledProtoFiles)
     }
 
     /**
@@ -102,22 +161,66 @@ public class Pipeline(
     }
 
     /**
+     * The source sets to be processed by the pipeline.
+     */
+    public val sources: List<SourceFileSet> by lazy {
+        createSourceFileSets()
+    }
+
+    /**
      * Creates a new `Pipeline` with only one plugin and one source set.
      */
     @VisibleForTesting
     public constructor(
+        params: PipelineParameters,
         plugin: Plugin,
-        sources: SourceFileSet,
-        request: CodeGeneratorRequest,
-        settings: SettingsDirectory,
         id: String = generateId()
-    ) : this(id, listOf(plugin), listOf(sources), request, settings = settings)
+    ) : this(id, params, listOf(plugin))
 
     init {
         under<DefaultMode> {
             use(InMemoryStorageFactory.newInstance())
             use(InMemoryTransportFactory.newInstance())
             use(Delivery.direct())
+        }
+    }
+
+    private fun loadPlugins(plugins: List<String>): List<Plugin> {
+        val classpath = params.userClasspathList.map { Path(it) }
+        val factory = PluginFactory(
+            Thread.currentThread().contextClassLoader,
+            classpath,
+            ::printError
+        )
+        return factory.load(plugins)
+    }
+
+    private fun createSourceFileSets(): List<SourceFileSet> {
+        checkPaths()
+        val sources = params.sourceRootList
+        val targets = (params.targetRootList ?: sources)!!
+        return sources
+            ?.zip(targets)
+            ?.map { (s, t) -> s.toPath() to t.toPath() }
+            ?.filter { (s, _) -> s.exists() }
+            ?.map { (s, t) -> SourceFileSet.create(s, t) }
+            ?: targets.oneSetWithNoFiles()
+    }
+
+    private fun checkPaths() {
+        val sourceRoots = params.sourceRootList
+        val targetRoots = params.targetRootList
+        if (sourceRoots.isEmpty()) {
+            require(targetRoots.size == 1) {
+                "When not providing a source directory, only one target directory must be present."
+            }
+        }
+        if (sourceRoots.isNotEmpty()  && targetRoots.isNotEmpty()) {
+            require(sourceRoots!!.size == targetRoots!!.size) {
+                "Mismatched number of directories." +
+                        " Given ${sourceRoots.size} source directories and" +
+                        " ${targetRoots.size} target directories."
+            }
         }
     }
 
@@ -137,6 +240,16 @@ public class Pipeline(
      */
     public operator fun invoke(afterCompile: (CodegenContext) -> Unit = {}) {
         clearCaches()
+
+        logger.atDebug().log { """
+            Starting code generation with the following arguments:
+              - plugins: ${plugins.joinToString()}
+              - request
+                  - files to generate: ${request.fileToGenerateList.joinToString()}
+                  - parameter: ${request.parameter}.
+            """.ti()
+        }
+
         emitEventsAndRenderSources(afterCompile)
     }
 
@@ -204,10 +317,23 @@ public class Pipeline(
 }
 
 /**
+ * Prints the given error [message] to [System.err].
+ */
+private fun printError(message: String?) {
+    System.err.println(message)
+}
+
+/**
  * Converts this code generation request into [TypeSystem] taking all the proto files.
  */
-private fun CodeGeneratorRequest.toTypeSystem(): TypeSystem {
+private fun CodeGeneratorRequest.toTypeSystem(compiledProtoFiles: ProtoFileList): TypeSystem {
     val fileDescriptors = FileSet.of(protoFileList).files()
     val protoFiles = fileDescriptors.map { it.toPbSourceFile() }
-    return TypeSystem(protoFiles.toSet())
+    return TypeSystem(compiledProtoFiles, protoFiles.toSet())
 }
+
+/**
+ * Creates a list that contains a single, empty source set.
+ */
+private fun List<Directory>.oneSetWithNoFiles(): List<SourceFileSet> =
+    listOf(SourceFileSet.empty(first().toPath()))

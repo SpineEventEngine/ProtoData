@@ -26,19 +26,18 @@
 
 package io.spine.protodata.java.file
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
 import io.spine.protodata.java.ClassName
 import io.spine.protodata.java.EnumName
 import io.spine.protodata.java.annotation.TypeAnnotation
 import io.spine.protodata.render.CoordinatesFactory.Companion.nowhere
 import io.spine.protodata.render.SourceFile
-import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.testing.RenderingTestbed
+import io.spine.protodata.testing.pipelineParams
+import io.spine.protodata.testing.withRoots
 import io.spine.string.ti
 import io.spine.text.TextCoordinates
 import io.spine.tools.code.Java
@@ -103,7 +102,7 @@ class BeforeNestedTypeDeclarationSpec {
 
         @JvmStatic
         @BeforeAll
-        fun runPipeline(@TempDir settingsDir: Path, @TempDir input: Path, @TempDir output: Path) {
+        fun runPipeline(@TempDir input: Path, @TempDir output: Path) {
             val inputClassSrc = input / "$TOP_CLASS.java"
             inputClassSrc.run {
                 createFile()
@@ -111,14 +110,12 @@ class BeforeNestedTypeDeclarationSpec {
             }
 
             Pipeline(
+                params = pipelineParams { withRoots(input, output) },
                 plugin = RenderingTestbed(
                     SuppressWarningsAnnotation(deeplyNestedClassName),
                     SuppressWarningsAnnotation(nestedEnum),
                     SuppressWarningsAnnotation(nestedInterface),
                 ),
-                sources = SourceFileSet.create(input, output),
-                request = CodeGeneratorRequest.getDefaultInstance(),
-                settings = SettingsDirectory(settingsDir)
             )()
 
             javaFile = output / inputClassSrc.name

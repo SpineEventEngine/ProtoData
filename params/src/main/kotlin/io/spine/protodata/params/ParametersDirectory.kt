@@ -24,43 +24,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.settings
+package io.spine.protodata.params
 
-import io.spine.io.Glob
-import io.spine.protodata.settings.Format.UNRECOGNIZED
+import io.spine.protodata.util.Format
+import io.spine.protodata.util.extensions
+import io.spine.protodata.util.ensureExistingDirectory
+import io.spine.tools.code.SourceSetName
+import io.spine.type.toJson
+import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.name
 
 /**
- * Checks if the given file matches this configuration format.
+ * A directory under [WorkingDirectory] which manages files of [PipelineParameters].
  */
-public fun Format.matches(file: Path): Boolean =
-    extensions
-            .map { Glob.extension(it) }
-            .any { it.matches(file) }
-
-
-/**
- * Obtains file extensions associated with this format.
- */
-public val Format.extensions: List<String>
-    get() = if (this == UNRECOGNIZED) {
-        emptyList()
-    } else {
-        valueDescriptor.options.getExtension(SettingsProto.extension).toList()
+public class ParametersDirectory(
+    public val path: Path
+) {
+    /**
+     * Creates the file storing the parameters for the pipeline for the given source set.
+     *
+     * @return the path to the created file.
+     */
+    public fun write(sourceSet: SourceSetName, parameters: PipelineParameters): File {
+        val content = parameters.toJson()
+        val file = file(sourceSet)
+        ensureExistingDirectory(path)
+        file.writeText(content)
+        return file
     }
 
-/**
- * Obtains a [Format] from the file extension of the given configuration file.
- *
- * @throws IllegalStateException If the format is not recognized.
- */
-public fun formatOf(file: Path): Format =
-    Format.values().find { it.matches(file) }
-        ?: error("Unrecognized settings format: `${file.name}`.")
+    /**
+     * Obtains the file for passing parameters for compilation of the specified source set.
+     */
+    public fun file(sourceSet: SourceSetName): File {
+        val fileName = "${sourceSet.value}.${DEFAULT_FORMAT.extensions.first()}"
+        return path.resolve(fileName).toFile()
+    }
 
-/**
- * Tells if this file is a settings file.
- */
-public fun Path.isSettings(): Boolean =
-    Format.values().any { it.matches(this) }
+    private companion object {
+        val DEFAULT_FORMAT = Format.PROTO_JSON
+    }
+}

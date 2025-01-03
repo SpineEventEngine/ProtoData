@@ -27,6 +27,7 @@
 @file:Suppress("RemoveRedundantQualifierName")
 
 import io.spine.dependency.lib.JavaX
+import io.spine.dependency.local.Base
 import io.spine.dependency.local.Spine
 import io.spine.protodata.gradle.CodegenSettings
 
@@ -46,7 +47,7 @@ dependencies {
     "protoData"(extensionSubproject)
     implementation(extensionSubproject)
     implementation(JavaX.annotations)
-    testImplementation(Spine.base)?.because("tests use packing and unpacking extension functions.")
+    testImplementation(Base.lib)?.because("tests use packing and unpacking extension functions.")
 }
 
 extensions.getByType<CodegenSettings>().apply {

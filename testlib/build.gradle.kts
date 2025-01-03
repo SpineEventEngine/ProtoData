@@ -42,6 +42,7 @@ dependencies {
     api(CoreJava.testUtilServer)
     api(ProtoTap.api)
     api(project(":api"))
+    api(project(":params"))
     api(project(":backend"))
 
     implementation(Reflect.lib)

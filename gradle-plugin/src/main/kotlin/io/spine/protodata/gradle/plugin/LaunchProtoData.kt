@@ -26,32 +26,32 @@
 
 package io.spine.protodata.gradle.plugin
 
+import com.google.protobuf.gradle.GenerateProtoTask
 import com.intellij.openapi.util.io.FileUtil
 import io.spine.protodata.Constants.CLI_APP_CLASS
-import io.spine.protodata.cli.PluginParam
-import io.spine.protodata.cli.RequestParam
-import io.spine.protodata.cli.SettingsDirParam
-import io.spine.protodata.cli.SourceRootParam
-import io.spine.protodata.cli.TargetRootParam
-import io.spine.protodata.cli.UserClasspathParam
+import io.spine.protodata.ast.toDirectory
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
+import io.spine.protodata.params.ParametersFileParam
+import io.spine.protodata.params.WorkingDirectory
+import io.spine.protodata.params.pipelineParameters
+import io.spine.tools.code.SourceSetName
 import io.spine.tools.gradle.protobuf.containsProtoFiles
+import java.io.File
 import java.io.File.pathSeparator
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectories
@@ -69,17 +69,8 @@ import org.gradle.api.tasks.SourceSet
  */
 public abstract class LaunchProtoData : JavaExec() {
 
-    /**
-     * The file containing the binary form of `CodeGeneratorRequest` passed to this task.
-     */
-    @get:InputFile
-    internal abstract val requestFile: RegularFileProperty
-
-    /**
-     * The directory which stores ProtoData settings files.
-     */
-    @get:InputDirectory
-    internal abstract val settingsDir: DirectoryProperty
+    @get:Input
+    internal abstract val sourceSetName: Property<String>
 
     @get:Input
     internal lateinit var plugins: Provider<List<String>>
@@ -109,6 +100,13 @@ public abstract class LaunchProtoData : JavaExec() {
     @get:OutputDirectories
     internal lateinit var targets: Provider<List<Directory>>
 
+    @get:Internal
+    internal val workingDir: WorkingDirectory by lazy {
+        val dir = project.protoDataWorkingDir.asFile
+        dir.mkdirs()
+        WorkingDirectory(dir.toPath())
+    }
+
     /**
      * Configures the CLI command for this task.
      *
@@ -116,29 +114,9 @@ public abstract class LaunchProtoData : JavaExec() {
      */
     internal fun compileCommandLine() {
         val command = sequence {
-            plugins.get().forEach {
-                yield(PluginParam.name)
-                yield(it)
-            }
-            yield(RequestParam.name)
-            yield(project.file(requestFile).absolutePath)
-
-            if (sources.isPresent) {
-                yield(SourceRootParam.name)
-                yield(sources.absolutePaths())
-            }
-
-            yield(TargetRootParam.name)
-            yield(targets.absolutePaths())
-
-            val userCp = userClasspathConfiguration.asPath
-            if (userCp.isNotEmpty()) {
-                yield(UserClasspathParam.name)
-                yield(userCp)
-            }
-
-            yield(SettingsDirParam.name)
-            yield(project.file(settingsDir).absolutePath)
+            val sourceSet = SourceSetName(sourceSetName.get())
+            yield(ParametersFileParam.name)
+            yield(workingDir.parametersDirectory.file(sourceSet))
         }.asIterable()
         logger.info { "ProtoData command for `${path}`: ${command.joinToString(separator = " ")}" }
         classpath(protoDataConfiguration)
@@ -147,7 +125,7 @@ public abstract class LaunchProtoData : JavaExec() {
         args(command)
     }
 
-    internal fun setPreLaunchCleanup() {
+    internal fun requestPreLaunchCleanup() {
         doFirst(CleanTargetDirs())
     }
 
@@ -185,17 +163,12 @@ public abstract class LaunchProtoData : JavaExec() {
  * Applies default settings to the receiver task.
  *
  * @param sourceSet The source set for which the task is created.
- * @param settingsDirTask The task for creating the settings directory from which this task depends.
  */
-internal fun LaunchProtoData.applyDefaults(
-    sourceSet: SourceSet,
-    settingsDirTask: CreateSettingsDirectory
-) {
+internal fun LaunchProtoData.applyDefaults(sourceSet: SourceSet) {
+    sourceSetName.set(sourceSet.name)
     val project = project
-    settingsDir.set(settingsDirTask.settingsDir.get())
     val ext = project.extension
     plugins = ext.plugins
-    requestFile.set(ext.requestFile(sourceSet))
     protoDataConfiguration = project.protoDataRawArtifact
     userClasspathConfiguration = project.userClasspath
     project.afterEvaluate {
@@ -203,20 +176,19 @@ internal fun LaunchProtoData.applyDefaults(
         targets = ext.targetDirs(sourceSet)
         compileCommandLine()
     }
-    setPreLaunchCleanup()
+    requestPreLaunchCleanup()
+    doFirst {
+        createParametersFile()
+    }
     onlyIf {
         hasRequestFile(sourceSet)
     }
-    setDependencies(sourceSet, settingsDirTask)
+    setDependencies(sourceSet)
 }
 
-private fun LaunchProtoData.setDependencies(
-    sourceSet: SourceSet,
-    settingsDirTask: CreateSettingsDirectory
-) {
+private fun LaunchProtoData.setDependencies(sourceSet: SourceSet) {
     val project = project
     dependsOn(
-        settingsDirTask,
         project.protoDataRawArtifact.buildDependencies,
         project.userClasspath.buildDependencies,
     )
@@ -226,13 +198,51 @@ private fun LaunchProtoData.setDependencies(
 }
 
 /**
+ * Writes the file with parameters for a pipeline.
+ *
+ * The function obtains the list of compiled proto files by querying an instance
+ * of [GenerateProtoTask] on which the receiver task depends on (as set by the
+ * [Plugin.handleLaunchTaskDependency][io.spine.protodata.gradle.plugin.handleLaunchTaskDependency]
+ * function).
+ */
+private fun LaunchProtoData.createParametersFile() {
+    val generateProtoTask = dependsOn.first { it is GenerateProtoTask } as GenerateProtoTask
+    val params = pipelineParameters {
+        val protoFiles = generateProtoTask.sourceDirs.asFileTree.files.toList().sorted()
+            .map {
+                it.toProto()
+            }
+        compiledProto.addAll(protoFiles)
+        settings = workingDir.settingsDirectory.path.toAbsolutePath().toDirectory()
+        sourceRoot.addAll(
+            sources.absoluteDirs().map { it.toDirectory() }
+        )
+        targetRoot.addAll(
+            targets.absoluteDirs().map { it.toDirectory() }
+        )
+        request = workingDir.requestDirectory.file(SourceSetName(sourceSetName.get())).toProto()
+
+        pluginClassName.addAll(plugins.get())
+
+        val ucp = userClasspathConfiguration.asPath.split(pathSeparator)
+        userClasspath.addAll(ucp)
+    }
+
+    val sourceSet = SourceSetName(sourceSetName.get())
+    val file = workingDir.parametersDirectory.write(sourceSet, params)
+    logger.info {
+        "Parameters file `${file.canonicalPath}` has been created.`"
+    }
+}
+
+/**
  * Tells if the request file for this task exists.
  *
  * Logs error if the given source set contains `proto` directory which contains files,
  * which assumes that the request file should have been created.
  */
 internal fun LaunchProtoData.hasRequestFile(sourceSet: SourceSet): Boolean {
-    val requestFile = requestFile.get().asFile
+    val requestFile = workingDir.requestDirectory.file(SourceSetName(sourceSet.name))
     if (!requestFile.exists() && sourceSet.containsProtoFiles()) {
         logger.error {
             "Unable to locate the request file `$requestFile` which should have been created" +
@@ -249,10 +259,7 @@ private val Project.protoDataRawArtifact: Configuration
 private val Project.userClasspath: Configuration
     get() = configurations.getByName(USER_CLASSPATH_CONFIGURATION)
 
-private fun Provider<List<Directory>>.absoluteDirs() = takeIf { it.isPresent }
+private fun Provider<List<Directory>>.absoluteDirs(): List<File> = takeIf { it.isPresent }
     ?.get()
     ?.map { it.asFile.absoluteFile }
     ?: listOf()
-
-private fun Provider<List<Directory>>.absolutePaths(): String =
-    absoluteDirs().joinToString(pathSeparator)

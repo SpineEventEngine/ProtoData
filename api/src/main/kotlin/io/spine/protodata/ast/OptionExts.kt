@@ -71,9 +71,15 @@ public val Option.isColumn: Boolean
  * @return the value of the option or `null` if the option is not found.
  */
 public fun <T : Message> Iterable<Option>.find(optionName: String, cls: Class<T>): T? {
-    val value = firstOrNull { it.name == optionName }?.value
+    val value = find(optionName)?.value
     return value?.unpack(cls)
 }
+
+/**
+ * Finds an option with the given name.
+ */
+public fun Iterable<Option>.find(optionName: String): Option? =
+    firstOrNull { it.name == optionName }
 
 /**
  * Looks up an option with the given type [T].
@@ -99,7 +105,8 @@ public suspend fun SequenceScope<EventMessage>.produceOptionEvents(
     context: GenericDescriptor,
     factory: (Option) -> EventMessage
 ) {
-    options.parseOptions(context).forEach {
+    val parsed = options.parseOptions(context)
+    parsed.forEach {
         yield(factory(it))
     }
 }

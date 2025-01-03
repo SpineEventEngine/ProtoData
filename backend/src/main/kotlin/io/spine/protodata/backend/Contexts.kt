@@ -32,6 +32,7 @@ import io.spine.base.EventMessage
 import io.spine.core.userId
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.plugin.add
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContext.singleTenant
@@ -72,7 +73,10 @@ public class CodeGenerationContext(
      * This is a test-only constructor for the cases when resolving of types is unnecessary.
      */
     @VisibleForTesting
-    public constructor(pipelineId: String) : this(pipelineId, TypeSystem(emptySet()))
+    public constructor(pipelineId: String) : this(
+        pipelineId,
+        TypeSystem(ProtoFileList(emptyList()), emptySet())
+    )
 
     /**
      * The underlying instance of the `Code Generation` bounded context.

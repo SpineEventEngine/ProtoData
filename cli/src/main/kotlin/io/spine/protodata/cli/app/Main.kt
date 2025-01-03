@@ -29,40 +29,24 @@ package io.spine.protodata.cli.app
 import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.UsageError
-import com.github.ajalt.clikt.parameters.options.NullableOption
 import com.github.ajalt.clikt.parameters.options.flag
-import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
-import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.file
-import com.github.ajalt.clikt.parameters.types.path
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.code.proto.parse
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
 import io.spine.logging.context.ScopedLoggingContext
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.cli.DebugLoggingParam
-import io.spine.protodata.cli.InfoLoggingParam
-import io.spine.protodata.cli.Parameter
-import io.spine.protodata.cli.PluginParam
-import io.spine.protodata.cli.RequestParam
-import io.spine.protodata.cli.SettingsDirParam
-import io.spine.protodata.cli.SourceRootParam
-import io.spine.protodata.cli.TargetRootParam
-import io.spine.protodata.cli.UserClasspathParam
-import io.spine.protodata.plugin.Plugin
-import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.params.DebugLoggingParam
+import io.spine.protodata.params.InfoLoggingParam
+import io.spine.protodata.params.Parameter
+import io.spine.protodata.params.ParametersFileParam
+import io.spine.protodata.params.PipelineParameters
+import io.spine.protodata.util.parseFile
 import io.spine.string.Separator
-import io.spine.string.ti
 import io.spine.tools.code.manifest.Version
 import java.io.File
-import java.io.File.pathSeparator
-import java.nio.file.Path
-import kotlin.io.path.exists
 import kotlin.system.exitProcess
 
 /**
@@ -96,19 +80,6 @@ private fun readVersion(): String = Version.fromManifestOf(Run::class.java).valu
 
 /**
  * The main CLI command which performs the ProtoData code generation tasks.
- *
- * The command accepts class names for the service provider interface implementations via the CLI
- * parameters, such as `--plugin`, `--renderer`, and `--option-provider`, all of which
- * can be repeated parameters, if required.
- *
- * Then, using the classpath of the app and the user classpath supplied via the `--user-classpath`
- * parameter, loads those classes.
- *
- * `Code Generation` context accept Protobuf compiler events, regarding the Protobuf types, listed
- * in the `CodeGeneratorRequest.file_to_generate` as loaded from the `--request` parameter.
- *
- * Finally, the renderers apply required changes to the source set with the root path, supplied in
- * the `--source-root` parameter.
  */
 @Suppress("TooManyFunctions") // It is OK for the `main` entry point.
 internal class Run(version: String) : CliktCommand(
@@ -126,45 +97,12 @@ internal class Run(version: String) : CliktCommand(
         completionCandidates = cc
     )
 
-    private fun NullableOption<Path, Path>.splitPaths() = split(pathSeparator)
-
-    private val plugins: List<String>
-            by PluginParam.toOption().multiple()
-
-    private val codegenRequestFile: File
-            by RequestParam.toOption().file(
-                mustExist = true,
-                canBeDir = false,
-                canBeSymlink = false,
-                mustBeReadable = true
-            ).required()
-
-    private val sourceRoots: List<Path>?
-            by SourceRootParam.toOption().path(
-                canBeFile = false,
-                canBeSymlink = false
-            ).splitPaths()
-
-    private val targetRoots: List<Path>?
-            by TargetRootParam.toOption().path(
-                canBeFile = false,
-                canBeSymlink = false
-            ).splitPaths().required()
-
-    private val classpath: List<Path>?
-            by UserClasspathParam.toOption().path(
-                mustExist = true,
-                mustBeReadable = true
-            ).splitPaths()
-
-    @Suppress("unused")
-    private val settingsDir: Path
-            by SettingsDirParam.toOption().path(
-                mustExist = true,
-                mustBeReadable = true,
-                canBeDir = true,
-                canBeSymlink = false
-            ).required()
+    private val paramsFile: File by ParametersFileParam.toOption().file(
+        mustExist = true,
+        canBeDir = false,
+        canBeSymlink = false,
+        mustBeReadable = true
+    ).required()
 
     private val debug: Boolean by DebugLoggingParam.toOption().flag(default = false)
 
@@ -194,80 +132,11 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun doRun() {
-        val sources = createSourceFileSets()
-        val plugins = loadPlugins()
-        val request = loadRequest()
-        val dir = SettingsDirectory(settingsDir)
-        logger.atDebug().log { """
-            Starting code generation with the following arguments:
-              - plugins: ${plugins.joinToString()}
-              - request
-                  - files to generate: ${request.fileToGenerateList.joinToString()}
-                  - parameter: ${request.parameter}
-              - settings dir: ${settingsDir}.
-            """.ti()
-        }
-        val pipeline = Pipeline(
-            plugins = plugins,
-            sources = sources,
-            request = request,
-            settings = dir
-        )
+        val params = parseFile(paramsFile, PipelineParameters::class.java)
+        val pipeline = Pipeline(params = params)
         pipeline()
     }
-
-    private fun loadRequest(): CodeGeneratorRequest {
-        return codegenRequestFile.inputStream().use {
-            CodeGeneratorRequest::class.parse(it)
-        }
-    }
-
-    private fun createSourceFileSets(): List<SourceFileSet> {
-        checkPaths()
-        val sources = sourceRoots
-        val targets = (targetRoots ?: sources)!!
-        return sources
-            ?.zip(targets)
-            ?.filter { (s, _) -> s.exists() }
-            ?.map { (s, t) -> SourceFileSet.create(s, t) }
-            ?: targets.oneSetWithNoFiles()
-    }
-
-    private fun checkPaths() {
-        if (sourceRoots == null) {
-            checkUsage(targetRoots!!.size == 1) {
-                "When not providing a source directory, only one target directory must be present."
-            }
-        }
-        if (sourceRoots != null && targetRoots != null) {
-            checkUsage(sourceRoots!!.size == targetRoots!!.size) {
-                "Mismatched number of directories." +
-                        " Given ${sourceRoots!!.size} source directories and" +
-                        " ${targetRoots!!.size} target directories."
-            }
-        }
-    }
-
-    private fun loadPlugins(): List<Plugin> {
-        val factory = PluginFactory(
-            Thread.currentThread().contextClassLoader,
-            classpath,
-            ::printError
-        )
-        return factory.load(plugins)
-    }
-
-    /**
-     * Prints the given error [message] to the screen.
-     */
-    private fun printError(message: String?) = echo(message, trailingNewline = true, err = true)
 }
-
-/**
- * Creates a list that contains a single, empty source set.
- */
-private fun List<Path>.oneSetWithNoFiles(): List<SourceFileSet> =
-    listOf(SourceFileSet.empty(first()))
 
 /**
  * Throws an [UsageError] with the result of calling [lazyMessage] if the [condition] isn't met.

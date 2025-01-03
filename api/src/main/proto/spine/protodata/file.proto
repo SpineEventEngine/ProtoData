@@ -35,7 +35,7 @@ option java_package = "io.spine.protodata.ast";
 option java_outer_classname = "FileProto";
 option java_multiple_files = true;
 
-// Represents a file in an arbitrary OS.
+// A path to a file in an arbitrary OS.
 //
 // In most cases it is going to be a relative path.
 // In some cases it may be an absolute path.

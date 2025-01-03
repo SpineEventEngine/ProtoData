@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,26 +26,36 @@
 
 package io.spine.protodata.gradle
 
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.tasks.SourceSet
+
 /**
- * Constants for directory names used by ProtoData.
+ * Abstract base for utilities finding tasks of a certain type by
+ * the [provided name pattern][nameFor].
  */
-public object Directories {
+public abstract class TaskLocator {
 
     /**
-     * The name of the ProtoData working directory which is conventionally
-     * placed under the `build` directory.
+     * Obtains a name for the task for the given source set.
      */
-    public const val PROTODATA_WORKING_DIR: String = "protodata"
+    public abstract fun nameFor(sourceSet: SourceSet): String
 
     /**
-     * The name of the subdirectory under [PROTODATA_WORKING_DIR] where
-     * the ProtoData settings files are stored.
+     * Obtains an instance of the task in the given project for the specified source set.
      */
-    public const val SETTINGS_SUBDIR: String = "settings"
+    public fun get(project: Project, sourceSet: SourceSet): Task {
+        val name = LaunchTask.nameFor(sourceSet)
+        return project.tasks.getByName(name)
+    }
 
     /**
-     * The name of the subdirectory under [PROTODATA_WORKING_DIR] where
-     * [code generation requests files][CodeGeneratorRequestFile] are stored.
+     * Obtains an instance of the task in the given project for the specified source set.
+     *
+     * @return the task or `null` if there is no task created for this source set
      */
-    public const val REQUESTS_SUBDIR: String = "requests"
+    public fun find(project: Project, sourceSet: SourceSet): Task? {
+        val name = LaunchTask.nameFor(sourceSet)
+        return project.tasks.findByName(name)
+    }
 }

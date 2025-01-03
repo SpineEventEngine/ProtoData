@@ -32,16 +32,24 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
-import io.spine.option.OptionsProto
+import io.spine.protodata.ast.directory
+import io.spine.protodata.ast.file
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
+import io.spine.protodata.params.WorkingDirectory
+import io.spine.protodata.params.pipelineParameters
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.StubSoloRenderer
+import io.spine.protodata.testing.googleProtobufProtos
+import io.spine.protodata.testing.spineOptionProtos
+import io.spine.tools.code.SourceSetName
+import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.pathString
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import kotlin.reflect.jvm.jvmName
@@ -51,9 +59,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
-@DisplayName("`ProtoData` CLI logging levels should")
+@DisplayName("ProtoData CLI logging levels should")
 class LoggingLevelSpec {
 
+    private lateinit var parametersFile: File
     private lateinit var codegenRequestFile: Path
     private lateinit var settingsDirectory: Path
     private lateinit var srcRoot : Path
@@ -62,13 +71,26 @@ class LoggingLevelSpec {
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
+        val workingDir = WorkingDirectory(sandbox)
+
+        codegenRequestFile = sandbox.resolve("code-gen-request.bin")
+
+        val params = pipelineParameters {
+            compiledProto.add(file { path = "/given/proto/file/path.proto"})
+            settings = directory { path = workingDir.settingsDirectory.path.absolutePathString() }
+            sourceRoot.add(directory { path = sandbox.resolve("src").absolutePathString() })
+            targetRoot.add(directory { path = sandbox.resolve("generated").absolutePathString() })
+            request = codegenRequestFile.toFile().toProto()
+            pluginClassName.add(LoggingLevelAsserterPlugin::class.jvmName)
+        }
+        parametersFile = workingDir.parametersDirectory.write(SourceSetName.main, params)
+
         settingsDirectory = sandbox.resolve("settings")
         settingsDirectory.toFile().mkdirs()
         srcRoot = sandbox.resolve("src")
         srcRoot.toFile().mkdirs()
         targetRoot = sandbox.resolve("target")
         targetRoot.toFile().mkdirs()
-        codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
         sourceFile = srcRoot.resolve("SourceCode.java")
         sourceFile.writeText("""
@@ -78,12 +100,14 @@ class LoggingLevelSpec {
         val project = ProjectProto.getDescriptor()
         val testProto = TestProto.getDescriptor()
         val request = codeGeneratorRequest {
-            protoFile.addAll(listOf(
-                project.toProto(),
-                testProto.toProto(),
-                TestOptionsProto.getDescriptor().toProto(),
-                OptionsProto.getDescriptor().toProto()
-            ))
+            protoFile.addAll(
+                listOf(
+                    project.toProto(),
+                    testProto.toProto(),
+                    TestOptionsProto.getDescriptor().toProto(),
+                ) + spineOptionProtos()
+                        + googleProtobufProtos()
+            )
             fileToGenerate.addAll(listOf(
                 project.name,
                 testProto.name
@@ -122,11 +146,7 @@ class LoggingLevelSpec {
 
     private fun launchWithLoggingParams(vararg argv: String) {
         val params = mutableListOf(
-            "-p", LoggingLevelAsserterPlugin::class.jvmName,
-            "--src", srcRoot.toString(),
-            "--target", targetRoot.toString(),
-            "-t", codegenRequestFile.toString(),
-            "-d", settingsDirectory.pathString
+            "--params", parametersFile.toPath().absolutePathString(),
         )
         params.addAll(argv)
         Run("1961.04.12").parse(params)

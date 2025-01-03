@@ -31,11 +31,15 @@ import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
+import io.spine.protodata.params.RequestDirectory
 import io.spine.protodata.testing.PipelineSetup
+import io.spine.protodata.testing.pipelineParams
 import io.spine.protodata.testing.recorder.RecordingPlugin
 import io.spine.protodata.testing.recorder.enumTypeNames
 import io.spine.protodata.testing.recorder.messageTypeNames
 import io.spine.protodata.testing.recorder.serviceNames
+import io.spine.protodata.testing.withRequestFile
+import io.spine.tools.code.SourceSetName
 import java.nio.file.Path
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -56,11 +60,18 @@ internal class PipelineFilteringSpec {
      * Creates a pipeline with the [recorder] plugin and the given [filter].
      */
     private fun createPipeline(
+        requestsDir: Path,
         output: Path,
-        settings: Path,
         filter: DescriptorFilter
     ): Pipeline {
-        val setup = PipelineSetup.byResources(listOf(recorder), output, settings, filter) { _ -> }
+        val requestFile = RequestDirectory(requestsDir).file(SourceSetName("testFixtures"))
+        val params = pipelineParams { withRequestFile(requestFile) }
+        val setup = PipelineSetup.byResources(
+            params = params,
+            plugins = listOf(recorder),
+            outputRoot = output,
+            descriptorFilter = filter
+        ) { _ -> }
         val pipeline = setup.createPipeline()
         return pipeline
     }
@@ -72,7 +83,7 @@ internal class PipelineFilteringSpec {
         "spine.protodata.backend.given.$simpleName"
 
     @Test
-    fun `message types`(@TempDir output: Path, @TempDir settings: Path) {
+    fun `message types`(@TempDir requestsDir: Path, @TempDir output: Path) {
         val acceptedTypeName = "Message2"
 
         val filter: DescriptorFilter = {
@@ -83,7 +94,7 @@ internal class PipelineFilteringSpec {
             }
         }
 
-        val pipeline = createPipeline(output, settings, filter)
+        val pipeline = createPipeline(requestsDir, output, filter)
         pipeline {
             it.messageTypeNames().let { list ->
                 list shouldContain qualifiedNameOf(acceptedTypeName)
@@ -105,7 +116,7 @@ internal class PipelineFilteringSpec {
             }
         }
 
-        val pipeline = createPipeline(output, settings, filter)
+        val pipeline = createPipeline(settings, output, filter)
         pipeline {
             it.enumTypeNames().let { list ->
                 list shouldContain qualifiedNameOf(acceptedTypeName)
@@ -127,7 +138,7 @@ internal class PipelineFilteringSpec {
             }
         }
 
-        val pipeline = createPipeline(output, settings, filter)
+        val pipeline = createPipeline(settings, output, filter)
         pipeline {
             it.serviceNames().let { list ->
                 list shouldContain qualifiedNameOf(acceptedServiceName)

@@ -26,8 +26,8 @@
 
 package io.spine.protodata.ast
 
-import io.spine.protodata.settings.Format
-import io.spine.protodata.settings.extensions
+import io.spine.protodata.util.Format
+import io.spine.protodata.util.extensions
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
@@ -35,21 +35,37 @@ import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
 
 /**
- * Converts the given path to a [File] message.
+ * Converts the given path to a [File] message containing an absolute version of this path.
  */
 public fun Path.toProto(): File = file {
     path = absolutePathString()
 }
 
 /**
- * Converts the given [java.io.File] to a [File] message.
+ * Converts this path to a [Directory] message.
+ */
+public fun Path.toDirectory(): Directory = toFile().toDirectory()
+
+/**
+ * Converts this instance of [java.io.File] to a [File] message with an absolute path.
  */
 public fun java.io.File.toProto(): File = toPath().toProto()
 
 /**
- * Converts the given [File] message to a [Path].
+ * Converts this instance of [java.io.File] to a [Directory] message.
+ */
+public fun java.io.File.toDirectory(): Directory =
+    directory { this@directory.path = this@toDirectory.path }
+
+/**
+ * Converts this [File] message to a [Path].
  */
 public fun File.toPath(): Path = Path(path)
+
+/**
+ * Converts this [Directory] message to a [Path].
+ */
+public fun Directory.toPath(): Path = Path(path)
 
 /**
  * The suffix of `pb.json` files including the leading dot.

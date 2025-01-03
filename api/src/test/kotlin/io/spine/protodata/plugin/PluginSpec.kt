@@ -26,7 +26,6 @@
 
 package io.spine.protodata.plugin
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldStartWith
@@ -34,8 +33,9 @@ import io.spine.protodata.ast.event.FieldEntered
 import io.spine.protodata.ast.event.FieldExited
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.render.SourceFileSet
-import io.spine.protodata.settings.SettingsDirectory
+import io.spine.protodata.protobuf.ProtoFileList
+import io.spine.protodata.testing.pipelineParams
+import io.spine.protodata.testing.withRoots
 import io.spine.protodata.type.TypeSystem
 import io.spine.server.BoundedContext
 import io.spine.server.BoundedContextBuilder
@@ -65,7 +65,7 @@ internal class PluginSpec {
     @Test
     fun `propagate 'TypeSystem' into its policies`() {
         val ctx = BoundedContext.singleTenant("Stubs")
-        val typeSystem = TypeSystem(emptySet())
+        val typeSystem = TypeSystem(ProtoFileList(emptyList()), emptySet())
         plugin.applyTo(ctx, typeSystem)
         policy1.typeSystem() shouldBe typeSystem
         policy2.typeSystem() shouldBe typeSystem
@@ -74,10 +74,9 @@ internal class PluginSpec {
     @Test
     fun `register policies with a 'CodegenContext'`(
         @TempDir src: Path,
-        @TempDir target: Path,
-        @TempDir settingsDir: Path
+        @TempDir target: Path
     ) {
-        runPipeline(src, target, settingsDir)
+        runPipeline(src, target)
 
         policy1.context() shouldNotBe null
         policy1.context().name().value shouldStartWith CodeGenerationContext.NAME_PREFIX
@@ -87,20 +86,19 @@ internal class PluginSpec {
     @Test
     fun `extend a given context via its builder`(
         @TempDir src: Path,
-        @TempDir target: Path,
-        @TempDir settingsDir: Path
+        @TempDir target: Path
     ) {
-        runPipeline(src, target, settingsDir)
+        runPipeline(src, target)
         (plugin as StubPlugin).contextBuilder shouldNotBe null
     }
 
-    private fun runPipeline(src: Path, target: Path, settingsDir: Path) {
-        val fileSet = SourceFileSet.create(src, target)
+    private fun runPipeline(src: Path, target: Path) {
+        val params = pipelineParams {
+            withRoots(src, target)
+        }
         val pipeline = Pipeline(
+            params,
             plugin,
-            fileSet,
-            CodeGeneratorRequest.getDefaultInstance(),
-            SettingsDirectory(settingsDir)
         )
         pipeline()
     }

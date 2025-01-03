@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.dependency.lib.AutoService
+import io.spine.dependency.lib.AutoServiceKsp
 import io.spine.dependency.lib.Clikt
 import io.spine.dependency.local.Logging
 import io.spine.gradle.publish.SpinePublishing
@@ -34,6 +36,7 @@ plugins {
     `write-manifest`
     `build-proto-model`
     `maven-publish`
+    ksp
     id("com.github.johnrengelman.shadow")
 }
 
@@ -47,11 +50,16 @@ dependencies {
 
     listOf(
         ":api",
-        ":cli-api",
+        ":params",
         ":backend",
         ":java"
     ).forEach { implementation(project(it)) }
 
+    testAnnotationProcessor(AutoService.processor)?.because(
+        "We need `@AutoService` for registering custom options provider.")
+    ksp(AutoServiceKsp.processor)
+    testCompileOnly(AutoService.annotations)
+    testImplementation(project(":testlib"))
     testImplementation(project(":test-env"))
 }
 
@@ -210,3 +218,11 @@ tasks.shadowJar {
 // See https://github.com/johnrengelman/shadow/issues/153.
 tasks.shadowDistTar.get().enabled = false
 tasks.shadowDistZip.get().enabled = false
+
+// Set explicit dependency for the `kspTestKotlin` task to avoid the Gradle warning
+// on missing explicit dependency.
+project.afterEvaluate {
+    val kspTestKotlin by tasks.getting
+    val launchTestProtoData by tasks.getting
+    kspTestKotlin.dependsOn(launchTestProtoData)
+}

@@ -26,16 +26,13 @@
 
 package io.spine.protodata.render
 
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldHaveAtLeastSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.backend.Pipeline
-import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.CompanionFramer
 import io.spine.protodata.test.CompanionLalalaRenderer
@@ -47,6 +44,9 @@ import io.spine.protodata.test.KotlinInsertionPoint.FILE_START
 import io.spine.protodata.test.KotlinInsertionPoint.LINE_FOUR_COL_THIRTY_THREE
 import io.spine.protodata.test.NonVoidMethodPrinter
 import io.spine.protodata.test.VariousKtInsertionPointsPrinter
+import io.spine.protodata.testing.RenderingTestbed
+import io.spine.protodata.testing.pipelineParams
+import io.spine.protodata.testing.withRoots
 import io.spine.text.TextCoordinates
 import java.lang.System.lineSeparator
 import java.nio.file.Path
@@ -105,6 +105,9 @@ class InsertionPointsSpec {
             """.trimIndent()
         )
         Pipeline(
+            params = pipelineParams {
+                withRoots(input, output)
+            },
             plugins = listOf(RenderingTestbed(
                 renderers = listOf(
                     VariousKtInsertionPointsPrinter(),
@@ -114,9 +117,6 @@ class InsertionPointsSpec {
                     CompanionFramer(),
                     CompanionLalalaRenderer())
             )),
-            sources = listOf(SourceFileSet.create(input, output)),
-            request = CodeGeneratorRequest.getDefaultInstance(),
-            settings = SettingsDirectory(input)
         )()
         kotlinFile = output / inputKtFile.name
         javaFile = output / inputJavaFile.name

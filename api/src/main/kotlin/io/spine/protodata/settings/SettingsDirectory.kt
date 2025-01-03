@@ -26,84 +26,93 @@
 
 package io.spine.protodata.settings
 
+import io.spine.protodata.util.ensureExistingDirectory
 import io.spine.protodata.ast.toProto
 import io.spine.protodata.settings.event.SettingsFileDiscovered
 import io.spine.protodata.settings.event.settingsFileDiscovered
+import io.spine.protodata.util.Format
+import io.spine.protodata.util.extensions
+import io.spine.protodata.util.hasSupportedFormat
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 
 /**
- * A directory containing settings files.
+ * A directory containing settings files for ProtoData plugins or their parts.
  *
  * Only the files with the [recognized extensions][Format] are considered settings files.
  *
  * Only the files belonging to the directory directly are considered,
  * no subdirectories are traversed.
  *
- * @param path the existing path to the settings directory.
+ * This class works in combination with the view which manages the [Settings] state class
+ * on the ProtoData backend. The view is subscribed to the [SettingsFileDiscovered] event for
+ * storing the name of the discovered settings file.
+ *
+ * The method [emitEvents] of this class traverses all the files stored in the settings directory
+ * emitting the [SettingsFileDiscovered] event for each file with the recognized format.
+ *
+ * In order to load settings, ProtoData plugins or their parts should implement
+ * the [LoadsSettings] interface, which provides the discovery and loading methods based
+ * on querying instances of the [Settings] class on the backend.
+ *
+ * @param path The existing path to the settings directory.
  */
 public class SettingsDirectory(
     public val path: Path
 ) {
-    init {
-        require(path.toFile().isDirectory) {
-            "The path `$path` is not a directory."
-        }
-        require(path.exists()) {
-            "The directory `$path` does not exist."
-        }
-    }
-
     /**
-     * Writes settings file for the given consumer.
+     * Writes a settings file for the given consumer.
      *
-     * @param consumerId the ID of the consumer to write settings for.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param consumerId The ID of the consumer to write settings for.
+     * @param format The format of the settings file.
+     * @param content The content of the settings file.
      */
     public fun write(consumerId: String, format: Format, content: String) {
         val file = file(consumerId, format)
-        file.toFile().writeText(content)
+        ensureExistingDirectory(path)
+        file.writeText(content)
     }
 
     /**
-     * Writes settings file for the consumer specified by the generic parameter.
+     * Writes a settings file for the consumer specified by the generic parameter.
      *
-     * @param T the type of the settings consumer.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param T The type of the settings consumer.
+     * @param format The format of the settings file.
+     * @param content The content of the settings file.
      */
     public inline fun <reified T: LoadsSettings> writeFor(format: Format, content: String) {
         write(T::class.java.defaultConsumerId, format, content)
     }
 
     /**
-     * Writes settings file for the given consumer.
+     * Writes a settings file for the given consumer.
      *
-     * @param consumerId the ID of the consumer to write settings for.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param consumerId The ID of the consumer to write settings for.
+     * @param format The format of the settings file.
+     * @param content The content of the settings file.
      */
     public fun write(consumerId: String, format: Format, content: ByteArray) {
         val file = file(consumerId, format)
-        file.toFile().writeBytes(content)
+        ensureExistingDirectory(path)
+        file.writeBytes(content)
     }
 
     /**
-     * Writes settings file for the consumer specified by the generic parameter.
+     * Writes a settings file for the consumer specified by the generic parameter.
      *
-     * @param T the type of the settings consumer.
-     * @param format the format of the settings file.
-     * @param content the content of the settings file.
+     * @param T The type of the settings consumer.
+     * @param format The format of the settings file.
+     * @param content The content of the settings file.
      */
     public inline fun <reified T: LoadsSettings> writeFor(format: Format, content: ByteArray) {
         write(T::class.java.defaultConsumerId, format, content)
     }
 
-    private fun file(consumerId: String, format: Format): Path {
+    private fun file(consumerId: String, format: Format): File {
         val fileName = "${consumerId}.${format.extensions.first()}"
-        return path.resolve(fileName)
+        return path.resolve(fileName).toFile()
     }
 
     /**
@@ -117,7 +126,11 @@ public class SettingsDirectory(
             }
         }
 
-    private fun files() =
-        path.listDirectoryEntries()
-            .filter { it.isSettings() }
+    private fun files(): List<Path> =
+        if (path.exists()) {
+            path.listDirectoryEntries()
+                .filter { it.hasSupportedFormat() }
+        } else {
+            emptyList()
+        }
 }

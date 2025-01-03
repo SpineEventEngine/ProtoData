@@ -1,0 +1,79 @@
+/*
+ * Copyright 2024, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+syntax = "proto3";
+
+package spine.protodata;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.util";
+option java_outer_classname = "FormatProto";
+option java_multiple_files = true;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.EnumValueOptions {
+
+    // Possible file extensions associated with a file format.
+    //
+    // Only applicable to the `Format` enum.
+    //
+    repeated string extension = 73980 [(internal) = true];
+}
+
+// The format of a Protobuf message stored in a file.
+//
+// Files with settings for ProtoData and its plugins should be stored in one of these formats.
+//
+enum Format {
+
+    RCF_UNKNOWN = 0;
+
+    // A Protobuf message encoded in binary.
+    //
+    // See: https://protobuf.dev/programming-guides/techniques/#suffixes
+    // See: https://buf.build/docs/reference/inputs#binpb
+    //
+    PROTO_BINARY = 1 [(extension) = "binpb", (extension) = "pb", (extension) = "bin"];
+
+    // A Protobuf message encoded in Protobuf JSON.
+    //
+    // Use this item instead of [JSON] for Protobuf messages stored in
+    // JSON format so that the correct parser is selected for the file.
+    //
+    PROTO_JSON = 2 [(extension) = "pb.json"];
+
+    // A plain JSON value.
+    JSON = 3 [(extension) = "json"];
+
+    // A plain YAML value.
+    YAML = 4 [(extension) = "yml", (extension) = "yaml"];
+
+    // A plain string value.
+    PLAIN = 5 [(extension) = "txt"];
+}

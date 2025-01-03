@@ -26,8 +26,8 @@
 
 package io.spine.protodata.gradle.plugin
 
-import io.spine.protodata.gradle.Directories.PROTODATA_WORKING_DIR
-import io.spine.protodata.gradle.Directories.SETTINGS_SUBDIR
+import io.spine.protodata.params.Directories.PROTODATA_WORKING_DIR
+import io.spine.protodata.params.Directories.SETTINGS_SUBDIR
 import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -38,7 +38,7 @@ import org.gradle.api.tasks.TaskAction
 /**
  * Creates a directory for storing settings files passed to ProtoData.
  */
-public abstract class CreateSettingsDirectory: DefaultTask() {
+public abstract class CreateSettingsDirectory : DefaultTask() {
 
     /**
      * The directory to store ProtoData settings files.

@@ -31,9 +31,11 @@ import io.spine.dependency.lib.Jackson
 import io.spine.dependency.lib.Kotlin
 import io.spine.dependency.lib.KotlinX
 import io.spine.dependency.lib.Protobuf
+import io.spine.dependency.local.Base
 import io.spine.dependency.test.Truth
 import io.spine.dependency.local.Logging
 import io.spine.dependency.local.ProtoData
+import io.spine.dependency.local.Reflect
 import io.spine.dependency.local.Spine
 import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
@@ -88,13 +90,13 @@ subprojects {
                     KotlinX.Coroutines.jdk8,
                     Caffeine.lib,
                     Grpc.api,
-                    Spine.base,
+                    Base.lib,
                     ToolBase.lib,
                     Validation.runtime,
                     Logging.lib,
                     Logging.libJvm,
                     Logging.middleware,
-                    Spine.reflect,
+                    Reflect.lib,
                     ProtoData.backend,
                     ProtoData.java,
                     Jackson.Junior.objects

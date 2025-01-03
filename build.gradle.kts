@@ -28,8 +28,10 @@
 
 import io.spine.dependency.build.Dokka
 import io.spine.dependency.lib.Grpc
+import io.spine.dependency.local.Base
 import io.spine.dependency.local.CoreJava
-import io.spine.dependency.local.Spine
+import io.spine.dependency.local.Reflect
+import io.spine.dependency.local.TestLib
 import io.spine.gradle.RunBuild
 import io.spine.gradle.publish.PublishingRepos
 import io.spine.gradle.publish.SpinePublishing
@@ -42,7 +44,7 @@ import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 
 buildscript {
     standardSpineSdkRepositories()
-    val baseForBuildScript = io.spine.dependency.local.Spine.baseForBuildScript
+    val baseForBuildScript = io.spine.dependency.local.Base.libForBuildScript
     dependencies {
         classpath(io.spine.dependency.lib.Protobuf.GradlePlugin.lib)
         classpath(baseForBuildScript)
@@ -92,9 +94,9 @@ allprojects {
         resolutionStrategy {
             force(
                 Grpc.ProtocPlugin.artifact,
-                Spine.reflect,
-                Spine.base,
-                Spine.testlib,
+                Reflect.lib,
+                Base.lib,
+                TestLib.lib,
                 CoreJava.server
             )
         }
