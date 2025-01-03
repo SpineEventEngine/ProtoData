@@ -84,7 +84,7 @@ message PipelineParameters {
     // They will just be ignored along with their paired targets. But at least one directory
     // must exist. Otherwise, the process will end up with an error.
     //
-    repeated Directory source_root = 5 [(required) = true];
+    repeated Directory source_root = 5;
 
     // Paths to the directories where the processed source files should be placed.
     //
