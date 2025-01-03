@@ -1,11 +1,11 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,7 +30,7 @@ package io.spine.protodata.settings
  * A ProtoData plugin component which can [load][loadSettings] its settings.
  *
  * It is the API user's responsibility to know the format of the settings and provide
- * an appropriate class given s the parameter to the [loadSettings] method.
+ * an appropriate class passed as the argument to the [loadSettings] method.
  *
  * For Protobuf messages, encoded either in binary or in the Protobuf JSON format, the class
  * passed as the parameter to the [loadSettings] method must be a subtype of
@@ -43,8 +43,9 @@ package io.spine.protodata.settings
  *
  * In Kotlin, the simplest way to define a type compatible with a configuration is a data class.
  * Jackson is capable of working with Kotlin `val`-s, so the data class can be immutable.
- * In Java, Jackson is capable of working with immutable types as well. However, it may require
- * some annotations to be added to the class. See the Jackson doc for more info.
+ * In Java, Jackson is capable of working with immutable types as well.
+ * However, it may require some annotations to be added to the class.
+ * Please see the Jackson's documentation for more info.
  */
 public interface WithSettings {
 
