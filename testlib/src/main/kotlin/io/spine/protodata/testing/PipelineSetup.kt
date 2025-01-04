@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,7 +172,9 @@ public class PipelineSetup(
      * Parameters with populated source and target rood directories passed as `inputDir` and
      * `outputDir` constructor parameters.
      */
-    public val params: PipelineParameters
+    public val params: PipelineParameters = params.toBuilder()
+        .withRoots(inputDir, outputDir)
+        .buildPartial()
 
     /**
      * The directory to store settings for the [plugins].
@@ -180,21 +182,40 @@ public class PipelineSetup(
     public val settings: SettingsDirectory
 
     /**
+     * The pipeline returned by the [createPipeline] method.
+     *
+     * The only purpose of this property is to serve the deprecated
+     * [sourceFileSet] and [sourceFiles] properties.
+     * Once these properties are removed, this property should be removed too.
+     */
+    private lateinit var pipeline: Pipeline
+
+    /**
      * The source file set used by the pipeline.
      */
+    @Deprecated(
+        message = "Please use `pipeline.sources[0]` instead.",
+        replaceWith = ReplaceWith("pipeline.sources[0]")
+    )
+    public val sourceFiles: SourceFileSet
+        get() = pipeline.sources[0]
+
+    /**
+     * The source file set used by the pipeline.
+     */
+    @Deprecated(
+        message = "Please use `pipeline.sources[0]` instead.",
+        replaceWith = ReplaceWith("pipeline.sources[0]")
+    )
     public val sourceFileSet: SourceFileSet
+        get() = pipeline.sources[0]
 
     init {
-        this.params = params.toBuilder()
-            .withRoots(inputDir, outputDir)
-            .buildPartial()
-
         require(plugins.isNotEmpty()) {
             "The list of plugins cannot be empty."
         }
         settings = SettingsDirectory(params.settings.toPath())
         outputDir.toFile().mkdirs()
-        sourceFileSet = SourceFileSet.create(inputDir, outputDir)
     }
 
     /**
@@ -209,6 +230,7 @@ public class PipelineSetup(
             plugins,
             descriptorFilter,
         )
+        this.pipeline = p
         return p
     }
 
