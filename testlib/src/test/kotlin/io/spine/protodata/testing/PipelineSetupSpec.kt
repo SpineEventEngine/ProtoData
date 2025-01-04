@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,13 +63,13 @@ internal class PipelineSetupSpec {
         // have nested ones to check the creation.
         val outputPrim = output.resolve("primo")
         val setup = setup(workingDir, input, outputPrim) { _ -> }
-        setup.run {
-            sourceFileSet.run {
-                inputRoot shouldBe input
-                outputRoot.run {
-                    this shouldBe outputPrim
-                    exists() shouldBe true
-                }
+        val pipeline = setup.createPipeline()
+        val sourceFileSet = pipeline.sources[0]
+        sourceFileSet.run {
+            inputRoot shouldBe input
+            outputRoot.run {
+                this shouldBe outputPrim
+                exists() shouldBe true
             }
         }
     }
@@ -112,25 +112,25 @@ internal class PipelineSetupSpec {
     ) {
         val language = Java
         val setup = setupByResources(language, workingDir, output)
-        setup.run {
-            val langDir = language.protocOutputDir()
-            val resourceDir = ResourceDirectory.get(
-                "${PROTOC_PLUGIN_NAME}/$langDir",
-                this::class.java.classLoader
-            )
-            sourceFileSet.run {
-                // We have generated sources as input in the set.
-                isEmpty shouldBe false
-                val inputPath = resourceDir.toPath()
-                inputRoot shouldBe inputPath
+        val pipeline = setup.createPipeline()
+        val sourceFileSet = pipeline.sources[0]
+        val langDir = language.protocOutputDir()
+        val resourceDir = ResourceDirectory.get(
+            "${PROTOC_PLUGIN_NAME}/$langDir",
+            this::class.java.classLoader
+        )
+        sourceFileSet.run {
+            // We have generated sources as input in the set.
+            isEmpty shouldBe false
+            val inputPath = resourceDir.toPath()
+            inputRoot shouldBe inputPath
 
-                // The output root of the source file set is configured with the subdirectory
-                // which corresponds to the input.
-                outputRoot shouldBe output.resolve(langDir)
-                find(
-                    Path("io/spine/given/domain/gas/CompressorStation.java")
-                ) shouldNotBe null
-            }
+            // The output root of the source file set is configured with the subdirectory
+            // which corresponds to the input.
+            outputRoot shouldBe output.resolve(langDir)
+            find(
+                Path("io/spine/given/domain/gas/CompressorStation.java")
+            ) shouldNotBe null
         }
     }
 

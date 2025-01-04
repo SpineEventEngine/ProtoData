@@ -1,11 +1,11 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -43,13 +43,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 /**
  * Obtains the directory where ProtoData stores its temporary files.
  */
-internal val Project.protoDataWorkingDir: Directory
+public val Project.protoDataWorkingDir: Directory
     get() = layout.buildDirectory.dir(PROTODATA_WORKING_DIR).get()
 
 /**
  * Obtains the root directory into which Protobuf Gradle Plugin assigns the `protoc` output.
  */
-internal val Project.protocOutputDir: File
+public val Project.protocOutputDir: File
     get() = generatedSourceProtoDir.toFile()
 
 /**
@@ -62,7 +62,7 @@ internal val Project.targetBaseDir: String
  * Obtains the path of the directory with the generated code as configured by
  * the [Extension.targetBaseDir] property of the ProtoData extension of this Gradle project.
  */
-internal val Project.generatedDir: Path
+public val Project.generatedDir: Path
     get() = projectDir.resolve(targetBaseDir).toPath()
 
 /**
@@ -70,7 +70,7 @@ internal val Project.generatedDir: Path
  *
  * If the language is not given, the returned directory is the root directory for the source set.
  */
-internal fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): File {
+public fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): File {
     val path = generatedDir.resolve("${sourceSet.name}/$language")
     return path.toFile()
 }
@@ -80,19 +80,19 @@ internal fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): 
  *
  * @return `true` if `java` plugin is installed, `false` otherwise.
  */
-internal fun Project.hasJava(): Boolean = hasCompileTask(Java)
+public fun Project.hasJava(): Boolean = hasCompileTask(Java)
 
 /**
  * Tells if this project can deal with Kotlin code.
  *
  * @return `true` if any of the tasks starts with `"compile"` and ends with `"Kotlin"`.
  */
-internal fun Project.hasKotlin(): Boolean = hasCompileTask(Kotlin)
+public fun Project.hasKotlin(): Boolean = hasCompileTask(Kotlin)
 
 /**
  * Tells if this project has a compile task for the given language.
  */
-private fun Project.hasCompileTask(language: Language): Boolean {
+public fun Project.hasCompileTask(language: Language): Boolean {
     val currentTasks = ImmutableList.copyOf(tasks)
     val compileTask = currentTasks.find {
         it.name.startsWith("compile") && it.name.endsWith(language.name)
@@ -113,7 +113,7 @@ private fun Project.hasCompileTask(language: Language): Boolean {
  * @see [hasJava]
  * @see [hasKotlin]
  */
-internal fun Project.hasJavaOrKotlin(): Boolean {
+public fun Project.hasJavaOrKotlin(): Boolean {
     if (hasJava()) {
         return true
     }
@@ -127,7 +127,7 @@ internal fun Project.hasJavaOrKotlin(): Boolean {
  * if the source set name is `"main"`. If the task does not fit this described pattern, this method
  * will not find it.
  */
-internal fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
+public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
     val taskName = sourceSet.compileJavaTaskName
     return tasks.findByName(taskName) as JavaCompile?
 }
@@ -139,7 +139,7 @@ internal fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
  * `compileKotlin` if the source set name is `"main"`. If the task does not fit this described
  * pattern, this method will not find it.
  */
-internal fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompile<*>? {
+public fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompile<*>? {
     val taskName = sourceSet.getCompileTaskName("Kotlin")
     return tasks.findByName(taskName) as KotlinCompile<*>?
 }
