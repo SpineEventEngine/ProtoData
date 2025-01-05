@@ -143,7 +143,7 @@ internal class CompilationSpec {
 
 private fun File.uriRef(): String {
     val uriSeparator = "/"
-    val separator = File.pathSeparator
+    val separator = File.separator
     return if (separator == uriSeparator) {
         path
     } else {
