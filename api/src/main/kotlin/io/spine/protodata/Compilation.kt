@@ -167,7 +167,7 @@ internal const val NO_HOSTNAME_PREFIX = "file:/"
  *
  * We use this prefix because it is recognized by the IntelliJ IDEA
  * console as a clickable URI.
- * This prefix is also used for reporting Kotlin compilation errors.
+ * Kotlin compiler also uses this prefix for reporting compilation errors.
  */
 @VisibleForTesting
 internal const val EMPTY_HOSTNAME_PREFIX = "file:///"
