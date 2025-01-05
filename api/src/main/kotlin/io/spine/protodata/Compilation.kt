@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,12 @@
 
 package io.spine.protodata
 
+import com.google.common.annotations.VisibleForTesting
 import io.spine.base.Mistake
 import io.spine.environment.Tests
 import java.io.File
 import kotlin.system.exitProcess
+
 
 /**
  * Provides functions to report compilation errors and warnings.
@@ -59,6 +61,18 @@ public object Compilation {
     public const val ERROR_EXIT_CODE: Int = -1
 
     /**
+     * The prefix used for error messages.
+     */
+    @VisibleForTesting
+    internal const val ERROR_PREFIX = "e:"
+
+    /**
+     * The prefix used for warning messages.
+     */
+    @VisibleForTesting
+    internal const val WARNING_PREFIX = "w:"
+
+    /**
      * Prints the error diagnostics to [System.err] and terminates the compilation.
      *
      * The termination of the compilation in the production mode is done by
@@ -83,12 +97,9 @@ public object Compilation {
         }
     }
 
-    private fun errorMessage(
-        file: File,
-        line: Int,
-        column: Int,
-        message: String
-    ) = "e: $file:$line:$column: $message"
+    @VisibleForTesting
+    internal fun errorMessage(file: File, line: Int, column: Int, message: String) =
+        "$ERROR_PREFIX ${file.maybeUri()}:$line:$column: $message"
 
     /**
      * Prints the warning diagnostics to [System.out].
@@ -103,10 +114,14 @@ public object Compilation {
      * @return the string printed to the console.
      */
     public fun warning(file: File, line: Int, column: Int, message: String): String {
-        val output = "w: $file:$line:$column: $message"
+        val output = warningMessage(file, line, column, message)
         println(output)
         return output
     }
+
+    @VisibleForTesting
+    internal fun warningMessage(file: File, line: Int, column: Int, message: String) =
+        "$WARNING_PREFIX ${file.maybeUri()}:$line:$column: $message"
 
     /**
      * The exception thrown by [Compilation.error] when the testing mode is on.
@@ -117,3 +132,42 @@ public object Compilation {
         }
     }
 }
+
+/**
+ * Converts the path of this file into a URI if the path is absolute.
+ *
+ * The purpose of this function is to make it easier to locate a file with
+ * an error or a warning. When a file URI is used for the console output,
+ * it could be opened in an IDE or a browser.
+ *
+ * If the path is relative, it is simply returned as the result of this function.
+ * Even though file URI could be
+ * [relative](https://stackoverflow.com/questions/7857416/file-uri-scheme-and-relative-files)
+ * we do not want to use this because its full path would be resolved relatively
+ * to a user home directory or the current directory.
+ * None of these cases represent a directory with proto files.
+ * Therefore, we just print a relative file name to avoid the confusion.
+ */
+private fun File.maybeUri(): String = if (isAbsolute) {
+    toURI().toString().replace(NO_HOSTNAME_PREFIX, EMPTY_HOSTNAME_PREFIX)
+} else {
+    path
+}
+
+/**
+ * The prefix used in a file URI if
+ * [host name is not used](https://en.wikipedia.org/wiki/File_URI_scheme).
+ */
+@VisibleForTesting
+internal const val NO_HOSTNAME_PREFIX = "file:/"
+
+/**
+ * The prefix used in a file URI for an
+ * [empty host name](https://en.wikipedia.org/wiki/File_URI_scheme).
+ *
+ * We use this prefix because it is recognized by the IntelliJ IDEA
+ * console as a clickable URI.
+ * Kotlin compiler also uses this prefix for reporting compilation errors.
+ */
+@VisibleForTesting
+internal const val EMPTY_HOSTNAME_PREFIX = "file:///"

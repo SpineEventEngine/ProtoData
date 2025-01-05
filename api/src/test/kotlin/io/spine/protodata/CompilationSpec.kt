@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,11 @@
 package io.spine.protodata
 
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
+import io.kotest.matchers.string.shouldStartWith
 import io.spine.logging.testing.tapConsole
+import io.spine.protodata.Compilation.ERROR_PREFIX
+import io.spine.protodata.Compilation.WARNING_PREFIX
 import java.io.File
 import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
@@ -39,7 +43,7 @@ internal class CompilationSpec {
 
     @Test
     fun `throw the 'Error' exception under tests`() {
-        val file = File("some.proto")
+        val file = File("some.proto").absoluteFile
         val lineNumber = 100
         val columnNumber = 500
         val errorMessage = "Some error."
@@ -47,7 +51,8 @@ internal class CompilationSpec {
             Compilation.error(file, lineNumber, columnNumber, errorMessage)
         }
         exception.message.let {
-            it shouldContain file.path
+            it shouldContain EMPTY_HOSTNAME_PREFIX
+            it shouldContain file.uriRef()
             it shouldContain "$lineNumber:$columnNumber"
             it shouldContain errorMessage
         }
@@ -55,7 +60,7 @@ internal class CompilationSpec {
 
     @Test
     fun `print the error message to the system error stream`() {
-        val file = Paths.get("nested/dir/file.proto").toFile()
+        val file = Paths.get("nested/dir/file.proto").toFile().absoluteFile
         val lineNumber = 10
         val columnNumber = 5
         val errorMessage = "Testing console output."
@@ -65,9 +70,83 @@ internal class CompilationSpec {
             }
         }
         consoleOutput.let {
-            it shouldContain file.path
+            it shouldContain EMPTY_HOSTNAME_PREFIX // because the file path is absolute.
+            it shouldContain file.uriRef()
             it shouldContain "$lineNumber:$columnNumber"
             it shouldContain errorMessage
         }
+    }
+
+    @Test
+    fun `print the warning message to the system out stream`() {
+        val file = Paths.get("nested/dir/file.proto").toFile().absoluteFile
+        val lineNumber = 10
+        val columnNumber = 5
+        val errorMessage = "Testing console output."
+        val consoleOutput = tapConsole {
+            assertThrows<Compilation.Error> {
+                Compilation.error(file, lineNumber, columnNumber, errorMessage)
+            }
+        }
+        consoleOutput.let {
+            it shouldContain EMPTY_HOSTNAME_PREFIX // because the file path is absolute.
+            it shouldContain file.uriRef()
+            it shouldContain "$lineNumber:$columnNumber"
+            it shouldContain errorMessage
+        }
+    }
+
+    @Test
+    fun `use file URI for absolute paths`() {
+        val file = File("/some/dir/file.proto").absoluteFile
+        Compilation.errorMessage(file, 1, 2, "").let {
+            it shouldContain EMPTY_HOSTNAME_PREFIX
+            it shouldContain file.uriRef()
+        }
+        Compilation.warningMessage(file, 3, 4, "").let {
+            it shouldContain EMPTY_HOSTNAME_PREFIX
+            it shouldContain file.uriRef()
+        }
+    }
+
+    @Test
+    fun `use print file relative if it is not absolute`() {
+        val file = File("not/absolute/file.proto")
+        Compilation.errorMessage(file, 1, 2, "").let {
+            it shouldNotContain EMPTY_HOSTNAME_PREFIX
+            it shouldNotContain NO_HOSTNAME_PREFIX
+            it shouldContain file.path // system-dependent file name.
+        }
+        Compilation.warningMessage(file, 3, 4, "").let {
+            it shouldNotContain EMPTY_HOSTNAME_PREFIX
+            it shouldNotContain NO_HOSTNAME_PREFIX
+            it shouldContain file.path // system-dependent file name.
+        }
+    }
+
+    @Test
+    fun `use the prefix for error messages`() {
+        val file = File("with_error.proto")
+        Compilation.errorMessage(file, 1, 2, "").let {
+            it shouldStartWith ERROR_PREFIX
+        }
+    }
+
+    @Test
+    fun `use the prefix for warning messages`() {
+        val file = File("with_warning.proto")
+        Compilation.warningMessage(file, 3, 4, "").let {
+            it shouldStartWith WARNING_PREFIX
+        }
+    }
+}
+
+private fun File.uriRef(): String {
+    val uriSeparator = "/"
+    val separator = File.separator
+    return if (separator == uriSeparator) {
+        path
+    } else {
+        path.replace(separator, uriSeparator)
     }
 }
