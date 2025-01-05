@@ -30,6 +30,8 @@ import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import io.kotest.matchers.string.shouldStartWith
 import io.spine.logging.testing.tapConsole
+import io.spine.protodata.Compilation.ERROR_PREFIX
+import io.spine.protodata.Compilation.WARNING_PREFIX
 import java.io.File
 import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
@@ -126,7 +128,7 @@ internal class CompilationSpec {
     fun `use the prefix for error messages`() {
         val file = File("with_error.proto")
         Compilation.errorMessage(file, 1, 2, "").let {
-            it shouldStartWith  "e:"
+            it shouldStartWith ERROR_PREFIX
         }
     }
 
@@ -134,7 +136,7 @@ internal class CompilationSpec {
     fun `use the prefix for warning messages`() {
         val file = File("with_warning.proto")
         Compilation.warningMessage(file, 3, 4, "").let {
-            it shouldStartWith  "w:"
+            it shouldStartWith WARNING_PREFIX
         }
     }
 }

@@ -32,6 +32,7 @@ import io.spine.environment.Tests
 import java.io.File
 import kotlin.system.exitProcess
 
+
 /**
  * Provides functions to report compilation errors and warnings.
  *
@@ -58,6 +59,18 @@ public object Compilation {
      * The exit code for a compilation error.
      */
     public const val ERROR_EXIT_CODE: Int = -1
+
+    /**
+     * The prefix used for error messages.
+     */
+    @VisibleForTesting
+    internal const val ERROR_PREFIX = "e:"
+
+    /**
+     * The prefix used for warning messages.
+     */
+    @VisibleForTesting
+    internal const val WARNING_PREFIX = "w:"
 
     /**
      * Prints the error diagnostics to [System.err] and terminates the compilation.
@@ -90,7 +103,7 @@ public object Compilation {
         line: Int,
         column: Int,
         message: String
-    ) = "e: ${file.maybeUri()}:$line:$column: $message"
+    ) = "$ERROR_PREFIX ${file.maybeUri()}:$line:$column: $message"
 
     /**
      * Prints the warning diagnostics to [System.out].
@@ -116,7 +129,7 @@ public object Compilation {
         line: Int,
         column: Int,
         message: String
-    ) = "w: ${file.maybeUri()}:$line:$column: $message"
+    ) = "$WARNING_PREFIX ${file.maybeUri()}:$line:$column: $message"
 
     /**
      * The exception thrown by [Compilation.error] when the testing mode is on.
