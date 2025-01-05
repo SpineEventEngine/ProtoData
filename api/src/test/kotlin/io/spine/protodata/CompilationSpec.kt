@@ -51,8 +51,8 @@ internal class CompilationSpec {
             Compilation.error(file, lineNumber, columnNumber, errorMessage)
         }
         exception.message.let {
-            it shouldContain "file:/"
-            it shouldContain file.path
+            it shouldContain EMPTY_HOSTNAME_PREFIX
+            it shouldContain file.uriRef()
             it shouldContain "$lineNumber:$columnNumber"
             it shouldContain errorMessage
         }
@@ -71,7 +71,7 @@ internal class CompilationSpec {
         }
         consoleOutput.let {
             it shouldContain EMPTY_HOSTNAME_PREFIX // because the file path is absolute.
-            it shouldContain file.path
+            it shouldContain file.uriRef()
             it shouldContain "$lineNumber:$columnNumber"
             it shouldContain errorMessage
         }
@@ -90,7 +90,7 @@ internal class CompilationSpec {
         }
         consoleOutput.let {
             it shouldContain EMPTY_HOSTNAME_PREFIX // because the file path is absolute.
-            it shouldContain file.path
+            it shouldContain file.uriRef()
             it shouldContain "$lineNumber:$columnNumber"
             it shouldContain errorMessage
         }
@@ -101,11 +101,11 @@ internal class CompilationSpec {
         val file = File("/some/dir/file.proto").absoluteFile
         Compilation.errorMessage(file, 1, 2, "").let {
             it shouldContain EMPTY_HOSTNAME_PREFIX
-            it shouldContain file.path
+            it shouldContain file.uriRef()
         }
         Compilation.warningMessage(file, 3, 4, "").let {
             it shouldContain EMPTY_HOSTNAME_PREFIX
-            it shouldContain file.path
+            it shouldContain file.uriRef()
         }
     }
 
@@ -115,12 +115,12 @@ internal class CompilationSpec {
         Compilation.errorMessage(file, 1, 2, "").let {
             it shouldNotContain EMPTY_HOSTNAME_PREFIX
             it shouldNotContain NO_HOSTNAME_PREFIX
-            it shouldContain file.path
+            it shouldContain file.path // system-dependent file name.
         }
         Compilation.warningMessage(file, 3, 4, "").let {
             it shouldNotContain EMPTY_HOSTNAME_PREFIX
             it shouldNotContain NO_HOSTNAME_PREFIX
-            it shouldContain file.path
+            it shouldContain file.path // system-dependent file name.
         }
     }
 
@@ -138,5 +138,15 @@ internal class CompilationSpec {
         Compilation.warningMessage(file, 3, 4, "").let {
             it shouldStartWith WARNING_PREFIX
         }
+    }
+}
+
+private fun File.uriRef(): String {
+    val uriSeparator = "/"
+    val separator = File.pathSeparator
+    return if (separator == uriSeparator) {
+        path
+    } else {
+        path.replace(separator, uriSeparator)
     }
 }
