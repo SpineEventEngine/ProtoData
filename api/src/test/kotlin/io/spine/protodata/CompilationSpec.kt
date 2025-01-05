@@ -111,13 +111,13 @@ internal class CompilationSpec {
     fun `use print file relative if it is not absolute`() {
         val file = File("not/absolute/file.proto")
         Compilation.errorMessage(file, 1, 2, "").let {
-            it shouldNotContain NO_HOSTNAME_PREFIX
             it shouldNotContain EMPTY_HOSTNAME_PREFIX
+            it shouldNotContain NO_HOSTNAME_PREFIX
             it shouldContain file.path
         }
         Compilation.warningMessage(file, 3, 4, "").let {
-            it shouldNotContain NO_HOSTNAME_PREFIX
             it shouldNotContain EMPTY_HOSTNAME_PREFIX
+            it shouldNotContain NO_HOSTNAME_PREFIX
             it shouldContain file.path
         }
     }
