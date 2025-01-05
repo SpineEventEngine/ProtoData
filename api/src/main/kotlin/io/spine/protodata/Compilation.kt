@@ -98,12 +98,8 @@ public object Compilation {
     }
 
     @VisibleForTesting
-    internal fun errorMessage(
-        file: File,
-        line: Int,
-        column: Int,
-        message: String
-    ) = "$ERROR_PREFIX ${file.maybeUri()}:$line:$column: $message"
+    internal fun errorMessage(file: File, line: Int, column: Int, message: String) =
+        "$ERROR_PREFIX ${file.maybeUri()}:$line:$column: $message"
 
     /**
      * Prints the warning diagnostics to [System.out].
@@ -124,12 +120,8 @@ public object Compilation {
     }
 
     @VisibleForTesting
-    internal fun warningMessage(
-        file: File,
-        line: Int,
-        column: Int,
-        message: String
-    ) = "$WARNING_PREFIX ${file.maybeUri()}:$line:$column: $message"
+    internal fun warningMessage(file: File, line: Int, column: Int, message: String) =
+        "$WARNING_PREFIX ${file.maybeUri()}:$line:$column: $message"
 
     /**
      * The exception thrown by [Compilation.error] when the testing mode is on.
