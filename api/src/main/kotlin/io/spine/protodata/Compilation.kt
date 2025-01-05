@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 
 package io.spine.protodata
 
+import com.google.common.annotations.VisibleForTesting
 import io.spine.base.Mistake
 import io.spine.environment.Tests
 import java.io.File
@@ -83,12 +84,13 @@ public object Compilation {
         }
     }
 
-    private fun errorMessage(
+    @VisibleForTesting
+    internal fun errorMessage(
         file: File,
         line: Int,
         column: Int,
         message: String
-    ) = "e: $file:$line:$column: $message"
+    ) = "e: ${file.maybeUri()}:$line:$column: $message"
 
     /**
      * Prints the warning diagnostics to [System.out].
@@ -103,10 +105,18 @@ public object Compilation {
      * @return the string printed to the console.
      */
     public fun warning(file: File, line: Int, column: Int, message: String): String {
-        val output = "w: $file:$line:$column: $message"
+        val output = warningMessage(file, line, column, message)
         println(output)
         return output
     }
+
+    @VisibleForTesting
+    internal fun warningMessage(
+        file: File,
+        line: Int,
+        column: Int,
+        message: String
+    ) = "w: ${file.maybeUri()}:$line:$column: $message"
 
     /**
      * The exception thrown by [Compilation.error] when the testing mode is on.
@@ -116,4 +126,18 @@ public object Compilation {
             private const val serialVersionUID: Long = 0L
         }
     }
+}
+
+/**
+ * Converts the path of this file into a URI if the path is absolute.
+ *
+ * If the path is relative, it is simply returned as the result of this function.
+ *
+ * The purpose of this function is to provide make the file reference actionable
+ * when it is printed in the console output associated with an error or warning message.
+ */
+private fun File.maybeUri(): String = if (isAbsolute) {
+    toURI().toString()
+} else {
+    path
 }

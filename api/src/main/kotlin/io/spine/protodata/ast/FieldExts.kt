@@ -102,9 +102,13 @@ public val FieldName.camelCase: String
 /**
  * Obtains the path to a Protobuf source file which declares
  * the message type to which this field belongs.
+ *
+ * @return The full path, if the declaring file is listed among [TypeSystem.compiledProtoFiles],
+ *  otherwise the path is relative.
  */
 public fun Field.declaringFile(typeSystem: TypeSystem): File {
     val messageType = declaringType.toMessageType(typeSystem)
     val file = messageType.file.toPath().toFile()
-    return file
+    val fullPath = typeSystem.compiledProtoFiles.find(file)
+    return fullPath ?: file
 }
