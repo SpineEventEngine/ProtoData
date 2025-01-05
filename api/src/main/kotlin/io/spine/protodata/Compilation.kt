@@ -155,8 +155,8 @@ private fun File.maybeUri(): String = if (isAbsolute) {
 }
 
 /**
- * The prefix used in a file URI if no
- * [host name is used](https://en.wikipedia.org/wiki/File_URI_scheme).
+ * The prefix used in a file URI if
+ * [host name is not used](https://en.wikipedia.org/wiki/File_URI_scheme).
  */
 @VisibleForTesting
 internal const val NO_HOSTNAME_PREFIX = "file:/"
