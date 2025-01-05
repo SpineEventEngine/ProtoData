@@ -68,7 +68,7 @@ internal class CompilationSpec {
             }
         }
         consoleOutput.let {
-            it shouldContain "file:/" // because the file path is absolute.
+            it shouldContain EMPTY_HOSTNAME_PREFIX // because the file path is absolute.
             it shouldContain file.path
             it shouldContain "$lineNumber:$columnNumber"
             it shouldContain errorMessage
@@ -87,7 +87,7 @@ internal class CompilationSpec {
             }
         }
         consoleOutput.let {
-            it shouldContain "file:/" // because the file path is absolute.
+            it shouldContain EMPTY_HOSTNAME_PREFIX // because the file path is absolute.
             it shouldContain file.path
             it shouldContain "$lineNumber:$columnNumber"
             it shouldContain errorMessage
@@ -98,11 +98,11 @@ internal class CompilationSpec {
     fun `use file URI for absolute paths`() {
         val file = File("/some/dir/file.proto").absoluteFile
         Compilation.errorMessage(file, 1, 2, "").let {
-            it shouldContain "file:/"
+            it shouldContain EMPTY_HOSTNAME_PREFIX
             it shouldContain file.path
         }
         Compilation.warningMessage(file, 3, 4, "").let {
-            it shouldContain "file:/"
+            it shouldContain EMPTY_HOSTNAME_PREFIX
             it shouldContain file.path
         }
     }
@@ -111,11 +111,13 @@ internal class CompilationSpec {
     fun `use print file relative if it is not absolute`() {
         val file = File("not/absolute/file.proto")
         Compilation.errorMessage(file, 1, 2, "").let {
-            it shouldNotContain "file:/"
+            it shouldNotContain NO_HOSTNAME_PREFIX
+            it shouldNotContain EMPTY_HOSTNAME_PREFIX
             it shouldContain file.path
         }
         Compilation.warningMessage(file, 3, 4, "").let {
-            it shouldNotContain "file:/"
+            it shouldNotContain NO_HOSTNAME_PREFIX
+            it shouldNotContain EMPTY_HOSTNAME_PREFIX
             it shouldContain file.path
         }
     }
@@ -131,7 +133,7 @@ internal class CompilationSpec {
     @Test
     fun `use the prefix for warning messages`() {
         val file = File("with_warning.proto")
-        Compilation.warningMessage(file, 1, 2, "").let {
+        Compilation.warningMessage(file, 3, 4, "").let {
             it shouldStartWith  "w:"
         }
     }

@@ -131,13 +131,38 @@ public object Compilation {
 /**
  * Converts the path of this file into a URI if the path is absolute.
  *
- * If the path is relative, it is simply returned as the result of this function.
+ * The purpose of this function is to make it easier to locate a file with
+ * an error or a warning. When a file URI is used for the console output,
+ * it could be opened in an IDE or a browser.
  *
- * The purpose of this function is to provide make the file reference actionable
- * when it is printed in the console output associated with an error or warning message.
+ * If the path is relative, it is simply returned as the result of this function.
+ * Even though file URI could be
+ * [relative](https://stackoverflow.com/questions/7857416/file-uri-scheme-and-relative-files)
+ * we do not want to use this because its full path would be resolved relatively
+ * to a user home directory or the current directory.
+ * None of these cases represent a directory with proto files.
+ * Therefore, we just print a relative file name to avoid the confusion.
  */
 private fun File.maybeUri(): String = if (isAbsolute) {
-    toURI().toString()
+    toURI().toString().replace(NO_HOSTNAME_PREFIX, EMPTY_HOSTNAME_PREFIX)
 } else {
     path
 }
+
+/**
+ * The prefix used in a file URI if no
+ * [host name is used](https://en.wikipedia.org/wiki/File_URI_scheme).
+ */
+@VisibleForTesting
+internal const val NO_HOSTNAME_PREFIX = "file:/"
+
+/**
+ * The prefix used in a file URI for an
+ * [empty host name](https://en.wikipedia.org/wiki/File_URI_scheme).
+ *
+ * We use this prefix because it is recognized by the IntelliJ IDEA
+ * console as a clickable URI.
+ * This prefix is also used for reporting Kotlin compilation errors.
+ */
+@VisibleForTesting
+internal const val EMPTY_HOSTNAME_PREFIX = "file:///"
