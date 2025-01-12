@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,10 @@ import io.spine.core.External
 import io.spine.core.Subscribe
 import io.spine.protodata.ast.nameWithoutExtension
 import io.spine.protodata.plugin.View
-import io.spine.protodata.plugin.ViewRepository
 import io.spine.protodata.settings.Settings
 import io.spine.protodata.settings.event.SettingsFileDiscovered
 import io.spine.server.entity.alter
-import io.spine.server.route.EventRouting
+import io.spine.server.route.Route
 
 /**
  * A view on the ProtoData user configuration.
@@ -50,16 +49,10 @@ internal class SettingsView : View<String, Settings, Settings.Builder>() {
         file = event.file
     }
 
-    /**
-     * A repository for the `ConfigView`.
-     */
-    internal class Repo : ViewRepository<String, SettingsView, Settings>() {
+    companion object {
 
-        override fun setupEventRouting(routing: EventRouting<String>) {
-            super.setupEventRouting(routing)
-            routing.unicast<SettingsFileDiscovered> { e, _ ->
-                e.file.nameWithoutExtension
-            }
-        }
+        @Route
+        @JvmStatic
+        fun route(e: SettingsFileDiscovered): String = e.file.nameWithoutExtension
     }
 }

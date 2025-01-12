@@ -52,7 +52,7 @@ public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>(
 
         @Route
         @JvmStatic
-        fun on(e: TypeDiscovered): Set<TypeName> {
+        fun route(e: TypeDiscovered): Set<TypeName> {
             val name = e.type.name
             return if (name.simpleName.endsWith("_")) {
                 setOf(name)

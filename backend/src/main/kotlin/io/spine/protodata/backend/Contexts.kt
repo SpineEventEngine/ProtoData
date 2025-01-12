@@ -88,7 +88,7 @@ public class CodeGenerationContext(
             add<ProtoSourceFileView>()
             add<DependencyView>()
             add<InsertionPointsView>()
-            add(SettingsView.Repo())
+            add<SettingsView>()
         }
         builder.setup()
         context = builder.build()
