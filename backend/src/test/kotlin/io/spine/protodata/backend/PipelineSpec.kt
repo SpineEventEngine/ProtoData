@@ -62,9 +62,7 @@ import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.protodata.testing.RenderingTestbed
-import io.spine.protodata.testing.googleProtobufProtos
 import io.spine.protodata.testing.pipelineParams
-import io.spine.protodata.testing.spineOptionProtos
 import io.spine.protodata.testing.withRequestFile
 import io.spine.protodata.testing.withRoots
 import io.spine.protodata.testing.withSettingsDir
