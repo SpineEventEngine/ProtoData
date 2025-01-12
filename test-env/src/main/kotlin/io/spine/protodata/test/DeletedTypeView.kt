@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import io.spine.protodata.ast.event.TypeDiscovered
 import io.spine.protodata.plugin.View
 import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.entity.update
-import io.spine.server.route.EventRouting
+import io.spine.server.route.Route
 
 /**
  * A view of a message type that should not be represented by a Java class.
@@ -47,19 +47,14 @@ public class DeletedTypeView : View<TypeName, DeletedType, DeletedType.Builder>(
             type = event.type
         }
     }
-}
 
-/**
- * The repository for [DeletedTypeView].
- */
-public class DeletedTypeRepository
-    : ViewRepository<TypeName, DeletedTypeView, DeletedType>() {
+    internal companion object {
 
-    override fun setupEventRouting(routing: EventRouting<TypeName>) {
-        super.setupEventRouting(routing)
-        routing.route<TypeDiscovered> { e, _ ->
+        @Route
+        @JvmStatic
+        fun on(e: TypeDiscovered): Set<TypeName> {
             val name = e.type.name
-            return@route if (name.simpleName.endsWith("_")) {
+            return if (name.simpleName.endsWith("_")) {
                 setOf(name)
             } else {
                 setOf()
@@ -67,3 +62,10 @@ public class DeletedTypeRepository
         }
     }
 }
+
+/**
+ * This class of the repository is used for tests checking the case when both
+ * view class and a repository class are passed to the plugin constructor.
+ */
+public class DeletedTypeRepository
+    : ViewRepository<TypeName, DeletedTypeView, DeletedType>()
