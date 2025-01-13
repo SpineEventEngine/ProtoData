@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,9 @@ public open class View<I : Any, M : EntityState<I>, B : ValidatingBuilder<M>> :
  * the event with the ID of the view. This is called routing. If the types match, the event is
  * routed to the view with the matching ID. Otherwise, an error occurs.
  *
- * To change the rules of event routing, override the [ViewRepository.setupEventRouting] method.
+ * To change the rules of event routing, do one of the following:
+ *  * Add static methods annotated with [@Route][io.spine.server.route.Route] in the view class.
+ *  * Override the [ViewRepository.setupEventRouting] method.
  *
  * If no customization is required from a `ViewRepository`, users should prefer
  * [ViewRepository.default] to creating custom repository types.

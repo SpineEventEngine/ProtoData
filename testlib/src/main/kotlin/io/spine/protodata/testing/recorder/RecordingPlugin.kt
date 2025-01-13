@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,13 +37,12 @@ import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.testing.recorder.RecordingPlugin.Companion.singletonId
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.plugin.View
-import io.spine.protodata.plugin.ViewRepository
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.server.entity.alter
 import io.spine.server.query.Querying
 import io.spine.server.query.select
-import io.spine.server.route.EventRouting
+import io.spine.server.route.Route
 import io.spine.tools.code.Java
 import io.spine.validate.ValidatingBuilder
 
@@ -52,10 +51,10 @@ import io.spine.validate.ValidatingBuilder
  * processed by a pipeline.
  */
 public class RecordingPlugin : Plugin(
-    viewRepositories = setOf(
-        MessageView.Repo(),
-        EnumView.Repo(),
-        ServicesView.Repo()
+    views = setOf(
+        MessageView::class.java,
+        EnumView::class.java,
+        ServicesView::class.java
     ),
     renderers = listOf(ContextAccess())
 ) {
@@ -93,19 +92,12 @@ private class ContextAccess: Renderer<Java>(Java) {
  * Abstract base for recording views.
  */
 private abstract class RecordingView<S : DeclarationViewState, B: ValidatingBuilder<S>> :
-    View<String, S, B>()
+    View<String, S, B>() {
 
-/**
- * Abstract base for view repositories which routs all events to the singleton instance.
- */
-private abstract class RecordingViewRepo<S : DeclarationViewState, V : RecordingView<S, *>> :
-    ViewRepository<String, V, S>() {
-
-    override fun setupEventRouting(routing: EventRouting<String>) {
-        super.setupEventRouting(routing)
-        routing.unicast<EventMessage> { _, _ -> singletonId }
+        protected companion object {
+            fun defaultRoute(@Suppress("UNUSED_PARAMETER") e: EventMessage): String = singletonId
+        }
     }
-}
 
 /**
  * The view which records message type names.
@@ -118,7 +110,9 @@ private class MessageView : RecordingView<MessageTypes, MessageTypes.Builder>() 
         addName(e.type.qualifiedName)
     }
 
-    class Repo : RecordingViewRepo<MessageTypes, MessageView>()
+    companion object {
+        @Route @JvmStatic fun route(e: EventMessage): String = defaultRoute(e)
+    }
 }
 
 /**
@@ -132,7 +126,9 @@ private class EnumView : RecordingView<EnumTypes, EnumTypes.Builder>() {
         addName(e.type.qualifiedName)
     }
 
-    class Repo : RecordingViewRepo<EnumTypes, EnumView>()
+    companion object {
+        @Route @JvmStatic fun route(e: EventMessage): String = defaultRoute(e)
+    }
 }
 
 /**
@@ -146,7 +142,9 @@ private class ServicesView : RecordingView<Services, Services.Builder>() {
         addName(e.service.qualifiedName)
     }
 
-    class Repo : RecordingViewRepo<Services, ServicesView>()
+    companion object {
+        @Route @JvmStatic fun route(e: EventMessage): String = defaultRoute(e)
+    }
 }
 
 /**

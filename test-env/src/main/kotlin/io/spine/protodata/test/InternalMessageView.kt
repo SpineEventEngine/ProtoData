@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,8 @@ import io.spine.core.Subscribe
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.event.TypeEntered
 import io.spine.protodata.plugin.View
-import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.entity.update
-import io.spine.server.route.EventRoute.withId
-import io.spine.server.route.EventRouting
+import io.spine.server.route.Route
 
 /**
  * A view on a message type that should be hidden from public API.
@@ -48,18 +46,11 @@ public class InternalMessageView
             name = e.type
         }
     }
-}
 
-/**
- * The repo for the [InternalMessageView].
- */
-public class InternalMessageRepository :
-    ViewRepository<TypeName, InternalMessageView, InternalType>() {
+    internal companion object {
 
-    protected override fun setupEventRouting(routing: EventRouting<TypeName>) {
-        super.setupEventRouting(routing)
-        routing.route<TypeEntered> { event, _ ->
-            withId(event.type)
-        }
+        @Route
+        @JvmStatic
+        fun route(e: TypeEntered): TypeName = e.type
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,9 +62,7 @@ import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
 import io.spine.protodata.testing.RenderingTestbed
-import io.spine.protodata.testing.googleProtobufProtos
 import io.spine.protodata.testing.pipelineParams
-import io.spine.protodata.testing.spineOptionProtos
 import io.spine.protodata.testing.withRequestFile
 import io.spine.protodata.testing.withRoots
 import io.spine.protodata.testing.withSettingsDir

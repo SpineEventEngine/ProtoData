@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,8 @@ import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.event.FieldOptionDiscovered
 import io.spine.protodata.cli.test.DefaultOptionsCounter
 import io.spine.protodata.plugin.View
-import io.spine.protodata.plugin.ViewRepository
 import io.spine.server.entity.alter
-import io.spine.server.route.EventRoute
-import io.spine.server.route.EventRouting
+import io.spine.server.route.Route
 import io.spine.time.validation.Time
 import io.spine.time.validation.TimeOption
 
@@ -71,14 +69,10 @@ class DefaultOptionsCounterView
     private fun readTimeOption(event: FieldOptionDiscovered): TimeOption =
         AnyPacker.unpack(event.option.value, TimeOption::class.java)
 
-    class Repository
-        : ViewRepository<TypeName, DefaultOptionsCounterView, DefaultOptionsCounter>() {
+    companion object {
 
-        override fun setupEventRouting(routing: EventRouting<TypeName>) {
-            super.setupEventRouting(routing)
-            routing.route(FieldOptionDiscovered::class.java) { event, _ ->
-                EventRoute.withId(event.subject.declaringType)
-            }
-        }
+        @Route
+        @JvmStatic
+        fun route(e: FieldOptionDiscovered): TypeName = e.subject.declaringType
     }
 }
