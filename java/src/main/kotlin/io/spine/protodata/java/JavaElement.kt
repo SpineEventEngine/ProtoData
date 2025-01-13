@@ -51,5 +51,4 @@ public open class AnElement(public val code: String) : JavaElement  {
     override fun hashCode(): Int = code.hashCode()
 
     override fun toString(): String = code
-
 }
