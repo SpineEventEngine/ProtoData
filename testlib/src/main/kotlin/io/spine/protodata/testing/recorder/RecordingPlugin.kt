@@ -81,7 +81,7 @@ public class RecordingPlugin : Plugin(
  */
 private class ContextAccess: Renderer<Java>(Java) {
 
-    fun context(): CodegenContext = context!!
+    fun context(): CodegenContext = context
 
     override fun render(sources: SourceFileSet) {
         // Do nothing.
