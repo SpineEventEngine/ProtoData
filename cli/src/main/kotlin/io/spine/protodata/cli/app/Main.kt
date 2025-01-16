@@ -53,7 +53,7 @@ import kotlin.system.exitProcess
  * Launches the CLI application.
  *
  * When the application is done exists the process with the code `0`.
- * If an unhandled error occurs, exits the process with the code `1`.
+ * If an unhandled error occurs, exits the process with the code `-1`.
  */
 @Suppress(
     "TooGenericExceptionCaught", // We do want the most generic type thrown.
@@ -72,7 +72,7 @@ public fun main(args: Array<String>) {
             e.printStackTrace(this)
             println("```")
         }
-        exitProcess(1)
+        exitProcess(-1)
     }
 }
 
