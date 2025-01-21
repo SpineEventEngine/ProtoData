@@ -55,7 +55,7 @@ public abstract class TypeRenderer<V>  : BaseRenderer<V>()
     }
 
     private fun doRender(view: V, type: MessageType, sourceFile: SourceFile<Java>) {
-        val actions = RenderActions(type, sourceFile, view.getActions(), context!!)
+        val actions = RenderActions(type, sourceFile, view.getActions(), context)
         actions.apply()
     }
 }

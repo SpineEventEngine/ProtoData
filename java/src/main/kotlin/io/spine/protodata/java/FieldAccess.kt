@@ -39,7 +39,7 @@ import io.spine.protodata.ast.fieldName
  */
 public class FieldAccess
 internal constructor(
-    public val message: Expression<out Message>,
+    public val message: Expression<Message>,
     name: FieldName,
     kind: Cardinality,
 ) : FieldConventions(name, kind) {
@@ -48,7 +48,7 @@ internal constructor(
      * Constructs field access for the given [message] and [name].
      */
     internal constructor(
-        message: Expression<out Message>,
+        message: Expression<Message>,
         name: String,
         kind: Cardinality = CARDINALITY_SINGLE
     ) : this(message, fieldName { value = name }, kind)

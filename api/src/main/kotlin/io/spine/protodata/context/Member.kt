@@ -71,26 +71,24 @@ protected constructor(
     /**
      * A code generation context associated with this instance.
      *
-     * Is `null` before the call to [registerWith].
-     *
-     * @see registerWith
+     * @throws IllegalStateException if accessed before `Code Generation` context
+     *  is [injected][registerWith].
      */
-    protected open val context: CodegenContext?
-        get() = if (this::_context.isInitialized) {
-            _context
-        } else {
-            null
-        }
+    protected open val context: CodegenContext by lazy {
+        checkContext(this::context.name)
+        _context
+    }
 
     /**
      * A type system with the Protobuf types defined in the current code generation pipeline.
      *
-     * Is `null` if the type system is not yet available to this renderer.
-     *
-     * This property is guaranteed to be non-`null` after [registerWith].
+     * @throws IllegalStateException if accessed before `Code Generation` context
+     *  is [injected][registerWith].
      */
-    protected open val typeSystem: TypeSystem?
-        get() = context?.typeSystem
+    protected open val typeSystem: TypeSystem by lazy {
+        checkContext(this::typeSystem.name)
+        context.typeSystem
+    }
 
     /**
      * Creates a [QueryingClient] for obtaining entity states of the given type.
@@ -152,6 +150,12 @@ protected constructor(
     @Internal
     override fun isRegistered(): Boolean {
         return this::_context.isInitialized
+    }
+
+    private fun checkContext(property: String) = check(this::_context.isInitialized) {
+        "Access to `${this::class.simpleName}.$property` property is not allowed until " +
+                "the `Code Generation` context has been injected. Please invoke " +
+                "`registerWith(CodegenContext)` method first."
     }
 }
 

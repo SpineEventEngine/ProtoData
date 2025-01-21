@@ -29,7 +29,6 @@ package io.spine.protodata.java
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import io.spine.tools.psi.java.Environment.elementFactory
-import org.jaxen.expr.Expr
 
 /**
  * A declaration of a Java field.
@@ -37,7 +36,7 @@ import org.jaxen.expr.Expr
  * The declared field may OR may not be initialized,
  * depending on a specific implementation.
  */
-public sealed class FieldDeclaration<T>(public val name: String, code: String) : AnElement(code) {
+public sealed class FieldDeclaration<T>(public val name: String, code: String) : Statement(code) {
 
     /**
      * Returns an expression that reads the value of this field.

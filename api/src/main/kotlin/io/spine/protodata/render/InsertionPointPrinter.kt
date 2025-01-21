@@ -139,7 +139,7 @@ public abstract class InsertionPointPrinter<L: Language>(
         val cursors = coordinates.map { it.inline }
         val cursorsByLine = cursors.groupBy({ it.line }, { it.column })
         val comment = target.comment(point.codeLine)
-        cursorsByLine.forEach { lineNumber, columns ->
+        cursorsByLine.forEach { (lineNumber, columns) ->
             lines.checkLineNumber(lineNumber)
             val line = lines[lineNumber]
             columns.forEach {
@@ -172,10 +172,7 @@ public abstract class InsertionPointPrinter<L: Language>(
             label = pointLabel
             representationInCode = comment
         }
-        check(context != null) {
-            "Insertion point printer `$this` is not registered with a `CodegenContext`."
-        }
-        context!!.insertionPointsContext.emittedEvent(event, actorId)
+        context.insertionPointsContext.emittedEvent(event, actorId)
     }
 
     private companion object {

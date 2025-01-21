@@ -58,11 +58,11 @@ public fun Expression<*>.packToAny(): Expression<ProtoAny> {
 /**
  * Obtains a [FieldAccess] to the [field] of this message.
  */
-public fun Expression<out Message>.field(field: Field): FieldAccess =
+public fun Expression<Message>.field(field: Field): FieldAccess =
     FieldAccess(this, field.name, field.type.cardinality)
 
 /**
  * Obtains a [FieldAccess] to the field of this message with the given [name].
  */
-public fun Expression<out Message>.field(name: String, cardinality: Cardinality): FieldAccess =
+public fun Expression<Message>.field(name: String, cardinality: Cardinality): FieldAccess =
     FieldAccess(this, name, cardinality)
