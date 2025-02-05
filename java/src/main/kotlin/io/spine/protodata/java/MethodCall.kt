@@ -32,12 +32,13 @@ import com.google.protobuf.Message
  * An expression of a Java method call.
  *
  * Can be a static or an instance method. In the case of the former, the scope is a class name.
- * In the case of the latter — an object reference.
+ * In the case of the latter — an object reference. If the scope is empty, the method call is
+ * considered implicit.
  *
  * @param T The method returned type.
  *
- * @param scope The scope of the method invocation: an instance receiving the method call, or
- *   the name of the class declaring a static method.
+ * @param scope The receiver of the method call. Can be a class name or an object reference.
+ *   If the scope is empty, the method call is implicit.
  * @param name The name of the method.
  * @param arguments The list of the arguments passed to the method.
  * @param generics The list of the type arguments passed to the method.
@@ -48,7 +49,14 @@ public open class MethodCall<T> @JvmOverloads constructor(
     arguments: List<Expression<*>> = listOf(),
     generics: List<JavaTypeName> = listOf()
 ) : Expression<T>(
-    "${scope.toCode()}.${generics.genericTypes()}$name(${arguments.formatParams()})"
+    buildString {
+        if (scope.toCode().isNotBlank()) {
+            append("${scope.toCode()}.")
+        }
+        append(generics.genericTypes())
+        append(name)
+        append("(${arguments.formatParams()})")
+    }
 ) {
 
     /**

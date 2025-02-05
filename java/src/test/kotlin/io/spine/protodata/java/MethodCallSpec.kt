@@ -73,6 +73,13 @@ internal class MethodCallSpec {
         call.toCode() shouldBe "$immutableMap.<$sidekick, $duration>builder()"
     }
 
+    @Test
+    fun `omit scope when it is empty or blank`() {
+        val emptyScope = This<Message>(explicit = false)
+        val call = MethodCall<Message>(emptyScope, "toBuilder")
+        call.toCode() shouldBe "toBuilder()"
+    }
+
     @Nested
     inner class Chain {
 
