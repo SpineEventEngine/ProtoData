@@ -90,17 +90,18 @@ public fun FieldDescriptor.toField(): Field =
     field {
         val messageType = containingType
         val declaredIn = messageType.name()
+        val descriptor = this@toField
         name = name()
         // New `FieldType` and `group_name` API.
         type = toFieldType()
         declaringType = declaredIn
-        number = this@toField.number
+        number = descriptor.number
         orderOfDeclaration = index
         realContainingOneof?.let {
             enclosingOneof = it.name()
         }
-        doc = messageType.documentation().forField(this@toField)
-        span = messageType.coordinates().forField(this@toField)
+        doc = messageType.documentation().forField(descriptor)
+        span = messageType.coordinates().forField(descriptor)
         option.addAll(options())
     }
 
