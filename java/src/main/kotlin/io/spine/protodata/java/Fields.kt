@@ -36,7 +36,7 @@ import io.spine.tools.psi.java.Environment.elementFactory
  * The declared field may OR may not be initialized,
  * depending on a specific implementation.
  */
-public sealed class FieldDeclaration<T>(public val name: String, code: String) : Statement(code) {
+public sealed class FieldDeclaration<T>(public val name: String, code: String) : MemberDeclaration(code) {
 
     /**
      * Returns an expression that reads the value of this field.
@@ -107,13 +107,13 @@ public class DeclField<T>(
  *
  * @param name The field name.
  * @param value The value to assign.
- * @param useThis Tells whether to use the explicit `this` keyword.
+ * @param explicitThis Tells whether to use the explicit `this` keyword.
  */
 public class SetField<T>(
     public val name: String,
     public val value: Expression<T>,
-    public val useThis: Boolean = false
-) : Statement("${field(name, useThis)} = $value;") {
+    public val explicitThis: Boolean = false
+) : Statement("${field(name, explicitThis)} = $value;") {
 
     /**
      * Returns an expression that reads the field value.
@@ -133,10 +133,10 @@ public class SetField<T>(
  *
  * @param T The type of the field.
  * @param name The name of the field.
- * @param useThis Tells whether to use the explicit `this` keyword.
+ * @param explicitThis Tells whether to use the explicit `this` keyword.
  */
-public class ReadField<T>(name: String, useThis: Boolean = false) :
-    Expression<T>(field(name, useThis))
+public class ReadField<T>(name: String, explicitThis: Boolean = false) :
+    Expression<T>(field(name, explicitThis))
 
 /**
  * Creates a new [PsiField] from this Java [FieldDeclaration].
