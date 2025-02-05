@@ -84,7 +84,7 @@ import kotlin.reflect.KClass
 public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
 
 /**
- * Converts this field descriptor into a [Field] with options.
+ * Converts this field descriptor into a [Field].
  */
 public fun FieldDescriptor.toField(): Field =
     field {
