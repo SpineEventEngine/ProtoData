@@ -27,8 +27,8 @@
 package io.spine.protodata.java
 
 /**
- * Represents a class-level declaration of a member.
+ * Represents a class-level member declaration.
  *
- * A class body may contain declarations of fields, methods, classes, and interfaces.
+ * A class may contain declarations of fields, methods, classes, and interfaces.
  */
 public open class MemberDeclaration(code: String) : AnElement(code)

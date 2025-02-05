@@ -66,4 +66,3 @@ public fun Expression<Message>.field(field: Field): FieldAccess =
  */
 public fun Expression<Message>.field(name: String, cardinality: Cardinality): FieldAccess =
     FieldAccess(this, name, cardinality)
-

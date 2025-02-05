@@ -34,11 +34,11 @@ package io.spine.protodata.java
 public object Null : Expression<Null>("null")
 
 /**
- * A reference to the current instance (`this`).
+ * A reference to the current `this` instance.
  *
  * @param T The type of the `this` value.
  *
- * @param explicit If `true`, the expression yields the literal `"this"`.
- *   Otherwise, yields an empty string.
+ * @param explicit If `true`, the expression yields `this` keyword.
+ *   Otherwise, it yields an empty string.
  */
 public class This<T>(explicit: Boolean = true) : Expression<T>(if (explicit) "this" else "")
