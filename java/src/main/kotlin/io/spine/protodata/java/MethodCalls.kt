@@ -89,6 +89,14 @@ public fun EnumName.enumValue(number: Int): MethodCall<Message> =
     call("forNumber", listOf(Literal(number)))
 
 /**
+ * Constructs an expression which creates a new builder for this [Message].
+ *
+ * Example: `Expression("myMessage").toBuilder()` yields `"myMessage.toBuilder()"`.
+ */
+public fun Expression<Message>.toBuilder(): MethodCall<Message.Builder> =
+    MethodCall(this, "toBuilder")
+
+/**
  * Constructs an expression of a list from the given list of [expressions].
  *
  * The resulting expression always yields an instance of Guava `ImmutableList`.
