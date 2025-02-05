@@ -36,7 +36,10 @@ import io.spine.tools.psi.java.Environment.elementFactory
  * The declared field may OR may not be initialized,
  * depending on a specific implementation.
  */
-public sealed class FieldDeclaration<T>(public val name: String, code: String) : MemberDeclaration(code) {
+public sealed class FieldDeclaration<T>(
+    public val name: String,
+    code: String
+) : MemberDeclaration(code) {
 
     /**
      * Returns an expression that reads the value of this field.
