@@ -66,3 +66,12 @@ public fun Expression<Message>.field(field: Field): FieldAccess =
  */
 public fun Expression<Message>.field(name: String, cardinality: Cardinality): FieldAccess =
     FieldAccess(this, name, cardinality)
+
+
+/**
+ * Constructs an expression which creates a new builder for this [Message].
+ *
+ * Example: `Expression("myMessage").toBuilder()` yields `"myMessage.toBuilder()"`.
+ */
+public fun Expression<Message>.toBuilder(): MethodCall<Message.Builder> =
+    MethodCall(this, "toBuilder")
