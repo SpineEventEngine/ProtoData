@@ -94,7 +94,7 @@ public fun FieldDescriptor.toField(): Field =
         // New `FieldType` and `group_name` API.
         type = toFieldType()
         declaringType = declaredIn
-        number = number
+        number = this@toField.number
         orderOfDeclaration = index
         realContainingOneof?.let {
             enclosingOneof = it.name()
