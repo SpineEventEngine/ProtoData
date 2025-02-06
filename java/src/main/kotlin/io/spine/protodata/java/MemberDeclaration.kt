@@ -31,4 +31,4 @@ package io.spine.protodata.java
  *
  * A class may contain declarations of fields, methods, classes, and interfaces.
  */
-public open class MemberDeclaration(code: String) : AnElement(code)
+public open class MemberDeclaration(code: String) : AnElement(code.trim())

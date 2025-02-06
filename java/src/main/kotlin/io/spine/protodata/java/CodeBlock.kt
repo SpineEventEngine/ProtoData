@@ -46,6 +46,8 @@ import io.spine.string.joinByLines
  *     """.trimIndent()
  * )
  * ```
+ *
+ * @param code Arbitrary block of Java code. Leading and trailing whitespaces are allowed.
  */
 public class CodeBlock(code: String) : AnElement(code) {
 

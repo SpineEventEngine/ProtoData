@@ -39,7 +39,28 @@ public interface JavaElement : CodeElement<Java>
  *
  * This class is the default implementation of [JavaElement].
  *
- * @param code Arbitrary Java code.
+ * Please note that, in general, when defining a Java element with the [code]
+ * property, it is highly desirable to avoid any leading spaces, tab indents,
+ * or new lines. Furthermore, we often convert our [JavaElement]s to PSI
+ * counterparts, and for many elements, PSI prohibits leading whitespaces.
+ *
+ * Be especially aware when defining [code] using Kotlin multiline strings.
+ * If such a string is a literal expression, using [trimIndent] is justified
+ * because literals are always predictably formatted. However, If such a string
+ * is interpolated or concatenated with other strings (which may themselves be multiline),
+ * consider using safer formatting methods like [trimMargin] or [trim] to ensure
+ * there are no leading whitespaces. Dynamically added lines may have inappropriate
+ * indentation or none at all, causing [trimIndent] to interpret `0` as the minimal
+ * common indent. This effectively causes an invocation of [trimIndent] to behave
+ * as a no-op.
+ *
+ * Concrete implementations of [AnElement] may not accept [code] on constructor,
+ * requiring the user to pass more specific parts of the code. In such cases,
+ * it is a responsibility of the class to assemble the correct final [code].
+ * Specific subclasses may also accept [code] that allows leading whitespaces;
+ * if so, they should document this behavior explicitly.
+ *
+ * @param code Arbitrary Java code without leading whitespaces.
  */
 public open class AnElement(public val code: String) : JavaElement  {
 
