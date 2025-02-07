@@ -47,7 +47,7 @@ import io.spine.string.joinByLines
  * )
  * ```
  *
- * @param code Arbitrary block of Java code.
+ * @param code An arbitrary block of Java code.
  */
 public class CodeBlock(code: String) : AnElement(code) {
 
