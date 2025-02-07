@@ -52,4 +52,4 @@ package io.spine.protodata.java
  * @param T The type of the returned value.
  * @param code The Java code denoting the expression.
  */
-public open class Expression<out T>(code: String) : AnElement(code.trim())
+public open class Expression<out T>(code: String) : AnElement(code)

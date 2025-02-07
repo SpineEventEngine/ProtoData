@@ -39,7 +39,7 @@ import io.spine.tools.psi.java.Environment
  * val return = Statement("return;")
  * ```
  */
-public open class Statement(code: String) : AnElement(code.trim())
+public open class Statement(code: String) : AnElement(code)
 
 /**
  * Creates a new [PsiStatement] from this Java [Statement].

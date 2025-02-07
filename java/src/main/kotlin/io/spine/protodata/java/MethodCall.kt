@@ -33,7 +33,7 @@ import com.google.protobuf.Message
  *
  * Can be a static or an instance method. In the case of the former, the scope is a class name.
  * In the case of the latter — an object reference. If the scope is empty, the method call is
- * considered to use an implicit receiver.
+ * considered as the one using an implicit receiver.
  *
  * @param T The method returned type.
  *
