@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("Expressions")
-
 package io.spine.protodata.java
 
 /**
- * An expression that evaluates to `null`.
- */
-public object Null : Expression<Null>("null")
-
-/**
- * A reference to the current `this` instance.
+ * Represents a class-level member declaration.
  *
- * @param T The type of the `this` value.
- *
- * @param explicit If `true`, the expression yields `this` keyword.
- *   Otherwise, it yields an empty string.
+ * A class may contain declarations of fields, methods, classes, and interfaces.
  */
-public class This<T>(explicit: Boolean = true) : Expression<T>(if (explicit) "this" else "")
+public open class MemberDeclaration(code: String) : AnElement(code)

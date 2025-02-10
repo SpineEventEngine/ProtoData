@@ -48,9 +48,9 @@ import io.spine.protodata.ast.event.typeExited
 import io.spine.protodata.ast.event.typeOptionDiscovered
 import io.spine.protodata.ast.oneofGroup
 import io.spine.protodata.ast.produceOptionEvents
-import io.spine.protodata.protobuf.buildField
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.realNestedTypes
+import io.spine.protodata.protobuf.toField
 import io.spine.protodata.protobuf.toMessageType
 
 /**
@@ -183,7 +183,7 @@ internal class MessageEvents(header: ProtoFileHeader) : DeclarationEvents<Descri
     ) {
         val typeName = desc.containingType.name()
         val fieldName = desc.name()
-        val theField = buildField(desc)
+        val theField = desc.toField()
         val path = header.file
         yield(
             fieldEntered {

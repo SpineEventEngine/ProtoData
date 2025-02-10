@@ -38,5 +38,8 @@ internal class KeywordExpressionsSpec {
     fun `for 'null' keyword`() = assertCode(Null, "null")
 
     @Test
-    fun `for 'this' keyword`() = assertCode(This<Message>(), "this")
+    fun `for explicit 'this' keyword`() = assertCode(This<Message>(), "this")
+
+    @Test
+    fun `for implicit 'this' keyword`() = assertCode(This<Message>(explicit = false), "")
 }

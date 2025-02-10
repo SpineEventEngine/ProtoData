@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("Expressions")
-
 package io.spine.protodata.java
 
-/**
- * An expression that evaluates to `null`.
- */
-public object Null : Expression<Null>("null")
+import io.spine.string.joinByLines
 
 /**
- * A reference to the current `this` instance.
+ * Represents a block of Java code.
  *
- * @param T The type of the `this` value.
+ * An example usage:
  *
- * @param explicit If `true`, the expression yields `this` keyword.
- *   Otherwise, it yields an empty string.
+ * ```
+ * CodeBlock(
+ *     """
+ *     // Create a violation if the field value equals to "hello".
+ *     if (fieldValue.equals("hello")) {
+ *         var fieldPath = getFieldPath();
+ *         var violation = createViolation(fieldPath);
+ *         violations.add(violation);
+ *     }
+ *     return violations;
+ *     """
+ * )
+ * ```
+ *
+ * @param code An arbitrary block of Java code.
  */
-public class This<T>(explicit: Boolean = true) : Expression<T>(if (explicit) "this" else "")
+public class CodeBlock(code: String) : AnElement(code) {
+
+    /**
+     * Creates a [CodeBlock] from the provided list of [Statement].
+     */
+    public constructor(statements: List<Statement>) : this(statements.joinByLines())
+}

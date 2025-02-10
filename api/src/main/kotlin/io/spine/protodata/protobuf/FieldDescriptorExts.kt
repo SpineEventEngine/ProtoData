@@ -68,7 +68,6 @@ import io.spine.protodata.ast.PrimitiveType.TYPE_UINT64
 import io.spine.protodata.ast.Type
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.coordinates
-import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.documentation
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.fieldName
@@ -85,44 +84,25 @@ import kotlin.reflect.KClass
 public fun FieldDescriptor.name(): FieldName = fieldName { value = name }
 
 /**
- * Converts this field descriptor into a [Field] with options.
- *
- * @see buildField
- */
-public fun FieldDescriptor.toField(): Field {
-    val self = this
-    val field = buildField(self)
-    return field.copy {
-        // There are several similar expressions in this file, like
-        // the `option.addAll()` call below. Sadly, these duplicates
-        // could not be refactored into a common function because
-        // they have no common compile-time type.
-        option.addAll(options())
-    }
-}
-
-/**
  * Converts this field descriptor into a [Field].
- *
- * The resulting [Field] will not reflect the field options.
- *
- * @see toField
  */
-public fun buildField(desc: FieldDescriptor): Field =
+public fun FieldDescriptor.toField(): Field =
     field {
-        val messageType = desc.containingType
+        val messageType = containingType
         val declaredIn = messageType.name()
-        name = desc.name()
+        val descriptor = this@toField
+        name = name()
         // New `FieldType` and `group_name` API.
-        type = desc.toFieldType()
+        type = toFieldType()
         declaringType = declaredIn
-        number = desc.number
-        orderOfDeclaration = desc.index
-        desc.realContainingOneof?.let {
+        number = descriptor.number
+        orderOfDeclaration = index
+        realContainingOneof?.let {
             enclosingOneof = it.name()
         }
-        doc = messageType.documentation().forField(desc)
-        span = messageType.coordinates().forField(desc)
+        doc = messageType.documentation().forField(descriptor)
+        span = messageType.coordinates().forField(descriptor)
+        option.addAll(options())
     }
 
 /**
