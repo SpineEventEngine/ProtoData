@@ -43,7 +43,7 @@ import io.spine.string.joinByLines
  *         violations.add(violation);
  *     }
  *     return violations;
- *     """.trimIndent()
+ *     """
  * )
  * ```
  *
