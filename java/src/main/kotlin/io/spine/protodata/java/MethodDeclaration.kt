@@ -38,7 +38,7 @@ package io.spine.protodata.java
  *         var noParent = io.spine.base.FieldPath.getDefaultInstance();
  *         return validate(noParent);
  *     }
- *     """.trimIndent()
+ *     """
  * )
  * ```
  */
