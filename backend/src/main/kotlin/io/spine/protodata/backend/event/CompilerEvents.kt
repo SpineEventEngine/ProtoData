@@ -62,11 +62,12 @@ internal object CompilerEvents {
         val allFiles = request.protoFileList.toDescriptors()
         val filesToGenerate = request.fileToGenerateList.toSet()
         return sequence {
-            val (ownFiles, dependencies) = allFiles.partition {
+            val (compiledFiles, dependencies) = allFiles.partition {
                 it.name in filesToGenerate
             }
             yieldAll(dependencies.map { it.toDependencyEvent() })
-            ownFiles
+            compiledFiles
+                .filter(descriptorFilter)
                 .map { ProtoFileEvents(it, descriptorFilter) }
                 .forEach {
                     it.apply { produceEvents() }
