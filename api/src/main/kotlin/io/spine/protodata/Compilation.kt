@@ -29,8 +29,12 @@ package io.spine.protodata
 import com.google.common.annotations.VisibleForTesting
 import io.spine.base.Mistake
 import io.spine.environment.Tests
+import io.spine.protodata.Compilation.ERROR_EXIT_CODE
+import io.spine.protodata.Compilation.error
+import io.spine.protodata.ast.toPath
 import java.io.File
 import kotlin.system.exitProcess
+import io.spine.protodata.ast.File as PFile
 
 
 /**
@@ -96,6 +100,23 @@ public object Compilation {
             exitProcess(ERROR_EXIT_CODE)
         }
     }
+
+    /**
+     * Prints the error diagnostics to [System.err] and terminates the compilation.
+     *
+     * The termination of the compilation in the production mode is done by
+     * exiting the process with [ERROR_EXIT_CODE].
+     *
+     * If the code is run [under tests][Tests] the method throws [Compilation.Error].
+     *
+     * @param file The file in which the error occurred.
+     * @param line The one-based number of the line with the error.
+     * @param column The one-based number of the column with the error.
+     * @param message The description of what went wrong.
+     * @throws Compilation.Error exception when called under tests.
+     */
+    public fun error(file: PFile, line: Int, column: Int, message: String): Nothing =
+        error(file.toPath().toFile(), line, column, message)
 
     @VisibleForTesting
     internal fun errorMessage(file: File, line: Int, column: Int, message: String) =
