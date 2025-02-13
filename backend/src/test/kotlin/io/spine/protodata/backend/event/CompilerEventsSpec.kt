@@ -119,7 +119,7 @@ class CompilerEventsSpec {
         )
 
         @Test
-        fun `for standard file option`() = with(events) {
+        fun `for standard file option`(): Unit = with(events) {
             findJavaPackageEvent().option<StringValue>().value shouldBe "io.spine.protodata.test"
             findOuterClassNameEvent().option<StringValue>().value shouldBe "DoctorProto"
             findMultipleFilesEvent().option<BoolValue>().value shouldBe true
