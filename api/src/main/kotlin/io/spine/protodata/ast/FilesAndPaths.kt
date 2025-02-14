@@ -63,6 +63,11 @@ public fun java.io.File.toDirectory(): Directory =
 public fun File.toPath(): Path = Path(path)
 
 /**
+ * Converts this [File] into [java.io] counterpart.
+ */
+public fun File.toJava(): java.io.File = java.io.File(path)
+
+/**
  * Converts this [Directory] message to a [Path].
  */
 public fun Directory.toPath(): Path = Path(path)
