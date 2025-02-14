@@ -282,8 +282,8 @@ public class PipelineSetup(
          * placed into the resources using [ProtoTap](https://github.com/SpineEventEngine/ProtoTap).
          *
          * @param language The programming language which is handled by the pipeline to be created.
-         * @param params The pipeline parameters instance, which can pass only partial information
-         *   required for the test.
+         * @param params The pipeline parameters instance, which may contain only
+         *   partial information required for the test.
          * @param plugins The list of plugins to be passed to the created pipeline.
          * @param outputRoot The root directory to which the updated code will be placed into
          *  the subdirectory calculated from the [language].
@@ -368,8 +368,8 @@ public class PipelineSetup(
          *
          * The pipeline to be created will handle code generation in [Java].
          *
-         * @param params The pipeline parameters instance, which can pass only partial information
-         *   required for the test.
+         * @param params The pipeline parameters instance, which may contain only
+         *   partial information required for the test.
          * @param plugins The list of plugins to be passed to the created pipeline.
          * @param outputRoot The root directory to which the updated code will be placed under
          *   the `java` subdirectory.
