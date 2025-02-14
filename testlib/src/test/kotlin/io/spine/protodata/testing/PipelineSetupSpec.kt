@@ -28,8 +28,10 @@ package io.spine.protodata.testing
 
 import com.google.protobuf.Empty
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.spine.io.Resource
 import io.spine.io.ResourceDirectory
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.params.PipelineParameters
@@ -42,7 +44,9 @@ import io.spine.tools.code.Java
 import io.spine.tools.code.Kotlin
 import io.spine.tools.code.TypeScript
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
+import io.spine.tools.prototap.Paths.CODE_GENERATOR_REQUEST_JSON_FILE
 import io.spine.validate.NonValidated
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.exists
@@ -52,6 +56,8 @@ import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("`PipelineSetup` should")
 internal class PipelineSetupSpec {
+
+    private val classLoader = this::class.java.classLoader
 
     @Test
     fun `ensure output and settings directories are created`(
@@ -106,6 +112,20 @@ internal class PipelineSetupSpec {
     }
 
     @Test
+    fun `create a JSON file with 'CodeGeneratorRequest' captured by ProtoTap`(
+        @TempDir workingDir: Path,
+        @TempDir output: Path
+    ) {
+        val language = Java
+        setupByResources(language, workingDir, output)
+        val resource = Resource.file(
+            "${PROTOC_PLUGIN_NAME}/$CODE_GENERATOR_REQUEST_JSON_FILE",
+            classLoader
+        )
+        resource.exists() shouldBe true
+    }
+
+    @Test
     fun `use sources captured by ProtoTap`(
         @TempDir workingDir: Path,
         @TempDir output: Path
@@ -115,10 +135,7 @@ internal class PipelineSetupSpec {
         val pipeline = setup.createPipeline()
         val sourceFileSet = pipeline.sources[0]
         val langDir = language.protocOutputDir()
-        val resourceDir = ResourceDirectory.get(
-            "${PROTOC_PLUGIN_NAME}/$langDir",
-            this::class.java.classLoader
-        )
+        val resourceDir = ResourceDirectory.get("${PROTOC_PLUGIN_NAME}/$langDir", classLoader)
         sourceFileSet.run {
             // We have generated sources as input in the set.
             isEmpty shouldBe false
@@ -160,6 +177,26 @@ internal class PipelineSetupSpec {
             pipeline.invoke()
             underlyingContext.isOpen shouldBe false
         }
+    }
+
+    @Test
+    fun `add compiled proto files to pipeline parameters`(
+        @TempDir workingDir: Path,
+        @TempDir output: Path,
+    ) {
+        val setup = setupByResources(Java, workingDir, output)
+        val pipeline = setup.createPipeline()
+
+        val files = pipeline.params.compiledProtoList.map { File(it.path) }
+        files.forEach {
+            it.isFile shouldBe true
+            it.isAbsolute shouldBe true
+        }
+
+        val fileNames = files.map { it.name }
+
+        // Should be alphabetically sorted.
+        fileNames shouldContainExactly listOf("gas_transportation.proto", "oil_refinery.proto")
     }
 }
 
