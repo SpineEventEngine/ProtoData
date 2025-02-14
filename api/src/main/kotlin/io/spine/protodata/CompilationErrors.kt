@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata
+
+import io.spine.environment.Tests
+import io.spine.protodata.Compilation.ERROR_EXIT_CODE
+import io.spine.protodata.ast.File
+import io.spine.protodata.ast.Span
+import io.spine.protodata.ast.toPath
+
 /**
- * The version of the ProtoData to publish.
+ * Prints the error diagnostics to [System.err] and terminates the compilation.
  *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
+ * The termination of the compilation in the production mode is done by
+ * exiting the process with [ERROR_EXIT_CODE].
  *
- * For dependencies on Spine SDK module please see [io.spine.dependency.local.Spine].
+ * If the code is run [under tests][Tests] the method throws [Compilation.Error].
+ *
+ * @param file The file in which the error occurred.
+ * @param span The location span of the erroneous Protobuf declaration.
+ * @param message The description of what went wrong.
+ *
+ * @throws Compilation.Error exception when called under tests.
  */
-val protoDataVersion: String by extra("0.91.7")
+public fun compilationError(file: File, span: Span, message: () -> String): Nothing =
+    Compilation.error(
+        file.toPath().toFile(),
+        span.startLine, span.startColumn,
+        message()
+    )
