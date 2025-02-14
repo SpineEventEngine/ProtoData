@@ -35,8 +35,15 @@ import io.spine.tools.psi.java.Environment.elementFactory
  *
  * The declared field may OR may not be initialized,
  * depending on a specific implementation.
+ *
+ * Note: the class is intentionally not `sealed`, allowing instantiation
+ * with arbitrary [code]. While not recommended for general use, this can
+ * be helpful, e.g., when converting JavaPoet or PSI fields to [FieldDeclaration].
+ *
+ * @see InitField
+ * @see DeclField
  */
-public sealed class FieldDeclaration<T>(
+public open class FieldDeclaration<T>(
     public val name: String,
     code: String
 ) : MemberDeclaration(code) {
