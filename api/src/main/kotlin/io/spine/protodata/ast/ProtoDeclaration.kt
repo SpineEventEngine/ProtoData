@@ -25,7 +25,6 @@
  */
 package io.spine.protodata.ast
 
-import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Message
 import io.spine.annotation.GeneratedMixin
 import io.spine.annotation.Internal
@@ -85,7 +84,7 @@ public interface TypeDeclaration : ProtoDeclaration
  * @return the option or `null` if there is no option with such a type applied to this declaration.
  * @see ProtoDeclaration.option
  */
-public inline fun <reified T : GeneratedMessageV3> ProtoDeclaration.findOption(): Option? {
+public inline fun <reified T : Message> ProtoDeclaration.findOption(): Option? {
     val typeUrl = T::class.java.defaultInstance.typeName.toUrl().value()
     return optionList.find { opt ->
         opt.value.typeUrl == typeUrl
@@ -103,7 +102,7 @@ public inline fun <reified T : GeneratedMessageV3> ProtoDeclaration.findOption()
  * @throws IllegalStateException if the option is not found.
  * @see ProtoDeclaration.findOption
  */
-public inline fun <reified T : GeneratedMessageV3> ProtoDeclaration.option(): Option {
+public inline fun <reified T : Message> ProtoDeclaration.option(): Option {
     findOption<T>()?.let { return it }
         ?: error("The declaration `${qualifiedName}` must have the `${simply<T>()}` option.")
 }
