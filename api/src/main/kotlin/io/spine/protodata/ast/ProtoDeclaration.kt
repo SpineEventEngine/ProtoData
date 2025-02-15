@@ -49,6 +49,11 @@ public interface ProtoDeclaration : Message {
      */
     public val typeUrl: String
         get() = name.typeUrl
+
+    /**
+     * Obtains a file in which the declaration is made.
+     */
+    public val file: File
 }
 
 /**

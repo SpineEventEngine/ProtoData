@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import com.google.protobuf.Descriptors.GenericDescriptor
  *
  * Even though the input type of the predicate is [GenericDescriptor], which is a supertype of
  * all the descriptor classes in Protobuf, filtering is supported only for the following types:
+ *  * [FileDescriptor][com.google.protobuf.Descriptors.FileDescriptor]
  *  * [Descriptor][com.google.protobuf.Descriptors.Descriptor]
  *  * [EnumDescriptor][com.google.protobuf.Descriptors.EnumDescriptor]
  *  * [ServiceDescriptor][com.google.protobuf.Descriptors.ServiceDescriptor]
