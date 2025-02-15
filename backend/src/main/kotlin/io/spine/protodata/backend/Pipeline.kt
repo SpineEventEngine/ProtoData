@@ -295,7 +295,7 @@ public class Pipeline(
         settings.emitEvents().forEach {
             configuration.emitted(it)
         }
-        val events = CompilerEvents.parse(request, descriptorFilter)
+        val events = CompilerEvents.parse(request, typeSystem, descriptorFilter)
         compiler.emitted(events)
     }
 
@@ -326,7 +326,8 @@ private fun printError(message: String?) {
 /**
  * Converts this code generation request into [TypeSystem] taking all the proto files.
  */
-private fun CodeGeneratorRequest.toTypeSystem(compiledProtoFiles: ProtoFileList): TypeSystem {
+@VisibleForTesting
+internal fun CodeGeneratorRequest.toTypeSystem(compiledProtoFiles: ProtoFileList): TypeSystem {
     val fileDescriptors = FileSet.of(protoFileList).files()
     val protoFiles = fileDescriptors.map { it.toPbSourceFile() }
     return TypeSystem(compiledProtoFiles, protoFiles.toSet())

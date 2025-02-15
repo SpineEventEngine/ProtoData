@@ -64,6 +64,8 @@ import io.spine.protodata.ast.event.TypeExited
 import io.spine.protodata.ast.file
 import io.spine.protodata.ast.messageType
 import io.spine.protodata.ast.typeName
+import io.spine.protodata.backend.toTypeSystem
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.test.DoctorProto
 import io.spine.testing.Correspondences
 import io.spine.type.KnownTypes
@@ -97,7 +99,10 @@ class CompilerEventsSpec {
             fileToGenerate += DoctorProto.getDescriptor().fullName
             protoFile.addAll(allDependencyFiles)
         }
-        events = CompilerEvents.parse(request, { true }).toList()
+        val typeSystem = request.toTypeSystem(
+            ProtoFileList(listOf())
+        )
+        events = CompilerEvents.parse(request, typeSystem, { true }).toList()
     }
 
     @Test
