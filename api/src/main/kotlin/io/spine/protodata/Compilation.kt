@@ -31,7 +31,8 @@ import io.spine.base.Mistake
 import io.spine.environment.Tests
 import io.spine.protodata.Compilation.ERROR_EXIT_CODE
 import io.spine.protodata.Compilation.error
-import io.spine.protodata.ast.toPath
+import io.spine.protodata.ast.Span
+import io.spine.protodata.ast.toJava
 import java.io.File
 import kotlin.system.exitProcess
 import io.spine.protodata.ast.File as PFile
@@ -116,7 +117,23 @@ public object Compilation {
      * @throws Compilation.Error exception when called under tests.
      */
     public fun error(file: PFile, line: Int, column: Int, message: String): Nothing =
-        error(file.toPath().toFile(), line, column, message)
+        error(file.toJava(), line, column, message)
+
+    /**
+     * Prints the error diagnostics to [System.err] and terminates the compilation.
+     *
+     * The termination of the compilation in the production mode is done by
+     * exiting the process with [ERROR_EXIT_CODE].
+     *
+     * If the code is run [under tests][Tests] the method throws [Compilation.Error].
+     *
+     * @param file The file in which the error occurred.
+     * @param span The span of Protobuf declaration which caused the error.
+     * @param message The function calculating the description of what went wrong.
+     * @throws Compilation.Error exception when called under tests.
+     */
+    public fun error(file: PFile, span: Span, message: () -> String): Nothing =
+        error(file, span.startLine, span.startColumn, message())
 
     @VisibleForTesting
     internal fun errorMessage(file: File, line: Int, column: Int, message: String) =
