@@ -92,10 +92,14 @@ private class ProtoFileEvents(
     private val descriptorFilter: DescriptorFilter
 ) {
     /**
-     * Obtains the header of the proto [file] replacing its path
-     * the [TypeSystem] passed to the constructor parameter.
+     * The header of the proto [file] passed to the constructor.
      *
-     * If the full path is not available, the original header with the relative path is used.
+     * During the lazy evaluation, the [ProtoFileHeader.file][ProtoFileHeader.getFile] property,
+     * which is relative by default, is replaced with the absolute version using
+     * the [TypeSystem] passed to the constructor.
+     *
+     * If the full path of the proto file is not available via the [TypeSystem],
+     * the header with the relative path is used.
      */
     private val header: ProtoFileHeader by lazy {
         val hdr = file.toHeader()
