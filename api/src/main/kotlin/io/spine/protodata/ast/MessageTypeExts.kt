@@ -31,12 +31,6 @@ package io.spine.protodata.ast
 import io.spine.protodata.type.TypeSystem
 
 /**
- * Obtains the package and the name of the type.
- */
-public val MessageType.qualifiedName: String
-    get() = name.qualifiedName
-
-/**
  * Obtains column fields of this message type.
  *
  * @return the list if the column fields, or
