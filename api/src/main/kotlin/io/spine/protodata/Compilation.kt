@@ -128,7 +128,7 @@ public object Compilation {
      * If the code is run [under tests][Tests] the method throws [Compilation.Error].
      *
      * @param file The file in which the error occurred.
-     * @param span The span of Protobuf declaration which caused the error.
+     * @param span The span of the Protobuf declaration which caused the error.
      * @param message The function calculating the description of what went wrong.
      * @throws Compilation.Error exception when called under tests.
      */
