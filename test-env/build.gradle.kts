@@ -29,6 +29,7 @@ import io.spine.dependency.lib.Grpc
 
 plugins {
     `build-proto-model`
+    prototap
 }
 
 dependencies {
@@ -50,6 +51,15 @@ protobuf {
             }
         }
     }
+}
+
+prototap {
+    sourceSet.set(sourceSets.main.get())
+}
+
+// Add resources placed by ProtoTap so that we can use them from tests in other modules.
+tasks.processResources {
+    from(tasks.processTestResources)
 }
 
 /**

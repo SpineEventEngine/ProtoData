@@ -51,6 +51,7 @@ import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
 import io.spine.tools.code.Protobuf
 import io.spine.tools.code.TypeScript
+import io.spine.tools.prototap.CompiledProtosFile
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
 import io.spine.tools.prototap.Paths.CODE_GENERATOR_REQUEST_FILE
 import io.spine.tools.prototap.Paths.COMPILED_PROTOS_FILE
@@ -346,16 +347,11 @@ public class PipelineSetup(
             params: @NonValidated PipelineParameters,
             classLoader: ClassLoader
         ): @NonValidated PipelineParameters{
-            val listFile = Resource.file(
-                "$PROTOC_PLUGIN_NAME/$COMPILED_PROTOS_FILE",
-                classLoader
-            )
             return if (params.compiledProtoList.isEmpty()) {
-                val fileNames = listFile.read().lines()
-                    .filter { it.isNotBlank() }
-                    .map { file { path = it } }
+                val files = CompiledProtosFile(classLoader)
+                    .listFiles { file { path = it } }
                 params.toBuilder()
-                    .addAllCompiledProto(fileNames)
+                    .addAllCompiledProto(files)
                     .buildPartial()
             } else {
                 params

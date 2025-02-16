@@ -33,6 +33,7 @@ import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SI
 import com.google.protobuf.DescriptorProtos.MethodOptions.IdempotencyLevel.NO_SIDE_EFFECTS_VALUE
 import com.google.protobuf.Message
 import com.google.protobuf.StringValue
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import com.google.protobuf.enumValue
 import io.kotest.matchers.collections.shouldContainExactly
@@ -63,12 +64,19 @@ import io.spine.protodata.ast.event.TypeEntered
 import io.spine.protodata.ast.event.TypeExited
 import io.spine.protodata.ast.file
 import io.spine.protodata.ast.messageType
+import io.spine.protodata.ast.toJava
 import io.spine.protodata.ast.typeName
+import io.spine.protodata.backend.toTypeSystem
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.type.TypeSystem
 import io.spine.testing.Correspondences
+import io.spine.tools.prototap.CompiledProtosFile
 import io.spine.type.KnownTypes
+import java.io.File
+import java.net.URLClassLoader
 import kotlin.reflect.KClass
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -81,23 +89,51 @@ import org.junit.jupiter.api.Test
 @DisplayName("`CompilerEvents` should")
 class CompilerEventsSpec {
 
-    private val nl: String = System.lineSeparator()
+    companion object {
 
-    private lateinit var events: List<EventMessage>
+        private val nl: String = System.lineSeparator()
 
-    @BeforeEach
-    fun parseEvents() {
-        // Gather files of all known types to simplify resolving dependencies.
-        val allDependencyFiles = KnownTypes.instance()
-            .asTypeSet()
-            .messageTypes()
-            .map { it.descriptor().file.toProto() }
+        private lateinit var events: List<EventMessage>
 
-        val request = codeGeneratorRequest {
-            fileToGenerate += DoctorProto.getDescriptor().fullName
-            protoFile.addAll(allDependencyFiles)
+        @BeforeAll
+        @JvmStatic
+        fun parseEvents() {
+            val request = createRequest()
+            val typeSystem = createTypeSystem(request)
+            events = CompilerEvents.parse(request, typeSystem, { true }).toList()
         }
-        events = CompilerEvents.parse(request, { true }).toList()
+
+        private fun createRequest(): CodeGeneratorRequest {
+            // Gather files of all known types to simplify resolving dependencies.
+            val allDependencyFiles = KnownTypes.instance()
+                .asTypeSet()
+                .messageTypes()
+                .map { it.descriptor().file.toProto() }
+
+            val request = codeGeneratorRequest {
+                fileToGenerate += DoctorProto.getDescriptor().fullName
+                protoFile.addAll(allDependencyFiles)
+            }
+            return request
+        }
+
+        /**
+         * Creates a type system using the list of compiled proto files
+         * from the `test-env` module, which provides the [DoctorProto] file used
+         * by this test suite.
+         */
+        private fun createTypeSystem(request: CodeGeneratorRequest): TypeSystem {
+            val testEnvJar = DoctorProto::class.java.protectionDomain.codeSource.location
+            // Create the class loader without the parent because the parent is checked first.
+            // We only interested in that particular JAR.
+            val urlClassLoader = URLClassLoader(arrayOf(testEnvJar), null)
+            val protoFiles = CompiledProtosFile(urlClassLoader)
+                .listFiles { File(it) }
+            val typeSystem = request.toTypeSystem(
+                ProtoFileList(protoFiles)
+            )
+            return typeSystem
+        }
     }
 
     @Test
@@ -131,6 +167,13 @@ class CompilerEventsSpec {
 
             event shouldNotBe null
             event.option<StringValue>().value shouldBe "type.spine.io"
+        }
+
+        @Test
+        fun `with full file path`() {
+            events.first { it is FileEntered }.let { event ->
+                (event as FileEntered).file.toJava().isAbsolute shouldBe true
+            }
         }
     }
 

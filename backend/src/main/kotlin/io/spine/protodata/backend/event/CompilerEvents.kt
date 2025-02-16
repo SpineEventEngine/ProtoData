@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,15 +33,21 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.base.EventMessage
 import io.spine.code.proto.FileSet
+import io.spine.protodata.ast.ProtoFileHeader
+import io.spine.protodata.ast.copy
 import io.spine.protodata.ast.event.dependencyDiscovered
 import io.spine.protodata.ast.event.fileEntered
 import io.spine.protodata.ast.event.fileExited
 import io.spine.protodata.ast.event.fileOptionDiscovered
+import io.spine.protodata.ast.file
 import io.spine.protodata.ast.produceOptionEvents
+import io.spine.protodata.ast.toJava
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.backend.DescriptorFilter
 import io.spine.protodata.protobuf.file
 import io.spine.protodata.protobuf.toHeader
 import io.spine.protodata.protobuf.toPbSourceFile
+import io.spine.protodata.type.TypeSystem
 
 /**
  * A factory for Protobuf compiler events.
@@ -57,6 +63,7 @@ internal object CompilerEvents {
      */
     fun parse(
         request: CodeGeneratorRequest,
+        typeSystem: TypeSystem,
         descriptorFilter: DescriptorFilter
     ): Sequence<EventMessage> {
         val allFiles = request.protoFileList.toDescriptors()
@@ -68,7 +75,7 @@ internal object CompilerEvents {
             yieldAll(dependencies.map { it.toDependencyEvent() })
             compiledFiles
                 .filter(descriptorFilter)
-                .map { ProtoFileEvents(it, descriptorFilter) }
+                .map { ProtoFileEvents(it, typeSystem, descriptorFilter) }
                 .forEach {
                     it.apply { produceEvents() }
                 }
@@ -81,9 +88,29 @@ internal object CompilerEvents {
  */
 private class ProtoFileEvents(
     private val file: FileDescriptor,
+    typeSystem: TypeSystem,
     private val descriptorFilter: DescriptorFilter
 ) {
-    private val header = file.toHeader()
+    /**
+     * The header of the proto [file] passed to the constructor.
+     *
+     * During the lazy evaluation, the [ProtoFileHeader.file][ProtoFileHeader.getFile] property,
+     * which is relative by default, is replaced with the absolute version using
+     * the [TypeSystem] passed to the constructor.
+     *
+     * If the full path of the proto file is not available via the [TypeSystem],
+     * the header with the relative path is used.
+     */
+    private val header: ProtoFileHeader by lazy {
+        val hdr = file.toHeader()
+        val relativePath = hdr.file.toJava()
+        val fullPath = typeSystem.compiledProtoFiles.find(relativePath)
+        if (fullPath != null) {
+            hdr.copy { file = fullPath.toProto() }
+        } else {
+            hdr
+        }
+    }
 
     /**
      * Yields compiler events for the given file.
