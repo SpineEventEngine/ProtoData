@@ -103,6 +103,7 @@ public class TypeSystem(
  * @return the file with the declaration, or `null` if the file is not among
  *  the [compiled proto files][TypeSystem.compiledProtoFiles] known to this type system.
  */
+@Deprecated(message = "Please use `file` properties of `ProtoDeclaration`s with `toJava()`")
 public fun TypeSystem.fileOf(d: ProtoDeclaration): File? {
     val file = d.file.toJava()
     return compiledProtoFiles.find(file)
