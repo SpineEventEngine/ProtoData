@@ -35,6 +35,7 @@ import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.ServiceInFile
 import io.spine.protodata.ast.enums
+import io.spine.protodata.ast.unixPath
 import io.spine.protodata.ast.messages
 import io.spine.protodata.ast.services
 import io.spine.protodata.settings.LoadsSettings
@@ -167,7 +168,9 @@ protected constructor(
  */
 public fun Member<*>.findSource(path: File): ProtobufSourceFile? {
     return (this as Querying).select<ProtobufSourceFile>().findById(path)
-        ?: findAllFiles().firstOrNull { it.file.path.endsWith(path.path) }
+        ?: findAllFiles().firstOrNull {
+            it.file.path.endsWith(path.path)
+        }
 }
 
 /**
