@@ -43,9 +43,11 @@ import io.spine.protodata.ast.TypeBase
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.field
 import io.spine.protodata.ast.qualifiedName
+import io.spine.protodata.ast.toJava
 import io.spine.protodata.ast.typeName
 import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.type.shortDebugString
+import java.io.File
 
 /**
  * A collection of known Protobuf types.
@@ -93,6 +95,18 @@ public class TypeSystem(
         val type = types?.get(typeUrl)
         return if (type != null) type to file.header else null
     }
+}
+
+/**
+ * Obtains the full path of the proto file in which the given declaration is made.
+ *
+ * @return the file with the declaration, or `null` if the file is not among
+ *  the [compiled proto files][TypeSystem.compiledProtoFiles] known to this type system.
+ */
+@Deprecated(message = "Please use `file` properties of `ProtoDeclaration`s with `toJava()`")
+public fun TypeSystem.fileOf(d: ProtoDeclaration): File? {
+    val file = d.file.toJava()
+    return compiledProtoFiles.find(file)
 }
 
 /**

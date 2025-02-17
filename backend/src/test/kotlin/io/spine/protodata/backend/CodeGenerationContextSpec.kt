@@ -54,11 +54,13 @@ import io.spine.protodata.ast.span
 import io.spine.protodata.ast.toType
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
+import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.protobuf.file
 import io.spine.protodata.protobuf.toFile
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.PhDProto
 import io.spine.protodata.test.XtraOptsProto
+import io.spine.protodata.type.TypeSystem
 import io.spine.testing.server.blackbox.BlackBox
 import io.spine.testing.server.blackbox.assertEntity
 import io.spine.time.TimeProto
@@ -125,6 +127,10 @@ class CodeGenerationContextSpec {
             fileToGenerate.addAll(filesToGenerate)
         }
 
+        private val typeSystem = codeGeneratorRequest.toTypeSystem(
+            ProtoFileList(listOf())
+        )
+
         fun createCodegenBlackBox(pipelineId: String): Pair<CodegenContext, BlackBox> {
             val context = CodeGenerationContext(pipelineId)
             val blackBox = BlackBox.from(context.context)
@@ -132,7 +138,7 @@ class CodeGenerationContextSpec {
         }
 
         fun emitCompilerEvents(pipelineId: String) {
-            val events = CompilerEvents.parse(codeGeneratorRequest, { true })
+            val events = CompilerEvents.parse(codeGeneratorRequest, typeSystem, { true })
             ProtobufCompilerContext(pipelineId).use {
                 it.emitted(events)
             }
@@ -272,7 +278,7 @@ class CodeGenerationContextSpec {
                 protoFile.addAll(dependencies)
                 fileToGenerate.addAll(dependencies.map { it.name })
             }
-            val events = CompilerEvents.parse(set, { true })
+            val events = CompilerEvents.parse(set, Fixtures.typeSystem, { true })
 
             val eventList = events.toList()
             eventList.distinct() shouldContainExactly eventList

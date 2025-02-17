@@ -28,6 +28,9 @@ package io.spine.protodata.ast
 import com.google.protobuf.Message
 import io.spine.annotation.GeneratedMixin
 import io.spine.annotation.Internal
+import io.spine.protobuf.defaultInstance
+import io.spine.string.simply
+import io.spine.type.typeName
 
 /**
  * A high-level Protobuf declaration, such as a message, an enum, or a service.
@@ -42,6 +45,12 @@ public interface ProtoDeclaration : Message {
     public val name: ProtoDeclarationName
 
     /**
+     * Obtains the qualified name of this declaration, primarily for diagnostic messages.
+     */
+    public val qualifiedName: String
+        get() = typeUrl.substringAfterLast('/')
+
+    /**
      * The type URL of the type.
      *
      * A type URL contains the type URL prefix and the qualified name of the type separated by
@@ -49,6 +58,16 @@ public interface ProtoDeclaration : Message {
      */
     public val typeUrl: String
         get() = name.typeUrl
+
+    /**
+     * Obtains a file in which the declaration is made.
+     */
+    public val file: File
+
+    /**
+     * The list of options of this declaration.
+     */
+    public val optionList: List<Option>
 }
 
 /**
@@ -57,3 +76,33 @@ public interface ProtoDeclaration : Message {
 @Internal
 @GeneratedMixin
 public interface TypeDeclaration : ProtoDeclaration
+
+/**
+ * Finds the option with the given type [T] applied to this Protobuf declaration.
+ *
+ * @param T The type of the option.
+ * @return the option or `null` if there is no option with such a type applied to this declaration.
+ * @see ProtoDeclaration.option
+ */
+public inline fun <reified T : Message> ProtoDeclaration.findOption(): Option? {
+    val typeUrl = T::class.java.defaultInstance.typeName.toUrl().value()
+    return optionList.find { opt ->
+        opt.value.typeUrl == typeUrl
+    }
+}
+
+/**
+ * Obtains the option with the given type [T] applied to this Protobuf declaration.
+ *
+ * Invoke this function if you are sure the option with the type [T] is applied
+ * to the receiver declaration. Otherwise, please use [findOption].
+ *
+ * @param T The type of the option.
+ * @return the option.
+ * @throws IllegalStateException if the option is not found.
+ * @see ProtoDeclaration.findOption
+ */
+public inline fun <reified T : Message> ProtoDeclaration.option(): Option {
+    findOption<T>()?.let { return it }
+        ?: error("The declaration `${qualifiedName}` must have the `${simply<T>()}` option.")
+}
