@@ -30,24 +30,41 @@ import assertCode
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`InitField` should")
-internal class InitFieldSpec {
-
-    private val surname = InitField(
-        modifiers = "private final",
-        type = ClassName(String::class),
-        name = "surname",
-        value = StringLiteral("Anderson")
-    )
+@DisplayName("`FieldDeclaration` should")
+internal class FieldDeclarationSpec {
 
     @Test
-    fun `create an initialized Java field`() {
-        assertCode(surname, "private final java.lang.String surname = \"Anderson\";")
+    fun `declare an arbitrary Java field`() {
+        val code = "private static String surname = \"\";"
+        val field = FieldDeclaration<String>("surname", code)
+        assertCode(field, code)
     }
 
     @Test
-    fun `provide a read access to the created field`() {
-        assertCode(surname.read(), "surname")
-        assertCode(surname.read(useThis = true), "this.surname")
+    fun `declare a non-initialized Java field`() {
+        val field = FieldDeclaration<String>(
+            modifiers = "private final",
+            type = ClassName(String::class),
+            name = "surname"
+        )
+        assertCode(field, "private final java.lang.String surname;")
+    }
+
+    @Test
+    fun `declare an initialized Java field`() {
+        val field = FieldDeclaration(
+            modifiers = "private final",
+            type = ClassName(String::class),
+            name = "surname",
+            value = StringLiteral("Anderson")
+        )
+        assertCode(field, "private final java.lang.String surname = \"Anderson\";")
+    }
+
+    @Test
+    fun `provide a read access to the field`() {
+        val field = FieldDeclaration<String>("surname", "private static String surname = \"\";")
+        assertCode(field.read(), "surname")
+        assertCode(field.read(useThis = true), "this.surname")
     }
 }

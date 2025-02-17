@@ -33,93 +33,57 @@ import io.spine.tools.psi.java.Environment.elementFactory
 /**
  * A declaration of a Java field.
  *
- * The declared field may OR may not be initialized,
- * depending on a specific implementation.
+ * The declared field may OR may not be initialized.
  */
-public sealed class FieldDeclaration<T>(
+public class FieldDeclaration<T>(
     public val name: String,
     code: String
 ) : MemberDeclaration(code) {
 
     /**
+     * Declares an initialized Java field.
+     *
+     * An example usage:
+     *
+     * ```
+     * val height = FieldDeclaration("public final", PrimitiveName.INT, "height", Expression<Int>("180"))
+     * println(height) // `public final int height = 180;`
+     * ```
+     *
+     * @param modifiers The field modifiers separated with a space.
+     * @param type The field type.
+     * @param name The field name.
+     * @param value The field value.
+     */
+    public constructor(
+        modifiers: String,
+        type: JavaTypeName,
+        name: String,
+        value: Expression<T>
+    ) : this(name, "$modifiers $type $name = $value;")
+
+    /**
+     * Declares a non-initialized Java field.
+     *
+     * An example usage:
+     *
+     * ```
+     * val height = FieldDeclaration("public final", PrimitiveName.INT, "height")
+     * println(height) // `public final int height;`
+     * ```
+     *
+     * @param modifiers The field modifiers separated with a space.
+     * @param type The field type.
+     * @param name The field name.
+     */
+    public constructor(
+        modifiers: String,
+        type: JavaTypeName,
+        name: String
+    ) : this(name, "$modifiers $type $name;")
+
+    /**
      * Returns an expression that reads the value of this field.
-     */
-    public fun read(useThis: Boolean = false): ReadField<T> = ReadField(name, useThis)
-}
-
-/**
- * Declares and initializes a Java field.
- *
- * An example usage:
- *
- * ```
- * val height = InitField("public final", PrimitiveName.INT, "height", Expression<Int>("180"))
- * println(height) // `public final int height = 180;`
- * ```
- *
- * @param modifiers The field modifiers separated with a space.
- * @param type The field type.
- * @param name The field name.
- * @param value The field value.
- */
-public class InitField<T>(
-    public val modifiers: String,
-    public val type: JavaTypeName,
-    name: String,
-    public val value: Expression<T>
-) : FieldDeclaration<T>(name, "$modifiers $type $name = $value;")
-
-/**
- * Declares a Java field with the given parameters.
- *
- * Please note, the declared field is NOT initialized.
- *
- * An example usage:
- *
- * ```
- * val height = DeclField("public final", PrimitiveName.INT, "height")
- * println(height) // `public final int height;`
- * ```
- *
- * @param modifiers The field modifiers separated with a space.
- * @param type The field type.
- * @param name The field name.
- */
-public class DeclField<T>(
-    public val modifiers: String,
-    public val type: JavaTypeName,
-    name: String
-) : FieldDeclaration<T>(name, "$modifiers $type $name;") {
-
-    /**
-     * Returns an expression that sets the value for this field.
-     */
-    public fun set(value: Expression<T>, useThis: Boolean = false): SetField<T> =
-        SetField(name, value, useThis)
-}
-
-/**
- * Assigns a [value] to a field with the given [name].
- *
- * An example usage:
- *
- * ```
- * val setHeight = SetField("height", Expression<Int>("180"), useThis = true)
- * println(setHeight) // `this.height = 180;`
- * ```
- *
- * @param name The field name.
- * @param value The value to assign.
- * @param explicitThis Tells whether to use the explicit `this` keyword.
- */
-public class SetField<T>(
-    public val name: String,
-    public val value: Expression<T>,
-    public val explicitThis: Boolean = false
-) : Statement("${field(name, explicitThis)} = $value;") {
-
-    /**
-     * Returns an expression that reads the field value.
      */
     public fun read(useThis: Boolean = false): ReadField<T> = ReadField(name, useThis)
 }
