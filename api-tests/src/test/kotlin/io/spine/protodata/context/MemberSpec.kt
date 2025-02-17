@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,11 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldEndWith
 import io.spine.protodata.ast.EnumInFile
 import io.spine.protodata.ast.MessageInFile
+import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.ast.ServiceInFile
+import io.spine.protodata.given.members.Person
 import io.spine.protodata.params.WorkingDirectory
+import io.spine.protodata.protobuf.toMessageType
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.testing.PipelineSetup
@@ -52,6 +55,12 @@ internal class MemberSpec {
 
     companion object {
 
+        /**
+         * This is the subject of testing.
+         *
+         * This renderer invokes the extension functions under the test in
+         * its [ProbeRenderer.render] method.
+         */
         val probe = ProbeRenderer()
 
         /**
@@ -80,6 +89,10 @@ internal class MemberSpec {
         }
     }
 
+    /**
+     * Tests under this class inspect sets collected by [ProbeRenderer]
+     * when its [ProbeRenderer.render] function is called.
+     */
     @Nested inner class
     `provide extensions for` {
 
@@ -128,6 +141,20 @@ internal class MemberSpec {
             }
         }
     }
+
+    @Nested inner class
+    `find a header via` {
+
+        @Test
+        fun `relative path`() {
+            probe.headerViaRelativePath shouldNotBe null
+        }
+
+        @Test
+        fun `absolute path`() {
+            probe.headerViaAbsolutePath shouldNotBe null
+        }
+    }
 }
 
 /**
@@ -140,10 +167,20 @@ class ProbeRenderer : Renderer<Java>(Java) {
     lateinit var enumTypes: Set<EnumInFile>
     lateinit var services: Set<ServiceInFile>
 
+    var headerViaRelativePath: ProtoFileHeader? = null
+    var headerViaAbsolutePath: ProtoFileHeader? = null
+
     override fun render(sources: SourceFileSet) {
         messageTypes = findMessageTypes()
         enumTypes = findEnumTypes()
         services = findServices()
+
+        val relativeFile = Person.getDescriptor().toMessageType().file
+        headerViaRelativePath = findHeader(relativeFile)
+
+        val personMessage = messageTypes.find("Person")!!.message
+        val absoluteFile = personMessage.file
+        headerViaAbsolutePath = findHeader(absoluteFile)
     }
 }
 
