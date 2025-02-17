@@ -27,13 +27,13 @@
 package io.spine.protodata.test
 
 import com.google.protobuf.StringValue
-import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.find
+import io.spine.protodata.context.findSource
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.server.query.Querying
-import io.spine.tools.code.Java
 import io.spine.server.query.select
+import io.spine.tools.code.Java
 import kotlin.io.path.Path
 import kotlin.io.path.div
 
@@ -45,7 +45,7 @@ public class DeletingRenderer : Renderer<Java>(Java) {
     override fun render(sources: SourceFileSet) {
         val types = (this as Querying).select<DeletedType>().all()
         types.forEach {
-            val source = (this as Querying).select<ProtobufSourceFile>().findById(it.type.file)
+            val source = findSource(it.type.file)
             val javaPackage = source!!.header.optionList
                 .find("java_package", StringValue::class.java)!!.value
             val simpleName = it.type.name.simpleName

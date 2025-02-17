@@ -160,10 +160,23 @@ protected constructor(
 }
 
 /**
- * Obtains the header of the proto file with the given [path].
+ * Obtains the proto source file with the given [path].
+ *
+ * @param path The path to the source file which could be relative or absolute.
  */
-public fun Member<*>.findHeader(path: File): ProtoFileHeader? =
-    (this as Querying).select<ProtobufSourceFile>().findById(path)?.header
+public fun Member<*>.findSource(path: File): ProtobufSourceFile? {
+    return (this as Querying).select<ProtobufSourceFile>().findById(path)
+        ?: run {
+            findAllFiles().firstOrNull { it.file.path.endsWith(path.path) }
+        }
+}
+
+/**
+ * Obtains the header of the proto file with the given [path].
+ *
+ * @param path The path to the source file which could be relative or absolute.
+ */
+public fun Member<*>.findHeader(path: File): ProtoFileHeader? = findSource(path)?.header
 
 /**
  * Obtains all Protobuf source code files passed to the current compilation process.
