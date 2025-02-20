@@ -33,6 +33,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.plugin.ConfigurationError
@@ -66,6 +67,7 @@ import io.spine.protodata.testing.pipelineParams
 import io.spine.protodata.testing.withRequestFile
 import io.spine.protodata.testing.withRoots
 import io.spine.protodata.testing.withSettingsDir
+import io.spine.protodata.type.TypeSystem
 import io.spine.protodata.util.Format
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
@@ -94,8 +96,13 @@ internal class PipelineSpec {
     private lateinit var targetFile: Path
     private lateinit var params: PipelineParameters
     private lateinit var request: CodeGeneratorRequest
+    private lateinit var typeSystem: TypeSystem
     private lateinit var renderer: UnderscorePrefixRenderer
     private lateinit var sourceSet: SourceFileSet
+
+    private fun PipelineParameters.Builder.addAbsoluteCompiledProtoPaths() {
+        addAllCompiledProto(typeSystem.compiledProtoFiles.files.map { it.toProto() })
+    }
 
     @BeforeEach
     fun prepareSources(@TempDir sandbox: Path) {
@@ -118,7 +125,10 @@ internal class PipelineSpec {
         }
         codegenRequestFile.writeBytes(request.toByteArray())
 
+        typeSystem = createTypeSystem(request)
+
         params = pipelineParams {
+            addAbsoluteCompiledProtoPaths()
             withRequestFile(codegenRequestFile)
             withRoots(srcRoot, targetRoot)
         }
@@ -245,7 +255,9 @@ internal class PipelineSpec {
         val ktPath = "corp/acme/test/Source.kt"
         write(jsPath, "alert('Hello')")
         write(ktPath, "println(\"Hello\")")
+
         val local = pipelineParams {
+            addAbsoluteCompiledProtoPaths()
             withRequestFile(codegenRequestFile)
             withRoots(srcRoot, targetRoot)
         }
@@ -296,6 +308,7 @@ internal class PipelineSpec {
     fun `write code into different destination`(
         @TempDir destination: Path) {
         val local = pipelineParams {
+            addAbsoluteCompiledProtoPaths()
             withRequestFile(codegenRequestFile)
             withRoots(srcRoot, destination)
         }
@@ -338,6 +351,7 @@ internal class PipelineSpec {
             secondSourceFile.createFile().writeText("foo bar")
 
             val local = pipelineParams {
+                addAbsoluteCompiledProtoPaths()
                 withRoots(srcRoot, destination1)
                 withRoots(source2, destination2)
                 withRequestFile(codegenRequestFile)
@@ -376,6 +390,7 @@ internal class PipelineSpec {
                 expectedContent
             )
             val params = pipelineParams {
+                addAbsoluteCompiledProtoPaths()
                 withRequestFile(codegenRequestFile)
                 withSettingsDir(settingsDir)
                 withRoots(srcRoot, destination1)
@@ -410,6 +425,7 @@ internal class PipelineSpec {
             write(existingFilePath, expectedContent)
 
             val local = pipelineParams {
+                addAbsoluteCompiledProtoPaths()
                 withRequestFile(codegenRequestFile)
                 withRoots(srcRoot, destination1)
                 withRoots(source2, destination2)

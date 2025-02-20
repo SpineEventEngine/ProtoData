@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import io.spine.protodata.ast.event.enumEntered
 import io.spine.protodata.ast.event.enumExited
 import io.spine.protodata.ast.event.enumOptionDiscovered
 import io.spine.protodata.ast.produceOptionEvents
+import io.spine.protodata.ast.withAbsoluteFile
 import io.spine.protodata.protobuf.buildConstant
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.toEnumType
@@ -57,9 +58,9 @@ internal class EnumEvents(header: ProtoFileHeader) : DeclarationEvents<EnumDescr
      * At last, closes with an [EnumExited][io.spine.protodata.ast.event.EnumExited] event.
      */
     override suspend fun SequenceScope<EventMessage>.produceEvents(desc: EnumDescriptor) {
-        val enumType = desc.toEnumType()
-        val typeName = desc.name()
         val path = header.file
+        val enumType = desc.toEnumType().withAbsoluteFile(path)
+        val typeName = desc.name()
         yield(
             enumDiscovered {
                 file = path

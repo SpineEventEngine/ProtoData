@@ -48,6 +48,7 @@ import io.spine.protodata.ast.event.typeExited
 import io.spine.protodata.ast.event.typeOptionDiscovered
 import io.spine.protodata.ast.oneofGroup
 import io.spine.protodata.ast.produceOptionEvents
+import io.spine.protodata.ast.withAbsoluteFile
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.realNestedTypes
 import io.spine.protodata.protobuf.toField
@@ -74,7 +75,7 @@ internal class MessageEvents(header: ProtoFileHeader) : DeclarationEvents<Descri
     ) {
         val typeName = desc.name()
         val path = header.file
-        val messageType = desc.toMessageType()
+        val messageType = desc.toMessageType().withAbsoluteFile(path)
         yield(
             typeDiscovered {
                 file = path

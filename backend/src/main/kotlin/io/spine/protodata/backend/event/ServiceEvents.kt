@@ -40,6 +40,7 @@ import io.spine.protodata.ast.event.serviceEntered
 import io.spine.protodata.ast.event.serviceExited
 import io.spine.protodata.ast.event.serviceOptionDiscovered
 import io.spine.protodata.ast.produceOptionEvents
+import io.spine.protodata.ast.withAbsoluteFile
 import io.spine.protodata.protobuf.buildRpc
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.toService
@@ -62,7 +63,7 @@ internal class ServiceEvents(header: ProtoFileHeader) :
         desc: ServiceDescriptor
     ) {
         val path = header.file
-        val serviceType = desc.toService()
+        val serviceType = desc.toService().withAbsoluteFile(path)
         yield(
             serviceDiscovered {
                 file = path

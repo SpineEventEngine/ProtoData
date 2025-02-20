@@ -62,19 +62,13 @@ import io.spine.protodata.ast.event.ServiceExited
 import io.spine.protodata.ast.event.TypeDiscovered
 import io.spine.protodata.ast.event.TypeEntered
 import io.spine.protodata.ast.event.TypeExited
-import io.spine.protodata.ast.file
 import io.spine.protodata.ast.messageType
 import io.spine.protodata.ast.toJava
 import io.spine.protodata.ast.typeName
-import io.spine.protodata.backend.toTypeSystem
-import io.spine.protodata.protobuf.ProtoFileList
+import io.spine.protodata.backend.createTypeSystem
 import io.spine.protodata.test.DoctorProto
-import io.spine.protodata.type.TypeSystem
 import io.spine.testing.Correspondences
-import io.spine.tools.prototap.CompiledProtosFile
 import io.spine.type.KnownTypes
-import java.io.File
-import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
@@ -115,24 +109,6 @@ class CompilerEventsSpec {
                 protoFile.addAll(allDependencyFiles)
             }
             return request
-        }
-
-        /**
-         * Creates a type system using the list of compiled proto files
-         * from the `test-env` module, which provides the [DoctorProto] file used
-         * by this test suite.
-         */
-        private fun createTypeSystem(request: CodeGeneratorRequest): TypeSystem {
-            val testEnvJar = DoctorProto::class.java.protectionDomain.codeSource.location
-            // Create the class loader without the parent because the parent is checked first.
-            // We only interested in that particular JAR.
-            val urlClassLoader = URLClassLoader(arrayOf(testEnvJar), null)
-            val protoFiles = CompiledProtosFile(urlClassLoader)
-                .listFiles { File(it) }
-            val typeSystem = request.toTypeSystem(
-                ProtoFileList(protoFiles)
-            )
-            return typeSystem
         }
     }
 
@@ -279,7 +255,7 @@ class CompilerEventsSpec {
             .comparingExpectedFieldsOnly()
             .isEqualTo(messageType {
                 name = typeName { simpleName = "Journey" }
-                file = file { path = "spine/protodata/test/doctor.proto" }
+                file = typeEntered.type.file
             })
 
         val doc = typeEntered.type.doc
