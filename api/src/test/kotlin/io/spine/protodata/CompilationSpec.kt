@@ -150,9 +150,7 @@ internal class CompilationSpec {
         val span = Span.getDefaultInstance()
         val msg = TestValues.randomString()
         val error = assertThrows<Compilation.Error> {
-            Compilation.check(condition = false, file, span) {
-                msg
-            }
+            Compilation.check(condition = false, file, span) { msg }
         }
         
         error.message shouldContain msg
