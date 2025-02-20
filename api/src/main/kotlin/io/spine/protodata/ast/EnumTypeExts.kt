@@ -30,11 +30,10 @@ package io.spine.protodata.ast
  * Replaces the [file][EnumType.file] property of this enum type with
  * the specified absolute path.
  *
+ * @return a new instance with the absolute path, or `this` if the file was already absolute.
  * @throws IllegalArgumentException if the given path is not absolute, or
  *  if the given path is not an absolute version of the relative file set in
  *  this enum type prior to the call of this function.
  */
-public fun EnumType.withAbsoluteFile(path: File): EnumType {
-    checkReplacingAbsoluteFile(path)
-    return copy { file = path }
-}
+public fun EnumType.withAbsoluteFile(path: File): EnumType =
+    replaceIfNotAbsoluteAlready(path) { copy { file = path } }

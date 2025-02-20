@@ -113,11 +113,31 @@ public inline fun <reified T : Message> ProtoDeclaration.option(): Option {
  *
  * @throws IllegalArgumentException if the above conditions are not met.
  */
-internal fun ProtoDeclaration.checkReplacingAbsoluteFile(path: File) {
+private fun ProtoDeclaration.checkReplacingAbsoluteFile(path: File) {
     require(path.toJava().isAbsolute) {
         "The path `${path.path} must be absolute."
     }
     require(path.path.endsWith(file.path)) {
         "The path `${path.path}` is not the absolute version of `${file.path}`."
+    }
+}
+
+/**
+ * Replaces the [ProtoDeclaration.file] property with the given absolute path.
+ *
+ * @param T The type implementing [ProtoDeclaration].
+ * @param file The absolute path to be used instead of the relative one.
+ * @param block The function creating a new instance with the full path.
+ * @return a new instance with the full path or `this` if the file was already absolute.
+ */
+internal fun <T : ProtoDeclaration> T.replaceIfNotAbsoluteAlready(
+    file: File,
+    block: (File) -> T
+): T {
+    checkReplacingAbsoluteFile(file)
+    return if (this.file.toJava().isAbsolute) {
+        this
+    } else {
+        block(file)
     }
 }

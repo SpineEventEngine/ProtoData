@@ -26,6 +26,9 @@
 
 package io.spine.protodata.ast
 
+import io.kotest.matchers.shouldBe
+import io.spine.protodata.given.StubDeclaration
+import io.spine.protodata.given.copy
 import io.spine.protodata.given.stubDeclaration
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
@@ -42,19 +45,19 @@ internal class ProtoDeclarationSpec {
     private val absoluteFile: File = absoluteFile(relativeFile.path)
 
     @Suppress("unused")
-    private lateinit var decl: ProtoDeclaration
+    private lateinit var decl: StubDeclaration
 
     @Nested inner class
-    `check the replacing absolute file` {
+    `check the replacing file` {
 
         @Test
         fun `is absolute`() {
             decl = stubDeclaration { file = relativeFile }
             assertThrows<IllegalArgumentException> {
-                decl.checkReplacingAbsoluteFile(relativeFile)
+                decl.withAbsoluteFile(relativeFile)
             }
             assertDoesNotThrow {
-                decl.checkReplacingAbsoluteFile(absoluteFile)
+                decl.withAbsoluteFile(absoluteFile)
             }
         }
 
@@ -63,22 +66,35 @@ internal class ProtoDeclarationSpec {
             decl = stubDeclaration { file = relativeFile }
             val stranger = absoluteFile("stranger.proto")
             assertThrows<IllegalArgumentException> {
-                decl.checkReplacingAbsoluteFile(stranger)
+                decl.withAbsoluteFile(stranger)
             }
             assertDoesNotThrow {
-                decl.checkReplacingAbsoluteFile(absoluteFile)
-            }
-        }
-
-        @Test
-        fun `accept the absolute path if the current is already absolute`() {
-            decl = stubDeclaration { file = absoluteFile }
-            assertDoesNotThrow {
-                decl.checkReplacingAbsoluteFile(absoluteFile)
+                decl.withAbsoluteFile(absoluteFile)
             }
         }
     }
+
+    @Test
+    fun `accept the absolute path if the current is already absolute`() {
+        decl = stubDeclaration { file = absoluteFile }
+        assertDoesNotThrow {
+            decl.withAbsoluteFile(absoluteFile)
+        }
+    }
+
+    @Test
+    fun `return 'this' if the file already absolute`() {
+        val abs = absoluteFile.copy { /* just not the same instance. */ }
+        decl = stubDeclaration { file = abs }
+
+        val updated = decl.withAbsoluteFile(absoluteFile)
+
+        (updated === decl) shouldBe true
+    }
 }
+
+private fun StubDeclaration.withAbsoluteFile(path: File): StubDeclaration =
+    replaceIfNotAbsoluteAlready(path) { copy { file = path } }
 
 private fun absoluteFile(path: String): File =
     file { this.path = Path(".").resolve(path).absolutePathString() }
