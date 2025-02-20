@@ -26,7 +26,7 @@
 
 import io.spine.dependency.lib.JavaPoet
 import io.spine.dependency.lib.JavaX
-import io.spine.dependency.local.Spine
+import io.spine.dependency.local.Base
 import io.spine.dependency.local.Time
 import io.spine.dependency.local.ToolBase
 import org.gradle.api.file.DuplicatesStrategy.INCLUDE
@@ -50,7 +50,7 @@ dependencies {
 configurations.all {
     if(name in arrayOf("testCompileClasspath", "testRuntimeClasspath")) {
         resolutionStrategy.force(
-            Spine.baseForBuildScript
+            Base.libForBuildScript
         )
     }
 }
