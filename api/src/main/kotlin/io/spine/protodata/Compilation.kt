@@ -80,6 +80,9 @@ public object Compilation {
     /**
      * Prints the error diagnostics to [System.err] and terminates the compilation.
      *
+     * The error message includes the path to the [file], line and column numbers
+     * followed by the [message].
+     *
      * The termination of the compilation in the production mode is done by
      * exiting the process with [ERROR_EXIT_CODE].
      *
@@ -168,6 +171,22 @@ public object Compilation {
         public companion object {
             private const val serialVersionUID: Long = 0L
         }
+    }
+}
+
+/**
+ * Invokes [Compilation.error] if the [condition] is `false`, does nothing otherwise.
+ *
+ * @param condition If `false`, the [Compilation.error] will be called.
+ * @param file The file causing the error.
+ * @param span The span of the declaration which cases the error.
+ * @param message The lazily evaluated part of the error message.
+ *
+ * @see Compilation.error
+ */
+public fun Compilation.check(condition: Boolean, file: PFile, span: Span, message: () -> String) {
+    if (!condition) {
+        error(file, span, message)
     }
 }
 

@@ -32,10 +32,14 @@ import io.kotest.matchers.string.shouldStartWith
 import io.spine.logging.testing.tapConsole
 import io.spine.protodata.Compilation.ERROR_PREFIX
 import io.spine.protodata.Compilation.WARNING_PREFIX
+import io.spine.protodata.ast.Span
+import io.spine.protodata.ast.toProto
+import io.spine.testing.TestValues
 import java.io.File
 import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
 @DisplayName("`Compilation` object should")
@@ -110,7 +114,7 @@ internal class CompilationSpec {
     }
 
     @Test
-    fun `use print file relative if it is not absolute`() {
+    fun `use relative file path if it is not absolute`() {
         val file = File("not/absolute/file.proto")
         Compilation.errorMessage(file, 1, 2, "").let {
             it shouldNotContain EMPTY_HOSTNAME_PREFIX
@@ -137,6 +141,24 @@ internal class CompilationSpec {
         val file = File("with_warning.proto")
         Compilation.warningMessage(file, 3, 4, "").let {
             it shouldStartWith WARNING_PREFIX
+        }
+    }
+
+    @Test
+    fun `provide 'check' utility`() {
+        val file = File("some/path/goes/here.proto").toProto()
+        val span = Span.getDefaultInstance()
+        val msg = TestValues.randomString()
+        val error = assertThrows<Compilation.Error> {
+            Compilation.check(condition = false, file, span) {
+                msg
+            }
+        }
+        
+        error.message shouldContain msg
+
+        assertDoesNotThrow {
+            Compilation.check(condition = true, file, span) { msg }
         }
     }
 }
