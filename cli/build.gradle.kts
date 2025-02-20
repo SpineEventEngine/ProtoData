@@ -36,6 +36,7 @@ plugins {
     `write-manifest`
     `build-proto-model`
     `maven-publish`
+    prototap
     ksp
     id("com.github.johnrengelman.shadow")
 }
