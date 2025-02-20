@@ -129,6 +129,9 @@ private fun ProtoDeclaration.checkReplacingAbsoluteFile(path: File) {
  * @param file The absolute path to be used instead of the relative one.
  * @param block The function creating a new instance with the full path.
  * @return a new instance with the full path or `this` if the file was already absolute.
+ * @throws IllegalArgumentException if the given path is not absolute, or
+ *  if the given path is not an absolute version of the relative file set in
+ *  this declaration before the call of this function.
  */
 internal fun <T : ProtoDeclaration> T.replaceIfNotAbsoluteAlready(
     file: File,

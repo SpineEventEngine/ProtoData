@@ -37,7 +37,7 @@ import io.spine.protodata.type.TypeSystem
  * @return a new instance with the absolute path, or `this` if the file was already absolute.
  * @throws IllegalArgumentException if the given path is not absolute, or
  *  if the given path is not an absolute version of the relative file set in
- *  this message type prior to the call of this function.
+ *  this message type before the call of this function.
  */
 public fun MessageType.withAbsoluteFile(path: File): MessageType =
     replaceIfNotAbsoluteAlready(path) { copy { file = path } }

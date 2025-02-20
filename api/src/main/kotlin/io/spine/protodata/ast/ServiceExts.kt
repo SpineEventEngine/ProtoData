@@ -33,7 +33,7 @@ package io.spine.protodata.ast
  * @return a new instance with the absolute path, or `this` if the file was already absolute.
  * @throws IllegalArgumentException if the given path is not absolute, or
  *  if the given path is not an absolute version of the relative file set in
- *  this service to the call of this function.
+ *  this service before the call of this function.
  */
 public fun Service.withAbsoluteFile(path: File): Service =
     replaceIfNotAbsoluteAlready(path) { copy { file = path } }
