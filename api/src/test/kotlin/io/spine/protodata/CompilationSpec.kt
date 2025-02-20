@@ -145,7 +145,7 @@ internal class CompilationSpec {
     }
 
     @Test
-    fun `provide 'check' utility`() {
+    fun `provide the 'check' utility function`() {
         val file = File("some/path/goes/here.proto").toProto()
         val span = Span.getDefaultInstance()
         val msg = TestValues.randomString()
