@@ -73,7 +73,7 @@ object ProtoData {
      * The version of ProtoData dependencies.
      */
     val version: String
-    private const val fallbackVersion = "0.92.6"
+    private const val fallbackVersion = "0.92.5"
 
     /**
      * The distinct version of ProtoData used by other build tools.
