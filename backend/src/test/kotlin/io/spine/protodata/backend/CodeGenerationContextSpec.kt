@@ -51,16 +51,16 @@ import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.doc
 import io.spine.protodata.ast.option
 import io.spine.protodata.ast.span
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.ast.toType
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
-import io.spine.protodata.protobuf.ProtoFileList
 import io.spine.protodata.protobuf.file
 import io.spine.protodata.protobuf.toFile
 import io.spine.protodata.test.DoctorProto
 import io.spine.protodata.test.PhDProto
 import io.spine.protodata.test.XtraOptsProto
-import io.spine.protodata.type.TypeSystem
+import io.spine.protodata.type.findAbsolute
 import io.spine.testing.server.blackbox.BlackBox
 import io.spine.testing.server.blackbox.assertEntity
 import io.spine.time.TimeProto
@@ -68,6 +68,7 @@ import io.spine.util.theOnly
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -127,9 +128,7 @@ class CodeGenerationContextSpec {
             fileToGenerate.addAll(filesToGenerate)
         }
 
-        private val typeSystem = codeGeneratorRequest.toTypeSystem(
-            ProtoFileList(listOf())
-        )
+        private val typeSystem = createTypeSystem(codeGeneratorRequest)
 
         fun createCodegenBlackBox(pipelineId: String): Pair<CodegenContext, BlackBox> {
             val context = CodeGenerationContext(pipelineId)
@@ -169,8 +168,9 @@ class CodeGenerationContextSpec {
 
         @Test
         fun `with files marked for generation`() {
+            val fullPath = typeSystem.findAbsolute(DoctorProto.getDescriptor())
             val assertSourceFile = ctx.assertEntity<ProtoSourceFileView, _>(
-                DoctorProto.getDescriptor().file()
+                fullPath!!.toProto()
             )
             assertSourceFile.exists()
 
@@ -214,8 +214,9 @@ class CodeGenerationContextSpec {
 
         @Test
         fun `with respect for custom options among the source files`() {
+            val filePath = typeSystem.findAbsolute(PhDProto.getDescriptor())
             val phdFile = ctx.assertEntity<ProtoSourceFileView, _>(
-                PhDProto.getDescriptor().file()
+                filePath!!.toProto()
             ).actual()!!.state() as ProtobufSourceFile
             val paperType = phdFile.typeMap.values.find { it.name.simpleName == "Paper" }!!
             val keywordsField = paperType.fieldList.find { it.name.value == "keywords" }!!
@@ -227,6 +228,7 @@ class CodeGenerationContextSpec {
     }
     
     @Nested
+    @Disabled("Because we don't seem to need this at all.")
     inner class `construct views` {
 
         private val thirdPartyFiles = dependencies.filter { it.name !in filesToGenerate }

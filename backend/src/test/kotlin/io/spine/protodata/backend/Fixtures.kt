@@ -24,19 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+package io.spine.protodata.backend
+
+import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
+import io.spine.protodata.protobuf.ProtoFileList
+import io.spine.protodata.test.DoctorProto
+import io.spine.protodata.type.TypeSystem
+import io.spine.tools.prototap.CompiledProtosFile
+import java.io.File
+import java.net.URLClassLoader
 
 /**
- * Spine Base module.
- *
- * @see <a href="https://github.com/SpineEventEngine/base">spine-base</a>
+ * Creates a type system using the list of compiled proto files from the `test-env` module.
  */
-@Suppress("ConstPropertyName")
-object Base {
-    const val version = "2.0.0-SNAPSHOT.242"
-    const val versionForBuildScript = "2.0.0-SNAPSHOT.242"
-    const val group = Spine.group
-    const val artifact = "spine-base"
-    const val lib = "$group:$artifact:$version"
-    const val libForBuildScript = "$group:$artifact:$versionForBuildScript"
+internal fun createTypeSystem(request: CodeGeneratorRequest): TypeSystem {
+    val testEnvJar = DoctorProto::class.java.protectionDomain.codeSource.location
+    // Create the class loader without the parent because the parent is checked first.
+    // We only interested in that particular JAR.
+    val urlClassLoader = URLClassLoader(arrayOf(testEnvJar), null)
+    val protoFiles = CompiledProtosFile(urlClassLoader)
+        .listFiles { File(it) }
+    val typeSystem = request.toTypeSystem(
+        ProtoFileList(protoFiles)
+    )
+    return typeSystem
 }

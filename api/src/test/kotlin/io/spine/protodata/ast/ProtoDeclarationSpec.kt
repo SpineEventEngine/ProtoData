@@ -1,0 +1,100 @@
+/*
+ * Copyright 2025, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package io.spine.protodata.ast
+
+import io.kotest.matchers.shouldBe
+import io.spine.protodata.given.StubDeclaration
+import io.spine.protodata.given.copy
+import io.spine.protodata.given.stubDeclaration
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
+
+@DisplayName("`ProtoDeclaration` should")
+internal class ProtoDeclarationSpec {
+
+    private val relativeFile: File = file { path = "foo/bar/baz.proto" }
+    private val absoluteFile: File = absoluteFile(relativeFile.path)
+
+    @Suppress("unused")
+    private lateinit var decl: StubDeclaration
+
+    @Nested inner class
+    `check the replacing file` {
+
+        @Test
+        fun `is absolute`() {
+            decl = stubDeclaration { file = relativeFile }
+            assertThrows<IllegalArgumentException> {
+                decl.withAbsoluteFile(relativeFile)
+            }
+            assertDoesNotThrow {
+                decl.withAbsoluteFile(absoluteFile)
+            }
+        }
+
+        @Test
+        fun `is absolute version of the relative one`() {
+            decl = stubDeclaration { file = relativeFile }
+            val stranger = absoluteFile("stranger.proto")
+            assertThrows<IllegalArgumentException> {
+                decl.withAbsoluteFile(stranger)
+            }
+            assertDoesNotThrow {
+                decl.withAbsoluteFile(absoluteFile)
+            }
+        }
+    }
+
+    @Test
+    fun `accept the absolute path if the current is already absolute`() {
+        decl = stubDeclaration { file = absoluteFile }
+        assertDoesNotThrow {
+            decl.withAbsoluteFile(absoluteFile)
+        }
+    }
+
+    @Test
+    fun `return 'this' if the file already absolute`() {
+        val abs = absoluteFile.copy { /* just not the same instance. */ }
+        decl = stubDeclaration { file = abs }
+
+        val updated = decl.withAbsoluteFile(absoluteFile)
+
+        (updated === decl) shouldBe true
+    }
+}
+
+private fun StubDeclaration.withAbsoluteFile(path: File): StubDeclaration =
+    replaceIfNotAbsoluteAlready(path) { copy { file = path } }
+
+private fun absoluteFile(path: String): File =
+    file { this.path = Path(".").resolve(path).absolutePathString() }

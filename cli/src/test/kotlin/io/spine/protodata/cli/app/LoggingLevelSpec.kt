@@ -42,11 +42,11 @@ import io.spine.protodata.params.pipelineParameters
 import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.Project
-import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.StubSoloRenderer
 import io.spine.protodata.testing.googleProtobufProtos
 import io.spine.protodata.testing.spineOptionProtos
 import io.spine.tools.code.SourceSetName
+import io.spine.tools.prototap.CompiledProtosFile
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -75,8 +75,11 @@ class LoggingLevelSpec {
 
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
+        val compiledProtos = CompiledProtosFile(this::class.java.classLoader)
+        val absoluteFiles = compiledProtos.listFiles { file { path = it } }
+
         val params = pipelineParameters {
-            compiledProto.add(file { path = "/given/proto/file/path.proto"})
+            compiledProto.addAll(absoluteFiles)
             settings = directory { path = workingDir.settingsDirectory.path.absolutePathString() }
             sourceRoot.add(directory { path = sandbox.resolve("src").absolutePathString() })
             targetRoot.add(directory { path = sandbox.resolve("generated").absolutePathString() })
@@ -97,19 +100,16 @@ class LoggingLevelSpec {
             ${Project::class.simpleName}.getUuid() 
         """.trimIndent())
 
-        val project = ProjectProto.getDescriptor()
         val testProto = TestProto.getDescriptor()
         val request = codeGeneratorRequest {
             protoFile.addAll(
                 listOf(
-                    project.toProto(),
                     testProto.toProto(),
                     TestOptionsProto.getDescriptor().toProto(),
                 ) + spineOptionProtos()
                         + googleProtobufProtos()
             )
             fileToGenerate.addAll(listOf(
-                project.name,
                 testProto.name
             ))
         }

@@ -24,19 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+syntax = "proto3";
 
-/**
- * Spine Base module.
- *
- * @see <a href="https://github.com/SpineEventEngine/base">spine-base</a>
- */
-@Suppress("ConstPropertyName")
-object Base {
-    const val version = "2.0.0-SNAPSHOT.242"
-    const val versionForBuildScript = "2.0.0-SNAPSHOT.242"
-    const val group = Spine.group
-    const val artifact = "spine-base"
-    const val lib = "$group:$artifact:$version"
-    const val libForBuildScript = "$group:$artifact:$versionForBuildScript"
+package spine.protodata.given;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.protodata.given";
+option java_outer_classname = "StubDeclarationProto";
+option java_multiple_files = true;
+
+import "spine/protodata/ast.proto";
+import "spine/protodata/file.proto";
+
+// A stub implementation of `ProtoDeclaration`.
+message StubDeclaration {
+    option (is).java_type = "io.spine.protodata.ast.ProtoDeclaration";
+
+    // This property is just to satisfy the `ProtoDeclaration` interface.
+    // We don't need it for tests.
+    TypeName name = 1;
+
+    File file = 2 [(required) = true];
+
+    // Another property to satisfy the interface.
+    repeated Option option = 4 [(distinct) = true];
 }

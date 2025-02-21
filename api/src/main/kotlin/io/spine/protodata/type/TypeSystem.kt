@@ -26,6 +26,8 @@
 
 package io.spine.protodata.type
 
+import com.google.common.annotations.VisibleForTesting
+import com.google.protobuf.Descriptors.FileDescriptor
 import io.spine.base.FieldPath
 import io.spine.base.isNotNested
 import io.spine.base.root
@@ -46,6 +48,7 @@ import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.ast.toJava
 import io.spine.protodata.ast.typeName
 import io.spine.protodata.protobuf.ProtoFileList
+import io.spine.protodata.protobuf.file
 import io.spine.type.shortDebugString
 import java.io.File
 
@@ -98,15 +101,33 @@ public class TypeSystem(
 }
 
 /**
- * Obtains the full path of the proto file in which the given declaration is made.
+ * Obtains an absolute path of the proto file in which the given declaration is made.
+ *
+ * If the proto declaration already refers to an absolute file, it is returned.
+ * Otherwise, the type system attempts to find it among
+ * [compiledProtoFiles][TypeSystem.compiledProtoFiles].
  *
  * @return the file with the declaration, or `null` if the file is not among
  *  the [compiled proto files][TypeSystem.compiledProtoFiles] known to this type system.
  */
-@Deprecated(message = "Please use `file` properties of `ProtoDeclaration`s with `toJava()`")
-public fun TypeSystem.fileOf(d: ProtoDeclaration): File? {
+@VisibleForTesting
+public fun TypeSystem.absoluteFileOf(d: ProtoDeclaration): File? {
     val file = d.file.toJava()
+    if (file.isAbsolute) {
+        return file
+    }
     return compiledProtoFiles.find(file)
+}
+
+/**
+ * Obtains the full path of the proto file specified with the given descriptor.
+ *
+ * @return the absolute file, or `null` if the file is not among
+ *  the [compiled proto files][TypeSystem.compiledProtoFiles] known to this type system.
+ */
+@VisibleForTesting
+public fun TypeSystem.findAbsolute(f: FileDescriptor): File? {
+    return compiledProtoFiles.find(f.file().toJava())
 }
 
 /**

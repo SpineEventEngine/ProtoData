@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,18 @@
 package io.spine.protodata.ast
 
 import io.spine.protodata.type.TypeSystem
+
+/**
+ * Replaces the [file][MessageType.file] property of this message type with
+ * the specified absolute path.
+ *
+ * @return a new instance with the absolute path, or `this` if the file was already absolute.
+ * @throws IllegalArgumentException if the given path is not absolute, or
+ *  if the given path is not an absolute version of the relative file set in
+ *  this message type before the call of this function.
+ */
+public fun MessageType.withAbsoluteFile(path: File): MessageType =
+    replaceIfNotAbsoluteAlready(path) { copy { file = path } }
 
 /**
  * Obtains column fields of this message type.

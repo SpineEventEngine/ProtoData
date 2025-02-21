@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,9 +68,11 @@ import io.spine.time.LocalDates
 import io.spine.time.Month.SEPTEMBER
 import io.spine.time.toInstant
 import io.spine.tools.code.SourceSetName
+import io.spine.tools.prototap.CompiledProtosFile
 import io.spine.type.toCompactJson
 import io.spine.type.toJson
 import java.io.File
+import java.net.URLClassLoader
 import java.nio.file.Path
 import kotlin.io.path.name
 import kotlin.io.path.readText
@@ -108,8 +110,15 @@ class MainSpec {
         targetRoot = sandbox.resolve("target")
         targetRoot.toFile().mkdirs()
 
+        val compiledProtos = CompiledProtosFile(this::class.java.classLoader)
+        val thisModuleFiles = compiledProtos.listFiles { file { path = it } }
+
+        val testEnvJar = ProjectProto::class.java.protectionDomain.codeSource.location
+        val urlClassLoader = URLClassLoader(arrayOf(testEnvJar), null)
+        val testEnvJarFiles = CompiledProtosFile(urlClassLoader).listFiles { file { path = it } }
+
         val params = pipelineParameters {
-            compiledProto.add(file { path = "/given/proto/file/path.proto"})
+            compiledProto.addAll(thisModuleFiles + testEnvJarFiles)
             settings = workingDir.settingsDirectory.path.toDirectory()
             sourceRoot.add(srcRoot.toDirectory())
             targetRoot.add(this@MainSpec.targetRoot.toDirectory())

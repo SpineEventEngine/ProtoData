@@ -24,19 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+package io.spine.protodata.ast
 
 /**
- * Spine Base module.
+ * Replaces the [file][Service.file] property of this service with
+ * the specified absolute path.
  *
- * @see <a href="https://github.com/SpineEventEngine/base">spine-base</a>
+ * @return a new instance with the absolute path, or `this` if the file was already absolute.
+ * @throws IllegalArgumentException if the given path is not absolute, or
+ *  if the given path is not an absolute version of the relative file set in
+ *  this service before the call of this function.
  */
-@Suppress("ConstPropertyName")
-object Base {
-    const val version = "2.0.0-SNAPSHOT.242"
-    const val versionForBuildScript = "2.0.0-SNAPSHOT.242"
-    const val group = Spine.group
-    const val artifact = "spine-base"
-    const val lib = "$group:$artifact:$version"
-    const val libForBuildScript = "$group:$artifact:$versionForBuildScript"
-}
+public fun Service.withAbsoluteFile(path: File): Service =
+    replaceIfNotAbsoluteAlready(path) { copy { file = path } }
