@@ -33,6 +33,7 @@ import com.google.protobuf.Timestamp
 import io.kotest.matchers.shouldBe
 import io.spine.protodata.ast.FilePatternFactory.prefix
 import io.spine.protodata.ast.FilePatternFactory.regex
+import io.spine.protodata.ast.FilePatternFactory.infix
 import io.spine.protodata.ast.FilePatternFactory.suffix
 import io.spine.validate.ValidationError
 import org.junit.jupiter.api.DisplayName
@@ -52,6 +53,13 @@ internal class FilePatternsSpec {
             assertThrowing { suffix(" ") }
         }
 
+        @Test
+        fun infix() {
+            assertThrowing { infix("") }
+            assertThrowing { infix(" ") }
+        }
+
+        @Suppress("DEPRECATION") // Supporting for backward combability.
         @Test
         fun prefix() {
             assertThrowing { prefix("") }
@@ -76,9 +84,19 @@ internal class FilePatternsSpec {
 
         @Test
         fun prefix() {
+            @Suppress("DEPRECATION") // Supporting for backward compatibility.
             prefix("google/protobuf/any").run {
                 matches(messageTypeOf<Any>()) shouldBe true
                 matches(messageTypeOf<Timestamp>()) shouldBe false
+            }
+        }
+
+        @Test
+        fun infix() {
+            infix("protodata/file").run {
+                matches(messageTypeOf<FilePattern>()) shouldBe true
+                matches(messageTypeOf<File>()) shouldBe true
+                matches(messageTypeOf<Directory>()) shouldBe false
             }
         }
 

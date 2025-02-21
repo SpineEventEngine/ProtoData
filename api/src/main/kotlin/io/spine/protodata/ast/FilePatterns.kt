@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@
 package io.spine.protodata.ast
 
 import io.spine.protodata.ast.FilePattern.KindCase.KIND_NOT_SET
-import io.spine.protodata.ast.FilePattern.KindCase.PREFIX
 import io.spine.protodata.ast.FilePattern.KindCase.REGEX
+import io.spine.protodata.ast.FilePattern.KindCase.INFIX
 import io.spine.protodata.ast.FilePattern.KindCase.SUFFIX
 
 /**
@@ -38,8 +38,10 @@ import io.spine.protodata.ast.FilePattern.KindCase.SUFFIX
  */
 public fun FilePattern.matches(file: File): Boolean {
     val path = file.path
+    @Suppress("DEPRECATION") // Support the `PREFIX` kind for backward compatibility.
     return when (kindCase) {
-        PREFIX -> path.startsWith(prefix)
+        io.spine.protodata.ast.FilePattern.KindCase.PREFIX -> path.startsWith(prefix)
+        INFIX -> path.contains(infix)
         SUFFIX -> path.endsWith(suffix)
         REGEX -> path.matches(Regex(regex))
         KIND_NOT_SET -> false

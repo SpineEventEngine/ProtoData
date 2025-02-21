@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,10 +42,20 @@ public object FilePatternFactory {
     }
 
     /**
+     * Creates a new [FilePattern] with the [infix][FilePattern.getInfix] field filled.
+     */
+    public fun infix(value: String): FilePattern = filePattern {
+        value.checkNotBlank("infix")
+        infix = value
+    }
+
+    /**
      * Creates a new [FilePattern] with the [prefix][FilePattern.getPrefix] field filled.
      */
+    @Deprecated(message = "Please use `infix` instead.", ReplaceWith("infix(value)"))
     public fun prefix(value: String): FilePattern = filePattern {
         value.checkNotBlank("prefix")
+        @Suppress("DEPRECATION") // Supporting for backward compatibility.
         prefix = value
     }
 
@@ -59,7 +69,7 @@ public object FilePatternFactory {
 
     private fun String.checkNotBlank(name: String) {
         require(isNotBlank()) {
-            "File pattern $name cannot be empty or blank: `$this`."
+            "The file pattern `$name` cannot be empty or blank. Encountered: `$this`."
         }
     }
 }
