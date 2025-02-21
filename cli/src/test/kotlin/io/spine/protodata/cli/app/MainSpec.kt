@@ -146,6 +146,7 @@ class MainSpec {
                         + googleProtobufProtos()
             )
             fileToGenerate.addAll(listOf(
+                project.name,
                 testProto.name
             ))
         }
