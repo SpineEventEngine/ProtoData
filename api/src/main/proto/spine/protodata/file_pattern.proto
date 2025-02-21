@@ -51,7 +51,7 @@ message FilePattern {
         //
         // Deprecated: File paths managed by Spine Compiler are primarily absolute.
         // That is why this kind of pattern would not work in most cases.
-        // Please use the `infix` kind instead.
+        // Please use the `infix` property instead.
         //
         string prefix = 2 [deprecated = true];
 
