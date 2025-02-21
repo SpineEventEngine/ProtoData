@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,27 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-syntax = "proto3";
+package io.spine.protodata.ast
 
-package spine.protodata;
+import io.spine.validate.ValidationException
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 
-import "spine/options.proto";
+@DisplayName("`File` should")
+internal class FileSpec {
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.protodata.ast";
-option java_outer_classname = "FileProto";
-option java_multiple_files = true;
-
-// A path to a file in an arbitrary OS.
-//
-// In most cases it is going to be a relative path.
-// In some cases it may be an absolute path.
-//
-// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
-// the current operating system. This value holds this exact format of the path.
-//
-message File {
-
-    // The path to the file, separating directories with the slash (`/`) symbol.
-    string path = 1 [(required) = true, (pattern).regex = "^[^\\\\]*$"];
+    @Test
+    fun `prohibit non-Unix path separators`() {
+        assertThrows<ValidationException> {
+            file { path = "foo\\bar.proto" }
+        }
+        assertDoesNotThrow {
+            file { path = "foo/bar.proto" }
+        }
+    }
 }
