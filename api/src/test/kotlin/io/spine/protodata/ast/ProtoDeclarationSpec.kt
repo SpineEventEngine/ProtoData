@@ -97,4 +97,4 @@ private fun StubDeclaration.withAbsoluteFile(path: File): StubDeclaration =
     replaceIfNotAbsoluteAlready(path) { copy { file = path } }
 
 private fun absoluteFile(path: String): File =
-    file { this.path = Path(".").resolve(path).absolutePathString() }
+    file { this.path = Path(".").resolve(path).absolutePathString().replace('\\', '/') }
