@@ -14,10 +14,6 @@ option java_multiple_files = true;
 import "google/protobuf/timestamp.proto";
 import "spine/protodata/ast.proto";
 
-message Project {
-    string uuid = 1;
-}
-
 message Type {
 
     string custom_field_for_test = 1 [(.spine.protodata.cli.test.custom) = { bar: "yes" }];
