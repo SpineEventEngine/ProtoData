@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,12 @@ option java_outer_classname = "DirectoryProto";
 option java_multiple_files = true;
 
 // A path to a directory in an arbitrary OS.
+//
+// The Protobuf compiler only works with the Unix-style file separator (`/`), regardless of
+// the current operating system. This value holds this exact format of the path.
+//
 message Directory {
 
-    // The path to the directory, could be relative or absolute.
-    string path = 1 [(required) = true];
+    // The path to the directory, could be relative or absolute, with the slash (`/`) separator.
+    string path = 1 [(required) = true, (pattern).regex = "^[^\\\\]*$"];
 }
