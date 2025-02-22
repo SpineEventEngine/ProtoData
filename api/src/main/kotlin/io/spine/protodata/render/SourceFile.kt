@@ -32,6 +32,7 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import io.spine.protodata.ast.file
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.util.Cache
 import io.spine.server.query.select
 import io.spine.text.Text
@@ -262,7 +263,7 @@ private constructor(
      */
     public fun atInline(insertionPoint: InsertionPoint): SourceAtPoint {
         val points = sources.querying.select<InsertedPoints>()
-            .findById(file { path = relativePath.toString() })
+            .findById(relativePath.toProto())
         val point = points?.pointList?.firstOrNull { it.label == insertionPoint.label }
         return if (point != null) {
             SpecificPoint(this@SourceFile, point)
