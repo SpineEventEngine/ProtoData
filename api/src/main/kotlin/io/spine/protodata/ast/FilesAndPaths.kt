@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:Suppress("TooManyFunctions") // ... we need for relative and absolute paths.
+
 package io.spine.protodata.ast
 
 import io.spine.protodata.util.Format

@@ -95,4 +95,5 @@ internal class ProtoDeclarationSpec {
 private fun StubDeclaration.withAbsoluteFile(path: File): StubDeclaration =
     replaceIfNotAbsoluteAlready(path) { copy { file = path } }
 
-private fun absoluteFile(path: String): File = Path(".").resolve(path).toAbsolutePath().toAbsoluteFile()
+private fun absoluteFile(path: String): File =
+    Path(".").resolve(path).toAbsolutePath().toAbsoluteFile()
