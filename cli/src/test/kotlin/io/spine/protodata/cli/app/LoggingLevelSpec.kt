@@ -32,8 +32,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
-import io.spine.protodata.ast.directory
 import io.spine.protodata.ast.file
+import io.spine.protodata.ast.toAbsoluteDirectory
 import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
@@ -80,10 +80,10 @@ class LoggingLevelSpec {
 
         val params = pipelineParameters {
             compiledProto.addAll(absoluteFiles)
-            settings = directory { path = workingDir.settingsDirectory.path.absolutePathString() }
-            sourceRoot.add(directory { path = sandbox.resolve("src").absolutePathString() })
-            targetRoot.add(directory { path = sandbox.resolve("generated").absolutePathString() })
-            request = codegenRequestFile.toFile().toAbsoluteFile()
+            settings = workingDir.settingsDirectory.path.toAbsoluteDirectory()
+            sourceRoot.add(sandbox.resolve("src").toAbsoluteDirectory())
+            targetRoot.add(sandbox.resolve("generated").toAbsoluteDirectory())
+            request = codegenRequestFile.toAbsoluteFile()
             pluginClassName.add(LoggingLevelAsserterPlugin::class.jvmName)
         }
         parametersFile = workingDir.parametersDirectory.write(SourceSetName.main, params)

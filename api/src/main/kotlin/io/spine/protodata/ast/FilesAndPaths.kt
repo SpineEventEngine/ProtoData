@@ -62,6 +62,11 @@ public fun java.io.File.unixPath(): String = path.toUnix()
 public fun Path.toDirectory(): Directory = toFile().toDirectory()
 
 /**
+ * Converts this path to a [Directory] with the absolute path.
+ */
+public fun Path.toAbsoluteDirectory(): Directory = toAbsolutePath().toDirectory()
+
+/**
  * Converts this instance of [java.io.File] to a [File] message with an absolute path.
  */
 public fun java.io.File.toAbsoluteFile(): File = toPath().toAbsoluteFile()
