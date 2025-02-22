@@ -42,7 +42,7 @@ import io.spine.protodata.ast.event.fileOptionDiscovered
 import io.spine.protodata.ast.file
 import io.spine.protodata.ast.produceOptionEvents
 import io.spine.protodata.ast.toJava
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.backend.DescriptorFilter
 import io.spine.protodata.protobuf.file
 import io.spine.protodata.protobuf.toHeader
@@ -106,7 +106,7 @@ private class ProtoFileEvents(
         val relativePath = hdr.file.toJava()
         val fullPath = typeSystem.compiledProtoFiles.find(relativePath)
         if (fullPath != null) {
-            hdr.copy { file = fullPath.toProto() }
+            hdr.copy { file = fullPath.toAbsoluteFile() }
         } else {
             hdr
         }

@@ -32,9 +32,8 @@ import io.spine.code.proto.parse
 import io.spine.io.Resource
 import io.spine.io.ResourceDirectory
 import io.spine.io.replaceExtension
-import io.spine.protodata.ast.file
 import io.spine.protodata.ast.toPath
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.DescriptorFilter
 import io.spine.protodata.backend.Pipeline
@@ -351,7 +350,7 @@ public class PipelineSetup(
         ): @NonValidated PipelineParameters{
             return if (params.compiledProtoList.isEmpty()) {
                 val files = CompiledProtosFile(classLoader)
-                    .listFiles { Path(it).toProto() }
+                    .listFiles { Path(it).toAbsoluteFile() }
                 params.toBuilder()
                     .addAllCompiledProto(files)
                     .buildPartial()

@@ -37,7 +37,7 @@ import io.spine.protodata.ast.AstProto
 import io.spine.protodata.ast.FileProto
 import io.spine.protodata.ast.file
 import io.spine.protodata.ast.toDirectory
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
 import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
 import io.spine.protodata.cli.given.DefaultOptionsCounterRendererPlugin
@@ -122,7 +122,7 @@ class MainSpec {
             settings = workingDir.settingsDirectory.path.toDirectory()
             sourceRoot.add(srcRoot.toDirectory())
             targetRoot.add(this@MainSpec.targetRoot.toDirectory())
-            request = codegenRequestFile.toFile().toProto()
+            request = codegenRequestFile.toFile().toAbsoluteFile()
         }
         parametersFile = workingDir.parametersDirectory.write(SourceSetName.test, params)
 

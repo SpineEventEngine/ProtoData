@@ -34,7 +34,7 @@ import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.protodata.ast.directory
 import io.spine.protodata.ast.file
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.params.WorkingDirectory
@@ -83,7 +83,7 @@ class LoggingLevelSpec {
             settings = directory { path = workingDir.settingsDirectory.path.absolutePathString() }
             sourceRoot.add(directory { path = sandbox.resolve("src").absolutePathString() })
             targetRoot.add(directory { path = sandbox.resolve("generated").absolutePathString() })
-            request = codegenRequestFile.toFile().toProto()
+            request = codegenRequestFile.toFile().toAbsoluteFile()
             pluginClassName.add(LoggingLevelAsserterPlugin::class.jvmName)
         }
         parametersFile = workingDir.parametersDirectory.write(SourceSetName.main, params)

@@ -33,13 +33,19 @@ import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
 
 /**
  * Converts the given path to a [File] message containing an absolute version of this path.
  */
-public fun Path.toProto(): File = file {
+public fun Path.toAbsoluteFile(): File = file {
     path = absolutePathString().toUnix()
 }
+
+/**
+ * Converts this path to a [File] message with conversion to Unix path separators.
+ */
+public fun Path.toProto(): File = file { path = this@toProto.pathString.toUnix() }
 
 private fun String.toUnix(): String = replace('\\', '/')
 
@@ -55,6 +61,11 @@ public fun Path.toDirectory(): Directory = toFile().toDirectory()
 
 /**
  * Converts this instance of [java.io.File] to a [File] message with an absolute path.
+ */
+public fun java.io.File.toAbsoluteFile(): File = toPath().toAbsoluteFile()
+
+/**
+ * Converts this path to a [File] message with conversion to Unix path separators.
  */
 public fun java.io.File.toProto(): File = toPath().toProto()
 
