@@ -35,6 +35,7 @@ import io.spine.logging.WithLogging
 import io.spine.protodata.ast.file
 import io.spine.protodata.ast.toAbsoluteDirectory
 import io.spine.protodata.ast.toAbsoluteFile
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.cli.test.TestOptionsProto
 import io.spine.protodata.cli.test.TestProto
 import io.spine.protodata.params.WorkingDirectory
@@ -76,7 +77,7 @@ class LoggingLevelSpec {
         codegenRequestFile = sandbox.resolve("code-gen-request.bin")
 
         val compiledProtos = CompiledProtosFile(this::class.java.classLoader)
-        val absoluteFiles = compiledProtos.listFiles { file { path = it } }
+        val absoluteFiles = compiledProtos.listFiles { File(it).toProto() }
 
         val params = pipelineParameters {
             compiledProto.addAll(absoluteFiles)
