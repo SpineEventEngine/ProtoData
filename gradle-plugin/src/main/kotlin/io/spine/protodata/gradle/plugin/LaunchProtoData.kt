@@ -220,7 +220,9 @@ private fun LaunchProtoData.createParametersFile() {
         targetRoot.addAll(
             targets.absoluteDirs().map { it.toDirectory() }
         )
-        request = workingDir.requestDirectory.file(SourceSetName(sourceSetName.get())).toAbsoluteFile()
+        request = workingDir.requestDirectory
+            .file(SourceSetName(sourceSetName.get()))
+            .toAbsoluteFile()
 
         pluginClassName.addAll(plugins.get())
 
