@@ -33,7 +33,7 @@ import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.codeGeneratorRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.plugin.ConfigurationError
@@ -101,7 +101,7 @@ internal class PipelineSpec {
     private lateinit var sourceSet: SourceFileSet
 
     private fun PipelineParameters.Builder.addAbsoluteCompiledProtoPaths() {
-        addAllCompiledProto(typeSystem.compiledProtoFiles.files.map { it.toProto() })
+        addAllCompiledProto(typeSystem.compiledProtoFiles.files.map { it.toAbsoluteFile() })
     }
 
     @BeforeEach

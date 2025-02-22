@@ -27,7 +27,7 @@
 package io.spine.protodata.testing
 
 import io.spine.protodata.ast.toDirectory
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.tools.code.SourceSetName
@@ -50,7 +50,7 @@ public fun pipelineParams(
  * Assigns the given [file] as the reference to the request parameters file.
  */
 public fun PipelineParameters.Builder.withRequestFile(file: File): PipelineParameters.Builder  {
-    request = file.toProto()
+    request = file.toAbsoluteFile()
     return this
 }
 
@@ -108,7 +108,7 @@ public fun parametersForWorkingDir(
     val requestFile = wd.requestDirectory.file(SourceSetName("testFixtures"))
     val params = PipelineParameters.newBuilder()
         .setSettings(wd.settingsDirectory.path.toDirectory())
-        .setRequest(requestFile.toProto())
+        .setRequest(requestFile.toAbsoluteFile())
         .buildPartial()
     return params
 }

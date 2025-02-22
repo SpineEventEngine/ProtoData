@@ -27,7 +27,8 @@
 package io.spine.protodata.render
 
 import io.spine.core.userId
-import io.spine.protodata.ast.file
+import io.spine.protodata.ast.toAbsoluteFile
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.render.CoordinatesFactory.Companion.endOfFile
 import io.spine.protodata.render.event.insertionPointPrinted
 import io.spine.text.TextCoordinates
@@ -168,7 +169,7 @@ public abstract class InsertionPointPrinter<L: Language>(
 
     private fun reportPoint(sourceFile: SourceFile<*>, pointLabel: String, comment: String) {
         val event = insertionPointPrinted {
-            file = file { path = sourceFile.relativePath.toString() }
+            file = sourceFile.relativePath.toProto()
             label = pointLabel
             representationInCode = comment
         }

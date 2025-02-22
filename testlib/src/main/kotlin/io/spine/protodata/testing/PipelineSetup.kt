@@ -32,8 +32,8 @@ import io.spine.code.proto.parse
 import io.spine.io.Resource
 import io.spine.io.ResourceDirectory
 import io.spine.io.replaceExtension
-import io.spine.protodata.ast.file
 import io.spine.protodata.ast.toPath
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.backend.CodeGenerationContext
 import io.spine.protodata.backend.DescriptorFilter
 import io.spine.protodata.backend.Pipeline
@@ -60,6 +60,7 @@ import io.spine.validate.NonValidated
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+import kotlin.io.path.Path
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 import org.gradle.api.Project
@@ -349,7 +350,7 @@ public class PipelineSetup(
         ): @NonValidated PipelineParameters{
             return if (params.compiledProtoList.isEmpty()) {
                 val files = CompiledProtosFile(classLoader)
-                    .listFiles { file { path = it } }
+                    .listFiles { Path(it).toAbsoluteFile() }
                 params.toBuilder()
                     .addAllCompiledProto(files)
                     .buildPartial()

@@ -49,6 +49,8 @@ plugins {
     kotlin("jvm")
     id("net.ltgt.errorprone")
     id("detekt-code-analysis")
+    id("dokka-for-java")
+    id("dokka-for-kotlin")
     jacoco
     idea
 }

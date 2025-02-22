@@ -179,16 +179,11 @@ fun Project.dokkaKotlinJar(): TaskProvider<Jar> = tasks.getOrCreate("dokkaKotlin
 }
 
 /**
- * Tells if this task belongs to the execution graph which contains publishing tasks.
- *
- * The task `"publishToMavenLocal"` is excluded from the check because it is a part of
- * the local testing workflow.
+ * Tells if this task belongs to the execution graph which contains the "publish" task.
  */
 fun AbstractDokkaTask.isInPublishingGraph(): Boolean =
     project.gradle.taskGraph.allTasks.any {
-        with(it.name) {
-            startsWith("publish") && !startsWith("publishToMavenLocal")
-        }
+        it.name == "publish"
     }
 
 /**

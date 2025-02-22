@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:Suppress("TooManyFunctions") // ... we need for relative and absolute paths.
+
 package io.spine.protodata.ast
 
 import io.spine.protodata.util.Format
@@ -33,13 +35,19 @@ import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
 
 /**
  * Converts the given path to a [File] message containing an absolute version of this path.
  */
-public fun Path.toProto(): File = file {
+public fun Path.toAbsoluteFile(): File = file {
     path = absolutePathString().toUnix()
 }
+
+/**
+ * Converts this path to a [File] message with conversion to Unix path separators.
+ */
+public fun Path.toProto(): File = file { path = this@toProto.pathString.toUnix() }
 
 private fun String.toUnix(): String = replace('\\', '/')
 
@@ -54,7 +62,17 @@ public fun java.io.File.unixPath(): String = path.toUnix()
 public fun Path.toDirectory(): Directory = toFile().toDirectory()
 
 /**
+ * Converts this path to a [Directory] with the absolute path.
+ */
+public fun Path.toAbsoluteDirectory(): Directory = toAbsolutePath().toDirectory()
+
+/**
  * Converts this instance of [java.io.File] to a [File] message with an absolute path.
+ */
+public fun java.io.File.toAbsoluteFile(): File = toPath().toAbsoluteFile()
+
+/**
+ * Converts this path to a [File] message with conversion to Unix path separators.
  */
 public fun java.io.File.toProto(): File = toPath().toProto()
 

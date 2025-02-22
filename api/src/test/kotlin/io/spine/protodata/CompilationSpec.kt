@@ -33,7 +33,7 @@ import io.spine.logging.testing.tapConsole
 import io.spine.protodata.Compilation.ERROR_PREFIX
 import io.spine.protodata.Compilation.WARNING_PREFIX
 import io.spine.protodata.ast.Span
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.testing.TestValues
 import java.io.File
 import java.nio.file.Paths
@@ -146,7 +146,7 @@ internal class CompilationSpec {
 
     @Test
     fun `provide the 'check' utility function`() {
-        val file = File("some/path/goes/here.proto").toProto()
+        val file = File("some/path/goes/here.proto").toAbsoluteFile()
         val span = Span.getDefaultInstance()
         val msg = TestValues.randomString()
         val error = assertThrows<Compilation.Error> {

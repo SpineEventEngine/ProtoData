@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,16 @@ message FilePattern {
         // The path must end with this string.
         string suffix = 1;
 
+        // The path must contain this infix.
+        string infix = 4;
+
         // The path must start with this string.
-        string prefix = 2;
+        //
+        // Deprecated: File paths managed by Spine Compiler are primarily absolute.
+        // That is why this kind of pattern would not work in most cases.
+        // Please use the `infix` property instead.
+        //
+        string prefix = 2 [deprecated = true];
 
         // The path must match this regular expression.
         string regex = 3;

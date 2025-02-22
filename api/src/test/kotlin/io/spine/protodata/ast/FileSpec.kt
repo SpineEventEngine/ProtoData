@@ -24,33 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:JvmName("FilePatterns")
-
 package io.spine.protodata.ast
 
-import io.spine.protodata.ast.FilePattern.KindCase.KIND_NOT_SET
-import io.spine.protodata.ast.FilePattern.KindCase.REGEX
-import io.spine.protodata.ast.FilePattern.KindCase.INFIX
-import io.spine.protodata.ast.FilePattern.KindCase.SUFFIX
+import io.spine.validate.ValidationException
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 
-/**
- * Tells if this patterns matches the given [file].
- */
-public fun FilePattern.matches(file: File): Boolean {
-    val path = file.path
-    @Suppress("DEPRECATION") // Support the `PREFIX` kind for backward compatibility.
-    return when (kindCase) {
-        io.spine.protodata.ast.FilePattern.KindCase.PREFIX -> path.startsWith(prefix)
-        INFIX -> path.contains(infix)
-        SUFFIX -> path.endsWith(suffix)
-        REGEX -> path.matches(Regex(regex))
-        KIND_NOT_SET -> false
-        else -> return false
+@DisplayName("`File` should")
+internal class FileSpec {
+
+    @Test
+    fun `prohibit non-Unix path separators`() {
+        assertThrows<ValidationException> {
+            file { path = "foo\\bar.proto" }
+        }
+        assertDoesNotThrow {
+            file { path = "foo/bar.proto" }
+        }
     }
 }
-
-/**
- * Tells if this file pattern matches the file in which the given [type] is declared.
- */
-public fun FilePattern.matches(type: MessageType): Boolean =
-    matches(type.file)

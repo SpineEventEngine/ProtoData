@@ -35,9 +35,9 @@ import io.spine.base.Time
 import io.spine.protobuf.pack
 import io.spine.protodata.ast.AstProto
 import io.spine.protodata.ast.FileProto
-import io.spine.protodata.ast.file
-import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toDirectory
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
 import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
 import io.spine.protodata.cli.given.DefaultOptionsCounterRendererPlugin
@@ -111,18 +111,18 @@ class MainSpec {
         targetRoot.toFile().mkdirs()
 
         val compiledProtos = CompiledProtosFile(this::class.java.classLoader)
-        val thisModuleFiles = compiledProtos.listFiles { file { path = it } }
+        val thisModuleFiles = compiledProtos.listFiles { File(it).toProto() }
 
         val testEnvJar = ProjectProto::class.java.protectionDomain.codeSource.location
         val urlClassLoader = URLClassLoader(arrayOf(testEnvJar), null)
-        val testEnvJarFiles = CompiledProtosFile(urlClassLoader).listFiles { file { path = it } }
+        val testEnvJarFiles = CompiledProtosFile(urlClassLoader).listFiles { File(it).toProto() }
 
         val params = pipelineParameters {
             compiledProto.addAll(thisModuleFiles + testEnvJarFiles)
             settings = workingDir.settingsDirectory.path.toDirectory()
             sourceRoot.add(srcRoot.toDirectory())
             targetRoot.add(this@MainSpec.targetRoot.toDirectory())
-            request = codegenRequestFile.toFile().toProto()
+            request = codegenRequestFile.toFile().toAbsoluteFile()
         }
         parametersFile = workingDir.parametersDirectory.write(SourceSetName.test, params)
 

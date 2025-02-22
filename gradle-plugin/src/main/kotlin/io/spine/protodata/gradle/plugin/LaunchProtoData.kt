@@ -30,7 +30,7 @@ import com.google.protobuf.gradle.GenerateProtoTask
 import com.intellij.openapi.util.io.FileUtil
 import io.spine.protodata.Constants.CLI_APP_CLASS
 import io.spine.protodata.ast.toDirectory
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.error
@@ -210,7 +210,7 @@ private fun LaunchProtoData.createParametersFile() {
     val params = pipelineParameters {
         val protoFiles = generateProtoTask.sourceDirs.asFileTree.files.toList().sorted()
             .map {
-                it.toProto()
+                it.toAbsoluteFile()
             }
         compiledProto.addAll(protoFiles)
         settings = workingDir.settingsDirectory.path.toAbsolutePath().toDirectory()
@@ -220,7 +220,9 @@ private fun LaunchProtoData.createParametersFile() {
         targetRoot.addAll(
             targets.absoluteDirs().map { it.toDirectory() }
         )
-        request = workingDir.requestDirectory.file(SourceSetName(sourceSetName.get())).toProto()
+        request = workingDir.requestDirectory
+            .file(SourceSetName(sourceSetName.get()))
+            .toAbsoluteFile()
 
         pluginClassName.addAll(plugins.get())
 

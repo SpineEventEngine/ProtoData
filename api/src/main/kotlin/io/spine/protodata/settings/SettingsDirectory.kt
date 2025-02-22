@@ -27,7 +27,7 @@
 package io.spine.protodata.settings
 
 import io.spine.protodata.util.ensureExistingDirectory
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.settings.event.SettingsFileDiscovered
 import io.spine.protodata.settings.event.settingsFileDiscovered
 import io.spine.protodata.util.Format
@@ -122,7 +122,7 @@ public class SettingsDirectory(
     public fun emitEvents(): List<SettingsFileDiscovered> =
         files().map {
             settingsFileDiscovered {
-                file = it.toProto()
+                file = it.toAbsoluteFile()
             }
         }
 

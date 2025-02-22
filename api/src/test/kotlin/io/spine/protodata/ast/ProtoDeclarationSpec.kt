@@ -31,7 +31,6 @@ import io.spine.protodata.given.StubDeclaration
 import io.spine.protodata.given.copy
 import io.spine.protodata.given.stubDeclaration
 import kotlin.io.path.Path
-import kotlin.io.path.absolutePathString
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -97,4 +96,4 @@ private fun StubDeclaration.withAbsoluteFile(path: File): StubDeclaration =
     replaceIfNotAbsoluteAlready(path) { copy { file = path } }
 
 private fun absoluteFile(path: String): File =
-    file { this.path = Path(".").resolve(path).absolutePathString() }
+    Path(".").resolve(path).toAbsolutePath().toAbsoluteFile()

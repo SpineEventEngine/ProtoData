@@ -51,7 +51,7 @@ import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.doc
 import io.spine.protodata.ast.option
 import io.spine.protodata.ast.span
-import io.spine.protodata.ast.toProto
+import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.ast.toType
 import io.spine.protodata.backend.event.CompilerEvents
 import io.spine.protodata.context.CodegenContext
@@ -170,7 +170,7 @@ class CodeGenerationContextSpec {
         fun `with files marked for generation`() {
             val fullPath = typeSystem.findAbsolute(DoctorProto.getDescriptor())
             val assertSourceFile = ctx.assertEntity<ProtoSourceFileView, _>(
-                fullPath!!.toProto()
+                fullPath!!.toAbsoluteFile()
             )
             assertSourceFile.exists()
 
@@ -216,7 +216,7 @@ class CodeGenerationContextSpec {
         fun `with respect for custom options among the source files`() {
             val filePath = typeSystem.findAbsolute(PhDProto.getDescriptor())
             val phdFile = ctx.assertEntity<ProtoSourceFileView, _>(
-                filePath!!.toProto()
+                filePath!!.toAbsoluteFile()
             ).actual()!!.state() as ProtobufSourceFile
             val paperType = phdFile.typeMap.values.find { it.name.simpleName == "Paper" }!!
             val keywordsField = paperType.fieldList.find { it.name.value == "keywords" }!!
