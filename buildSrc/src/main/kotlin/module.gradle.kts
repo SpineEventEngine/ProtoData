@@ -49,6 +49,8 @@ plugins {
     kotlin("jvm")
     id("net.ltgt.errorprone")
     id("detekt-code-analysis")
+    id("dokka-for-java")
+    id("dokka-for-kotlin")
     jacoco
     idea
 }
@@ -79,7 +81,6 @@ project.run {
     configureKotlin()
 
     setupTests()
-    configureDocTasks()
 
     applyGeneratedDirectories()
     configureTaskDependencies()
@@ -189,18 +190,5 @@ fun Module.configureKotlin() {
         setFreeCompilerArgs()
         // https://stackoverflow.com/questions/38298695/gradle-disable-all-incremental-compilation-and-parallel-builds
         incremental = false
-    }
-}
-
-fun Module.configureDocTasks() {
-    val dokkaJavadoc by tasks.getting(DokkaTask::class)
-    tasks.register("javadocJar", Jar::class) {
-        from(dokkaJavadoc.outputDirectory)
-        archiveClassifier.set("javadoc")
-        dependsOn(dokkaJavadoc)
-    }
-
-    tasks.withType<DokkaTaskPartial>().configureEach {
-        configureForKotlin()
     }
 }
