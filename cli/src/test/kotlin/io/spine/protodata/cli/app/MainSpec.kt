@@ -111,11 +111,11 @@ class MainSpec {
         targetRoot.toFile().mkdirs()
 
         val compiledProtos = CompiledProtosFile(this::class.java.classLoader)
-        val thisModuleFiles = compiledProtos.listFiles { file { path = it } }
+        val thisModuleFiles = compiledProtos.listFiles { File(it).toProto() }
 
         val testEnvJar = ProjectProto::class.java.protectionDomain.codeSource.location
         val urlClassLoader = URLClassLoader(arrayOf(testEnvJar), null)
-        val testEnvJarFiles = CompiledProtosFile(urlClassLoader).listFiles { file { path = it } }
+        val testEnvJarFiles = CompiledProtosFile(urlClassLoader).listFiles { File(it).toProto() }
 
         val params = pipelineParameters {
             compiledProto.addAll(thisModuleFiles + testEnvJarFiles)
