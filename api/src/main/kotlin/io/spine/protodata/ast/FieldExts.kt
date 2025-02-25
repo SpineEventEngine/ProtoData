@@ -112,3 +112,12 @@ public fun Field.declaringFile(typeSystem: TypeSystem): File {
     val fullPath = typeSystem.compiledProtoFiles.find(file)
     return fullPath ?: file
 }
+
+/**
+ * Creates a new instance of [FieldRef] for this [Field].
+ */
+public val Field.ref: FieldRef
+    get() = fieldRef {
+        type = declaringType
+        name = this@ref.name
+    }
