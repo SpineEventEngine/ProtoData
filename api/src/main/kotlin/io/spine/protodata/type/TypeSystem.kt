@@ -185,3 +185,30 @@ public fun TypeSystem.resolve(fieldPath: FieldPath, message: MessageType): Field
     val nextMessage = nextMessageInfo.first
     return resolve(remainingPath, nextMessage)
 }
+
+/**
+ * Obtains a message type by its name.
+ *
+ * @throws IllegalArgumentException if the requested type is unknown for this [TypeSystem].
+ */
+public fun TypeSystem.message(name: TypeName): MessageType = findMessage(name)?.first
+    ?: error("Message type `${name.qualifiedName}` not found in the `TypeSystem`.")
+
+/**
+ * Obtains an enum type by its name.
+ */
+public fun TypeSystem.enum(name: TypeName): EnumType = findEnum(name)?.first
+    ?: error("Enum type `${name.qualifiedName}` not found in the `TypeSystem`.")
+
+/**
+ * Obtains a message or enum type by its name.
+ */
+public fun TypeSystem.messageOrEnum(name: TypeName): ProtoDeclaration =
+    findMessageOrEnum(name)?.first
+        ?: error("Message or enum type `${name.qualifiedName}` not found in the `TypeSystem`.")
+
+/**
+ * Obtains a service by its name.
+ */
+public fun TypeSystem.service(name: ServiceName): Service = findService(name)?.first
+    ?: error("Service type `${name.qualifiedName}` not found in the `TypeSystem`.")
