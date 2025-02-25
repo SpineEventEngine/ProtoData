@@ -51,8 +51,10 @@ public abstract class AbstractCompilationTest {
 
     /**
      * The name of a source set under which the tested Proto declarations reside.
+     *
+     * By default, it is `testFixtures`.
      */
-    protected open val protoSourceSet: SourceSetName = SourceSetName("testFixtures")
+    protected open val protoSources: SourceSetName = SourceSetName("testFixtures")
 
     /**
      * List of ProtoData plugins to use in the compilation.
@@ -85,7 +87,7 @@ public abstract class AbstractCompilationTest {
         val outputDir = workingDir.resolve("output")
             .also { it.toFile().mkdirs() }
         val params = pipelineParams {
-            withRequestFile(wd.requestDirectory.file(protoSourceSet))
+            withRequestFile(wd.requestDirectory.file(protoSources))
             withSettingsDir(wd.settingsDirectory.path)
         }
         return byResources(
