@@ -63,8 +63,12 @@ public abstract class AbstractCompilationTest {
 
     /**
      * Writes plugin settings before the pipeline is created.
+     *
+     * The default implementation of this method does nothing.
      */
-    protected abstract fun writeSettings(settings: SettingsDirectory)
+    protected open fun writeSettings(settings: SettingsDirectory) {
+        // No settings by default.
+    }
 
     /**
      * Asserts that the messages represented by the given [descriptor]
