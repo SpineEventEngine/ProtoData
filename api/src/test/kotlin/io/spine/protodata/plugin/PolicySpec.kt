@@ -39,6 +39,7 @@ import io.spine.server.event.React
 import io.spine.server.tuple.EitherOf2
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 @DisplayName("`Policy` should")
 internal class PolicySpec {
@@ -46,15 +47,16 @@ internal class PolicySpec {
     @Test
     fun `obtain 'TypeSystem' after injected`() {
         val policy = StubPolicy()
-
-        policy.typeSystem() shouldBe null
+        assertThrows<IllegalStateException> {
+            policy.typeSystem()
+        }
 
         val typeSystem = TypeSystem(
             ProtoFileList(emptyList()),
             emptySet()
         )
-        policy.use(typeSystem)
 
+        policy.use(typeSystem)
         policy.typeSystem() shouldBe typeSystem
     }
 
