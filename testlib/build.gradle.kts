@@ -25,6 +25,7 @@
  */
 
 import io.spine.dependency.local.CoreJava
+import io.spine.dependency.local.Logging
 import io.spine.dependency.local.ProtoTap
 import io.spine.dependency.local.Reflect
 import io.spine.dependency.local.TestLib
@@ -46,4 +47,5 @@ dependencies {
     api(project(":backend"))
 
     implementation(Reflect.lib)
+    implementation(Logging.testLib)?.because("We need `tapConsole`.")
 }
