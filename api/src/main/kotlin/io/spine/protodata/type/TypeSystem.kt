@@ -196,12 +196,16 @@ public fun TypeSystem.message(name: TypeName): MessageType = findMessage(name)?.
 
 /**
  * Obtains an enum type by its name.
+ *
+ * @throws IllegalArgumentException if the requested type is unknown for this [TypeSystem].
  */
 public fun TypeSystem.enum(name: TypeName): EnumType = findEnum(name)?.first
     ?: error("Enum type `${name.qualifiedName}` not found in the `TypeSystem`.")
 
 /**
  * Obtains a message or enum type by its name.
+ *
+ * @throws IllegalArgumentException if the requested type is unknown for this [TypeSystem].
  */
 public fun TypeSystem.messageOrEnum(name: TypeName): ProtoDeclaration =
     findMessageOrEnum(name)?.first
@@ -209,6 +213,8 @@ public fun TypeSystem.messageOrEnum(name: TypeName): ProtoDeclaration =
 
 /**
  * Obtains a service by its name.
+ *
+ * @throws IllegalArgumentException if the requested type is unknown for this [TypeSystem].
  */
 public fun TypeSystem.service(name: ServiceName): Service = findService(name)?.first
     ?: error("Service type `${name.qualifiedName}` not found in the `TypeSystem`.")
