@@ -39,8 +39,8 @@ import io.spine.protodata.backend.DescriptorFilter
  * If the given [descriptor] is [FileDescriptor] the predicate accepts
  * the file itself, all the declarations made in this file.
  */
-public fun acceptingOnly(descriptor: GenericDescriptor): DescriptorFilter {
-    return if (descriptor is FileDescriptor) {
+public fun acceptingOnly(descriptor: GenericDescriptor): DescriptorFilter =
+    if (descriptor is FileDescriptor) {
         /* The descriptor tested by the predicate */ d ->
         if (d is FileDescriptor) {
             descriptor.fullName == d.fullName
@@ -55,7 +55,6 @@ public fun acceptingOnly(descriptor: GenericDescriptor): DescriptorFilter {
             descriptor.fullName == d.fullName
         }
     }
-}
 
 /**
  * Creates a predicate that accepts descriptors that are not present in the given list.
