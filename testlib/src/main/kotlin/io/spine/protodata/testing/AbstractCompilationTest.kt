@@ -50,6 +50,11 @@ public abstract class AbstractCompilationTest {
     protected lateinit var workingDir: Path
 
     /**
+     * The name of a source set under which the tested Proto declarations reside.
+     */
+    protected open val protoSourceSet: SourceSetName = SourceSetName("testFixtures")
+
+    /**
      * Writes plugin settings before the pipeline is created.
      */
     protected abstract fun writeSettings(settings: SettingsDirectory)
@@ -80,7 +85,7 @@ public abstract class AbstractCompilationTest {
         val outputDir = workingDir.resolve("output")
             .also { it.toFile().mkdirs() }
         val params = pipelineParams {
-            withRequestFile(wd.requestDirectory.file(SourceSetName("testFixtures")))
+            withRequestFile(wd.requestDirectory.file(protoSourceSet))
             withSettingsDir(wd.settingsDirectory.path)
         }
         return byResources(
