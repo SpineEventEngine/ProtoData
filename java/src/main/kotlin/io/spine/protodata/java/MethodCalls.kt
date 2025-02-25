@@ -149,3 +149,31 @@ public fun mapExpression(): MethodCall<ImmutableMap<*, *>> {
     val immutableMapClass = ClassName(ImmutableMap::class)
     return immutableMapClass.call(OF)
 }
+
+/**
+ * Constructs a method call upon this [Expression].
+ *
+ * @param name The name of the method.
+ * @param arguments The method arguments.
+ * @param generics The method type parameters.
+ */
+@JvmOverloads
+public fun <T> Expression<*>.call(
+    name: String,
+    arguments: List<Expression<*>> = listOf(),
+    generics: List<ClassName> = listOf()
+): MethodCall<T> = MethodCall(this, name, arguments, generics)
+
+/**
+ * Constructs a method call upon this [Expression].
+ *
+ * @param name The name of the method.
+ * @param argument The method argument.
+ * @param generics The method type parameters.
+ */
+@JvmOverloads
+public fun <T> Expression<*>.call(
+    name: String,
+    vararg argument: Expression<*>,
+    generics: List<ClassName> = listOf()
+): MethodCall<T> = MethodCall(this, name, argument.asList(), generics)
