@@ -350,6 +350,16 @@ message Field {
     Span span = 9;
 }
 
+// Uniquely identifies a field declaration within a compilation process.
+message FieldRef {
+
+    // The name of the containing type.
+    TypeName type = 1;
+
+    // The name of the field.
+    FieldName name = 2;
+}
+
 // Name of a group of fields.
 message OneofName {
 
