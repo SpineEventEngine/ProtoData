@@ -40,8 +40,21 @@ import org.junit.jupiter.api.io.TempDir
 
 /**
  * An abstract base for classes that test compilation errors.
+ *
+ * Note that there is no `assertCompilationPasses()` counterpart in this class
+ * because we avoid creation of [PipelineSetup] for positive assertions.
+ * Initialization and running of a pipeline is time-consuming. We do it here
+ * for each assertion just because ProtoData is expected to fail anyway.
+ *
+ * For tests, where compilation is expected to pass, a single run of a pipeline
+ * should be used for all sources. Positive tests usually have way more assertions.
+ *
+ * Another alternative is to create a standalone module just for tests, where all
+ * messages-under-test are compiled at once by `launchTestProtoData` task without
+ * a pipeline at all. Though, assertion of the generated source code is impossible
+ * with this approach.
  */
-public abstract class AbstractCompilationTest {
+public abstract class AbstractCompilationErrorTest {
 
     /**
      * A directory to be used by the compilation process.
