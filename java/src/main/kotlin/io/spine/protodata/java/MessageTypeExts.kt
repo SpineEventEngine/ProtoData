@@ -95,7 +95,7 @@ public fun MessageType.javaClass(typeSystem: TypeSystem): Class<*>? {
 }
 
 /**
- * Looks up for a field with the given [name] in this [MessageType].
+ * Looks for the field with the given [name] in this [MessageType].
  *
  * @return the found [Field], or `null` if this [MessageType] does not have such a field.
  */

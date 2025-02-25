@@ -353,7 +353,7 @@ message Field {
 // Uniquely identifies a field declaration within a compilation process.
 message FieldRef {
 
-    // The name of the containing type.
+    // The name of the declaring type.
     TypeName type = 1;
 
     // The name of the field.
