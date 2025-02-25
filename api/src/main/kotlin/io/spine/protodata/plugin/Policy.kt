@@ -98,12 +98,14 @@ public abstract class Policy<E : EventMessage> : Policy<E>(), LoadsSettings {
      * A non-null value is available in
      * a [rendering pipeline][io.spine.protodata.backend.Pipeline.invoke].
      */
-    protected open val typeSystem: TypeSystem?
-        get() = if (this::_typeSystem.isInitialized) {
-            _typeSystem
-        } else {
-            null
+    protected open val typeSystem: TypeSystem by lazy {
+        check(::_typeSystem.isInitialized) {
+            "Access to `Policy.typeSystem` property is not allowed until" +
+                    " the `Code Generation` context has been injected and" +
+                    " `Policy.use(typeSystem: TypeSystem)` invoked."
         }
+        _typeSystem
+    }
 
     /**
      * Assigns the type system to the policy.
