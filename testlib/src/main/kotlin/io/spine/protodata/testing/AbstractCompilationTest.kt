@@ -55,14 +55,14 @@ public abstract class AbstractCompilationTest {
     protected open val protoSourceSet: SourceSetName = SourceSetName("testFixtures")
 
     /**
-     * Writes plugin settings before the pipeline is created.
-     */
-    protected abstract fun writeSettings(settings: SettingsDirectory)
-
-    /**
      * List of ProtoData plugins to use in the compilation.
      */
     protected abstract fun plugins(): List<Plugin>
+
+    /**
+     * Writes plugin settings before the pipeline is created.
+     */
+    protected abstract fun writeSettings(settings: SettingsDirectory)
 
     /**
      * Asserts that the messages represented by the given [descriptor]
