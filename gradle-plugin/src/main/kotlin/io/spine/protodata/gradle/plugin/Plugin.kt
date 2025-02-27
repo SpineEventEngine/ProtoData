@@ -48,6 +48,7 @@ import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
 import io.spine.protodata.params.WorkingDirectory
+import io.spine.string.toBase64Encoded
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
@@ -271,7 +272,7 @@ private fun GenerateProtoTask.addProtoDataProtocPlugin() {
                 .requestDirectory
                 .file(SourceSetName(sourceSet.name))
             val path = requestFile.absolutePath
-            val nameEncoded = path.base64Encoded()
+            val nameEncoded = path.toBase64Encoded()
             it.option(nameEncoded)
             if (logger.isDebugEnabled) {
                 logger.debug(
