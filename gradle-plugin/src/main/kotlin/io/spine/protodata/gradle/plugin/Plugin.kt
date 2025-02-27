@@ -161,7 +161,7 @@ private fun Project.createConfigurations(protoDataVersion: String) {
  * Creates the [CleanProtoDataTask] and [LaunchProtoData] tasks for all source sets
  * in this project available by the time of the call.
  *
- * There may be cases of source sets added by other plugins after this method is invoked.
+ * There may be cases of source sets added by other plugins after this function is invoked.
  * Such cases are handled by the [handleLaunchTaskDependency] function.
  *
  * @see [Project.handleLaunchTaskDependency]
@@ -250,7 +250,7 @@ private fun Project.configureGenerateProtoTasks() {
  * Configures the given [task] by enabling Kotlin code generation and adding and
  * configuring ProtoData `protoc` plugin for the task.
  *
- * The method also handles the exclusion of duplicated source code and task dependencies.
+ * The function also handles the exclusion of duplicated source code and task dependencies.
  *
  * @see [GenerateProtoTask.configureSourceSetDirs]
  * @see [Project.handleLaunchTaskDependency]
