@@ -121,3 +121,9 @@ public val Field.ref: FieldRef
         type = declaringType
         name = this@ref.name
     }
+
+/**
+ * Looks up a field option by its [name].
+ */
+public fun Field.findOption(name: String): Option? =
+    optionList.find { it.name == name }
