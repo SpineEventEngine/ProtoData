@@ -102,10 +102,8 @@ public inline fun <reified T : Message> ProtoDeclaration.findOption(): Option? {
  * @throws IllegalStateException if the option is not found.
  * @see ProtoDeclaration.findOption
  */
-public inline fun <reified T : Message> ProtoDeclaration.option(): Option {
-    findOption<T>()?.let { return it }
-        ?: error("The declaration `${qualifiedName}` must have the `${simply<T>()}` option.")
-}
+public inline fun <reified T : Message> ProtoDeclaration.option(): Option = findOption<T>()
+    ?: error("The declaration `${qualifiedName}` must have the `${simply<T>()}` option.")
 
 /**
  * Checks that the given path is absolute and is the absolute version of
