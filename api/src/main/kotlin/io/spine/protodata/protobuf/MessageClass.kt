@@ -33,10 +33,11 @@ import kotlin.reflect.KClass
 /**
  * Returns a Protobuf descriptor for this message [Class].
  */
-public fun Class<out Message>.getDescriptor(): Descriptor =
-    getDeclaredMethod("getDescriptor").invoke(null) as Descriptor
+public val Class<out Message>.descriptor: Descriptor
+    get() = getDeclaredMethod("getDescriptor").invoke(null) as Descriptor
 
 /**
  * Returns a Protobuf descriptor for this message [KClass].
  */
-public fun KClass<out Message>.getDescriptor(): Descriptor = java.getDescriptor()
+public val KClass<out Message>.descriptor: Descriptor
+    get() = java.descriptor
