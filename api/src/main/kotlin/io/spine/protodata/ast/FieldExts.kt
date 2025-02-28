@@ -28,8 +28,12 @@
 
 package io.spine.protodata.ast
 
+import com.google.protobuf.Message
+import io.spine.protobuf.defaultInstance
 import io.spine.protodata.type.TypeSystem
 import io.spine.string.camelCase
+import io.spine.string.simply
+import io.spine.type.typeName
 import java.io.File
 
 /**
@@ -121,3 +125,32 @@ public val Field.ref: FieldRef
         type = declaringType
         name = this@ref.name
     }
+
+/**
+ * Finds the option with the given type [T] applied to this [Field].
+ *
+ * @param T The type of the option.
+ * @return the option or `null` if there is no option with such a type applied to the field.
+ * @see Field.option
+ */
+public inline fun <reified T : Message> Field.findOption(): T? {
+    val typeUrl = T::class.java.defaultInstance.typeName.toUrl().value()
+    val option = optionList.find { opt ->
+        opt.value.typeUrl == typeUrl
+    }
+    return option?.unpack()
+}
+
+/**
+ * Obtains the option with the given type [T] applied to this [Field].
+ *
+ * Invoke this function if you are sure the option with the type [T] is applied
+ * to the receiver field. Otherwise, please use [findOption].
+ *
+ * @param T The type of the option.
+ * @return the option.
+ * @throws IllegalStateException if the option is not found.
+ * @see Field.findOption
+ */
+public inline fun <reified T : Message> Field.option(): T = findOption<T>()
+    ?: error("The field `${qualifiedName}` must have the `${simply<T>()}` option.")

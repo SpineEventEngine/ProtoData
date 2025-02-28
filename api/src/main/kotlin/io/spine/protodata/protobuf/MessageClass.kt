@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.protodata.protobuf
+
+import com.google.protobuf.Descriptors.Descriptor
+import com.google.protobuf.Message
+import kotlin.reflect.KClass
+
 /**
- * The version of the ProtoData to publish.
- *
- * This version also used by integration test projects.
- * E.g. see `tests/consumer/build.gradle.kts`.
- *
- * For dependencies on Spine SDK module please see [io.spine.dependency.local.Spine].
+ * Returns a Protobuf descriptor for this message [Class].
  */
-val protoDataVersion: String by extra("0.92.10")
+public val Class<out Message>.descriptor: Descriptor
+    get() = getDeclaredMethod("getDescriptor").invoke(null) as Descriptor
+
+/**
+ * Returns a Protobuf descriptor for this message [KClass].
+ */
+public val KClass<out Message>.descriptor: Descriptor
+    get() = java.descriptor
