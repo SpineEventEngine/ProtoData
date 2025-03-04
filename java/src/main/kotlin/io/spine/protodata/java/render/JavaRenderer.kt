@@ -38,6 +38,8 @@ import io.spine.protodata.java.javaFile
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.render.SourceFileSet
+import io.spine.server.query.Querying
+import io.spine.server.query.select
 import io.spine.tools.code.Java
 import java.nio.file.Path
 
@@ -87,6 +89,6 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
  * Retrieves all message types known to the current compilation process.
  */
 public fun JavaRenderer.findMessageTypes(): Set<MessageType> =
-    select(ProtobufSourceFile::class.java).all()
+    (this as Querying).select<ProtobufSourceFile>().all()
         .flatMap { it.typeMap.values }
         .toSet()
