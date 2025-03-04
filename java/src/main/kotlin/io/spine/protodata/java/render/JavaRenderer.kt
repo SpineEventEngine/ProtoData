@@ -28,6 +28,7 @@ package io.spine.protodata.java.render
 
 import io.spine.protodata.ast.File
 import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.context.findHeader
@@ -81,3 +82,11 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
         return sourceFile as SourceFile<Java>
     }
 }
+
+/**
+ * Retrieves all message types known to the current compilation process.
+ */
+public fun JavaRenderer.findMessageTypes(): Set<MessageType> =
+    select(ProtobufSourceFile::class.java).all()
+        .flatMap { it.typeMap.values }
+        .toSet()
