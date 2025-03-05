@@ -37,7 +37,7 @@ import io.spine.code.proto.DescriptorReference
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.CleanProtoDataTask
 import io.spine.protodata.gradle.CodegenSettings
-import io.spine.protodata.gradle.LaunchTask
+import io.spine.protodata.gradle.ProtoDataTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTOBUF_GRADLE_PLUGIN_ID
 import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
@@ -180,7 +180,7 @@ private fun Project.createTasks() {
 private fun Project.createLaunchTask(
     sourceSet: SourceSet,
 ): LaunchProtoData {
-    val taskName = LaunchTask.nameFor(sourceSet)
+    val taskName = ProtoDataTask.nameFor(sourceSet)
     val result = tasks.create<LaunchProtoData>(taskName) {
         applyDefaults(sourceSet)
     }
@@ -201,8 +201,8 @@ private fun Project.createCleanTask(sourceSet: SourceSet) {
 
         val cleanProtoDataTask = this
         tasks.getByName("clean").dependsOn(cleanProtoDataTask)
-        val launchTask = LaunchTask.get(project, sourceSet)
-        launchTask.mustRunAfter(this)
+        val compilation = ProtoDataTask.get(project, sourceSet)
+        compilation.mustRunAfter(cleanProtoDataTask)
     }
 }
 
@@ -419,7 +419,7 @@ private fun GenerateProtoTask.createDescriptorReferenceFile(dir: Path) {
  */
 private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask) {
     val sourceSet = generateProto.sourceSet
-    LaunchTask.find(this, sourceSet)
+    ProtoDataTask.find(this, sourceSet)
         ?.dependsOn(generateProto)
         ?: afterEvaluate {
             val launchTask = createLaunchTask(sourceSet)

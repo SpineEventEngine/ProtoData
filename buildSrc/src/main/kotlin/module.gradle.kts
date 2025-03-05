@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import Module_gradle.Module
 import io.spine.dependency.build.Dokka
 import io.spine.dependency.build.ErrorProne
 import io.spine.dependency.lib.Protobuf
@@ -34,7 +35,6 @@ import io.spine.dependency.test.JUnit
 import io.spine.dependency.test.Truth
 import io.spine.gradle.javac.configureErrorProne
 import io.spine.gradle.javac.configureJavac
-import io.spine.gradle.kotlin.applyJvmToolchain
 import io.spine.gradle.kotlin.setFreeCompilerArgs
 import io.spine.gradle.publish.IncrementGuard
 import io.spine.gradle.report.license.LicenseReporter
@@ -42,7 +42,6 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-library`
@@ -61,12 +60,6 @@ apply {
 
 apply<IncrementGuard>()
 LicenseReporter.generateReportIn(project)
-
-object BuildSettings {
-    private const val JAVA_VERSION = 11
-
-    val javaVersion: JavaLanguageVersion = JavaLanguageVersion.of(JAVA_VERSION)
-}
 
 /**
  * The alias for typed extensions functions related to modules of this project.
@@ -184,13 +177,10 @@ fun Module.configureJava() {
 fun Module.configureKotlin() {
     kotlin {
         explicitApi()
-        applyJvmToolchain(BuildSettings.javaVersion.asInt())
-    }
-
-    tasks.withType<KotlinCompile> {
-        setFreeCompilerArgs()
-        // https://stackoverflow.com/questions/38298695/gradle-disable-all-incremental-compilation-and-parallel-builds
-        incremental = false
+        compilerOptions {
+            jvmTarget.set(BuildSettings.jvmTarget)
+            setFreeCompilerArgs()
+        }
     }
 }
 
@@ -200,6 +190,13 @@ fun Module.configureDocTasks() {
         from(dokkaJavadoc.outputDirectory)
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
+    }
+
+    project.afterEvaluate {
+        val dokkaKotlinJar = tasks.findByName("dokkaKotlinJar")
+        dokkaKotlinJar?.let {
+            dokkaJavadoc.dependsOn(it)
+        }
     }
 
     tasks.withType<DokkaTaskPartial>().configureEach {

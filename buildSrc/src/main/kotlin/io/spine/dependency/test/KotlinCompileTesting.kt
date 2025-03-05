@@ -24,16 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+package io.spine.dependency.test
 
 /**
- * This object provides high-level constants, like the version of JVM, to be used
- * throughout the project.
+ * A library for in-process compilation of Kotlin and Java code compilation.
+ *
+ * @see <a href="https://github.com/tschuchortdev/kotlin-compile-testing">GitHub repo</a>
  */
-object BuildSettings {
-    private const val JVM_VERSION = 17
-    val javaVersion: JavaLanguageVersion = JavaLanguageVersion.of(JVM_VERSION)
-    val jvmTarget = JvmTarget.JVM_17
-    const val REMOTE_DEBUG_PORT = 5566
+@Suppress("unused", "ConstPropertyName")
+object KotlinCompileTesting {
+    private const val version = "1.5.0" // Compatible with Kotlin Compiler 1.8.22.
+    private const val group = "com.github.tschuchortdev"
+    const val lib = "$group:kotlin-compile-testing:$version"
+    const val libKsp = "$group:kotlin-compile-testing-ksp:$version"
 }
