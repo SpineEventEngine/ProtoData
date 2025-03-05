@@ -28,7 +28,7 @@ package io.spine.protodata.gradle.plugin
 
 import groovy.lang.Closure
 import io.kotest.matchers.shouldBe
-import io.spine.protodata.gradle.LaunchTask
+import io.spine.protodata.gradle.ProtoDataTask
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
@@ -43,9 +43,9 @@ class LaunchTaskSpec {
 
     @Test
     fun `provide a task name for a source set`() {
-        LaunchTask.nameFor(mainSourceSet) shouldBe "launchProtoData"
-        LaunchTask.nameFor(testSourceSet) shouldBe "launchTestProtoData"
-        LaunchTask.nameFor(functionalTestsSourceSet) shouldBe "launchFunctionalTestsProtoData"
+        ProtoDataTask.nameFor(mainSourceSet) shouldBe "launchProtoData"
+        ProtoDataTask.nameFor(testSourceSet) shouldBe "launchTestProtoData"
+        ProtoDataTask.nameFor(functionalTestsSourceSet) shouldBe "launchFunctionalTestsProtoData"
     }
 }
 

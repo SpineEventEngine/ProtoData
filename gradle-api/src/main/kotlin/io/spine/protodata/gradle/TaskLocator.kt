@@ -45,7 +45,7 @@ public abstract class TaskLocator {
      * Obtains an instance of the task in the given project for the specified source set.
      */
     public fun get(project: Project, sourceSet: SourceSet): Task {
-        val name = LaunchTask.nameFor(sourceSet)
+        val name = ProtoDataTask.nameFor(sourceSet)
         return project.tasks.getByName(name)
     }
 
@@ -55,7 +55,7 @@ public abstract class TaskLocator {
      * @return the task or `null` if there is no task created for this source set
      */
     public fun find(project: Project, sourceSet: SourceSet): Task? {
-        val name = LaunchTask.nameFor(sourceSet)
+        val name = ProtoDataTask.nameFor(sourceSet)
         return project.tasks.findByName(name)
     }
 }

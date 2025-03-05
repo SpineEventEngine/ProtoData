@@ -27,20 +27,25 @@
 package io.spine.protodata.gradle
 
 import io.spine.tools.code.SourceSetName
-import org.gradle.api.Project
-import org.gradle.api.Task
+import io.spine.tools.gradle.task.TaskWithSourceSetName
 import org.gradle.api.tasks.SourceSet
 
 /**
  * Utilities for working with `launchProtoData` tasks in a Gradle project.
  */
-public object LaunchTask : TaskLocator() {
+public object ProtoDataTask : TaskLocator() {
 
     /**
      * Obtains a name of the task for the given source set.
      */
     override fun nameFor(sourceSet: SourceSet): String {
-        val sourceSetName = SourceSetName(sourceSet.name)
-        return "launch${sourceSetName.toInfix()}ProtoData"
+        val ssn = SourceSetName(sourceSet.name)
+        return ProtoDataTaskName(ssn).value()
     }
 }
+
+/**
+ * The name of the `LaunchProtoData` task for the given source set.
+ */
+public class ProtoDataTaskName(ssn: SourceSetName) :
+    TaskWithSourceSetName("launch${ssn.toInfix()}ProtoData", ssn)
