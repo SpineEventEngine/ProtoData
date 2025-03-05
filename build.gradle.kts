@@ -141,12 +141,12 @@ val localPublish by tasks.registering {
  * This build should run _only_ if all tests of all modules passed.
  * Otherwise, integration tests make little sense.
  */
-val integrationTest by tasks.creating(RunBuild::class) {
+val integrationTest by tasks.registering(RunBuild::class) {
     directory = "$rootDir/tests"
     dependsOn(localPublish)
     subprojects.forEach {
         it.tasks.findByName("test")?.let { testTask ->
-            this@creating.dependsOn(testTask)
+            this@registering.dependsOn(testTask)
         }
     }
 }

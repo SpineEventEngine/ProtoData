@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,8 +107,9 @@ private fun IdeaModule.setGeneratedSourceDirs(protocTargets: List<Path>) {
  */
 private fun IdeaModule.excludeExtractedDirs(project: Project) {
     val sourceSetDirs = project.generateProtoTasks().map { Path(it.sourceSet.name) }
-    val extractedIncludeProtos = project.buildDir.resolve("extracted-include-protos").toPath()
-    val extractedProtos = project.buildDir.resolve("extracted-protos").toPath()
+    val buildDir = project.layout.buildDirectory.get().asFile
+    val extractedIncludeProtos = buildDir.resolve("extracted-include-protos").toPath()
+    val extractedProtos = buildDir.resolve("extracted-protos").toPath()
 
     excludeWithNested(extractedIncludeProtos, sourceSetDirs)
     excludeWithNested(extractedProtos, sourceSetDirs)

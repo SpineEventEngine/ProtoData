@@ -55,10 +55,13 @@ buildscript {
 
 plugins {
     java
+    `kotlin-dsl`
     kotlin("jvm") apply false
     id("com.google.protobuf")
     idea
 }
+
+repositories.standardToSpineSdk()
 
 subprojects {
     apply {
@@ -113,8 +116,11 @@ subprojects {
 
     disableDocumentationTasks()
 
-    tasks.withType<KotlinCompile> {
-        setFreeCompilerArgs()
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(BuildSettings.jvmTarget)
+            setFreeCompilerArgs()
+        }
     }
 
     val generatedFiles = "$projectDir/generated"

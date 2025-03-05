@@ -128,6 +128,7 @@ internal class FilePatternsSpec {
     @Nested inner class
     `Match a file by` {
 
+        @Suppress("DEPRECATION") // Still support for backward compatibility.
         @Test
         fun prefix() {
             prefix("C:/").run {
