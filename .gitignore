@@ -1,3 +1,6 @@
+# `jenv` file with the local version of Java.
+.java-version
+
 # Compiled class file
 *.class
 
