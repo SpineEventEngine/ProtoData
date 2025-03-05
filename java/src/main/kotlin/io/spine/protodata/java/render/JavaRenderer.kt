@@ -28,6 +28,7 @@ package io.spine.protodata.java.render
 
 import io.spine.protodata.ast.File
 import io.spine.protodata.ast.MessageType
+import io.spine.protodata.ast.ProtobufSourceFile
 import io.spine.protodata.ast.TypeName
 import io.spine.protodata.ast.qualifiedName
 import io.spine.protodata.context.findHeader
@@ -37,6 +38,8 @@ import io.spine.protodata.java.javaFile
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFile
 import io.spine.protodata.render.SourceFileSet
+import io.spine.server.query.Querying
+import io.spine.server.query.select
 import io.spine.tools.code.Java
 import java.nio.file.Path
 
@@ -56,8 +59,8 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
     /**
      * Obtains the path the `.java` file generated from the given type.
      *
-     * The path is relative to the generated source root. This path is useful for finding source
-     * files in a [SourceSet][io.spine.protodata.renderer.SourceFileSet].
+     * The path is relative to the generated source root. This path is useful for finding
+     * source files in a [SourceSet][io.spine.protodata.render.SourceFileSet].
      */
     protected fun javaFileOf(type: TypeName, declaredIn: File): Path {
         val header = findHeader(declaredIn)!!
@@ -81,3 +84,11 @@ public abstract class JavaRenderer : Renderer<Java>(Java) {
         return sourceFile as SourceFile<Java>
     }
 }
+
+/**
+ * Retrieves all message types known to the current compilation process.
+ */
+public fun JavaRenderer.findMessageTypes(): Set<MessageType> =
+    (this as Querying).select<ProtobufSourceFile>().all()
+        .flatMap { it.typeMap.values }
+        .toSet()
