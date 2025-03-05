@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,8 @@ message TypeName {
     //
     // Must not include a trailing slash ("/").
     //
-    string type_url_prefix = 4 [(pattern).regex = "^.*[^/]$"];
+    string type_url_prefix = 4 /*[(pattern).regex = "^.*[^/]$"]*/;
+    //TODO:2025-03-05:alexander.yevsyukov: Restore after Validation handles the above `regex`.
 }
 
 // A Protobuf message type.
@@ -405,7 +406,9 @@ message ServiceName {
     //
     // Must not include a training slash ("/").
     //
-    string type_url_prefix = 3 [(pattern).regex = "^.*[^/]$"];
+    string type_url_prefix = 3 /*[(pattern).regex = "^.*[^/]$"]*/;
+    //TODO:2025-03-05:alexander.yevsyukov: Restore after Validation handles the above `regex`.
+
 }
 
 // A Protobuf service type.
