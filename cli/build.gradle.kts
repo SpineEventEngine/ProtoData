@@ -128,7 +128,7 @@ val setupJar by tasks.registering(Jar::class) {
     dependsOn(tasks.distZip)
 }
 
-val stagingDir = "${layout.buildDirectory}/staging"
+val stagingDir: String = layout.buildDirectory.dir("staging").get().asFile.path
 
 val stageProtoData by tasks.registering(Copy::class) {
     from(zipTree(setupJar.get().archiveFile))
