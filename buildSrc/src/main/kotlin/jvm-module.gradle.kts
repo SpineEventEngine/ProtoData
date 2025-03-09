@@ -192,7 +192,6 @@ fun Module.setTaskDependencies(generatedDir: String) {
         }
     }
     configureTaskDependencies()
-    configureTaskDependencies()
 }
 
 fun Module.configureGitHubPages() {
