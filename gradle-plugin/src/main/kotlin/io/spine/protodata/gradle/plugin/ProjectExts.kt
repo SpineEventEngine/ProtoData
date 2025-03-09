@@ -38,7 +38,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 /**
  * Obtains the directory where ProtoData stores its temporary files.
@@ -139,7 +139,7 @@ public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
  * `compileKotlin` if the source set name is `"main"`. If the task does not fit this described
  * pattern, this method will not find it.
  */
-public fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompile<*>? {
+public fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompilationTask<*>? {
     val taskName = sourceSet.getCompileTaskName("Kotlin")
-    return tasks.findByName(taskName) as KotlinCompile<*>?
+    return tasks.findByName(taskName) as KotlinCompilationTask<*>?
 }
