@@ -37,12 +37,12 @@ import io.spine.code.proto.DescriptorReference
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.CleanProtoDataTask
 import io.spine.protodata.gradle.CodegenSettings
-import io.spine.protodata.gradle.ProtoDataTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTOBUF_GRADLE_PLUGIN_ID
 import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
+import io.spine.protodata.gradle.ProtoDataTask
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
@@ -62,9 +62,10 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
-import org.gradle.kotlin.dsl.create
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.register
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -99,6 +100,7 @@ public class Plugin : GradlePlugin<Project> {
 
     override fun apply(project: Project) {
         with(project) {
+            createExtension()
             createConfigurations(this@Plugin.version)
             createTasks()
             configureWithProtobufPlugin(this@Plugin.version)
@@ -179,9 +181,9 @@ private fun Project.createTasks() {
 @CanIgnoreReturnValue
 private fun Project.createLaunchTask(
     sourceSet: SourceSet,
-): LaunchProtoData {
+): TaskProvider<LaunchProtoData> {
     val taskName = ProtoDataTask.nameFor(sourceSet)
-    val result = tasks.create<LaunchProtoData>(taskName) {
+    val result = tasks.register<LaunchProtoData>(taskName) {
         applyDefaults(sourceSet)
     }
     return result
@@ -196,7 +198,7 @@ private fun Project.createLaunchTask(
 private fun Project.createCleanTask(sourceSet: SourceSet) {
     val project = this
     val cleanSourceSet = CleanProtoDataTask.nameFor(sourceSet)
-    tasks.create<Delete>(cleanSourceSet) {
+    tasks.register<Delete>(cleanSourceSet) {
         delete(extension.targetDirs(sourceSet))
 
         val cleanProtoDataTask = this
@@ -423,7 +425,9 @@ private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask)
         ?.dependsOn(generateProto)
         ?: afterEvaluate {
             val launchTask = createLaunchTask(sourceSet)
-            launchTask.dependsOn(generateProto)
+            launchTask.configure {
+                it.dependsOn(generateProto)
+            }
             createCleanTask(sourceSet)
         }
 }
