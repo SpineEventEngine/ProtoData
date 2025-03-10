@@ -74,7 +74,7 @@ message TypeName {
     //
     // Must not include a trailing slash ("/").
     //
-    string type_url_prefix = 4 [(pattern).regex = "^.*[^\\/]$"];
+    string type_url_prefix = 4 [(pattern).regex = "^.*[^/]$"];
 }
 
 // A Protobuf message type.
@@ -405,7 +405,7 @@ message ServiceName {
     //
     // Must not include a training slash ("/").
     //
-    string type_url_prefix = 3 [(pattern).regex = "^.*[^\\/]$"];
+    string type_url_prefix = 3 [(pattern).regex = "^.*[^/]$"];
 }
 
 // A Protobuf service type.
