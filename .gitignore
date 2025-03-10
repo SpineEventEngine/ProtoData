@@ -1,8 +1,8 @@
 # `jenv` file with the local version of Java.
 .java-version
 
-# Kotlin temp directory.
-/buildSrc/.kotlin/
+# Kotlin temp directories.
+**/.kotlin/**
 
 # Compiled class file
 *.class
