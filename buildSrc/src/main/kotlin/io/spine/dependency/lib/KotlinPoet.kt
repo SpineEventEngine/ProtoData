@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,23 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle
+package io.spine.dependency.lib
 
-import io.spine.tools.code.SourceSetName
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.SourceSet
-
-/**
- * Utilities for working with `launchProtoData` tasks in a Gradle project.
- */
-public object LaunchTask : TaskLocator() {
-
-    /**
-     * Obtains a name of the task for the given source set.
-     */
-    override fun nameFor(sourceSet: SourceSet): String {
-        val sourceSetName = SourceSetName(sourceSet.name)
-        return "launch${sourceSetName.toInfix()}ProtoData"
-    }
+// https://github.com/square/kotlinpoet
+@Suppress("unused", "ConstPropertyName")
+object KotlinPoet {
+    private const val version = "2.0.0"
+    const val lib = "com.squareup:kotlinpoet:$version"
+    const val ksp = "com.squareup:kotlinpoet-ksp:$version"
 }

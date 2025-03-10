@@ -179,7 +179,10 @@ fun Project.dokkaKotlinJar(): TaskProvider<Jar> = tasks.getOrCreate("dokkaKotlin
 }
 
 /**
- * Tells if this task belongs to the execution graph which contains the "publish" task.
+ * Tells if this task belongs to the execution graph which contains publishing tasks.
+ *
+ * The task `"publishToMavenLocal"` is excluded from the check because it is a part of
+ * the local testing workflow.
  */
 fun AbstractDokkaTask.isInPublishingGraph(): Boolean =
     project.gradle.taskGraph.allTasks.any {
@@ -212,7 +215,7 @@ fun Project.dokkaJavaJar(): TaskProvider<Jar> = tasks.getOrCreate("dokkaJavaJar"
 fun Project.disableDocumentationTasks() {
     gradle.taskGraph.whenReady {
         tasks.forEach { task ->
-            val lowercaseName = task.name.lowercased()
+            val lowercaseName = task.name.lowercase()
             if (lowercaseName.contains("dokka") || lowercaseName.contains("javadoc")) {
                 task.enabled = false
             }

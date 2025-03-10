@@ -1,11 +1,11 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,16 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle.plugin
-
-import java.util.*
+package io.spine.dependency.test
 
 /**
- * Encodes this string in Base64 using the UTF-8 charset.
+ * A library for in-process compilation of Kotlin and Java code compilation.
  *
- * @return the encoded string
+ * @see <a href="https://github.com/zacsweers/kotlin-compile-testing">GitHub repo</a>
  */
-internal fun String.base64Encoded(): String {
-    val bytes = encodeToByteArray()
-    return Base64.getEncoder().encodeToString(bytes)
+@Suppress("unused", "ConstPropertyName")
+object KotlinCompileTesting {
+    private const val version = "0.7.0"
+    private const val group = "dev.zacsweers.kctfork"
+    const val libCore = "$group:core:$version"
+    const val libKsp = "$group:ksp:$version"
 }

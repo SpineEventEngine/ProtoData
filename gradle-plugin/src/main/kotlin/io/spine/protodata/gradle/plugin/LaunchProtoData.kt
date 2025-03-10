@@ -171,19 +171,20 @@ internal fun LaunchProtoData.applyDefaults(sourceSet: SourceSet) {
     plugins = ext.plugins
     protoDataConfiguration = project.protoDataRawArtifact
     userClasspathConfiguration = project.userClasspath
-    project.afterEvaluate {
-        sources = ext.sourceDirs(sourceSet)
-        targets = ext.targetDirs(sourceSet)
-        compileCommandLine()
-    }
+
+    sources = ext.sourceDirs(sourceSet)
+    targets = ext.targetDirs(sourceSet)
+
     requestPreLaunchCleanup()
-    doFirst {
-        createParametersFile()
-    }
+    setDependencies(sourceSet)
+
     onlyIf {
         hasRequestFile(sourceSet)
     }
-    setDependencies(sourceSet)
+    doFirst {
+        compileCommandLine()
+        createParametersFile()
+    }
 }
 
 private fun LaunchProtoData.setDependencies(sourceSet: SourceSet) {

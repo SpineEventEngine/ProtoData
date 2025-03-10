@@ -37,17 +37,18 @@ import io.spine.code.proto.DescriptorReference
 import io.spine.protodata.gradle.Artifacts
 import io.spine.protodata.gradle.CleanProtoDataTask
 import io.spine.protodata.gradle.CodegenSettings
-import io.spine.protodata.gradle.LaunchTask
 import io.spine.protodata.gradle.Names.EXTENSION_NAME
 import io.spine.protodata.gradle.Names.PROTOBUF_GRADLE_PLUGIN_ID
 import io.spine.protodata.gradle.Names.PROTODATA_PROTOC_PLUGIN
 import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
+import io.spine.protodata.gradle.ProtoDataTask
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
 import io.spine.protodata.params.WorkingDirectory
+import io.spine.string.toBase64Encoded
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.sourceSets
@@ -61,9 +62,10 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
-import org.gradle.kotlin.dsl.create
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.register
 import org.gradle.api.Plugin as GradlePlugin
 
 /**
@@ -98,6 +100,7 @@ public class Plugin : GradlePlugin<Project> {
 
     override fun apply(project: Project) {
         with(project) {
+            createExtension()
             createConfigurations(this@Plugin.version)
             createTasks()
             configureWithProtobufPlugin(this@Plugin.version)
@@ -160,7 +163,7 @@ private fun Project.createConfigurations(protoDataVersion: String) {
  * Creates the [CleanProtoDataTask] and [LaunchProtoData] tasks for all source sets
  * in this project available by the time of the call.
  *
- * There may be cases of source sets added by other plugins after this method is invoked.
+ * There may be cases of source sets added by other plugins after this function is invoked.
  * Such cases are handled by the [handleLaunchTaskDependency] function.
  *
  * @see [Project.handleLaunchTaskDependency]
@@ -178,9 +181,9 @@ private fun Project.createTasks() {
 @CanIgnoreReturnValue
 private fun Project.createLaunchTask(
     sourceSet: SourceSet,
-): LaunchProtoData {
-    val taskName = LaunchTask.nameFor(sourceSet)
-    val result = tasks.create<LaunchProtoData>(taskName) {
+): TaskProvider<LaunchProtoData> {
+    val taskName = ProtoDataTask.nameFor(sourceSet)
+    val result = tasks.register<LaunchProtoData>(taskName) {
         applyDefaults(sourceSet)
     }
     return result
@@ -195,13 +198,13 @@ private fun Project.createLaunchTask(
 private fun Project.createCleanTask(sourceSet: SourceSet) {
     val project = this
     val cleanSourceSet = CleanProtoDataTask.nameFor(sourceSet)
-    tasks.create<Delete>(cleanSourceSet) {
+    tasks.register<Delete>(cleanSourceSet) {
         delete(extension.targetDirs(sourceSet))
 
         val cleanProtoDataTask = this
         tasks.getByName("clean").dependsOn(cleanProtoDataTask)
-        val launchTask = LaunchTask.get(project, sourceSet)
-        launchTask.mustRunAfter(this)
+        val compilation = ProtoDataTask.get(project, sourceSet)
+        compilation.mustRunAfter(cleanProtoDataTask)
     }
 }
 
@@ -249,7 +252,7 @@ private fun Project.configureGenerateProtoTasks() {
  * Configures the given [task] by enabling Kotlin code generation and adding and
  * configuring ProtoData `protoc` plugin for the task.
  *
- * The method also handles the exclusion of duplicated source code and task dependencies.
+ * The function also handles the exclusion of duplicated source code and task dependencies.
  *
  * @see [GenerateProtoTask.configureSourceSetDirs]
  * @see [Project.handleLaunchTaskDependency]
@@ -271,7 +274,7 @@ private fun GenerateProtoTask.addProtoDataProtocPlugin() {
                 .requestDirectory
                 .file(SourceSetName(sourceSet.name))
             val path = requestFile.absolutePath
-            val nameEncoded = path.base64Encoded()
+            val nameEncoded = path.toBase64Encoded()
             it.option(nameEncoded)
             if (logger.isDebugEnabled) {
                 logger.debug(
@@ -418,11 +421,13 @@ private fun GenerateProtoTask.createDescriptorReferenceFile(dir: Path) {
  */
 private fun Project.handleLaunchTaskDependency(generateProto: GenerateProtoTask) {
     val sourceSet = generateProto.sourceSet
-    LaunchTask.find(this, sourceSet)
+    ProtoDataTask.find(this, sourceSet)
         ?.dependsOn(generateProto)
         ?: afterEvaluate {
             val launchTask = createLaunchTask(sourceSet)
-            launchTask.dependsOn(generateProto)
+            launchTask.configure {
+                it.dependsOn(generateProto)
+            }
             createCleanTask(sourceSet)
         }
 }

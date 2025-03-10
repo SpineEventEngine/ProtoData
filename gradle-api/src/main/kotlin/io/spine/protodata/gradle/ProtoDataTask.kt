@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, TeamDev. All rights reserved.
+ * Copyright 2024, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+package io.spine.protodata.gradle
+
+import io.spine.tools.code.SourceSetName
+import io.spine.tools.gradle.task.TaskWithSourceSetName
+import org.gradle.api.tasks.SourceSet
 
 /**
- * Spine Base module.
- *
- * @see <a href="https://github.com/SpineEventEngine/base">spine-base</a>
+ * Utilities for working with `launchProtoData` tasks in a Gradle project.
  */
-@Suppress("ConstPropertyName")
-object Base {
-    const val version = "2.0.0-SNAPSHOT.301"
-    const val versionForBuildScript = "2.0.0-SNAPSHOT.301"
-    const val group = Spine.group
-    const val artifact = "spine-base"
-    const val lib = "$group:$artifact:$version"
-    const val libForBuildScript = "$group:$artifact:$versionForBuildScript"
+public object ProtoDataTask : TaskLocator() {
+
+    /**
+     * Obtains a name of the task for the given source set.
+     */
+    override fun nameFor(sourceSet: SourceSet): String {
+        val ssn = SourceSetName(sourceSet.name)
+        return ProtoDataTaskName(ssn).value()
+    }
 }
+
+/**
+ * The name of the `LaunchProtoData` task for the given source set.
+ */
+public class ProtoDataTaskName(ssn: SourceSetName) :
+    TaskWithSourceSetName("launch${ssn.toInfix()}ProtoData", ssn)
