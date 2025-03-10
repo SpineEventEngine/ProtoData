@@ -186,9 +186,7 @@ fun Project.dokkaKotlinJar(): TaskProvider<Jar> = tasks.getOrCreate("dokkaKotlin
  */
 fun AbstractDokkaTask.isInPublishingGraph(): Boolean =
     project.gradle.taskGraph.allTasks.any {
-        with(it.name) {
-            startsWith("publish") && !startsWith("publishToMavenLocal")
-        }
+        it.name == "publish"
     }
 
 /**

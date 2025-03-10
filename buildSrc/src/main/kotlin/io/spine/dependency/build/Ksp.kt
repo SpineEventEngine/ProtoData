@@ -38,4 +38,6 @@ object Ksp {
     const val group = "com.google.devtools.ksp"
     const val symbolProcessingApi = "$group:symbol-processing-api:$version"
     const val symbolProcessing = "$group:symbol-processing:$version"
+    const val symbolProcessingAaEmb = "$group:symbol-processing-aa-embeddable:$version"
+    const val symbolProcessingCommonDeps = "$group:symbol-processing-common-deps:$version"
 }
