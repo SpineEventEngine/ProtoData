@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,7 +128,9 @@ class CodeGenerationContextSpec {
             fileToGenerate.addAll(filesToGenerate)
         }
 
-        private val typeSystem = createTypeSystem(codeGeneratorRequest)
+        private val typeSystem by lazy {
+            createTypeSystem(codeGeneratorRequest)
+        }
 
         fun createCodegenBlackBox(pipelineId: String): Pair<CodegenContext, BlackBox> {
             val context = CodeGenerationContext(pipelineId)
