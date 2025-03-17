@@ -30,6 +30,7 @@ import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.tools.fs.DirectoryName.generated
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
+import java.nio.file.Path
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -95,6 +96,10 @@ public class Extension(private val project: Project): CodegenSettings {
         objects.directoryProperty().convention(
             layout.projectDirectory.dir(generated.name)
         )
+    }
+
+    override val outputBaseDir: Path by lazy {
+        project.layout.projectDirectory.dir(generated.name).asFile.toPath()
     }
 
     /**
