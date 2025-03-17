@@ -31,9 +31,9 @@ import io.spine.dependency.local.Reflect
 import io.spine.dependency.local.TestLib
 
 plugins {
+    `java-test-fixtures`
     protobuf
     id("io.spine.mc-java")
-    `java-test-fixtures`
     prototap
 }
 
