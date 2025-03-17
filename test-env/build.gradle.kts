@@ -58,7 +58,7 @@ prototap {
 }
 
 // Add resources placed by ProtoTap so that we can use them from tests in other modules.
-tasks.processResources {
+tasks.jar {
     from(tasks.processTestResources)
 }
 
