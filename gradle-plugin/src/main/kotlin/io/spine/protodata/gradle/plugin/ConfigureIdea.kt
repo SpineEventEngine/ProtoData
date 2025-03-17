@@ -27,7 +27,9 @@
 package io.spine.protodata.gradle.plugin
 
 import com.google.protobuf.gradle.GenerateProtoTask
+import io.spine.protodata.gradle.builtins
 import io.spine.protodata.gradle.debug
+import io.spine.protodata.gradle.plugins
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.Path
