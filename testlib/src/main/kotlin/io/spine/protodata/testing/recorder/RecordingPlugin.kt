@@ -91,7 +91,7 @@ private class ContextAccess: Renderer<Java>(Java) {
 /**
  * Abstract base for recording views.
  */
-private abstract class RecordingView<S : DeclarationViewState, B: ValidatingBuilder<S>> :
+internal abstract class RecordingView<S : DeclarationViewState, B: ValidatingBuilder<S>> :
     View<String, S, B>() {
 
         protected companion object {
@@ -102,7 +102,7 @@ private abstract class RecordingView<S : DeclarationViewState, B: ValidatingBuil
 /**
  * The view which records message type names.
  */
-private class MessageView : RecordingView<MessageTypes, MessageTypes.Builder>() {
+internal class MessageView : RecordingView<MessageTypes, MessageTypes.Builder>() {
 
     @Subscribe
     fun on(@External e: TypeEntered) = alter {
@@ -118,7 +118,7 @@ private class MessageView : RecordingView<MessageTypes, MessageTypes.Builder>() 
 /**
  * The view which records enum type names.
  */
-private class EnumView : RecordingView<EnumTypes, EnumTypes.Builder>() {
+internal class EnumView : RecordingView<EnumTypes, EnumTypes.Builder>() {
 
     @Subscribe
     fun on(@External e: EnumEntered) = alter {
@@ -134,7 +134,7 @@ private class EnumView : RecordingView<EnumTypes, EnumTypes.Builder>() {
 /**
  * The view which records service names.
  */
-private class ServicesView : RecordingView<Services, Services.Builder>() {
+internal class ServicesView : RecordingView<Services, Services.Builder>() {
 
     @Subscribe
     fun on(@External e: ServiceEntered) = alter {
