@@ -26,6 +26,8 @@
 
 package io.spine.protodata.gradle
 
+import java.nio.file.Path
+
 /**
  * Configures the code generation process performed by ProtoData.
  */
@@ -60,4 +62,9 @@ public interface CodegenSettings {
      * By default, points at the `$projectDir/generated/` directory.
      */
     public var targetBaseDir: Any
+
+    /**
+     * The path to the root directory with the generated code.
+     */
+    public val outputBaseDir: Path
 }
