@@ -118,9 +118,9 @@ public class Extension(private val project: Project): CodegenSettings {
     /**
      * Obtains the target directories for code generation.
      *
-     * @see targetBaseDir for the rules for the target dir construction
+     * @see outputBaseDir for the rules for the target dir construction.
      */
-    internal fun targetDirs(sourceSet: SourceSet): Provider<List<Directory>> =
+    internal fun outputDirs(sourceSet: SourceSet): Provider<List<Directory>> =
         compileDir(sourceSet, targetBaseDirProperty)
 
     private fun compileDir(

@@ -173,7 +173,7 @@ internal fun LaunchProtoData.applyDefaults(sourceSet: SourceSet) {
     userClasspathConfiguration = project.userClasspath
 
     sources = ext.sourceDirs(sourceSet)
-    targets = ext.targetDirs(sourceSet)
+    targets = ext.outputDirs(sourceSet)
 
     requestPreLaunchCleanup()
     setDependencies(sourceSet)
