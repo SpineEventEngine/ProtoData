@@ -40,9 +40,9 @@ public interface CodegenSettings {
     public fun plugins(vararg classNames: String)
 
     /**
-     * Passes given names of Java classes to ProtoData as
-     * the `io.spine.protodata.option.OptionsProvider` classes.
+     * Implementations do nothing. Please do not use.
      */
+    @Deprecated(message = "Please do not use. Option providers are provided via `@AutoService`.")
     public fun optionProviders(vararg classNames: String)
 
     /**

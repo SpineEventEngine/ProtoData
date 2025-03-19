@@ -75,14 +75,6 @@ class ExtensionSpec {
     }
 
     @Test
-    fun `add 'OptionProvider' class names`() {
-        val className = "com.acme.MyOptions"
-        extension.optionProviders(className)
-        assertThat(extension.optionProviders.get())
-            .containsExactly(className)
-    }
-
-    @Test
     fun `produce target directory`() {
         val basePath = "my/path"
         val expected = listOf("foo", "bar")

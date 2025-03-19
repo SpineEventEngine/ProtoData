@@ -46,17 +46,24 @@ public class Extension(private val project: Project): CodegenSettings {
 
     private val factory = project.objects
 
+    /**
+     * Adds the class names of the plugins to the list of those passed to ProtoData.
+     */
     public override fun plugins(vararg classNames: String): Unit =
         plugins.addAll(classNames.toList())
 
-    public override fun optionProviders(vararg classNames: String): Unit =
-        optionProviders.addAll(classNames.toList())
-
+    /**
+     * Contains the class names of the plugins passed to ProtoData.
+     */
     @VisibleForTesting
     public val plugins: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
 
+    @Deprecated(message = "Please do not use. Option providers are provided via `@AutoService`.")
+    public override fun optionProviders(vararg classNames: String): Unit = Unit
+
     @VisibleForTesting
+    @Deprecated(message = "Please do not use. Option providers are provided via `@AutoService`.")
     public val optionProviders: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
 
