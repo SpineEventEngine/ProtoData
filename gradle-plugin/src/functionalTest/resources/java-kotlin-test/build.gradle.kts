@@ -34,6 +34,7 @@ buildscript {
 
 plugins {
     java
+    kotlin("jvm")
     id("com.google.protobuf")
     id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
 }

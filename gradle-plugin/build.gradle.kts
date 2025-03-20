@@ -106,7 +106,6 @@ publishing.publications.withType<MavenPublication>().all {
 
 val pluginName = "protoDataPlugin"
 
-@Suppress("UnstableApiUsage") // `@Incubating` properties of `gradlePlugin`.
 gradlePlugin {
     website.set("https://spine.io/")
     vcsUrl.set("https://github.com/SpineEventEngine/ProtoData.git")

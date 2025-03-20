@@ -27,6 +27,7 @@
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.id
 import io.spine.gradle.standardToSpineSdk
+import io.spine.dependency.lib.Protobuf
 
 buildscript {
     standardSpineSdkRepositories()
@@ -34,6 +35,7 @@ buildscript {
 
 plugins {
     java
+    kotlin("jvm")
     id("com.google.protobuf")
     id("@PROTODATA_PLUGIN_ID@") version "@PROTODATA_VERSION@"
 }
@@ -47,6 +49,8 @@ val grpcVersion = "1.50.2"
 dependencies {
     compileOnly("org.apache.tomcat:annotations-api:6.0.53") // necessary for Java 9+
     runtimeOnly("io.grpc:grpc-netty-shaded:$grpcVersion")
+    implementation(kotlin("stdlib"))
+    Protobuf.libs.forEach { implementation(it) }
     implementation("io.grpc:grpc-protobuf:$grpcVersion")
     implementation("io.grpc:grpc-stub:$grpcVersion")
 }
