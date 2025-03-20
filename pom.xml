@@ -151,12 +151,6 @@ all modules and does not describe the project structure per-subproject.
   </dependency>
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
-    <artifactId>kotlin-gradle-plugin-api</artifactId>
-    <version>2.1.10</version>
-    <scope>compile</scope>
-  </dependency>
-  <dependency>
-    <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-reflect</artifactId>
     <version>null</version>
     <scope>compile</scope>
@@ -416,6 +410,12 @@ all modules and does not describe the project structure per-subproject.
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-gradle-plugin</artifactId>
     <version>2.1.10</version>
+  </dependency>
+  <dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-gradle-plugin-api</artifactId>
+    <version>2.1.10</version>
+    <scope>provided</scope>
   </dependency>
   <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
