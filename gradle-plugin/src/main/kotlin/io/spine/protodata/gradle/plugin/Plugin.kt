@@ -52,6 +52,8 @@ import io.spine.protodata.params.WorkingDirectory
 import io.spine.string.toBase64Encoded
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
+import io.spine.tools.gradle.project.hasJava
+import io.spine.tools.gradle.project.hasJavaOrKotlin
 import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.protobufExtension
 import io.spine.tools.gradle.task.JavaTaskName
@@ -334,7 +336,7 @@ private fun GenerateProtoTask.configureSourceSetDirs() {
         java.srcDir(generatedDir(GRPC))
     }
 
-    if (project.hasKotlin()) {
+    if (project.hasJava()) {
         val kotlinDirectorySet = sourceSet.kotlinDirectorySet()
         kotlinDirectorySet!!.let {
             excludeFor(it)

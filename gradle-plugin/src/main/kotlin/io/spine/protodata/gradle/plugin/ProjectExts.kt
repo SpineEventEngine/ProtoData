@@ -26,11 +26,14 @@
 
 package io.spine.protodata.gradle.plugin
 
-import com.google.common.collect.ImmutableList
 import io.spine.protodata.params.Directories.PROTODATA_WORKING_DIR
-import io.spine.tools.code.Java
-import io.spine.tools.code.Kotlin
 import io.spine.tools.code.Language
+import io.spine.tools.gradle.project.hasCompileTask
+import io.spine.tools.gradle.project.javaCompileFor
+import io.spine.tools.gradle.project.kotlinCompileFor
+import io.spine.tools.gradle.project.hasJava
+import io.spine.tools.gradle.project.hasKotlin
+import io.spine.tools.gradle.project.hasJavaOrKotlin
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
 import java.io.File
 import java.nio.file.Path
@@ -74,25 +77,34 @@ public fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): Fi
  *
  * @return `true` if `java` plugin is installed, `false` otherwise.
  */
-public fun Project.hasJava(): Boolean = hasCompileTask(Java)
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.hasJava()` instead.",
+    ReplaceWith("hasJava()", imports = arrayOf("io.spine.tools.gradle.project.hasJava"))
+)
+public fun Project.hasJava(): Boolean = hasJava()
 
 /**
  * Tells if this project can deal with Kotlin code.
  *
  * @return `true` if any of the tasks starts with `"compile"` and ends with `"Kotlin"`.
  */
-public fun Project.hasKotlin(): Boolean = hasCompileTask(Kotlin)
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.hasKotlin()` instead.",
+    ReplaceWith("hasJava()", imports = arrayOf("io.spine.tools.gradle.project.hasKotlin"))
+)
+public fun Project.hasKotlin(): Boolean = hasKotlin()
 
 /**
  * Tells if this project has a compile task for the given language.
  */
-public fun Project.hasCompileTask(language: Language): Boolean {
-    val currentTasks = ImmutableList.copyOf(tasks)
-    val compileTask = currentTasks.find {
-        it.name.startsWith("compile") && it.name.endsWith(language.name)
-    }
-    return compileTask != null
-}
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.hasCompileTask(Language)` instead.",
+    ReplaceWith(
+        "hasCompileTask(language)",
+        imports = arrayOf("io.spine.tools.gradle.project.hasCompileTask")
+    )
+)
+public fun Project.hasCompileTask(language: Language): Boolean = hasCompileTask(language)
 
 /**
  * Verifies if the project can deal with Java or Kotlin code.
@@ -107,12 +119,14 @@ public fun Project.hasCompileTask(language: Language): Boolean {
  * @see [hasJava]
  * @see [hasKotlin]
  */
-public fun Project.hasJavaOrKotlin(): Boolean {
-    if (hasJava()) {
-        return true
-    }
-    return hasKotlin()
-}
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.hasJavaOrKotlin()` instead.",
+    ReplaceWith(
+        "hasJavaOrKotlin()",
+        imports = arrayOf("io.spine.tools.gradle.project.hasJavaOrKotlin")
+    )
+)
+public fun Project.hasJavaOrKotlin(): Boolean = hasJavaOrKotlin()
 
 /**
  * Attempts to obtain the Java compilation Gradle task for the given source set.
@@ -121,10 +135,14 @@ public fun Project.hasJavaOrKotlin(): Boolean {
  * if the source set name is `"main"`. If the task does not fit this described pattern, this method
  * will not find it.
  */
-public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
-    val taskName = sourceSet.compileJavaTaskName
-    return tasks.findByName(taskName) as JavaCompile?
-}
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.javaCompileFor()` instead.",
+    ReplaceWith(
+        "javaCompileFor(sourceSet)",
+        imports = arrayOf("io.spine.tools.gradle.project.javaCompileFor")
+    )
+)
+public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? = javaCompileFor(sourceSet)
 
 /**
  * Attempts to obtain the Kotlin compilation Gradle task for the given source set.
@@ -133,7 +151,12 @@ public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
  * `compileKotlin` if the source set name is `"main"`. If the task does not fit this described
  * pattern, this method will not find it.
  */
-public fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompilationTask<*>? {
-    val taskName = sourceSet.getCompileTaskName("Kotlin")
-    return tasks.findByName(taskName) as KotlinCompilationTask<*>?
-}
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.kotlinCompileFor()` instead.",
+    ReplaceWith(
+        "kotlinCompileFor(sourceSet)",
+        imports = arrayOf("io.spine.tools.gradle.project.kotlinCompileFor")
+    )
+)
+public fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompilationTask<*>? =
+    kotlinCompileFor(sourceSet)
