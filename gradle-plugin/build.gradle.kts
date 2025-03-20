@@ -70,16 +70,17 @@ testing {
 }
 
 dependencies {
+    api(project(":gradle-api"))
+
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
     compileOnly(Protobuf.GradlePlugin.lib)
-    api(project(":gradle-api"))
+    compileOnly(Kotlin.GradlePlugin.api)
 
     implementation(project(":api"))
     implementation(project(":params"))
     implementation(ToolBase.lib)
     implementation(ToolBase.pluginBase)
-    implementation(Kotlin.GradlePlugin.api)
 }
 
 /**
