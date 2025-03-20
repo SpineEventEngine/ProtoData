@@ -79,11 +79,11 @@ class ExtensionSpec {
         val basePath = "my/path"
         val expected = listOf("foo", "bar")
 
-        extension.targetBaseDir = basePath
+        extension.outputBaseDir.set(project.layout.projectDirectory.dir(basePath))
         extension.subDirs = expected
 
         val sourceSet = project.sourceSets.getByName(MAIN_SOURCE_SET_NAME)
-        val targetDirs = extension.targetDirs(sourceSet).get()
+        val targetDirs = extension.outputDirs(sourceSet).get()
 
         val mainDir = project.projectDir.toPath() / basePath / MAIN_SOURCE_SET_NAME
         targetDirs[0].toPath() shouldBe mainDir / expected[0]

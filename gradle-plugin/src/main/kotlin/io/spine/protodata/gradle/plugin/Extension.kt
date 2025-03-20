@@ -30,7 +30,6 @@ import com.google.common.annotations.VisibleForTesting
 import io.spine.protodata.gradle.CodegenSettings
 import io.spine.tools.fs.DirectoryName.generated
 import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
-import java.nio.file.Path
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -95,18 +94,23 @@ public class Extension(private val project: Project): CodegenSettings {
     private val subDirProperty: ListProperty<String> =
         factory.listProperty<String>().convention(defaultSubdirectories)
 
+    @Deprecated(
+        message = "Please use `outputBaseDirectory` instead.",
+        ReplaceWith("outputBaseDirectory")
+    )
     public override var targetBaseDir: Any
-        get() = targetBaseDirProperty.get()
-        set(value) = targetBaseDirProperty.set(project.file(value))
+        get() = outputBaseDir.get()
+        set(value) = outputBaseDir.set(project.file(value))
 
-    private val targetBaseDirProperty: DirectoryProperty = with(project) {
+    /**
+     * Allows configuring the path to the root directory with the generated code.
+     *
+     * By default, points at the `$projectDir/generated/` directory.
+     */
+    override val outputBaseDir: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(
             layout.projectDirectory.dir(generated.name)
         )
-    }
-
-    override val outputBaseDir: Path by lazy {
-        project.layout.projectDirectory.dir(generated.name).asFile.toPath()
     }
 
     /**
@@ -118,10 +122,10 @@ public class Extension(private val project: Project): CodegenSettings {
     /**
      * Obtains the target directories for code generation.
      *
-     * @see targetBaseDir for the rules for the target dir construction
+     * @see outputBaseDir for the rules for the target dir construction
      */
-    internal fun targetDirs(sourceSet: SourceSet): Provider<List<Directory>> =
-        compileDir(sourceSet, targetBaseDirProperty)
+    internal fun outputDirs(sourceSet: SourceSet): Provider<List<Directory>> =
+        compileDir(sourceSet, outputBaseDir)
 
     private fun compileDir(
         sourceSet: SourceSet,

@@ -53,17 +53,11 @@ public val Project.protocOutputDir: File
     get() = generatedSourceProtoDir.toFile()
 
 /**
- * Obtains the name of the directory where ProtoData places generated files.
- */
-internal val Project.targetBaseDir: String
-    get() = extension.targetBaseDir.toString()
-
-/**
  * Obtains the path of the directory with the generated code as configured by
  * the [Extension.targetBaseDir] property of the ProtoData extension of this Gradle project.
  */
 public val Project.generatedDir: Path
-    get() = projectDir.resolve(targetBaseDir).toPath()
+    get() = extension.outputBaseDir.get().asFile.toPath()
 
 /**
  * Obtains the `generated` directory for the given [sourceSet] and a language.

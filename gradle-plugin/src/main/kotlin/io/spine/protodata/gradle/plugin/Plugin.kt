@@ -200,7 +200,7 @@ private fun Project.createCleanTask(sourceSet: SourceSet) {
     val project = this
     val cleanSourceSet = CleanProtoDataTask.nameFor(sourceSet)
     tasks.register<Delete>(cleanSourceSet) {
-        delete(extension.targetDirs(sourceSet))
+        delete(extension.outputDirs(sourceSet))
 
         val cleanProtoDataTask = this
         tasks.getByName("clean").dependsOn(cleanProtoDataTask)

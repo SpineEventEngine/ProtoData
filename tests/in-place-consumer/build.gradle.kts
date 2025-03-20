@@ -49,5 +49,5 @@ protoData {
     plugins(
         "io.spine.protodata.test.uuid.UuidPlugin"
     )
-    targetBaseDir = protobufDir
+    outputBaseDir.set(project.layout.projectDirectory.dir(protobufDir))
 }
