@@ -26,17 +26,14 @@
 
 package io.spine.protodata.gradle.plugin
 
-import io.spine.protodata.params.Directories.PROTODATA_WORKING_DIR
+import io.spine.protodata.gradle.protoDataWorkingDir
 import io.spine.tools.code.Language
 import io.spine.tools.gradle.project.hasCompileTask
+import io.spine.tools.gradle.project.hasJava
+import io.spine.tools.gradle.project.hasJavaOrKotlin
+import io.spine.tools.gradle.project.hasKotlin
 import io.spine.tools.gradle.project.javaCompileFor
 import io.spine.tools.gradle.project.kotlinCompileFor
-import io.spine.tools.gradle.project.hasJava
-import io.spine.tools.gradle.project.hasKotlin
-import io.spine.tools.gradle.project.hasJavaOrKotlin
-import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
-import java.io.File
-import java.nio.file.Path
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.tasks.SourceSet
@@ -46,31 +43,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 /**
  * Obtains the directory where ProtoData stores its temporary files.
  */
+@Deprecated(
+    "Please use `io.spine.protodata.gradle.protoDataWorkingDir` instead.",
+    ReplaceWith(
+        "protoDataWorkingDir",
+        imports = arrayOf("io.spine.protodata.gradle.protoDataWorkingDir")
+    )
+)
 public val Project.protoDataWorkingDir: Directory
-    get() = layout.buildDirectory.dir(PROTODATA_WORKING_DIR).get()
-
-/**
- * Obtains the root directory into which Protobuf Gradle Plugin assigns the `protoc` output.
- */
-public val Project.protocOutputDir: File
-    get() = generatedSourceProtoDir.toFile()
-
-/**
- * Obtains the path of the directory with the generated code as configured by
- * the [Extension.targetBaseDir] property of the ProtoData extension of this Gradle project.
- */
-public val Project.generatedDir: Path
-    get() = extension.outputBaseDir.get().asFile.toPath()
-
-/**
- * Obtains the `generated` directory for the given [sourceSet] and a language.
- *
- * If the language is not given, the returned directory is the root directory for the source set.
- */
-public fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): File {
-    val path = generatedDir.resolve("${sourceSet.name}/$language")
-    return path.toFile()
-}
+    get() = protoDataWorkingDir
 
 /**
  * Tells if this project can deal with Java code.

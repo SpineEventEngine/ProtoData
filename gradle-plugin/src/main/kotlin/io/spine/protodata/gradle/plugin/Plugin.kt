@@ -44,6 +44,7 @@ import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.ProtoDataTask
 import io.spine.protodata.gradle.ProtocPluginArtifact
+import io.spine.protodata.gradle.generatedDir
 import io.spine.protodata.gradle.kotlinDirectorySet
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
