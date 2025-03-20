@@ -33,8 +33,8 @@ import io.spine.dependency.local.TestLib
 plugins {
     `java-test-fixtures`
     protobuf
-    id("io.spine.mc-java")
     prototap
+    id("io.spine.mc-java")
 }
 
 dependencies {
