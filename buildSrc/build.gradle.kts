@@ -186,7 +186,7 @@ dependencies {
         "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}",
         "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion",
         "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
-        "org.jetbrains.kotlinx:kover-gradle-plugin:$koverVersion",
+        "org.jetbrains.kotlinx:kover-gradle-plugin:$koverVersion"
     ).forEach {
         implementation(it)
     }
