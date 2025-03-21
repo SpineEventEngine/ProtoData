@@ -39,8 +39,8 @@ import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.params.pipelineParameters
 import io.spine.tools.code.SourceSetName
-import io.spine.tools.gradle.project.javaCompileFor
-import io.spine.tools.gradle.project.kotlinCompileFor
+import io.spine.tools.gradle.project.findJavaCompileFor
+import io.spine.tools.gradle.project.findKotlinCompileFor
 import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File
 import java.io.File.pathSeparator
@@ -196,8 +196,8 @@ private fun LaunchProtoData.setDependencies(sourceSet: SourceSet) {
         project.userClasspath.buildDependencies,
     )
     val launchTask = this
-    project.javaCompileFor(sourceSet)?.dependsOn(launchTask)
-    project.kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
+    project.findJavaCompileFor(sourceSet)?.dependsOn(launchTask)
+    project.findKotlinCompileFor(sourceSet)?.dependsOn(launchTask)
 }
 
 /**

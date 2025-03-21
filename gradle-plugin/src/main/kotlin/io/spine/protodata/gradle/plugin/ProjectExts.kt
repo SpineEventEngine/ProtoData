@@ -28,12 +28,12 @@ package io.spine.protodata.gradle.plugin
 
 import io.spine.protodata.gradle.protoDataWorkingDir
 import io.spine.tools.code.Language
+import io.spine.tools.gradle.project.findJavaCompileFor
+import io.spine.tools.gradle.project.findKotlinCompileFor
 import io.spine.tools.gradle.project.hasCompileTask
 import io.spine.tools.gradle.project.hasJava
 import io.spine.tools.gradle.project.hasJavaOrKotlin
 import io.spine.tools.gradle.project.hasKotlin
-import io.spine.tools.gradle.project.javaCompileFor
-import io.spine.tools.gradle.project.kotlinCompileFor
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.tasks.SourceSet
@@ -120,10 +120,11 @@ public fun Project.hasJavaOrKotlin(): Boolean = hasJavaOrKotlin()
     "Please use `io.spine.tools.gradle.project.javaCompileFor()` instead.",
     ReplaceWith(
         "javaCompileFor(sourceSet)",
-        imports = arrayOf("io.spine.tools.gradle.project.javaCompileFor")
+        imports = arrayOf("io.spine.tools.gradle.project.findJavaCompileFor")
     )
 )
-public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? = javaCompileFor(sourceSet)
+public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? =
+    findJavaCompileFor(sourceSet)
 
 /**
  * Attempts to obtain the Kotlin compilation Gradle task for the given source set.
@@ -136,8 +137,8 @@ public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? = javaComp
     "Please use `io.spine.tools.gradle.project.kotlinCompileFor()` instead.",
     ReplaceWith(
         "kotlinCompileFor(sourceSet)",
-        imports = arrayOf("io.spine.tools.gradle.project.kotlinCompileFor")
+        imports = arrayOf("io.spine.tools.gradle.project.findKotlinCompileFor")
     )
 )
 public fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompilationTask<*>? =
-    kotlinCompileFor(sourceSet)
+    findKotlinCompileFor(sourceSet)
