@@ -193,13 +193,6 @@ fun Module.configureDocTasks() {
         dependsOn(dokkaJavadoc)
     }
 
-    project.afterEvaluate {
-        val dokkaKotlinJar = tasks.findByName("dokkaKotlinJar")
-        dokkaKotlinJar?.let {
-            dokkaJavadoc.dependsOn(it)
-        }
-    }
-
     tasks.withType<DokkaTaskPartial>().configureEach {
         configureForKotlin()
     }
