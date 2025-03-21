@@ -160,6 +160,35 @@ public object Compilation {
         return output
     }
 
+    /**
+     * Prints the warning diagnostics to [System.out]
+     *
+     * The method returns the string printed to the console so that it could be also
+     * put into logging output by the calling code.
+     *
+     * @param file The file which causes the warning.
+     * @param span The span of the questionable Protobuf declaration.
+     * @param message The function calculating the description of the warning.
+     * @return the string printed to the console.
+     */
+    public fun warning(file: PFile, span: Span, message: () -> String): String =
+        warning(file, span.startLine, span.startColumn, message())
+
+    /**
+     * Prints the warning diagnostics to [System.out]
+     *
+     * The method returns the string printed to the console so that it could be also
+     * put into logging output by the calling code.
+     *
+     * @param file The file which causes the warning.
+     * @param line The one-based number of the line with the questionable code.
+     * @param column The one-based number of the column with the questionable code.
+     * @param message The description of the warning.
+     * @return the string printed to the console.
+     */
+    public fun warning(file: PFile, line: Int, column: Int, message: String): String =
+        warning(file.toJava(), line, column, message)
+
     @VisibleForTesting
     internal fun warningMessage(file: File, line: Int, column: Int, message: String) =
         "$WARNING_PREFIX ${file.maybeUri()}:$line:$column: $message"
