@@ -45,17 +45,24 @@ public class Extension(private val project: Project): CodegenSettings {
 
     private val factory = project.objects
 
+    /**
+     * Adds the class names of the plugins to the list of those passed to ProtoData.
+     */
     public override fun plugins(vararg classNames: String): Unit =
         plugins.addAll(classNames.toList())
 
-    public override fun optionProviders(vararg classNames: String): Unit =
-        optionProviders.addAll(classNames.toList())
-
+    /**
+     * Contains the class names of the plugins passed to ProtoData.
+     */
     @VisibleForTesting
     public val plugins: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
 
+    @Deprecated(message = "Please do not use. Option providers are provided via `@AutoService`.")
+    public override fun optionProviders(vararg classNames: String): Unit = Unit
+
     @VisibleForTesting
+    @Deprecated(message = "Please do not use. Option providers are provided via `@AutoService`.")
     public val optionProviders: ListProperty<String> =
         factory.listProperty<String>().convention(listOf())
 
@@ -87,11 +94,20 @@ public class Extension(private val project: Project): CodegenSettings {
     private val subDirProperty: ListProperty<String> =
         factory.listProperty<String>().convention(defaultSubdirectories)
 
+    @Deprecated(
+        message = "Please use `outputBaseDirectory` instead.",
+        ReplaceWith("outputBaseDirectory")
+    )
     public override var targetBaseDir: Any
-        get() = targetBaseDirProperty.get()
-        set(value) = targetBaseDirProperty.set(project.file(value))
+        get() = outputBaseDir.get()
+        set(value) = outputBaseDir.set(project.file(value))
 
-    private val targetBaseDirProperty: DirectoryProperty = with(project) {
+    /**
+     * Allows configuring the path to the root directory with the generated code.
+     *
+     * By default, points at the `$projectDir/generated/` directory.
+     */
+    override val outputBaseDir: DirectoryProperty = with(project) {
         objects.directoryProperty().convention(
             layout.projectDirectory.dir(generated.name)
         )
@@ -106,10 +122,10 @@ public class Extension(private val project: Project): CodegenSettings {
     /**
      * Obtains the target directories for code generation.
      *
-     * @see targetBaseDir for the rules for the target dir construction
+     * @see outputBaseDir for the rules for the target dir construction
      */
-    internal fun targetDirs(sourceSet: SourceSet): Provider<List<Directory>> =
-        compileDir(sourceSet, targetBaseDirProperty)
+    internal fun outputDirs(sourceSet: SourceSet): Provider<List<Directory>> =
+        compileDir(sourceSet, outputBaseDir)
 
     private fun compileDir(
         sourceSet: SourceSet,

@@ -30,6 +30,7 @@ import io.spine.dependency.lib.Protobuf
 import io.spine.dependency.local.Base
 import io.spine.dependency.local.CoreJava
 import io.spine.dependency.local.ToolBase
+import io.spine.dependency.local.Validation
 import io.spine.dependency.test.JUnit
 import io.spine.dependency.test.Truth
 import io.spine.gradle.javac.configureErrorProne
@@ -98,6 +99,7 @@ fun Module.forceConfigurations() {
                 Protobuf.compiler,
                 Base.lib,
                 ToolBase.lib,
+                Validation.runtime,
             )
         }
     }
@@ -189,13 +191,6 @@ fun Module.configureDocTasks() {
         from(dokkaJavadoc.outputDirectory)
         archiveClassifier.set("javadoc")
         dependsOn(dokkaJavadoc)
-    }
-
-    project.afterEvaluate {
-        val dokkaKotlinJar = tasks.findByName("dokkaKotlinJar")
-        dokkaKotlinJar?.let {
-            dokkaJavadoc.dependsOn(it)
-        }
     }
 
     tasks.withType<DokkaTaskPartial>().configureEach {

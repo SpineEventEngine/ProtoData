@@ -29,8 +29,8 @@ package io.spine.protodata.gradle.plugin
 import com.google.protobuf.gradle.GenerateProtoTask
 import com.intellij.openapi.util.io.FileUtil
 import io.spine.protodata.Constants.CLI_APP_CLASS
-import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.ast.toAbsoluteFile
+import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.error
@@ -39,6 +39,8 @@ import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.params.pipelineParameters
 import io.spine.tools.code.SourceSetName
+import io.spine.tools.gradle.project.findJavaCompileFor
+import io.spine.tools.gradle.project.findKotlinCompileFor
 import io.spine.tools.gradle.protobuf.containsProtoFiles
 import java.io.File
 import java.io.File.pathSeparator
@@ -173,7 +175,7 @@ internal fun LaunchProtoData.applyDefaults(sourceSet: SourceSet) {
     userClasspathConfiguration = project.userClasspath
 
     sources = ext.sourceDirs(sourceSet)
-    targets = ext.targetDirs(sourceSet)
+    targets = ext.outputDirs(sourceSet)
 
     requestPreLaunchCleanup()
     setDependencies(sourceSet)
@@ -194,8 +196,8 @@ private fun LaunchProtoData.setDependencies(sourceSet: SourceSet) {
         project.userClasspath.buildDependencies,
     )
     val launchTask = this
-    project.javaCompileFor(sourceSet)?.dependsOn(launchTask)
-    project.kotlinCompileFor(sourceSet)?.dependsOn(launchTask)
+    project.findJavaCompileFor(sourceSet)?.dependsOn(launchTask)
+    project.findKotlinCompileFor(sourceSet)?.dependsOn(launchTask)
 }
 
 /**

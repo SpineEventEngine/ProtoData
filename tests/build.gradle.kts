@@ -95,11 +95,13 @@ subprojects {
                     Grpc.api,
                     Base.lib,
                     ToolBase.lib,
+                    ToolBase.psiJava,
                     Validation.runtime,
                     Logging.lib,
                     Logging.libJvm,
                     Logging.middleware,
                     Reflect.lib,
+                    ProtoData.api,
                     ProtoData.backend,
                     ProtoData.java,
                     Jackson.Junior.objects

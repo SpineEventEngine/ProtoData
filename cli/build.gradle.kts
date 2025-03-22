@@ -37,7 +37,6 @@ plugins {
     `build-proto-model`
     `maven-publish`
     prototap
-    ksp
     id("com.github.johnrengelman.shadow")
 }
 
@@ -62,6 +61,10 @@ dependencies {
     testCompileOnly(AutoService.annotations)
     testImplementation(project(":testlib"))
     testImplementation(project(":test-env"))
+}
+
+sourceSets.test {
+    kotlin.srcDirs("$projectDir/generated/ksp/test/kotlin")
 }
 
 /** The publishing settings from the root project. */

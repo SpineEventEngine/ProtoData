@@ -28,8 +28,11 @@ import io.spine.dependency.local.ToolBase
 
 dependencies {
     compileOnly(gradleApi())
+
     implementation(ToolBase.pluginBase)
     implementation(project(":api"))
+    implementation(project(":params"))
+
     testImplementation(gradleApi())
     testImplementation(ToolBase.pluginTestlib)
 }

@@ -35,8 +35,8 @@ import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
 
 plugins {
-    `build-proto-model`
     `java-test-fixtures`
+    `build-proto-model`
 }
 
 dependencies {

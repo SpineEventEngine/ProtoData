@@ -26,6 +26,8 @@
 
 package io.spine.protodata.gradle
 
+import org.gradle.api.file.DirectoryProperty
+
 /**
  * Configures the code generation process performed by ProtoData.
  */
@@ -38,9 +40,9 @@ public interface CodegenSettings {
     public fun plugins(vararg classNames: String)
 
     /**
-     * Passes given names of Java classes to ProtoData as
-     * the `io.spine.protodata.option.OptionsProvider` classes.
+     * Implementations do nothing. Please do not use.
      */
+    @Deprecated(message = "Please do not use. Option providers are provided via `@AutoService`.")
     public fun optionProviders(vararg classNames: String)
 
     /**
@@ -59,5 +61,13 @@ public interface CodegenSettings {
      *
      * By default, points at the `$projectDir/generated/` directory.
      */
+    @Deprecated(message = "Please use `outputBaseDir` instead.", ReplaceWith("outputBaseDir"))
     public var targetBaseDir: Any
+
+    /**
+     * The path to the root directory with the generated code.
+     *
+     * By default, points at the `$projectDir/generated/` directory.
+     */
+    public val outputBaseDir: DirectoryProperty
 }

@@ -28,7 +28,7 @@ plugins {
     java
 }
 
-val versionDir = layout.buildDirectory.dir("version").get()
+val versionDir = layout.buildDirectory.dir("version").get().asFile.path
 
 /**
  * This file, containing the version of ProtoData, is generated at build time and included into

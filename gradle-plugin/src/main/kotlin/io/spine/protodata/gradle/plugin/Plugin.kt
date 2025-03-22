@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.ProtoDataTask
 import io.spine.protodata.gradle.ProtocPluginArtifact
+import io.spine.protodata.gradle.generatedDir
+import io.spine.protodata.gradle.kotlinDirectorySet
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
@@ -51,6 +53,8 @@ import io.spine.protodata.params.WorkingDirectory
 import io.spine.string.toBase64Encoded
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
+import io.spine.tools.gradle.project.hasJava
+import io.spine.tools.gradle.project.hasJavaOrKotlin
 import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.protobufExtension
 import io.spine.tools.gradle.task.JavaTaskName
@@ -199,7 +203,7 @@ private fun Project.createCleanTask(sourceSet: SourceSet) {
     val project = this
     val cleanSourceSet = CleanProtoDataTask.nameFor(sourceSet)
     tasks.register<Delete>(cleanSourceSet) {
-        delete(extension.targetDirs(sourceSet))
+        delete(extension.outputDirs(sourceSet))
 
         val cleanProtoDataTask = this
         tasks.getByName("clean").dependsOn(cleanProtoDataTask)
@@ -333,7 +337,7 @@ private fun GenerateProtoTask.configureSourceSetDirs() {
         java.srcDir(generatedDir(GRPC))
     }
 
-    if (project.hasKotlin()) {
+    if (project.hasJava()) {
         val kotlinDirectorySet = sourceSet.kotlinDirectorySet()
         kotlinDirectorySet!!.let {
             excludeFor(it)

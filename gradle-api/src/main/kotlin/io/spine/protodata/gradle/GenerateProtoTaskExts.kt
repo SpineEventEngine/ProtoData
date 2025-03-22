@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle.plugin
+package io.spine.protodata.gradle
 
 import com.google.protobuf.gradle.GenerateProtoTask
 import com.google.protobuf.gradle.GenerateProtoTask.PluginOptions
@@ -34,12 +34,12 @@ import org.gradle.api.NamedDomainObjectContainer
 /**
  * Obtains names of [built-ins][GenerateProtoTask.getBuiltinsForCaching] of this task.
  */
-internal fun GenerateProtoTask.builtins(): List<String> = collectNames("getBuiltinsForCaching")
+public fun GenerateProtoTask.builtins(): List<String> = collectNames("getBuiltinsForCaching")
 
 /**
  * Obtains names of [plugins][GenerateProtoTask.getPluginsForCaching] of this task.
  */
-internal fun GenerateProtoTask.plugins(): List<String> = collectNames("getPluginsForCaching")
+public fun GenerateProtoTask.plugins(): List<String> = collectNames("getPluginsForCaching")
 
 /**
  * Reflectively calls the method obtaining a collection of [PluginOptions].

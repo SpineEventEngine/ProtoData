@@ -47,7 +47,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter(JUnit.version)
             dependencies {
-                implementation(Kotlin.gradlePluginLib)
+                implementation(Kotlin.GradlePlugin.lib)
                 implementation(gradleKotlinDsl())
                 implementation(Protobuf.GradlePlugin.lib)
                 implementation(ToolBase.pluginBase)
@@ -58,7 +58,7 @@ testing {
         val functionalTest by registering(JvmTestSuite::class) {
             useJUnitJupiter(JUnit.version)
             dependencies {
-                implementation(Kotlin.gradlePluginLib)
+                implementation(Kotlin.GradlePlugin.lib)
                 implementation(Kotlin.testJUnit5)
                 implementation(ToolBase.pluginBase)
                 implementation(TestLib.lib)
@@ -70,16 +70,17 @@ testing {
 }
 
 dependencies {
+    api(project(":gradle-api"))
+
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
     compileOnly(Protobuf.GradlePlugin.lib)
-    api(project(":gradle-api"))
+    compileOnly(Kotlin.GradlePlugin.api)
 
     implementation(project(":api"))
     implementation(project(":params"))
     implementation(ToolBase.lib)
     implementation(ToolBase.pluginBase)
-    implementation(Kotlin.gradlePluginApi)
 }
 
 /**
@@ -105,7 +106,6 @@ publishing.publications.withType<MavenPublication>().all {
 
 val pluginName = "protoDataPlugin"
 
-@Suppress("UnstableApiUsage") // `@Incubating` properties of `gradlePlugin`.
 gradlePlugin {
     website.set("https://spine.io/")
     vcsUrl.set("https://github.com/SpineEventEngine/ProtoData.git")

@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.gradle.plugin
+package io.spine.protodata.gradle
 
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSet
@@ -32,5 +32,5 @@ import org.gradle.api.tasks.SourceSet
 /**
  * Obtains a source directory set with the Kotlin source code, if it exists in this source set.
  */
-internal fun SourceSet.kotlinDirectorySet(): SourceDirectorySet? =
+public fun SourceSet.kotlinDirectorySet(): SourceDirectorySet? =
     extensions.findByName("kotlin") as SourceDirectorySet?

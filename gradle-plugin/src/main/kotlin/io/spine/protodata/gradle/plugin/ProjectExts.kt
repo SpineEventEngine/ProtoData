@@ -26,14 +26,14 @@
 
 package io.spine.protodata.gradle.plugin
 
-import com.google.common.collect.ImmutableList
-import io.spine.protodata.params.Directories.PROTODATA_WORKING_DIR
-import io.spine.tools.code.Java
-import io.spine.tools.code.Kotlin
+import io.spine.protodata.gradle.protoDataWorkingDir
 import io.spine.tools.code.Language
-import io.spine.tools.gradle.protobuf.generatedSourceProtoDir
-import java.io.File
-import java.nio.file.Path
+import io.spine.tools.gradle.project.findJavaCompileFor
+import io.spine.tools.gradle.project.findKotlinCompileFor
+import io.spine.tools.gradle.project.hasCompileTask
+import io.spine.tools.gradle.project.hasJava
+import io.spine.tools.gradle.project.hasJavaOrKotlin
+import io.spine.tools.gradle.project.hasKotlin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.tasks.SourceSet
@@ -43,62 +43,49 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 /**
  * Obtains the directory where ProtoData stores its temporary files.
  */
+@Deprecated(
+    "Please use `io.spine.protodata.gradle.protoDataWorkingDir` instead.",
+    ReplaceWith(
+        "protoDataWorkingDir",
+        imports = arrayOf("io.spine.protodata.gradle.protoDataWorkingDir")
+    )
+)
 public val Project.protoDataWorkingDir: Directory
-    get() = layout.buildDirectory.dir(PROTODATA_WORKING_DIR).get()
-
-/**
- * Obtains the root directory into which Protobuf Gradle Plugin assigns the `protoc` output.
- */
-public val Project.protocOutputDir: File
-    get() = generatedSourceProtoDir.toFile()
-
-/**
- * Obtains the name of the directory where ProtoData places generated files.
- */
-internal val Project.targetBaseDir: String
-    get() = extension.targetBaseDir.toString()
-
-/**
- * Obtains the path of the directory with the generated code as configured by
- * the [Extension.targetBaseDir] property of the ProtoData extension of this Gradle project.
- */
-public val Project.generatedDir: Path
-    get() = projectDir.resolve(targetBaseDir).toPath()
-
-/**
- * Obtains the `generated` directory for the given [sourceSet] and a language.
- *
- * If the language is not given, the returned directory is the root directory for the source set.
- */
-public fun Project.generatedDir(sourceSet: SourceSet, language: String = ""): File {
-    val path = generatedDir.resolve("${sourceSet.name}/$language")
-    return path.toFile()
-}
+    get() = protoDataWorkingDir
 
 /**
  * Tells if this project can deal with Java code.
  *
  * @return `true` if `java` plugin is installed, `false` otherwise.
  */
-public fun Project.hasJava(): Boolean = hasCompileTask(Java)
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.hasJava()` instead.",
+    ReplaceWith("hasJava()", imports = arrayOf("io.spine.tools.gradle.project.hasJava"))
+)
+public fun Project.hasJava(): Boolean = hasJava()
 
 /**
  * Tells if this project can deal with Kotlin code.
  *
  * @return `true` if any of the tasks starts with `"compile"` and ends with `"Kotlin"`.
  */
-public fun Project.hasKotlin(): Boolean = hasCompileTask(Kotlin)
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.hasKotlin()` instead.",
+    ReplaceWith("hasJava()", imports = arrayOf("io.spine.tools.gradle.project.hasKotlin"))
+)
+public fun Project.hasKotlin(): Boolean = hasKotlin()
 
 /**
  * Tells if this project has a compile task for the given language.
  */
-public fun Project.hasCompileTask(language: Language): Boolean {
-    val currentTasks = ImmutableList.copyOf(tasks)
-    val compileTask = currentTasks.find {
-        it.name.startsWith("compile") && it.name.endsWith(language.name)
-    }
-    return compileTask != null
-}
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.hasCompileTask(Language)` instead.",
+    ReplaceWith(
+        "hasCompileTask(language)",
+        imports = arrayOf("io.spine.tools.gradle.project.hasCompileTask")
+    )
+)
+public fun Project.hasCompileTask(language: Language): Boolean = hasCompileTask(language)
 
 /**
  * Verifies if the project can deal with Java or Kotlin code.
@@ -113,12 +100,14 @@ public fun Project.hasCompileTask(language: Language): Boolean {
  * @see [hasJava]
  * @see [hasKotlin]
  */
-public fun Project.hasJavaOrKotlin(): Boolean {
-    if (hasJava()) {
-        return true
-    }
-    return hasKotlin()
-}
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.hasJavaOrKotlin()` instead.",
+    ReplaceWith(
+        "hasJavaOrKotlin()",
+        imports = arrayOf("io.spine.tools.gradle.project.hasJavaOrKotlin")
+    )
+)
+public fun Project.hasJavaOrKotlin(): Boolean = hasJavaOrKotlin()
 
 /**
  * Attempts to obtain the Java compilation Gradle task for the given source set.
@@ -127,10 +116,15 @@ public fun Project.hasJavaOrKotlin(): Boolean {
  * if the source set name is `"main"`. If the task does not fit this described pattern, this method
  * will not find it.
  */
-public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
-    val taskName = sourceSet.compileJavaTaskName
-    return tasks.findByName(taskName) as JavaCompile?
-}
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.javaCompileFor()` instead.",
+    ReplaceWith(
+        "javaCompileFor(sourceSet)",
+        imports = arrayOf("io.spine.tools.gradle.project.findJavaCompileFor")
+    )
+)
+public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? =
+    findJavaCompileFor(sourceSet)
 
 /**
  * Attempts to obtain the Kotlin compilation Gradle task for the given source set.
@@ -139,7 +133,12 @@ public fun Project.javaCompileFor(sourceSet: SourceSet): JavaCompile? {
  * `compileKotlin` if the source set name is `"main"`. If the task does not fit this described
  * pattern, this method will not find it.
  */
-public fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompilationTask<*>? {
-    val taskName = sourceSet.getCompileTaskName("Kotlin")
-    return tasks.findByName(taskName) as KotlinCompilationTask<*>?
-}
+@Deprecated(
+    "Please use `io.spine.tools.gradle.project.kotlinCompileFor()` instead.",
+    ReplaceWith(
+        "kotlinCompileFor(sourceSet)",
+        imports = arrayOf("io.spine.tools.gradle.project.findKotlinCompileFor")
+    )
+)
+public fun Project.kotlinCompileFor(sourceSet: SourceSet): KotlinCompilationTask<*>? =
+    findKotlinCompileFor(sourceSet)
