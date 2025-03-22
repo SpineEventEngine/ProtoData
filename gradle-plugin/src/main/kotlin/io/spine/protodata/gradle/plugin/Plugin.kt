@@ -45,20 +45,22 @@ import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.ProtoDataTask
 import io.spine.protodata.gradle.ProtocPluginArtifact
 import io.spine.protodata.gradle.generatedDir
-import io.spine.protodata.gradle.kotlinDirectorySet
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.GRPC
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.JAVA
 import io.spine.protodata.gradle.plugin.GeneratedSubdir.KOTLIN
+import io.spine.protodata.gradle.protoDataWorkingDir
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.string.toBase64Encoded
 import io.spine.tools.code.SourceSetName
 import io.spine.tools.code.manifest.Version
 import io.spine.tools.gradle.project.hasJava
+import io.spine.tools.gradle.project.hasKotlin
 import io.spine.tools.gradle.project.hasJavaOrKotlin
 import io.spine.tools.gradle.project.sourceSets
 import io.spine.tools.gradle.protobuf.protobufExtension
 import io.spine.tools.gradle.task.JavaTaskName
 import io.spine.tools.gradle.task.descriptorSetFile
+import io.spine.tools.gradle.task.findKotlinDirectorySet
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
@@ -306,6 +308,7 @@ private object GeneratedSubdir {
  * Adds the `generated` directory to the Java and Kotlin source sets instead.
  */
 private fun GenerateProtoTask.configureSourceSetDirs() {
+    val project = project
     val protocOutputDir = File(outputBaseDir).parentFile
 
     /** Filters out directories belonging to `build/generated/source/proto`. */
@@ -323,6 +326,8 @@ private fun GenerateProtoTask.configureSourceSetDirs() {
         lang.srcDirs(newSourceDirectories)
     }
 
+    val sourceSet = sourceSet
+
     if (project.hasJava()) {
         val java = sourceSet.java
         excludeFor(java)
@@ -337,12 +342,17 @@ private fun GenerateProtoTask.configureSourceSetDirs() {
         java.srcDir(generatedDir(GRPC))
     }
 
-    if (project.hasJava()) {
-        val kotlinDirectorySet = sourceSet.kotlinDirectorySet()
-        kotlinDirectorySet!!.let {
-            excludeFor(it)
-            it.srcDirs(generatedDir(KOTLIN))
-        }
+    fun SourceDirectorySet.setup() {
+        excludeFor(this@setup)
+        srcDirs(generatedDir(KOTLIN))
+    }
+
+    if (project.hasKotlin()) {
+        val kotlinDirectorySet = sourceSet.findKotlinDirectorySet()
+        kotlinDirectorySet?.setup()
+            ?: project.afterEvaluate {
+                sourceSet.findKotlinDirectorySet()?.setup()
+            }
     }
 }
 
