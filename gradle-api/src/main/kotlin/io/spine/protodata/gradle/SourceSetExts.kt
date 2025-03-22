@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,18 @@
 
 package io.spine.protodata.gradle
 
+import io.spine.tools.gradle.task.findKotlinDirectorySet
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSet
 
 /**
  * Obtains a source directory set with the Kotlin source code, if it exists in this source set.
  */
-public fun SourceSet.kotlinDirectorySet(): SourceDirectorySet? =
-    extensions.findByName("kotlin") as SourceDirectorySet?
+@Deprecated(
+    message = "Please use `findKotlinDirectorySet()` instead.",
+    replaceWith = ReplaceWith(
+        "this.findKotlinDirectorySet()",
+        imports = arrayOf("io.spine.tools.gradle.task.findKotlinDirectorySet")
+    )
+)
+public fun SourceSet.kotlinDirectorySet(): SourceDirectorySet? = findKotlinDirectorySet()

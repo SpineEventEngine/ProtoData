@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import io.spine.protodata.gradle.Names.PROTO_DATA_RAW_ARTIFACT
 import io.spine.protodata.gradle.Names.USER_CLASSPATH_CONFIGURATION
 import io.spine.protodata.gradle.error
 import io.spine.protodata.gradle.info
+import io.spine.protodata.gradle.protoDataWorkingDir
 import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.WorkingDirectory
 import io.spine.protodata.params.pipelineParameters
