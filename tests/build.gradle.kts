@@ -29,6 +29,7 @@ import io.spine.dependency.lib.Grpc
 import io.spine.dependency.test.JUnit
 import io.spine.dependency.lib.Jackson
 import io.spine.dependency.lib.Kotlin
+import io.spine.dependency.lib.KotlinPoet
 import io.spine.dependency.lib.KotlinX
 import io.spine.dependency.lib.Protobuf
 import io.spine.dependency.local.Base
@@ -89,8 +90,10 @@ subprojects {
                 force(
                     Kotlin.stdLibJdk7,
                     KotlinX.Coroutines.core,
+                    KotlinX.Coroutines.coreJvm,
                     KotlinX.Coroutines.test,
                     KotlinX.Coroutines.jdk8,
+                    KotlinPoet.lib,
                     Caffeine.lib,
                     Grpc.api,
                     Base.lib,
