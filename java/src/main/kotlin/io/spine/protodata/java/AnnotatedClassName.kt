@@ -29,6 +29,25 @@ package io.spine.protodata.java
 /**
  * An annotated [ClassName].
  *
+ * For simple names, this class just prepends the annotation before the simple name:
+ *
+ * ```
+ * val string = ClassName(packageName = "", "String")
+ * val nullable = ClassName(Nullable::class)
+ * val annotatedString = AnnotatedClassName(string, nullable)
+ * println(annotatedString) // @org.checkerframework.checker.nullness.qual.Nullable String
+ * ```
+ *
+ * For fully-qualified classes and for classes with multiple simple names, the annotation
+ * prepended before the last simple name:
+ *
+ * ```
+ * val entry = ClassName(Map.Entry::class)
+ * val nullable = ClassName(Nullable::class)
+ * val annotatedEntry = AnnotatedClassName(entry, nullable)
+ * println(annotatedString) // java.util.Map.@org.checkerframework.checker.nullness.qual.Nullable Entry
+ * ```
+ *
  * @param [className] The class name to annotate.
  * @param [annotation] The class name of the annotation to apply.
  */
