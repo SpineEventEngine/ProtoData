@@ -27,9 +27,9 @@
 package io.spine.protodata.java
 
 /**
- * A parameterized class name.
+ * A parameterized Java type name.
  *
- * The class can be parameterized with any [JavaTypeName]. Usually, it is
+ * The type name can be parameterized with any [JavaTypeName]. Usually, it is
  * another class or a generic type variable (like `T` or `E`).
  *
  * Example usages:
@@ -52,11 +52,11 @@ package io.spine.protodata.java
  * println(comparatorOfGenericMaps) // java.util.Comparator<java.util.Map<T, E>>
  * ```
  *
- * @param base The parameterized class.
- * @param parameters The type parameters of the class.
+ * @param base The type name to parametrize.
+ * @param parameters The type parameters to use.
  */
-public class ParameterizedClassName(
-    base: ClassName,
+public class ParameterizedTypeName(
+    base: JavaTypeName,
     parameters: List<JavaTypeName>
 ) : JavaTypeName() {
 

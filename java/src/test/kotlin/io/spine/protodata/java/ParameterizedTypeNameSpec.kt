@@ -34,8 +34,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@DisplayName("`ParameterizedClassName` should")
-internal class ParameterizedClassNameSpec {
+@DisplayName("`ParameterizedTypeName` should")
+internal class ParameterizedTypeNameSpec {
 
     private val list = ClassName(List::class)
 
@@ -43,7 +43,7 @@ internal class ParameterizedClassNameSpec {
     inner class Accept {
 
         private val string = ClassName(String::class)
-        private val listOfStrings = ParameterizedClassName(list, string)
+        private val listOfStrings = ParameterizedTypeName(list, string)
 
         @Test
         fun `a class name as a parameter`() =
@@ -52,14 +52,14 @@ internal class ParameterizedClassNameSpec {
         @Test
         fun `generic variables as parameters`() {
             val map = ClassName(Map::class)
-            val genericMap = ParameterizedClassName(map, T, E)
+            val genericMap = ParameterizedTypeName(map, T, E)
             assertCode(genericMap, "java.util.Map<T, E>")
         }
 
         @Test
         fun `other parameterized classes`() {
             val comparator = ClassName(Comparator::class)
-            val comparatorOfLists = ParameterizedClassName(comparator, listOfStrings)
+            val comparatorOfLists = ParameterizedTypeName(comparator, listOfStrings)
             assertCode(comparatorOfLists, "java.util.Comparator<java.util.List<java.lang.String>>")
         }
 
@@ -70,7 +70,7 @@ internal class ParameterizedClassNameSpec {
                 override val canonical: String = arbitraryType
 
             }
-            val comparatorOfLists = ParameterizedClassName(list, typeName)
+            val comparatorOfLists = ParameterizedTypeName(list, typeName)
             assertCode(comparatorOfLists, "java.util.List<C super java.util.Collection>")
         }
     }
@@ -81,7 +81,7 @@ internal class ParameterizedClassNameSpec {
         @Test
         fun `throw if not given any parameters`() {
             assertThrows<IllegalArgumentException> {
-                ParameterizedClassName(list, emptyList())
+                ParameterizedTypeName(list, emptyList())
             }
         }
 
@@ -89,7 +89,7 @@ internal class ParameterizedClassNameSpec {
         fun `throw if given a primitive type as a parameter`() {
             JavaTypeName.KnownPrimitives.forEach { primitive ->
                 assertThrows<IllegalArgumentException> {
-                    ParameterizedClassName(list, primitive)
+                    ParameterizedTypeName(list, primitive)
                 }
             }
         }
