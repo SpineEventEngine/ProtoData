@@ -69,7 +69,7 @@ public class ParameterizedTypeName(
         }
     }
 
-    public constructor(base: ClassName, vararg parameter: JavaTypeName) : this(
+    public constructor(base: JavaTypeName, vararg parameter: JavaTypeName) : this(
         base,
         parameter.toList()
     )
