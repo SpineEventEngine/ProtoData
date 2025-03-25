@@ -40,22 +40,22 @@ internal class AnnotatedClassNameSpec {
     @Test
     fun `simple class name`() {
         val simpleName = "String"
-        val simpleClass = ClassName(packageName = "", simpleName)
-        val annotatedClass =  AnnotatedClassName(simpleClass, annotationClass)
-        annotatedClass.canonical shouldBe "$annotation $simpleName"
+        val string = ClassName(packageName = "", simpleName)
+        val nullableString =  AnnotatedClassName(string, annotationClass)
+        nullableString.canonical shouldBe "$annotation $simpleName"
     }
 
     @Test
     fun `fully-qualified class name`() {
-        val simpleClass = ClassName(String::class)
-        val annotatedClass =  AnnotatedClassName(simpleClass, annotationClass)
-        annotatedClass.canonical shouldBe "java.lang.$annotation String"
+        val string = ClassName(String::class)
+        val nullableString =  AnnotatedClassName(string, annotationClass)
+        nullableString.canonical shouldBe "java.lang.$annotation String"
     }
 
     @Test
     fun `class name with multiple simple names`() {
-        val simpleClass = ClassName(Map.Entry::class)
-        val annotatedClass =  AnnotatedClassName(simpleClass, annotationClass)
-        annotatedClass.canonical shouldBe "java.util.Map.$annotation Entry"
+        val entry = ClassName(Map.Entry::class)
+        val nullableEntry =  AnnotatedClassName(entry, annotationClass)
+        nullableEntry.canonical shouldBe "java.util.Map.$annotation Entry"
     }
 }
