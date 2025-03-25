@@ -29,8 +29,8 @@ package io.spine.protodata.java
 /**
  * A parameterized Java type name.
  *
- * The type name can be parameterized with any [JavaTypeName]. Usually, it is
- * another class or a generic type variable (like `T` or `E`).
+ * The type name can be parameterized with any other [JavaTypeName].
+ * Usually, it is class or a generic type variable (like `T` or `E`).
  *
  * Example usages:
  *
