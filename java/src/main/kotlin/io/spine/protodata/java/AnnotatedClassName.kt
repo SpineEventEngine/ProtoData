@@ -29,7 +29,7 @@ package io.spine.protodata.java
 /**
  * An annotated [ClassName].
  *
- * For simple names, this class just prepends the annotation before the simple name:
+ * For simple names, this class places the annotation before the simple name:
  *
  * ```
  * val string = ClassName(packageName = "", "String")
@@ -38,8 +38,8 @@ package io.spine.protodata.java
  * println(annotatedString) // @org.checkerframework.checker.nullness.qual.Nullable String
  * ```
  *
- * For fully-qualified classes and for classes with multiple simple names, the annotation
- * prepended before the last simple name:
+ * For fully qualified class names and classes with multiple simple names, the annotation
+ * is placed before the last simple name:
  *
  * ```
  * val entry = ClassName(Map.Entry::class)
