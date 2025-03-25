@@ -70,7 +70,7 @@ internal class ArrayTypeNameSpec {
     fun `of parameterized types`() {
         val timestamp = ClassName(Timestamp::class)
         val comparator = ClassName(Comparator::class)
-        val timestampComparator = ParameterizedClassName(comparator, timestamp)
+        val timestampComparator = ParameterizedTypeName(comparator, timestamp)
         assertArrayName(
             timestampComparator,
             "java.util.Comparator<com.google.protobuf.Timestamp>[]"
