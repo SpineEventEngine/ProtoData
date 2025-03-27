@@ -37,18 +37,18 @@ package io.spine.protodata.java
  * ```
  * val list = ClassName(List::class)
  * val string = ClassName(String::class)
- * val listOfStrings = ParameterizedClassName(list, string)
+ * val listOfStrings = ParameterizedTypeName(list, string)
  * println(listOfStrings) // java.util.List<java.lang.String>
  *
  * val map = ClassName(Map::class)
- * val genericMap = ParameterizedClassName(map, TypeVariableName.T, TypeVariableName.E)
+ * val genericMap = ParameterizedTypeName(map, TypeVariableName.T, TypeVariableName.E)
  * println(genericMap) // java.util.Map<T, E>
  *
  * val comparator = ClassName(Comparator::class)
- * val comparatorOfLists = ParameterizedClassName(comparator, listOfStrings)
+ * val comparatorOfLists = ParameterizedTypeName(comparator, listOfStrings)
  * println(comparatorOfLists) // java.util.Comparator<java.util.List<java.lang.String>>
  *
- * val comparatorOfGenericMaps = ParameterizedClassName(comparator, genericMap)
+ * val comparatorOfGenericMaps = ParameterizedTypeName(comparator, genericMap)
  * println(comparatorOfGenericMaps) // java.util.Comparator<java.util.Map<T, E>>
  * ```
  *
