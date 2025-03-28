@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,13 +32,21 @@ plugins {
     id("com.google.protobuf")
 }
 
-
 // For generating test fixtures. See `src/test/proto`.
 protobuf {
     configurations.excludeProtobufLite()
     protoc {
         artifact = Protobuf.compiler
     }
+
+    afterEvaluate {
+        // Walk the collection of tasks to force the execution
+        // of the `configureEach` operations earlier.
+        // This hack allows to avoid `ConcurrentModificationException` on
+        // creating `kspKotlin` task.
+        generateProtoTasks.all().size
+    }
+
     generateProtoTasks.all().configureEach {
         setup()
     }

@@ -41,10 +41,3 @@ dependencies {
     compileOnly("io.spine.protodata:backend")
     implementation("io.spine.protodata:java")
 }
-
-afterEvaluate {
-    val kspKotlin by tasks.getting
-    val compileKotlin by tasks.getting {
-        dependsOn(kspKotlin)
-    }
-}
