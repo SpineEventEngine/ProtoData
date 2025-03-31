@@ -157,24 +157,24 @@ public inline fun <reified T : Message> Field.option(): T = findOption<T>()
     ?: error("The field `${qualifiedName}` must have the `${simply<T>()}` option.")
 
 /**
- * Finds the option with the given generated type applied to this [Field].
+ * Finds the option applied to this [Field] by its generated extension type.
  *
- * @param [generated] The generated type used to represent the option.
+ * @param [extension] The extension type used to represent the option.
  * @return the option or `null` if there is no option with such a type applied to the field.
  * @see [option]
  */
-public fun Field.findOption(generated: GeneratedExtension<*, *>): Option? =
-    optionList.find { it.name == generated.descriptor.name && it.number == generated.number }
+public fun Field.findOption(extension: GeneratedExtension<*, *>): Option? =
+    optionList.find { it.name == extension.descriptor.name && it.number == extension.number }
 
 /**
- * Obtains the option with the given generated type applied to this [Field].
+ * Obtains the option applied to this [Field] by its generated extension type.
  *
- * Invoke this function if you are sure the option with the [generated] type is applied
- * to the receiver field. Otherwise, please use [findOption].
+ * Invoke this function if you are sure the option with the [extension] type
+ * is applied to the receiver field. Otherwise, please use [findOption].
  *
- * @param [generated] The generated type used to represent the option.
+ * @param [extension] The extension type used to represent the option.
  * @throws IllegalStateException if the option is not found.
  * @see [findOption]
  */
-public fun Field.option(generated: GeneratedExtension<*, *>): Option = findOption(generated)
-    ?: error("The field `${qualifiedName}` must have the `${generated.descriptor.name}` option.")
+public fun Field.option(extension: GeneratedExtension<*, *>): Option = findOption(extension)
+    ?: error("The field `${qualifiedName}` must have the `${extension.descriptor.name}` option.")

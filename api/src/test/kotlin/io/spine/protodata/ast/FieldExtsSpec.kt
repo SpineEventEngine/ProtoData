@@ -109,7 +109,7 @@ internal class FieldExtsSpec {
     }
 
     @Test
-    fun `find the option by its generated type`() {
+    fun `find the option by its generated extension type`() {
         val field = Student.getDescriptor().field("id")
         field.findOption(OptionsProto.setOnce) shouldNotBe null
     }
