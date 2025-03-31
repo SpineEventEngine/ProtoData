@@ -153,3 +153,8 @@ message PushNotification {
     string title = 2;
     string body = 3;
 }
+
+// The message with a boolean option.
+message Citizen {
+    string tax_code = 1 [(required) = true];
+}

@@ -34,6 +34,7 @@ import io.spine.protodata.ast.given.NotificationRequest
 import io.spine.protodata.ast.given.NotificationService
 import io.spine.protodata.ast.given.OptionExtsSpecProto
 import io.spine.protodata.ast.given.Selector
+import io.spine.protodata.given.value.Citizen
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -204,6 +205,13 @@ internal class OptionExtsSpec {
                 }
             }
         }
+    }
+
+    @Test
+    fun `return value of a boolean option`() {
+        val option = Citizen.getDescriptor().options()
+            .first()
+        option.boolValue shouldBe true
     }
 }
 
