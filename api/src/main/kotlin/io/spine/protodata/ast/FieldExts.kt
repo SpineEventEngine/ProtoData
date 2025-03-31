@@ -28,6 +28,7 @@
 
 package io.spine.protodata.ast
 
+import com.google.protobuf.GeneratedMessage.GeneratedExtension
 import com.google.protobuf.Message
 import io.spine.protobuf.defaultInstance
 import io.spine.protodata.type.TypeSystem
@@ -154,3 +155,26 @@ public inline fun <reified T : Message> Field.findOption(): T? {
  */
 public inline fun <reified T : Message> Field.option(): T = findOption<T>()
     ?: error("The field `${qualifiedName}` must have the `${simply<T>()}` option.")
+
+/**
+ * Finds the option with the given generated type applied to this [Field].
+ *
+ * @param [generated] The generated type used to represent the option.
+ * @return the option or `null` if there is no option with such a type applied to the field.
+ * @see [option]
+ */
+public fun Field.findOption(generated: GeneratedExtension<*, *>): Option? =
+    optionList.find { it.name == generated.descriptor.name && it.number == generated.number }
+
+/**
+ * Obtains the option with the given generated type applied to this [Field].
+ *
+ * Invoke this function if you are sure the option with the [generated] type is applied
+ * to the receiver field. Otherwise, please use [findOption].
+ *
+ * @param [generated] The generated type used to represent the option.
+ * @throws IllegalStateException if the option is not found.
+ * @see [findOption]
+ */
+public fun Field.option(generated: GeneratedExtension<*, *>): Option = findOption(generated)
+    ?: error("The field `${qualifiedName}` must have the `${generated.descriptor.name}` option.")

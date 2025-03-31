@@ -29,9 +29,12 @@ package io.spine.protodata.ast
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
+import io.spine.option.OptionsProto
 import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
 import io.spine.protodata.ast.given.Driver
 import io.spine.protodata.ast.given.Tractor
+import io.spine.protodata.given.value.Student
+import io.spine.protodata.protobuf.field
 import io.spine.protodata.protobuf.toMessageType
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -103,5 +106,11 @@ internal class FieldExtsSpec {
             endLine shouldBe 69
             endColumn shouldBe 51
         }
+    }
+
+    @Test
+    fun `find the option by its generated type`() {
+        val field = Student.getDescriptor().field("id")
+        field.findOption(OptionsProto.setOnce) shouldNotBe null
     }
 }
