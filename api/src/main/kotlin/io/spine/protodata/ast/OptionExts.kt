@@ -63,9 +63,9 @@ public inline fun <reified T : Message> Option.unpack(): T =
     try {
         value.unpack<T>()
     } catch (e: UnexpectedTypeException) {
-        error(
+        throw IllegalStateException(
             "Cannot unpack the `($name)` option to `${T::class.simpleName}`. " +
-                    "The actual option type: `${type.name}`."
+                    "The actual option type: `${type.name}`.", e
         )
     }
 
