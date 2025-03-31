@@ -55,9 +55,20 @@ import com.google.protobuf.Any as ProtoAny
 
 /**
  * Unpacks the value of this option using the specified generic type.
+ *
+ * @throws IllegalArgumentException if the specified [T] does not denote a message class.
+ * @throws IllegalStateException If the option stores a value of another type.
  */
 public inline fun <reified T : Message> Option.unpack(): T =
-    value.unpack<T>()
+    try {
+        value.unpack<T>()
+    } catch (e: UnexpectedTypeException) {
+        error(
+            "Cannot unpack the `($name)` option to `${T::class.simpleName}`. " +
+                    "The actual option type: `${type.name}`."
+        )
+    }
+
 
 /**
  * Tells if this is a column option.
@@ -71,14 +82,7 @@ public val Option.isColumn: Boolean
  * @throws IllegalStateException If the option stores a value of another type.
  */
 public val Option.boolValue: Boolean
-    get() = try {
-        value.unpack<BoolValue>().value
-    } catch (e: UnexpectedTypeException) {
-        error(
-            "Cannot unpack the `($name)` option to `${BoolValue::class.simpleName}`. " +
-                    "The actual option type: `${type.name}`."
-        )
-    }
+    get() = value.unpack<BoolValue>().value
 
 /**
  * Looks up an option value by the [optionName].
