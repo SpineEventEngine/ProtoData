@@ -30,11 +30,14 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.option.OptionsProto
+import io.spine.protobuf.field
 import io.spine.protodata.ast.PrimitiveType.TYPE_STRING
+import io.spine.protodata.ast.given.Citizen
 import io.spine.protodata.ast.given.Driver
 import io.spine.protodata.ast.given.Tractor
 import io.spine.protodata.given.value.Student
 import io.spine.protodata.protobuf.field
+import io.spine.protodata.protobuf.toField
 import io.spine.protodata.protobuf.toMessageType
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -110,7 +113,9 @@ internal class FieldExtsSpec {
 
     @Test
     fun `find the option by its generated extension type`() {
-        val field = Student.getDescriptor().field("id")
+        val field = Student.getDescriptor()
+            .field(Student.ID_FIELD_NUMBER)!!
+            .toField()
         field.findOption(OptionsProto.setOnce) shouldNotBe null
     }
 }
