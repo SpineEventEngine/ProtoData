@@ -28,6 +28,7 @@
 
 package io.spine.protodata.ast
 
+import com.google.protobuf.BoolValue
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.EnumValueDescriptor
@@ -38,6 +39,7 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
+import com.google.protobuf.GeneratedMessage.GeneratedExtension
 import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
 import com.google.protobuf.Message
 import io.spine.base.EventMessage
@@ -48,19 +50,39 @@ import io.spine.protobuf.pack
 import io.spine.protobuf.unpack
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.type
+import io.spine.type.UnexpectedTypeException
 import com.google.protobuf.Any as ProtoAny
 
 /**
  * Unpacks the value of this option using the specified generic type.
+ *
+ * @throws IllegalArgumentException if the specified [T] does not denote a message class.
+ * @throws IllegalStateException If the option stores a value of another type.
  */
 public inline fun <reified T : Message> Option.unpack(): T =
-    value.unpack<T>()
+    try {
+        value.unpack<T>()
+    } catch (e: UnexpectedTypeException) {
+        throw IllegalStateException(
+            "Cannot unpack the `($name)` option to `${T::class.simpleName}`. " +
+                    "The actual option type: `${type.name}`.", e
+        )
+    }
+
 
 /**
  * Tells if this is a column option.
  */
 public val Option.isColumn: Boolean
     get() = name == OptionsProto.column.descriptor.name
+
+/**
+ * Unpacks a [BoolValue] from this option.
+ *
+ * @throws IllegalStateException If the option stores a value of another type.
+ */
+public val Option.boolValue: Boolean
+    get() = value.unpack<BoolValue>().value
 
 /**
  * Looks up an option value by the [optionName].

@@ -29,7 +29,9 @@ package io.spine.protodata.ast
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldContain
+import io.spine.option.OptionsProto
 import io.spine.protobuf.field
+import io.spine.protodata.ast.given.Citizen
 import io.spine.protodata.ast.given.NotificationRequest
 import io.spine.protodata.ast.given.NotificationService
 import io.spine.protodata.ast.given.OptionExtsSpecProto
@@ -204,6 +206,15 @@ internal class OptionExtsSpec {
                 }
             }
         }
+    }
+
+    @Test
+    fun `return value of a boolean option`() {
+        val option = Citizen.getDescriptor()
+            .field(Citizen.TAX_CODE_FIELD_NUMBER)!!
+            .options().first()
+        option.name shouldBe OptionsProto.required.descriptor.name
+        option.boolValue shouldBe true
     }
 }
 

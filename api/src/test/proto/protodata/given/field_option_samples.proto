@@ -88,3 +88,8 @@ message Misreferences {
     // The field for checking nested paths.
     Range range = 10 [(required) = true];
 }
+
+// The message with a boolean option.
+message Student {
+    string id = 1 [(set_once) = true];
+}
