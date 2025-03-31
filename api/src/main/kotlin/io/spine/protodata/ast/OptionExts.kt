@@ -50,6 +50,7 @@ import io.spine.protobuf.pack
 import io.spine.protobuf.unpack
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.type
+import io.spine.type.UnexpectedTypeException
 import com.google.protobuf.Any as ProtoAny
 
 /**
@@ -67,10 +68,17 @@ public val Option.isColumn: Boolean
 /**
  * Unpacks a [BoolValue] from this option.
  *
- * @throws io.spine.type.UnexpectedTypeException If the option stores a value of another type.
+ * @throws IllegalStateException If the option stores a value of another type.
  */
 public val Option.boolValue: Boolean
-    get() = value.unpack<BoolValue>().value
+    get() = try {
+        value.unpack<BoolValue>().value
+    } catch (e: UnexpectedTypeException) {
+        error(
+            "Cannot unpack the `(${name})` option value to a boolean. " +
+                    "The actual option type: `${type.name}`."
+        )
+    }
 
 /**
  * Looks up an option value by the [optionName].
