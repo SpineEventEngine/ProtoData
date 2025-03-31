@@ -75,7 +75,7 @@ public val Option.boolValue: Boolean
         value.unpack<BoolValue>().value
     } catch (e: UnexpectedTypeException) {
         error(
-            "Cannot unpack the `(${name})` option value to a boolean. " +
+            "Cannot unpack the `($name)` option to `${BoolValue::class.simpleName}`. " +
                     "The actual option type: `${type.name}`."
         )
     }
