@@ -43,14 +43,16 @@ public fun OneofDescriptor.name(): OneofName = oneofName { value = name }
 /**
  * Converts this `oneof` descriptor to [OneofGroup].
  */
-public fun OneofDescriptor.toOneOfGroup(): OneofGroup =
-    oneofGroup {
-        val self = this@toOneOfGroup
-        val groupName = name()
-        name = groupName
+public fun OneofDescriptor.toOneOfGroup(): OneofGroup  {
+    val self = this@toOneOfGroup
+    val messageType = containingType
+    return oneofGroup {
+        name = name()
+        declaringType = messageType.name()
         field.addAll(fields.mapped())
         option.addAll(options())
-        val messageType = containingType
         doc = messageType.documentation().forOneof(self)
         span = messageType.coordinates().forOneof(self)
     }
+}
+
