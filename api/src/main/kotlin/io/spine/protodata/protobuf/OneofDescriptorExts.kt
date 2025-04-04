@@ -55,4 +55,3 @@ public fun OneofDescriptor.toOneOfGroup(): OneofGroup  {
         span = messageType.coordinates().forOneof(self)
     }
 }
-
