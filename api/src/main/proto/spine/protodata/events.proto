@@ -136,8 +136,8 @@ message OneofOptionDiscovered {
     // The file in which the `oneof` group is defined.
     File file = 1 [(required) = true];
 
-    // The type in which the `oneof` group is defined.
-    TypeName type = 2 [(required) = true];
+    // Deprecated: use `subject` instead.
+    TypeName type = 2 [(required) = true, deprecated = true];
 
     // Deprecated: please use `subject` instead.
     OneofName group = 3 [(required) = true, deprecated = true];
