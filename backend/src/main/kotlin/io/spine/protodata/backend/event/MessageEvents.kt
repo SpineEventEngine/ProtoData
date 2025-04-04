@@ -140,6 +140,7 @@ internal class MessageEvents(header: ProtoFileHeader) : DeclarationEvents<Descri
         val oneofName = desc.name()
         val oneofGroup = oneofGroup {
             name = oneofName
+            declaringType = typeName
             doc = documentation.forOneof(desc)
         }
         val path = header.file
@@ -153,8 +154,7 @@ internal class MessageEvents(header: ProtoFileHeader) : DeclarationEvents<Descri
         produceOptionEvents(desc.options, desc) {
             oneofOptionDiscovered {
                 file = path
-                type = typeName
-                group = oneofName
+                subject = oneofGroup
                 option = it
             }
         }

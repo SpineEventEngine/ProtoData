@@ -372,6 +372,9 @@ message OneofGroup {
 
     OneofName name = 1 [(required) = true];
 
+    // A type in which the `oneof` is declared.
+    TypeName declaring_type = 6 [(required) = true];
+
     // Fields declared in this group.
     //
     // The fields are ordered by their order of declaration in the group.
@@ -386,6 +389,16 @@ message OneofGroup {
 
     // Coordinates of the declaration.
     Span span = 5;
+}
+
+// Uniquely identifies a `oneof` group declaration within a compilation process.
+message OneofRef {
+
+    // The name of the declaring type.
+    TypeName type = 1;
+
+    // The name of the group.
+    OneofName name = 2;
 }
 
 // A name of a Protobuf service type.

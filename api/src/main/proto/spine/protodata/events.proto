@@ -136,11 +136,14 @@ message OneofOptionDiscovered {
     // The file in which the `oneof` group is defined.
     File file = 1 [(required) = true];
 
-    // The type in which the `oneof` group is defined.
-    TypeName type = 2 [(required) = true];
+    // Deprecated: use `subject` instead.
+    TypeName type = 2 [deprecated = true];
+
+    // Deprecated: please use `subject` instead.
+    OneofName group = 3 [deprecated = true];
 
     // The `oneof` group in which the option is discovered.
-    OneofName group = 3 [(required) = true];
+    OneofGroup subject = 5 [(required) = true];
 
     // The discovered option.
     Option option = 4 [(required) = true];
