@@ -137,10 +137,10 @@ message OneofOptionDiscovered {
     File file = 1 [(required) = true];
 
     // Deprecated: use `subject` instead.
-    TypeName type = 2 [(required) = true, deprecated = true];
+    TypeName type = 2 [deprecated = true];
 
     // Deprecated: please use `subject` instead.
-    OneofName group = 3 [(required) = true, deprecated = true];
+    OneofName group = 3 [deprecated = true];
 
     // The `oneof` group in which the option is discovered.
     OneofGroup subject = 5 [(required) = true];
