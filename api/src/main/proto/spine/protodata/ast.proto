@@ -391,6 +391,16 @@ message OneofGroup {
     Span span = 5;
 }
 
+// Uniquely identifies a `oneof` group declaration within a compilation process.
+message OneofRef {
+
+    // The name of the declaring type.
+    TypeName type = 1;
+
+    // The name of the group.
+    OneofName name = 2;
+}
+
 // A name of a Protobuf service type.
 message ServiceName {
     option (is).java_type = "ServiceNameMixin";
