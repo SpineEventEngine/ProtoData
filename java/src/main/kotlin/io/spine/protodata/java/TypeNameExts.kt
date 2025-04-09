@@ -73,10 +73,19 @@ public fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
  * @param typeSystem The type system to be used for obtaining the header for the proto
  *   file in which this message type is declared.
  */
-public fun TypeName.javaClassName(typeSystem: TypeSystem): ClassName {
-    val header = typeSystem.findMessageOrEnum(this)?.second
+public fun TypeName.javaClassName(typeSystem: TypeSystem): ClassName =
+    findJavaClassName(typeSystem)
         ?: error("Cannot find Java `${simply<ClassName>()}` for the Protobuf `${qualifiedName}`.")
-    val className = javaClassName(header)
+
+/**
+ * Finds a fully qualified Java class name, generated for the Protobuf type with this name.
+ *
+ * @param typeSystem The type system to be used for obtaining the header for the proto
+ *   file in which this message type is declared.
+ */
+public fun TypeName.findJavaClassName(typeSystem: TypeSystem): ClassName? {
+    val header = typeSystem.findMessageOrEnum(this)?.second
+    val className = header?.let { javaClassName(it) }
     return className
 }
 
