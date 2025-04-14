@@ -34,3 +34,9 @@ public val OneofGroup.ref: OneofRef
         type = declaringType
         name = this@ref.name
     }
+
+/**
+ * The qualified name of this [OneofGroup].
+ */
+public val OneofGroup.qualifiedName: String
+    get() = "${declaringType.qualifiedName}.${name.value}"

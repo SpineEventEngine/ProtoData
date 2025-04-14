@@ -161,7 +161,7 @@ private fun Location.toSpan(): Span {
 }
 
 /**
- * Obtains coordinates for the file this [GenericDescriptor].
+ * Obtains coordinates for this [GenericDescriptor].
  */
 internal fun GenericDescriptor.coordinates(): Coordinates {
     val fromResources = withSourceLines()

@@ -30,7 +30,6 @@ import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import io.spine.base.EventMessage
-import io.spine.protodata.ast.Documentation
 import io.spine.protodata.ast.ProtoFileHeader
 import io.spine.protodata.ast.event.FieldEntered
 import io.spine.protodata.ast.event.FieldExited
@@ -46,13 +45,13 @@ import io.spine.protodata.ast.event.typeDiscovered
 import io.spine.protodata.ast.event.typeEntered
 import io.spine.protodata.ast.event.typeExited
 import io.spine.protodata.ast.event.typeOptionDiscovered
-import io.spine.protodata.ast.oneofGroup
 import io.spine.protodata.ast.produceOptionEvents
 import io.spine.protodata.ast.withAbsoluteFile
 import io.spine.protodata.protobuf.name
 import io.spine.protodata.protobuf.realNestedTypes
 import io.spine.protodata.protobuf.toField
 import io.spine.protodata.protobuf.toMessageType
+import io.spine.protodata.protobuf.toOneOfGroup
 
 /**
  * Produces events for a message.
@@ -135,19 +134,14 @@ internal class MessageEvents(header: ProtoFileHeader) : DeclarationEvents<Descri
     private suspend fun SequenceScope<EventMessage>.produceOneofEvents(
         desc: OneofDescriptor
     ) {
-        val typeName = desc.containingType.name()
-        val documentation = Documentation.of(desc.containingType.file)
+        val containingType = desc.containingType.name()
         val oneofName = desc.name()
-        val oneofGroup = oneofGroup {
-            name = oneofName
-            declaringType = typeName
-            doc = documentation.forOneof(desc)
-        }
+        val oneofGroup = desc.toOneOfGroup()
         val path = header.file
         yield(
             oneofGroupEntered {
                 file = path
-                type = typeName
+                type = containingType
                 group = oneofGroup
             }
         )
@@ -164,7 +158,7 @@ internal class MessageEvents(header: ProtoFileHeader) : DeclarationEvents<Descri
         yield(
             oneofGroupExited {
                 file = path
-                type = typeName
+                type = containingType
                 group = oneofName
             }
         )
