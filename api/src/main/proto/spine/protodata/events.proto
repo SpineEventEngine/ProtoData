@@ -65,7 +65,7 @@ message FileOptionDiscovered {
     Option option = 2 [(required) = true];
 
     // The file in which the option is discovered.
-    File subject = 3[(required) = true];
+    File subject = 3 [(required) = true];
 }
 
 // Emitted when a file is completely discovered, including all the types, etc.
