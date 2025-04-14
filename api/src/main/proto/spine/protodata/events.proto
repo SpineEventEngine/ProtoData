@@ -58,11 +58,14 @@ message FileEntered {
 message FileOptionDiscovered {
     option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
-    // The file, option of which was found.
-    File file = 1 [(required) = true];
+    // Deprecated: please use `subject` instead.
+    File file = 1 [deprecated = true];
 
     // The discovered option.
     Option option = 2 [(required) = true];
+
+    // The file in which the option is discovered.
+    File subject = 3[(required) = true];
 }
 
 // Emitted when a file is completely discovered, including all the types, etc.
@@ -93,17 +96,20 @@ message TypeEntered {
 }
 
 // Emitted when a message-level option is found.
-message TypeOptionDiscovered {
+message MessageOptionDiscovered {
     option (is).java_type = "io.spine.protodata.ast.OptionAware";
 
     // The file in which the type is defined.
     File file = 1 [(required) = true];
 
-    // The type in which the option is discovered.
-    TypeName type = 2 [(required) = true];
+    // Deprecated: please use `subject` instead.
+    TypeName type = 2 [deprecated = true];
 
     // The discovered option.
     Option option = 3 [(required) = true];
+
+    // The message type in which the option is discovered.
+    MessageType subject = 4 [(required) = true];
 }
 
 // Emitted when a message type is completely discovered, including all the fields, etc.
@@ -182,16 +188,10 @@ message FieldOptionDiscovered {
     // The file in which the field is defined.
     File file = 1 [(required) = true];
 
-    // The type in which the field is defined.
-    //
     // Deprecated: please use `subject` instead.
-    //
     TypeName type = 2 [deprecated = true];
 
-    // The field in which the option is discovered.
-    //
     // Deprecated: please use `subject` instead.
-    //
     FieldName field = 3 [deprecated = true];
 
     // The field in which the option is discovered.
@@ -241,11 +241,14 @@ message EnumOptionDiscovered {
     // The file in which the enum is defined.
     File file = 1 [(required) = true];
 
-    // The type name of the enum.
-    TypeName type = 2 [(required) = true];
+    // Deprecated: please use `subject` instead.
+    TypeName type = 2 [deprecated = true];
 
     // The discovered option.
     Option option = 3 [(required) = true];
+
+    // The enum in which the option is discovered.
+    EnumType subject = 4 [(required) = true];
 }
 
 // Emitted when processing reaches an enum constant a.k.a. enum value.
@@ -268,14 +271,17 @@ message EnumConstantOptionDiscovered {
     // The file in which the enum is defined.
     File file = 1 [(required) = true];
 
-    // The type name of the enum.
-    TypeName type = 2 [(required) = true];
+    // Deprecated: please use `subject` instead.
+    TypeName type = 2 [deprecated = true];
 
-    // The enum constant in which the option is discovered.
-    ConstantName constant = 3 [(required) = true];
+    // Deprecated: please use `subject` instead.
+    ConstantName constant = 3 [deprecated = true];
 
     // The discovered option.
     Option option = 4 [(required) = true];
+
+    // The enum constant in which the option is discovered.
+    EnumConstant subject = 5 [(required) = true];
 }
 
 // Emitted when an enum constant is completely discovered.
@@ -328,11 +334,14 @@ message ServiceOptionDiscovered {
     // The file in which the service is defined.
     File file = 1 [(required) = true];
 
-    // The name of the service in which the option is discovered.
-    ServiceName service = 2 [(required) = true];
+    // Deprecated: please use `subject` instead.
+    ServiceName service = 2 [deprecated = true];
 
     // The discovered option.
     Option option = 3 [(required) = true];
+
+    // The service in which the option is discovered.
+    Service subject = 4 [(required) = true];
 }
 
 // Emitted when a service is completely discovered, including all the option and RPCs.
@@ -365,14 +374,17 @@ message RpcOptionDiscovered {
     // The file in which the RPC is defined.
     File file = 1 [(required) = true];
 
-    // The name of the service in which the RPC is defined.
-    ServiceName service = 2 [(required) = true];
+    // Deprecated: please use `subject` instead.
+    ServiceName service = 2 [deprecated = true];
 
-    // The RPC in which the option is discovered.
-    RpcName rpc = 3 [(required) = true];
+    // Deprecated: please use `subject` instead.
+    RpcName rpc = 3 [deprecated = true];
 
     // The discovered option.
     Option option = 4 [(required) = true];
+
+    // The RPC in which the option is discovered.
+    Rpc subject = 5 [(required) = true];
 }
 
 // Emitted when an RPC is completely discovered.
