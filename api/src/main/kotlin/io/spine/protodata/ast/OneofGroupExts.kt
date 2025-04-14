@@ -36,7 +36,7 @@ public val OneofGroup.ref: OneofRef
     }
 
 /**
- * The field name containing a qualified name of the declaring type.
+ * The qualified name of this [OneofGroup].
  */
 public val OneofGroup.qualifiedName: String
     get() = "${declaringType.qualifiedName}.${name.value}"
