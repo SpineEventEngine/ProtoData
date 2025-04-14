@@ -55,7 +55,7 @@ public fun TypeName.javaFile(accordingTo: ProtoFileHeader): Path {
 }
 
 /**
- * Obtains a fully qualified Java class name, generated for the Protobuf type with this name.
+ * Obtains a Java class name, generated for the Protobuf type with this name.
  *
  * @param accordingTo The header of the proto file in which the type is declared.
  */
@@ -68,7 +68,7 @@ public fun TypeName.javaClassName(accordingTo: ProtoFileHeader): ClassName =
     })
 
 /**
- * Obtains a fully qualified Java class name, generated for the Protobuf type with this name.
+ * Obtains a Java class name, generated for the Protobuf type with this name.
  *
  * @param typeSystem The type system to be used for obtaining the header for the proto
  *   file in which this message type is declared.
@@ -78,7 +78,7 @@ public fun TypeName.javaClassName(typeSystem: TypeSystem): ClassName =
         ?: error("Cannot find Java `${simply<ClassName>()}` for the Protobuf `${qualifiedName}`.")
 
 /**
- * Finds a fully qualified Java class name, generated for the Protobuf type with this name.
+ * Finds a Java class name, generated for the Protobuf type with this name.
  *
  * @param typeSystem The type system to be used for obtaining the header for the proto
  *   file in which this message type is declared.
@@ -90,7 +90,7 @@ public fun TypeName.findJavaClassName(typeSystem: TypeSystem): ClassName? {
 }
 
 /**
- * Obtains a fully qualified Java enum type name, generated for the Protobuf enum with this name.
+ * Obtains a Java enum type name, generated for the Protobuf enum with this name.
  */
 public fun TypeName.javaEnumName(accordingTo: ProtoFileHeader): EnumName =
     composeJavaTypeName(accordingTo, {
