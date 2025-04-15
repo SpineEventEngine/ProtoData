@@ -80,7 +80,7 @@ internal class ServiceEvents(header: ProtoFileHeader) :
         produceOptionEvents(desc.options, desc) {
             serviceOptionDiscovered {
                 file = path
-                service = serviceName
+                subject = serviceType
                 option = it
             }
         }
@@ -111,8 +111,7 @@ internal class ServiceEvents(header: ProtoFileHeader) :
         produceOptionEvents(desc.options, desc) {
             rpcOptionDiscovered {
                 file = path
-                service = serviceName
-                rpc = theRpc.name
+                subject = theRpc
                 option = it
             }
         }
