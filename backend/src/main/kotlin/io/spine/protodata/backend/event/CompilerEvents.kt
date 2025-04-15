@@ -131,7 +131,7 @@ private class ProtoFileEvents(
         )
         produceOptionEvents(file.options, file) {
             fileOptionDiscovered {
-                subject = header.file
+                file = header.file
                 option = it
             }
         }
