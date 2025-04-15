@@ -92,6 +92,24 @@ message TypeEntered {
     TypeName type = 2 [(required) = true];
 }
 
+// Deprecated: please use `MessageOptionDiscovered` instead.
+message TypeOptionDiscovered {
+    option (is).java_type = "io.spine.protodata.ast.OptionAware";
+    option deprecated = true;
+
+    // The file in which the type is defined.
+    File file = 1 [(required) = true];
+
+    // Deprecated: please use `subject` instead.
+    TypeName type = 2 [deprecated = true];
+
+    // The discovered option.
+    Option option = 3 [(required) = true];
+
+    // The message type in which the option is discovered.
+    MessageType subject = 4 [(required) = true];
+}
+
 // Emitted when a message-level option is found.
 message MessageOptionDiscovered {
     option (is).java_type = "io.spine.protodata.ast.OptionAware";
