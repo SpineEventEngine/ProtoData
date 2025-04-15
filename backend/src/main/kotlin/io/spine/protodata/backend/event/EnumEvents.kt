@@ -76,7 +76,7 @@ internal class EnumEvents(header: ProtoFileHeader) : DeclarationEvents<EnumDescr
         produceOptionEvents(desc.options, desc) {
             enumOptionDiscovered {
                 file = path
-                this.type = typeName
+                subject = enumType
                 option = it
             }
         }
@@ -118,8 +118,7 @@ internal class EnumEvents(header: ProtoFileHeader) : DeclarationEvents<EnumDescr
         produceOptionEvents(desc.options, desc) {
             enumConstantOptionDiscovered {
                 file = path
-                type = typeName
-                constant = name
+                subject = theConstant
                 option = it
             }
         }

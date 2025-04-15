@@ -38,13 +38,13 @@ import io.spine.protodata.ast.event.OneofGroupExited
 import io.spine.protodata.ast.event.fieldEntered
 import io.spine.protodata.ast.event.fieldExited
 import io.spine.protodata.ast.event.fieldOptionDiscovered
+import io.spine.protodata.ast.event.messageOptionDiscovered
 import io.spine.protodata.ast.event.oneofGroupEntered
 import io.spine.protodata.ast.event.oneofGroupExited
 import io.spine.protodata.ast.event.oneofOptionDiscovered
 import io.spine.protodata.ast.event.typeDiscovered
 import io.spine.protodata.ast.event.typeEntered
 import io.spine.protodata.ast.event.typeExited
-import io.spine.protodata.ast.event.typeOptionDiscovered
 import io.spine.protodata.ast.produceOptionEvents
 import io.spine.protodata.ast.withAbsoluteFile
 import io.spine.protodata.protobuf.name
@@ -88,9 +88,9 @@ internal class MessageEvents(header: ProtoFileHeader) : DeclarationEvents<Descri
             }
         )
         produceOptionEvents(desc.options, desc) {
-            typeOptionDiscovered {
+            messageOptionDiscovered {
                 file = path
-                type = typeName
+                subject = messageType
                 option = it
             }
         }
