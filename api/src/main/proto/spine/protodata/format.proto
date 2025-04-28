@@ -51,6 +51,7 @@ extend google.protobuf.EnumValueOptions {
 // Files with settings for ProtoData and its plugins should be stored in one of these formats.
 //
 enum Format {
+    option deprecated = true;
 
     RCF_UNKNOWN = 0;
 
