@@ -54,7 +54,7 @@ import io.spine.tools.prototap.CompiledProtosFile
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
 import io.spine.tools.prototap.Paths.CODE_GENERATOR_REQUEST_FILE
 import io.spine.tools.prototap.Paths.COMPILED_PROTOS_FILE
-import io.spine.type.parse
+import io.spine.code.proto.parse
 import io.spine.type.toJson
 import io.spine.validate.NonValidated
 import java.nio.file.Path
@@ -423,7 +423,7 @@ public class PipelineSetup(
                 classLoader
             )
             file.open().use {
-                val request = CodeGeneratorRequest::class.parse<CodeGeneratorRequest>(it)
+                val request = CodeGeneratorRequest::class.parse(it)
                 return request
             }
         }

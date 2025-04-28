@@ -55,7 +55,7 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
 import io.spine.string.ti
-import io.spine.type.parse
+import io.spine.code.proto.parse
 import io.spine.validate.NonValidated
 import kotlin.io.path.Path
 import kotlin.io.path.exists

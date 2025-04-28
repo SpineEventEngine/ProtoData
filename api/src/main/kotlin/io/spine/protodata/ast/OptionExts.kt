@@ -39,7 +39,6 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
-import com.google.protobuf.GeneratedMessage.ExtendableMessage
 import com.google.protobuf.Message
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto
@@ -122,7 +121,7 @@ public inline fun <reified T : Message> Iterable<Option>.find(): T? {
  * @param factory A function which given an option, constructs a fitting event.
  */
 public suspend fun SequenceScope<EventMessage>.produceOptionEvents(
-    options: ExtendableMessage<*>,
+    options: com.google.protobuf.GeneratedMessageV3.ExtendableMessage<*>,
     context: GenericDescriptor,
     factory: (Option) -> EventMessage
 ) {
@@ -175,10 +174,14 @@ public fun MethodDescriptor.options(): List<Option> = options.toList(this)
 /**
  * Parses this `options` message into a list of [Option]s.
  */
-private fun ExtendableMessage<*>.toList(context: GenericDescriptor): List<Option> =
+private fun com.google.protobuf.GeneratedMessageV3.ExtendableMessage<*>.toList(
+    context: GenericDescriptor
+): List<Option> =
     parseOptions(context).toList()
 
-private fun ExtendableMessage<*>.parseOptions(context: GenericDescriptor): Sequence<Option> =
+private fun com.google.protobuf.GeneratedMessageV3.ExtendableMessage<*>.parseOptions(
+    context: GenericDescriptor
+): Sequence<Option> =
     sequence {
         allFields.forEach { (optionDescriptor, value) ->
             if (value is Collection<*>) {
