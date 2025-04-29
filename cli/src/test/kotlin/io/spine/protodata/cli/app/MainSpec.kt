@@ -32,12 +32,14 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldStartWith
 import io.spine.base.Time
+import io.spine.format.Format
+import io.spine.format.parse
 import io.spine.protobuf.pack
 import io.spine.protodata.ast.AstProto
 import io.spine.protodata.ast.FileProto
-import io.spine.protodata.ast.toProto
-import io.spine.protodata.ast.toDirectory
 import io.spine.protodata.ast.toAbsoluteFile
+import io.spine.protodata.ast.toDirectory
+import io.spine.protodata.ast.toProto
 import io.spine.protodata.cli.given.DefaultOptionsCounterPlugin
 import io.spine.protodata.cli.given.DefaultOptionsCounterRenderer
 import io.spine.protodata.cli.given.DefaultOptionsCounterRendererPlugin
@@ -50,8 +52,6 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.EchoRenderer
 import io.spine.protodata.test.EchoRendererPlugin
-import io.spine.protodata.test.PlainStringRenderer
-import io.spine.protodata.test.PlainStringRendererPlugin
 import io.spine.protodata.test.Project
 import io.spine.protodata.test.ProjectProto
 import io.spine.protodata.test.ProtoEchoRenderer
@@ -61,8 +61,6 @@ import io.spine.protodata.test.UnderscorePrefixRendererPlugin
 import io.spine.protodata.test.echo
 import io.spine.protodata.testing.googleProtobufProtos
 import io.spine.protodata.testing.spineOptionProtos
-import io.spine.protodata.util.Format
-import io.spine.protodata.util.parseFile
 import io.spine.string.ti
 import io.spine.time.LocalDates
 import io.spine.time.Month.SEPTEMBER
@@ -175,7 +173,7 @@ class MainSpec {
     @Test
     fun `load settings via a file`() {
         val name = "Internet"
-        workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.JSON, """
+        workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.Json, """
                 { "value": "$name" }
             """.ti()
         )
@@ -189,7 +187,7 @@ class MainSpec {
         @Test
         fun `plain JSON`() {
             val name = "Internet"
-            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.JSON, """
+            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.Json, """
                     { "value": "$name" }
                 """.ti()
             )
@@ -206,7 +204,7 @@ class MainSpec {
                 arg = stringValue { value = "Adam Falkner" }.pack()
                 when_ = time
             }.toCompactJson()
-            workingDir.settingsDirectory.writeFor<ProtoEchoRenderer>(Format.PROTO_JSON, json)
+            workingDir.settingsDirectory.writeFor<ProtoEchoRenderer>(Format.ProtoJson, json)
 
             launchApp(ProtoEchoRendererPlugin::class)
             val text = outputEchoFile.readText()
@@ -225,7 +223,7 @@ class MainSpec {
                 when_ = time.toTimestamp()
             }.toByteArray()
 
-            workingDir.settingsDirectory.writeFor<ProtoEchoRenderer>(Format.PROTO_BINARY, bytes)
+            workingDir.settingsDirectory.writeFor<ProtoEchoRenderer>(Format.ProtoBinary, bytes)
 
             launchApp(ProtoEchoRendererPlugin::class)
 
@@ -239,22 +237,13 @@ class MainSpec {
         @Test
         fun YAML() {
             val name = "Mr. Anderson"
-            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.YAML, """
+            workingDir.settingsDirectory.writeFor<EchoRenderer>(Format.Yaml, """
                     value: $name
                 """.trimIndent()
             )
 
             launchApp(EchoRendererPlugin::class)
             outputEchoFile.readText() shouldBe name
-        }
-
-        @Test
-        fun `plain string`() {
-            val plainString = "dont.mail.me:42@example.org"
-            workingDir.settingsDirectory.writeFor<PlainStringRenderer>(Format.PLAIN, plainString)
-
-            launchApp(PlainStringRendererPlugin::class)
-            outputEchoFile.readText() shouldBe plainString
         }
     }
     
@@ -266,7 +255,7 @@ class MainSpec {
     }
 
     private fun addPluginClassNames(plugins: Array<out KClass<out Plugin>>) {
-        val draftParams = parseFile(parametersFile, PipelineParameters::class.java)
+        val draftParams = parse(parametersFile, PipelineParameters::class.java)
         val classNames = plugins.map { it.jvmName }
         val withPlugins = draftParams.toBuilder()
             .addAllPluginClassName(classNames)

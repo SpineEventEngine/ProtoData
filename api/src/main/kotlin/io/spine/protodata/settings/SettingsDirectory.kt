@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,12 @@
 
 package io.spine.protodata.settings
 
-import io.spine.protodata.util.ensureExistingDirectory
+import io.spine.format.Format
+import io.spine.format.hasSupportedFormat
 import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.settings.event.SettingsFileDiscovered
 import io.spine.protodata.settings.event.settingsFileDiscovered
-import io.spine.protodata.util.Format
-import io.spine.protodata.util.extensions
-import io.spine.protodata.util.hasSupportedFormat
+import io.spine.protodata.util.ensureExistingDirectory
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -69,7 +68,7 @@ public class SettingsDirectory(
      * @param format The format of the settings file.
      * @param content The content of the settings file.
      */
-    public fun write(consumerId: String, format: Format, content: String) {
+    public fun write(consumerId: String, format: Format<*>, content: String) {
         val file = file(consumerId, format)
         ensureExistingDirectory(path)
         file.writeText(content)
@@ -82,7 +81,7 @@ public class SettingsDirectory(
      * @param format The format of the settings file.
      * @param content The content of the settings file.
      */
-    public inline fun <reified T: LoadsSettings> writeFor(format: Format, content: String) {
+    public inline fun <reified T: LoadsSettings> writeFor(format: Format<*>, content: String) {
         write(T::class.java.defaultConsumerId, format, content)
     }
 
@@ -93,7 +92,7 @@ public class SettingsDirectory(
      * @param format The format of the settings file.
      * @param content The content of the settings file.
      */
-    public fun write(consumerId: String, format: Format, content: ByteArray) {
+    public fun write(consumerId: String, format: Format<*>, content: ByteArray) {
         val file = file(consumerId, format)
         ensureExistingDirectory(path)
         file.writeBytes(content)
@@ -106,11 +105,11 @@ public class SettingsDirectory(
      * @param format The format of the settings file.
      * @param content The content of the settings file.
      */
-    public inline fun <reified T: LoadsSettings> writeFor(format: Format, content: ByteArray) {
+    public inline fun <reified T: LoadsSettings> writeFor(format: Format<*>, content: ByteArray) {
         write(T::class.java.defaultConsumerId, format, content)
     }
 
-    private fun file(consumerId: String, format: Format): File {
+    private fun file(consumerId: String, format: Format<*>): File {
         val fileName = "${consumerId}.${format.extensions.first()}"
         return path.resolve(fileName).toFile()
     }
@@ -129,7 +128,7 @@ public class SettingsDirectory(
     private fun files(): List<Path> =
         if (path.exists()) {
             path.listDirectoryEntries()
-                .filter { it.hasSupportedFormat() }
+                .filter { it.toFile().hasSupportedFormat() }
         } else {
             emptyList()
         }

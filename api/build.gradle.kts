@@ -28,6 +28,7 @@ import io.spine.dependency.lib.Aedile
 import io.spine.dependency.lib.Jackson
 import io.spine.dependency.local.Base
 import io.spine.dependency.local.CoreJava
+import io.spine.dependency.local.Format
 import io.spine.dependency.local.Logging
 import io.spine.dependency.local.Reflect
 import io.spine.dependency.local.Text
@@ -42,6 +43,7 @@ plugins {
 dependencies {
     listOf(
         Base.lib,
+        Format.lib,
         Text.lib,
         CoreJava.server,
         ToolBase.lib,

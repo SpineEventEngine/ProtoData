@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,7 @@
 
 package io.spine.protodata.params
 
-import io.spine.protodata.util.Format
-import io.spine.protodata.util.extensions
+import io.spine.format.Format
 import io.spine.protodata.util.ensureExistingDirectory
 import io.spine.tools.code.SourceSetName
 import io.spine.type.toJson
@@ -62,6 +61,6 @@ public class ParametersDirectory(
     }
 
     private companion object {
-        val DEFAULT_FORMAT = Format.PROTO_JSON
+        val DEFAULT_FORMAT = Format.ProtoJson
     }
 }

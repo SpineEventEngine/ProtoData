@@ -33,6 +33,7 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.file
+import io.spine.format.parse
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
 import io.spine.logging.context.LogLevelMap
@@ -43,7 +44,6 @@ import io.spine.protodata.params.InfoLoggingParam
 import io.spine.protodata.params.Parameter
 import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.PipelineParameters
-import io.spine.protodata.util.parseFile
 import io.spine.string.Separator
 import io.spine.tools.code.manifest.Version
 import java.io.File
@@ -132,7 +132,7 @@ internal class Run(version: String) : CliktCommand(
     }
 
     private fun doRun() {
-        val params = parseFile(paramsFile, PipelineParameters::class.java)
+        val params = parse(paramsFile, PipelineParameters::class.java)
         val pipeline = Pipeline(params = params)
         pipeline()
     }

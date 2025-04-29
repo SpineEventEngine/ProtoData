@@ -41,8 +41,6 @@ import io.spine.protodata.plugin.Plugin
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.settings.SettingsDirectory
 import io.spine.protodata.testing.PipelineSetup.Companion.byResources
-import io.spine.protodata.util.Format.PROTO_JSON
-import io.spine.protodata.util.extensions
 import io.spine.reflect.CallerFinder.findCallerOf
 import io.spine.testing.server.blackbox.BlackBox
 import io.spine.tools.code.Java
@@ -55,6 +53,7 @@ import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
 import io.spine.tools.prototap.Paths.CODE_GENERATOR_REQUEST_FILE
 import io.spine.tools.prototap.Paths.COMPILED_PROTOS_FILE
 import io.spine.code.proto.parse
+import io.spine.format.Format
 import io.spine.type.toJson
 import io.spine.validate.NonValidated
 import java.nio.file.Path
@@ -332,7 +331,7 @@ public class PipelineSetup(
             val requestFile = params.request.toPath()
             requestFile.parent.toFile().mkdirs()
             requestFile.writeBytes(request.toByteArray(), CREATE, TRUNCATE_EXISTING)
-            val jsonFile = requestFile.replaceExtension(PROTO_JSON.extensions[0])
+            val jsonFile = requestFile.replaceExtension(Format.ProtoJson.extensions[0])
             val json = request.toJson()
             jsonFile.writeText(json, options = arrayOf(CREATE, TRUNCATE_EXISTING))
         }

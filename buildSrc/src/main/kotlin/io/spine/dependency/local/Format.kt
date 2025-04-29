@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,42 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.protodata.util
-
-import io.spine.io.Glob
-import io.spine.protodata.util.Format.UNRECOGNIZED
-import java.nio.file.Path
-import kotlin.io.path.name
+package io.spine.dependency.local
 
 /**
- * Checks if the given file matches this configuration format.
+ * The `spine-format` artifact offered by
+ * the <a href="https://github.com/SpineEventEngine/base">base</a> module
+ * of the Spine SDK.
  */
-public fun Format.matches(file: Path): Boolean =
-    extensions
-            .map { Glob.extension(it) }
-            .any { it.matches(file) }
-
-/**
- * Obtains file extensions associated with this format.
- */
-public val Format.extensions: List<String>
-    get() = if (this == UNRECOGNIZED) {
-        emptyList()
-    } else {
-        valueDescriptor.options.getExtension(FormatProto.extension).toList()
-    }
-
-/**
- * Obtains a [Format] from the file extension of the given configuration file.
- *
- * @throws IllegalStateException If the format is not recognized.
- */
-public fun formatOf(file: Path): Format =
-    Format.values().find { it.matches(file) }
-        ?: error("Unrecognized settings format: `${file.name}`.")
-
-/**
- * Tells if this file is of one of the supported [formats][Format].
- */
-public fun Path.hasSupportedFormat(): Boolean =
-    Format.values().any { it.matches(this) }
+object Format {
+    const val version = "2.0.0-SNAPSHOT.314"
+    const val group = Spine.group
+    const val artifact = "spine-format"
+    const val lib = "$group:$artifact:$version"
+}

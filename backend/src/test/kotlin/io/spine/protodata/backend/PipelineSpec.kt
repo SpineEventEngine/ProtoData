@@ -39,8 +39,6 @@ import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.plugin.ConfigurationError
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.render.codeLine
-import io.spine.protodata.settings.SettingsDirectory
-import io.spine.protodata.settings.defaultConsumerId
 import io.spine.protodata.test.AnnotationInsertionPointPrinter
 import io.spine.protodata.test.CatOutOfTheBoxEmancipator
 import io.spine.protodata.test.DeletedTypeRepository
@@ -48,7 +46,6 @@ import io.spine.protodata.test.DeletedTypeView
 import io.spine.protodata.test.DeletingRenderer
 import io.spine.protodata.test.DocilePlugin
 import io.spine.protodata.test.DoctorProto
-import io.spine.protodata.test.ECHO_FILE
 import io.spine.protodata.test.GenericInsertionPoint
 import io.spine.protodata.test.InternalAccessRenderer
 import io.spine.protodata.test.JavaGenericInsertionPointPrinter
@@ -58,7 +55,6 @@ import io.spine.protodata.test.KtRenderer
 import io.spine.protodata.test.NoOpRenderer
 import io.spine.protodata.test.NonExistingPoint
 import io.spine.protodata.test.NullableAnnotationRenderer
-import io.spine.protodata.test.PlainStringRenderer
 import io.spine.protodata.test.PrependingRenderer
 import io.spine.protodata.test.TestPlugin
 import io.spine.protodata.test.UnderscorePrefixRenderer
@@ -66,9 +62,7 @@ import io.spine.protodata.testing.RenderingTestbed
 import io.spine.protodata.testing.pipelineParams
 import io.spine.protodata.testing.withRequestFile
 import io.spine.protodata.testing.withRoots
-import io.spine.protodata.testing.withSettingsDir
 import io.spine.protodata.type.TypeSystem
-import io.spine.protodata.util.Format
 import io.spine.testing.assertDoesNotExist
 import io.spine.testing.assertExists
 import java.nio.file.Path
@@ -373,45 +367,6 @@ internal class PipelineSpec {
 
             assertDoesNotExist(destination1.resolve(secondSourceFile.name))
             assertDoesNotExist(destination2.resolve(targetFile.name))
-        }
-
-        @Test
-        fun `generate new files by relative path`(
-            @TempDir settingsDir: Path,
-            @TempDir source2: Path,
-            @TempDir destination1: Path,
-            @TempDir destination2: Path
-        ) {
-            checkTemps(source2, destination1, destination2)
-            val expectedContent = "123456789"
-            val settings = SettingsDirectory(settingsDir)
-            settings.write(PlainStringRenderer::class.java.defaultConsumerId,
-                Format.PLAIN,
-                expectedContent
-            )
-            val params = pipelineParams {
-                addAbsoluteCompiledProtoPaths()
-                withRequestFile(codegenRequestFile)
-                withSettingsDir(settingsDir)
-                withRoots(srcRoot, destination1)
-                withRoots(source2, destination2)
-            }
-
-            Pipeline(
-                params = params,
-                plugins = listOf(
-                    TestPlugin(),
-                    RenderingTestbed(PlainStringRenderer())
-                ),
-            )()
-
-            val firstFile = destination1.resolve(ECHO_FILE)
-            val secondFile = destination2.resolve(ECHO_FILE)
-            assertExists(firstFile)
-            assertExists(secondFile)
-
-            assertTextIn(firstFile).isEqualTo(expectedContent)
-            assertTextIn(secondFile).isEqualTo(expectedContent)
         }
 
         @Test

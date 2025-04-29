@@ -26,8 +26,7 @@
 
 package io.spine.protodata.settings
 
-import io.spine.protodata.ast.File
-import io.spine.protodata.ast.toPath
+import io.spine.protodata.ast.toJava
 import io.spine.protodata.settings.Settings.KindCase.EMPTY
 import io.spine.protodata.settings.Settings.KindCase.FILE
 import io.spine.protodata.settings.Settings.KindCase.KIND_NOT_SET
@@ -89,12 +88,9 @@ public val Class<*>.defaultConsumerId: String
  */
 private fun <T : Any> Settings.parse(cls: Class<T>): T =
     when (kindCase!!) {
-        FILE -> parseFile(file, cls)
+        FILE -> io.spine.format.parse(file.toJava(), cls)
         EMPTY, KIND_NOT_SET -> unknownCase(cls)
     }
-
-private fun <T : Any> parseFile(file: File, cls: Class<T>): T =
-    io.spine.protodata.util.parseFile(file.toPath().toFile(), cls)
 
 private fun Settings.unknownCase(cls: Class<*>): Nothing {
     error("Unable to parse settings as `${cls.canonicalName}`. `kindCase` is `$kindCase`.")
