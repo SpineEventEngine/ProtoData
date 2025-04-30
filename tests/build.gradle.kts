@@ -40,6 +40,7 @@ import io.spine.dependency.local.Reflect
 import io.spine.dependency.local.Spine
 import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
+import io.spine.dependency.boms.BomsPlugin
 import io.spine.dependency.test.Kotest
 import io.spine.gradle.kotlin.setFreeCompilerArgs
 import io.spine.gradle.standardToSpineSdk
@@ -61,6 +62,7 @@ plugins {
     id("com.google.protobuf")
     idea
 }
+apply<BomsPlugin>()
 
 repositories.standardToSpineSdk()
 
@@ -72,6 +74,7 @@ subprojects {
         plugin("com.google.protobuf")
         from("$rootDir/../version.gradle.kts")
     }
+    apply<BomsPlugin>()
 
     val protoDataVersion: String by extra
     group = "io.spine.protodata.tests"
@@ -88,11 +91,6 @@ subprojects {
             resolutionStrategy {
                 @Suppress("DEPRECATION") // To force `Kotlin.stdLibJdk7`.
                 force(
-                    Kotlin.stdLibJdk7,
-                    KotlinX.Coroutines.core,
-                    KotlinX.Coroutines.coreJvm,
-                    KotlinX.Coroutines.test,
-                    KotlinX.Coroutines.jdk8,
                     KotlinPoet.lib,
                     Caffeine.lib,
                     Grpc.api,

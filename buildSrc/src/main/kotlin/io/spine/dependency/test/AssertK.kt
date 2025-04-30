@@ -34,6 +34,6 @@ package io.spine.dependency.test
 @Deprecated("Please use Kotest assertions instead.")
 @Suppress("unused", "ConstPropertyName")
 object AssertK {
-    private const val version = "0.26.1"
+    private const val version = "0.28.1"
     const val libJvm = "com.willowtreeapps.assertk:assertk-jvm:$version"
 }

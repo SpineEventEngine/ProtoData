@@ -36,6 +36,6 @@ package io.spine.dependency.lib
  */
 @Suppress("unused")
 object Caffeine {
-    private const val version = "3.0.5"
+    private const val version = "3.2.0"
     const val lib = "com.github.ben-manes.caffeine:caffeine:$version"
 }

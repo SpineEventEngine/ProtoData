@@ -28,7 +28,6 @@ package io.spine.gradle.checkstyle
 
 import io.spine.dependency.build.CheckStyle
 import org.gradle.api.Project
-import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.plugins.quality.CheckstyleExtension
 import org.gradle.api.plugins.quality.CheckstylePlugin
 import org.gradle.kotlin.dsl.the

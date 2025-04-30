@@ -33,6 +33,6 @@ package io.spine.dependency.lib
  */
 @Suppress("unused")
 object Aedile {
-    private const val version = "1.3.1"
+    private const val version = "2.0.3"
     const val lib = "com.sksamuel.aedile:aedile-core:$version"
 }

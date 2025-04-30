@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 
 plugins {
     id("org.jetbrains.dokka") // Cannot use `Dokka` dependency object here yet.
@@ -34,9 +34,17 @@ dependencies {
     useDokkaWithSpineExtensions()
 }
 
-tasks.withType<AbstractDokkaLeafTask>().configureEach {
-    configureForKotlin()
+afterEvaluate {
+    dokka {
+        configureForKotlin(
+            project,
+            DocumentationSettings.SourceLink.url
+        )
+    }
+}
+
+tasks.withType<DokkaTaskPartial>().configureEach {
     onlyIf {
-        (it as AbstractDokkaLeafTask).isInPublishingGraph()
+        isInPublishingGraph()
     }
 }
