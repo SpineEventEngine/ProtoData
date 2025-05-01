@@ -30,7 +30,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import io.spine.annotation.Internal
 import io.spine.code.proto.FileSet
-import io.spine.code.proto.parse
 import io.spine.environment.DefaultMode
 import io.spine.logging.WithLogging
 import io.spine.protodata.ast.Coordinates
@@ -56,6 +55,7 @@ import io.spine.server.storage.memory.InMemoryStorageFactory
 import io.spine.server.transport.memory.InMemoryTransportFactory
 import io.spine.server.under
 import io.spine.string.ti
+import io.spine.type.parse
 import io.spine.validate.NonValidated
 import kotlin.io.path.Path
 import kotlin.io.path.exists

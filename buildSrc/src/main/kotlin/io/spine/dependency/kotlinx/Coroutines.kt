@@ -28,7 +28,7 @@ package io.spine.dependency.kotlinx
 
 /**
  * Kotlin Coroutines.
- *
+ * 
  * @see <a href="https://github.com/Kotlin/kotlinx.coroutines">GitHub project</a>
  */
 @Suppress("unused", "ConstPropertyName")
@@ -40,11 +40,8 @@ object Coroutines {
 
     const val core = "$group:$infix-core"
     const val coreJvm = "$group:$infix-core-jvm"
-    const val jdk7 = "$group:$infix-jdk7"
     const val jdk8 = "$group:$infix-jdk8"
     const val debug = "$group:$infix-debug"
     const val test = "$group:$infix-test"
     const val testJvm = "$group:$infix-test-jvm"
-
-    val artefacts = listOf(core, coreJvm, jdk8, debug, test, testJvm).map { "$it:$version"}
 }

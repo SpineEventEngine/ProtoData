@@ -25,7 +25,7 @@
  */
 
 import com.google.protobuf.gradle.protobuf
-import io.spine.gradle.standardToSpineSdk
+import io.spine.gradle.repo.standardToSpineSdk
 
 buildscript {
     standardSpineSdkRepositories()

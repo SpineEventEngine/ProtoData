@@ -29,13 +29,13 @@ package io.spine.protodata.render
 import com.google.common.collect.ImmutableSet.toImmutableSet
 import com.intellij.openapi.project.Project
 import io.spine.annotation.Internal
+import io.spine.collect.theOnly
 import io.spine.protodata.ast.ProtoDeclarationName
 import io.spine.protodata.render.SourceFileSet.Companion.create
 import io.spine.server.query.Querying
 import io.spine.string.ti
 import io.spine.tools.code.Language
 import io.spine.tools.psi.java.Environment
-import io.spine.util.theOnly
 import java.nio.charset.Charset
 import java.nio.file.Files.walk
 import java.nio.file.Path

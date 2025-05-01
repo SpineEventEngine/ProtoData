@@ -24,28 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.dependency.boms.BomsPlugin
 import io.spine.dependency.lib.Caffeine
 import io.spine.dependency.lib.Grpc
-import io.spine.dependency.test.JUnit
-import io.spine.dependency.lib.Jackson
-import io.spine.dependency.lib.Kotlin
 import io.spine.dependency.lib.KotlinPoet
-import io.spine.dependency.lib.KotlinX
 import io.spine.dependency.lib.Protobuf
 import io.spine.dependency.local.Base
-import io.spine.dependency.test.Truth
+import io.spine.dependency.local.CoreJava
 import io.spine.dependency.local.Logging
 import io.spine.dependency.local.ProtoData
 import io.spine.dependency.local.Reflect
-import io.spine.dependency.local.Spine
 import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
-import io.spine.dependency.boms.BomsPlugin
+import io.spine.dependency.test.JUnit
 import io.spine.dependency.test.Kotest
+import io.spine.dependency.test.Truth
 import io.spine.gradle.kotlin.setFreeCompilerArgs
-import io.spine.gradle.standardToSpineSdk
+import io.spine.gradle.repo.standardToSpineSdk
 import io.spine.gradle.testing.configureLogging
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("RemoveRedundantQualifierName")
 buildscript {
@@ -72,6 +68,7 @@ subprojects {
         plugin("kotlin")
         plugin("idea")
         plugin("com.google.protobuf")
+        plugin("module-testing")
         from("$rootDir/../version.gradle.kts")
     }
     apply<BomsPlugin>()
@@ -104,8 +101,9 @@ subprojects {
                     Reflect.lib,
                     ProtoData.api,
                     ProtoData.backend,
+                    ProtoData.params,
+                    CoreJava.server,
                     ProtoData.java,
-                    Jackson.Junior.objects
                 )
             }
         }
@@ -133,15 +131,5 @@ subprojects {
 
     dependencies {
         Protobuf.libs.forEach { implementation(it) }
-
-        JUnit.api.forEach { testImplementation(it) }
-        Truth.libs.forEach { testImplementation(it) }
-        testImplementation(Kotest.assertions)
-        testRuntimeOnly(JUnit.runner)
-    }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
-        configureLogging()
     }
 }

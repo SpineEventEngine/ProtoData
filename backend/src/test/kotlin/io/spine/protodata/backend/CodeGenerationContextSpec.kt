@@ -42,6 +42,7 @@ import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.spine.collect.theOnly
 import io.spine.option.OptionsProto
 import io.spine.option.OptionsProto.BETA_TYPE_FIELD_NUMBER
 import io.spine.protobuf.AnyPacker
@@ -64,7 +65,6 @@ import io.spine.protodata.type.findAbsolute
 import io.spine.testing.server.blackbox.BlackBox
 import io.spine.testing.server.blackbox.assertEntity
 import io.spine.time.TimeProto
-import io.spine.util.theOnly
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -282,7 +282,7 @@ class CodeGenerationContextSpec {
                 protoFile.addAll(dependencies)
                 fileToGenerate.addAll(dependencies.map { it.name })
             }
-            val events = CompilerEvents.parse(set, Fixtures.typeSystem, { true })
+            val events = CompilerEvents.parse(set, typeSystem, { true })
 
             val eventList = events.toList()
             eventList.distinct() shouldContainExactly eventList

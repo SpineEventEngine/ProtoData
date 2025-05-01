@@ -55,8 +55,6 @@ object Boms {
      * Technology-based BOMs.
      */
     object Optional {
-        val jackson = listOf(
-            Jackson.bom
-        )
+        val jackson = Jackson.bom
     }
 }

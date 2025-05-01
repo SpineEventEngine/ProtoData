@@ -28,7 +28,7 @@ package io.spine.protodata.java.style
 
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.spine.util.theOnly
+import io.spine.collect.theOnly
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 

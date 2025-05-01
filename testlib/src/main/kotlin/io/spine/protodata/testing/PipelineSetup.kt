@@ -28,7 +28,6 @@ package io.spine.protodata.testing
 
 import com.google.common.annotations.VisibleForTesting
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
-import io.spine.code.proto.parse
 import io.spine.io.Resource
 import io.spine.io.ResourceDirectory
 import io.spine.io.replaceExtension
@@ -55,6 +54,7 @@ import io.spine.tools.prototap.CompiledProtosFile
 import io.spine.tools.prototap.Names.PROTOC_PLUGIN_NAME
 import io.spine.tools.prototap.Paths.CODE_GENERATOR_REQUEST_FILE
 import io.spine.tools.prototap.Paths.COMPILED_PROTOS_FILE
+import io.spine.type.parse
 import io.spine.type.toJson
 import io.spine.validate.NonValidated
 import java.nio.file.Path
