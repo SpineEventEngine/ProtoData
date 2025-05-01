@@ -55,11 +55,17 @@
 !.idea/codeStyles/
 !.idea/copyright/
 
+# Ignore IDEA config files under `tests`
+/tests/.idea/**
+
 # Gradle interim configs
 **/.gradle/**
 
 # Temp directory for Gradle TestKit runners
 **/.gradle-test-kit/**
+
+# Integration test log files
+/tests/_out/**
 
 # Generated source code
 **/generated/**
