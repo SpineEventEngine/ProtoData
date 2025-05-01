@@ -68,6 +68,9 @@
 **/*.pbserver.dart
 **/*.pbjson.dart
 
+# Generated source code with custom path under `tests`
+/tests/**/proto-gen/**
+
 # Gradle build files
 **/build/**
 !**/src/**/build/**
