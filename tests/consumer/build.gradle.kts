@@ -29,7 +29,6 @@
 import io.spine.dependency.lib.JavaX
 import io.spine.dependency.local.Base
 import io.spine.dependency.local.Spine
-import io.spine.dependency.boms.Boms
 import io.spine.protodata.gradle.CodegenSettings
 
 buildscript {
