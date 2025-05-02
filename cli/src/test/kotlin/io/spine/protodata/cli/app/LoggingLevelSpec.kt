@@ -32,7 +32,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.spine.logging.Level
 import io.spine.logging.WithLogging
-import io.spine.protodata.ast.file
+import io.spine.logging.testing.tapConsole
 import io.spine.protodata.ast.toAbsoluteDirectory
 import io.spine.protodata.ast.toAbsoluteFile
 import io.spine.protodata.ast.toProto
@@ -131,7 +131,9 @@ class LoggingLevelSpec {
 
     @Test
     fun `set 'DEBUG' logging level`() {
-        launchWithLoggingParams("--debug")
+        tapConsole {
+            launchWithLoggingParams("--debug")
+        }
 
         LoggingLevelAsserter.infoEnabled shouldBe true
         LoggingLevelAsserter.debugEnabled shouldBe true
