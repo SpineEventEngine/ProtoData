@@ -49,8 +49,8 @@ import org.gradle.api.artifacts.Configuration
  *
  *  In addition to forcing BOM-based dependencies,
  *  the plugin [forces][org.gradle.api.artifacts.ResolutionStrategy.force] the versions
- *  of [Kotlin.StdLib.artefacts] for all configurations because even through Kotlin
- *  artefacts are forced with BOM, the `variants` in the dependencies cannot be
+ *  of [Kotlin.StdLib.artifacts] for all configurations because even through Kotlin
+ *  artifacts are forced with BOM, the `variants` in the dependencies cannot be
  *  picked by Gradle.
  *
  *  Run Gradle with the [INFO][org.gradle.api.logging.Logger.isInfoEnabled] logging level
@@ -113,11 +113,11 @@ class BomsPlugin : Plugin<Project>  {
 
             all {
                 resolutionStrategy {
-                    // The versions for Kotlin are resoled above correctly.
-                    // But that does not guarantees that Gradle picks up a correct `variant`.
-                    Kotlin.StdLib.artefacts.forEach { artefact ->
-                        force(artefact)
-                        log { "Forced the version of `$artefact` in " + this@all.diagSuffix() }
+                    // The versions for Kotlin are resolved above correctly.
+                    // But that does not guarantee that Gradle picks up a correct `variant`.
+                    Kotlin.StdLib.artifacts.forEach { artifact ->
+                        force(artifact)
+                        log { "Forced the version of `$artifact` in " + this@all.diagSuffix() }
                     }
                 }
             }

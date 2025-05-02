@@ -65,7 +65,7 @@ object Kotlin {
         const val jdk7 = "$group:$infix-jdk7"
         const val jdk8 = "$group:$infix-jdk8"
 
-        val artefacts = setOf(itself, common, jdk7, jdk8).map { "$it:$runtimeVersion" }
+        val artifacts = setOf(itself, common, jdk7, jdk8).map { "$it:$runtimeVersion" }
     }
 
     @Deprecated("Please use `StdLib.itself` instead.", ReplaceWith("StdLib.itself"))
