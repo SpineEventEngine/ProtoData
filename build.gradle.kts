@@ -28,6 +28,7 @@
 
 import io.spine.dependency.build.Dokka
 import io.spine.dependency.lib.Grpc
+import io.spine.dependency.lib.Protobuf
 import io.spine.dependency.local.Base
 import io.spine.dependency.local.CoreJava
 import io.spine.dependency.local.Reflect
@@ -36,11 +37,10 @@ import io.spine.gradle.RunBuild
 import io.spine.gradle.publish.PublishingRepos
 import io.spine.gradle.publish.SpinePublishing
 import io.spine.gradle.publish.spinePublishing
+import io.spine.gradle.repo.standardToSpineSdk
 import io.spine.gradle.report.coverage.JacocoConfig
 import io.spine.gradle.report.license.LicenseReporter
 import io.spine.gradle.report.pom.PomGenerator
-import io.spine.gradle.standardToSpineSdk
-import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 
 buildscript {
     standardSpineSdkRepositories()
@@ -60,6 +60,7 @@ buildscript {
 }
 
 plugins {
+    id("org.jetbrains.dokka")
     idea
     jacoco
     `gradle-doctor`
@@ -92,6 +93,9 @@ allprojects {
 
     configurations.all {
         resolutionStrategy {
+            Protobuf.libs.forEach {
+                force(it)
+            }
             force(
                 Grpc.ProtocPlugin.artifact,
                 Reflect.lib,
@@ -106,6 +110,12 @@ allprojects {
 subprojects {
     apply {
         plugin("module")
+    }
+}
+
+dependencies {
+    productionModules.forEach {
+        dokka(it)
     }
 }
 
@@ -155,7 +165,3 @@ val integrationTest by tasks.registering(RunBuild::class) {
  * The `check` task is done if `integrationTest` passes.
  */
 tasks["check"].dependsOn(integrationTest)
-
-val dokkaHtmlMultiModule by tasks.getting(DokkaMultiModuleTask::class) {
-    configureStyle()
-}

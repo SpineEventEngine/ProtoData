@@ -37,7 +37,7 @@ object Roaster {
      * [2.29.0.Final](https://github.com/forge/roaster/releases/tag/2.29.0.Final),
      * Roaster requires Java 17.
      */
-    private const val version = "2.28.0.Final"
+    private const val version = "2.29.0.Final"
 
     const val group = "org.jboss.forge.roaster"
     const val api = "$group:roaster-api:$version"

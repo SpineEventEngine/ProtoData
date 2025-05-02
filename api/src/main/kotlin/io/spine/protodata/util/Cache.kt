@@ -26,7 +26,7 @@
 
 package io.spine.protodata.util
 
-import com.sksamuel.aedile.core.cacheBuilder
+import com.github.benmanes.caffeine.cache.Caffeine
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -39,10 +39,9 @@ import kotlinx.coroutines.runBlocking
  */
 public abstract class Cache<K: Any, V: Any>(private val initialCapacity: Int = 100) {
 
-    @Suppress("MemberNameEqualsClassName")
-    private val cache = cacheBuilder<K, V> {
-        initialCapacity = this@Cache.initialCapacity
-    }.build()
+    private val syncCache = Caffeine.newBuilder()
+        .initialCapacity(this@Cache.initialCapacity)
+        .build<K, V>()
 
     /**
      * Creates an instance of the cached value for the given key.
@@ -63,7 +62,7 @@ public abstract class Cache<K: Any, V: Any>(private val initialCapacity: Int = 1
     protected fun get(key: K, param: Any? = null): V {
         return synchronized(this) {
             runBlocking {
-                cache.get(key) {
+                syncCache.get(key) {
                     create(key, param)
                 }
             }
@@ -77,7 +76,7 @@ public abstract class Cache<K: Any, V: Any>(private val initialCapacity: Int = 1
      */
     public fun clearCache() {
         synchronized(this) {
-            cache.invalidateAll()
+            syncCache.invalidateAll()
         }
     }
 }

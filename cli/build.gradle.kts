@@ -59,6 +59,7 @@ dependencies {
         "We need `@AutoService` for registering custom options provider.")
     ksp(AutoServiceKsp.processor)
     testCompileOnly(AutoService.annotations)
+    testImplementation(Logging.testLib)?.because("We need `tapConsole`.")
     testImplementation(project(":testlib"))
     testImplementation(project(":test-env"))
 }

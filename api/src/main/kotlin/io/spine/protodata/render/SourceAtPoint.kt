@@ -26,8 +26,8 @@
 
 package io.spine.protodata.render
 
+import io.spine.collect.interlaced
 import io.spine.text.TextFactory
-import io.spine.util.interlaced
 
 /**
  * A fluent builder for inserting code into pre-prepared inline insertion points.

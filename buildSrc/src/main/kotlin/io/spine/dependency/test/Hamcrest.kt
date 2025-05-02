@@ -35,6 +35,6 @@ package io.spine.dependency.test
 @Suppress("unused", "ConstPropertyName")
 object Hamcrest {
     // https://github.com/hamcrest/JavaHamcrest/releases
-    private const val version = "2.2"
+    private const val version = "3.0"
     const val core = "org.hamcrest:hamcrest-core:$version"
 }

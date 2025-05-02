@@ -51,11 +51,11 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
+import io.spine.collect.interlaced
 import io.spine.protodata.ast.LocationPath.Companion.fromEnum
 import io.spine.protodata.ast.LocationPath.Companion.fromMessage
 import io.spine.protodata.ast.LocationPath.Companion.fromService
 import io.spine.protodata.ast.LocationPath.Companion.plus
-import io.spine.util.interlaced
 
 /**
  * A numerical path to a location is source code.

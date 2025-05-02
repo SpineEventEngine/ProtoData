@@ -26,12 +26,12 @@
 
 package io.spine.protodata.test
 
+import io.spine.collect.theOnly
 import io.spine.protodata.render.InsertionPoint
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
 import io.spine.protodata.test.GenericInsertionPoint.FILE_START
 import io.spine.tools.code.Java
-import io.spine.util.theOnly
 import kotlin.io.path.name
 
 /**

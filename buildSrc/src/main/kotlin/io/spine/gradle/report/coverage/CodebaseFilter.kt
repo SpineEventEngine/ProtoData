@@ -29,7 +29,6 @@ package io.spine.gradle.report.coverage
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import io.spine.gradle.report.coverage.FileFilter.generatedOnly
 import java.io.File
-import kotlin.streams.toList
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileTree

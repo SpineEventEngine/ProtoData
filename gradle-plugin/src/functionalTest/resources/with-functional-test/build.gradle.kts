@@ -26,7 +26,7 @@
 
 import com.google.protobuf.gradle.protobuf
 import io.spine.dependency.lib.Protobuf
-import io.spine.gradle.standardToSpineSdk
+import io.spine.gradle.repo.standardToSpineSdk
 import org.gradle.api.plugins.jvm.JvmTestSuite
 
 buildscript {

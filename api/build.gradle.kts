@@ -24,8 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import io.spine.dependency.boms.Boms
 import io.spine.dependency.lib.Aedile
 import io.spine.dependency.lib.Jackson
+import io.spine.dependency.lib.Jackson.DataFormat
 import io.spine.dependency.local.Base
 import io.spine.dependency.local.CoreJava
 import io.spine.dependency.local.Logging
@@ -55,9 +57,10 @@ dependencies {
     implementation(Reflect.lib)
     implementation(Aedile.lib)
 
+    implementation(platform(Boms.Optional.jackson))
     with(Jackson) {
         implementation(databind)
-        implementation(dataformatYaml)
+        implementation(DataFormat.yamlArtifact)
         runtimeOnly(moduleKotlin)
     }
 

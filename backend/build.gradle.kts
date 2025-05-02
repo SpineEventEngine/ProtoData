@@ -24,8 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.dependency.test.JUnit
+import io.spine.dependency.boms.Boms
 import io.spine.dependency.lib.Jackson
+import io.spine.dependency.lib.Jackson.DataFormat
 import io.spine.dependency.local.CoreJava
 import io.spine.dependency.local.ToolBase
 import io.spine.gradle.publish.CheckVersionIncrement
@@ -44,15 +45,15 @@ dependencies {
     api(project(":api"))
     implementation(project(":params"))?.because("We need the `PipelineParameters` type.")
 
+    api(platform(Boms.Optional.jackson))
     with(Jackson) {
         api(databind)
-        implementation(dataformatYaml)
+        implementation(DataFormat.yamlArtifact)
         runtimeOnly(moduleKotlin)
     }
 
     testImplementation(project(":testlib"))
     testImplementation(project(":test-env"))
-    testImplementation(JUnit.params)
 }
 
 apply<IncrementGuard>()
