@@ -32,6 +32,7 @@ import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
 import io.spine.gradle.javac.configureErrorProne
 import io.spine.gradle.javac.configureJavac
+import io.spine.gradle.javadoc.JavadocConfig
 import io.spine.gradle.kotlin.setFreeCompilerArgs
 import io.spine.gradle.publish.IncrementGuard
 import io.spine.gradle.report.license.LicenseReporter
@@ -53,6 +54,7 @@ apply {
 }
 
 apply<IncrementGuard>()
+JavadocConfig.applyTo(project)
 LicenseReporter.generateReportIn(project)
 
 /**
