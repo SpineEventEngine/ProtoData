@@ -26,22 +26,29 @@
 
 package io.spine.dependency.kotlinx
 
+import io.spine.dependency.DependencyWithBom
+
 /**
  * Kotlin Coroutines.
- * 
+ *
  * @see <a href="https://github.com/Kotlin/kotlinx.coroutines">GitHub project</a>
  */
-@Suppress("unused", "ConstPropertyName")
-object Coroutines {
-    const val group = KotlinX.group
-    const val version = "1.10.2"
-    const val infix = "kotlinx-coroutines"
-    const val bom = "$group:$infix-bom:$version"
+object Coroutines : DependencyWithBom() {
+    override val group = KotlinX.group
+    override val version = "1.10.2"
 
-    const val core = "$group:$infix-core"
-    const val coreJvm = "$group:$infix-core-jvm"
-    const val jdk8 = "$group:$infix-jdk8"
-    const val debug = "$group:$infix-debug"
-    const val test = "$group:$infix-test"
-    const val testJvm = "$group:$infix-test-jvm"
+    @Suppress("ConstPropertyName") // https://bit.ly/kotlin-prop-names
+    const val infix = "kotlinx-coroutines"
+
+    override val bom = "$group:$infix-bom:$version"
+
+    val core = "$group:$infix-core"
+    val coreJvm = "$group:$infix-core-jvm"
+    val jdk7 = "$group:$infix-jdk7"
+    val jdk8 = "$group:$infix-jdk8"
+    val debug = "$group:$infix-debug"
+    val test = "$group:$infix-test"
+    val testJvm = "$group:$infix-test-jvm"
+
+    override val modules = listOf(core, coreJvm, jdk7, jdk8, debug, test, testJvm)
 }
