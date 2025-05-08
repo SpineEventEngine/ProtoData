@@ -52,7 +52,7 @@ message Settings {
     string consumer = 1;
 
     oneof kind {
-        option (is_required) = true;
+        option (choice).required = true;
 
         // No settings are supplied.
         google.protobuf.Empty empty = 2;
