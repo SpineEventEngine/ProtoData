@@ -31,7 +31,7 @@ import io.spine.protodata.ast.TypeName;
 import io.spine.protodata.plugin.ViewRepository;
 import io.spine.protodata.test.UuidType;
 import io.spine.server.route.EventRouting;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import static io.spine.server.route.EventRoute.withId;
 

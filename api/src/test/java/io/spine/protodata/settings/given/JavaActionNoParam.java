@@ -31,7 +31,7 @@ import io.spine.protodata.ast.MessageType;
 import io.spine.protodata.context.CodegenContext;
 import io.spine.protodata.render.SourceFile;
 import io.spine.tools.code.Java;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A stub rendering action implemented in Java which accepts no parameter.
