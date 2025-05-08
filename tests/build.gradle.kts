@@ -47,7 +47,7 @@ import io.spine.gradle.testing.configureLogging
 buildscript {
     dependencies {
         classpath(io.spine.dependency.lib.Protobuf.GradlePlugin.lib)
-        classpath(io.spine.dependency.lib.Kotlin.gradlePluginLib)
+        classpath(io.spine.dependency.lib.Kotlin.GradlePlugin.lib)
     }
 }
 
@@ -86,11 +86,11 @@ subprojects {
             exclude(group = "io.spine", module = "spine-logging-backend")
 
             resolutionStrategy {
+                Grpc.forceArtifacts(project, this@all, this@resolutionStrategy)
                 @Suppress("DEPRECATION") // To force `Kotlin.stdLibJdk7`.
                 force(
                     KotlinPoet.lib,
                     Caffeine.lib,
-                    Grpc.api,
                     Base.lib,
                     ToolBase.lib,
                     ToolBase.psiJava,
