@@ -227,7 +227,7 @@ message Type {
     option (is).java_type = "TypeBase";
 
     oneof kind {
-        option (is_required) = true;
+        option (choice).required = true;
 
         TypeName message = 1;
 
@@ -242,7 +242,7 @@ message FieldType {
     option (is).java_type = "TypeBase";
 
     oneof kind {
-        option (is_required) = true;
+        option (choice).required = true;
 
         // The field holds a message.
         TypeName message = 1;
