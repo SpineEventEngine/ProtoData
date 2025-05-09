@@ -25,11 +25,11 @@
  */
 
 @CheckReturnValue
-@ParametersAreNonnullByDefault
+@NullMarked
 @JvmLoggingDomain(Constants.LOGGING_DOMAIN)
 package io.spine.protodata;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 import io.spine.logging.JvmLoggingDomain;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;

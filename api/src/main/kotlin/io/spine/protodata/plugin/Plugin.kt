@@ -27,6 +27,8 @@
 package io.spine.protodata.plugin
 
 import io.spine.annotation.Internal
+import io.spine.base.EntityState
+import io.spine.server.add
 import io.spine.protodata.context.CodegenContext
 import io.spine.protodata.render.Renderer
 import io.spine.protodata.render.SourceFileSet
@@ -169,7 +171,7 @@ public fun MutableSet<Class<out View<*,  *, *>>>.add(view: KClass<out View<*, *,
 }
 
 /**
- * Adds specified entity class to this `BoundedContextBuilder`.
+ * Adds the specified entity class to this `BoundedContextBuilder`.
  *
  * A default repository instance will be created for this class.
  * This instance will be added to the repository registration list for
@@ -178,7 +180,9 @@ public fun MutableSet<Class<out View<*,  *, *>>>.add(view: KClass<out View<*, *,
  * @param I The type of entity identifiers.
  * @param E The type of entities.
  */
-public inline fun <reified I, reified E : Entity<I, *>>
-        BoundedContextBuilder.add(entity: KClass<out E>) {
-    add(entity.java)
-}
+@Deprecated(
+    message = "Please use `add(KClass<out E>)` from `io.spine.server` instead.",
+    replaceWith = ReplaceWith(expression = "add(entity)", imports = ["io.spine.server.add"])
+)
+public inline fun <reified I : Any, reified S : EntityState<I>, reified E : Entity<I, out S>>
+        BoundedContextBuilder.add(entity: KClass<out E>) = add(entity)

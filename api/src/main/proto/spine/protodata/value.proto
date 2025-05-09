@@ -60,7 +60,7 @@ import "spine/protodata/ast.proto";
 message Value {
     // The kind of the value.
     oneof kind {
-        option (is_required) = true;
+        option (choice).required = true;
 
         // The `null` value.
         NullValue null_value = 1;

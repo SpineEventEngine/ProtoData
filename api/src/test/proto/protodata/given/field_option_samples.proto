@@ -55,7 +55,9 @@ message KelvinTemperature {
 // The option here references the field in the same type.
 //
 message Range {
-    int32 min_value = 1 [(max).value = "max_value"];
+    //TODO:2025-05-08:alexander.yevsyukov: Uncomment after the issue below is resolved.
+    // https://github.com/SpineEventEngine/validation/issues/64
+    int32 min_value = 1 /*[(max).value = "max_value"]*/;
     int32 max_value = 2;
 }
 
@@ -64,7 +66,9 @@ message Range {
 // The options here reference nested fields.
 //
 message NumberGenerated {
-    int32 number = 1 [(min).value = "range.min_value", (max).value = "range.max_value"];
+    //TODO:2025-05-08:alexander.yevsyukov: Uncomment after the issue below is resolved.
+    // https://github.com/SpineEventEngine/validation/issues/64
+    int32 number = 1 /*[(min).value = "range.min_value", (max).value = "range.max_value"]*/;
     Range range = 2 [(required) = true];
 }
 
@@ -74,16 +78,21 @@ message NumberGenerated {
 
 // The cases of wrong field references.
 message Misreferences {
-
+    //TODO:2025-05-08:alexander.yevsyukov: Uncomment after the issue below is resolved.
+    // https://github.com/SpineEventEngine/validation/issues/64
     // Here the option references the field which is not declared in this message type.
-    int32 wrong_direct = 1 [(min).value = "missing"];
+    int32 wrong_direct = 1 /*[(min).value = "missing"]*/;
 
+    //TODO:2025-05-08:alexander.yevsyukov: Uncomment after the issue below is resolved.
+    // https://github.com/SpineEventEngine/validation/issues/64
     // Here the option references the missing nested field.
-    int32 wrong_indirect = 2 [(max).value = "range.top"];
+    int32 wrong_indirect = 2 /*[(max).value = "range.top"]*/;
 
+    //TODO:2025-05-08:alexander.yevsyukov: Uncomment after the issue below is resolved.
+    // https://github.com/SpineEventEngine/validation/issues/64
     // Even though the type of this field is wider than that of the referenced,
     // this field should generate the error because we require same types.
-    int64 wrong_type = 3 [(max).value = "range.max_value"];
+    int64 wrong_type = 3 /*[(max).value = "range.max_value"]*/;
 
     // The field for checking nested paths.
     Range range = 10 [(required) = true];

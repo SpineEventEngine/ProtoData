@@ -101,7 +101,7 @@ message NotificationRequest {
     // A method of notification.
     oneof channel {
         // A channel must be selected.
-        option (is_required) = true;
+        option (choice) = { required: true };
         // The trailing comment for the `oneof` option.
 
         EmailNotification email = 2;

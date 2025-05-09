@@ -61,11 +61,18 @@ internal object BeforePrimaryDeclaration : NonRepeatingInsertionPoint {
             val lineNumber = psiClass.lineNumber
             return atLine(lineNumber)
         }
-        logger.atWarning().log { """
+        // The formatting of the logging output below is a bit "cryptic"
+        // because we want to align the quoted code after the warning message.
+        logger.atWarning().log {
+            """
             Could not find a primary declaration in the code:
             ```java
-            $text
-            ```    
+            
+            """.ti() +
+            text.trimIndent() +
+            """
+                
+            ```
             """.ti()
         }
         return nowhere

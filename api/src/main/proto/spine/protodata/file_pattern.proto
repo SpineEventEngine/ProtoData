@@ -39,7 +39,7 @@ option java_multiple_files = true;
 message FilePattern {
 
     oneof kind {
-        option (is_required) = true;
+        option (choice).required = true;
 
         // The path must end with this string.
         string suffix = 1;

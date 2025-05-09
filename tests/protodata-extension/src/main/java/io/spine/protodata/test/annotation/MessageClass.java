@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableSet;
 import io.spine.text.TextCoordinates;
 import io.spine.protodata.render.InsertionPoint;
 import io.spine.text.Text;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Set;
 

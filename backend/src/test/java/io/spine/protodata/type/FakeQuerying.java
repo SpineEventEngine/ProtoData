@@ -30,7 +30,7 @@ import io.spine.base.EntityState;
 import io.spine.protodata.context.CodegenContext;
 import io.spine.server.query.Querying;
 import io.spine.server.query.QueryingClient;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.NonNull;
 
 final class FakeQuerying implements Querying {
 
