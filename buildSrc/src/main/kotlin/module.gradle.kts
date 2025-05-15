@@ -28,6 +28,7 @@ import io.spine.dependency.build.Dokka
 import io.spine.dependency.build.ErrorProne
 import io.spine.dependency.lib.Protobuf
 import io.spine.dependency.local.Base
+import io.spine.dependency.local.Time
 import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
 import io.spine.gradle.javac.configureErrorProne
@@ -87,6 +88,7 @@ fun Module.forceConfigurations() {
             force(
                 Protobuf.compiler,
                 Base.lib,
+                Time.lib,
                 ToolBase.lib,
                 Validation.runtime,
             )
