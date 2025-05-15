@@ -86,6 +86,7 @@ fun Module.forceConfigurations() {
     configurations.all {
         resolutionStrategy {
             force(
+                Protobuf.javaLib,
                 Protobuf.compiler,
                 Base.lib,
                 Time.lib,
