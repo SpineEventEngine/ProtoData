@@ -195,6 +195,19 @@ public object Compilation {
     internal fun warningMessage(file: File, line: Int, column: Int, message: String) =
         indentedMessage(WARNING_PREFIX, file, line, column, message)
 
+    /**
+     * Constructs a formatted diagnostic message for compilation errors or warnings,
+     * with proper indentation for multi-line user messages.
+     *
+     * The returned string consists of:
+     *
+     * 1. The specified [prefix] followed by the file URI or path, line, and column.
+     * 2. The first line of the [message] appended directly to the header.
+     * 3. Any subsequent lines of the [message], each indented under the header
+     *    by the length of the [prefix] plus one space.
+     *
+     * @throws IllegalArgumentException if [prefix] is blank.
+     */
     @VisibleForTesting
     internal fun indentedMessage(
         prefix: String,
@@ -210,15 +223,10 @@ public object Compilation {
         val messageLines = message.lines()
         val messageHeader = messageLines.first()
 
-        // "+1" counts whitespace between a prefix and the file path.
         val indent = Indent(prefix.length + 1)
-
-        // The first line is appended to the location, each consequent line is
-        // prepended with indentation.
         val indentedBody = messageLines.drop(1)
             .indent(indent, level = 1)
 
-        // The method uses OS-specific line breaks.
         return buildString {
             append("$prefix ${file.maybeUri()}:$line:$column: $messageHeader")
             if (indentedBody.isNotEmpty()) {
