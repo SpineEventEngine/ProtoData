@@ -165,7 +165,7 @@ internal class CompilationSpec {
     }
 
     @Nested inner class
-    `when appending indent` {
+    `when indenting a user message` {
 
         private val file = File("with_error.proto")
         private val prefix = "m:"
@@ -173,7 +173,7 @@ internal class CompilationSpec {
         private val column = 1
 
         @Test
-        fun `use the prefix length for indentation`() {
+        fun `use the prefix length as a number of spaces`() {
             val message = """
                 The file contains one or more mistakes.
                 Mistake #1: illegal beginning.
@@ -209,7 +209,6 @@ internal class CompilationSpec {
             val result = Compilation.indentedMessage(prefix, file, line, column, message = "")
             result shouldBe "m: with_error.proto:1:1: "
         }
-
 
         @Test
         fun `preserve original blank lines and whitespaces`() {
