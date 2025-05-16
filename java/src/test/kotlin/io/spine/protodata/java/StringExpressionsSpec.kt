@@ -24,19 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+package io.spine.protodata.java
 
-/**
- * Spine Base module.
- *
- * @see <a href="https://github.com/SpineEventEngine/base">spine-base</a>
- */
-@Suppress("ConstPropertyName")
-object Base {
-    const val version = "2.0.0-SNAPSHOT.318"
-    const val versionForBuildScript = "2.0.0-SNAPSHOT.318"
-    const val group = Spine.group
-    const val artifact = "spine-base"
-    const val lib = "$group:$artifact:$version"
-    const val libForBuildScript = "$group:$artifact:$versionForBuildScript"
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+
+@DisplayName("Extensions for `Expression<String>` should")
+internal class StringExpressionsSpec {
+
+    @Test
+    fun `concatenate two string expressions`() {
+        val hello = StringLiteral("Hello ")
+        val world = Expression<String>("object.toString()")
+        val expected = """
+            "Hello " + object.toString()
+        """.trimIndent()
+
+        (hello + world).code shouldBe expected
+    }
+
+    @Test
+    fun `concatenate a string expression with a literal`() {
+        val hello = StringLiteral("Hello")
+        val world = "World!"
+        val expected = """
+            "Hello" + "World!"
+        """.trimIndent()
+
+        (hello + world).code shouldBe expected
+    }
 }

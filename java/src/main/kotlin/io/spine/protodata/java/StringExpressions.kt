@@ -24,19 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.dependency.local
+package io.spine.protodata.java
 
 /**
- * Spine Base module.
- *
- * @see <a href="https://github.com/SpineEventEngine/base">spine-base</a>
+ * Yields a new string [Expression] by concatenating this [Expression]
+ * with another [Expression].
  */
-@Suppress("ConstPropertyName")
-object Base {
-    const val version = "2.0.0-SNAPSHOT.318"
-    const val versionForBuildScript = "2.0.0-SNAPSHOT.318"
-    const val group = Spine.group
-    const val artifact = "spine-base"
-    const val lib = "$group:$artifact:$version"
-    const val libForBuildScript = "$group:$artifact:$versionForBuildScript"
-}
+public operator fun Expression<String>.plus(value: Expression<String>): Expression<String> =
+    Expression("$this + $value")
+
+/**
+ * Yields a new string [Expression] by appending the given [String]
+ * literal to this string [Expression].
+ */
+public operator fun Expression<String>.plus(value: String): Expression<String> =
+    plus(StringLiteral(value))
