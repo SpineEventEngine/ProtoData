@@ -196,8 +196,8 @@ public object Compilation {
         indentedMessage(WARNING_PREFIX, file, line, column, message)
 
     /**
-     * Constructs a formatted diagnostic message for compilation errors or warnings,
-     * with proper indentation for multi-line user messages.
+     * Constructs a formatted compilation message with indentation
+     * for multi-line user messages.
      *
      * The returned string consists of:
      *
