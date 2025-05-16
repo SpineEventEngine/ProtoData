@@ -49,6 +49,12 @@
 .idea/modules
 .idea/shelf
 
+# IDEA settings under integration tests.
+/tests/.idea/
+
+# Debug output of integration tests
+/tests/_out/
+
 # Do not ignore the following IDEA settings
 !.idea/misc.xml
 !.idea/codeStyleSettings.xml
@@ -67,6 +73,9 @@
 **/*.pbenum.dart
 **/*.pbserver.dart
 **/*.pbjson.dart
+
+# Generated code in integration tests
+tests/**/proto-gen/
 
 # Gradle build files
 **/build/**
