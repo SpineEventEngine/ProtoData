@@ -26,6 +26,7 @@
 
 package io.spine.protodata
 
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import io.kotest.matchers.string.shouldStartWith
@@ -38,6 +39,7 @@ import io.spine.testing.TestValues
 import java.io.File
 import java.nio.file.Paths
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -159,6 +161,74 @@ internal class CompilationSpec {
         }
         assertDoesNotThrow {
             Compilation.check(condition = true, file, span) { msg }
+        }
+    }
+
+    @Nested inner class
+    `when appending indent` {
+
+        private val file = File("with_error.proto")
+        private val prefix = "m:"
+        private val line = 1
+        private val column = 1
+
+        @Test
+        fun `use the prefix length for indentation`() {
+            val message = """
+                The file contains one or more mistakes.
+                Mistake #1: illegal beginning.
+                Mistake #2: illegal ending.
+            """.trimIndent()
+
+            val result = Compilation.indentedMessage(prefix, file, line, column, message)
+            val expected = """
+                m: with_error.proto:1:1: The file contains one or more mistakes.
+                   Mistake #1: illegal beginning.
+                   Mistake #2: illegal ending.
+            """.trimIndent()
+
+            result shouldBe expected
+        }
+
+        @Test
+        fun `throw when given an empty prefix`() {
+            assertThrows<IllegalArgumentException> {
+                Compilation.indentedMessage(prefix = "", file, line, column, message = "")
+            }
+        }
+
+        @Test
+        fun `do not append trailing lines for one-line messages`() {
+            val message = "The file contains one or more mistakes."
+            val result = Compilation.indentedMessage(prefix, file, line, column, message)
+            result shouldBe "m: with_error.proto:1:1: The file contains one or more mistakes."
+        }
+
+        @Test
+        fun `do nothing for empty messages`() {
+            val result = Compilation.indentedMessage(prefix, file, line, column, message = "")
+            result shouldBe "m: with_error.proto:1:1: "
+        }
+
+
+        @Test
+        fun `preserve original blank lines and whitespaces`() {
+            val message = """
+                First line.
+
+                Third line after blank.
+                  Fourth line with its own whitespaces.
+            """.trimIndent()
+
+            val result = Compilation.indentedMessage(prefix, file, line, column, message)
+            val expected = """
+                |m: with_error.proto:1:1: First line.
+                |   
+                |   Third line after blank.
+                |     Fourth line with its own whitespaces.
+            """.trimMargin()
+
+            result shouldBe expected
         }
     }
 }

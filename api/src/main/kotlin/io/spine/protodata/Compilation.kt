@@ -33,10 +33,12 @@ import io.spine.protodata.Compilation.ERROR_EXIT_CODE
 import io.spine.protodata.Compilation.error
 import io.spine.protodata.ast.Span
 import io.spine.protodata.ast.toJava
+import io.spine.string.Indent
+import io.spine.string.Separator
+import io.spine.string.indent
 import java.io.File
 import kotlin.system.exitProcess
 import io.spine.protodata.ast.File as PFile
-
 
 /**
  * Provides functions to report compilation errors and warnings.
@@ -140,7 +142,7 @@ public object Compilation {
 
     @VisibleForTesting
     internal fun errorMessage(file: File, line: Int, column: Int, message: String) =
-        "$ERROR_PREFIX ${file.maybeUri()}:$line:$column: $message"
+        indentedMessage(ERROR_PREFIX, file, line, column, message)
 
     /**
      * Prints the warning diagnostics to [System.out].
@@ -191,7 +193,40 @@ public object Compilation {
 
     @VisibleForTesting
     internal fun warningMessage(file: File, line: Int, column: Int, message: String) =
-        "$WARNING_PREFIX ${file.maybeUri()}:$line:$column: $message"
+        indentedMessage(WARNING_PREFIX, file, line, column, message)
+
+    @VisibleForTesting
+    internal fun indentedMessage(
+        prefix: String,
+        file: File,
+        line: Int,
+        column: Int,
+        message: String
+    ): String {
+        require(prefix.isNotBlank()) {
+            "The compilation message must have a non-empty prefix specified."
+        }
+
+        val messageLines = message.lines()
+        val messageHeader = messageLines.first()
+
+        // "+1" counts whitespace between a prefix and the file path.
+        val indent = Indent(prefix.length + 1)
+
+        // The first line is appended to the location, each consequent line is
+        // prepended with indentation.
+        val indentedBody = messageLines.drop(1)
+            .indent(indent, level = 1)
+
+        // The method uses OS-specific line breaks.
+        return buildString {
+            append("$prefix ${file.maybeUri()}:$line:$column: $messageHeader")
+            if (indentedBody.isNotEmpty()) {
+                append(Separator.nl())
+                append(indentedBody)
+            }
+        }
+    }
 
     /**
      * The exception thrown by [Compilation.error] when the testing mode is on.
