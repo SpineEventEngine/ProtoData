@@ -47,6 +47,7 @@ buildscript {
     val baseForBuildScript = io.spine.dependency.local.Base.libForBuildScript
     dependencies {
         classpath(io.spine.dependency.lib.Protobuf.GradlePlugin.lib)
+        classpath(io.spine.dependency.build.Ksp.run { artifact(gradlePlugin) })
         classpath(baseForBuildScript)
         classpath(mcJava.pluginLib) {
             excludeSpineBase()
