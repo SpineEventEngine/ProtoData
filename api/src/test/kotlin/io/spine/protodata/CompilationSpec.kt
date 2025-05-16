@@ -35,6 +35,8 @@ import io.spine.protodata.Compilation.ERROR_PREFIX
 import io.spine.protodata.Compilation.WARNING_PREFIX
 import io.spine.protodata.ast.Span
 import io.spine.protodata.ast.toAbsoluteFile
+import io.spine.string.ti
+import io.spine.string.tm
 import io.spine.testing.TestValues
 import java.io.File
 import java.nio.file.Paths
@@ -178,14 +180,14 @@ internal class CompilationSpec {
                 The file contains one or more mistakes.
                 Mistake #1: illegal beginning.
                 Mistake #2: illegal ending.
-            """.trimIndent()
+            """.ti()
 
             val result = Compilation.indentedMessage(prefix, file, line, column, message)
             val expected = """
                 m: with_error.proto:1:1: The file contains one or more mistakes.
                    Mistake #1: illegal beginning.
                    Mistake #2: illegal ending.
-            """.trimIndent()
+            """.ti()
 
             result shouldBe expected
         }
@@ -217,7 +219,7 @@ internal class CompilationSpec {
 
                 Third line after blank.
                   Fourth line with its own whitespaces.
-            """.trimIndent()
+            """.ti()
 
             val result = Compilation.indentedMessage(prefix, file, line, column, message)
             val expected = """
@@ -225,7 +227,7 @@ internal class CompilationSpec {
                 |   
                 |   Third line after blank.
                 |     Fourth line with its own whitespaces.
-            """.trimMargin()
+            """.tm()
 
             result shouldBe expected
         }
