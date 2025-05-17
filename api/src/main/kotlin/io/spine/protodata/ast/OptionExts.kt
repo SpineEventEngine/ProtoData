@@ -39,8 +39,7 @@ import com.google.protobuf.Descriptors.GenericDescriptor
 import com.google.protobuf.Descriptors.MethodDescriptor
 import com.google.protobuf.Descriptors.OneofDescriptor
 import com.google.protobuf.Descriptors.ServiceDescriptor
-import com.google.protobuf.GeneratedMessage.GeneratedExtension
-import com.google.protobuf.GeneratedMessageV3.ExtendableMessage
+import com.google.protobuf.GeneratedMessage.ExtendableMessage
 import com.google.protobuf.Message
 import io.spine.base.EventMessage
 import io.spine.option.OptionsProto

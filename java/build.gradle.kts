@@ -48,15 +48,6 @@ dependencies {
     testImplementation(project(":test-env"))
 }
 
-// Temporarily force the previous version of Base so that tests for `IsOption` could pass.
-configurations.all {
-    if(name in arrayOf("testCompileClasspath", "testRuntimeClasspath")) {
-        resolutionStrategy.force(
-            Base.libForBuildScript
-        )
-    }
-}
-
 // Allows test suites to fetch generated Java files as resources.
 protobuf {
     generateProtoTasks {

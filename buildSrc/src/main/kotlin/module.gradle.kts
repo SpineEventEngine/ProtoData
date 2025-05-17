@@ -26,8 +26,10 @@
 
 import io.spine.dependency.build.Dokka
 import io.spine.dependency.build.ErrorProne
+import io.spine.dependency.build.Ksp
 import io.spine.dependency.lib.Protobuf
 import io.spine.dependency.local.Base
+import io.spine.dependency.local.Time
 import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
 import io.spine.gradle.javac.configureErrorProne
@@ -84,9 +86,12 @@ fun Module.setDependencies() {
 fun Module.forceConfigurations() {
     configurations.all {
         resolutionStrategy {
+            Ksp.forceArtifacts(project, this@all, this@resolutionStrategy)
             force(
+                Protobuf.javaLib,
                 Protobuf.compiler,
                 Base.lib,
+                Time.lib,
                 ToolBase.lib,
                 Validation.runtime,
             )
