@@ -45,6 +45,7 @@ import io.spine.protodata.params.ParametersFileParam
 import io.spine.protodata.params.PipelineParameters
 import io.spine.protodata.util.parseFile
 import io.spine.string.Separator
+import io.spine.string.qualifiedClassName
 import io.spine.tools.code.manifest.Version
 import java.io.File
 import kotlin.system.exitProcess
@@ -67,7 +68,9 @@ public fun main(args: Array<String>) {
         exitProcess(0)
     } catch (e: Throwable) {
         System.err.run {
-            println("Exception caught in ProtoData `main()`:")
+            println("`${e.qualifiedClassName}` caught in ProtoData `main()`.")
+            println("Message: ${e.message}")
+            println("Stacktrace:")
             println("```")
             e.printStackTrace(this)
             println("```")
